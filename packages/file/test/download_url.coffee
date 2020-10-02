@@ -1,7 +1,7 @@
 
 http = require 'http'
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, tmpdir} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -80,8 +80,9 @@ describe 'file.download url', ->
       @timeout 100000
       # Download a non existing file
       nikita
+        ssh: ssh
         tmpdir: true
-        cache_file: "#{tmpdir}/cache_file"
+        cache_file: "{{metadata.tmpdir}}/cache_file"
       , ({metadata: {tmpdir}}) ->
         @file.download
           ssh: ssh
@@ -90,7 +91,7 @@ describe 'file.download url', ->
         .should.be.finally.containEql status: true
         @fs.assert
           ssh: null
-          target: "#{tmpdir}/download"
+          target: "#{tmpdir}/cache_file"
           content: 'okay'
 
     they 'cache dir', ({ssh}) ->

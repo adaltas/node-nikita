@@ -24,18 +24,12 @@ require('nikita')
 });
 ```
 
-## On config
+## Hooks
 
     on_action = ({config, metadata}) ->
-      # Options
-      config.source = metadata.argument if metadata.argument?
       throw Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless config.cache_file or config.target or config.cache_dir
-      config.target ?= config.cache_file
-      config.target ?= path.basename config.source
-      config.target = path.resolve config.cache_dir, config.target
-      config.source = config.source.substr 7 if /^file:\/\//.test config.source
-      config.http_headers ?= []
-      config.cookies ?= []
+      # config.http_headers ?= []
+      # config.cookies ?= []
 
 ## Schema
 
@@ -60,6 +54,7 @@ require('nikita')
           """
         'cookies':
           type: 'array', items: type: 'string'
+          default: []
           description: """
           Extra cookies  to include in the request when sending HTTP to a server.
           """
@@ -76,6 +71,7 @@ require('nikita')
           """
         'http_headers':
           type: 'array', items: type: 'string'
+          default: []
           description: """
           Extra header to include in the request when sending HTTP to a server.
           """
@@ -132,6 +128,10 @@ require('nikita')
 
     handler = ({config, log}) ->
       log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
+      config.target ?= config.cache_file
+      config.target ?= path.basename config.source
+      config.target = path.resolve config.cache_dir, config.target
+      config.source = config.source.substr 7 if /^file:\/\//.test config.source
       # todo, also support config.algo and config.hash
       if config.md5?
         algo = 'md5'
@@ -223,6 +223,8 @@ require('nikita')
       handler: handler
       hooks:
         on_action: on_action
+      metadata:
+        argument_name: 'source'
       schema: schema
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']

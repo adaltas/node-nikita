@@ -67,9 +67,26 @@
 var curl, fs, handler, on_action, path, schema, url, utils,
   indexOf = [].indexOf;
 
-on_action = function({config}) {
+on_action = async function({
+    config,
+    operations: {find}
+  }) {
+  config.cache = (await find(function({
+      config: {cache}
+    }) {
+    return cache;
+  }));
+  config.cache_file = (await find(function({
+      config: {cache_file}
+    }) {
+    return cache_file;
+  }));
+  config.cache_dir = (await find(function({
+      config: {cache_dir}
+    }) {
+    return cache_dir;
+  }));
   if (/^file:\/\//.test(config.source)) {
-    // Options
     return config.source = config.source.substr(7);
   }
 };
@@ -80,7 +97,6 @@ schema = {
   properties: {
     'cache': {
       type: 'boolean',
-      default: false,
       description: `Activate the cache, default to true if either "cache_dir" or "cache_file" is
 activated.`
     },
@@ -249,7 +265,7 @@ handler = async function({
   source_url = url.parse(config.source);
   match = null;
   if ((config.cache == null) && source_url.protocol === null) {
-    // Disable caching if source is a local file and cache isnt exlicitly set by user
+    // Disable caching if source is a local file and cache isnt explicitly set by user
     config.cache = false;
   }
   if (config.cache == null) {

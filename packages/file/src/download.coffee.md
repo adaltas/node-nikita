@@ -65,8 +65,10 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 ## On config
 
-    on_action = ({config}) ->
-      # Options
+    on_action = ({config, operations: {find}}) ->
+      config.cache = await find ({config: {cache}}) -> cache
+      config.cache_file = await find ({config: {cache_file}}) -> cache_file
+      config.cache_dir = await find ({config: {cache_dir}}) -> cache_dir
       config.source = config.source.substr 7 if /^file:\/\//.test config.source
 
 ## Schema
@@ -76,7 +78,6 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       properties:
         'cache':
           type: 'boolean'
-          default: false
           description: """
           Activate the cache, default to true if either "cache_dir" or "cache_file" is
           activated.
@@ -190,7 +191,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       log message: "Using force: #{JSON.stringify config.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if config.force
       source_url = url.parse config.source
       match = null
-      # Disable caching if source is a local file and cache isnt exlicitly set by user
+      # Disable caching if source is a local file and cache isnt explicitly set by user
       config.cache = false if not config.cache? and source_url.protocol is null
       config.cache ?= !!(config.cache_dir or config.cache_file)
       config.http_headers ?= []
