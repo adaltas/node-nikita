@@ -1,7 +1,7 @@
 
 path = require 'path'
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, tmpdir} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix

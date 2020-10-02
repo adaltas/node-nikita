@@ -1,7 +1,7 @@
 
 path = require 'path'
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, tmpdir} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -88,7 +88,6 @@ describe 'file.download file', ->
 
     they 'cache dir', ({ssh}) ->
       # Download a non existing file
-      target = "#{tmpdir}/download"
       nikita
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
@@ -132,7 +131,6 @@ describe 'file.download file', ->
 
     they 'cache dir with md5 string', ({ssh}) ->
       # Download a non existing file
-      target = "#{tmpdir}/download"
       nikita
         ssh: ssh
         tmpdir: true

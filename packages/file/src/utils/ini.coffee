@@ -1,6 +1,6 @@
 
 ini = require 'ini'
-utils = require '@nikitajs/engine/lib/utils/string'
+utils = require '@nikitajs/engine/lib/utils'
 
 module.exports =
   # Remove undefined and null values

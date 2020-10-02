@@ -118,20 +118,14 @@ optional, use should_exists to enforce its presence.`
       type: 'string',
       description: `File path where to write content to or a callback.`
     }
-  }
+  },
+  required: ['content', 'target']
 };
 
 // ## Handler
 handler = async function({config, log}) {
   var content, data, default_props, err, org_props, parse, stringify;
-  if (!(config.content || !config.source)) {
-    // log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
-    // Validation
-    throw Error("Required Option: one of 'content' or 'source' is mandatory");
-  }
-  if (!config.target) {
-    throw Error("Required Option: option 'target' is mandatory");
-  }
+  // log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
   org_props = {};
   default_props = {};
   parse = config.parse || ini.parse;
