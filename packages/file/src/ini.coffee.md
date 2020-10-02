@@ -124,14 +124,12 @@ require('nikita')
           description: """
           File path where to write content to or a callback.
           """
+      required: ['content', 'target']
 
 ## Handler
 
     handler = ({config, log}) ->
       # log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
-      # Validation
-      throw Error "Required Option: one of 'content' or 'source' is mandatory" unless config.content or not config.source
-      throw Error "Required Option: option 'target' is mandatory" unless config.target
       org_props = {}
       default_props = {}
       parse = config.parse or ini.parse

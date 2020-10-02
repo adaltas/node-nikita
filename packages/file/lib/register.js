@@ -18,6 +18,9 @@ module.exports = {
     },
     render: '@nikitajs/file/lib/render',
     touch: '@nikitajs/file/lib/touch',
+    types: {
+      'ceph_conf': '@nikitajs/file/lib/types/ceph_conf'
+    },
     upload: '@nikitajs/file/lib/upload',
     yaml: '@nikitajs/file/lib/yaml'
   }

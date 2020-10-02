@@ -24,33 +24,18 @@
   // });
   // ```
 
-// ## On config
+// ## Hooks
 var curl, error, errors, handler, on_action, path, protocols_ftp, protocols_http, schema, url,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    // Options
-    config.source = metadata.argument;
-  }
   if (!(config.cache_file || config.target || config.cache_dir)) {
     throw Error("Missing one of 'target', 'cache_file' or 'cache_dir' option");
   }
-  if (config.target == null) {
-    config.target = config.cache_file;
-  }
-  if (config.target == null) {
-    config.target = path.basename(config.source);
-  }
-  config.target = path.resolve(config.cache_dir, config.target);
-  if (/^file:\/\//.test(config.source)) {
-    config.source = config.source.substr(7);
-  }
-  if (config.http_headers == null) {
-    config.http_headers = [];
-  }
-  return config.cookies != null ? config.cookies : config.cookies = [];
 };
+
+// config.http_headers ?= []
+// config.cookies ?= []
 
 // ## Schema
 schema = {
@@ -81,6 +66,7 @@ the command is used instead of over SSH.`
       items: {
         type: 'string'
       },
+      default: [],
       description: `Extra cookies  to include in the request when sending HTTP to a server.`
     },
     'fail': {
@@ -97,6 +83,7 @@ option of the same name.`
       items: {
         type: 'string'
       },
+      default: [],
       description: `Extra header to include in the request when sending HTTP to a server.`
     },
     'location': {
@@ -179,6 +166,16 @@ handler = async function({config, log}) {
     level: 'DEBUG',
     module: 'nikita/lib/file/cache'
   });
+  if (config.target == null) {
+    config.target = config.cache_file;
+  }
+  if (config.target == null) {
+    config.target = path.basename(config.source);
+  }
+  config.target = path.resolve(config.cache_dir, config.target);
+  if (/^file:\/\//.test(config.source)) {
+    config.source = config.source.substr(7);
+  }
   // todo, also support config.algo and config.hash
   if (config.md5 != null) {
     algo = 'md5';
@@ -364,6 +361,9 @@ module.exports = {
   handler: handler,
   hooks: {
     on_action: on_action
+  },
+  metadata: {
+    argument_name: 'source'
   },
   schema: schema
 };

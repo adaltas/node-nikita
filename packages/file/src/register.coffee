@@ -16,6 +16,8 @@ module.exports =
       read: '@nikitajs/file/src/properties/read'
     render: '@nikitajs/file/src/render'
     touch: '@nikitajs/file/src/touch'
+    types:
+      'ceph_conf': '@nikitajs/file/src/types/ceph_conf'
     upload: '@nikitajs/file/src/upload'
     yaml: '@nikitajs/file/src/yaml'
 (->
