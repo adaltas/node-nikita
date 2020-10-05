@@ -19,8 +19,6 @@ module.exports = ->
     'nikita:session:result':
       after: '@nikitajs/engine/src/metadata/status'
       handler: ({action, error, output}, handler) ->
-        # console.log 'operation:event', arguments
-        # action.operations.events.emit 'nikita:action:end', action, error, output
         ({action}) ->
           try
             output = await handler.apply null, arguments

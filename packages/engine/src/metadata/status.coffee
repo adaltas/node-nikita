@@ -44,12 +44,8 @@ module.exports = ->
         # Register `status` operation
         action.operations ?= {}
         action.operations.status = (index) ->
-          # console.log ':call:status:'
           if arguments.length is 0
             action.children.some (sibling) ->
-              # console.log sibling.output
-              # return false if sibling.metadata.shy
-              # sibling.output?.status is true
               not sibling.metadata.shy and sibling.output?.status is true
           else
             l = action.children.length

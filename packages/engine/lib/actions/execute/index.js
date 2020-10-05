@@ -129,16 +129,33 @@ to execute.`
       description: `Current working directory from where to execute the command.`
     },
     'code': {
-      type: 'array',
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'integer'
+          }
+        }
+      ],
       default: [0],
-      items: {
-        type: 'integer'
-      },
       description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
     },
     'code_skipped': {
-      type: 'array',
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'integer'
+          }
+        }
+      ],
       default: [],
       description: `Expected code(s) returned by the command if it has no effect, executed
 will not be incremented, int or array of int.`

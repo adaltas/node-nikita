@@ -9,6 +9,7 @@ module.exports =
   'execute':
     '': '@nikitajs/engine/src/actions/execute'
     'assert': '@nikitajs/engine/src/actions/execute/assert'
+    'wait': '@nikitajs/engine/src/actions/execute/wait'
   'fs':
     'base':
       'chmod': '@nikitajs/engine/src/actions/fs/base/chmod'
