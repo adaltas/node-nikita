@@ -24,13 +24,13 @@ describe 'plugins.status', ->
   describe 'last child no interference', ->
 
     it '`true` when child return `true`', ->
-      {status} = await nikita.call ({context}) ->
+      {status} = await nikita.call ->
         @call -> false
         @call -> true
       status.should.be.true()
 
     it '`false` when child return `false`', ->
-      {status} = await nikita.call ({context}) ->
+      {status} = await nikita.call ->
         @call -> true
         @call -> false
       status.should.be.false()

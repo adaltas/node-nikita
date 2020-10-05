@@ -18,8 +18,6 @@ Available values for the `stringify` option are:
 
 * `stringify`
   Default, implemented by `require('nikita/lib/misc/ini').stringify`
-* `stringify`
-  Default, implemented by `require('nikita/lib/misc/ini').stringify`
 
 The default stringify function accepts:
 
