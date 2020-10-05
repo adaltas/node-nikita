@@ -17,7 +17,18 @@ module.exports =
     render: '@nikitajs/file/src/render'
     touch: '@nikitajs/file/src/touch'
     types:
+      'systemd':
+        'resolved': '@nikitajs/file/src/types/systemd/resolved'
+        'timesyncd': '@nikitajs/file/src/types/systemd/timesyncd'
       'ceph_conf': '@nikitajs/file/src/types/ceph_conf'
+      'hfile': '@nikitajs/file/src/types/hfile'
+      'krb5_conf': '@nikitajs/file/src/types/krb5_conf'
+      'locale_gen': '@nikitajs/file/src/types/locale_gen'
+      'my_cnf': '@nikitajs/file/src/types/my_cnf'
+      'pacman_conf': '@nikitajs/file/src/types/pacman_conf'
+      'ssh_authorized_keys': '@nikitajs/file/src/types/ssh_authorized_keys'
+      'wireguard_conf': '@nikitajs/file/src/types/wireguard_conf'
+      'yum_repo': '@nikitajs/file/src/types/yum_repo'
     upload: '@nikitajs/file/src/upload'
     yaml: '@nikitajs/file/src/yaml'
 (->

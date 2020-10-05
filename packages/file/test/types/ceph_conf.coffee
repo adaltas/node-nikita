@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'file.types.yum_repo', ->
+describe 'file.types.ceph_conf', ->
 
   they 'generate from content', ({ssh}) ->
     nikita
