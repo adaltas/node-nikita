@@ -106,16 +106,24 @@ nikita.execute({
           Current working directory from where to execute the command.
           """
         'code':
-          type: 'array'
-          default: [0]
-          items:
+          oneOf: [
             type: 'integer'
+          ,
+            type: 'array'
+            items: type: 'integer'
+          ]
+          default: [0]
           description: """
           Expected code(s) returned by the command, int or array of int, default
           to 0.
           """
         'code_skipped':
-          type: 'array'
+          oneOf: [
+            type: 'integer'
+          ,
+            type: 'array'
+            items: type: 'integer'
+          ]
           default: []
           description: """
           Expected code(s) returned by the command if it has no effect, executed

@@ -56,13 +56,9 @@ module.exports = function() {
           }
           action.operations.status = function(index) {
             var i, l, sibling;
-            // console.log ':call:status:'
             if (arguments.length === 0) {
               return action.children.some(function(sibling) {
                 var ref;
-                // console.log sibling.output
-                // return false if sibling.metadata.shy
-                // sibling.output?.status is true
                 return !sibling.metadata.shy && ((ref = sibling.output) != null ? ref.status : void 0) === true;
               });
             } else {
