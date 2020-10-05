@@ -46,13 +46,19 @@
     {
       "name": "Alexander Hoffmann",
       "email": "alexander@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
     }
   ],
   "dependencies": {
     "diff": "^4.0.2",
     "handlebars": "^4.7.6",
     "mixme": "^0.3.5",
-    "season": "^6.0.2"
+    "season": "^6.0.2",
+    "xmlbuilder": "^15.1.1",
+    "xmldom": "^0.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

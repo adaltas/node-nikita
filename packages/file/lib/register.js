@@ -19,7 +19,8 @@ module.exports = {
     render: '@nikitajs/file/lib/render',
     touch: '@nikitajs/file/lib/touch',
     types: {
-      'ceph_conf': '@nikitajs/file/lib/types/ceph_conf'
+      'ceph_conf': '@nikitajs/file/lib/types/ceph_conf',
+      'krb5_conf': '@nikitajs/file/lib/types/krb5_conf'
     },
     upload: '@nikitajs/file/lib/upload',
     yaml: '@nikitajs/file/lib/yaml'
