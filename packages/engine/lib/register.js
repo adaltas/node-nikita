@@ -14,7 +14,8 @@ module.exports = {
   },
   'execute': {
     '': '@nikitajs/engine/lib/actions/execute',
-    'assert': '@nikitajs/engine/lib/actions/execute/assert'
+    'assert': '@nikitajs/engine/lib/actions/execute/assert',
+    'wait': '@nikitajs/engine/lib/actions/execute/wait'
   },
   'fs': {
     'base': {

@@ -25,8 +25,6 @@ module.exports = function() {
       'nikita:session:result': {
         after: '@nikitajs/engine/src/metadata/status',
         handler: function({action, error, output}, handler) {
-          // console.log 'operation:event', arguments
-          // action.operations.events.emit 'nikita:action:end', action, error, output
           return async function({action}) {
             var err;
             try {
