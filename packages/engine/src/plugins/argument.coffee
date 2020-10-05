@@ -15,5 +15,6 @@ module.exports = ->
           delete action.argument
     'nikita:session:action':
       handler: (action) ->
-        action.config[action.metadata.argument_name] ?= action.metadata.argument
+        if action.metadata.argument_name
+          action.config[action.metadata.argument_name] ?= action.metadata.argument
         action

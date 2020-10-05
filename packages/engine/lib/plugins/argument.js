@@ -18,8 +18,10 @@ module.exports = function() {
       'nikita:session:action': {
         handler: function(action) {
           var base, name;
-          if ((base = action.config)[name = action.metadata.argument_name] == null) {
-            base[name] = action.metadata.argument;
+          if (action.metadata.argument_name) {
+            if ((base = action.config)[name = action.metadata.argument_name] == null) {
+              base[name] = action.metadata.argument;
+            }
           }
           return action;
         }
