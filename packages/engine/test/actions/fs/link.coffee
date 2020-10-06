@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'fs.link', ->
+describe 'actions.fs.link', ->
 
   they 'should link file', ({ssh}) ->
     # Create a non existing link

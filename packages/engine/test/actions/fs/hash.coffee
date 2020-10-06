@@ -4,7 +4,7 @@ nikita = require '../../../src'
 {tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh
 
-describe 'file.hash', ->
+describe 'actions.fs.hash', ->
   return unless tags.posix
 
   they 'error if target does not exist', ({ssh}) ->
