@@ -50,7 +50,7 @@ module.exports = {
     }
     validate_container_name(options.container);
     if (!(options.device = this.system.execute({
-      cmd: ['lxc', 'query', ['1.0', 'instances', options.container, 'state'].join('/')].join(' ')
+      cmd: ['lxc', 'query', ['1.0', 'containers', options.container, 'state'].join('/')].join(' ')
     }, function(err, {stdout}) {
       var config;
       if (err) {

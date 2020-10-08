@@ -45,7 +45,7 @@ require('nikita')
         cmd: [
           'lxc', 'query',
           [
-            '1.0', 'instances', options.container, 'state'
+            '1.0', 'containers', options.container, 'state'
           ].join '/'
         ].join ' '
       , (err, {stdout}) ->
