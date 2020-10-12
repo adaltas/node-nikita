@@ -1,29 +1,36 @@
+###
 
-# # Registry
-#
-# Management facility to register and unregister actions.
-#
-# ## Register all functions
+# Registry
+
+Management facility to register and unregister actions.
+
+## Register all functions
+
+###
 
 create = ({chain, on_register, parent, plugins} = {}) ->
   store = {}
   obj =
     chain: chain
 
-# ## Create
-#
-# Create a new registry.
-#
-# Options include:
-#
-# * `chain`
-#   Default object to return, used by `register`, `deprecate` and `unregister`.
-#   Could be used to provide a chained style API.
-# * `on_register`
-#   User function called on action registration. Takes two arguments: the action
-#   name and the action itself.
-# * `parent`
-#   Parent registry.
+###
+
+## Create
+
+Create a new registry.
+
+Options include:
+
+* `chain`
+  Default object to return, used by `register`, `deprecate` and `unregister`.
+  Could be used to provide a chained style API.
+* `on_register`
+  User function called on action registration. Takes two arguments: the action
+  name and the action itself.
+* `parent`
+  Parent registry.
+
+###
 
   obj.create = (options={}) ->
     # Inherit options from parent
@@ -51,14 +58,23 @@ create = ({chain, on_register, parent, plugins} = {}) ->
     action.metadata.module = module
     action
 
-# ## Get
-#
-# Retrieve an action by name.
-#
-# Options include:
-#
-# * `flatten`
-# * `deprecate`
+###
+
+## Get
+
+Retrieve an action by name. It will also search the action in the parent
+registries.
+
+Options include:
+
+* `flatten`
+  Return an array of action instead of a hierarchical tree
+* `deprecate`
+  Include deprecated actions
+* `normalize` (boolean, true)
+  Call the 'nikita:registry:normalize' hook.
+
+###
 
   obj.get = (namespace, options) ->
     if arguments.length is 1 and is_object arguments[0]
@@ -66,6 +82,7 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       namespace = null
     options ?= {}
     options.normalize ?= true
+    # Return multiple actions
     unless namespace
       # Flatten result
       if options.flatten
@@ -74,7 +91,6 @@ create = ({chain, on_register, parent, plugins} = {}) ->
           for k, v of store
             if k is ''
               continue if v.metadata?.deprecate and not options.deprecate
-              # flatstore[keys.join '.'] = merge v
               v.action = keys
               actions.push merge v
             else
@@ -94,91 +110,91 @@ create = ({chain, on_register, parent, plugins} = {}) ->
               res[k] = v unless Object.values(v).length is 0
           res
         return walk store, []
+    # Return one action
     namespace = [namespace] if typeof namespace is 'string'
+    action = null
+    # Search for action in the current registry
     child_store = store
     for n, i in namespace.concat ['']
       break unless child_store[n]
-      # return child_store[n] if child_store[n] and i is namespace.length
       if child_store[n] and i is namespace.length
         action = child_store[n]
-        return action unless options.normalize
-        return if plugins
-          # Hook attented to modify an action returned by the registry
-          await plugins.hook
-            event: 'nikita:registry:normalize'
-            args: action
-            handler: (action) ->
-              normalize action
-        else
-          normalize action
+        break
       child_store = child_store[n]
-    if parent
+    # Action is not found, search in the parent registry
+    if not action and parent
       action = await parent.get namespace, {...options, normalize: false}
-      return null unless action?
-      action = if plugins
-        action = await plugins.hook
-          event: 'nikita:registry:normalize'
-          args: action
-          handler: (action) ->
-            normalize action
-      else
-        normalize action
-      return action
-    else null
+    return null unless action?
+    # Return the raw action, without normalizing it
+    return action unless options.normalize
+    action = merge action
+    if plugins
+      # Hook attented to modify an action returned by the registry
+      await plugins.hook
+        event: 'nikita:registry:normalize'
+        args: action
+        handler: (action) ->
+          normalize action
+    else
+      normalize action
 
-# ## Register
-#
-# Register new actions.
-#
-# With an action path:
-#
-# ```javascript
-# nikita.register('first_action', 'path/to/action')
-# nikita.first_action(options);
-# ```
-#
-# With a namespace and an action path:
-#
-# ```javascript
-# nikita.register(['second', 'action'], 'path/to/action')
-# nikita.second.action(options);
-# ```
-#
-# With an action object:
-#
-# ```javascript
-# nikita.register('third_action', {
-#   relax: true,
-#   handler: function(options){ console.info(options.relax) }
-# })
-# nikita.third_action(options);
-# ```
-#
-# With a namespace and an action object:
-#
-# ```javascript
-# nikita.register(['fourth', 'action'], {
-#   relax: true,
-#   handler: function(options){ console.info(options.relax) }
-# })
-# nikita.fourth.action(options);
-# ```
-#
-# Multiple actions:
-#
-# ```javascript
-# nikita.register({
-#   'fifth_action': 'path/to/action'
-#   'sixth': {
-#     '': 'path/to/sixth',
-#     'action': : 'path/to/sixth/actkon'
-#   }
-# })
-# nikita
-# .fifth_action(options);
-# .sixth(options);
-# .sixth.action(options);
-# ```
+###
+
+## Register
+
+Register new actions.
+
+With an action path:
+
+```javascript
+nikita.register('first_action', 'path/to/action')
+nikita.first_action(options);
+```
+
+With a namespace and an action path:
+
+```javascript
+nikita.register(['second', 'action'], 'path/to/action')
+nikita.second.action(options);
+```
+
+With an action object:
+
+```javascript
+nikita.register('third_action', {
+  relax: true,
+  handler: function(options){ console.info(options.relax) }
+})
+nikita.third_action(options);
+```
+
+With a namespace and an action object:
+
+```javascript
+nikita.register(['fourth', 'action'], {
+  relax: true,
+  handler: function(options){ console.info(options.relax) }
+})
+nikita.fourth.action(options);
+```
+
+Multiple actions:
+
+```javascript
+nikita.register({
+  'fifth_action': 'path/to/action'
+  'sixth': {
+    '': 'path/to/sixth',
+    'action': : 'path/to/sixth/actkon'
+  }
+})
+nikita
+.fifth_action(options);
+.sixth(options);
+.sixth.action(options);
+```
+
+###
 
   obj.register = (namespace, action) ->
     namespace = [namespace] if typeof namespace is 'string'
@@ -216,21 +232,25 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       mutate store, namespace
     obj.chain or obj
 
-# ## Deprecate
-#
-# `nikita.deprecate(old_function, [new_function], action)`
-#
-# Deprecate an old or renamed action. Internally, it leverages
-# [Node.js `util.deprecate`](https://nodejs.org/api/util.html#util_util_deprecate_function_string).
-#
-# For example:
-#
-# ```javascript
-# nikita.deprecate('old_function', 'new_function', -> 'my_function')
-# nikita.old_function()
-# # Print
-# # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
-# ```
+###
+
+## Deprecate
+
+`nikita.deprecate(old_function, [new_function], action)`
+
+Deprecate an old or renamed action. Internally, it leverages
+[Node.js `util.deprecate`](https://nodejs.org/api/util.html#util_util_deprecate_function_string).
+
+For example:
+
+```javascript
+nikita.deprecate('old_function', 'new_function', -> 'my_function')
+nikita.old_function()
+# Print
+# (node:75923) DeprecationWarning: old_function is deprecated, use new_function
+```
+
+###
 
   obj.deprecate = (old_name, new_name, action) ->
     if arguments.length is 2
@@ -246,16 +266,20 @@ create = ({chain, on_register, parent, plugins} = {}) ->
     obj.register old_name, action
     obj.chain or obj
 
-# # Registered
-#
-# Test if a function is registered or not.
-#
-# Options:
-#
-# * `local` (boolean)
-#   Search action in the parent registries.
-# * `partial` (boolean)
-#   Return true if name match a namespace and not a leaf action.
+###
+
+# Registered
+
+Test if a function is registered or not.
+
+Options:
+
+* `local` (boolean)
+  Search action in the parent registries.
+* `partial` (boolean)
+  Return true if name match a namespace and not a leaf action.
+
+###
 
   obj.registered = (name, options = {}) ->
     name = [name] if typeof name is 'string'
@@ -268,9 +292,13 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       child_store = child_store[n]
     false
 
-# ## Unregister
-#
-# Remove an action from registry.
+###
+
+## Unregister
+
+Remove an action from registry.
+
+###
 
   obj.unregister = (name) ->
     name = [name] if typeof name is 'string'
