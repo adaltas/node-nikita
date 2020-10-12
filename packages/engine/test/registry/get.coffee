@@ -1,6 +1,7 @@
 
 nikita = require '../../src'
 registry = require '../../src/registry'
+plugins = require '../../src/plugins'
 
 describe 'registry.get', ->
 
@@ -52,3 +53,26 @@ describe 'registry.get', ->
     actions = await reg.get flatten: true, deprecate: true
     actions.some( (action) -> action.action.join('.') is 'new.function').should.be.true()
     actions.some( (action) -> action.action.join('.') is 'old.function').should.be.true()
+
+  it 'return an immutable copy of the action', ->
+    reg = registry.create
+      plugins: plugins
+        plugins: [
+          ->
+            hooks:
+              'nikita:registry:normalize': (action) ->
+                action.key = 'new value'
+                action.new_key = 'new value'
+        ]
+    reg.register ['action'], key: 'value', handler: (->)
+    action = await reg.get 'action'
+    # Ensure the returned action is altered
+    action.should.match
+      config: 
+        key: 'new value', new_key: 'new value'
+      handler: (val) -> val.should.be.a.Function()
+    # Now, make sure the action is not altered
+    action = await reg.get 'action', normalize: false
+    action.should.match
+      key: 'value'
+      handler: (val) -> val.should.be.a.Function()

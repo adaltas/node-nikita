@@ -73,6 +73,8 @@ require('nikita')({
       # if config.ssh and not ssh.is config.ssh
       #   config[k] ?= v for k, v of config.ssh or {}
       #   delete config.ssh
+      
+      config.private_key ?= config.privateKey
       # Define host from ip
       if config.ip and not config.host
         config.host = config.ip

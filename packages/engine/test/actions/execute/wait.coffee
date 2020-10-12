@@ -17,7 +17,7 @@ describe 'actions.execute.wait', ->
       status.should.be.false()
       @call ->
         setTimeout ->
-          nikita(ssh: ssh).fs.mkdir "#{tmpdir}/a_file"
+          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
         , 100
       {status} = await @execute.wait
         cmd: "test -d #{tmpdir}/a_file"
@@ -37,8 +37,8 @@ describe 'actions.execute.wait', ->
       status.should.be.false()
       @call ->
         setTimeout ->
-          nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_1"
-          nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_2"
+          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
+          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
         , 100
       {status} = await @execute.wait
         cmd: [
@@ -59,7 +59,7 @@ describe 'actions.execute.wait', ->
         logs = []
         @call ->
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/a_file"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
           , 200
         @execute.wait
           cmd: "test -d #{tmpdir}/a_file"
@@ -108,13 +108,13 @@ describe 'actions.execute.wait', ->
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_1"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
           , 30
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_2"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
           , 60
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_3"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 90
         {status} = await @execute.wait
           cmd: [
@@ -136,13 +136,13 @@ describe 'actions.execute.wait', ->
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_1"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
           , 50
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_2"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
           , 100
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_3"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 200
         {status} = await @execute.wait
           cmd: [
@@ -164,13 +164,13 @@ describe 'actions.execute.wait', ->
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_1"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
           , 30
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_2"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
           , 60
           setTimeout ->
-            nikita(ssh: ssh).fs.mkdir "#{tmpdir}/file_3"
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 90
         {status} = await @execute.wait
           cmd: [
