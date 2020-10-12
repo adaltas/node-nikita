@@ -13,7 +13,6 @@ module.exports = function() {
         before: '@nikitajs/engine/src/metadata/disabled',
         handler: async function(action) {
           var final_run, k, local_run, ref, v;
-          // return handler
           final_run = true;
           ref = action.conditions;
           for (k in ref) {
