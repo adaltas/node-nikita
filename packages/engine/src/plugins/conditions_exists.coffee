@@ -11,7 +11,6 @@ module.exports = ->
       after: '@nikitajs/engine/src/plugins/conditions'
       before: '@nikitajs/engine/src/metadata/disabled'
       handler: (action) ->
-        # return handler
         final_run = true
         for k, v of action.conditions
           continue unless handlers[k]?

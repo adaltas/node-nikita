@@ -75,6 +75,9 @@ on_action = function({config, state}) {
   // if config.ssh and not ssh.is config.ssh
   //   config[k] ?= v for k, v of config.ssh or {}
   //   delete config.ssh
+  if (config.private_key == null) {
+    config.private_key = config.privateKey;
+  }
   // Define host from ip
   if (config.ip && !config.host) {
     config.host = config.ip;
@@ -278,7 +281,9 @@ handler = async function({
 // ## Export
 module.exports = {
   handler: handler,
-  on_action: on_action,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
 
