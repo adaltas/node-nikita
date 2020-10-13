@@ -6,7 +6,7 @@ LABEL project=nikita \
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 11.12.0
+ENV NODE_VERSION 12.13.1
 RUN apt-get update -y \
   && apt-get install -y curl xz-utils \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
