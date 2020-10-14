@@ -48,7 +48,7 @@ module.exports = (action) ->
         else 'multiple errors where found in the configuration of'
         if action.metadata.namespace.length
         then "action `#{action.metadata.namespace.join('.')}`:"
-        else "anonymous action:"
+        else "root action:"
         validate.errors
         .map (err) ->
           msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
@@ -88,7 +88,10 @@ module.exports = (action) ->
         if action.metadata.schema? and not is_object_literal action.metadata.schema
           throw error 'METADATA_SCHEMA_INVALID_VALUE', [
             "option `schema` expect an object literal value,"
-            "got #{JSON.stringify action.metadata.schema}."
+            "got #{JSON.stringify action.metadata.schema} in"
+            if action.metadata.namespace.length
+            then "action `#{action.metadata.namespace.join('.')}`."
+            else "root action."
           ]
         return handler unless action.metadata.schema
         err = await schema.validate action, action.metadata.schema
