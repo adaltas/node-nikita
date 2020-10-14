@@ -85,6 +85,11 @@ handlers = {
           case 'function':
             return (await session(null, function({run}) {
               return run({
+                hooks: {
+                  on_result: function({action}) {
+                    return delete action.parent;
+                  }
+                },
                 metadata: {
                   condition: true,
                   depth: action.metadata.depth,
@@ -131,6 +136,11 @@ handlers = {
           case 'function':
             return !(await session(null, function({run}) {
               return run({
+                hooks: {
+                  on_result: function({action}) {
+                    return delete action.parent;
+                  }
+                },
                 metadata: {
                   condition: true,
                   depth: action.metadata.depth,

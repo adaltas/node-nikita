@@ -82,13 +82,13 @@ describe 'plugin.condition if', ->
         db: test: ''
         handler: -> throw Error 'forbidden'
 
-    it 'buffer with content - success', ->
+    it 'run if buffer length > 1', ->
       nikita.call
         if: Buffer.from 'abc'
         handler: -> 'called'
       .should.finally.eql 'called'
 
-    it 'buffer empty - failure', ->
+    it 'skip if buffer length is empty', ->
       nikita.call
         if: Buffer.from ''
         handler: -> throw Error 'forbidden'
@@ -108,29 +108,33 @@ describe 'plugin.condition if', ->
   
   describe 'function', ->
 
-    it 'function execute handler if return true', ->
-      called = 0
-      nikita
-      .call
-        if: ->
-          called++
-          true
-        handler: ->
-          called++
-      .call ->
-        called.should.equal 2
+    it 'run if function returns true', ->
+      {status, value} = await nikita.call
+        if: -> true
+        handler: -> status: true, value: 'called'
+      status.should.be.true()
+      value.should.eql 'called'
 
-    it 'function skip handler if return true', ->
-      called = 0
-      nikita
-      .call
+    it 'run if promise resolves with true', ->
+      {status, value} = await nikita.call
         if: ->
-          called++
-          false
-        handler: ->
-          throw Error 'You are not welcome here'
-      .call ->
-        called.should.equal 1
+          new Promise (accept, reject) -> accept true
+        handler: -> status: true, value: 'called'
+      status.should.be.true()
+      value.should.eql 'called'
+
+    it 'skip if function returns false', ->
+      {status} = await nikita.call
+        if: -> false
+        handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
+
+    it 'skip if promise resolves with false', ->
+      {status, value} = await nikita.call
+        if: ->
+          new Promise (accept, reject) -> accept false
+        handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
 
     it 'function pass config', ->
       nikita.call

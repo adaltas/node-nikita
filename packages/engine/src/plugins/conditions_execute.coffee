@@ -7,22 +7,6 @@ module.exports = ->
     '@nikitajs/engine/src/plugins/conditions'
   ]
   hooks:
-    # 'nikita:session:normalize': (action, handler) ->
-    #   # Ventilate conditions properties defined at root
-    #   conditions = {}
-    #   for property, value of action
-    #     if /^(if|unless)($|_[\w_]+$)/.test property
-    #       throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
-    #         "Property #{property} is defined multiple times,"
-    #         'at the root of the action and inside conditions'
-    #       ] if conditions[property]
-    #       value = [value] unless Array.isArray value
-    #       conditions[property] = value
-    #       delete action[property]
-    #   ->
-    #     action = handler.call null, ...arguments
-    #     action.conditions[k] = v for k, v of conditions
-    #     action
     'nikita:session:action':
       after: '@nikitajs/engine/src/plugins/conditions'
       before: '@nikitajs/engine/src/metadata/disabled'
@@ -32,7 +16,9 @@ module.exports = ->
           continue unless handlers[k]?
           local_run = await handlers[k].call null, action
           final_run = false if local_run is false
-        action.metadata.disabled = true unless final_run
+        if not final_run
+          action.metadata.disabled = true
+        action
 
 handlers =
   if_execute: (action, value) ->
@@ -40,6 +26,8 @@ handlers =
     for condition in action.conditions.if_execute
       await session null, ({run}) ->
         {status} = await run
+          hooks:
+            on_result: ({action}) -> delete action.parent
           metadata:
             condition: true
             depth: action.metadata.depth
@@ -54,6 +42,8 @@ handlers =
     for condition in action.conditions.unless_execute
       await session null, ({run}) ->
         {status} = await run
+          hooks:
+            on_result: ({action}) -> delete action.parent
           metadata:
             condition: true
             depth: action.metadata.depth
@@ -62,5 +52,4 @@ handlers =
           code_skipped: 1
         , condition
         final_run = false if status
-      final_run = false
     final_run

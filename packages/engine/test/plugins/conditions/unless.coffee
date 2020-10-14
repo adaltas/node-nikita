@@ -55,21 +55,28 @@ describe 'plugin.condition unless', ->
     
   describe 'string + buffer', ->
 
-    it 'succeed if buffer and length > 1', ->
-      nikita.call
-        unless: Buffer.from 'abc'
-        handler: -> throw Error 'You are not welcome here'
-
-    it 'run if buffer and length is 0', ->
-      nikita.call
-        unless: Buffer.from ''
-        handler: -> 'called'
-      .should.be.finally.eql 'called'
-
     it 'skip if string not empty', ->
       nikita.call
         unless: 'abc'
         handler: -> throw Error 'You are not welcome here'
+
+    it 'run if string empty', ->
+      {status, value} = await nikita.call
+        unless: ''
+        handler: -> status: true, value: 'called'
+      status.should.be.true()
+      value.should.eql 'called'
+
+    it 'skip if buffer length > 1', ->
+      nikita.call
+        unless: Buffer.from 'abc'
+        handler: -> throw Error 'You are not welcome here'
+
+    it 'run if buffer length is 0', ->
+      nikita.call
+        unless: Buffer.from ''
+        handler: -> 'called'
+      .should.be.finally.eql 'called'
   
   describe 'object', ->
 
@@ -86,26 +93,32 @@ describe 'plugin.condition unless', ->
   
   describe 'function', ->
 
-    it 'run if string empty', ->
-      nikita.call
-        unless: ''
-        handler: -> 'called'
-      .should.be.finally.eql 'called'
+    it 'skip if function returns true', ->
+      {status} = await nikita.call
+        unless: -> true
+        handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
 
-    it 'skip on `positive` callback', ->
-      nikita.call
+    it 'skip if promise resolves with true', ->
+      {status} = await nikita.call
         unless: ->
           new Promise (accept, reject) -> accept true
         handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
 
-    it 'run on `negative` callback', ->
-      nikita.call
-        unless: ->
-          new Promise (accept, reject) -> accept false
-        handler: -> 'called'
-      .should.finally.eql 'called'
+    it 'run if function returns false', ->
+      {status, value} = await nikita.call
+        unless: -> false
+        handler: -> true
+      status.should.be.true()
 
-    it 'function pass error object on `failed` callback', ->
+    it 'run if promise resolves with false', ->
+      {status, value} = await nikita.call
+        unless: -> false
+        handler: -> true
+      status.should.be.true()
+
+    it 'pass error on rejected promise', ->
       nikita.call
         unless: ->
           new Promise (accept, reject) ->

@@ -51,6 +51,8 @@ handlers =
         when 'function'
           await session null, ({run}) ->
             run
+              hooks:
+                on_result: ({action}) -> delete action.parent
               metadata:
                 condition: true
                 depth: action.metadata.depth
@@ -75,6 +77,8 @@ handlers =
         when 'function'
           ! await session null, ({run}) ->
             run
+              hooks:
+                on_result: ({action}) -> delete action.parent
               metadata:
                 condition: true
                 depth: action.metadata.depth
