@@ -81,6 +81,24 @@ describe 'plugins.schema', ->
         '#/additionalProperties config should NOT have additional properties,'
         'additionalProperty is "lonely_duck".'
       ].join ' '
+
+    it 'ensure schema is an object', ->
+      nikita.call
+        schema: true
+        handler: (->)
+      .should.be.rejectedWith [
+        'METADATA_SCHEMA_INVALID_VALUE:'
+        'option `schema` expect an object literal value,'
+        'got true in action `call`.'
+      ].join ' '
+      nikita
+        schema: true
+        handler: (->)
+      .should.be.rejectedWith [
+        'METADATA_SCHEMA_INVALID_VALUE:'
+        'option `schema` expect an object literal value,'
+        'got true in root action.'
+      ].join ' '
   
   describe '$ref', ->
 

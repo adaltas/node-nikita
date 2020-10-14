@@ -63,7 +63,7 @@ module.exports = function(action) {
       }
       return error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
         validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors where found in the configuration of',
-        action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "anonymous action:",
+        action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "root action:",
         validate.errors.map(function(err) {
           var key,
         msg,
@@ -125,7 +125,7 @@ module.exports = function(action) {
           }
           action.schema = schema;
           if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {
-            throw error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)}.`]);
+            throw error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)} in`, action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`.` : "root action."]);
           }
           if (!action.metadata.schema) {
             return handler;
