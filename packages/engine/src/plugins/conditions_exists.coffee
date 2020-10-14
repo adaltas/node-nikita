@@ -23,8 +23,10 @@ handlers =
     final_run = true
     for condition in action.conditions.if_exists
       try
-        {stats} = await session null, ({run}) ->
+        await session null, ({run}) ->
           run
+            hooks:
+              on_result: ({action}) -> delete action.parent
             metadata:
               condition: true
               depth: action.metadata.depth
@@ -40,8 +42,10 @@ handlers =
     final_run = true
     for condition in action.conditions.unless_exists
       try
-        {stats} = await session null, ({run}) ->
+        await session null, ({run}) ->
           run
+            hooks:
+              on_result: ({action}) -> delete action.parent
             metadata:
               condition: true
               depth: action.metadata.depth

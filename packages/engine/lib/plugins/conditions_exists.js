@@ -36,14 +36,19 @@ module.exports = function() {
 
 handlers = {
   if_exists: async function(action, value) {
-    var condition, err, final_run, i, len, ref, stats;
+    var condition, err, final_run, i, len, ref;
     final_run = true;
     ref = action.conditions.if_exists;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        ({stats} = (await session(null, function({run}) {
+        await session(null, function({run}) {
           return run({
+            hooks: {
+              on_result: function({action}) {
+                return delete action.parent;
+              }
+            },
             metadata: {
               condition: true,
               depth: action.metadata.depth
@@ -54,7 +59,7 @@ handlers = {
               target: condition
             });
           });
-        })));
+        });
       } catch (error) {
         err = error;
         if (err.code === 'NIKITA_FS_STAT_TARGET_ENOENT') {
@@ -67,14 +72,19 @@ handlers = {
     return final_run;
   },
   unless_exists: async function(action) {
-    var condition, err, final_run, i, len, ref, stats;
+    var condition, err, final_run, i, len, ref;
     final_run = true;
     ref = action.conditions.unless_exists;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        ({stats} = (await session(null, function({run}) {
+        await session(null, function({run}) {
           return run({
+            hooks: {
+              on_result: function({action}) {
+                return delete action.parent;
+              }
+            },
             metadata: {
               condition: true,
               depth: action.metadata.depth
@@ -85,7 +95,7 @@ handlers = {
               target: condition
             });
           });
-        })));
+        });
         final_run = false;
       } catch (error) {
         err = error;

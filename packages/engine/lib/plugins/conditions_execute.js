@@ -8,22 +8,6 @@ module.exports = function() {
     module: '@nikitajs/engine/src/plugins/conditions_execute',
     require: ['@nikitajs/engine/src/plugins/conditions'],
     hooks: {
-      // 'nikita:session:normalize': (action, handler) ->
-      //   # Ventilate conditions properties defined at root
-      //   conditions = {}
-      //   for property, value of action
-      //     if /^(if|unless)($|_[\w_]+$)/.test property
-      //       throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
-      //         "Property #{property} is defined multiple times,"
-      //         'at the root of the action and inside conditions'
-      //       ] if conditions[property]
-      //       value = [value] unless Array.isArray value
-      //       conditions[property] = value
-      //       delete action[property]
-      //   ->
-      //     action = handler.call null, ...arguments
-      //     action.conditions[k] = v for k, v of conditions
-      //     action
       'nikita:session:action': {
         after: '@nikitajs/engine/src/plugins/conditions',
         before: '@nikitajs/engine/src/metadata/disabled',
@@ -42,8 +26,9 @@ module.exports = function() {
             }
           }
           if (!final_run) {
-            return action.metadata.disabled = true;
+            action.metadata.disabled = true;
           }
+          return action;
         }
       }
     }
@@ -60,6 +45,11 @@ handlers = {
       await session(null, async function({run}) {
         var status;
         ({status} = (await run({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
           metadata: {
             condition: true,
             depth: action.metadata.depth
@@ -84,6 +74,11 @@ handlers = {
       await session(null, async function({run}) {
         var status;
         ({status} = (await run({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
           metadata: {
             condition: true,
             depth: action.metadata.depth
@@ -96,7 +91,6 @@ handlers = {
           return final_run = false;
         }
       });
-      final_run = false;
     }
     return final_run;
   }
