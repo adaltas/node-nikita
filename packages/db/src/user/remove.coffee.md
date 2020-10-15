@@ -1,30 +1,37 @@
 
 # `nikita.db.user.remove`
 
-Create a user for the destination database.
+Remove a user for the destination database.
 
-## Options
+## Schema
 
-* `admin_username`   
-  The login of the database administrator.   
-* `admin_password`   
-  The password of the database administrator.   
-* `engine`   
-  The engine type, can be MySQL or PostgreSQL, default to MySQL.   
-* `host`   
-  The hostname of the database.   
-* `username`   
-  The new user name.   
+    schema =
+      type: 'object'
+      properties:
+        'username':
+          type: 'string'
+          description: """
+          The name of the user to remove.
+          """
+      required: [
+        'username'
+        'admin_username', 'admin_password', 'engine', 'host'
+      ]
 
-## Source Code
+## Handler
 
-    module.exports = ({metadata, options}) ->
-      # Import options from `options.db`
-      options.db ?= {}
-      options[k] ?= v for k, v of options.db
-      options.username ?= metadata.argument
-      @system.execute
-        cmd: cmd options, "DROP USER IF EXISTS #{options.username};"
+    handler = ({config}) ->
+      @db.query config,
+        cmd: "DROP USER IF EXISTS #{config.username};"
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        argument_name: 'username'
+        global: 'db'
+      schema: schema
 
 ## Dependencies
 

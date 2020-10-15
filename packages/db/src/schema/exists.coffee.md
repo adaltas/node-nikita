@@ -1,7 +1,18 @@
 
-# `nikita.db.schema.remove`
+# `nikita.db.schema.exists`
 
-Remove a schema from a database.
+Create a database for the destination database.
+
+## Create Schema example
+
+```js
+{exists} = await nikita.db.schema.exists({
+  admin_username: 'test',
+  admin_password: 'test',
+  database: 'my_db'
+})
+console.log('Schema exists: ' + exists);
+```
 
 ## Schema
 
@@ -15,7 +26,7 @@ Remove a schema from a database.
         'database':
           type: 'string'
           description: """
-          The database name where the schema is registered.
+          The database name where the schema is created.
           """
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
@@ -23,6 +34,11 @@ Remove a schema from a database.
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':
           $ref: 'module://@nikitajs/db/src/query#/properties/port'
+        'owner':
+          type: 'string'
+          description: """
+          The Schema owner. Alter Schema if schema already exists.
+          """
         'schema':
           type: 'string'
           description: """
@@ -33,20 +49,19 @@ Remove a schema from a database.
 ## Handler
 
     handler = ({config}) ->
-      {exists} = await @db.schema.exists config: config
-      return false unless exists
-      @db.query config: config,
-        cmd: "DROP SCHEMA IF EXISTS #{config.schema};"
+      {status} = await @db.query config: config,
+        cmd: "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';"
+        grep: '1'
+      exists: status
 
 ## Exports
 
     module.exports =
       handler: handler
       metadata:
-        argument_name: 'schema'
         global: 'db'
       schema: schema
-
+      
 ## Dependencies
 
     {cmd} = require '../query'

@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, db} = require './test'
 they = require('ssh2-they').configure ssh...
 
@@ -13,12 +13,12 @@ for engine, _ of db
       nikita
         ssh: ssh
         db: db[engine]
-      .db.database.remove 'db_wait_1'
-      .db.database 'db_wait_0'
-      .db.database.wait 'db_wait_0', (err, {status}) ->
-        status.should.be.false() unless err
-      .db.database.remove 'db_wait_0'
-      .promise()
+      , ->
+        @db.database.remove 'db_wait_1'
+        @db.database 'db_wait_0'
+        {status} = await @db.database.wait 'db_wait_0'
+        status.should.be.false()
+        @db.database.remove 'db_wait_0'
 
     they 'is not yet created', ({ssh}) ->
       setTimeout ->
@@ -30,8 +30,8 @@ for engine, _ of db
       nikita
         ssh: ssh
         db: db[engine]
-      .db.database.remove 'db_wait_1'
-      .db.database.wait 'db_wait_1', (err, {status}) ->
-        status.should.be.true() unless err
-      .db.database.remove 'db_wait_1'
-      .promise()
+      , ->
+        @db.database.remove 'db_wait_1'
+        {status} = await @db.database.wait 'db_wait_1'
+        status.should.be.true()
+        @db.database.remove 'db_wait_1'
