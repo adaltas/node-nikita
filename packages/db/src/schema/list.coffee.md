@@ -1,7 +1,20 @@
 
-# `nikita.db.database.exists`
+# `nikita.db.schema.exists`
 
-Check if a database exists.
+List the PostgreSQL schemas of a database.
+
+## Create Schema example
+
+```js
+{schemas} = await nikita.db.schema.list({
+  admin_username: 'test',
+  admin_password: 'test',
+  database: 'my_db'
+})
+schemas.map ({name, owner}) => {
+  console.info(`Schema is ${name} and owner is ${owner}`)
+}
+```
 
 ## Schema
 
@@ -15,7 +28,7 @@ Check if a database exists.
         'database':
           type: 'string'
           description: """
-          The database name to check for existance.
+          The database name storing the schemas.
           """
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
@@ -27,17 +40,17 @@ Check if a database exists.
 
 ## Handler
 
-    handler = ({config, metadata, operations: {find}}) ->
-      {status} = await @db.query connection_config(config),
-        cmd: switch config.engine
-          when 'mariadb', 'mysql'
-            'SHOW DATABASES'
-          when 'postgresql'
-            # Not sure why we're not using \l
-            "SELECT datname FROM pg_database WHERE datname = '#{config.database}'"
-        database: null
-        grep: config.database
-      exists: status
+    handler = ({config}) ->
+      {stdout} = await @db.query config: config,
+        cmd: '\\dn'
+        trim: true
+      schemas = utils.string
+      .lines(stdout)
+      .map (line) ->
+        [name, owner] = line.split '|'
+        name: name
+        owner: owner
+      schemas: schemas
 
 ## Exports
 
@@ -46,9 +59,8 @@ Check if a database exists.
       metadata:
         argument_name: 'database'
         global: 'db'
-        shy: true
       schema: schema
-
+      
 ## Dependencies
 
-    {cmd, connection_config} = require '../query'
+    utils = require '@nikitajs/engine/lib/utils'

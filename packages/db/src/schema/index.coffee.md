@@ -1,79 +1,85 @@
 
 # `nikita.db.schema`
 
-Create a database for the destination database.
+Create or modify a schema for the destination database.
 
-## Options
+A PostgreSQL database contains one or multiple schemas which in turns contains
+table, data types, functions, and operators.
 
-* `admin_username`   
-  The login of the database administrator.   
-* `admin_password`   
-  The password of the database administrator.   
-* `database` (String)   
-  The database name where the schema is created.
-* `engine`   
-  The engine type, can be MySQL or PostgreSQL. Default to MySQL   
-* `host`   
-  The hostname of the database   
-* `port`   
-  Port to the associated database   
-* `schema`   
-  New schema name.   
-* `owner` Array or String   
-  The Schema owner. Alter Schema if schema already exists.   
+Note, PostgreSQL default to the default `root` database while Nikita enforce the
+presence of the targeted database.
 
 ## Create Schema example
 
 ```js
-require('nikita')
-.database.schema({
+{status} = await nikita.db.schema({
   admin_username: 'test',
   admin_password: 'test',
-  database: 'my_db'
-}, function(err, {status}){
-  console.log(err ? err.message : 'Principal created or modified: ' + status);
-});
+  database: 'my_database'
+  schema: 'my_schema'
+})
+console.log('Schema created or modified:', status);
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      # Import options from `options.db`
-      options.db ?= {}
-      options[k] ?= v for k, v of options.db
-      # Check main options
-      throw Error 'Missing option: "host"' unless options.host
-      throw Error 'Missing option: "admin_username"' unless options.admin_username
-      throw Error 'Missing option: "admin_password"' unless options.admin_password
-      throw Error 'Missing option: "database"' unless options.database
-      throw Error 'Missing option: "engine"' unless options.engine
-      # Deprecation
-      if options.engine is 'postgres'
-        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
-        options.engine = 'postgresql'
-      # Defines and check the engine type
-      options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgresql']
-      # Options
-      options.port ?= 5432
-      @system.execute
+    schema =
+      type: 'object'
+      properties:
+        'admin_username':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+        'admin_password':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+        'database':
+          type: 'string'
+          description: """
+          The database name where the schema is created.
+          """
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'host':
+          $ref: 'module://@nikitajs/db/src/query#/properties/host'
+        'port':
+          $ref: 'module://@nikitajs/db/src/query#/properties/port'
+        'owner':
+          type: 'string'
+          description: """
+          The Schema owner. Alter Schema if schema already exists.
+          """
+        'schema':
+          type: 'string'
+          description: """
+          New schema name.
+          """
+      required: ['admin_username', 'admin_password', 'database', 'engine', 'host', 'schema']
+
+## Handler
+
+    handler = ({config}) ->
+      {status} = await @execute
         code_skipped: 2
-        cmd: cmd options, '\\dt'
-      , (err, {status}) ->
-        throw err if err
-        throw Error "Database does not exist #{options.database}" if !err and !status
-      @system.execute
-        cmd: cmd options, "CREATE SCHEMA #{options.schema};"
-        unless_exec: cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
+        cmd: cmd config, '\\dt'
+        shy: true
+      throw Error "Database does not exist #{config.database}" if !status
+      @db.query config: config,
+        cmd: "CREATE SCHEMA #{config.schema};"
+        unless_execute: cmd(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
       # Check if owner is the good one
-      @system.execute
-        if: -> options.owner?
-        unless_exec: cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
-        cmd: cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"
+      {stderr} = await @execute
+        if: config.owner?
+        unless_execute: cmd(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
+        cmd: cmd config, "ALTER SCHEMA #{config.schema} OWNER TO #{config.owner};"
         code_skipped: 1
-      , (err, {stderr}) ->
-        throw Error "Owner #{options.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
+      throw Error "Owner #{config.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
 
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'db'
+      schema: schema
+      
 ## Dependencies
 
     {cmd} = require '../query'

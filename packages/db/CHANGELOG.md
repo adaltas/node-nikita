@@ -9,5 +9,8 @@ Categories include:
 
 ## Trunk
 
+Breaking changes
+* engine migration
+
 New feature:
 * query: new action

@@ -1,8 +1,8 @@
 
-nikita = require '@nikitajs/core'
-{cmd} = require '../src/query'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, db} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
+{cmd} = require '../src/query'
 
 return unless tags.db
 
@@ -10,28 +10,26 @@ for engine, _ of db then do (engine) ->
 
   describe "db.database #{engine}", ->
 
-    they 'add new database', ({ssh}) ->
-      nikita
+    they 'database as an argument', ({ssh}) ->
+      {exists} = await nikita
         ssh: ssh
         db: db[engine]
-      .db.database.remove 'postgres_db_0a'
-      .db.database.remove 'postgres_db_0b'
-      .db.database database: 'postgres_db_0a'
-      .db.database 'postgres_db_0b'
-      .db.database.remove 'postgres_db_0a'
-      .db.database.remove 'postgres_db_0b'
-      .promise()
+      .db.database.remove 'db_create_0'
+      .db.database 'db_create_0'
+      .db.database.exists 'db_create_0'
+      exists.should.be.true()
 
-    they 'status not modified new database', ({ssh}) ->
+    they 'metadata status', ({ssh}) ->
       nikita
         ssh: ssh
         db: db[engine]
-      .db.database.remove 'postgres_db_1'
-      .db.database 'postgres_db_1'
-      .db.database 'postgres_db_1', (err, {status}) ->
-        status.should.be.false() unless err
-      .db.database.remove 'postgres_db_1'
-      .promise()
+      , ->
+        @db.database.remove 'db_create_1'
+        {status} = await @db.database 'db_create_1'
+        status.should.be.true()
+        {status} = await @db.database 'db_create_1'
+        status.should.be.false()
+        @db.database.remove 'db_create_1'
 
     describe 'user', ->
 
@@ -39,62 +37,58 @@ for engine, _ of db then do (engine) ->
         nikita
           ssh: ssh
           db: db[engine]
-          debug: true
-        .db.database.remove 'postgres_db_3'
-        .db.user.remove 'postgres_user_3'
-        .db.user
-          username: 'postgres_user_3'
-          password: 'postgres_user_3'
-        .db.database
-          database: 'postgres_db_3'
-          user: 'postgres_user_3'
-        .system.execute
-          cmd: switch engine
-            when 'mariadb', 'mysql' then cmd(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
-            when 'postgresql' then cmd(db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
-        , (err, {status}) ->
-          status.should.be.true() unless err
-        .db.database.remove 'postgres_db_3'
-        .db.user.remove 'postgres_user_3'
-        .promise()
+        , ->
+          @db.database.remove 'db_create_3'
+          @db.user.remove 'db_create_user_3'
+          @db.user
+            username: 'db_create_user_3'
+            password: 'db_create_user_3'
+          @db.database
+            database: 'db_create_3'
+            user: 'db_create_user_3'
+          # Todo: why not using nikita.user.exists ?
+          {status: user_exists} = await @execute
+            cmd: switch engine
+              when 'mariadb', 'mysql' then cmd(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
+              when 'postgresql' then cmd(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
+          user_exists.should.be.true()
+          @db.database.remove 'db_create_3'
+          @db.user.remove 'db_create_user_3'
 
-      they 'honors status', ({ssh}) ->
+      they 'metadata status', ({ssh}) ->
         nikita
           ssh: ssh
           db: db[engine]
-        .db.database.remove 'postgres_db_3'
-        .db.user.remove 'postgres_user_3'
-        .db.user
-          username: 'postgres_user_3'
-          password: 'postgres_user_3'
-        .db.database
-          database: 'postgres_db_3'
-        .db.database
-          database: 'postgres_db_3'
-          user: 'postgres_user_3'
-        , (err, {status}) ->
+        , ->
+          @db.database.remove 'db_create_3'
+          @db.user.remove 'db_create_user_3'
+          @db.user
+            username: 'db_create_user_3'
+            password: 'db_create_user_3'
+          @db.database
+            database: 'db_create_3'
+          {status} = await @db.database
+            database: 'db_create_3'
+            user: 'db_create_user_3'
           status.should.be.true()
-        .db.database
-          database: 'postgres_db_3'
-          user: 'postgres_user_3'
-        , (err, {status}) ->
+          {status} = await @db.database
+            database: 'db_create_3'
+            user: 'db_create_user_3'
           status.should.be.false()
-        .db.database.remove 'postgres_db_3'
-        .db.user.remove 'postgres_user_3'
-        .promise()
+          @db.database.remove 'db_create_3'
+          @db.user.remove 'db_create_user_3'
 
       they 'which is not existing', ({ssh}) ->
         nikita
           ssh: ssh
           db: db[engine]
-        .db.database.remove 'postgres_db_4'
-        .db.user.remove 'postgres_user_4'
-        .db.database
-          database: 'postgres_db_4'
-          user: 'postgres_user_4'
-          relax: true
-        , (err) ->
-          err.message.should.eql 'DB user does not exists: postgres_user_4'
-        .db.database.remove 'postgres_db_4'
-        .db.user.remove 'postgres_user_4'
-        .promise()
+        , ->
+          @db.database.remove 'db_create_4'
+          @db.user.remove 'db_create_user_4'
+          @db.database
+            database: 'db_create_4'
+            user: 'db_create_user_4'
+          .should.be.rejectedWith
+            message: 'DB user does not exists: db_create_user_4'
+          @db.database.remove 'db_create_4'
+          @db.user.remove 'db_create_user_4'

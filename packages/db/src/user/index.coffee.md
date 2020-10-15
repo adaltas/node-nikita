@@ -3,72 +3,52 @@
 
 Create a user for the destination database.
 
-## Options
-
-* `admin_username`   
-  The login of the database administrator. It should have credentials to 
-  create accounts.   
-* `admin_password`   
-  The password of the database administrator.   
-* `db` (Array or String)   
-  The database name(s) to which the user should be added.   
-* `engine`   
-  The engine type, can be MySQL or PostgreSQL, default to MySQL.   
-* `host`   
-  The hostname of the database.   
-* `username`   
-  The new user name.   
-* `password`   
-  The new user password.   
-* `port`   
-  Port to the associated database.   
-
 ## Schema
 
-    schema = null
-      # type: 'object'
-      # properties:
-      #   $ref: '/nikita/db/query'
-      #   'username': type: 'string'
-      #   'password': type: 'string'
-      # required: [
-      #   'username', 'password' ]
+    schema =
+      type: 'object'
+      properties:
+        'username':
+          type: 'string'
+          description: """
+          The username of a user with privileges on the database, used unless admin_username is provided.
+          """
+        'password':
+          type: 'string'
+          description: """
+          The password of a user with privileges on the database, used unless admin_password is provided.
+          """
+        'admin_username':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+        'admin_password':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'host':
+          $ref: 'module://@nikitajs/db/src/query#/properties/host'
+        'port':
+          $ref: 'module://@nikitajs/db/src/query#/properties/port'
+      required: [
+        'username', 'password'
+        'admin_username', 'admin_password', 'engine', 'host'
+      ]
 
 ## Hander
 
-    handler = ({options}) ->
-      # Import options from `options.db`
-      options.db ?= {}
-      options[k] ?= v for k, v of options.db
-      # Validate options
-      throw Error 'Missing option: "host"' unless options.host
-      throw Error 'Missing option: "admin_username"' unless options.admin_username
-      throw Error 'Missing option: "admin_password"' unless options.admin_password
-      throw Error 'Missing option: "username"' unless options.username
-      throw Error 'Missing option: "password"' unless options.password
-      throw Error 'Missing option: "engine"' unless options.engine
-      # Deprecation
-      if options.engine is 'postgres'
-        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
-        options.engine = 'postgresql'
-      # Defines and check the engine type
-      options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
-      # Default values
-      options.port ?= 5432
+    handler = ({config}) ->
       # Commands
-      switch options.engine
+      switch config.engine
         when 'mariadb', 'mysql'
-          cmd_user_exists = cmd(options, "SELECT User FROM mysql.user WHERE User='#{options.username}'") + " | grep #{options.username}"
-          cmd_user_create = cmd options, "CREATE USER #{options.username} IDENTIFIED BY '#{options.password}';"
-          cmd_password_is_invalid = cmd(options, admin_username: options.username, admin_password: options.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
-          cmd_password_change = cmd options, "SET PASSWORD FOR #{options.username} = PASSWORD ('#{options.password}');"
+          cmd_user_exists = cmd(config, "SELECT User FROM mysql.user WHERE User='#{config.username}'") + " | grep #{config.username}"
+          cmd_user_create = cmd config, "CREATE USER #{config.username} IDENTIFIED BY '#{config.password}';"
+          cmd_password_is_invalid = cmd(config, admin_username: config.username, admin_password: config.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
+          cmd_password_change = cmd config, "SET PASSWORD FOR #{config.username} = PASSWORD ('#{config.password}');"
         when 'postgresql'
-          cmd_user_exists = cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-          cmd_user_create = cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
-          cmd_password_is_invalid = cmd(options, admin_username: options.username, admin_password: options.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
-          cmd_password_change = cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
-      @system.execute
+          cmd_user_exists = cmd(config, "SELECT 1 FROM pg_roles WHERE rolname='#{config.username}'") + " | grep 1"
+          cmd_user_create = cmd config, "CREATE USER #{config.username} WITH PASSWORD '#{config.password}';"
+          cmd_password_is_invalid = cmd(config, admin_username: config.username, admin_password: config.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
+          cmd_password_change = cmd config, "ALTER USER #{config.username} WITH PASSWORD '#{config.password}';"
+      @execute
         cmd: """
         signal=3
         if #{cmd_user_exists}; then
@@ -91,10 +71,13 @@ Create a user for the destination database.
         """
         code_skipped: 3
         trap: true
-## Source Code
+
+## Exports
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'db'
       schema: schema
 
 ## Dependencies

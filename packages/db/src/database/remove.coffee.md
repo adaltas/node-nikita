@@ -3,35 +3,65 @@
 
 Create a user for the destination database.
 
-## Options
+## Schema
 
-* `admin_username`   
-  The login of the database administrator.   
-* `admin_password`   
-  The password of the database administrator.   
-* `engine`   
-  The engine type, can be MySQL or PostgreSQL. Default to MySQL   
-* `host`   
-  The hostname of the database   
-* `database`   
-  The database to be removed.   
+    schema =
+      type: 'object'
+      properties:
+        'admin_username':
+          type: 'string'
+          description: """
+          The login of the database administrator.
+          """
+        'admin_password':
+          type: 'string'
+          description: """
+          The password of the database administrator.
+          """
+        'database':
+          type: 'string'
+          description: """
+          The database name to check for existance.
+          """
+        'engine':
+          type: 'string'
+          enum: ['mariadb', 'mysql', 'postgresql']
+          description: """
+          The engine type, can be MariaDB, MySQL or PostgreSQL. Values
+          are converted to lower cases.
+          """
+        'host':
+          type: 'string'
+          description: """
+          The hostname of the database.
+          """
+        'port':
+          type: 'integer'
+          description: """
+          Port to the associated database.
+          """
+      required: ['admin_username', 'admin_password']
 
 ## Source Code
 
-    module.exports = ({metadata, options}) ->
-      # Import options from `options.db`
-      options.db ?= {}
-      options[k] ?= v for k, v of options.db
-      options.database ?= metadata.argument
-      throw Error 'Missing option: "admin_username"' unless options.admin_username
-      throw Error 'Missing option: "admin_password"' unless options.admin_password
-      # Avoid Postgres error "ERROR:  cannot drop the currently open database"
-      database = options.database
-      delete options.database
-      @system.execute
-        cmd: cmd options, "DROP DATABASE IF EXISTS #{database};"
+    handler = ({config, metadata, operations: {find}}) ->
+      # Avoid errors when database argument is provided in the command:
+      # - Postgres: "ERROR:  cannot drop the currently open database"
+      # - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
+      @db.query config,
+        cmd: "DROP DATABASE IF EXISTS #{config.database};"
         code_skipped: 2
+        database: null
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        argument_name: 'database'
+        global: 'db'
+      schema: schema
 
 ## Dependencies
 
-    {cmd} = require '../query'
+    {cmd, connection_config} = require '../query'

@@ -5,21 +5,6 @@ Create a database for the destination database.
 
 ## Options
 
-* `admin_username`   
-  The login of the database administrator.   
-* `admin_password`   
-  The password of the database administrator.   
-* `database` (Array or String)   
-  The database name(s) to which the user should be added.   
-* `engine`   
-  The engine type, can be MySQL or PostgreSQL, required.   
-* `host`   
-  The hostname of the database.   
-* `port`   
-  Port to the associated database.   
-* `user` (Array or String)   
-  Contains  user(s) to add to the database, optional.   
-
 This user will be granted superuser permissions (see above) for the database specified
 
 ## Create Database example
@@ -34,78 +19,73 @@ require('nikita').database.db({
 });
 ```
 
-## Run the tests
+## Schema
 
-```
-cd docker/centos6
-# then
-docker-compose run --rm nodejs test/db/database.coffee
-# or
-docker-compose run --rm nodejs
-npm test test/db/database.coffee
-```
+    schema =
+      type: 'object'
+      properties:
+        'admin_username':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+        'admin_password':
+          $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+        'database':
+          type: 'string'
+          description: """
+          The name of the database to create.
+          """
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'host':
+          $ref: 'module://@nikitajs/db/src/query#/properties/host'
+        'port':
+          $ref: 'module://@nikitajs/db/src/query#/properties/port'
+      required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
 
 ## Source Code
 
-    module.exports = ({metadata, options}) ->
-      # Import options from `options.db`
-      options.db ?= {}
-      options[k] ?= v for k, v of options.db
-      options.database ?= metadata.argument
-      # Validate options
-      throw Error 'Missing option: "host"' unless options.host
-      throw Error 'Missing option: "admin_username"' unless options.admin_username
-      throw Error 'Missing option: "admin_password"' unless options.admin_password
-      throw Error 'Missing option: "database"' unless options.database
-      throw Error 'Missing option: "engine"' unless options.engine
-      options.user ?= []
-      options.user = [options.user] if typeof options.user is 'string'
-      # Deprecation
-      if options.engine is 'postgres'
-        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
-        options.engine = 'postgresql'
+    handler = ({config, log}) ->
+      config.user ?= []
+      config.user = [config.user] if typeof config.user is 'string'
       # Defines and check the engine type
-      options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
-      @log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
+      config.engine = config.engine.toLowerCase()
+      log message: "Database engine set to #{config.engine}", level: 'DEBUG', module: 'nikita/db/database'
       # Create database unless exist
-      @log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
-      switch options.engine
+      log message: "Check if database #{config.database} exists", level: 'DEBUG', module: 'nikita/db/database'
+      switch config.engine
         when 'mariadb', 'mysql'
-          options.character_set ?= 'latin1' # MySQL default
-          switch options.character_set
-            when 'latin1' then options.collation ?= 'latin1_swedish_ci' # MySQL default
-            when 'utf8' then options.collation ?= 'utf8_general_ci'
-          cmd_database_create = cmd options, database: null, [
-            "CREATE DATABASE #{options.database}"
-            "DEFAULT CHARACTER SET #{options.character_set}"
-            "DEFAULT COLLATE #{options.collation}" if options.collation
+          config.character_set ?= 'latin1' # MySQL default
+          switch config.character_set
+            when 'latin1' then config.collation ?= 'latin1_swedish_ci' # MySQL default
+            when 'utf8' then config.collation ?= 'utf8_general_ci'
+          cmd_database_create = cmd config, database: null, [
+            "CREATE DATABASE #{config.database}"
+            "DEFAULT CHARACTER SET #{config.character_set}"
+            "DEFAULT COLLATE #{config.collation}" if config.collation
             ';'
           ].join ' '
-          cmd_database_exists = cmd options, database: options.database, "USE #{options.database};"
         when 'postgresql'
-          cmd_database_create = cmd options, database: null, "CREATE DATABASE #{options.database};"
-          cmd_database_exists = cmd options, database: options.database, "\\dt"
-      @system.execute
-        cmd: cmd_database_create
-        unless_exec: cmd_database_exists
-      , (err, {status}) ->
-        @log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
-      for user in options.user then do =>
-        @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'
-        @db.user.exists connection_options(options),
+          cmd_database_create = cmd config, database: null, "CREATE DATABASE #{config.database};"
+      # Create the database if it does not exists
+      {exists} = await @db.database.exists config
+      unless exists
+        await @execute
+          cmd: cmd_database_create
+        log message: "Database created: #{JSON.stringify config.database}", level: 'WARN', module: 'nikita/db/database'
+      # Associate users to the database
+      for user in config.user
+        log message: "Check if user #{user} has PRIVILEGES on #{config.database} ", level: 'DEBUG', module: 'nikita/db/database'
+        {exists} = await @db.user.exists config,
           username: user
-        , (err, {status}) ->
-          throw Error "DB user does not exists: #{user}" if not err and not status
-        switch options.engine
+        throw Error "DB user does not exists: #{user}" unless exists
+        switch config.engine
           when 'mariadb', 'mysql'
-            # cmd_has_privileges = cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
-            cmd_has_privileges = cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
-            cmd_grant_privileges = cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
+            # cmd_has_privileges = cmd config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
+            cmd_has_privileges = cmd(config, database: 'mysql', "SELECT user FROM db WHERE db='#{config.database}';") + " | grep '#{user}'"
+            cmd_grant_privileges = cmd config, database: null, "GRANT ALL PRIVILEGES ON #{config.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
           when 'postgresql'
-            cmd_has_privileges = cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
-            cmd_grant_privileges = cmd options, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
-        @system.execute
+            cmd_has_privileges = cmd(config, database: config.database, "\\l") + " | egrep '^#{user}='"
+            cmd_grant_privileges = cmd config, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{config.database} TO #{user}"
+        {status} = await @execute
           cmd: """
           if #{cmd_has_privileges}; then
             echo '[INFO] User already with privileges'
@@ -115,9 +95,18 @@ npm test test/db/database.coffee
           #{cmd_grant_privileges}
           """
           code_skipped: 3
-        , (err, {status}) ->
-          @log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
+        log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN', module: 'nikita/db/database' if status
+      null
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        argument_name: 'database'
+        global: 'db'
+      schema: schema
 
 ## Dependencies
 
-    {cmd, connection_options} = require '../query'
+    {cmd, connection_config} = require '../query'
