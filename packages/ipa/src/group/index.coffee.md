@@ -3,14 +3,7 @@
 
 Add or modify a group in FreeIPA.
 
-## Options
-
-* `attributes` (object, required)   
-  Attributes associated with the group to add or modify.
-* `cn` (string, required)   
-  Name of the group to add.
-
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -32,60 +25,56 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'cn': type: 'string'
+        'cn':
+          type: 'string'
+          description: """
+          Name of the group to add or modify.
+          """
         'attributes':
           type: 'object'
-          properties:
-            'user': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+          default: {}
+          description: """
+          Attributes associated with the group to add or modify.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['cn', 'connection']
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.attributes ?= {}
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {status} = await @ipa.group.exists
+        connection: config.connection
+        cn: config.cn
+      # Add or modify a group
+      {data} = await @network.http config.connection,
+        negotiate: true
+        method: 'POST'
+        data:
+          method: unless status then "group_add/1" else "group_mod/1"
+          params: [[config.cn], config.attributes]
+          id: 0
       output = {}
-      @ipa.group.exists
-        connection: options.connection
-        cn: options.cn
-      @call ({}, callback) ->
-        @connection.http options.connection,
-          negotiate: true
-          method: 'POST'
-          data:
-            method: unless @status(-1) then "group_add/1" else "group_mod/1"
-            params: [[options.cn], options.attributes]
-            id: 0
-          http_headers: options.http_headers
-        , (error, {data}) ->
-          if data?.error
-            return callback null, false if data.error.code is 4202 # no modifications to be performed
-            error = Error data.error.message
-            error.code = data.error.code
-          output.result = data.result.result
-          callback error, true
-      @call
-        unless: -> @status -1
-      , ->
-        @ipa.group.show options,
-          cn: options.cn
-        , (err, {result}) ->
-          output.result = result unless err
-      @next (err, {status}) ->
-        callback err, status: status, result: output.result
+      status = false
+      if data?.error
+        if data.error.code isnt 4202 # no modifications to be performed
+          error = Error data.error.message
+          error.code = data.error.code
+          throw error
+      else
+        output.result = data.result.result
+        status = true
+      # Get result info even if no modification is performed
+      unless status
+        {result} = await @ipa.group.show config,
+          cn: config.cn
+        output.result = result
+      status: status, result: output.result
 
 ## Export
 
     module.exports =
       handler: handler
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

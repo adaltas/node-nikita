@@ -3,7 +3,7 @@
 
 Find the users registed inside FreeIPA. "https://ipa.domain.com/ipa/session/json"
 
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -25,6 +25,11 @@ require('nikita')
 ## Schema
 
     schema =
+      type: 'object'
+      properties:
+        'connection':
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       criterias:
         type: 'object'
         properties:
@@ -83,33 +88,23 @@ require('nikita')
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @connection.http options.connection,
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {data} = await @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:
           method: 'user_find/1'
-          params: [[], options.criterias or {}]
+          params: [[], config.criterias or {}]
           id: 0
-        http_headers: options.http_headers
-      , (err, {data}) ->
-        return callback err if err
-        if data.error
-          error = Error data.error.message
-          error.code = data.error.code
-          return callback error
-        callback error, result: data.result.result
+      if data.error
+        error = Error data.error.message
+        error.code = data.error.code
+        throw error
+      result: data.result.result
 
 ## Export
 
     module.exports =
       handler: handler
       schema: schema
-
-## Dependencies
-
-    {merge} = require 'mixme'
