@@ -2,7 +2,7 @@
 
 # Node.js Nikita
 
-Nikita gathers a set of functions usually used during system deployment.
+Nikita gathers a set of functions commonly used during system deployment.
 Documentation is available on the [project website](https://nikita.js.org).
 
 ## Main features 

@@ -1,7 +1,6 @@
 
 # registration of `nikita.db` actions
 
-require '@nikitajs/file/src/register'
 registry = require '@nikitajs/engine/src/registry'
 
 module.exports =
