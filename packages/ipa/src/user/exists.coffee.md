@@ -3,14 +3,7 @@
 
 Check if a user exists inside FreeIPA.
 
-## Options
-
-* `uid` (string, required)   
-  Name of the user to check for existence, same as the username.
-* `connection` (object, required)   
-  See the `nikita.connection.http` action.
-
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -27,46 +20,50 @@ require('nikita')
 })
 ```
 
-## Options
+## Hook
 
-    on_options = ({options}) ->
-      options.uid ?= options.username
-      delete options.username
+    on_action = ({config}) ->
+      config.uid ?= config.username
+      delete config.username
 
 ## Schema
 
     schema =
       type: 'object'
       properties:
-        'uid': type: 'string'
-        'username': type: 'string'
+        'uid':
+          type: 'string'
+          description: """
+          Name of the user to check for existence, same as the `username`.
+          """
+        'username':
+          type: 'string'
+          description: """
+          Name of the user to check for existence, alias of `uid`.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['connection', 'uid']
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.user.show
-        connection: options.connection
-        uid: options.uid
-        relax: true
-      , (err) ->
-        return callback err if err and err.code isnt 4001
-        exists = !err
-        callback null, status: exists, exists: exists
+## Handler
+
+    handler = ({config}, callback) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      try
+        await @ipa.user.show
+          connection: config.connection
+          uid: config.uid
+        status: true, exists: true
+      catch err
+        throw err if err.code isnt 4001 # user not found
+        status: false, exists: false
 
 ## Export
 
     module.exports =
       handler: handler
-      on_options: on_options
+      hooks:
+        on_action: on_action
       schema: schema
       shy: true
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

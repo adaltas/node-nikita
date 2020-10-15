@@ -3,12 +3,7 @@
 
 Delete a group from FreeIPA.
 
-## Options
-
-* `cn` (string, required)   
-  Name of the group to delete.
-
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -30,43 +25,35 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'cn': type: 'string'
-        'attributes':
-          type: 'object'
-          properties:
-            'user': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+        'cn':
+          type: 'string'
+          description: """
+          Name of the group to delete.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['cn', 'connection']
 
 ## Handler
 
-    handler = ({options}) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.group.exists
-        connection: options.connection
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {status} = await @ipa.group.exists
+        connection: config.connection
         shy: false
-        cn: options.cn
-      @connection.http options.connection,
-        if: -> @status(-1)
+        cn: config.cn
+      return unless status
+      @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:
           method: "group_del/1"
-          params: [[options.cn], {}]
+          params: [[config.cn], {}]
           id: 0
-        http_headers: options.http_headers
 
 ## Export
 
     module.exports =
       handler: handler
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

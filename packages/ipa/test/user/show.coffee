@@ -1,29 +1,35 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, ipa} = require '../test'
+{tags, ssh, ipa} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.ipa
 
 describe 'ipa.user.show', ->
+  
+  describe 'schema', ->
 
-  they 'get single user', ({ssh}) ->
-    nikita
-      ssh: ssh
-    .ipa.user.show connection: ipa,
-      uid: 'admin'
-    , (err, {result}) ->
-      throw err if err
-      result.dn.should.match /^uid=admin,cn=users,cn=accounts,/
-    .promise()
+    they 'use `username` as alias for `uid`', ({ssh}) ->
+      nikita
+      .ipa.user.show connection: ipa,
+        username: 'admin'
 
-  they 'get missing user', ({ssh}) ->
-    nikita
-      ssh: ssh
-    .ipa.user.show connection: ipa,
-      uid: 'missing'
-      relax: true
-    , (err, {result}) ->
-      err.code.should.eql 4001
-      err.message.should.eql 'missing: user not found'
-    .promise()
+  describe 'action', ->
+
+    they 'get single user', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        {result} = await @ipa.user.show connection: ipa,
+          uid: 'admin'
+        result.dn.should.match /^uid=admin,cn=users,cn=accounts,/
+
+    they 'get missing user', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        @ipa.user.show connection: ipa,
+          uid: 'missing'
+        .should.be.rejectedWith
+          code: 4001
+          message: 'missing: user not found'
