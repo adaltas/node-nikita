@@ -3,14 +3,7 @@
 
 Retrieve user information from FreeIPA.
 
-## Options
-
-* `uid` (string, required)   
-  Name of the user to add, same as the username.
-* `username` (string, required)   
-  Name of the user to add, alias of `uid`.
-
-## Exemple
+## Example
 
 ```js
 require("nikita")
@@ -43,52 +36,54 @@ require("nikita")
 })
 ```
 
-## Options
+## Hook
 
-    on_options = ({options}) ->
-      options.uid ?= options.username
-      delete options.username
+    on_action = ({config}) ->
+      config.uid ?= config.username
+      delete config.username
 
 ## Schema
 
     schema =
       type: 'object'
       properties:
-        'uid': type: 'string'
-        'username': type: 'string'
+        'uid':
+          type: 'string'
+          description: """
+          Name of the user to show, same as the `username`.
+          """
+        'username':
+          type: 'string'
+          description: """
+          Name of the user to show, alias of `uid`.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['connection', 'uid']
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @connection.http options.connection,
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {data} = await @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:
           method: 'user_show/1'
-          params: [[options.uid],{}]
+          params: [[config.uid],{}]
           id: 0
-      , (err, {data}) ->
-        return callback err if err
-        if data.error
-          error = Error data.error.message
-          error.code = data.error.code
-          return callback error
-        callback null, result: data.result.result
+      if data.error
+        error = Error data.error.message
+        error.code = data.error.code
+        throw error
+      else
+        result: data.result.result
 
 ## Export
 
     module.exports =
       handler: handler
-      on_options: on_options
+      hooks:
+        on_action: on_action
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'

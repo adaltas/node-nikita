@@ -3,14 +3,7 @@
 
 Delete a user from FreeIPA.
 
-## Options
-
-* `uid` (string, required)   
-  Name of the user to delete, same as the username.
-* `connection` (object, required)   
-  See the `nikita.connection.http` action.
-
-## Exemple
+## Example
 
 ```js
 require("nikita")
@@ -27,51 +20,53 @@ require("nikita")
 })
 ```
 
-## Options
+## Hook
 
-    on_options = ({options}) ->
-      options.uid ?= options.username
-      delete options.username
+    on_action = ({config}) ->
+      config.uid ?= config.username
+      delete config.username
 
 ## Schema
 
     schema =
       type: 'object'
       properties:
-        'uid': type: 'string'
-        'username': type: 'string'
+        'uid':
+          type: 'string'
+          description: """
+          Name of the user to delete, same as the `username`.
+          """
+        'username':
+          type: 'string'
+          description: """
+          Name of the user to delete, alias of `uid`.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['connection', 'uid']
 
 ## Handler
 
-    handler = ({options}) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.user.exists
-        connection: options.connection
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {status} = await @ipa.user.exists
+        connection: config.connection
         shy: false
-        uid: options.uid
-      @connection.http options.connection,
-        if: -> @status(-1)
+        uid: config.uid
+      return unless status
+      @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:
           method: "user_del/1"
-          params: [[options.uid], {}]
+          params: [[config.uid], {}]
           id: 0
-        http_headers: options.http_headers
 
 ## Export
 
     module.exports =
       handler: handler
+      hooks:
+        on_action: on_action
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

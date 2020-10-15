@@ -3,12 +3,7 @@
 
 Check if a group exists inside FreeIPA.
 
-## Options
-
-* `cn` (string, required)   
-  Name of the group to check for existence.
-
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -30,29 +25,29 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'cn': type: 'string'
-        'attributes':
-          type: 'object'
-          properties:
-            'user': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+        'cn':
+          type: 'string'
+          description: """
+          Name of the group to check for existence.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['cn', 'connection']
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.group.show
-        connection: options.connection
-        cn: options.cn
-        relax: true
-      , (err) ->
-        return callback err if err and err.code isnt 4001
-        callback null, status: !err, exists: !err
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      try
+        await @ipa.group.show
+          connection: config.connection
+          cn: config.cn
+        status: true, exists: true
+      catch err
+        throw err if err.code isnt 4001 # group not found
+        status: false, exists: false
+      
 
 ## Export
 
@@ -60,8 +55,3 @@ require('nikita')
       handler: handler
       schema: schema
       shy: true
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

@@ -1,27 +1,23 @@
 
-# `nikita.ipa.service.show`
+# `nikita.ipa.service`
 
-Retrieve service information from FreeIPA.
+Add a service in FreeIPA.
 
-## Exemple
+## Example
 
 ```js
-require("nikita")
-.ipa.service.show({
-  principal: "myprincipal/my.domain.com",
+require('nikita')
+.ipa.service({
+  principal: "myprincipal/my.domain.com"
+  },
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(err, {result}){
-  console.info(err ? err.message :
-    `Service is ${result.principal[0]}`)
-}
-switch(err.code){
-  case 4001:
-   assert("missing: service not found", err.message)
-  break
+}, function(){
+  console.info(err ? err.message : status ?
+    "Service was updated" : " Service was already set")
 })
 ```
 
@@ -33,7 +29,7 @@ switch(err.code){
         'principal':
           type: 'string'
           description: """
-          Name of the service to show.
+          Name of the service to add.
           """
         'connection':
           $ref: 'module://@nikitajs/network/src/http'
@@ -44,21 +40,26 @@ switch(err.code){
 
     handler = ({config}) ->
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      # @ipa.service.exists
+      #   connection: config.connection
+      #   principal: config.principal
+      status = true
       {data} = await @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:
-          method: 'service_show/1'
-          params: [[config.principal],{}]
+          method: "service_add/1"
+          params: [[config.principal], {}]
           id: 0
-      if data.error
-        error = Error data.error.message
-        error.code = data.error.code
-        throw error
-      else
-        result: data.result.result
+      if data?.error
+        if data.error.code isnt 4002 # principal alredy exists
+          error = Error data.error.message
+          error.code = data.error.code
+          throw error
+        status = false
+      status: status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

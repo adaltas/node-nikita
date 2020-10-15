@@ -3,22 +3,13 @@
 
 Add or modify a user in FreeIPA.
 
-## Options
-
-* `attributes` (object, required)   
-  Attributes associated with the user to add or modify.
-* `uid` (string, required)   
-  Name of the user to add, same as the username.
-* `username` (string, required)   
-  Name of the user to add, alias of `uid`.
-
 ## Implementation
 
 The `userpassword` attribute is only used on user creation. To force the
-password to be re-initialized on user update, pass the 'force_userpassword'
+password to be re-initialized on user update, pass the `force_userpassword`
 option.
 
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -40,21 +31,29 @@ require('nikita')
 })
 ```
 
-## Options
+## Hook
 
-    on_options = ({options}) ->
-      options.uid ?= options.username
-      delete options.username
-      if options.attributes
-        options.attributes.mail = [options.attributes.mail] if typeof options.attributes.mail is 'string'
+    on_action = ({config}) ->
+      config.uid ?= config.username
+      delete config.username
+      if config.attributes
+        config.attributes.mail = [config.attributes.mail] if typeof config.attributes.mail is 'string'
 
 ## Schema
 
     schema =
       type: 'object'
       properties:
-        'uid': type: 'string'
-        'username': type: 'string'
+        'uid':
+          type: 'string'
+          description: """
+          Name of the user to add or modify, same as the `username`.
+          """
+        'username':
+          type: 'string'
+          description: """
+          Name of the user to add or modify, alias of `uid`.
+          """
         'attributes':
           type: 'object'
           properties:
@@ -62,47 +61,44 @@ require('nikita')
             'sn': type: 'string' # Lastname
             'mail': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
             'userpassword': type: 'string'
-        'connection':
-          $ref: '/nikita/connection/http'
+          description: """
+          Attributes associated with the user to add or modify.
+          """
         'force_userpassword': type: 'boolean'
+        'connection':
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['attributes', 'connection', 'uid']
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.user.exists
-        connection: options.connection
-        uid: options.uid
-      @call ({}, callback) ->
-        exists = @status(-1)
-        options.attributes.userpassword = undefined if exists and not options.force_userpassword
-        @connection.http options.connection,
-          negotiate: true
-          method: 'POST'
-          data:
-            method: unless exists then 'user_add/1' else 'user_mod/1'
-            params: [[options.uid], options.attributes]
-            id: 0
-        , (error, {data}) ->
-          if data?.error
-            return callback null, false if data.error.code is 4202 # no modifications to be performed
-            error = Error data.error.message
-            error.code = data.error.code
-          callback error, true
-      @next callback
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      {status} = await @ipa.user.exists
+        connection: config.connection
+        uid: config.uid
+      exists = status
+      status = true
+      config.attributes.userpassword = undefined if exists and not config.force_userpassword
+      {data} = await @network.http config.connection,
+        negotiate: true
+        method: 'POST'
+        data:
+          method: unless exists then 'user_add/1' else 'user_mod/1'
+          params: [[config.uid], config.attributes]
+          id: 0
+      if data?.error
+        if data.error.code isnt 4202 # no modifications to be performed
+          error = Error data.error.message
+          error.code = data.error.code
+          throw error
+        status = false
+      status: status
 
 ## Exports
 
     module.exports =
       handler: handler
-      on_options: on_options
+      hooks:
+        on_action: on_action
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'

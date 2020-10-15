@@ -3,14 +3,7 @@
 
 Check if a service exists inside FreeIPA.
 
-## Options
-
-* `principal` (string, required)   
-  Name of the service to check for existence.
-* `connection` (object, required)   
-  See the `nikita.connection.http` action.
-
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -32,24 +25,31 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'principal': type: 'string'
+        'principal':
+          type: 'string'
+          description: """
+          Name of the service to check for existence.
+          """
         'connection':
-          $ref: '/nikita/connection/http'
+          $ref: 'module://@nikitajs/network/src/http'
+          required: ['principal', 'password']
       required: ['connection', 'principal']
 
-    handler = ({options}, callback) ->
-      options.connection.http_headers ?= {}
-      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
-      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
-      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.service.show
-        connection: options.connection
-        principal: options.principal
-        relax: true
-      , (err) ->
-        return callback err if err and err.code isnt 4001
-        exists = !err
-        callback null, status: exists, exists: exists
+
+## Handler
+
+    handler = ({config}) ->
+      config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
+      try
+        await @ipa.service.show
+          connection: config.connection
+          principal: config.principal
+        status: true, exists: true
+      catch err
+        if err.code isnt 4001 # service not found
+          throw err
+        status: false, exists: false
+      
 
 ## Export
 
@@ -57,8 +57,3 @@ require('nikita')
       handler: handler
       schema: schema
       shy: true
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'
