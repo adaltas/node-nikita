@@ -1,5 +1,5 @@
 
-# `nikita.connection.http`
+# `nikita.network.http`
 
 Perform an HTTP request. It uses internaly the curl command.
 
