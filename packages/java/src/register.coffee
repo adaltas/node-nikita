@@ -1,13 +1,13 @@
 
 # registration of `nikita.java` actions
 
-## Dependency
+require '@nikitajs/file/src/register'
+registry = require '@nikitajs/engine/src/registry'
 
-    {register} = require '@nikitajs/core/lib/registry'
-
-## Action registration
-
-    register module.exports =
-      java:
-        keystore_add: '@nikitajs/java/src/keystore_add'
-        keystore_remove: '@nikitajs/java/src/keystore_remove'
+module.exports =
+  java:
+    keystore_add: '@nikitajs/java/src/keystore_add'
+    keystore_remove: '@nikitajs/java/src/keystore_remove'
+(->
+  await registry.register module.exports
+)()
