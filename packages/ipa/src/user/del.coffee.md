@@ -20,7 +20,7 @@ require("nikita")
 })
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config}) ->
       config.uid ?= config.username

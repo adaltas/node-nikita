@@ -20,7 +20,7 @@ require('nikita')
 })
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config}) ->
       config.uid ?= config.username
@@ -48,7 +48,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config}, callback) ->
+    handler = ({config}) ->
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
       try
         await @ipa.user.show
