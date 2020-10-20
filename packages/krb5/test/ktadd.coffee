@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, krb5} = require './test'
+{tags, ssh, krb5} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.krb5_ktadd
@@ -11,61 +11,59 @@ describe 'krb5.ktadd', ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-    .krb5.addprinc
-      principal: "nikita@#{krb5.realm}"
-      randkey: true
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita.keytab"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita.keytab"
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @krb5.addprinc
+        principal: "nikita@#{krb5.realm}"
+        randkey: true
+      {status} = await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita.keytab"
+      status.should.be.true()
+      {status} = await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita.keytab"
+      status.should.be.false()
 
   they 'detect kvno', ({ssh}) ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-    .krb5.addprinc
-      principal: "nikita@#{krb5.realm}"
-      randkey: true
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita_1.keytab"
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita_2.keytab"
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita_1.keytab"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita_1.keytab"
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @krb5.addprinc
+        principal: "nikita@#{krb5.realm}"
+        randkey: true
+      await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita_1.keytab"
+      await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita_2.keytab"
+      {status} = await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita_1.keytab"
+      status.should.be.true()
+      {status} = await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita_1.keytab"
+      status.should.be.false()
 
   they 'change permission', ({ssh}) ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-    .krb5.addprinc
-      principal: "nikita@#{krb5.realm}"
-      randkey: true
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita.keytab"
-      mode: 0o0755
-    .krb5.ktadd
-      principal: "nikita@#{krb5.realm}"
-      keytab: "#{scratch}/nikita.keytab"
-      mode: 0o0707
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @krb5.addprinc
+        principal: "nikita@#{krb5.realm}"
+        randkey: true
+      await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita.keytab"
+        mode: 0o0755
+      {status} = await @krb5.ktadd
+        principal: "nikita@#{krb5.realm}"
+        keytab: "#{tmpdir}/nikita.keytab"
+        mode: 0o0707
+      status.should.be.true()

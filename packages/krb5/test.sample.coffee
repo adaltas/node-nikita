@@ -1,6 +1,8 @@
 
 module.exports =
   tags:
+    api: false
+    krb5: false
     krb5_addprinc: false
     krb5_delprinc: false
     krb5_ktadd: false
