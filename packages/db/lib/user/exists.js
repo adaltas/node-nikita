@@ -22,89 +22,51 @@
 //   Port to the associated database.   
 
 // ## Schema
-var connection_options;
+var connection_config, handler, schema;
 
-({
-  schema: { // THIS IS NOT YET REGISTERED
-    type: 'object',
-    properties: {
-      $ref: '/nikita/db/query',
-      'username': {
-        type: 'string'
-      },
-      'password': {
-        type: 'string'
+schema = {
+  type: 'object',
+  properties: {
+    // $ref: 'module://@nikitajs/db/src/query'
+    'username': {
+      type: 'string',
+      description: `Name of the user to check for existance.`
+    }
+  },
+  required: ['username', 'admin_username', 'admin_password', 'engine', 'host']
+};
+
+// ## Handler
+handler = async function({config}) {
+  var stdout;
+  ({stdout} = (await this.db.query(connection_config(config), {
+    database: void 0,
+    cmd: (function() {
+      switch (config.engine) {
+        case 'mariadb':
+        case 'mysql':
+          return `SELECT User FROM mysql.user WHERE User = '${config.username}'`;
+        case 'postgresql':
+          return `SELECT '${config.username}' FROM pg_roles WHERE rolname='${config.username}'`;
       }
-    },
-    // 'connection':
-    //   $ref: '/nikita/db/query'
-    required: ['password', 'username']
-  }
-});
+    })(),
+    trim: true
+  })));
+  return {
+    exists: stdout === config.username
+  };
+};
 
-// ## Source Code
+// ## Exports
 module.exports = {
-  shy: true,
-  handler: function({options}, callback) {
-    var k, ref, ref1, v;
-    // Import options from `options.db`
-    if (options.db == null) {
-      options.db = {};
-    }
-    ref = options.db;
-    for (k in ref) {
-      v = ref[k];
-      if (options[k] == null) {
-        options[k] = v;
-      }
-    }
-    if (!options.host) {
-      // Check main options
-      throw Error('Missing option: "host"');
-    }
-    if (!options.admin_username) {
-      throw Error('Missing option: "admin_username"');
-    }
-    if (!options.admin_password) {
-      throw Error('Missing option: "admin_password"');
-    }
-    if (!options.username) {
-      throw Error('Missing option: "username"');
-    }
-    if (!options.engine) {
-      throw Error('Missing option: "engine"');
-    }
-    // Deprecation
-    if (options.engine === 'postgres') {
-      console.log('Deprecated Value: options "postgres" is deprecated in favor of "postgresql"');
-      options.engine = 'postgresql';
-    }
-    // Defines and check the engine type
-    options.engine = options.engine.toLowerCase();
-    if ((ref1 = options.engine) !== 'mariadb' && ref1 !== 'mysql' && ref1 !== 'postgresql') {
-      throw Error(`Unsupport engine: ${JSON.stringify(options.engine)}`);
-    }
-    // Defines port
-    if (options.port == null) {
-      options.port = 5432;
-    }
-    return this.db.query(connection_options(options), {
-      database: void 0,
-      cmd: (function() {
-        switch (options.engine) {
-          case 'mariadb':
-          case 'mysql':
-            return `SELECT User FROM mysql.user WHERE User = '${options.username}'`;
-          case 'postgresql':
-            return `SELECT '${options.username}' FROM pg_roles WHERE rolname='${options.username}'`;
-        }
-      })(),
-      trim: true
-    }, function(err, {stdout}) {
-      return callback(err, stdout === options.username);
-    });
-  }
+  handler: handler,
+  metadata: {
+    argument_name: 'username',
+    global: 'db',
+    shy: true
+  },
+  schema: schema
 };
 
 // ## Dependencies
-({connection_options} = require('../query'));
+({connection_config} = require('../query'));
