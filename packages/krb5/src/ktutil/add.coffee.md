@@ -1,27 +1,8 @@
 
-# `nikita.krb5.ktutil(options, [callback])`
+# `nikita.krb5.ktutil`
 
 Create and manage a keytab for an existing principal. It's different than ktadd
 in the way it can manage several principal on one keytab.
-
-## Options
-
-* `admin.server`   
-  Address of the kadmin server; optional, use "kadmin.local" if missing.   
-* `admin.principal`   
-  KAdmin principal name unless `kadmin.local` is used.   
-* `admin.password`   
-  Password associated to the KAdmin principal.   
-* `principal`   
-  Principal to be inserted.   
-* `password`   
-  Password of the principal.   
-* `keytab`    
-  Path to the file storing key entries.   
-* `realm`   
-  The realm the principal belongs to. optional
-* `enctypes`   
-  the enctypes used by krb5_server. optional
 
 ## Example
 
@@ -35,40 +16,68 @@ require('nikita').krb5.ktutil.add({
 });
 ```
 
-## Hooks
+## Schema
 
-    on_options = ({options}) ->
-      # Import all properties from `options.krb5`
-      if options.krb5
-        mutate options, options.krb5
-        delete options.krb5
+    schema =
+      type: 'object'
+      properties:
+        'admin':
+          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
+        'enctypes':
+          type: 'array', items: type: 'string'
+          default: ['aes256-cts-hmac-sha1-96', 'aes128-cts-hmac-sha1-96', 'des3-cbc-sha1','arcfour-hmac']
+          description: """
+          The enctypes used by krb5_server
+          """
+        'gid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+        'keytab':
+          type: 'string'
+          description: """
+          Path to the file storing key entries.
+          """
+        'mode':
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
+        'password':
+          type: 'string'
+          description: """
+          Password associated to this principal; required if no randkey is
+          provided.
+          """
+        'principal':
+          type: 'string'
+          description: """
+          Principal to be created.
+          """
+        'realm':
+          type: 'string'
+          description: """
+          The realm the principal belongs to.
+          """
+        'uid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+      required: ['keytab', 'password', 'principal']
 
-## Source Code
+## Handler
 
-    handler = ({options}) ->
-      throw Error 'Property principal is required' unless options.principal
-      throw Error 'Property keytab is required' unless options.keytab
-      throw Error 'Property password is required' unless options.password
-      if /^\S+@\S+$/.test options.principal
-        options.realm ?= options.principal.split('@')[1]
+    handler = ({config, log}) ->
+      if /^\S+@\S+$/.test config.principal
+        config.realm ?= config.principal.split('@')[1]
       else
-        throw Error 'Property "realm" is required in principal' unless options.realm
-        options.principal = "#{options.principal}@#{options.realm}"
+        throw Error 'Property "realm" is required in principal' unless config.realm
+        config.principal = "#{config.principal}@#{config.realm}"
       entries = []
       princ_entries = []
       princ = {}
-      options.enctypes ?= ['aes256-cts-hmac-sha1-96','aes128-cts-hmac-sha1-96','des3-cbc-sha1','arcfour-hmac']
       cmd = null
       # Get keytab entries
-      @system.execute
-        cmd: "echo -e 'rkt #{options.keytab}\nlist -e -t \n' | ktutil"
+      {status, stdout, code} = await @execute
+        cmd: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
         code_skipped: 1
         shy: true
-      , (err, {status, stdout}) ->
-        throw err if err
-        return unless status
-        @log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
-        for line in string.lines stdout
+      if status
+        log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
+        for line in utils.string.lines stdout
           continue unless match = /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec line
           [_, slot, kvno, timestamp, principal, enctype] = match
           kvno = parseInt kvno, 10
@@ -78,75 +87,71 @@ require('nikita').krb5.ktutil.add({
             timestamps: timestamp
             principal: principal.trim()
             enctype: enctype
-        princ_entries = entries.filter((e) -> "#{e.principal}" is "#{options.principal}").reverse()
+        princ_entries = entries.filter((e) -> "#{e.principal}" is "#{config.principal}").reverse()
       # Get principal information and compare to keytab entries kvnos
-      @krb5.execute
-        admin: options.admin
-        cmd: "getprinc -terse #{options.principal}"
+      {status, stdout} = await @krb5.execute
+        admin: config.admin
+        cmd: "getprinc -terse #{config.principal}"
         shy: true
-      , (err, {status, stdout}) ->
-        return err if err
-        return unless status
-        values = string.lines(stdout)[1]
+      if status
+        values = utils.string.lines(stdout)[1]
         # Check if a ticket exists for this
-        throw Error "Principal does not exist: '#{options.principal}'" unless values
+        throw Error "Principal does not exist: '#{config.principal}'" unless values
         values = values.split '\t'
         mdate = parseInt(values[2], 10) * 1000
         kvno = parseInt values[8], 10
         princ = mdate: mdate, kvno: kvno
       # read keytab and check kvno validities
-      @call ->
-        cmd = null
-        tmp_keytab = "#{options.keytab}.tmp_nikita_#{Date.now()}"
-        for enctype in options.enctypes
-          entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
-          #entries.filter( (entry) -> entry.enctype is enctype).length is 1
-          # add_entry_cmd = "add_entry -password -p #{options.principal} -k #{princ.kvno} -e #{enctype}\n#{options.password}\n"
-          if entry? and (entry?.kvno isnt princ.kvno)
-            cmd ?= "echo -e 'rkt #{options.keytab}\n"
-            # remove entry if kvno not identical
-            @log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
-            cmd += "delete_entry #{entry?.slot}\n"
-        @call
-          if: entries.length > princ_entries.length
-        , ->
-          @system.execute
-            if: -> cmd?
+      cmd = null
+      tmp_keytab = "#{config.keytab}.tmp_nikita_#{Date.now()}"
+      for enctype in config.enctypes
+        entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
+        #entries.filter( (entry) -> entry.enctype is enctype).length is 1
+        # add_entry_cmd = "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
+        if entry? and (entry?.kvno isnt princ.kvno)
+          cmd ?= "echo -e 'rkt #{config.keytab}\n"
+          # remove entry if kvno not identical
+          log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
+          cmd += "delete_entry #{entry?.slot}\n"
+      if entries.length > princ_entries.length
+        if cmd?
+          await @execute
             cmd: cmd + "wkt #{tmp_keytab}\nquit\n' | ktutil"
-          @system.move
-            if: -> cmd?
+        if cmd?
+          await @fs.move
             source: tmp_keytab
-            target: options.keytab
-        @system.remove
-          if: (entries.length is princ_entries.length) and cmd?
-          target: options.keytab
+            target: config.keytab
+      if (entries.length is princ_entries.length) and cmd?
+        await @fs.remove
+          target: config.keytab
       # write entries in keytab
-      @call ->
-        cmd = null
-        for enctype in options.enctypes
-          entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
-          if (entry?.kvno isnt princ.kvno) or !entry?
-            cmd ?= "echo -e '"
-            cmd += "add_entry -password -p #{options.principal} -k #{princ.kvno} -e #{enctype}\n#{options.password}\n"
-        @system.execute
-          if: -> cmd?
-          cmd: cmd + "wkt #{options.keytab}\n' | ktutil"
+      cmd = null
+      for enctype in config.enctypes
+        entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
+        if (entry?.kvno isnt princ.kvno) or !entry?
+          cmd ?= "echo -e '"
+          cmd += "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
+      if cmd?
+        await @execute
+          cmd: cmd + "wkt #{config.keytab}\n' | ktutil"
       # Keytab ownership and permissions
-      @system.chown
-        target: options.keytab
-        uid: options.uid
-        gid: options.gid
-        if:  options.uid? or options.gid?
-      @system.chmod
-        target: options.keytab
-        mode: options.mode
-        if: options.mode?
+      if config.uid? or config.gid?
+        await @fs.chown
+          target: config.keytab
+          uid: config.uid
+          gid: config.gid
+      return unless config.mode
+      await @fs.chmod
+        target: config.keytab
+        mode: config.mode
 
 ## Export
 
     module.exports =
       handler: handler
-      on_options: on_options
+      metadata:
+        global: 'krb5'
+      schema: schema
 
 ## Fields in 'getprinc -terse' output
 
@@ -173,7 +178,5 @@ data-type[1]
 
 ## Dependencies
 
-    path = require 'path'
-    misc = require '@nikitajs/core/lib/misc'
-    string = require '@nikitajs/core/lib/misc/string'
+    utils = require '@nikitajs/engine/src/utils'
     {mutate} = require 'mixme'

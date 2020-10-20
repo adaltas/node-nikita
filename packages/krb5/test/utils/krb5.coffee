@@ -1,10 +1,10 @@
 
-krb5 = require '../../src/misc/krb5'
-{tags} = require '../test'
+krb5 = require '../../src/utils/krb5'
+tags = require '../test'
 
-return unless tags.api
+return unless tags.krb5
 
-describe 'misc krb5', ->
+describe 'utils krb5', ->
 
   describe 'kinit', ->
 

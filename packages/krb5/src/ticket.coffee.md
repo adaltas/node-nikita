@@ -1,23 +1,9 @@
 
-# `nikita.krb5.ticket(options, [callback])`
+# `nikita.krb5.ticket`
 
 Renew the Kerberos ticket of a user principal inside a Unix session.
 
-## Options
-
-* `principal`   
-  Principal to be created.   
-* `password`   
-  Password associated to this principal; required if no randkey is
-  provided.   
-* `keytab`   
-  Path to the file storing key entries.   
-* `cache_name` (string)    
-  Path to Kerberos cache file.    
-* `uid`   
-  Unix uid or username of the Unix session   
-
-## Keytab example
+## Example
 
 ```js
 require('nikita')
@@ -29,46 +15,67 @@ require('nikita')
 });
 ```
 
-## Hooks
+## Schema
 
-    on_options = ({options}) ->
-      # Import all properties from `options.krb5`
-      if options.krb5
-        mutate options, options.krb5
-        delete options.krb5
+    schema =
+      type: 'object'
+      properties:
+        'gid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+        'principal':
+          type: 'string'
+          description: """
+          The principal the ticket to be renewed.
+          """
+        'password':
+          type: 'string'
+          description: """
+          Password associated to this principal.
+          """
+        'keytab':
+          type: 'string'
+          description: """
+          Path to the file storing key entries.
+          """
+        'uid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+      oneOf: [
+        {required: ['keytab']}
+        {required: ['password']}
+      ]
 
 ## Handler
 
-    handler = ({options}) ->
-      throw Error "Incoherent options: expects one of keytab or password" if not options.keytab and not options.password
+    handler = ({config, ssh}) ->
       # SSH connection
-      ssh = @ssh options.ssh
       # @system.uid_gid
-      #   uid: options.uid
-      #   gid: options.gid
+      #   uid: config.uid
+      #   gid: config.gid
       #   shy: true
       # , (err, {status, uid, gid, default_gid}) ->
-      #   options.uid = uid
-      #   options.gid = gid
-      @system.execute
+      #   config.uid = uid
+      #   config.gid = gid
+      await @execute
         cmd: """
-        if #{krb5.su options, 'klist -s'}; then exit 3; fi
-        #{krb5.kinit options}
+        if #{utils.krb5.su config, 'klist -s'}; then exit 3; fi
+        #{utils.krb5.kinit config}
         """
         code_skipped: 3
-      @system.chown
-        if: options.uid? or options.gid?
-        uid: options.uid
-        gid: options.gid
-        target: options.target
+      return unless (config.uid? or config.gid?) and config.keytab?
+      @fs.chown
+        uid: config.uid
+        gid: config.gid
+        target: config.keytab
 
 ## Export
 
     module.exports =
       handler: handler
-      on_options: on_options
+      metadata:
+        global: 'krb5'
+      schema: schema
 
 ## Dependencies
 
-    krb5 = require '@nikitajs/core/lib/misc/krb5'
+    utils = require '@nikitajs/krb5/src/utils'
     {mutate} = require 'mixme'
