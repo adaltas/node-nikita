@@ -37,60 +37,75 @@ module.exports = function() {
 
 handlers = {
   if_execute: async function(action, value) {
-    var condition, final_run, i, len, ref;
+    var code_skipped, condition, err, final_run, i, len, ref, ref1;
     final_run = true;
     ref = action.conditions.if_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
-      await session(null, async function({run}) {
-        var status;
-        ({status} = (await run({
-          hooks: {
-            on_result: function({action}) {
-              return delete action.parent;
-            }
-          },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth
-          },
-          parent: action,
-          namespace: ['execute'],
-          code_skipped: 1
-        }, condition)));
-        if (!status) {
-          return final_run = false;
+      try {
+        await session(null, async function({run}) {
+          var status;
+          ({status} = (await run({
+            hooks: {
+              on_result: function({action}) {
+                return delete action.parent;
+              }
+            },
+            metadata: {
+              condition: true,
+              depth: action.metadata.depth
+            },
+            parent: action,
+            namespace: ['execute']
+          }, condition)));
+          if (!status) {
+            return final_run = false;
+          }
+        });
+      } catch (error) {
+        err = error;
+        code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);
+        if (code_skipped && parseInt(code_skipped) !== err.exit_code) {
+          throw err;
         }
-      });
+        final_run = false;
+      }
     }
     return final_run;
   },
   unless_execute: async function(action) {
-    var condition, final_run, i, len, ref;
+    var code_skipped, condition, err, final_run, i, len, ref, ref1;
     final_run = true;
     ref = action.conditions.unless_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
-      await session(null, async function({run}) {
-        var status;
-        ({status} = (await run({
-          hooks: {
-            on_result: function({action}) {
-              return delete action.parent;
-            }
-          },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth
-          },
-          parent: action,
-          namespace: ['execute'],
-          code_skipped: 1
-        }, condition)));
-        if (status) {
-          return final_run = false;
+      try {
+        await session(null, async function({run}) {
+          var status;
+          ({status} = (await run({
+            hooks: {
+              on_result: function({action}) {
+                return delete action.parent;
+              }
+            },
+            metadata: {
+              condition: true,
+              depth: action.metadata.depth
+            },
+            parent: action,
+            namespace: ['execute']
+          }, condition)));
+          if (status) {
+            return final_run = false;
+          }
+        });
+      } catch (error) {
+        err = error;
+        code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);
+        if (code_skipped && parseInt(code_skipped) !== err.exit_code) {
+          throw err;
         }
-      });
+      }
     }
     return final_run;
   }
