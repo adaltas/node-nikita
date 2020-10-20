@@ -1,20 +1,7 @@
 
-# `nikita.krb5.delprinc(options, [callback])`
+# `nikita.krb5.delprinc`
 
 Remove a Kerberos principal and optionally its keytab.
-
-## Options
-
-* `admin.server`   
-  Address of the kadmin server; optional, use "kadmin.local" if missing.   
-* `admin.principal`   
-  KAdmin principal name unless `kadmin.local` is used.   
-* `admin.password`   
-  Password associated to the KAdmin principal.   
-* `principal`   
-  Principal to be created.   
-* `keytab`   
-  Path to the file storing key entries.   
 
 ## Example
 
@@ -33,45 +20,59 @@ require('nikita')
 });
 ```
 
-## Hooks
+## Schema
 
-    on_options = ({options}) ->
-      # Import all properties from `options.krb5`
-      if options.krb5
-        mutate options, options.krb5
-        delete options.krb5
+    schema =
+      type: 'object'
+      properties:
+        'admin':
+          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
+        'keytab':
+          type: 'string'
+          description: """
+          Path to the file storing key entries.
+          """
+        'principal':
+          type: 'string'
+          description: """
+          Principal to be created.
+          """
+        'realm':
+          type: 'string'
+          description: """
+          The realm the principal belongs to.
+          """
+      required: ['principal']
 
 ## Handler
 
-    handler = ({options}) ->
-      return throw Error 'Property principal is required' unless options.principal
-      # Normalize realm and principal for later usage of options
-      options.realm ?= options.admin.principal.split('@')[1] if /.*@.*/.test options.admin.principal
-      options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
+    handler = ({config}) ->
+      # Normalize realm and principal for later usage of config
+      config.realm ?= config.admin.principal.split('@')[1] if /.*@.*/.test config.admin.principal
+      config.principal = "#{config.principal}@#{config.realm}" unless /^\S+@\S+$/.test config.principal
       # Prepare commands
-      @krb5.execute
-        options:
-          admin: options.admin
-          cmd: "getprinc #{options.principal}"
-          egrep: new RegExp "^.*#{misc.regexp.escape options.principal}$"
-        metadata:
-          shy: true
-      @krb5.execute
-        if: -> @status -1
-        options:
-          admin: options.admin
-          cmd: "delprinc -force #{options.principal}"
-      @system.remove
-        target: options.keytab
-        if: options.keytab
+      {status} = await @krb5.execute
+        admin: config.admin
+        cmd: "getprinc #{config.principal}"
+        grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
+        shy: true
+      if status
+        await  @krb5.execute
+          admin: config.admin
+          cmd: "delprinc -force #{config.principal}"
+      if config.keytab
+        await @fs.remove
+          target: config.keytab
 
 ## Export
 
     module.exports =
       handler: handler
-      on_options: on_options
+      metadata:
+        global: 'krb5'
+      schema: schema
 
 ## Dependencies
 
-    misc = require '@nikitajs/core/lib/misc'
+    utils = require '@nikitajs/engine/src/utils'
     {mutate} = require 'mixme'
