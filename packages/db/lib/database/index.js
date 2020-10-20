@@ -5,21 +5,6 @@
 
 // ## Options
 
-// * `admin_username`   
-//   The login of the database administrator.   
-// * `admin_password`   
-//   The password of the database administrator.   
-// * `database` (Array or String)   
-//   The database name(s) to which the user should be added.   
-// * `engine`   
-//   The engine type, can be MySQL or PostgreSQL, required.   
-// * `host`   
-//   The hostname of the database.   
-// * `port`   
-//   Port to the associated database.   
-// * `user` (Array or String)   
-//   Contains  user(s) to add to the database, optional.   
-
 // This user will be granted superuser permissions (see above) for the database specified
 
 // ## Create Database example
@@ -34,183 +19,158 @@
 // });
 // ```
 
-// ## Run the tests
+// ## Schema
+var cmd, connection_config, handler, schema;
 
-// ```
-// cd docker/centos6
-// # then
-// docker-compose run --rm nodejs test/db/database.coffee
-// # or
-// docker-compose run --rm nodejs
-// npm test test/db/database.coffee
-// ```
+schema = {
+  type: 'object',
+  properties: {
+    'admin_username': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+    },
+    'admin_password': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+    },
+    'database': {
+      type: 'string',
+      description: `The name of the database to create.`
+    },
+    'engine': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+    },
+    'host': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/host'
+    },
+    'port': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/port'
+    }
+  },
+  required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
+};
 
 // ## Source Code
-var cmd, connection_options;
-
-module.exports = function({metadata, options}) {
-  var cmd_database_create, cmd_database_exists, i, k, len, ref, ref1, ref2, results, user, v;
-  // Import options from `options.db`
-  if (options.db == null) {
-    options.db = {};
+handler = async function({config, log}) {
+  var cmd_database_create, cmd_grant_privileges, cmd_has_privileges, exists, i, len, ref, status, user;
+  if (config.user == null) {
+    config.user = [];
   }
-  ref = options.db;
-  for (k in ref) {
-    v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
-    }
-  }
-  if (options.database == null) {
-    options.database = metadata.argument;
-  }
-  if (!options.host) {
-    // Validate options
-    throw Error('Missing option: "host"');
-  }
-  if (!options.admin_username) {
-    throw Error('Missing option: "admin_username"');
-  }
-  if (!options.admin_password) {
-    throw Error('Missing option: "admin_password"');
-  }
-  if (!options.database) {
-    throw Error('Missing option: "database"');
-  }
-  if (!options.engine) {
-    throw Error('Missing option: "engine"');
-  }
-  if (options.user == null) {
-    options.user = [];
-  }
-  if (typeof options.user === 'string') {
-    options.user = [options.user];
-  }
-  // Deprecation
-  if (options.engine === 'postgres') {
-    console.log('Deprecated Value: options "postgres" is deprecated in favor of "postgresql"');
-    options.engine = 'postgresql';
+  if (typeof config.user === 'string') {
+    config.user = [config.user];
   }
   // Defines and check the engine type
-  options.engine = options.engine.toLowerCase();
-  if ((ref1 = options.engine) !== 'mariadb' && ref1 !== 'mysql' && ref1 !== 'postgresql') {
-    throw Error(`Unsupport engine: ${JSON.stringify(options.engine)}`);
-  }
-  this.log({
-    message: `Database engine set to ${options.engine}`,
-    level: 'INFO',
-    module: 'nikita/db/database'
-  });
-  // Create database unless exist
-  this.log({
-    message: `Check if database ${options.database} exists`,
+  config.engine = config.engine.toLowerCase();
+  log({
+    message: `Database engine set to ${config.engine}`,
     level: 'DEBUG',
     module: 'nikita/db/database'
   });
-  switch (options.engine) {
+  // Create database unless exist
+  log({
+    message: `Check if database ${config.database} exists`,
+    level: 'DEBUG',
+    module: 'nikita/db/database'
+  });
+  switch (config.engine) {
     case 'mariadb':
     case 'mysql':
-      if (options.character_set == null) {
-        options.character_set = 'latin1'; // MySQL default
+      if (config.character_set == null) {
+        config.character_set = 'latin1'; // MySQL default
       }
-      switch (options.character_set) {
+      switch (config.character_set) {
         case 'latin1':
-          if (options.collation == null) {
-            options.collation = 'latin1_swedish_ci'; // MySQL default
+          if (config.collation == null) {
+            config.collation = 'latin1_swedish_ci'; // MySQL default
           }
           break;
         case 'utf8':
-          if (options.collation == null) {
-            options.collation = 'utf8_general_ci';
+          if (config.collation == null) {
+            config.collation = 'utf8_general_ci';
           }
       }
-      cmd_database_create = cmd(options, {
+      cmd_database_create = cmd(config, {
         database: null
-      }, [`CREATE DATABASE ${options.database}`, `DEFAULT CHARACTER SET ${options.character_set}`, options.collation ? `DEFAULT COLLATE ${options.collation}` : void 0, ';'].join(' '));
-      cmd_database_exists = cmd(options, {
-        database: options.database
-      }, `USE ${options.database};`);
+      }, [`CREATE DATABASE ${config.database}`, `DEFAULT CHARACTER SET ${config.character_set}`, config.collation ? `DEFAULT COLLATE ${config.collation}` : void 0, ';'].join(' '));
       break;
     case 'postgresql':
-      cmd_database_create = cmd(options, {
+      cmd_database_create = cmd(config, {
         database: null
-      }, `CREATE DATABASE ${options.database};`);
-      cmd_database_exists = cmd(options, {
-        database: options.database
-      }, "\\dt");
+      }, `CREATE DATABASE ${config.database};`);
   }
-  this.system.execute({
-    cmd: cmd_database_create,
-    unless_exec: cmd_database_exists
-  }, function(err, {status}) {
-    if (status) {
-      return this.log({
-        message: `Database created: ${JSON.stringify(options.database)}`,
-        level: 'WARN',
-        module: 'nikita/db/database'
-      });
+  // Create the database if it does not exists
+  ({exists} = (await this.db.database.exists(config)));
+  if (!exists) {
+    await this.execute({
+      cmd: cmd_database_create
+    });
+    log({
+      message: `Database created: ${JSON.stringify(config.database)}`,
+      level: 'WARN',
+      module: 'nikita/db/database'
+    });
+  }
+  ref = config.user;
+  // Associate users to the database
+  for (i = 0, len = ref.length; i < len; i++) {
+    user = ref[i];
+    log({
+      message: `Check if user ${user} has PRIVILEGES on ${config.database} `,
+      level: 'DEBUG',
+      module: 'nikita/db/database'
+    });
+    ({exists} = (await this.db.user.exists(config, {
+      username: user
+    })));
+    if (!exists) {
+      throw Error(`DB user does not exists: ${user}`);
     }
-  });
-  ref2 = options.user;
-  results = [];
-  for (i = 0, len = ref2.length; i < len; i++) {
-    user = ref2[i];
-    results.push((() => {
-      var cmd_grant_privileges, cmd_has_privileges;
-      this.call(function() {
-        return this.log({
-          message: `Check if user ${user} has PRIVILEGES on ${options.database} `,
-          level: 'DEBUG',
-          module: 'nikita/db/database'
-        });
-      });
-      this.db.user.exists(connection_options(options), {
-        username: user
-      }, function(err, {status}) {
-        if (!err && !status) {
-          throw Error(`DB user does not exists: ${user}`);
-        }
-      });
-      switch (options.engine) {
-        case 'mariadb':
-        case 'mysql':
-          // cmd_has_privileges = cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
-          cmd_has_privileges = cmd(options, {
-            database: 'mysql'
-          }, `SELECT user FROM db WHERE db='${options.database}';`) + ` | grep '${user}'`;
-          cmd_grant_privileges = cmd(options, {
-            database: null
-          }, `GRANT ALL PRIVILEGES ON ${options.database}.* TO '${user}' WITH GRANT OPTION;`);
-          break;
-        case 'postgresql':
-          cmd_has_privileges = cmd(options, {
-            database: options.database
-          }, "\\l") + ` | egrep '^${user}='`;
-          cmd_grant_privileges = cmd(options, {
-            database: null
-          }, `GRANT ALL PRIVILEGES ON DATABASE ${options.database} TO ${user}`);
-      }
-      return this.system.execute({
-        cmd: `if ${cmd_has_privileges}; then
+    switch (config.engine) {
+      case 'mariadb':
+      case 'mysql':
+        // cmd_has_privileges = cmd config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
+        cmd_has_privileges = cmd(config, {
+          database: 'mysql'
+        }, `SELECT user FROM db WHERE db='${config.database}';`) + ` | grep '${user}'`;
+        cmd_grant_privileges = cmd(config, {
+          database: null
+        }, `GRANT ALL PRIVILEGES ON ${config.database}.* TO '${user}' WITH GRANT OPTION;`);
+        break;
+      case 'postgresql':
+        cmd_has_privileges = cmd(config, {
+          database: config.database
+        }, "\\l") + ` | egrep '^${user}='`;
+        cmd_grant_privileges = cmd(config, {
+          database: null
+        }, `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`);
+    }
+    ({status} = (await this.execute({
+      cmd: `if ${cmd_has_privileges}; then
   echo '[INFO] User already with privileges'
   exit 3
 fi
 echo '[WARN] User privileges granted'
 ${cmd_grant_privileges}`,
-        code_skipped: 3
-      }, function(err, {status}) {
-        if (status) {
-          return this.log({
-            message: `Privileges granted: to ${JSON.stringify(user)} on ${JSON.stringify(options.database)}`,
-            level: 'WARN',
-            module: 'nikita/db/database'
-          });
-        }
+      code_skipped: 3
+    })));
+    if (status) {
+      log({
+        message: `Privileges granted: to ${JSON.stringify(user)} on ${JSON.stringify(config.database)}`,
+        level: 'WARN',
+        module: 'nikita/db/database'
       });
-    })());
+    }
   }
-  return results;
+  return null;
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    argument_name: 'database',
+    global: 'db'
+  },
+  schema: schema
 };
 
 // ## Dependencies
-({cmd, connection_options} = require('../query'));
+({cmd, connection_config} = require('../query'));

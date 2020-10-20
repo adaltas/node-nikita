@@ -3,28 +3,11 @@
 
 // Wait for the creation of a database.
 
-// ## Options
-
-// * `admin_username`   
-//   The login of the database administrator.   
-// * `admin_password`   
-//   The password of the database administrator.   
-// * `database` (Array or String)   
-//   The database name to check for existance.   
-// * `engine`   
-//   The engine type, can be MySQL or PostgreSQL, required.   
-// * `host`   
-//   The hostname of the database.   
-// * `port`   
-//   Port to the associated database.   
-// * `user` Array or String   
-//   Contains  user(s) to add to the database, optional.   
-
 // ## Create Database example
 
 // ```js
 // require('nikita')
-// .database.db.wait({
+// .db.db.wait({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_db'
@@ -33,51 +16,67 @@
 // });
 // ```
 
-// ## Source Code
-var cmd;
+// ## Schema
+var cmd, handler, schema;
 
-module.exports = function({metadata, options}) {
-  var k, ref, ref1, v;
-  // Import options from `options.db`
-  if (options.db == null) {
-    options.db = {};
-  }
-  ref = options.db;
-  for (k in ref) {
-    v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+schema = {
+  type: 'object',
+  properties: {
+    'admin_username': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+    },
+    'admin_password': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+    },
+    'database': {
+      type: 'string',
+      description: `The database name to wait for.`
+    },
+    'engine': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+    },
+    'host': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/host'
+    },
+    'port': {
+      $ref: 'module://@nikitajs/db/src/query#/properties/port'
     }
-  }
-  if (options.database == null) {
-    options.database = metadata.argument;
-  }
-  // Deprecation
-  if (options.engine === 'postgres') {
-    console.log('Deprecated Value: options "postgres" is deprecated in favor of "postgresql"');
-    options.engine = 'postgresql';
-  }
-  // Defines and check the engine type
-  options.engine = options.engine.toLowerCase();
-  if ((ref1 = options.engine) !== 'mariadb' && ref1 !== 'mysql' && ref1 !== 'postgresql') {
-    throw Error(`Unsupport engine: ${JSON.stringify(options.engine)}`);
-  }
+  },
+  required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
+};
+
+// ## Handler
+handler = function({
+    config,
+    metadata,
+    operations: {find}
+  }) {
   // Command
-  return this.wait.execute({
+  return this.execute.wait({
     cmd: (function() {
-      switch (options.engine) {
+      switch (config.engine) {
         case 'mariadb':
         case 'mysql':
-          return cmd(options, {
+          return cmd(config, {
             database: null
-          }, "show databases") + ` | grep '${options.database}'`;
+          }, "show databases") + ` | grep '${config.database}'`;
         case 'postgresql':
-          return cmd(options, {
+          return cmd(config, {
             database: null
-          }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${options.database}'`;
+          }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${config.database}'`;
       }
     })()
   });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    argument_name: 'database',
+    global: 'db'
+  },
+  schema: schema
 };
 
 // ## Dependencies

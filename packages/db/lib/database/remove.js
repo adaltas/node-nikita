@@ -3,52 +3,67 @@
 
 // Create a user for the destination database.
 
-// ## Options
+// ## Schema
+var cmd, connection_config, handler, schema;
 
-// * `admin_username`   
-//   The login of the database administrator.   
-// * `admin_password`   
-//   The password of the database administrator.   
-// * `engine`   
-//   The engine type, can be MySQL or PostgreSQL. Default to MySQL   
-// * `host`   
-//   The hostname of the database   
-// * `database`   
-//   The database to be removed.   
+schema = {
+  type: 'object',
+  properties: {
+    'admin_username': {
+      type: 'string',
+      description: `The login of the database administrator.`
+    },
+    'admin_password': {
+      type: 'string',
+      description: `The password of the database administrator.`
+    },
+    'database': {
+      type: 'string',
+      description: `The database name to check for existance.`
+    },
+    'engine': {
+      type: 'string',
+      enum: ['mariadb', 'mysql', 'postgresql'],
+      description: `The engine type, can be MariaDB, MySQL or PostgreSQL. Values
+are converted to lower cases.`
+    },
+    'host': {
+      type: 'string',
+      description: `The hostname of the database.`
+    },
+    'port': {
+      type: 'integer',
+      description: `Port to the associated database.`
+    }
+  },
+  required: ['admin_username', 'admin_password']
+};
 
 // ## Source Code
-var cmd;
-
-module.exports = function({metadata, options}) {
-  var database, k, ref, v;
-  // Import options from `options.db`
-  if (options.db == null) {
-    options.db = {};
-  }
-  ref = options.db;
-  for (k in ref) {
-    v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
-    }
-  }
-  if (options.database == null) {
-    options.database = metadata.argument;
-  }
-  if (!options.admin_username) {
-    throw Error('Missing option: "admin_username"');
-  }
-  if (!options.admin_password) {
-    throw Error('Missing option: "admin_password"');
-  }
-  // Avoid Postgres error "ERROR:  cannot drop the currently open database"
-  database = options.database;
-  delete options.database;
-  return this.system.execute({
-    cmd: cmd(options, `DROP DATABASE IF EXISTS ${database};`),
-    code_skipped: 2
+handler = function({
+    config,
+    metadata,
+    operations: {find}
+  }) {
+  // Avoid errors when database argument is provided in the command:
+  // - Postgres: "ERROR:  cannot drop the currently open database"
+  // - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
+  return this.db.query(config, {
+    cmd: `DROP DATABASE IF EXISTS ${config.database};`,
+    code_skipped: 2,
+    database: null
   });
 };
 
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    argument_name: 'database',
+    global: 'db'
+  },
+  schema: schema
+};
+
 // ## Dependencies
-({cmd} = require('../query'));
+({cmd, connection_config} = require('../query'));
