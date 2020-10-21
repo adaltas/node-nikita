@@ -3,143 +3,137 @@
 
 Register a new ldap schema.
 
-## Options
-
-* `binddn`   
-  Distinguished Name to bind to the LDAP directory.   
-* `passwd`   
-  Password for simple authentication.   
-* `uri`   
-  LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false
-  in which case it will use your openldap client environment configuration.   
-* `name`   
-  Common name of the schema.   
-* `schema`   
-  Path to the schema definition.   
-* `overwrite`   
-  Overwrite existing "olcAccess", default is to merge.   
-* `log`   
-  Function called with a log related messages.   
-* `ssh` (object|ssh2)   
-  Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
-* `stdout` (stream.Writable)   
-  Writable EventEmitter in which the standard output of executed commands will
-  be piped.   
-* `stderr` (stream.Writable)   
-  Writable EventEmitter in which the standard error output of executed command
-  will be piped.   
-
 ## Example
 
 ```js
-require('nikita')
-.ldap.schema({
+{status} = await nikita.ldap.schema({
+  uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   name: 'kerberos',
   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
-}, function(err, modified){
-  console.log(err ? err.message : 'Index modified: ' + !!modified);
-});
+})
+console.info(`Schema created or modified: ${status}`);
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
-      # SSH connection
-      ssh = @ssh options.ssh
-      # Auth related options
-      binddn = if options.binddn then "-D #{options.binddn}" else ''
-      passwd = if options.passwd then "-w #{options.passwd}" else ''
-      if options.url
-        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
-        options.uri ?= options.url
-      options.uri = 'ldapi:///' if options.uri is true
-      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-      # Schema related options
-      throw Error "Missing name" unless options.name
-      throw Error "Missing schema" unless options.schema
-      options.schema = options.schema.trim()
-      tempdir = options.tempdir or "/tmp/nikita_ldap.schema_#{Date.now()}"
-      schema = "#{tempdir}/#{options.name}.schema"
-      conf = "#{tempdir}/schema.conf"
-      ldif = "#{tempdir}/ldif"
-      @system.execute
-        # shy: true
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          type: 'string'
+          description: """
+          Common name of the schema.
+          """
+        'schema':
+          type: 'string'
+          description: """
+          Path to the schema definition.
+          """
+        # General LDAP connection information
+        'binddn':
+          type: 'string'
+          description: """
+          Distinguished Name to bind to the LDAP directory.
+          """
+        'passwd':
+          type: 'string'
+          description: """
+          Password for simple authentication.
+          """
+        'uri':
+          type: 'string'
+          description: """
+          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+          false in which case it will use your openldap client environment
+          configuration.
+          """
+
+## Handler
+
+    handler = ({config, metadata: {tmpdir}}) ->
+      log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
+      # Auth related config
+      binddn = if config.binddn then "-D #{config.binddn}" else ''
+      passwd = if config.passwd then "-w #{config.passwd}" else ''
+      config.uri = 'ldapi:///' if config.uri is true
+      uri = if config.uri then "-H #{config.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # Schema related config
+      throw Error "Missing name" unless config.name
+      throw Error "Missing schema" unless config.schema
+      config.schema = config.schema.trim()
+      schema = "#{tmpdir}/#{config.name}.schema"
+      conf = "#{tmpdir}/schema.conf"
+      ldif = "#{tmpdir}/ldif"
+      {status} = await @execute
         cmd: """
         ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" \
-        | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config
+        | grep -E cn=\\{[0-9]+\\}#{config.name},cn=schema,cn=config
         """
         code: 1
         code_skipped: 0
-      @call if: (-> @status -1), ->
-        @system.mkdir
-          target: ldif
-          ssh: ssh
-        , (err) ->
-          @log 'Directory ldif created'
-        @system.copy
-          source: options.schema
-          target: schema
-          ssh: ssh
-        , (err) ->
-          @log 'Schema copied'
-        @file
-          content: "include #{schema}"
-          target: conf
-          ssh: ssh
-        , (err) ->
-          @log 'Configuration generated'
-        @system.execute
-          cmd: "slaptest -f #{conf} -F #{ldif}"
-        , (err) ->
-          @log 'Configuration validated' unless err
-        @system.move
-          source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
-          target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
-          force: true
-        , (err, data) ->
-          throw Error 'No generated schema' unless data.status
-          @log 'Configuration renamed'
-        @file
-          target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
-          write: [
-            match: /^dn: cn.*$/mg
-            replace: "dn: cn=#{options.name},cn=schema,cn=config"
-          ,
-            match: /^cn: {\d+}(.*)$/mg
-            replace: 'cn: $1'
-          ,
-            match: /^structuralObjectClass.*/mg
-            replace: ''
-          ,
-            match: /^entryUUID.*/mg
-            replace: ''
-          ,
-            match: /^creatorsName.*/mg
-            replace: ''
-          ,
-            match: /^createTimestamp.*/mg
-            replace: ''
-          ,
-            match: /^entryCSN.*/mg
-            replace: ''
-          ,
-            match: /^modifiersName.*/mg
-            replace: ''
-          ,
-            match: /^modifyTimestamp.*/mg
-            replace: ''
-          ]
-        , (err) ->
-          @log "File ldif ready" unless err
-        @system.execute
-          cmd: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
-        , (err) ->
-          throw err if err
-          @log "Schema added: #{options.name}"
-      @system.remove
-        if: -> @status -1
-        target: tempdir
+      return false unless status
+      await @system.mkdir
+        target: ldif
+      log message: 'Directory ldif created', level: 'DEBUG'
+      await @system.copy
+        source: config.schema
+        target: schema
+      log message: 'Schema copied', level: 'DEBUG'
+      await @file
+        content: "include #{schema}"
+        target: conf
+      log message: 'Configuration generated', level: 'DEBUG'
+      await @execute
+        cmd: "slaptest -f #{conf} -F #{ldif}"
+      log message: 'Configuration validated', level: 'DEBUG'
+      {status} = await @fs.move
+        source: "#{ldif}/cn=config/cn=schema/cn={0}#{config.name}.ldif"
+        target: "#{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
+        force: true
+      throw Error 'No generated schema' unless status
+      log message: 'Configuration renamed', level: 'DEBUG'
+      @file
+        target: "#{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
+        write: [
+          match: /^dn: cn.*$/mg
+          replace: "dn: cn=#{config.name},cn=schema,cn=config"
+        ,
+          match: /^cn: {\d+}(.*)$/mg
+          replace: 'cn: $1'
+        ,
+          match: /^structuralObjectClass.*/mg
+          replace: ''
+        ,
+          match: /^entryUUID.*/mg
+          replace: ''
+        ,
+          match: /^creatorsName.*/mg
+          replace: ''
+        ,
+          match: /^createTimestamp.*/mg
+          replace: ''
+        ,
+          match: /^entryCSN.*/mg
+          replace: ''
+        ,
+          match: /^modifiersName.*/mg
+          replace: ''
+        ,
+          match: /^modifyTimestamp.*/mg
+          replace: ''
+        ]
+      log message: 'File ldif ready', level: 'DEBUG'
+      @execute
+        cmd: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
+      log message: "Schema added: #{config.name}", level: 'INFO'
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        tmpdir: true
+        global: 'ldap'
+      schema: schema

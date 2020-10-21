@@ -2,12 +2,12 @@
 module.exports =
   tags:
     api: true
-    ldap: false
-    ldap_acl: false
-    ldap_index: false
-    ldap_user: false
+    ldap: true
+    ldap_acl: true
+    ldap_index: true
+    ldap_user: true
   ldap:
-    uri: 'ldap://localhost:389'
+    uri: 'ldap://openldap:389'
     binddn: 'cn=admin,dc=example,dc=org'
     passwd: 'admin'
     config:

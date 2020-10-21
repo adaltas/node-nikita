@@ -1,95 +1,106 @@
 
 nikita = require '@nikitajs/engine/src'
 {tags, ssh, ldap} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
+utils = require '../src/utils'
 
 return unless tags.ldap_acl
 
 describe 'ldap.acl', ->
   
-  client = olcAccess = null
-  beforeEach (next) ->
-    client = ldap.createClient url: ldap.url
-    client.bind ldap.binddn, ldap.passwd, (err) ->
-      return next err if err
-      client.search 'olcDatabase={2}bdb,cn=config',
-        scope: 'base'
-        attributes:['olcAccess']
-      , (err, search) ->
-        search.on 'searchEntry', (entry) ->
-          olcAccess = entry.object.olcAccess
-        search.on 'end', ->
-          next()
-  afterEach (next) ->
-    change = new ldap.Change
-      operation: 'replace'
-      modification: olcAccess: olcAccess
-    client.modify 'olcDatabase={2}bdb,cn=config', change, (err) ->
-      client.unbind (err) ->
-        next err
+  client = olcAccesses = olcDatabase = null
+  beforeEach ->
+    {database: olcDatabase} = await nikita.ldap.tools.database
+      uri: ldap.uri
+      binddn: ldap.config.binddn
+      passwd: ldap.config.passwd
+      suffix: ldap.suffix_dn
+    {stdout} = await nikita.ldap.search
+      uri: ldap.uri
+      binddn: ldap.config.binddn
+      passwd: ldap.config.passwd
+      base: "olcDatabase=#{olcDatabase},cn=config"
+      attributes:['olcAccess']
+      scope: 'base'
+    olcAccesses = utils.string.lines(stdout)
+    .filter (l) -> /^olcAccess: /.test l
+    .map (line) -> line.split(':')[1].trim()
+  afterEach ->
+    nikita.ldap.modify
+      uri: ldap.uri
+      binddn: ldap.config.binddn
+      passwd: ldap.config.passwd
+      operations:
+        dn: "olcDatabase=#{olcDatabase},cn=config"
+        changetype: 'modify'
+        attributes: [
+          type: 'delete'
+          name: 'olcAccess'
+          ...(
+            type: 'add'
+            name: 'olcAccess'
+            value: olcAccess
+          ) for olcAccess in olcAccesses
+        ]
 
   they 'create a new permission', ({ssh}) ->
     nikita
+      ldap:
+        uri: ldap.uri
+        binddn: ldap.config.binddn
+        passwd: ldap.config.passwd
       ssh: ssh
-    .ldap.acl
-      # ldap: client
-      url: ldap.url
-      binddn: ldap.binddn
-      passwd: ldap.passwd
-      name: 'olcDatabase={2}bdb,cn=config'
-      to: 'dn.base="dc=test,dc=com"'
-      by: [
-        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
-      ]
-    , (err, {status}) ->
+    , ->
+      {status} = await @ldap.acl
+        suffix: ldap.suffix_dn
+        acls:
+          to: 'dn.base="dc=test,dc=com"'
+          by: [
+            'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
+          ]
       status.should.be.true()
-    .ldap.acl
-      ldap: client
-      name: 'olcDatabase={2}bdb,cn=config'
-      to: 'dn.base="dc=test,dc=com"'
-      by: [
-        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
-      ]
-    , (err, {status}) ->
+      {status} = await @ldap.acl
+        suffix: ldap.suffix_dn
+        acls:
+          to: 'dn.base="dc=test,dc=com"'
+          by: [
+            'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
+          ]
       status.should.be.false()
-    .promise()
 
   they 'respect order in creation', ({ssh}) ->
     nikita
+      ldap:
+        uri: ldap.uri
+        binddn: ldap.config.binddn
+        passwd: ldap.config.passwd
       ssh: ssh
-    .ldap.acl
-      ldap: client
-      name: 'olcDatabase={2}bdb,cn=config'
-      to: 'dn.base="ou=test1,dc=test,dc=com"'
-      by: [
-        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
-      ]
-    .ldap.acl
-      ldap: client
-      name: 'olcDatabase={2}bdb,cn=config'
-      to: 'dn.base="ou=test2,dc=test,dc=com"'
-      by: [
-        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
-      ]
-    .ldap.acl
-      ldap: client
-      name: 'olcDatabase={2}bdb,cn=config'
-      to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
-      place_before: 'dn.base="ou=test2,dc=test,dc=com"'
-      by: [
-        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
-      ]
-    .call (_, callback) ->
-      client.search 'olcDatabase={2}bdb,cn=config',
+    , ->
+      @ldap.acl
+        suffix: ldap.suffix_dn
+        acls:
+          to: 'dn.base="ou=test1,dc=test,dc=com"'
+          by: [
+            'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
+          ]
+      @ldap.acl
+        suffix: ldap.suffix_dn
+        acls:
+          to: 'dn.base="ou=test2,dc=test,dc=com"'
+          by: [
+            'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
+          ]
+      @ldap.acl
+        suffix: ldap.suffix_dn
+        acls:
+          to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
+          place_before: 'dn.base="ou=test2,dc=test,dc=com"'
+          by: [
+            'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
+          ]
+      {dn} = await @ldap.tools.database
+        suffix: ldap.suffix_dn
+      {stdout} = await @ldap.search
+        base: dn
         scope: 'base'
         attributes:['olcAccess']
-      , (err, search) ->
-        search.on 'searchEntry', (entry) ->
-          accesses = entry.object.olcAccess
-          for access, i in accesses
-            if /\{\d+\}(.*?) by/.exec(access)[1] is 'to dn.base="ou=test1,dc=test,dc=com"'
-              /\{\d+\}(.*?) by/.exec(accesses[i+1])[1].should.eql 'to dn.base="ou=INSERTED,dc=test,dc=com"'
-              /\{\d+\}(.*?) by/.exec(accesses[i+2])[1].should.eql 'to dn.base="ou=test2,dc=test,dc=com"'
-              break
-        search.on 'end', callback
-      .promise()

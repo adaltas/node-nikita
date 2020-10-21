@@ -1,17 +1,21 @@
 
 # registration of `nikita.ldap` actions
 
-## Dependency
+registry = require '@nikitajs/engine/src/registry'
 
-    {register} = require '@nikitajs/core/lib/registry'
-
-## Action registration
-
-    register module.exports =
-      ldap:
-        acl: '@nikitajs/ldap/src/acl'
-        add: '@nikitajs/ldap/src/add'
-        delete: '@nikitajs/ldap/src/delete'
-        index: '@nikitajs/ldap/src/index'
-        schema: '@nikitajs/ldap/src/schema'
-        user: '@nikitajs/ldap/src/user'
+module.exports =
+  ldap:
+    acl: '@nikitajs/ldap/src/acl'
+    add: '@nikitajs/ldap/src/add'
+    delete: '@nikitajs/ldap/src/delete'
+    index: '@nikitajs/ldap/src/index'
+    modify: '@nikitajs/ldap/src/modify'
+    schema: '@nikitajs/ldap/src/schema'
+    search: '@nikitajs/ldap/src/search'
+    tools:
+      database: '@nikitajs/ldap/src/tools/database'
+      databases: '@nikitajs/ldap/src/tools/databases'
+    user: '@nikitajs/ldap/src/user'
+(->
+  await registry.register module.exports
+)()

@@ -1,5 +1,5 @@
 
-ldap = require '../../src/misc/ldap'
+ldap = require '../../src/utils/ldap'
 {tags} = require '../test'
 
 return unless tags.api

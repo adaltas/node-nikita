@@ -1,0 +1,24 @@
+
+# Run all tests: `docker-compose up --abort-on-container-exit`
+# Enter console: `docker-compose run --rm --entrypoint /bin/bash nodejs` and `service sshd start`
+# Run a subset of the tests: `docker-compose run --rm nodejs test/service`
+
+# TODO: implement variable substitution once default value is implemented
+# see https://github.com/docker/compose/issues/2441
+
+version: '2'
+services:
+  nodejs:
+    build: .
+    image: nikita_ldap_openldap
+    volumes:
+      - ../../../../:/nikita
+    depends_on:
+      - openldap
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/ldap/env/openldap/test.coffee
+  openldap:
+    image: osixia/openldap:latest
+    expose:
+      - "389"
+      - "636"
