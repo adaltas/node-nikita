@@ -3,58 +3,82 @@
 
 Insert or modify an entry inside an OpenLDAP server.   
 
-## Options
-
-* `dn` (string | array)   
-  One or multiple DN to remove.   
-* `uri`   
-  Specify URI referring to the ldap server.   
-* `binddn`   
-  Distinguished Name to bind to the LDAP directory.   
-* `passwd`   
-  Password for simple authentication.   
-* `name`   
-  Distinguish name storing the "olcAccess" property, using the database adress
-  (eg: "olcDatabase={2}bdb,cn=config").   
-* `overwrite`   
-  Overwrite existing "olcAccess", default is to merge.   
-
 ## Example
 
 ```js
-require('nikita')
-.ldap.delete({
-  url: 'ldap://openldap.server/',
+{status} = await nikita.ldap.delete({
+  uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   dn: 'cn=group1,ou=groups,dc=company,dc=com'
-}, function(err, {status}){
-  console.log(err ? err.message : 'Entry deleted: ' + status);
 });
+console.log(`Entry deleted: ${status}`)
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      # Auth related options
-      binddn = if options.binddn then "-D #{options.binddn}" else ''
-      passwd = if options.passwd then "-w #{options.passwd}" else ''
-      if options.url
-        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
-        options.uri ?= options.url
-      options.uri = 'ldapi:///' if options.uri is true
-      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-      # Add related options
-      return callback Error "Nikita `ldap.delete`: required property 'dn'" unless options.dn
-      options.dn = [options.dn] unless Array.isArray options.dn
-      dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
+    schema =
+      type: 'object'
+      properties:
+        'dn':
+          oneOf: [
+            { type: 'string' }
+            { type: 'array', items: type: 'string' }
+          ]
+          description: """
+          One or multiple DN to remove.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Distinguish name storing the "olcAccess" property, using the database
+          address (eg: "olcDatabase={2}bdb,cn=config").
+          """
+        # General LDAP connection information
+        'binddn':
+          type: 'string'
+          description: """
+          Distinguished Name to bind to the LDAP directory.
+          """
+        'passwd':
+          type: 'string'
+          description: """
+          Password for simple authentication.
+          """
+        'uri':
+          type: 'string'
+          description: """
+          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+          false in which case it will use your openldap client environment
+          configuration.
+          """
+      required: ['dn']
+
+## Handler
+
+    handler = ({config}) ->
+      # Auth related config
+      binddn = if config.binddn then "-D #{config.binddn}" else ''
+      passwd = if config.passwd then "-w #{config.passwd}" else ''
+      config.uri = 'ldapi:///' if config.uri is true
+      uri = if config.uri then "-H #{config.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # Add related config
+      config.dn = [config.dn] unless Array.isArray config.dn
+      dn = config.dn.map( (dn) -> "'#{dn}'").join(' ')
       # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba' 
-      @system.execute
+      @execute
+        # Check that the entry exists
+        if_execute: "ldapsearch #{binddn} #{passwd} #{uri} -b #{dn} -s base"
         cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68
-      , (err, data) ->
-        return callback err if err
-        callback err, data.status
-        # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
-        # added = modified # For now, we dont modify
-        # callback err, modified, added
+      # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
+      # added = modified # For now, we dont modify
+      # callback err, modified, added
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'ldap'
+      schema: schema

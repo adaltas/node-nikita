@@ -3,166 +3,178 @@
 
 // Create and modify a user store inside an OpenLDAP server.   
 
-// ## Options
-
-// * `binddn`   
-//   Distinguished Name to bind to the LDAP directory.   
-// * `passwd`   
-//   Password for simple authentication.   
-// * `name`   
-//   Distinguish name storing the "olcAccess" property, using the database adress
-//   (eg: "olcDatabase={2}bdb,cn=config").   
-// * `overwrite`   
-//   Overwrite existing "olcAccess", default is to merge.   
-// * `uri`   
-//   Specify URI referring to the ldap server.   
-// * `user`   
-//   User object.   
-
 // ## Example
 
 // ```js
-// require('nikita')
-// .ldap.user({
-//   url: 'ldap://openldap.server/',
+// {status} = await nikita.ldap.user({
+//   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
-//   user: {
-//   }
-// }, function(err, {status}){
-//   console.log(err ? err.message : 'Index modified: ' + status);
+//   user: {}
 // });
+// console.info(`User created or modified: ${status}`);
 // ```
 
-// ## Source Code
-var each;
+// ## Schema
+var handler, merge, schema, utils;
 
-module.exports = function({options}, callback) {
-  var binddn, modified, passwd, uri;
-  // Auth related options
-  binddn = options.binddn ? `-D ${options.binddn}` : '';
-  passwd = options.passwd ? `-w ${options.passwd}` : '';
-  if (options.url) {
-    console.log("Nikita: option 'options.url' is deprecated, use 'options.uri'");
-    if (options.uri == null) {
-      options.uri = options.url;
+schema = {
+  type: 'object',
+  properties: {
+    'name': {
+      type: 'string',
+      description: `Distinguish name storing the "olcAccess" property, using the database
+address (eg: "olcDatabase={2}bdb,cn=config").`
+    },
+    'user': {
+      oneOf: [
+        {
+          type: 'object'
+        },
+        {
+          type: 'array'
+        }
+      ],
+      description: `User object.`
+    },
+    // General LDAP connection information
+    'binddn': {
+      type: 'string',
+      description: `Distinguished Name to bind to the LDAP directory.`
+    },
+    'passwd': {
+      type: 'string',
+      description: `Password for simple authentication.`
+    },
+    'uri': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean',
+          default: 'ldapi:///'
+        }
+      ],
+      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+false in which case it will use your openldap client environment
+configuration.`
     }
   }
-  if (options.uri === true) {
-    options.uri = 'ldapi:///';
-  }
-  uri = options.uri ? `-H ${options.uri}` : ''; // URI is obtained from local openldap conf unless provided
-  if (!options.user) {
-    // User related options
-    return callback(Error("Nikita `ldap.user`: required property 'user'"));
-  }
-  if (!Array.isArray(options.user)) {
-    options.user = [options.user];
+};
+
+// ## Handler
+handler = async function({config, log}) {
+  var added, entry, i, k, len, loggedin, modified, new_password, ref, updated, user, v;
+  if (!Array.isArray(config.user)) {
+    // Auth related config
+    // binddn = if config.binddn then "-D #{config.binddn}" else ''
+    // passwd = if config.passwd then "-w #{config.passwd}" else ''
+    // uri = if config.uri then "-H #{config.uri}" else '' # URI is obtained from local openldap conf unless provided
+    // User related config
+    // Note, very weird, if we don't merge, the user array is traversable but
+    // the keys map to undefined values.
+    config.user = [merge(config.user)];
   }
   modified = false;
-  return each(options.user).call((user, callback) => {
-    var do_checkpass, do_end, do_ldappass, do_user;
-    do_user = () => {
-      var entry, k, v;
-      entry = {};
-      for (k in user) {
-        v = user[k];
-        if (k === 'userPassword' && !/^\{SASL\}/.test(user.userPassword)) {
-          continue;
-        }
-        entry[k] = v;
+  ref = config.user;
+  for (i = 0, len = ref.length; i < len; i++) {
+    user = ref[i];
+    // Add the user
+    entry = {};
+    for (k in user) {
+      v = user[k];
+      if (k === 'userPassword' && !/^\{SASL\}/.test(user.userPassword)) {
+        continue;
       }
-      return this.ldap.add({
-        entry: entry,
-        uri: options.uri,
-        binddn: options.binddn,
-        passwd: options.passwd
-      }, function(err, updated, added) {
-        if (err) {
-          return callback(err);
-        }
-        if (added) {
-          this.log({
-            message: "User added",
-            level: 'WARN',
-            module: 'nikita/ldap/user'
-          });
-        } else if (updated) {
-          this.log({
-            message: "User updated",
-            level: 'WARN',
-            module: 'nikita/ldap/user'
-          });
-        }
-        if (updated || added) {
-          modified = true;
-        }
-        if (added) {
-          return do_ldappass();
-        } else {
-          return do_checkpass();
-        }
+      entry[k] = user[k];
+    }
+    ({updated, added} = (await this.ldap.add({
+      entry: entry,
+      uri: config.uri,
+      binddn: config.binddn,
+      passwd: config.passwd
+    })));
+    if (added) {
+      log({
+        message: "User added",
+        level: 'WARN',
+        module: 'nikita/ldap/user'
       });
-    };
-    do_checkpass = () => {
-      if (!(user.userPassword || /^\{SASL\}/.test(user.userPassword))) {
-        return do_end();
-      }
-      return this.system.execute({
+    } else if (updated) {
+      log({
+        message: "User updated",
+        level: 'WARN',
+        module: 'nikita/ldap/user'
+      });
+    }
+    if (updated || added) {
+      modified = true;
+    }
+    // Check password is user is not new and his password is not of type SASL
+    new_password = false;
+    if (!added && user.userPassword && !/^\{SASL\}/.test(user.userPassword)) {
+      ({
+        status: loggedin
+      } = (await this.ldap.search({
         // See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
-        cmd: `ldapsearch -D ${user.dn} -w ${user.userPassword} ${uri} -b "" -s base "objectclass=*"`,
+        binddn: user.dn,
+        passwd: user.userPassword,
+        uri: config.uri,
+        base: '',
+        scope: 'base',
+        filter: 'objectclass=*',
         code_skipped: 49
-      }, function(err, data) {
-        if (err) {
-          return callback(err);
-        }
-        if (data.status) {
-          return do_end();
-        } else {
-          return do_ldappass();
-        }
-      });
-    };
-    do_ldappass = () => {
-      if (!(user.userPassword || /^\{SASL\}/.test(user.userPassword))) {
-        return do_end();
+      })));
+      if (!loggedin) {
+        new_password = true;
       }
-      return this.system.execute({
-        cmd: `ldappasswd ${binddn} ${passwd} ${uri} -s ${user.userPassword} '${user.dn}'`
-      }, function(err) {
-        if (err) {
-          return callback(err);
-        }
-        this.log({
-          message: "Password modified",
-          level: 'WARN',
-          module: 'nikita/ldap/user'
-        });
-        modified = true;
-        return do_end();
+    }
+    if (added || new_password && !/^\{SASL\}/.test(user.userPassword)) {
+      await this.execute({
+        // """
+        // ldappasswd #{binddn} #{passwd} #{uri} \
+        //   -s #{user.userPassword} \
+        //   '#{user.dn}'
+        // """
+        cmd: ['ldappasswd', config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0, config.binddn ? `-D ${utils.string.escapeshellarg(config.binddn)}` : void 0, config.passwd ? `-w ${utils.string.escapeshellarg(config.passwd)}` : void 0, config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0, `-s ${user.userPassword}`, `${utils.string.escapeshellarg(user.dn)}`].join(' ')
       });
-    };
-    do_end = function() {
-      return callback();
-    };
-    return do_user();
-  }).next(function(err) {
-    return callback(err, modified);
-  });
+      log({
+        message: "Password modified",
+        level: 'WARN',
+        module: 'nikita/ldap/user'
+      });
+      modified = true;
+    }
+  }
+  return {
+    status: modified
+  };
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    global: 'ldap'
+  },
+  schema: schema
 };
 
 // ## Note
 
-// A user can modify it's own password with the "ldappasswd" command if ACL allows
+  // A user can modify it's own password with the "ldappasswd" command if ACL allows
 // it. Here's an example:
 
-// ```bash
+  // ```bash
 // ldappasswd -D cn=myself,ou=users,dc=ryba -w oldpassword \
 //   -H ldaps://master3.ryba:636 \
 //   -s newpassword 'cn=myself,ou=users,dc=ryba'
 // ```
 
-// ## Dependencies
-each = require('each');
+  // ## Dependencies
+({merge} = require('mixme'));
+
+utils = require('./utils');
 
 // [index]: http://www.zytrax.com/books/ldap/apa/indeces.html

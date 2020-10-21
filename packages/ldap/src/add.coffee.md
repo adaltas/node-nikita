@@ -3,28 +3,12 @@
 
 Insert or modify an entry inside an OpenLDAP server.   
 
-## Options
-
-* `entry` (object | array)   
-  Object to be inserted or modified.   
-* `uri`   
-  Specify URI referring to the ldap server.   
-* `binddn`   
-  Distinguished Name to bind to the LDAP directory.   
-* `passwd`   
-  Password for simple authentication.   
-* `name`   
-  Distinguish name storing the "olcAccess" property, using the database adress
-  (eg: "olcDatabase={2}bdb,cn=config").   
-* `overwrite`   
-  Overwrite existing "olcAccess", default is to merge.   
-
 ## Example
 
 ```js
 require('nikita')
 .ldap.index({
-  url: 'ldap://openldap.server/',
+  uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   entry: {
@@ -39,25 +23,82 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({options}, callback) ->
-      # Auth related options
-      binddn = if options.binddn then "-D #{options.binddn}" else ''
-      passwd = if options.passwd then "-w #{options.passwd}" else ''
-      if options.url
-        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
-        options.uri ?= options.url
-      options.uri = 'ldapi:///' if options.uri is true
-      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-      # Add related options
-      return callback Error "Nikita `ldap.add`: required property 'entry'" unless options.entry
-      options.entry = [options.entry] unless Array.isArray options.entry
+    on_action = ({config}) ->
+      config.entry = [config.entry] unless Array.isArray config.entry
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'entry':
+          type: 'array'
+          items:
+            type: 'object'
+            properties:
+              'dn':
+                type: 'string'
+                description: """
+                Distinguish name of the entry
+                """
+            required: ['dn']
+          description: """
+          Object to be inserted or modified.
+          """
+        # General LDAP connection information
+        'binddn':
+          type: 'string'
+          description: """
+          Distinguished Name to bind to the LDAP directory.
+          """
+        'mesh':
+          type: 'string'
+          description: """
+          Specify the SASL mechanism to be used for authentication. If it's not
+          specified, the program will choose the best  mechanism  the  server
+          knows.
+          """
+        'passwd':
+          type: 'string'
+          description: """
+          Password for simple authentication.
+          """
+        'uri':
+          type: 'string'
+          description: """
+          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+          false in which case it will use your openldap client environment
+          configuration.
+          """
+      required: ['entry']
+
+## Handler
+
+    handler = ({config}) ->
+      # Auth related config
+      # binddn = if config.binddn then "-D #{config.binddn}" else ''
+      # passwd = if config.passwd then "-w #{config.passwd}" else ''
+      # config.uri = 'ldapi:///' if config.uri is true
+      if config.uri is true
+        config.mesh ?= 'EXTERNAL'
+        config.uri = 'ldapi:///'
+      uri = if config.uri then "-H #{config.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # Add related config
       ldif = ''
-      for entry in options.entry
-        return callback Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
+      for entry in config.entry
+        # Check if record already exists
+        {status, stdout} = await @ldap.search config,
+          base: entry.dn
+          code_skipped: 32 # No such object
+          scope: 'base'
+        original = {}
+        continue if status
+        # throw Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
         ldif += '\n'
         ldif += "dn: #{entry.dn}\n"
+        ldif += 'changetype: add\n'
         [_, k, v] = /^(.*?)=(.+?),.*$/.exec entry.dn
         ldif += "#{k}: #{v}\n"
         if entry[k]
@@ -68,22 +109,37 @@ require('nikita')
           v = [v] unless Array.isArray v
           for vv in v
             ldif += "#{k}: #{vv}\n"
-      modified = false
-      # We keep -c for now because we accept multiple entries. In the future, 
-      # we shall detect modification and be more strict.
-      # -c  Continuous operation mode.  Errors are reported, but ldapmodify will
-      # continue with modifications.  The default is to exit after reporting an
-      # error.
-      @system.execute
-        cmd: """
-        ldapadd -c #{binddn} #{passwd} #{uri} \
-        <<-EOF
-        #{ldif}
-        EOF
-        """
-        code_skipped: 68
-      , (err, data) ->
-        return callback err if err
-        modified = data.stderr.match(/Already exists/g)?.length isnt data.stdout.match(/adding new entry/g).length
-        added = modified # For now, we dont modify
-        callback err, modified, added
+      {stdout, stderr} = await @execute
+        if: ldif isnt ''
+        cmd: [
+          [
+            'ldapmodify'
+            '-c' if config.continuous
+            "-Y #{utils.string.escapeshellarg config.mesh}" if config.mesh
+            "-D #{utils.string.escapeshellarg config.binddn}" if config.binddn
+            "-w #{utils.string.escapeshellarg config.passwd}" if config.passwd
+            "-H #{utils.string.escapeshellarg config.uri}" if config.uri
+          ].join ' '
+          """
+          <<-EOF
+          #{ldif}
+          EOF
+          """
+        ].join ' '
+        # code_skipped: 68
+      # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
+      # status: modified
+
+## Exports
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      metadata:
+        global: 'ldap'
+      schema: schema
+
+## Dependencies
+
+    utils = require './utils'

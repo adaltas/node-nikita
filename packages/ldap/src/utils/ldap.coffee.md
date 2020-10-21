@@ -1,5 +1,5 @@
 
-# Misc LDAP
+# Utils LDAP
 
     module.exports =
       acl:
@@ -75,8 +75,3 @@ Stringify one or multiple "olcDbIndex" entries.
           indexes = for k, v of indexes
             "#{k} #{v}"
           if isArray then indexes else indexes[0]
-
-
-
-
-

@@ -3,41 +3,11 @@
 
 // Create new [ACLs](acls) for the OpenLDAP server.
 
-// ## Options
-
-// * `to`   
-//   What to control access to as a string.   
-// * `place_before`   
-//   Place before another rule defined by "to".   
-// * `by`   
-//   Who to grant access to and the access to grant as an array
-//   (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
-// * `first`   
-// * `url`   
-//   Specify URI referring to the ldap server.   
-// * `binddn`   
-//   Distinguished Name to bind to the LDAP directory.   
-// * `passwd`   
-//   Password for simple authentication.   
-// * `name`   
-//   Distinguish name storing the "olcAccess" property, using the database adress
-//   (eg: "olcDatabase={2}bdb,cn=config").   
-// * `overwrite`   
-//   Overwrite existing "olcAccess", default is to merge.   
-// * `log`   
-//   Function called with a log related messages.   
-// * `acl`   
-//   In case of multiple acls, regroup "place_before", "to" and "by" as an array.   
-
 // ## Example
 
 // ```js
-// require('nikita')
-// .ldap.acl({
-//   url: 'ldap://openldap.server/',
-//   binddn: 'cn=admin,cn=config',
-//   passwd: 'password',
-//   name: 'olcDatabase={2}bdb,cn=config',
+// nikita.ldap.acl({
+//   dn: '',
 //   acls: [{
 //     place_before: 'dn.subtree="dc=domain,dc=com"',
 //     to: 'dn.subtree="ou=users,dc=domain,dc=com"',
@@ -52,235 +22,273 @@
 //       'dn.exact="ou=kerberos,dc=domain,dc=com" write'
 //     ]
 //   }]
-// }, function(err, {status}){
-//   console.log(err ? err.message : 'ACL modified: ' + status);
-// });
+// })
+// console.info(`ACL modified: ${status}`)
 // ```
 
-// ## Source Code
-var each, ldap, misc, string;
+// ## Hooks
+var handler, is_object_literal, ldap, merge, on_action, schema, utils;
 
-module.exports = function({options}, callback) {
-  var modified;
-  // # Auth related options
-  // binddn = if options.binddn then "-D #{options.binddn}" else ''
-  // passwd = if options.passwd then "-w #{options.passwd}" else ''
-  // options.uri = 'ldapi:///' if options.uri is true
-  // uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-  // Acl related options
-  if (options.acls == null) {
-    options.acls = [{}];
+on_action = function({config}) {
+  if (is_object_literal(config.acls)) {
+    return config.acls = [config.acls];
   }
-  modified = false;
-  return each(options.acls).call((acl, callback) => {
-    var do_diff, do_end, do_getacls, do_getdn, do_save;
-    do_getdn = () => {
-      if (options.hdb_dn) {
-        return do_getacls();
-      }
-      this.log({
-        message: "Get DN of the HDB to modify",
-        level: 'DEBUG',
-        module: 'nikita/ldap/acl'
-      });
-      return this.system.execute({
-        cmd: `ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config "(olcSuffix= ${options.suffix})" dn 2>/dev/null | egrep '^dn' | sed -e 's/^dn:\\s*olcDatabase=\\(.*\\)$/\\1/g'`
-      }, function(err, data) {
-        if (err) {
-          return callback(err);
-        }
-        options.hdb_dn = data.stdout.trim();
-        return do_getacls();
-      });
-    };
-    do_getacls = () => {
-      this.log({
-        message: "List all ACL of the directory",
-        level: 'DEBUG',
-        module: 'nikita/ldap/acl'
-      });
-      return this.system.execute({
-        cmd: `ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b olcDatabase=${options.hdb_dn} "(olcAccess=*)" olcAccess`
-      }, function(err, data) {
-        var current, j, len, line, match, olcAccesses, ref;
-        if (err) {
-          return callback(err);
-        }
-        current = null;
-        olcAccesses = [];
-        ref = string.lines(data.stdout);
-        for (j = 0, len = ref.length; j < len; j++) {
-          line = ref[j];
-          if (match = /^olcAccess: (.*)$/.exec(line)) {
-            if (current != null) {
-              olcAccesses.push(current); // Push previous rule
-            }
-            current = match[1];
-          } else if (current != null) {
-            if (/^ /.test(line)) { // Append to existing rule
-              current += line.substr(1); // Close the rule
-            } else {
-              olcAccesses.push(current);
-              current = null;
-            }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'acls': {
+      type: 'array',
+      description: `In case of multiple acls, regroup "place_before", "to" and "by" as an array.`,
+      items: {
+        type: 'object',
+        properties: {
+          'by': {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            description: `Who to grant access to and the access to grant as an array (eg:
+\`{..., by:["ssf=64 anonymous auth"]}\`).`
+          },
+          'first': {
+            type: 'boolean',
+            description: `Please ACL in the first position.`
+          },
+          'place_before': {
+            type: 'string',
+            description: `Place before another rule defined by "to".`
+          },
+          'to': {
+            type: 'string',
+            description: `What to control access to as a string.`
           }
         }
-        return do_diff(ldap.acl.parse(olcAccesses));
-      });
-    };
-    do_diff = (olcAccesses) => {
-      var access, access_by, acl_by, found, i, index, is_perfect_match, j, k, l, len, len1, len2, len3, len4, len5, m, n, not_found_acl, o, olcAccess, ref, ref1, ref2;
-      olcAccess = null;
+      }
+    },
+    'dn': {
+      type: 'string',
+      description: `Distinguish name storing the "olcAccess" property, using the database
+address (eg: "olcDatabase={2}bdb,cn=config").`
+    },
+    'suffix': {
+      type: 'string',
+      description: `The suffix associated with the database (eg: "dc=example,dc=org"),
+used as an alternative to the \`dn\` configuration.`
+    }
+  },
+  required: ['acls']
+};
+
+// ## Handler
+handler = async function({config, log}) {
+  var access, access_by, acl, acl_by, current, dn, found, i, index, is_perfect_match, j, k, l, len, len1, len2, len3, len4, len5, len6, len7, line, m, match, n, not_found_acl, o, olcAccess, olcAccesses, old, operations, p, q, ref, ref1, ref2, ref3, ref4, status, stdout;
+  status = false;
+  // Get DN
+  if (!config.dn) {
+    log({
+      message: "Get DN of the database to modify",
+      level: 'DEBUG',
+      module: 'nikita/ldap/index'
+    });
+    ({dn} = (await this.ldap.tools.database(config, {
+      suffix: config.suffix
+    })));
+    config.dn = dn;
+    log({
+      message: `Database DN is ${dn}`,
+      level: 'INFO',
+      module: 'nikita/ldap/index'
+    });
+  }
+  ref = config.acls;
+  for (j = 0, len = ref.length; j < len; j++) {
+    acl = ref[j];
+    // Get ACLs
+    log({
+      message: "List all ACL of the directory",
+      level: 'DEBUG',
+      module: 'nikita/ldap/acl'
+    });
+    ({stdout} = (await this.ldap.search(config, {
+      attributes: ['olcAccess'],
+      base: `${config.dn}`,
+      filter: '(olcAccess=*)'
+    })));
+    current = null;
+    olcAccesses = [];
+    ref1 = utils.string.lines(stdout);
+    for (k = 0, len1 = ref1.length; k < len1; k++) {
+      line = ref1[k];
+      if (match = /^olcAccess: (.*)$/.exec(line)) {
+        if (current != null) {
+          olcAccesses.push(current); // Push previous rule
+        }
+        current = match[1];
+      } else if (current != null) {
+        if (/^ /.test(line)) { // Append to existing rule
+          current += line.substr(1); // Close the rule
+        } else {
+          olcAccesses.push(current);
+          current = null;
+        }
+      }
+    }
+    olcAccesses = ldap.acl.parse(olcAccesses);
+    // Diff
+    olcAccess = null;
 // Find match "to" property
-      for (i = j = 0, len = olcAccesses.length; j < len; i = ++j) {
-        access = olcAccesses[i];
-        if (acl.to === access.to) {
-          olcAccess = misc.object.clone(access);
-          olcAccess.old = access;
-          break;
+    for (i = l = 0, len2 = olcAccesses.length; l < len2; i = ++l) {
+      access = olcAccesses[i];
+      if (acl.to === access.to) {
+        olcAccess = merge(access);
+        olcAccess.old = access;
+        break;
+      }
+    }
+    if (olcAccess) { // Modify rule or bypass perfect match
+      is_perfect_match = true;
+      not_found_acl = [];
+      if (acl.by.length !== olcAccess.by.length) {
+        is_perfect_match = false;
+      } else {
+        ref2 = acl.by;
+        for (i = m = 0, len3 = ref2.length; m < len3; i = ++m) {
+          acl_by = ref2[i];
+          if (acl_by !== olcAccess.by[i]) {
+            is_perfect_match = false;
+          }
+          found = true;
+          ref3 = olcAccess.by;
+          for (n = 0, len4 = ref3.length; n < len4; n++) {
+            access_by = ref3[n];
+            if (acl_by !== access_by) {
+              found = false;
+            }
+          }
+          if (!found) {
+            not_found_acl.push(acl_by);
+          }
         }
       }
-      if (olcAccess) { // Modify rule or bypass perfect match
-        is_perfect_match = true;
-        not_found_acl = [];
-        if (acl.by.length !== olcAccess.by.length) {
-          is_perfect_match = false;
-        } else {
-          ref = acl.by;
-          for (i = k = 0, len1 = ref.length; k < len1; i = ++k) {
-            acl_by = ref[i];
-            if (acl_by !== olcAccess.by[i]) {
-              is_perfect_match = false;
-            }
-            found = true;
-            ref1 = olcAccess.by;
-            for (l = 0, len2 = ref1.length; l < len2; l++) {
-              access_by = ref1[l];
-              if (acl_by !== access_by) {
-                found = false;
-              }
-            }
-            if (!found) {
-              not_found_acl.push(acl_by);
-            }
-          }
-        }
-        if (is_perfect_match) {
-          this.log({
-            message: "No modification to apply",
-            level: 'INFO',
-            module: 'nikita/ldap/acl'
-          });
-          return do_end();
-        }
-        if (not_found_acl.length) {
-          this.log({
-            message: "Modify access after undefined acl",
-            level: 'INFO',
-            module: 'nikita/ldap/acl'
-          });
-          ref2 = olcAccess.by;
-          for (m = 0, len3 = ref2.length; m < len3; m++) {
-            access_by = ref2[m];
-            not_found_acl.push(access_by);
-          }
-          olcAccess.by = not_found_acl;
-        } else {
-          this.log({
-            message: "Modify access after reorder",
-            level: 'INFO',
-            module: 'nikita/ldap/acl'
-          });
-          if (typeof this.log === "function") {
-            this.log('nikita `ldap.acl`: m');
-          }
-          olcAccess.by = acl.by;
-        }
-      } else {
-        this.log({
-          message: "Insert a new access",
+      if (is_perfect_match) {
+        log({
+          message: "No modification to apply",
           level: 'INFO',
           module: 'nikita/ldap/acl'
         });
-        index = olcAccesses.length;
-        if (acl.first) { // not tested
-          index = 0;
-        }
-        if (acl.place_before) {
-          for (i = n = 0, len4 = olcAccesses.length; n < len4; i = ++n) {
-            access = olcAccesses[i];
-            if (access.to === acl.place_before) {
-              index = i;
-            }
-          }
-        } else if (acl.after) {
-          for (i = o = 0, len5 = olcAccesses.length; o < len5; i = ++o) {
-            access = olcAccesses[i];
-            if (access.to === options.after) {
-              index = i + 1;
-            }
-          }
-        }
-        olcAccess = {
-          index: index,
-          to: acl.to,
-          by: acl.by,
-          add: true
-        };
+        continue;
       }
-      return do_save(olcAccess);
-    };
-    do_save = (olcAccess) => {
-      var cmd, old;
-      if (olcAccess.old) {
-        old = ldap.acl.stringify(olcAccess.old);
-      }
-      olcAccess = ldap.acl.stringify(olcAccess);
-      if (old) {
-        cmd = `ldapadd -Y EXTERNAL -H ldapi:/// <<-EOF
-dn: olcDatabase=${options.hdb_dn}
-changetype: modify
-delete: olcAccess
-olcAccess: ${old}
--
-add: olcAccess
-olcAccess: ${olcAccess}
-EOF`;
+      if (not_found_acl.length) {
+        log({
+          message: "Modify access after undefined acl",
+          level: 'INFO',
+          module: 'nikita/ldap/acl'
+        });
+        ref4 = olcAccess.by;
+        for (o = 0, len5 = ref4.length; o < len5; o++) {
+          access_by = ref4[o];
+          not_found_acl.push(access_by);
+        }
+        olcAccess.by = not_found_acl;
       } else {
-        cmd = `ldapadd -Y EXTERNAL -H ldapi:/// <<-EOF
-dn: olcDatabase=${options.hdb_dn}
-changetype: modify
-add: olcAccess
-olcAccess: ${olcAccess}
-EOF`;
-      }
-      return this.system.execute({
-        cmd: cmd
-      }, function(err, data) {
-        if (err) {
-          return callback(err);
+        log({
+          message: "Modify access after reorder",
+          level: 'INFO',
+          module: 'nikita/ldap/acl'
+        });
+        if (typeof log === "function") {
+          log('nikita `ldap.acl`: m');
         }
-        modified = true;
-        return do_end();
+        olcAccess.by = acl.by;
+      }
+    } else {
+      log({
+        message: "Insert a new access",
+        level: 'INFO',
+        module: 'nikita/ldap/acl'
       });
+      index = olcAccesses.length;
+      if (acl.first) { // not tested
+        index = 0;
+      }
+      if (acl.place_before) {
+        for (i = p = 0, len6 = olcAccesses.length; p < len6; i = ++p) {
+          access = olcAccesses[i];
+          if (access.to === acl.place_before) {
+            index = i;
+          }
+        }
+      } else if (acl.after) {
+        for (i = q = 0, len7 = olcAccesses.length; q < len7; i = ++q) {
+          access = olcAccesses[i];
+          if (access.to === config.after) {
+            index = i + 1;
+          }
+        }
+      }
+      olcAccess = {
+        index: index,
+        to: acl.to,
+        by: acl.by,
+        add: true
+      };
+    }
+    if (olcAccess.old) {
+      // Save
+      old = ldap.acl.stringify(olcAccess.old);
+    }
+    olcAccess = ldap.acl.stringify(olcAccess);
+    operations = {
+      dn: config.dn,
+      changetype: 'modify',
+      attributes: []
     };
-    do_end = function() {
-      return callback();
-    };
-    return do_getdn();
-  }).next(function(err) {
-    return callback(err, modified);
-  });
+    if (old) {
+      operations.attributes.push({
+        type: 'delete',
+        name: 'olcAccess'
+      });
+      operations.attributes.push({
+        type: 'add',
+        name: 'olcAccess',
+        value: olcAccess
+      });
+    } else {
+      operations.attributes.push({
+        type: 'add',
+        name: 'olcAccess',
+        value: olcAccess
+      });
+    }
+    await this.ldap.modify(config, {
+      operations: operations
+    });
+    status = true;
+  }
+  return status;
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  metadata: {
+    global: 'ldap'
+  },
+  schema: schema
 };
 
 // ## Dependencies
-each = require('each');
+({is_object_literal, merge} = require('mixme'));
 
-misc = require('@nikitajs/core/lib/misc');
+ldap = require('./utils/ldap');
 
-ldap = require('@nikitajs/core/lib/misc/ldap');
-
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('@nikitajs/engine/lib/utils');
 
 // [acls]: http://www.openldap.org/doc/admin24/access-control.html
 // [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl

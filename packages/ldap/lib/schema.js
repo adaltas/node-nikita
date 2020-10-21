@@ -3,188 +3,190 @@
 
 // Register a new ldap schema.
 
-// ## Options
-
-// * `binddn`   
-//   Distinguished Name to bind to the LDAP directory.   
-// * `passwd`   
-//   Password for simple authentication.   
-// * `uri`   
-//   LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false
-//   in which case it will use your openldap client environment configuration.   
-// * `name`   
-//   Common name of the schema.   
-// * `schema`   
-//   Path to the schema definition.   
-// * `overwrite`   
-//   Overwrite existing "olcAccess", default is to merge.   
-// * `log`   
-//   Function called with a log related messages.   
-// * `ssh` (object|ssh2)   
-//   Run the action on a remote server using SSH, an ssh2 instance or an
-//   configuration object used to initialize the SSH connection.   
-// * `stdout` (stream.Writable)   
-//   Writable EventEmitter in which the standard output of executed commands will
-//   be piped.   
-// * `stderr` (stream.Writable)   
-//   Writable EventEmitter in which the standard error output of executed command
-//   will be piped.   
-
 // ## Example
 
 // ```js
-// require('nikita')
-// .ldap.schema({
+// {status} = await nikita.ldap.schema({
+//   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   name: 'kerberos',
 //   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
-// }, function(err, modified){
-//   console.log(err ? err.message : 'Index modified: ' + !!modified);
-// });
+// })
+// console.info(`Schema created or modified: ${status}`);
 // ```
 
-// ## Source Code
-module.exports = function({options}) {
-  var binddn, conf, ldif, passwd, schema, ssh, tempdir, uri;
-  this.log({
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'name': {
+      type: 'string',
+      description: `Common name of the schema.`
+    },
+    'schema': {
+      type: 'string',
+      description: `Path to the schema definition.`
+    },
+    // General LDAP connection information
+    'binddn': {
+      type: 'string',
+      description: `Distinguished Name to bind to the LDAP directory.`
+    },
+    'passwd': {
+      type: 'string',
+      description: `Password for simple authentication.`
+    },
+    'uri': {
+      type: 'string',
+      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+false in which case it will use your openldap client environment
+configuration.`
+    }
+  }
+};
+
+// ## Handler
+handler = async function({
+    config,
+    metadata: {tmpdir}
+  }) {
+  var binddn, conf, ldif, passwd, status, uri;
+  log({
     message: "Entering ldap.schema",
     level: 'DEBUG',
     module: 'nikita/lib/ldap/schema'
   });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  // Auth related options
-  binddn = options.binddn ? `-D ${options.binddn}` : '';
-  passwd = options.passwd ? `-w ${options.passwd}` : '';
-  if (options.url) {
-    console.log("Nikita: option 'options.url' is deprecated, use 'options.uri'");
-    if (options.uri == null) {
-      options.uri = options.url;
-    }
+  // Auth related config
+  binddn = config.binddn ? `-D ${config.binddn}` : '';
+  passwd = config.passwd ? `-w ${config.passwd}` : '';
+  if (config.uri === true) {
+    config.uri = 'ldapi:///';
   }
-  if (options.uri === true) {
-    options.uri = 'ldapi:///';
-  }
-  uri = options.uri ? `-H ${options.uri}` : ''; // URI is obtained from local openldap conf unless provided
-  if (!options.name) {
-    // Schema related options
+  uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided
+  if (!config.name) {
+    // Schema related config
     throw Error("Missing name");
   }
-  if (!options.schema) {
+  if (!config.schema) {
     throw Error("Missing schema");
   }
-  options.schema = options.schema.trim();
-  tempdir = options.tempdir || `/tmp/nikita_ldap.schema_${Date.now()}`;
-  schema = `${tempdir}/${options.name}.schema`;
-  conf = `${tempdir}/schema.conf`;
-  ldif = `${tempdir}/ldif`;
-  this.system.execute({
-    // shy: true
-    cmd: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${options.name},cn=schema,cn=config`,
+  config.schema = config.schema.trim();
+  schema = `${tmpdir}/${config.name}.schema`;
+  conf = `${tmpdir}/schema.conf`;
+  ldif = `${tmpdir}/ldif`;
+  ({status} = (await this.execute({
+    cmd: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
     code: 1,
     code_skipped: 0
+  })));
+  if (!status) {
+    return false;
+  }
+  await this.system.mkdir({
+    target: ldif
   });
-  this.call({
-    if: (function() {
-      return this.status(-1);
-    })
-  }, function() {
-    this.system.mkdir({
-      target: ldif,
-      ssh: ssh
-    }, function(err) {
-      return this.log('Directory ldif created');
-    });
-    this.system.copy({
-      source: options.schema,
-      target: schema,
-      ssh: ssh
-    }, function(err) {
-      return this.log('Schema copied');
-    });
-    this.file({
-      content: `include ${schema}`,
-      target: conf,
-      ssh: ssh
-    }, function(err) {
-      return this.log('Configuration generated');
-    });
-    this.system.execute({
-      cmd: `slaptest -f ${conf} -F ${ldif}`
-    }, function(err) {
-      if (!err) {
-        return this.log('Configuration validated');
-      }
-    });
-    this.system.move({
-      source: `${ldif}/cn=config/cn=schema/cn={0}${options.name}.ldif`,
-      target: `${ldif}/cn=config/cn=schema/cn=${options.name}.ldif`,
-      force: true
-    }, function(err, data) {
-      if (!data.status) {
-        throw Error('No generated schema');
-      }
-      return this.log('Configuration renamed');
-    });
-    this.file({
-      target: `${ldif}/cn=config/cn=schema/cn=${options.name}.ldif`,
-      write: [
-        {
-          match: /^dn: cn.*$/mg,
-          replace: `dn: cn=${options.name},cn=schema,cn=config`
-        },
-        {
-          match: /^cn: {\d+}(.*)$/mg,
-          replace: 'cn: $1'
-        },
-        {
-          match: /^structuralObjectClass.*/mg,
-          replace: ''
-        },
-        {
-          match: /^entryUUID.*/mg,
-          replace: ''
-        },
-        {
-          match: /^creatorsName.*/mg,
-          replace: ''
-        },
-        {
-          match: /^createTimestamp.*/mg,
-          replace: ''
-        },
-        {
-          match: /^entryCSN.*/mg,
-          replace: ''
-        },
-        {
-          match: /^modifiersName.*/mg,
-          replace: ''
-        },
-        {
-          match: /^modifyTimestamp.*/mg,
-          replace: ''
-        }
-      ]
-    }, function(err) {
-      if (!err) {
-        return this.log("File ldif ready");
-      }
-    });
-    return this.system.execute({
-      cmd: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldif}/cn=config/cn=schema/cn=${options.name}.ldif`
-    }, function(err) {
-      if (err) {
-        throw err;
-      }
-      return this.log(`Schema added: ${options.name}`);
-    });
+  log({
+    message: 'Directory ldif created',
+    level: 'DEBUG'
   });
-  return this.system.remove({
-    if: function() {
-      return this.status(-1);
-    },
-    target: tempdir
+  await this.system.copy({
+    source: config.schema,
+    target: schema
   });
+  log({
+    message: 'Schema copied',
+    level: 'DEBUG'
+  });
+  await this.file({
+    content: `include ${schema}`,
+    target: conf
+  });
+  log({
+    message: 'Configuration generated',
+    level: 'DEBUG'
+  });
+  await this.execute({
+    cmd: `slaptest -f ${conf} -F ${ldif}`
+  });
+  log({
+    message: 'Configuration validated',
+    level: 'DEBUG'
+  });
+  ({status} = (await this.fs.move({
+    source: `${ldif}/cn=config/cn=schema/cn={0}${config.name}.ldif`,
+    target: `${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`,
+    force: true
+  })));
+  if (!status) {
+    throw Error('No generated schema');
+  }
+  log({
+    message: 'Configuration renamed',
+    level: 'DEBUG'
+  });
+  this.file({
+    target: `${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`,
+    write: [
+      {
+        match: /^dn: cn.*$/mg,
+        replace: `dn: cn=${config.name},cn=schema,cn=config`
+      },
+      {
+        match: /^cn: {\d+}(.*)$/mg,
+        replace: 'cn: $1'
+      },
+      {
+        match: /^structuralObjectClass.*/mg,
+        replace: ''
+      },
+      {
+        match: /^entryUUID.*/mg,
+        replace: ''
+      },
+      {
+        match: /^creatorsName.*/mg,
+        replace: ''
+      },
+      {
+        match: /^createTimestamp.*/mg,
+        replace: ''
+      },
+      {
+        match: /^entryCSN.*/mg,
+        replace: ''
+      },
+      {
+        match: /^modifiersName.*/mg,
+        replace: ''
+      },
+      {
+        match: /^modifyTimestamp.*/mg,
+        replace: ''
+      }
+    ]
+  });
+  log({
+    message: 'File ldif ready',
+    level: 'DEBUG'
+  });
+  this.execute({
+    cmd: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`
+  });
+  return log({
+    message: `Schema added: ${config.name}`,
+    level: 'INFO'
+  });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    tmpdir: true,
+    global: 'ldap'
+  },
+  schema: schema
 };

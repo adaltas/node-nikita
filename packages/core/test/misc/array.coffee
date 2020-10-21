@@ -6,12 +6,6 @@ return unless tags.api
 
 describe 'misc.array', ->
 
-  it 'compare', ->
-    array.compare(['a'], ['a']).should.be.true()
-    array.compare(['a', 'b'], ['a', 'b']).should.be.true()
-    array.compare(['a', 'b'], ['a']).should.be.false()
-    array.compare(['a'], ['a', 'b']).should.be.false()
-
   it 'flatten', ->
     array.flatten([['a'], ['b']]).should.eql ['a', 'b']
     array.flatten([['a',['b']], [['c', ['d']]]]).should.eql ['a', 'b', 'c', 'd']

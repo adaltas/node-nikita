@@ -3,101 +3,126 @@
 
 Create and modify a user store inside an OpenLDAP server.   
 
-## Options
-
-* `binddn`   
-  Distinguished Name to bind to the LDAP directory.   
-* `passwd`   
-  Password for simple authentication.   
-* `name`   
-  Distinguish name storing the "olcAccess" property, using the database adress
-  (eg: "olcDatabase={2}bdb,cn=config").   
-* `overwrite`   
-  Overwrite existing "olcAccess", default is to merge.   
-* `uri`   
-  Specify URI referring to the ldap server.   
-* `user`   
-  User object.   
-
 ## Example
 
 ```js
-require('nikita')
-.ldap.user({
-  url: 'ldap://openldap.server/',
+{status} = await nikita.ldap.user({
+  uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
-  user: {
-  }
-}, function(err, {status}){
-  console.log(err ? err.message : 'Index modified: ' + status);
+  user: {}
 });
+console.info(`User created or modified: ${status}`);
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      # Auth related options
-      binddn = if options.binddn then "-D #{options.binddn}" else ''
-      passwd = if options.passwd then "-w #{options.passwd}" else ''
-      if options.url
-        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
-        options.uri ?= options.url
-      options.uri = 'ldapi:///' if options.uri is true
-      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-      # User related options
-      return callback Error "Nikita `ldap.user`: required property 'user'" unless options.user
-      options.user = [options.user] unless Array.isArray options.user
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          type: 'string'
+          description: """
+          Distinguish name storing the "olcAccess" property, using the database
+          address (eg: "olcDatabase={2}bdb,cn=config").
+          """
+        'user':
+          oneOf: [
+            type: 'object'
+          ,
+            type: 'array'
+          ]
+          description: """
+          User object.
+          """
+        # General LDAP connection information
+        'binddn':
+          type: 'string'
+          description: """
+          Distinguished Name to bind to the LDAP directory.
+          """
+        'passwd':
+          type: 'string'
+          description: """
+          Password for simple authentication.
+          """
+        'uri':
+          oneOf: [
+            {type: 'string'}
+            {type: 'boolean', default: 'ldapi:///'}
+          ]
+          description: """
+          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+          false in which case it will use your openldap client environment
+          configuration.
+          """
+
+## Handler
+
+    handler = ({config, log}) ->
+      # Auth related config
+      # binddn = if config.binddn then "-D #{config.binddn}" else ''
+      # passwd = if config.passwd then "-w #{config.passwd}" else ''
+      # uri = if config.uri then "-H #{config.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # User related config
+      # Note, very weird, if we don't merge, the user array is traversable but
+      # the keys map to undefined values.
+      config.user = [merge config.user] unless Array.isArray config.user
       modified = false
-      each(options.user)
-      .call (user, callback) =>
-        do_user = =>
-          entry = {}
-          for k, v of user
-            continue if k is 'userPassword' and not /^\{SASL\}/.test user.userPassword
-            entry[k] = v
-          @ldap.add
-            entry: entry
-            uri: options.uri
-            binddn: options.binddn
-            passwd: options.passwd
-          , (err, updated, added) ->
-            return callback err if err
-            if added then @log message: "User added", level: 'WARN', module: 'nikita/ldap/user'
-            else if updated then @log message: "User updated", level: 'WARN', module: 'nikita/ldap/user'
-            modified = true if updated or added
-            if added
-            then do_ldappass()
-            else do_checkpass()
-        do_checkpass = =>
-          return do_end() unless user.userPassword or /^\{SASL\}/.test user.userPassword
-          @system.execute
+      for user in config.user
+        # Add the user
+        entry = {}
+        for k, v of user
+          continue if k is 'userPassword' and not /^\{SASL\}/.test user.userPassword
+          entry[k] = user[k]
+        {updated, added} = await @ldap.add
+          entry: entry
+          uri: config.uri
+          binddn: config.binddn
+          passwd: config.passwd
+        if added then log message: "User added", level: 'WARN', module: 'nikita/ldap/user'
+        else if updated then log message: "User updated", level: 'WARN', module: 'nikita/ldap/user'
+        modified = true if updated or added
+        # Check password is user is not new and his password is not of type SASL
+        new_password = false
+        if not added and user.userPassword and not /^\{SASL\}/.test user.userPassword
+          {status: loggedin} = await @ldap.search
             # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
-            cmd: """
-            ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
-            """
+            binddn: user.dn
+            passwd: user.userPassword
+            uri: config.uri
+            base: ''
+            scope: 'base'
+            filter: 'objectclass=*'
             code_skipped: 49
-          , (err, data) ->
-            return callback err if err
-            if data.status then do_end() else do_ldappass()
-        do_ldappass = =>
-          return do_end() unless user.userPassword or /^\{SASL\}/.test user.userPassword
-          @system.execute
-            cmd: """
-            ldappasswd #{binddn} #{passwd} #{uri} \
-              -s #{user.userPassword} \
-              '#{user.dn}'
-            """
-          , (err) ->
-            return callback err if err
-            @log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
-            modified = true
-            do_end()
-        do_end = ->
-          callback()
-        do_user()
-      .next (err) ->
-        callback err, modified
+          new_password = true unless loggedin
+        if added or new_password and not /^\{SASL\}/.test user.userPassword
+          await @execute
+            # """
+            # ldappasswd #{binddn} #{passwd} #{uri} \
+            #   -s #{user.userPassword} \
+            #   '#{user.dn}'
+            # """
+            cmd: [
+              'ldappasswd'
+              "-Y #{utils.string.escapeshellarg config.mesh}" if config.mesh
+              "-D #{utils.string.escapeshellarg config.binddn}" if config.binddn
+              "-w #{utils.string.escapeshellarg config.passwd}" if config.passwd
+              "-H #{utils.string.escapeshellarg config.uri}" if config.uri
+              "-s #{user.userPassword}"
+              "#{utils.string.escapeshellarg user.dn}"
+            ].join ' '
+          log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
+          modified = true
+      status: modified
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'ldap'
+      schema: schema
 
 ## Note
 
@@ -112,6 +137,7 @@ ldappasswd -D cn=myself,ou=users,dc=ryba -w oldpassword \
 
 ## Dependencies
 
-    each = require 'each'
+    {merge} = require 'mixme'
+    utils = require './utils'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html

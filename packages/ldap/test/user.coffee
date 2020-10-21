@@ -1,67 +1,62 @@
 
 nikita = require '@nikitajs/engine/src'
 {tags, ssh, ldap} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.ldap_user
 
 describe 'ldap.user', ->
 
-  it 'create a new user', ->
-    @timeout 100000
+  they 'create a new user', ({ssh}) ->
     nikita
-      binddn: ldap.binddn
-      passwd: ldap.passwd
-      uri: ldap.uri
-    .ldap.user
-      user:
+      ldap:
+        binddn: ldap.binddn
+        passwd: ldap.passwd
+        uri: ldap.uri
+      ssh: ssh
+    , ->
+      @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
-        userPassword: 'test'
-        uid: 'nikita'
-        objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
-        shadowLastChange: '15140'
-        shadowMin: '0'
-        shadowMax: '99999'
-        shadowWarning: '7'
-        loginShell: '/bin/bash'
-        uidNumber: '9610'
-        gidNumber: '9610'
-        homeDirectory: '/home/nikita'
-    .next (err, {status}) ->
-      throw err if err
+      {status} = await @ldap.user
+        user:
+          dn: "cn=nikita,#{ldap.suffix_dn}"
+          userPassword: 'test'
+          uid: 'nikita'
+          objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
+          shadowLastChange: '15140'
+          shadowMin: '0'
+          shadowMax: '99999'
+          shadowWarning: '7'
+          loginShell: '/bin/bash'
+          uidNumber: '9610'
+          gidNumber: '9610'
+          homeDirectory: '/home/nikita'
       status.should.be.true()
-    .ldap.delete
-      dn: "cn=nikita,#{ldap.suffix_dn}"
-    .promise()
+      @ldap.delete
+        dn: "cn=nikita,#{ldap.suffix_dn}"
 
-  it 'detect no change', ->
-    @timeout 100000
+  they 'detect no change', ({ssh}) ->
     user =
       dn: "cn=nikita,#{ldap.suffix_dn}"
       userPassword: 'test'
       uid: 'nikita'
       objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
-      shadowLastChange: '15140'
-      shadowMin: '0'
-      shadowMax: '99999'
-      shadowWarning: '7'
-      loginShell: '/bin/bash'
       uidNumber: '9610'
       gidNumber: '9610'
       homeDirectory: '/home/nikita'
     nikita
-      binddn: ldap.binddn
-      passwd: ldap.passwd
-      uri: ldap.uri
-    .ldap.user
-      user: user
-    .next ->
-      return # reset status
-    .ldap.user
-      user: user
-    .next (err, {status}) ->
-      throw err if err
+      ldap:
+        binddn: ldap.binddn
+        passwd: ldap.passwd
+        uri: ldap.uri
+      ssh: ssh
+    , ->
+      @ldap.delete
+        dn: "cn=nikita,#{ldap.suffix_dn}"
+      @ldap.user
+        user: user
+      {status} = await @ldap.user
+        user: user
       status.should.be.false()
-    .ldap.delete
-      dn: "cn=nikita,#{ldap.suffix_dn}"
-    .promise()
+      @ldap.delete
+        dn: "cn=nikita,#{ldap.suffix_dn}"

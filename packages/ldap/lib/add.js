@@ -3,28 +3,12 @@
 
 // Insert or modify an entry inside an OpenLDAP server.   
 
-// ## Options
-
-// * `entry` (object | array)   
-//   Object to be inserted or modified.   
-// * `uri`   
-//   Specify URI referring to the ldap server.   
-// * `binddn`   
-//   Distinguished Name to bind to the LDAP directory.   
-// * `passwd`   
-//   Password for simple authentication.   
-// * `name`   
-//   Distinguish name storing the "olcAccess" property, using the database adress
-//   (eg: "olcDatabase={2}bdb,cn=config").   
-// * `overwrite`   
-//   Overwrite existing "olcAccess", default is to merge.   
-
 // ## Example
 
 // ```js
 // require('nikita')
 // .ldap.index({
-//   url: 'ldap://openldap.server/',
+//   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   entry: {
@@ -39,38 +23,91 @@
 // });
 // ```
 
-// ## Source Code
-module.exports = function({options}, callback) {
-  var _, binddn, entry, i, j, k, ldif, len, len1, modified, passwd, ref, uri, v, vv;
-  // Auth related options
-  binddn = options.binddn ? `-D ${options.binddn}` : '';
-  passwd = options.passwd ? `-w ${options.passwd}` : '';
-  if (options.url) {
-    console.log("Nikita: option 'options.url' is deprecated, use 'options.uri'");
-    if (options.uri == null) {
-      options.uri = options.url;
+// ## Hooks
+var handler, on_action, schema, utils;
+
+on_action = function({config}) {
+  if (!Array.isArray(config.entry)) {
+    return config.entry = [config.entry];
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'entry': {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          'dn': {
+            type: 'string',
+            description: `Distinguish name of the entry`
+          }
+        },
+        required: ['dn']
+      },
+      description: `Object to be inserted or modified.`
+    },
+    // General LDAP connection information
+    'binddn': {
+      type: 'string',
+      description: `Distinguished Name to bind to the LDAP directory.`
+    },
+    'mesh': {
+      type: 'string',
+      description: `Specify the SASL mechanism to be used for authentication. If it's not
+specified, the program will choose the best  mechanism  the  server
+knows.`
+    },
+    'passwd': {
+      type: 'string',
+      description: `Password for simple authentication.`
+    },
+    'uri': {
+      type: 'string',
+      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+false in which case it will use your openldap client environment
+configuration.`
     }
+  },
+  required: ['entry']
+};
+
+// ## Handler
+handler = async function({config}) {
+  var _, entry, i, j, k, ldif, len, len1, original, ref, status, stderr, stdout, uri, v, vv;
+  // Auth related config
+  // binddn = if config.binddn then "-D #{config.binddn}" else ''
+  // passwd = if config.passwd then "-w #{config.passwd}" else ''
+  // config.uri = 'ldapi:///' if config.uri is true
+  if (config.uri === true) {
+    if (config.mesh == null) {
+      config.mesh = 'EXTERNAL';
+    }
+    config.uri = 'ldapi:///';
   }
-  if (options.uri === true) {
-    options.uri = 'ldapi:///';
-  }
-  uri = options.uri ? `-H ${options.uri}` : ''; // URI is obtained from local openldap conf unless provided
-  if (!options.entry) {
-    // Add related options
-    return callback(Error("Nikita `ldap.add`: required property 'entry'"));
-  }
-  if (!Array.isArray(options.entry)) {
-    options.entry = [options.entry];
-  }
+  uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided
+  // Add related config
   ldif = '';
-  ref = options.entry;
+  ref = config.entry;
   for (i = 0, len = ref.length; i < len; i++) {
     entry = ref[i];
-    if (!entry.dn) {
-      return callback(Error("Nikita `ldap.add`: required property 'dn'"));
+    // Check if record already exists
+    ({status, stdout} = (await this.ldap.search(config, {
+      base: entry.dn,
+      code_skipped: 32, // No such object
+      scope: 'base'
+    })));
+    original = {};
+    if (status) {
+      continue;
     }
+    // throw Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
     ldif += '\n';
     ldif += `dn: ${entry.dn}\n`;
+    ldif += 'changetype: add\n';
     [_, k, v] = /^(.*?)=(.+?),.*$/.exec(entry.dn);
     ldif += `${k}: ${v}\n`;
     if (entry[k]) {
@@ -93,24 +130,37 @@ module.exports = function({options}, callback) {
       }
     }
   }
-  modified = false;
-  // We keep -c for now because we accept multiple entries. In the future, 
-  // we shall detect modification and be more strict.
-  // -c  Continuous operation mode.  Errors are reported, but ldapmodify will
-  // continue with modifications.  The default is to exit after reporting an
-  // error.
-  return this.system.execute({
-    cmd: `ldapadd -c ${binddn} ${passwd} ${uri} <<-EOF
+  return ({stdout, stderr} = (await this.execute({
+    if: ldif !== '',
+    cmd: [
+      ['ldapmodify',
+      config.continuous ? '-c' : void 0,
+      config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0,
+      config.binddn ? `-D ${utils.string.escapeshellarg(config.binddn)}` : void 0,
+      config.passwd ? `-w ${utils.string.escapeshellarg(config.passwd)}` : void 0,
+      config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0].join(' '),
+      `<<-EOF
 ${ldif}
-EOF`,
-    code_skipped: 68
-  }, function(err, data) {
-    var added, ref1;
-    if (err) {
-      return callback(err);
-    }
-    modified = ((ref1 = data.stderr.match(/Already exists/g)) != null ? ref1.length : void 0) !== data.stdout.match(/adding new entry/g).length;
-    added = modified; // For now, we dont modify
-    return callback(err, modified, added);
-  });
+EOF`
+    ].join(' ')
+  })));
 };
+
+// code_skipped: 68
+// modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
+// status: modified
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  metadata: {
+    global: 'ldap'
+  },
+  schema: schema
+};
+
+// ## Dependencies
+utils = require('./utils');
