@@ -38,20 +38,17 @@ exists and is modified.`
     },
     'target': {
       type: 'string',
-      description: `File to write, default to "/etc/pacman.conf".`
+      description: `File to write.`
     }
   },
   required: ['target']
 };
 
 // ## Handler
-handler = function({
-    config,
-    operations: {log}
-  }) {
+handler = function({config}) {
   if (config.rootdir) {
     // log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
-    config.target = `${path.join(config.rootdir)}`;
+    config.target = `${path.join(config.rootdir, config.target)}`;
   }
   return this.file.ini({
     stringify: utils.ini.stringify,
