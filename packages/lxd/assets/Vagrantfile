@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/bionic64" # LTS bionic64
+  config.vm.box = "ubuntu/groovy64"
   config.ssh.insert_key = true
   config.vm.box_check_update = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
@@ -54,6 +54,7 @@ Vagrant.configure("2") do |config|
     # lxc launch -e images:ubuntu/xenial preload
     # lxc delete --force preload
     # Install Node.js to run the tests
+    apt-get install -y make
     curl -L https://git.io/n-install | bash -s -- -y
     # Append lxd group to vagrant user
     usermod --append --groups lxd vagrant
