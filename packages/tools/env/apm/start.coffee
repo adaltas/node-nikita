@@ -34,7 +34,7 @@ nikita
       container: options.container
       cmd: """
       command -v node && exit 42
-      NODE_VERSION=10.12.0
+      NODE_VERSION=12.13.1
       yum install -y xz
       curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
       tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
