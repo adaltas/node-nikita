@@ -42,7 +42,10 @@ module.exports = function() {
           return action.ssh || false;
         }));
         if (ssh && !utils.ssh.is(ssh)) {
-          ({ssh} = (await session(function({run}) {
+          ({ssh} = (await session({
+            // Need to inject `tools.log`
+            plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')]
+          }, function({run}) {
             return run({
               metadata: {
                 namespace: ['ssh', 'open']
@@ -59,7 +62,10 @@ module.exports = function() {
       },
       'nikita:session:result': async function({action}) {
         if (action.metadata.ssh_dispose) {
-          return (await session(function({run}) {
+          return (await session({
+            // Need to inject `tools.log`
+            plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')]
+          }, function({run}) {
             return run({
               metadata: {
                 namespace: ['ssh', 'close']

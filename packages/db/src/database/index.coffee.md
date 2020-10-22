@@ -43,7 +43,7 @@ require('nikita').database.db({
 
 ## Source Code
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       config.user ?= []
       config.user = [config.user] if typeof config.user is 'string'
       # Defines and check the engine type

@@ -50,7 +50,7 @@
 //   #   age: month: 2
 //   # }
 // }, function(err, {status, info}){
-//   console.log(info);
+//   console.info(info);
 // });
 // ```
 

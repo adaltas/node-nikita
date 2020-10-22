@@ -127,19 +127,19 @@ system config if "true", supported attributes include 'mode', 'uid', 'gid',
 // ## Handler
 handler = async function({
     config,
-    tools: {status, path}
+    tools: {status, log, path}
   }) {
   var err, hash, hash_source, hash_target, res, source_stats, target_stats;
   // Retrieve stats information about the source unless provided through the "source_stats" option.
   if (config.source_stats) {
-    this.log({
+    log({
       message: "Source Stats: using short circuit",
       level: 'DEBUG',
       module: 'nikita/lib/system/copy'
     });
     source_stats = config.source_stats;
   } else {
-    this.log({
+    log({
       message: `Stats source file ${config.source}`,
       level: 'DEBUG',
       module: 'nikita/lib/system/copy'
@@ -152,14 +152,14 @@ handler = async function({
   }
   // Retrieve stat information about the traget unless provided through the "target_stats" option.
   if (config.target_stats) {
-    this.log({
+    log({
       message: "Target Stats: using short circuit",
       level: 'DEBUG',
       module: 'nikita/lib/system/copy'
     });
     target_stats = config.target_stats;
   } else {
-    this.log({
+    log({
       message: `Stats target file ${config.target}`,
       level: 'DEBUG',
       module: 'nikita/lib/system/copy'
@@ -204,7 +204,7 @@ handler = async function({
     if (target_stats && !sourceEndWithSlash) {
       config.target = path.resolve(config.target, path.basename(config.source));
     }
-    this.log({
+    log({
       message: "Source is a directory",
       level: 'INFO',
       module: 'nikita/lib/system/copy'
@@ -287,13 +287,13 @@ handler = async function({
   }
   // Copy a file if content match with source
   if (hash_source === hash_target) {
-    this.log({
+    log({
       message: `Hash matches as '${hash_source}'`,
       level: 'INFO',
       module: 'nikita/lib/file/download'
     });
   } else {
-    this.log({
+    log({
       message: `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
       level: 'WARN',
       module: 'nikita/lib/file/download'
@@ -303,7 +303,7 @@ handler = async function({
       target: config.target
     });
     if (status) {
-      this.log({
+      log({
         message: `File copied from ${config.source} into ${config.target}`,
         level: 'INFO',
         module: 'nikita/lib/system/copy'

@@ -15,7 +15,7 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 
 module.exports = ->
   module: '@nikitajs/engine/src/plugins/log'
-  require: '@nikitajs/engine/src/plugins/events'
+  require: '@nikitajs/engine/src/plugins/tools_events'
   hooks:
     'nikita:session:normalize': (action) ->
       # Move property from action to metadata
@@ -25,9 +25,10 @@ module.exports = ->
       if not action.metadata.log? and action.parent?.metadata?.log?
         action.metadata.log = action.parent.metadata.log
     'nikita:session:action':
-      after: '@nikitajs/engine/src/plugins/events'
+      after: '@nikitajs/engine/src/plugins/tools_events'
       handler: (action) ->
-        action.log = (log) ->
+        action.tools ?= {}
+        action.tools.log = (log) ->
           log = merge log
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'

@@ -18,7 +18,7 @@ require('nikita')
   },
   target: '/tmp/my_file'
 }, function(err, {status}){
-  console.log(err ? err.message : 'Content was updated: ' + status);
+  console.info(err ? err.message : 'Content was updated: ' + status);
 });
 ```
 
@@ -60,7 +60,7 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
       if config.merge

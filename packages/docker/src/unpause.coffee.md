@@ -26,7 +26,7 @@ require('nikita')
 .docker.pause({
   container: 'toto'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container was unpaused: ' + status);
+  console.info( err ? err.message : 'Container was unpaused: ' + status);
 })
 ```
 
@@ -44,7 +44,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
       # Validation
       throw Error 'Missing container parameter' unless config.container?

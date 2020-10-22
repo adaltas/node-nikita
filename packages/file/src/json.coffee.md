@@ -80,7 +80,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       if config.merge
         try

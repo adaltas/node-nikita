@@ -63,9 +63,11 @@ stat object associated with the target if one is already available.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var stats;
-  // log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
   if (config.stats) {
     stats = config.stats;
   } else {

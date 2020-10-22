@@ -21,7 +21,7 @@
 //   container: 'toto',
 //   signal: 9
 // }, function(err, status){  
-//   console.log( err ? err.message : 'Container killed: ' + status);
+//   console.info( err ? err.message : 'Container killed: ' + status);
 // })
 // ```
 
@@ -62,8 +62,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var status;
   log({

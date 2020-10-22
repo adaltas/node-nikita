@@ -19,7 +19,7 @@
 // .docker.pause({
 //   name: 'my_volume'
 // }, function(err, status){
-//   console.log( err ? err.message : 'Volume created: ' + status);
+//   console.info( err ? err.message : 'Volume created: ' + status);
 // })
 // ```
 
@@ -80,8 +80,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var status;
   log({

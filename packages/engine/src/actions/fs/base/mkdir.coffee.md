@@ -38,7 +38,6 @@ Create a directory. Missing parent directories are created as required.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
       # Convert mode into a string
       config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
       try

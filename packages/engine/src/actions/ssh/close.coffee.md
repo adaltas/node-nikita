@@ -22,8 +22,8 @@ Close the existing connection if any.
 
 ## Source code
 
-    handler = ({config, parent: {state}}) ->
-      @log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
+    handler = ({config, parent: {state}, tools: {log}}) ->
+      log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
       # Retrieve connection from parameters or state
       conn = if config.ssh
       then config.ssh

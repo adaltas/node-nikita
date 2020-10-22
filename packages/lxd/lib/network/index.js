@@ -29,7 +29,7 @@
 //     'ipv6.address': 'none'
 //   }
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Network created: ' + status);
+//   console.info( err ? err.message : 'Network created: ' + status);
 // })
 // ```
 

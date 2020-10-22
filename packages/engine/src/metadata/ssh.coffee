@@ -30,7 +30,15 @@ module.exports = ->
         return undefined if action.ssh is undefined
         action.ssh or false
       if ssh and not utils.ssh.is ssh
-        {ssh} = await session ({run}) -> run
+        {ssh} = await session
+          # Need to inject `tools.log`
+          plugins: [
+            require '../plugins/tools_events'
+            require '../plugins/tools_log'
+            require '../metadata/status'
+            require '../plugins/history'
+          ]
+        , ({run}) -> run
           metadata:
             namespace: ['ssh', 'open']
           config: ssh
@@ -41,7 +49,15 @@ module.exports = ->
       handler
     'nikita:session:result': ({action}) ->
       if action.metadata.ssh_dispose
-        await session ({run}) -> run
+        await session
+          # Need to inject `tools.log`
+          plugins: [
+            require '../plugins/tools_events'
+            require '../plugins/tools_log'
+            require '../metadata/status'
+            require '../plugins/history'
+          ]
+        , ({run}) -> run
           metadata:
             namespace: ['ssh', 'close']
           config: ssh: action.ssh

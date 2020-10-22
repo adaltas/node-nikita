@@ -25,7 +25,7 @@ require('nikita')
   container: "my_container",
   device: 'eth0',
 }, function(err, {status, config}) {
-  console.log( err ? err.message : status ?
+  console.info( err ? err.message : status ?
     'device exists, type is' + config.type : 'device missing')
 });
 ```

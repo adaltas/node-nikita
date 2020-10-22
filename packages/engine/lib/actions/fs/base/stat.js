@@ -119,11 +119,6 @@ link information.`
 // ## Handler
 handler = async function({config, metadata}) {
   var atime, dereference, err, gid, mtime, rawmodehex, size, stdout, uid;
-  this.log({
-    message: "Entering fs.stat",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/stat'
-  });
   // Normalize configuration
   if (config.dereference == null) {
     config.dereference = true;

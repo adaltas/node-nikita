@@ -49,7 +49,6 @@ paths locally using the Minimatch package.
 ## Handler
 
     handler = ({config, metadata, tools: {path}}) ->
-      # @log message: "Entering file.glob", level: 'DEBUG', module: 'nikita/lib/file/hash'
       config.minimatch ?= {}
       config.minimatch.dot ?= config.dot if config.dot?
       config.target = path.normalize config.target

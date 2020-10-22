@@ -59,7 +59,7 @@ value properties.
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       fnl_props = {}
       org_props = {}
       # Read target properties

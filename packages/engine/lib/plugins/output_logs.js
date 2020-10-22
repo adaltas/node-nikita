@@ -20,7 +20,7 @@ module.exports = function() {
         after: '@nikitajs/engine/src/plugins/log',
         handler: function(action) {
           action.state.logs = [];
-          return action.log = (function(fn) {
+          return action.tools.log = (function(fn) {
             return function(info) {
               var frame, log;
               log = fn.call(null, info);
@@ -38,7 +38,7 @@ module.exports = function() {
               action.state.logs.push(log);
               return log;
             };
-          })(action.log);
+          })(action.tools.log);
         }
       },
       'nikita:session:result': {

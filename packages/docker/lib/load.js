@@ -23,7 +23,7 @@
 //   machine: machine,
 //   source: source + "/nikita_load.tar"
 // }, function(err, {status}) {
-//   console.log( err ? err.message : 'Container loaded: ' + status);
+//   console.info( err ? err.message : 'Container loaded: ' + status);
 // })
 // ```
 
@@ -61,8 +61,7 @@ not native to docker but implemented to get better performance.`
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var cmd, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, status, stderr, stdout;
   log({

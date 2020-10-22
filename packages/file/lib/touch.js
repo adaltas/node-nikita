@@ -22,7 +22,7 @@
 //   ssh: ssh,
 //   target: '/tmp/a_file'
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'File touched: ' + status);
+//   console.info(err ? err.message : 'File touched: ' + status);
 // });
 // ```
 
@@ -65,7 +65,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var status;
   log({
     message: "Entering file.touch",

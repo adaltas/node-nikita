@@ -159,7 +159,10 @@ Default to the basename of source.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var _hash, algo, cookie, hash, header, ref, status, u;
   log({
     message: "Entering file.cache",

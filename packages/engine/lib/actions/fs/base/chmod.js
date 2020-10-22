@@ -40,11 +40,6 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
 
 // ## Handler
 handler = function({config}) {
-  this.log({
-    message: "Entering fs.chmod",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/chmod'
-  });
   if (typeof config.mode === 'number') {
     config.mode = config.mode.toString(8).substr(-4);
   }

@@ -19,7 +19,7 @@
 // .docker.stop({
 //   container: 'toto'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container state changed to stopped: ' + status);
+//   console.info( err ? err.message : 'Container state changed to stopped: ' + status);
 // })
 // ```
 
@@ -54,8 +54,7 @@ is 10).`
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var status;
   log({

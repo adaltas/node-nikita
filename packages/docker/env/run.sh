@@ -2,5 +2,5 @@
 
 HOME=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $HOME/krb5
+cd $HOME/docker
 docker-compose up --abort-on-container-exit

@@ -88,7 +88,7 @@
 //     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
 //   ]
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'Iptables was updated: ' + status);
+//   console.info(err ? err.message : 'Iptables was updated: ' + status);
 // });
 // ```
 

@@ -21,7 +21,7 @@ Inspect a single container.
 {info} = await require('nikita').docker.inspect({
   name: 'my_container'
 })
-console.log(`Container id is ${info.Id}`)
+console.info(`Container id is ${info.Id}`)
 ```
 
 Inspect multiple containers.
@@ -31,7 +31,7 @@ Inspect multiple containers.
   name: 'my_container'
 })
 info.map( (container) =>
-  console.log(`Container id is ${container.Id}`)
+  console.info(`Container id is ${container.Id}`)
 )
 ```
 
@@ -60,7 +60,7 @@ info.map( (container) =>
 
 ## Handler
 
-    handler = ({args, config, log, tools: {find}}) ->
+    handler = ({args, config, tools: {find, log}}) ->
       isCointainerArray = Array.isArray arg?.container for arg in args
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Ensure target container exists

@@ -30,11 +30,6 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  this.log({
-    message: "Entering fs.rename",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/rename'
-  });
   return this.execute({
     cmd: `mv ${config.source} ${config.target}`,
     trim: true

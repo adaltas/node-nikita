@@ -28,7 +28,6 @@ Change permissions of a file.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.copy", level: 'DEBUG', module: 'nikita/lib/fs/copy'
       try
         await @execute """
           [ ! -d `dirname "#{config.target}"` ] && exit 2

@@ -24,7 +24,7 @@
 //   container: 'toto',
 //   attach: true
 // }, function(err, is_true, stdout, stderr){
-//   console.log( err ? err.message : 'Container state changed to started: ' + status);
+//   console.info( err ? err.message : 'Container state changed to started: ' + status);
 // })
 // ```
 
@@ -59,8 +59,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var status;
   log({

@@ -45,5 +45,4 @@ module.exports =
       str.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
 
 # nunjucks = require 'nunjucks/src/environment'
-quote = require 'regexp-quote'
 crypto = require 'crypto'

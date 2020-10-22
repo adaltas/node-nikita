@@ -23,7 +23,6 @@ Read a link to retrieve its destination path.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.readlink", level: 'DEBUG', module: 'nikita/lib/fs/readlink'
       {stdout} = await @execute
         cmd: "readlink #{config.target}"
       target: stdout.trim()

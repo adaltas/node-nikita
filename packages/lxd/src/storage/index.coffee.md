@@ -30,7 +30,7 @@ require('nikita')
     source: "syspool/lxd"
   }
 }, function(err, {status}) {
-  console.log( err ? err.message : 'The storage was created or config updated')
+  console.info( err ? err.message : 'The storage was created or config updated')
 });
 ```
 

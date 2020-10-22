@@ -14,7 +14,7 @@ describe 'actions.log.csv', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
-      @call ({log}) -> log 'ok'
+      @call ({tools: {log}}) -> log 'ok'
       {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
       data.should.eql 'text,INFO,"ok"\n'
 
@@ -24,7 +24,7 @@ describe 'actions.log.csv', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
-      @call header: 'h1', ({log}) -> true
+      @call header: 'h1', ({tools: {log}}) -> true
       {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
       data.should.eql 'header,,"h1"\n'
     

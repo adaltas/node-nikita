@@ -31,7 +31,7 @@
 //   source: '/path/to/file.tgz'
 //   destation: '/tmp'
 // }, function(err, status){
-//   console.log(err ? err.message : 'File was compressed: ' + status);
+//   console.info(err ? err.message : 'File was compressed: ' + status);
 // });
 // ```
 

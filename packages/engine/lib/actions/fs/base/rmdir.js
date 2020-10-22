@@ -34,11 +34,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var err;
-  this.log({
-    message: "Entering fs.rmdir",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/rmdir'
-  });
   try {
     await this.execute({
       cmd: `[ ! -d '${config.target}' ] && exit 2

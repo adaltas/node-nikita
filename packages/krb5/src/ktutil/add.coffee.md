@@ -60,7 +60,7 @@ require('nikita').krb5.ktutil.add({
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       if /^\S+@\S+$/.test config.principal
         config.realm ?= config.principal.split('@')[1]
       else

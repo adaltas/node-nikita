@@ -35,7 +35,7 @@ require('nikita')
   image: 'ryba/targe-build',
   source: '/home/ryba/Dockerfile'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container built: ' + status);
+  console.info( err ? err.message : 'Container built: ' + status);
 });
 ```
 
@@ -66,7 +66,7 @@ require('nikita')
   source: '/home/ryba/Dockerfile',
   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container built: ' + status);
+  console.info( err ? err.message : 'Container built: ' + status);
 });
 ```
 
@@ -79,7 +79,7 @@ require('nikita')
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container built: ' + status);
+  console.info( err ? err.message : 'Container built: ' + status);
 });
 ```
 
@@ -169,7 +169,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       number_of_step = 0
       userargs = []

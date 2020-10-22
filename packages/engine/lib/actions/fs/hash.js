@@ -57,7 +57,6 @@ stat object associated with the target if one is already available.`
 // ## Handler
 handler = async function({config, metadata}) {
   var err, files, hash, hashs, stats, stdout;
-  // @log message: "Entering file.hash", level: 'DEBUG', module: 'nikita/lib/file/hash'
   ({stats} = config.stats ? config.stats : (await this.fs.base.stat(config.target)));
   if (!(utils.stats.isFile(stats.mode) || utils.stats.isDirectory(stats.mode))) {
     throw errors.NIKITA_FS_HASH_FILETYPE_UNSUPPORTED({

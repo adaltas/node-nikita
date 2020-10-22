@@ -24,7 +24,7 @@ require('nikita')
   container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
-  console.log( err ? err.message : 'Container state changed to started: ' + status);
+  console.info( err ? err.message : 'Container state changed to started: ' + status);
 })
 ```
 
@@ -54,7 +54,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       {status} = await @docker.tools.status shy: true, config
       if status

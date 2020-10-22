@@ -5,7 +5,7 @@ var EventEmitter;
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/events',
+    module: '@nikitajs/engine/src/plugins/tools_events',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         return function() {
@@ -33,7 +33,6 @@ module.exports = function() {
               return output;
             } catch (error1) {
               err = error1;
-              // console.log action
               action.tools.events.emit('nikita:action:end', action, err, output);
               throw err;
             }

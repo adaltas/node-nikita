@@ -22,7 +22,7 @@ require('nikita')
   container: 'myContainer',
   cmd: '/bin/bash -c "echo toto"'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Command executed: ' + status);
+  console.info( err ? err.message : 'Command executed: ' + status);
 });
 ```
 
@@ -76,7 +76,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       config.service ?= false
       # Construct exec command

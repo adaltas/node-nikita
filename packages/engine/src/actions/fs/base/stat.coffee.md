@@ -111,7 +111,6 @@ returned values.
 ## Handler
 
     handler = ({config, metadata}) ->
-      @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
       # Normalize configuration
       config.dereference ?= true
       dereference = if config.dereference then '-L' else ''

@@ -79,15 +79,10 @@ handler = async function({
     config,
     hooks,
     metadata,
-    tools: {path, find},
+    tools: {path, log, find},
     ssh
   }) {
   var current_username, err, sudo;
-  this.log({
-    message: "Entering fs.createReadStream",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/createReadStream'
-  });
   sudo = (await find(function({
       config: {sudo}
     }) {
@@ -116,7 +111,7 @@ handler = async function({
       await this.execute(`[ ! -f '${config.target}' ] && exit
 cp '${config.target}' '${config.target_tmp}'
 chown '${current_username}' '${config.target_tmp}'`);
-      this.log({
+      log({
         message: "Placing original file in temporary path before reading",
         level: 'INFO',
         module: 'nikita/lib/fs/createReadStream'
@@ -124,7 +119,7 @@ chown '${current_username}' '${config.target_tmp}'`);
     }
   } catch (error1) {
     err = error1;
-    this.log({
+    log({
       message: "Failed to place original file in temporary path",
       level: 'ERROR',
       module: 'nikita/lib/fs/createReadStream'
@@ -132,7 +127,7 @@ chown '${current_username}' '${config.target_tmp}'`);
     throw err;
   }
   // Read the stream
-  this.log({
+  log({
     message: `Reading file ${config.target_tmp || config.target}`,
     level: 'DEBUG',
     module: 'nikita/lib/fs/createReadStream'

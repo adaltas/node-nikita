@@ -69,7 +69,7 @@
 // ## Hooks
 var connect, error, fs, handler, object, on_action, schema, ssh, tilde;
 
-on_action = function({config, state}) {
+on_action = function({config}) {
   var base, base1;
   // Merge SSH config namespace
   // if config.ssh and not ssh.is config.ssh
@@ -165,10 +165,11 @@ connection.`
 // ## Handler
 handler = async function({
     config,
-    parent: {state}
+    parent: {state},
+    tools: {log}
   }) {
   var conn, err, location;
-  this.log({
+  log({
     message: "Entering ssh.open",
     level: 'DEBUG',
     module: 'nikita/lib/ssh/open'
@@ -208,7 +209,7 @@ handler = async function({
   }
   // Read private key if option is a path
   if (!(config.private_key || config.password)) {
-    this.log({
+    log({
       message: `Read Private Key from: ${config.private_key_path}`,
       level: 'DEBUG',
       module: 'nikita/lib/ssh/open'
@@ -228,14 +229,14 @@ handler = async function({
   }
   try {
     // Establish connection
-    this.log({
+    log({
       message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
       level: 'DEBUG',
       module: 'nikita/lib/ssh/open'
     });
     conn = (await connect(config));
     state['nikita:ssh:connection'] = conn;
-    this.log({
+    log({
       message: "Connection is established",
       level: 'INFO',
       module: 'nikita/lib/ssh/open'
@@ -246,7 +247,7 @@ handler = async function({
     };
   } catch (error1) {
     err = error1;
-    this.log({
+    log({
       message: "Connection failed",
       level: 'WARN',
       module: 'nikita/lib/ssh/open'
@@ -254,14 +255,14 @@ handler = async function({
   }
   // Enable root access
   if (config.root.username) {
-    this.log({
+    log({
       message: "Bootstrap Root Access",
       level: 'INFO',
       module: 'nikita/lib/ssh/open'
     });
     this.ssh.root(config.root);
   }
-  this.log({
+  log({
     message: "Establish Connection: attempt after enabling root access",
     level: 'DEBUG',
     module: 'nikita/lib/ssh/open'

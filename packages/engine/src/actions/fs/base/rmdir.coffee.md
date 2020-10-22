@@ -23,7 +23,6 @@ Delete a directory.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.rmdir", level: 'DEBUG', module: 'nikita/lib/fs/rmdir'
       try
         await @execute
           cmd: """

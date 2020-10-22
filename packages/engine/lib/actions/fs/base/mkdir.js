@@ -60,11 +60,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var err;
-  this.log({
-    message: "Entering fs.mkdir",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/mkdir'
-  });
   if (typeof config.mode === 'number') {
     // Convert mode into a string
     config.mode = config.mode.toString(8).substr(-4);

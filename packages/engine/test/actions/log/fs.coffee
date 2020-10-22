@@ -30,7 +30,7 @@ describe 'actions.log.fs', ->
       @log.fs
         basedir: tmpdir
         serializer: {}
-      @call ({log}) ->
+      @call ({tools: {log}}) ->
         log message: 'ok'
       # .file.assert
       #   source: "#{tmpdir}/localhost.log"
@@ -49,7 +49,7 @@ describe 'actions.log.fs', ->
       @log.fs
         basedir: tmpdir
         serializer: text: (log) -> "#{log.message}\n"
-      @call ({log, tools: {events}}) ->
+      @call ({tools: {events, log}}) ->
         log message: 'ok'
       @fs.assert
         target: "#{tmpdir}/localhost.log"
@@ -66,7 +66,7 @@ describe 'actions.log.fs', ->
           basedir: tmpdir
           serializer: text: (log) -> "#{log.message}\n"
           archive: true
-        await @call ({log}) ->
+        await @call ({tools: {log}}) ->
           log message: 'ok'
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
@@ -83,7 +83,7 @@ describe 'actions.log.fs', ->
           basedir: tmpdir
           serializer: text: (log) -> "#{log.message}\n"
           archive: true
-        @call ({log})->
+        @call ({tools: {log}})->
           log message: 'ok'
         {stats} = await @fs.base.lstat "#{tmpdir}/latest"
         utils.stats.isSymbolicLink(stats.mode).should.be.true()

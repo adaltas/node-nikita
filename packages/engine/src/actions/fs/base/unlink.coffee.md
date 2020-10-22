@@ -23,7 +23,6 @@ Remove a non-directory type file.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.unlink", level: 'DEBUG', module: 'nikita/lib/fs/unlink'
       try
         # ! -e: file does not exist
         # `! -L && -d`: file is not a symlink and is a directory, symlink test

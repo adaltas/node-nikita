@@ -27,7 +27,7 @@ require('nikita')
     username: 'a_user'
   }
 }, function(err, {status}){
-  console.log(err ? err.message : 'File rendered: ' + status);
+  console.info(err ? err.message : 'File rendered: ' + status);
 });
 ```
 
@@ -73,7 +73,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Read source
       if config.source

@@ -51,7 +51,7 @@
   //     'vm.swappiness': 1
   //   }
   // }, function(err, {status}){
-  //   console.log(err ? err.message : 'Systcl reloaded: ' + status);
+  //   console.info(err ? err.message : 'Systcl reloaded: ' + status);
   // });
   // ```
 

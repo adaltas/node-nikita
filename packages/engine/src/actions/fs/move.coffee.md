@@ -59,7 +59,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, metadata, tools: {path}, ssh}) ->
+    handler = ({config, metadata, tools: {log, path}, ssh}) ->
       log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
       ssh = @ssh config.ssh

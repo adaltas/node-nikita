@@ -19,7 +19,7 @@ require('nikita')
   config:
     'boot.autostart.priority': 100,
 }, function(err, {status}) {
-  console.log( err ? err.message : status ?
+  console.info( err ? err.message : status ?
     'Property set' : 'Property already present')
 });
 ```

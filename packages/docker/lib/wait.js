@@ -16,7 +16,7 @@
 // nikita.docker.wait({
 //   container: 'toto'
 // }, function(err, status){
-//   console.log( err ? err.message : 'Did we really had to wait: ' + status);
+//   console.info( err ? err.message : 'Did we really had to wait: ' + status);
 // })
 // ```
 
@@ -46,8 +46,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker wait",

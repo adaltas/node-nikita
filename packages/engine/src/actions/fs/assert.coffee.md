@@ -122,7 +122,6 @@ require('nikita')
 ## Source code
 
     handler = ({metadata, config}) ->
-      # @log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
       config.filetype = for filetype in config.filetype or []
         continue unless filetype
         if typeof filetype is 'string'

@@ -254,13 +254,11 @@ config.cmd}\`. See the \`tmpdir\` plugin for additionnal information.`
 // ## Source Code
 handler = async function({
     config,
-    log,
     metadata,
-    tools: {find, path},
+    tools: {find, log, path},
     ssh
   }) {
   var cmd, current_username, dry, stdout, sudo;
-  // @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;

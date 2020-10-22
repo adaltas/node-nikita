@@ -72,7 +72,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
       if config.uid?
         uid = if typeof config.uid is 'number' then config.uid

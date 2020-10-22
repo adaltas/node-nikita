@@ -36,7 +36,6 @@ Change ownership of a file.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
       # Normalization
       config.uid = null if config.uid is false
       config.gid = null if config.gid is false

@@ -76,8 +76,7 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, log, metadata}, callback) ->
-      # log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
+    handler = ({config, metadata, tools: {log}}, callback) ->
       # Validate parameters
       config.cmd = [config.cmd] unless Array.isArray config.cmd
       if config.quorum and config.quorum is true

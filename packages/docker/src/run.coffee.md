@@ -25,7 +25,7 @@ require('nikita')
   env: ["FOO=bar",]
   entrypoint: '/bin/true'
 }, function(err, status, stdout, stderr){
-  console.log( err ? err.message : 'Container state changed to running: ' + status);
+  console.info( err ? err.message : 'Container state changed to running: ' + status);
 })
 ```
 
@@ -266,7 +266,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
       # Validate parameters
       log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm

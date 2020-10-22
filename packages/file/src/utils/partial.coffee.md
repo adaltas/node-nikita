@@ -10,14 +10,14 @@ Replace partial elements in a text.
         if opts.match
           opts.match ?= opts.replace
           log message: "Convert match string to regexp", level: 'DEBUG', module: 'nikita/lib/misc/string' if typeof opts.match is 'string'
-          opts.match = ///#{quote opts.match}///mg if typeof opts.match is 'string'
+          opts.match = ///#{utils.regexp.quote opts.match}///mg if typeof opts.match is 'string'
           throw Error "Invalid match option" unless opts.match instanceof RegExp
           if opts.match.test config.content
             config.content = config.content.replace opts.match, opts.replace
             log message: "Match existing partial", level: 'INFO', module: 'nikita/lib/misc/string'
           else if opts.place_before and typeof opts.replace is 'string'
             if typeof opts.place_before is "string"
-              opts.place_before = new RegExp ///^.*#{quote opts.place_before}.*$///mg
+              opts.place_before = new RegExp ///^.*#{utils.regexp.quote opts.place_before}.*$///mg
             if opts.place_before instanceof RegExp
               log message: "Replace with match and place_before regexp", level: 'DEBUG', module: 'nikita/lib/misc/string'
               posoffset = 0
@@ -36,7 +36,7 @@ Replace partial elements in a text.
           else if opts.append and typeof opts.replace is 'string'
             if typeof opts.append is "string"
               log message: "Convert append string to regexp", level: 'DEBUG', module: 'nikita/lib/misc/string'
-              opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
+              opts.append = new RegExp "^.*#{utils.regexp.quote opts.append}.*$", 'mg'
             if opts.append instanceof RegExp
               log message: "Replace with match and append regexp", level: 'DEBUG', module: 'nikita/lib/misc/string'
               posoffset = 0
@@ -56,8 +56,8 @@ Replace partial elements in a text.
           log message: "Before is true, need to explain how we could get here", level: 'INFO', module: 'nikita/lib/misc/string'
         else if opts.from or opts.to
           if opts.from and opts.to
-            from = ///(^#{quote opts.from}$)///m.exec(config.content)
-            to = ///(^#{quote opts.to}$)///m.exec(config.content)
+            from = ///(^#{utils.regexp.quote opts.from}$)///m.exec(config.content)
+            to = ///(^#{utils.regexp.quote opts.to}$)///m.exec(config.content)
             if from? and not to?
               log message: "Found 'from' but missing 'to', skip writing", level: 'WARN', module: 'nikita/lib/misc/string'
             else if not from? and to?
@@ -70,15 +70,19 @@ Replace partial elements in a text.
             else
               config.content = config.content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + config.content.substr(to.index)
           else if opts.from and not opts.to
-            from = ///(^#{quote opts.from}$)///m.exec(config.content)
+            from = ///(^#{utils.regexp.quote opts.from}$)///m.exec(config.content)
             if from?
               config.content = config.content.substr(0, from.index + from[1].length) + '\n' + opts.replace
             else # TODO: honors append
               log message: "Missing 'from', skip writing", level: 'WARN', module: 'nikita/lib/misc/string'
           else if not opts.from and opts.to
             from_index = 0
-            to = ///(^#{quote opts.to}$)///m.exec(config.content)
+            to = ///(^#{utils.regexp.quote opts.to}$)///m.exec(config.content)
             if to?
               config.content = opts.replace + '\n' + config.content.substr(to.index)
             else # TODO: honors append
               log message: "Missing 'to', skip writing", level: 'WARN', module: 'nikita/lib/misc/string'
+
+## Dependencies
+
+    utils = require '@nikitajs/engine/lib/utils'

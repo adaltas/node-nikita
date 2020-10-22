@@ -41,7 +41,7 @@ require('nikita')
   },
   target: '/tmp/my_file'
 }, function(err, {status}){
-  console.log(err ? err.message : 'Content was updated: ' + status);
+  console.info(err ? err.message : 'Content was updated: ' + status);
 });
 ```
 
@@ -126,7 +126,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       # log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       org_props = {}
       default_props = {}

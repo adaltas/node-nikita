@@ -144,8 +144,8 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config}) ->
-      @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+    handler = ({config, tools: {log}}) ->
+      log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
       try if config.merge
         {data} = await @fs.base.readFile
@@ -156,10 +156,10 @@ require('nikita')
       catch err
         throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.clean
-        @log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
-        # console.log JSON.stringify config.content, null, true
+        log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
+        # console.info JSON.stringify config.content, null, true
         object.clean config.content
-      @log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+      log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       config.content = yaml.safeDump config.content, noRefs: true, lineWidth: config.line_width
       @file config, header: null
 

@@ -25,7 +25,7 @@ require('nikita')
   compression: 'gzip'
   entrypoint: '/bin/true'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container running: ' + status);
+  console.info( err ? err.message : 'Container running: ' + status);
 })
 ```
 
@@ -52,7 +52,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker

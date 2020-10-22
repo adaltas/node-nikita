@@ -22,7 +22,7 @@ require('nikita')
 .lxd.start({
   container: "my_container"
 }, function(err, {status}) {
-  console.log( err ? err.message :
+  console.info( err ? err.message :
     status ? 'Container now running' : 'Container already running' )
 });
 ```

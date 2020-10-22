@@ -167,9 +167,12 @@ will be piped.`
 };
 
 // ## Handler
-handler = async function({config}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var data, err;
-  this.log({
+  log({
     message: "Entering file.yaml",
     level: 'DEBUG',
     module: 'nikita/lib/file/yaml'
@@ -191,15 +194,15 @@ handler = async function({config}) {
     }
   }
   if (config.clean) {
-    this.log({
+    log({
       message: "Clean content",
       level: 'INFO',
       module: 'nikita/lib/file/yaml'
     });
-    // console.log JSON.stringify config.content, null, true
+    // console.info JSON.stringify config.content, null, true
     object.clean(config.content);
   }
-  this.log({
+  log({
     message: "Serialize content",
     level: 'DEBUG',
     module: 'nikita/lib/file/yaml'

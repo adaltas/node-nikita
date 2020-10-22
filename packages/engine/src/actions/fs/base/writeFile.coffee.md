@@ -69,7 +69,6 @@ require('nikita')
 ## Handler
 
     handler = ({config, tools: {path}, ssh}) ->
-      @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       # Normalization
       config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
       throw NIKITA_FS_STAT_TARGET_ENOENT config: config, err: err if ssh and not path.isAbsolute config.target

@@ -110,9 +110,13 @@ connection.`
 };
 
 // ## Handler
-handler = async function({metadata, config}) {
+handler = async function({
+    metadata,
+    config,
+    tools: {log}
+  }) {
   var err, location, rebooting, ref;
-  this.log({
+  log({
     message: "Entering ssh.root",
     level: 'DEBUG',
     module: 'nikita/lib/ssh/root'
@@ -155,7 +159,7 @@ handler = async function({metadata, config}) {
   }
   // Read private key if option is a path
   if (config.private_key_path && !config.private_key) {
-    this.log({
+    log({
       message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
       level: 'DEBUG',
       module: 'nikita/lib/ssh/root'
@@ -175,13 +179,13 @@ handler = async function({metadata, config}) {
   }
   await this.call(async function() {
     var child, cmd, conn;
-    this.log({
+    log({
       message: "Connecting",
       level: 'DEBUG',
       module: 'nikita/lib/ssh/root'
     });
     conn = !metadata.dry ? (await connect(config)) : null;
-    this.log({
+    log({
       message: "Connected",
       level: 'INFO',
       module: 'nikita/lib/ssh/root'
@@ -219,12 +223,12 @@ fi;`);
         cmd = config.cmd;
       }
     }
-    this.log({
+    log({
       message: "Enable Root Access",
       level: 'DEBUG',
       module: 'nikita/lib/ssh/root'
     });
-    this.log({
+    log({
       message: cmd,
       type: 'stdin',
       module: 'nikita/lib/ssh/root'
@@ -235,7 +239,7 @@ fi;`);
         cmd: cmd
       }, (err) => {
         if ((err != null ? err.code : void 0) === 2) {
-          this.log({
+          log({
             message: "Root Access Enabled",
             level: 'WARN',
             module: 'nikita/lib/ssh/root'
@@ -247,28 +251,28 @@ fi;`);
         }
       });
       child.stdout.on('data', (data) => {
-        return this.log({
+        return log({
           message: data,
           type: 'stdout',
           module: 'nikita/lib/ssh/root'
         });
       });
       child.stdout.on('end', (data) => {
-        return this.log({
+        return log({
           message: null,
           type: 'stdout',
           module: 'nikita/lib/ssh/root'
         });
       });
       child.stderr.on('data', (data) => {
-        return this.log({
+        return log({
           message: data,
           type: 'stderr',
           module: 'nikita/lib/ssh/root'
         });
       });
       return child.stderr.on('end', (data) => {
-        return this.log({
+        return log({
           message: null,
           type: 'stderr',
           module: 'nikita/lib/ssh/root'

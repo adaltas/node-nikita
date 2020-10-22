@@ -36,7 +36,7 @@ require('nikita').tools.extract({
   source: '/path/to/file.tgz'
   destation: '/tmp'
 }, function(err, {status}){
-  console.log(err ? err.message : 'File was extracted: ' + status);
+  console.info(err ? err.message : 'File was extracted: ' + status);
 });
 ```
 

@@ -56,7 +56,6 @@ used for comparaison.
 ## Handler
 
     handler = ({config, metadata}) ->
-      # @log message: "Entering file.hash", level: 'DEBUG', module: 'nikita/lib/file/hash'
       {stats} = if config.stats
       then config.stats
       else await @fs.base.stat config.target

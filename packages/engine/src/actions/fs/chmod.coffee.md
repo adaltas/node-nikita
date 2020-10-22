@@ -55,8 +55,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
-      # log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
+    handler = ({config, tools: {log}}) ->
       if config.stats
       then stats = config.stats
       else {stats} = await @fs.base.stat config.target

@@ -83,7 +83,10 @@ used as an alternative to the \`dn\` configuration.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var access, access_by, acl, acl_by, current, dn, found, i, index, is_perfect_match, j, k, l, len, len1, len2, len3, len4, len5, len6, len7, line, m, match, n, not_found_acl, o, olcAccess, olcAccesses, old, operations, p, q, ref, ref1, ref2, ref3, ref4, status, stdout;
   status = false;
   // Get DN

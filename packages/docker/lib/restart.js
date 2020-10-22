@@ -17,7 +17,7 @@
 // .docker.restart({
 //   container: 'toto'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container restarted: ' + status);
+//   console.info( err ? err.message : 'Container restarted: ' + status);
 // })
 // ```
 
@@ -51,8 +51,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker restart",

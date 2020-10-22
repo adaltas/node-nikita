@@ -90,10 +90,13 @@ for later execution, default to "1".`
 };
 
 // ## Source Code
-handler = async function({config, log, metadata}, callback) {
+handler = async function({
+    config,
+    metadata,
+    tools: {log}
+  }, callback) {
   var cmd, count, i, len, modified, quorum_current, ref, run;
   if (!Array.isArray(config.cmd)) {
-    // log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
     // Validate parameters
     config.cmd = [config.cmd];
   }

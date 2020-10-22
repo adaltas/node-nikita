@@ -18,7 +18,7 @@
 // .docker.rm({
 //   container: 'toto'
 // }, function(err, status){
-//   console.log( err ? err.message : 'Container removed: ' + status);
+//   console.info( err ? err.message : 'Container removed: ' + status);
 // })
 // ```
 
@@ -60,8 +60,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var status;
   log({

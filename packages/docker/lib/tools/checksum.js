@@ -54,8 +54,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var checksum, k, ref, status, stdout, v;
   log({

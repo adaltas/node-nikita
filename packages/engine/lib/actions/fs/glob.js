@@ -54,7 +54,6 @@ handler = async function({
     tools: {path}
   }) {
   var base, exit_code, files, minimatch, s, stdout;
-  // @log message: "Entering file.glob", level: 'DEBUG', module: 'nikita/lib/file/hash'
   if (config.minimatch == null) {
     config.minimatch = {};
   }

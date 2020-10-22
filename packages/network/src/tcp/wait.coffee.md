@@ -166,8 +166,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
-      # @log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
+    handler = ({config, tools: {log}}) ->
       unless config.server?.length
         log message: "No connection to wait for", level: 'WARN'
         return

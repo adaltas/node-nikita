@@ -31,7 +31,6 @@ Change permissions of a file.
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
       config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
       @execute
         cmd: "chmod #{config.mode} #{config.target}"

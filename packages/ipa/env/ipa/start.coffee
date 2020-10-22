@@ -11,7 +11,7 @@ require '@nikitajs/tools/lib/register'
 # complaining that it cannot write into /tmp
 # solution involve `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
 
-# console.log path.join os.tmpdir(), 'nikita_ipa_lxd_install'
+# console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
 # parameters({
 #   name: 'nikita_lxd'
 #   description: 'Nikita LXD tests'

@@ -59,7 +59,7 @@ console.info(`User created or modified: ${status}`);
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       # Auth related config
       # binddn = if config.binddn then "-D #{config.binddn}" else ''
       # passwd = if config.passwd then "-w #{config.passwd}" else ''

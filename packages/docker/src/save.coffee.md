@@ -24,7 +24,7 @@ nikita.docker({
   compression: 'gzip'
   entrypoint: '/bin/true'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container saved: ' + status);
+  console.info( err ? err.message : 'Container saved: ' + status);
 })
 ```
 
@@ -68,7 +68,7 @@ nikita.docker({
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
       # Saves image to local tmp path, than copy it
       log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO', module: 'nikita/lib/docker/save'

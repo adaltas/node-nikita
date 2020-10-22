@@ -49,7 +49,10 @@ schema = {
 };
 
 // ## Source Code
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var cmd_database_create, cmd_grant_privileges, cmd_has_privileges, exists, i, len, ref, status, user;
   if (config.user == null) {
     config.user = [];

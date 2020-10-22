@@ -13,7 +13,7 @@ require('nikita')
   name: 'coffeescript',
   global: true
 }, (err, {status}) => {
-  console.log(err ? err.message : 'Package uninstalled ' + status);
+  console.info(err ? err.message : 'Package uninstalled ' + status);
 });
 ```
 

@@ -23,7 +23,7 @@
 //   version: '2.1.0',
 //   cwd: '/tmp/my_gems'
 // }, function(err, {status, filename, filepath}){
-//   console.log( err ? err.messgage : 'Gem fetched: ' + status);
+//   console.info( err ? err.messgage : 'Gem fetched: ' + status);
 // });
 // ```
 

@@ -56,7 +56,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var _, i, keytab, kvno, len, line, match, mdate, princ, principal, ref, ref1, ref2, ref3, ref4, ref5, status, stdout, values;
   if (/^\S+@\S+$/.test(config.admin.principal)) {
     if (config.realm == null) {

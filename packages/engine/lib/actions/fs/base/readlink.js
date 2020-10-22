@@ -34,11 +34,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var stdout;
-  this.log({
-    message: "Entering fs.readlink",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/readlink'
-  });
   ({stdout} = (await this.execute({
     cmd: `readlink ${config.target}`
   })));

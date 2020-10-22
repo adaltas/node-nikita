@@ -41,7 +41,7 @@
 //   },
 //   target: '/tmp/my_file'
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'Content was updated: ' + status);
+//   console.info(err ? err.message : 'Content was updated: ' + status);
 // });
 // ```
 
@@ -121,7 +121,10 @@ optional, use should_exists to enforce its presence.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var content, data, default_props, err, org_props, parse, stringify;
   // log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
   org_props = {};

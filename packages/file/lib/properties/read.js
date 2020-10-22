@@ -59,7 +59,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var _, data, i, k, len, line, lines, properties, v;
   log({
     message: "Entering file.properties",

@@ -21,7 +21,7 @@ module.exports = ->
       after: '@nikitajs/engine/src/plugins/log'
       handler: (action) ->
         action.state.logs = []
-        action.log = ( (fn) ->
+        action.tools.log = ( (fn) ->
           (info) ->
             log = fn.call null, info
             # Note, log is undefined if `metadata.log` is `false`
@@ -35,7 +35,7 @@ module.exports = ->
             # Push log to internal state
             action.state.logs.push log
             log
-        )(action.log)
+        )(action.tools.log)
     'nikita:session:result':
       after: '@nikitajs/engine/src/metadata/status'
       handler: ({action, output}, handler) ->

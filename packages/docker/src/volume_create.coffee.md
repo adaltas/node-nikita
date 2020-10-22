@@ -20,7 +20,7 @@ require('nikita')
 .docker.pause({
   name: 'my_volume'
 }, function(err, status){
-  console.log( err ? err.message : 'Volume created: ' + status);
+  console.info( err ? err.message : 'Volume created: ' + status);
 })
 ```
 
@@ -64,7 +64,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
       # Normalize config
       config.label = [config.label] if typeof config.label is 'string'

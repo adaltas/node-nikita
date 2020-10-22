@@ -27,7 +27,7 @@ require('nikita')
   container: 'container1',
   device: 'vpn'
 }, function(err, {config}){
-  console.log( err ? err.message : config);
+  console.info( err ? err.message : config);
   # { connect: "udp:127.0.0.1:1194",
   #   listen: "udp:51.68.116.44:1194",
   #   type: proxy } }

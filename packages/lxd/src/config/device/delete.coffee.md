@@ -25,7 +25,7 @@ require('nikita')
   container: 'container1',
   device: 'root',
 }, function(err, {status}){
-  console.log( err ? err.message : 'Device removed: ' + status);
+  console.info( err ? err.message : 'Device removed: ' + status);
 })
 ```
 
