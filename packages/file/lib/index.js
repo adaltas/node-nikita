@@ -126,7 +126,7 @@
 // ```
 
 // ## Hook
-var diff, handler, on_action, path, schema, utils;
+var diff, handler, on_action, partial, path, schema, utils;
 
 on_action = function({config}) {
   if (!((config.source || (config.content != null)) || config.replace || (config.write != null))) {
@@ -599,7 +599,7 @@ handler = async function({config, log}) {
     config.content = config.content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1");
   }
   if (config.write.length) {
-    utils.string.replace_partial.call(this, config);
+    partial.call(this, config);
   }
   if (config.eof) {
     log({
@@ -755,5 +755,7 @@ path = require('path');
 utils = require('@nikitajs/engine/src/utils');
 
 diff = require('./utils/diff');
+
+partial = require('./utils/partial');
 
 // [diffLines]: https://github.com/kpdecker/jsdiff
