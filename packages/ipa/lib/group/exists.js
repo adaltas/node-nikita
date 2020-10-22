@@ -3,12 +3,7 @@
 
 // Check if a group exists inside FreeIPA.
 
-// ## Options
-
-// * `cn` (string, required)   
-//   Name of the group to check for existence.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require('nikita')
@@ -26,63 +21,50 @@
 // ```
 
 // ## Schema
-var diff, handler, schema, string;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'cn': {
-      type: 'string'
-    },
-    'attributes': {
-      type: 'object',
-      properties: {
-        'user': {
-          type: 'array',
-          minItems: 1,
-          uniqueItems: true,
-          items: {
-            type: 'string'
-          }
-        }
-      }
+      type: 'string',
+      description: `Name of the group to check for existence.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['cn', 'connection']
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, err;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.ipa.group.show({
-    connection: options.connection,
-    cn: options.cn,
-    relax: true
-  }, function(err) {
-    if (err && err.code !== 4001) {
-      return callback(err);
-    }
-    return callback(null, {
-      status: !err,
-      exists: !err
+  try {
+    await this.ipa.group.show({
+      connection: config.connection,
+      cn: config.cn
     });
-  });
+    return {
+      status: true,
+      exists: true
+    };
+  } catch (error) {
+    err = error;
+    if (err.code !== 4001) { // group not found
+      throw err;
+    }
+    return {
+      status: false,
+      exists: false
+    };
+  }
 };
+
 
 // ## Export
 module.exports = {
@@ -90,8 +72,3 @@ module.exports = {
   schema: schema,
   shy: true
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
-
-diff = require('object-diff');

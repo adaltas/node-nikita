@@ -52,7 +52,7 @@ force options is set.
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
@@ -75,7 +75,7 @@ force options is set.
            ":#{config.tag}" if config.tag?
         ].join ''
         if: ({parent}) ->
-          parent.parent.operations.status -1
+          parent.parent.tools.status -1
 
 ## Exports
 

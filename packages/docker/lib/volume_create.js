@@ -5,19 +5,6 @@
 
 // ## Options
 
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `driver` (string)   
-//   Specify volume driver name.
-// * `label` (string|array)   
-//   Set metadata for a volume.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `name` (string)   
-//   Specify volume name.
-// * `opt` (string|array)   
-//   Set driver specific options.
-
 // ## Callback parameters
 
 // * `err`   
@@ -41,25 +28,73 @@ var docker, handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'driver': {
+      type: 'string',
+      description: `Specify volume driver name.`
+    },
+    'label': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      ],
+      description: `Set metadata for a volume.`
+    },
+    'name': {
+      type: 'string',
+      description: `Specify volume name.`
+    },
+    'opt': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      ],
+      description: `Set driver specific options.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  }
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, status, v;
   log({
     message: "Entering Docker volume_create",
     level: 'DEBUG',
     module: 'nikita/lib/docker/volume_create'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -74,33 +109,18 @@ handler = function({
   if (typeof config.opt === 'string') {
     config.opt = [config.opt];
   }
-  // Build the docker command arguments
-  cmd = ["volume create"];
-  if (config.driver) {
-    cmd.push(`--driver ${config.driver}`);
-  }
-  if (config.label) {
-    cmd.push(`--label ${config.label.join(',')}`);
-  }
-  if (config.name) {
-    cmd.push(`--name ${config.name}`);
-  }
-  if (config.opt) {
-    cmd.push(`--opt ${config.opt.join(',')}`);
-  }
-  cmd = cmd.join(' ');
-  this.execute({
+  ({status} = (await this.docker.tools.execute({
     if: config.name,
-    cmd: docker.wrap(config, `volume inspect ${config.name}`),
+    cmd: `volume inspect ${config.name}`,
     code: 1,
     code_skipped: 0,
     shy: true
-  });
-  return this.execute({
+  })));
+  return this.docker.tools.execute({
     if: function() {
-      return !config.name || this.status(-1);
+      return !config.name || status;
     },
-    cmd: docker.wrap(config, cmd)
+    cmd: ["volume create", config.driver ? `--driver ${config.driver}` : void 0, config.label ? `--label ${config.label.join(',')}` : void 0, config.name ? `--name ${config.name}` : void 0, config.opt ? `--opt ${config.opt.join(',')}` : void 0].join(' ')
   });
 };
 

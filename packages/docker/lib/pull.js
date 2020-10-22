@@ -28,7 +28,7 @@
 // ```
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema;
 
 schema = {
   type: 'object',
@@ -39,15 +39,20 @@ schema = {
     },
     'version': {
       type: 'string',
-      description: `Version of the tag to control.  Default to \`latest\`.`
-    },
-    'code_skipped': {
-      type: 'string',
-      description: `The exit code to skip if different from 0.`
+      description: `Version of the tag to control. Default to \`latest\`.`
     },
     'all': {
       type: 'boolean',
       description: `Download all tagged images in the repository.  Default to false.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
     }
   }
 };
@@ -56,18 +61,20 @@ schema = {
 handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, cmd_images, k, ref, status, v, version;
+  var cmd, k, ref, status, v, version;
   log({
     message: "Entering Docker pull",
     level: 'DEBUG',
     module: 'nikita/lib/docker/pull'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -81,25 +88,19 @@ handler = async function({
   if (config.all == null) {
     config.all = false;
   }
-  cmd_images = 'images';
-  cmd_images += ` | grep '${config.tag}'`;
-  if (!config.all) {
-    cmd_images += ` | grep '${version}'`;
-  }
   if (config.tag == null) {
     throw Error('Missing Tag Name');
   }
   // rm is false by default only if config.service is true
   cmd = 'pull';
   cmd += config.all ? ` -a ${config.tag}` : ` ${config.tag}:${version}`;
-  ({status} = (await this.execute({
-    cmd: docker.wrap(config, cmd_images),
+  ({status} = (await this.docker.tools.execute({
+    cmd: ['images', `| grep '${config.tag}'`, !config.all ? `| grep '${version}'` : void 0].join(' '),
     code_skipped: 1
   })));
-  return this.execute({
+  return this.docker.tools.execute({
     unless: status,
-    cmd: docker.wrap(config, cmd),
-    code_skipped: config.code_skipped
+    cmd: cmd
   });
 };
 
@@ -108,8 +109,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

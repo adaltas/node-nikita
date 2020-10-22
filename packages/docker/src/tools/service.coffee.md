@@ -22,7 +22,7 @@ after execution.
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker service", level: 'DEBUG', module: 'nikita/lib/docker/service'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

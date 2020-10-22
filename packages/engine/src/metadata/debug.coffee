@@ -51,16 +51,16 @@ module.exports = ->
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
               else "\x1b[32m#{msg}\x1b[39m"
             debug.ws.write "#{msg}\n"
-      action.operations.events.addListener 'text', debug.listener
-      action.operations.events.addListener 'stdin', debug.listener
-      action.operations.events.addListener 'stdout_stream', debug.listener
-      action.operations.events.addListener 'stderr_stream', debug.listener
+      action.tools.events.addListener 'text', debug.listener
+      action.tools.events.addListener 'stdin', debug.listener
+      action.tools.events.addListener 'stdout_stream', debug.listener
+      action.tools.events.addListener 'stderr_stream', debug.listener
     'nikita:session:result':
       # after: '@nikitajs/engine/src/plugins/log'
       handler: ({action}) ->
         debug = action.metadata.debug
         return unless debug and debug.listener # undefined with invalid value error
-        action.operations.events.removeListener 'text', debug.listener
-        action.operations.events.removeListener 'stdin', debug.listener
-        action.operations.events.removeListener 'stdout_stream', debug.listener
-        action.operations.events.removeListener 'stderr_stream', debug.listener
+        action.tools.events.removeListener 'text', debug.listener
+        action.tools.events.removeListener 'stdin', debug.listener
+        action.tools.events.removeListener 'stdout_stream', debug.listener
+        action.tools.events.removeListener 'stderr_stream', debug.listener

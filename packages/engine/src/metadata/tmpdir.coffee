@@ -32,7 +32,7 @@ module.exports = ->
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
-        else await action.operations.find (action) ->
+        else await action.tools.find (action) ->
           action.ssh
         tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
@@ -69,7 +69,7 @@ module.exports = ->
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
-        else await action.operations.find (action) ->
+        else await action.tools.find (action) ->
           # action.state['nikita:ssh:connection']
           action.ssh
         # Ensure the location is correct

@@ -38,7 +38,7 @@ module.exports = function() {
           if (!global) {
             return action;
           }
-          action.config[global] = (await action.operations.find(function({config}) {
+          action.config[global] = (await action.tools.find(function({config}) {
             return config[global];
           }));
           ref = action.config[global];

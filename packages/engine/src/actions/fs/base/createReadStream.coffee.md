@@ -67,7 +67,7 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Source Code
 
-    handler = ({config, hooks, metadata, operations: {path, find}, ssh}) ->
+    handler = ({config, hooks, metadata, tools: {path, find}, ssh}) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalization

@@ -67,7 +67,7 @@ handler = async function({
     config,
     log,
     metadata,
-    operations: {path},
+    tools: {path},
     ssh
   }) {
   var exists, hash;

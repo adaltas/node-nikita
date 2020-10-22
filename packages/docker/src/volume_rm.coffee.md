@@ -39,7 +39,7 @@ nikita.docker.volume_rm({
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

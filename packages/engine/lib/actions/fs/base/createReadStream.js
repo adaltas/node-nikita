@@ -79,7 +79,7 @@ handler = async function({
     config,
     hooks,
     metadata,
-    operations: {path, find},
+    tools: {path, find},
     ssh
   }) {
   var current_username, err, sudo;

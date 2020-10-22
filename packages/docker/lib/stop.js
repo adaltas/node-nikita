@@ -5,15 +5,6 @@
 
 // ## Options
 
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `timeout` (int)   
-//   Seconds to wait for stop before killing it
-
 // ## Callback parameters
 
 // * `err`   
@@ -37,25 +28,47 @@ var docker, handler, schema, util;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container.`
+    },
+    'timeout': {
+      type: 'integer',
+      description: `Seconds to wait for stop before killing the container (Docker default
+is 10).`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, status, v;
   log({
     message: "Entering Docker stop",
     level: 'DEBUG',
     module: 'nikita/lib/docker/stop'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -63,42 +76,27 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validate parameters
-    throw Error('Missing container parameter');
-  }
   // rm is false by default only if config.service is true
-  cmd = 'stop';
-  if (config.timeout != null) {
-    cmd += ` -t ${config.timeout}`;
-  }
-  cmd += ` ${config.container}`;
-  this.docker.status({
+  ({status} = (await this.docker.tools.status({
     shy: true
-  }, config, function(err, {status}) {
-    if (err) {
-      throw err;
-    }
-    if (status) {
-      log({
-        message: `Stopping container ${config.container}`,
-        level: 'INFO',
-        module: 'nikita/lib/docker/stop'
-      });
-    } else {
-      log({
-        message: `Container already stopped ${config.container} (Skipping)`,
-        level: 'INFO',
-        module: 'nikita/lib/docker/stop'
-      });
-    }
-    if (!status) {
-      return this.end();
-    }
+  }, config)));
+  if (status) {
+    log({
+      message: `Stopping container ${config.container}`,
+      level: 'INFO',
+      module: 'nikita/lib/docker/stop'
+    });
+  } else {
+    log({
+      message: `Container already stopped ${config.container} (Skipping)`,
+      level: 'INFO',
+      module: 'nikita/lib/docker/stop'
+    });
+  }
+  return this.docker.tools.execute({
+    if: status,
+    cmd: ['stop', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
   });
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
 };
 
 // ## Exports

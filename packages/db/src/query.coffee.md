@@ -5,7 +5,7 @@ Check if a user exists in the database.
 
 ## Hooks
 
-    on_action = ({config, operations: {find}}) ->
+    on_action = ({config, tools: {find}}) ->
       throw Error 'Deprecated config `egrep`' if config.egrep?
       config.engine = config.engine?.toLowerCase()
       config.port = parseInt config.port if typeof config.port is 'string' and /^\d+$/.test config.port

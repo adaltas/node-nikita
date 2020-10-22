@@ -3,11 +3,6 @@
 
 // Retrieve service information from FreeIPA.
 
-// ## Options
-
-// * `principal` (string, required)   
-//   Name of the service to add.
-
 // ## Exemple
 
 // ```js
@@ -31,58 +26,47 @@
 // ```
 
 // ## Schema
-var handler, schema, string;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'principal': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the service to show.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['connection', 'principal']
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, data, error;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.connection.http(options.connection, {
+  ({data} = (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
       method: 'service_show/1',
-      params: [[options.principal], {}],
+      params: [[config.principal], {}],
       id: 0
     }
-  }, function(err, {data}) {
-    var error;
-    if (err) {
-      return callback(err);
-    }
-    if (data.error) {
-      error = Error(data.error.message);
-      error.code = data.error.code;
-      return callback(error);
-    }
-    return callback(null, {
+  })));
+  if (data.error) {
+    error = Error(data.error.message);
+    error.code = data.error.code;
+    throw error;
+  } else {
+    return {
       result: data.result.result
-    });
-  });
+    };
+  }
 };
 
 // ## Export
@@ -90,6 +74,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');

@@ -49,7 +49,7 @@ describe 'actions.log.fs', ->
       @log.fs
         basedir: tmpdir
         serializer: text: (log) -> "#{log.message}\n"
-      @call ({log, operations: {events}}) ->
+      @call ({log, tools: {events}}) ->
         log message: 'ok'
       @fs.assert
         target: "#{tmpdir}/localhost.log"

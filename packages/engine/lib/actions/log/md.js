@@ -59,7 +59,7 @@ handler = function(action) {
         headers = walk(act);
         // Async operation break the event order, causing header to be writen
         // after other sync event such as text
-        // headers = await act.operations.walk ({config}) ->
+        // headers = await act.tools.walk ({config}) ->
         //   config.header
         header = headers.reverse().join(action.config.divider);
         return [last_event_type !== 'nikita:action:start' ? '\n' : void 0, '#'.repeat(headers.length), ' ', header, '\n\n'].join('');

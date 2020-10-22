@@ -25,14 +25,14 @@ create = ->
     require './plugins/conditions_exists'
     require './plugins/global'
     require './plugins/history'
-    require './plugins/log'
-    require './plugins/operation_events'
-    require './plugins/operation_find'
-    require './plugins/operation_path'
-    require './plugins/operation_walk'
     require './plugins/output_logs'
     require './plugins/schema'
     require './plugins/templated'
+    require './plugins/tools_events'
+    require './plugins/tools_find'
+    require './plugins/tools_log'
+    require './plugins/tools_path'
+    require './plugins/tools_walk'
   ], ...arguments
 
 module.exports = new Proxy create,

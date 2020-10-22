@@ -49,7 +49,7 @@ schema = {
 handler = function({
     config,
     metadata,
-    operations: {find}
+    tools: {find}
   }) {
   // Command
   return this.execute.wait({

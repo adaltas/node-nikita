@@ -34,7 +34,7 @@ describe 'file options diff', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, operations: {events}}) ->
+    , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) -> logs.push log.message
       @file
         target: "#{tmpdir}/file"
@@ -55,7 +55,7 @@ describe 'file options diff', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, operations: {events}}) ->
+    , ({metadata: {tmpdir}, tools: {events}}) ->
       diffs = []
       events.on 'diff', (log) ->
         # logs.push log.message
@@ -71,7 +71,7 @@ describe 'file options diff', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, operations: {events}}) ->
+    , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) ->
         logs.push log.message
       await @file

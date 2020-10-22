@@ -3,26 +3,6 @@
 
 // Save Docker images.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `image` (string)   
-//   Name/ID of base image, required.
-// * `tag` (string)   
-//   Tag of the image.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `output` (string).   
-//   TAR archive output path, required.
-// * `target` (string).   
-//   Shortcut for "output" option, required.
-// * `code` (int | array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will
-//   not be incremented, int or array of int.
-
 // ## Callback parameters
 
 // * `err`   
@@ -48,30 +28,64 @@
 // })
 // ```
 
-// ## Schema
-var docker, handler, schema, util;
+// ## Hooks
+var handler, on_action, schema;
 
+on_action = function({config}) {
+  return config.output != null ? config.output : config.output = config.target;
+};
+
+// ## Schema
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'image': {
+      type: 'string',
+      description: `Name/ID of base image, required.`
+    },
+    'tag': {
+      type: 'string',
+      description: `Tag of the image.`
+    },
+    'output': {
+      type: 'string',
+      description: `TAR archive output path, required.`
+    },
+    'target': {
+      type: 'string',
+      description: `Shortcut for "output" option, required.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['image', 'output']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, v;
   log({
     message: "Entering Docker save",
     level: 'DEBUG',
     module: 'nikita/lib/docker/save'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -79,38 +93,22 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.image == null) {
-    // Validate parameters
-    throw Error('Missing image parameter');
-  }
-  if (config.output == null) {
-    config.output = config.target;
-  }
-  if (config.output == null) {
-    throw Error('Missing output parameter');
-  }
   // Saves image to local tmp path, than copy it
-  cmd = `save -o ${config.output} ${config.image}`;
-  if (config.tag != null) {
-    cmd += `:${config.tag}`;
-  }
   log({
     message: `Extracting image ${config.output} to file:${config.image}`,
     level: 'INFO',
     module: 'nikita/lib/docker/save'
   });
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
+  return this.docker.tools.execute({
+    cmd: [`save -o ${config.output} ${config.image}`, config.tag != null ? `:${config.tag}` : void 0].join('')
+  });
 };
 
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-util = require('util');
-
-docker = require('./utils');

@@ -8,7 +8,7 @@ var cmd, connection_config, escape, handler, jdbc, on_action, schema, utils;
 
 on_action = function({
     config,
-    operations: {find}
+    tools: {find}
   }) {
   var ref;
   if (config.egrep != null) {

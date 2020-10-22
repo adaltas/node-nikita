@@ -68,7 +68,7 @@ nikita.docker({
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

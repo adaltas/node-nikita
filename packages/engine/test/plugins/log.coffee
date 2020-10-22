@@ -7,7 +7,7 @@ describe 'plugins.log', ->
   describe 'events', ->
     
     it 'are emitted', ->
-      nikita ({log, operations: {events}}) ->
+      nikita ({log, tools: {events}}) ->
         new Promise (resolve) ->
           events.on 'text', (msg) ->
             resolve msg
@@ -51,7 +51,7 @@ describe 'plugins.log', ->
     it 'equals `true`', ->
       data = []
       await nikita
-      .call ({operations: {events}}) ->
+      .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
       .call log: true, ({log}) ->
         log message: 'enabled parent'
@@ -62,7 +62,7 @@ describe 'plugins.log', ->
     it 'equals `false`', ->
       data = []
       await nikita
-      .call ({operations: {events}}) ->
+      .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
       .call log: false, ({log}) ->
         log message: 'disabled'

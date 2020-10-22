@@ -111,7 +111,7 @@ require('nikita').fs.copy({
 
 ## Handler
 
-    handler = ({config, operations: {status, path}}) ->
+    handler = ({config, tools: {status, path}}) ->
       # Retrieve stats information about the source unless provided through the "source_stats" option.
       if config.source_stats
         @log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'

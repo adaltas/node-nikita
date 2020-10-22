@@ -176,14 +176,15 @@ a global scale.`
 handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, data, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, ref6, source, stderr, stdout, userargs, v;
+  var cmd, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, ref6, source, stderr, stdout, userargs, v;
   log({
     message: "Entering Docker build",
     level: 'DEBUG',
     module: 'nikita/lib/docker/build'
   });
+  // Global config
   config.docker = (await find(function({
       config: {docker}
     }) {
@@ -289,12 +290,13 @@ handler = async function({
       level: 'INFO',
       module: 'nikita/lib/build'
     });
-    data = (await this.fs.base.readFile({
+    ({
+      data: config.content
+    } = (await this.fs.base.readFile({
       ssh: config.ssh,
       target: config.file,
       encoding: 'utf8'
-    }));
-    config.content = data;
+    })));
   }
   ref4 = utils.string.lines(config.content);
   // Count steps

@@ -6,17 +6,6 @@
 // return status is UNMODIFIED. If container does not exist nor is running
 // SIGNAL is not sent.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.   
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `signal` (int|string)   
-//   Use a specified signal. SIGKILL by default.
-
 // ## Callback parameters
 
 // * `err`   
@@ -37,29 +26,57 @@
 // ```
 
 // ## Schema
-var docker, handler, schema;
+var handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container.`
+    },
+    'signal': {
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
+      description: `Use a specified signal. SIGKILL by default.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, status, v;
   log({
     message: "Entering Docker kill",
     level: 'DEBUG',
     module: 'nikita/lib/docker/kill'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -67,25 +84,16 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validate parameters
-    return callback(Error('Missing container parameter'));
-  }
-  cmd = 'kill';
-  if (config.signal != null) {
-    cmd += ` -s ${config.signal}`;
-  }
-  cmd += ` ${config.container}`;
-  this.execute({
-    cmd: docker.wrap(config, `ps | grep '${config.container}' | grep 'Up'`),
+  ({status} = (await this.docker.tools.execute({
+    cmd: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1
-  }, docker.callback);
-  return this.execute({
+  })));
+  return this.docker.tools.execute({
     if: function() {
-      return this.status(-1);
+      return status;
     },
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
+    cmd: ['kill', config.signal != null ? `-s ${config.signal}` : void 0, `${config.container}`].join(' ')
+  });
 };
 
 // ## Exports
@@ -93,6 +101,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');

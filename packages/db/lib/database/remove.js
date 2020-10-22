@@ -43,7 +43,7 @@ are converted to lower cases.`
 handler = function({
     config,
     metadata,
-    operations: {find}
+    tools: {find}
   }) {
   // Avoid errors when database argument is provided in the command:
   // - Postgres: "ERROR:  cannot drop the currently open database"

@@ -32,7 +32,7 @@ module.exports = ->
       handler: (action) ->
         global = action.metadata.global
         return action unless global
-        action.config[global] = await action.operations.find ({config}) -> config[global]
+        action.config[global] = await action.tools.find ({config}) -> config[global]
         action.config[k] ?= v for k, v of action.config[global]
         delete action.config[global]
         action

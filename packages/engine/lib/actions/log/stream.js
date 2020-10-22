@@ -36,7 +36,7 @@ information.`,
 // ## Handler
 handler = function({
     config,
-    operations: {events}
+    tools: {events}
   }) {
   var close;
   if (!config.stream) {

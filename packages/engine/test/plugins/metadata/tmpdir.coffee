@@ -35,8 +35,8 @@ describe 'plugins.metadata.tmpdir', ->
     they 'in children', ({ssh}) ->
       nikita.call ssh: ssh, tmpdir: true, ({metadata, ssh})->
         parent = metadata.tmpdir
-        @call -> @call ({operations}) ->
-          child = await operations.find (action) ->
+        @call -> @call ({tools}) ->
+          child = await tools.find (action) ->
             action.metadata.tmpdir
           child.should.eql parent
   

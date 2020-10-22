@@ -3,14 +3,7 @@
 
 // Check if a service exists inside FreeIPA.
 
-// ## Options
-
-// * `principal` (string, required)   
-//   Name of the service to check for existence.
-// * `connection` (object, required)   
-//   See the `nikita.connection.http` action.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require('nikita')
@@ -28,51 +21,50 @@
 // ```
 
 // ## Schema
-var diff, handler, schema, string;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'principal': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the service to check for existence.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['connection', 'principal']
 };
 
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+// ## Handler
+handler = async function({config}) {
+  var base, err;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.ipa.service.show({
-    connection: options.connection,
-    principal: options.principal,
-    relax: true
-  }, function(err) {
-    var exists;
-    if (err && err.code !== 4001) {
-      return callback(err);
-    }
-    exists = !err;
-    return callback(null, {
-      status: exists,
-      exists: exists
+  try {
+    await this.ipa.service.show({
+      connection: config.connection,
+      principal: config.principal
     });
-  });
+    return {
+      status: true,
+      exists: true
+    };
+  } catch (error) {
+    err = error;
+    if (err.code !== 4001) { // service not found
+      throw err;
+    }
+    return {
+      status: false,
+      exists: false
+    };
+  }
 };
+
 
 // ## Export
 module.exports = {
@@ -80,8 +72,3 @@ module.exports = {
   schema: schema,
   shy: true
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
-
-diff = require('object-diff');

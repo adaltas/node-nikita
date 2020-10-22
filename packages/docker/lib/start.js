@@ -3,22 +3,6 @@
 
 // Start a container.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `attach` (boolean)   
-//   attach STDOUT/STDERR, default to false.
-// * `code` (int|array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will
-//   not be incremented, int or array of int.
-
 // ## Callback parameters
 
 // * `err`   
@@ -49,25 +33,47 @@ var docker, handler, schema, util;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'attach': {
+      type: 'boolean',
+      default: false,
+      description: `Attach STDOUT/STDERR.`
+    },
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container, required.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, status, v;
   log({
     message: "Entering Docker start",
     level: 'DEBUG',
     module: 'nikita/lib/docker/start'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -75,42 +81,26 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validation
-    throw Error('Missing container parameter');
-  }
-  // rm is false by default only if config.service is true
-  cmd = 'start';
-  if (config.attach) {
-    cmd += ' -a';
-  }
-  cmd += ` ${config.container}`;
-  this.docker.status({
+  ({status} = (await this.docker.tools.status({
     shy: true
-  }, config, function(err, {status}) {
-    if (err) {
-      throw err;
-    }
-    if (status) {
-      log({
-        message: `Container already started ${config.container} (Skipping)`,
-        level: 'INFO',
-        module: 'nikita/lib/docker/start'
-      });
-    } else {
-      log({
-        message: `Starting container ${config.container}`,
-        level: 'INFO',
-        module: 'nikita/lib/docker/start'
-      });
-    }
-    if (status) {
-      return this.end();
-    }
+  }, config)));
+  if (status) {
+    log({
+      message: `Container already started ${config.container} (Skipping)`,
+      level: 'INFO',
+      module: 'nikita/lib/docker/start'
+    });
+  } else {
+    log({
+      message: `Starting container ${config.container}`,
+      level: 'INFO',
+      module: 'nikita/lib/docker/start'
+    });
+  }
+  return this.docker.tools.execute({
+    unless: status,
+    cmd: ['start', config.attach ? '-a' : void 0, `${config.container}`].join(' ')
   });
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
 };
 
 // ## Exports

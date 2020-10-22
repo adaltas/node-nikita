@@ -40,7 +40,7 @@ nikita.docker.wait({
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

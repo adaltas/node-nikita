@@ -44,7 +44,7 @@ Create a user for the destination database.
 
 ## Source Code
 
-    handler = ({config, metadata, operations: {find}}) ->
+    handler = ({config, metadata, tools: {find}}) ->
       # Avoid errors when database argument is provided in the command:
       # - Postgres: "ERROR:  cannot drop the currently open database"
       # - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"

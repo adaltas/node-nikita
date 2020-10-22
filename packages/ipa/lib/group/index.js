@@ -3,14 +3,7 @@
 
 // Add or modify a group in FreeIPA.
 
-// ## Options
-
-// * `attributes` (object, required)   
-//   Attributes associated with the group to add or modify.
-// * `cn` (string, required)   
-//   Name of the group to add.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require('nikita')
@@ -28,98 +21,71 @@
 // ```
 
 // ## Schema
-var diff, handler, schema, string;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'cn': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the group to add or modify.`
     },
     'attributes': {
       type: 'object',
-      properties: {
-        'user': {
-          type: 'array',
-          minItems: 1,
-          uniqueItems: true,
-          items: {
-            type: 'string'
-          }
-        }
-      }
+      default: {},
+      description: `Attributes associated with the group to add or modify.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['cn', 'connection']
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1, output;
-  if (options.attributes == null) {
-    options.attributes = {};
+handler = async function({config}) {
+  var base, data, error, output, result, status;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
-  }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  output = {};
-  this.ipa.group.exists({
-    connection: options.connection,
-    cn: options.cn
-  });
-  this.call(function({}, callback) {
-    return this.connection.http(options.connection, {
-      negotiate: true,
-      method: 'POST',
-      data: {
-        method: !this.status(-1) ? "group_add/1" : "group_mod/1",
-        params: [[options.cn], options.attributes],
-        id: 0
-      },
-      http_headers: options.http_headers
-    }, function(error, {data}) {
-      if (data != null ? data.error : void 0) {
-        if (data.error.code === 4202) { // no modifications to be performed
-          return callback(null, false);
-        }
-        error = Error(data.error.message);
-        error.code = data.error.code;
-      }
-      output.result = data.result.result;
-      return callback(error, true);
-    });
-  });
-  this.call({
-    unless: function() {
-      return this.status(-1);
+  ({status} = (await this.ipa.group.exists({
+    connection: config.connection,
+    cn: config.cn
+  })));
+  // Add or modify a group
+  ({data} = (await this.network.http(config.connection, {
+    negotiate: true,
+    method: 'POST',
+    data: {
+      method: !status ? "group_add/1" : "group_mod/1",
+      params: [[config.cn], config.attributes],
+      id: 0
     }
-  }, function() {
-    return this.ipa.group.show(options, {
-      cn: options.cn
-    }, function(err, {result}) {
-      if (!err) {
-        return output.result = result;
-      }
-    });
-  });
-  return this.next(function(err, {status}) {
-    return callback(err, {
-      status: status,
-      result: output.result
-    });
-  });
+  })));
+  output = {};
+  status = false;
+  if (data != null ? data.error : void 0) {
+    if (data.error.code !== 4202) { // no modifications to be performed
+      error = Error(data.error.message);
+      error.code = data.error.code;
+      throw error;
+    }
+  } else {
+    output.result = data.result.result;
+    status = true;
+  }
+  // Get result info even if no modification is performed
+  if (!status) {
+    ({result} = (await this.ipa.group.show(config, {
+      cn: config.cn
+    })));
+    output.result = result;
+  }
+  return {
+    status: status,
+    result: output.result
+  };
 };
 
 // ## Export
@@ -127,8 +93,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
-
-diff = require('object-diff');
