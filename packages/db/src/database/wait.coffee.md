@@ -40,7 +40,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, metadata, operations: {find}}) ->
+    handler = ({config, metadata, tools: {find}}) ->
       # Command
       @execute.wait
         cmd: switch config.engine

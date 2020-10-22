@@ -31,18 +31,28 @@
 // ```
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  }
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
   var k, ref, v;
   log({
@@ -51,9 +61,11 @@ handler = function({
     module: 'nikita/lib/docker/unpause'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -65,10 +77,8 @@ handler = function({
     // Validation
     throw Error('Missing container parameter');
   }
-  return this.execute({
-    cmd: docker.wrap(config, `unpause ${config.container}`)
-  }, function() {
-    return docker.callback(callback, ...arguments);
+  return this.docker.tools.execute({
+    cmd: `unpause ${config.container}`
   });
 };
 
@@ -77,8 +87,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

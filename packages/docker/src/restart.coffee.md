@@ -46,7 +46,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

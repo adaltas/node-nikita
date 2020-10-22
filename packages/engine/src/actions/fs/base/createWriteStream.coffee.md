@@ -61,7 +61,7 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, metadata, operations: {find}, ssh}) ->
+    handler = ({config, metadata, tools: {find}, ssh}) ->
       @log message: "Entering fs.createWriteStream", level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalize config

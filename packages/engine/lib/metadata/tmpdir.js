@@ -40,7 +40,7 @@ module.exports = function() {
             return handler;
           }
           // SSH connection extraction
-          ssh = action.config.ssh === false ? void 0 : (await action.operations.find(function(action) {
+          ssh = action.config.ssh === false ? void 0 : (await action.tools.find(function(action) {
             return action.ssh;
           }));
           tmpdir = ssh ? '/tmp' : os.tmpdir();
@@ -81,7 +81,7 @@ module.exports = function() {
             return;
           }
           // SSH connection extraction
-          ssh = action.config.ssh === false ? void 0 : (await action.operations.find(function(action) {
+          ssh = action.config.ssh === false ? void 0 : (await action.tools.find(function(action) {
             // action.state['nikita:ssh:connection']
             return action.ssh;
           }));

@@ -72,7 +72,7 @@ Create and start containers according to a docker-compose file
 
 ## Source Code
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

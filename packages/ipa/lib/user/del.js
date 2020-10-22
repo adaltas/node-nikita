@@ -3,14 +3,7 @@
 
 // Delete a user from FreeIPA.
 
-// ## Options
-
-// * `uid` (string, required)   
-//   Name of the user to delete, same as the username.
-// * `connection` (object, required)   
-//   See the `nikita.connection.http` action.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require("nikita")
@@ -27,14 +20,14 @@
 // })
 // ```
 
-// ## Options
-var diff, handler, on_options, schema, string;
+// ## Hooks
+var handler, on_action, schema;
 
-on_options = function({options}) {
-  if (options.uid == null) {
-    options.uid = options.username;
+on_action = function({config}) {
+  if (config.uid == null) {
+    config.uid = config.username;
   }
-  return delete options.username;
+  return delete config.username;
 };
 
 // ## Schema
@@ -42,60 +35,51 @@ schema = {
   type: 'object',
   properties: {
     'uid': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the user to delete, same as the \`username\`.`
     },
     'username': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the user to delete, alias of \`uid\`.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['connection', 'uid']
 };
 
 // ## Handler
-handler = function({options}) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, status;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  this.ipa.user.exists({
-    connection: options.connection,
+  ({status} = (await this.ipa.user.exists({
+    connection: config.connection,
     shy: false,
-    uid: options.uid
-  });
-  return this.connection.http(options.connection, {
-    if: function() {
-      return this.status(-1);
-    },
+    uid: config.uid
+  })));
+  if (!status) {
+    return;
+  }
+  return this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
       method: "user_del/1",
-      params: [[options.uid], {}],
+      params: [[config.uid], {}],
       id: 0
-    },
-    http_headers: options.http_headers
+    }
   });
 };
 
 // ## Export
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
-
-diff = require('object-diff');

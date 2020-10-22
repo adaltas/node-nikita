@@ -60,7 +60,7 @@ info.map( (container) =>
 
 ## Handler
 
-    handler = ({args, config, log, operations: {find}}) ->
+    handler = ({args, config, log, tools: {find}}) ->
       isCointainerArray = Array.isArray arg?.container for arg in args
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Global config

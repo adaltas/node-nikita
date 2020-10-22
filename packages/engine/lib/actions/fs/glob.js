@@ -51,7 +51,7 @@ schema = {
 handler = async function({
     config,
     metadata,
-    operations: {path}
+    tools: {path}
   }) {
   var base, exit_code, files, minimatch, s, stdout;
   // @log message: "Entering file.glob", level: 'DEBUG', module: 'nikita/lib/file/hash'

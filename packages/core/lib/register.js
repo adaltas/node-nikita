@@ -46,25 +46,6 @@ register(module.exports = {
     upload: '@nikitajs/core/src/file/upload',
     yaml: '@nikitajs/core/src/file/yaml'
   },
-  fs: {
-    chmod: '@nikitajs/core/src/fs/chmod',
-    chown: '@nikitajs/core/src/fs/chown',
-    copy: '@nikitajs/core/src/fs/copy',
-    createReadStream: '@nikitajs/core/src/fs/createReadStream',
-    createWriteStream: '@nikitajs/core/src/fs/createWriteStream',
-    exists: '@nikitajs/core/src/fs/exists',
-    lstat: '@nikitajs/core/src/fs/lstat',
-    mkdir: '@nikitajs/core/src/fs/mkdir',
-    rmdir: '@nikitajs/core/src/fs/rmdir',
-    readdir: '@nikitajs/core/src/fs/readdir',
-    readFile: '@nikitajs/core/src/fs/readFile',
-    readlink: '@nikitajs/core/src/fs/readlink',
-    rename: '@nikitajs/core/src/fs/rename',
-    stat: '@nikitajs/core/src/fs/stat',
-    symlink: '@nikitajs/core/src/fs/symlink',
-    unlink: '@nikitajs/core/src/fs/unlink',
-    writeFile: '@nikitajs/core/src/fs/writeFile'
-  },
   log: {
     '': '@nikitajs/core/src/log',
     cli: '@nikitajs/core/src/log/cli',
@@ -106,12 +87,6 @@ register(module.exports = {
       read: '@nikitajs/core/src/system/user/read',
       remove: '@nikitajs/core/src/system/user/remove'
     }
-  },
-  ssh: {
-    '': '@nikitajs/core/src/ssh',
-    open: '@nikitajs/core/src/ssh/open',
-    close: '@nikitajs/core/src/ssh/close',
-    root: '@nikitajs/core/src/ssh/root'
   },
   wait: {
     '': '@nikitajs/core/src/wait',

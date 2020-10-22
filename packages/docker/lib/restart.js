@@ -3,22 +3,6 @@
 
 // Start stopped containers or restart (stop + starts) a started container.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.   
-// * `container` (string)   
-//   Name/ID of the container, required.   
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine   
-// * `timeout` (int)   
-//   Seconds to wait for stop before killing it   
-// * `code` (int|array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.   
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will   
-//   not be incremented, int or array of int.   
-
 // ## Callback parameters
 
 // * `err`   
@@ -38,29 +22,50 @@
 // ```
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container, required.`
+    },
+    'timeout': {
+      type: 'integer',
+      description: `Seconds to wait for stop before killing it.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, v;
   log({
     message: "Entering Docker restart",
     level: 'DEBUG',
     module: 'nikita/lib/docker/restart'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -68,18 +73,9 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validate parameters
-    return callback(Error('Missing container parameter'));
-  }
-  cmd = 'restart';
-  if (config.timeout != null) {
-    cmd += ` -t ${config.timeout}`;
-  }
-  cmd += ` ${config.container}`;
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
+  return this.docker.tools.execute({
+    cmd: ['restart', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
+  });
 };
 
 // ## Exports
@@ -87,8 +83,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

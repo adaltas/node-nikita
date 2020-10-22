@@ -127,7 +127,7 @@ system config if "true", supported attributes include 'mode', 'uid', 'gid',
 // ## Handler
 handler = async function({
     config,
-    operations: {status, path}
+    tools: {status, path}
   }) {
   var err, hash, hash_source, hash_target, res, source_stats, target_stats;
   // Retrieve stats information about the source unless provided through the "source_stats" option.

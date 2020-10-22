@@ -256,7 +256,7 @@ handler = async function({
     config,
     log,
     metadata,
-    operations: {find, path},
+    tools: {find, path},
     ssh
   }) {
   var cmd, current_username, dry, stdout, sudo;

@@ -4,19 +4,6 @@
 // Remove certificates, private keys and certificate authorities from java
 // keystores and truststores.
 
-// ## Options
-
-// * `name` (string|array)   
-//   Alias of the key and the certificate, required if "caname" isn't provided.   
-// * `caname` (string|array)   
-//   Alias of the certificate authority (CA), required if "name" isn't provided.   
-// * `keytool` (boolean, optioanl)   
-//   Path to the `keytool` command, detetected from `$PATH` by default.
-// * `keystore` (string)   
-//   Path to the keystore (doesn't need to exists).   
-// * `storepass` (string)   
-//   Password to manage the keystore.   
-
 // ## Removing a key and its certificate
 
 // ```js
@@ -40,42 +27,87 @@
 //   caname: 'my_ca_certificate'
 // }, function(err, status){ /* do sth */ });
 // ```
-// ## Source Code
-module.exports = function({options}) {
+
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'name': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array'
+        }
+      ],
+      description: `Alias of the key and the certificate.`
+    },
+    'caname': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array'
+        }
+      ],
+      description: `Alias of the certificate authority (CA).`
+    },
+    'keytool': {
+      type: 'boolean',
+      description: `Path to the \`keytool\` command, detetected from \`$PATH\` by default.`
+    },
+    'keystore': {
+      type: 'string',
+      description: `Path to the keystore (doesn't need to exists).`
+    },
+    'storepass': {
+      type: 'string',
+      description: `Password to manage the keystore.`
+    }
+  },
+  required: ['keystore', 'storepass'],
+  anyOf: [
+    {
+      required: ['name']
+    },
+    {
+      required: ['caname']
+    }
+  ]
+};
+
+
+// ## Handler
+handler = function({config}) {
   var aliases;
-  if (!options.keystore) {
-    throw Error("Required option 'keystore'");
+  if (!Array.isArray(config.caname)) {
+    config.caname = [config.caname];
   }
-  if (!options.storepass) {
-    throw Error("Required option 'storepass'");
+  if (!Array.isArray(config.name)) {
+    config.name = [config.name];
   }
-  if (!(options.name || options.caname)) {
-    throw Error("Required option 'name' or 'caname'");
+  aliases = [...config.caname, ...config.name].join(' ').trim();
+  if (config.keytool == null) {
+    config.keytool = 'keytool';
   }
-  if (!Array.isArray(options.caname)) {
-    options.caname = [options.caname];
-  }
-  if (!Array.isArray(options.name)) {
-    options.name = [options.name];
-  }
-  aliases = [...options.caname, ...options.name].join(' ').trim();
-  if (options.keytool == null) {
-    options.keytool = 'keytool';
-  }
-  return this.system.execute({
+  return this.execute({
     bash: true,
     cmd: `# Detect keytool command
-keytoolbin=${options.keytool}
+keytoolbin=${config.keytool}
 command -v $keytoolbin >/dev/null || {
   if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
   else exit 7; fi
 }
-test -f "${options.keystore}" || # Nothing to do if not a file
+test -f "${config.keystore}" || # Nothing to do if not a file
 exit 3
 count=0
 for alias in ${aliases}; do
-  if \${keytoolbin} -list -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"; then
-     \${keytoolbin} -delete -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"
+  if \${keytoolbin} -list -keystore "${config.keystore}" -storepass "${config.storepass}" -alias "$alias"; then
+     \${keytoolbin} -delete -keystore "${config.keystore}" -storepass "${config.storepass}" -alias "$alias"
      (( count++ ))
   fi
 done
@@ -83,4 +115,10 @@ done
 exit 0`,
     code_skipped: 3
   });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
 };

@@ -36,14 +36,28 @@ var docker, handler, path, schema, util;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    '': {
+      type: '',
+      description: `          `
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  }
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
   var cmd, i, k, len, opt, ref, ref1, v;
   log({
@@ -52,9 +66,11 @@ handler = function({
     module: 'nikita/lib/docker/login'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];

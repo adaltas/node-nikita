@@ -42,8 +42,8 @@ module.exports = ->
         # Handler execution
         action = handler.apply null, arguments
         # Register `status` operation
-        action.operations ?= {}
-        action.operations.status = (index) ->
+        action.tools ?= {}
+        action.tools.status = (index) ->
           if arguments.length is 0
             action.children.some (sibling) ->
               not sibling.metadata.shy and sibling.output?.status is true

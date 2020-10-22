@@ -44,7 +44,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

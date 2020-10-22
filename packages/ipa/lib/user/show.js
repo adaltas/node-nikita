@@ -3,14 +3,7 @@
 
 // Retrieve user information from FreeIPA.
 
-// ## Options
-
-// * `uid` (string, required)   
-//   Name of the user to add, same as the username.
-// * `username` (string, required)   
-//   Name of the user to add, alias of `uid`.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require("nikita")
@@ -43,14 +36,14 @@
 // })
 // ```
 
-// ## Options
-var handler, on_options, schema, string;
+// ## Hooks
+var handler, on_action, schema;
 
-on_options = function({options}) {
-  if (options.uid == null) {
-    options.uid = options.username;
+on_action = function({config}) {
+  if (config.uid == null) {
+    config.uid = config.username;
   }
-  return delete options.username;
+  return delete config.username;
 };
 
 // ## Schema
@@ -58,63 +51,52 @@ schema = {
   type: 'object',
   properties: {
     'uid': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the user to show, same as the \`username\`.`
     },
     'username': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the user to show, alias of \`uid\`.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['connection', 'uid']
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, data, error;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.connection.http(options.connection, {
+  ({data} = (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
       method: 'user_show/1',
-      params: [[options.uid], {}],
+      params: [[config.uid], {}],
       id: 0
     }
-  }, function(err, {data}) {
-    var error;
-    if (err) {
-      return callback(err);
-    }
-    if (data.error) {
-      error = Error(data.error.message);
-      error.code = data.error.code;
-      return callback(error);
-    }
-    return callback(null, {
+  })));
+  if (data.error) {
+    error = Error(data.error.message);
+    error.code = data.error.code;
+    throw error;
+  } else {
+    return {
       result: data.result.result
-    });
-  });
+    };
+  }
 };
 
 // ## Export
 module.exports = {
   handler: handler,
-  on_options: on_options,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');

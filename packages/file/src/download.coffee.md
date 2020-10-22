@@ -65,7 +65,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 ## On config
 
-    on_action = ({config, operations: {find}}) ->
+    on_action = ({config, tools: {find}}) ->
       config.cache = await find ({config: {cache}}) -> cache
       config.cache_file = await find ({config: {cache_file}}) -> cache_file
       config.cache_dir = await find ({config: {cache_dir}}) -> cache_dir
@@ -169,7 +169,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 ## Handler
 
-    handler = ({config, log, ssh, operations: {path}}) ->
+    handler = ({config, log, ssh, tools: {path}}) ->
       log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       p = if ssh then path.posix else path
       if config.md5?

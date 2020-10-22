@@ -36,7 +36,7 @@ schema = {
 handler = async function({
     config,
     metadata,
-    operations: {find}
+    tools: {find}
   }) {
   var status;
   ({status} = (await this.db.query(connection_config(config), {

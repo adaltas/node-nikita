@@ -32,7 +32,7 @@ Write log to custom destinations in a user provided format.
 
 ## Handler
 
-    handler = ({config, operations: {events}}) ->
+    handler = ({config, tools: {events}}) ->
       # Validate config
       throw Error 'Missing option: "stream"' unless config.stream
       throw Error 'Missing option: "serializer"' unless config.serializer

@@ -236,7 +236,7 @@ nikita.execute({
           
 ## Source Code
 
-    handler = ({config, log, metadata, operations: {find, path}, ssh}) ->
+    handler = ({config, log, metadata, tools: {find, path}, ssh}) ->
       # @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Validate parameters
       config.mode ?= 0o500

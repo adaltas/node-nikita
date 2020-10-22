@@ -4,21 +4,6 @@
 // Remove one or more containers. Containers need to be stopped to be deleted unless
 // force options is set.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.
-// * `machine` (string)   
-//   Name of the docker-machine, required if docker-machine installed.
-// * `link` (boolean)   
-//   Remove the specified link.
-// * `volumes` (boolean)   
-//   Remove the volumes associated with the container.
-// * `force` (boolean)   
-//   Force the removal of a running container (uses SIGKILL).
-
 // ## Callback parameters
 
 // * `err`   
@@ -42,25 +27,54 @@ var docker, handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container, required.`
+    },
+    'link': {
+      type: 'boolean',
+      description: `Remove the specified link.`
+    },
+    'volumes': {
+      type: 'boolean',
+      description: `Remove the volumes associated with the container.`
+    },
+    'force': {
+      type: 'boolean',
+      description: `Force the removal of a running container (uses SIGKILL).`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, opt, ref, v;
+  var k, ref, status, v;
   log({
     message: "Entering Docker rm",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rm'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -68,43 +82,36 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validate parameters and madatory conditions
-    return callback(Error('Missing container parameter'));
-  }
-  cmd = (function() {
-    var i, len, ref1, results;
-    ref1 = ['link', 'volumes', 'force'];
-    results = [];
-    for (i = 0, len = ref1.length; i < len; i++) {
-      opt = ref1[i];
-      if (config[opt]) {
-        results.push(`-${opt.charAt(0)}`);
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  })();
-  cmd = `rm ${cmd.join(' ')} ${config.container}`;
-  this.execute({
-    cmd: docker.wrap(config, `ps | grep '${config.container}'`),
+  // cmd = for opt in ['link', 'volumes', 'force']
+  //   "-#{opt.charAt 0}" if config[opt]
+  // cmd = "rm #{cmd.join ' '} #{config.container}"
+  ({status} = (await this.docker.tools.execute({
+    cmd: `ps | egrep ' ${config.container}$'`,
     code_skipped: 1
-  }, (err, {status}) => {
-    if (status && !config.force) {
-      throw Error('Container must be stopped to be removed without force', null);
+  })));
+  if (status && !config.force) {
+    throw Error('Container must be stopped to be removed without force');
+  }
+  ({status} = (await this.docker.tools.execute({
+    cmd: `ps -a | egrep ' ${config.container}$'`,
+    code_skipped: 1
+  })));
+  return this.docker.tools.execute({
+    cmd: [
+      'rm',
+      ...(['link',
+      'volumes',
+      'force'].filter(function(opt) {
+        return config[opt];
+      }).map(function(opt) {
+        return `-${opt.charAt(0)}`;
+      })),
+      config.container
+    ].join(' '),
+    if: function() {
+      return status;
     }
   });
-  this.execute({
-    cmd: docker.wrap(config, `ps -a | grep '${config.container}'`),
-    code_skipped: 1
-  }, docker.callback);
-  return this.execute({
-    cmd: docker.wrap(config, cmd),
-    if: function() {
-      return this.status(-1);
-    }
-  }, docker.callback);
 };
 
 // ## Exports

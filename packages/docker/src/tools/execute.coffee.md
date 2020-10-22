@@ -104,7 +104,7 @@ Execute a docker command.
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker

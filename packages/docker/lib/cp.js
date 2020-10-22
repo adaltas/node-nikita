@@ -13,17 +13,6 @@
 
 // Note, stream are not yet supported.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine or boot2docker.
-// * `source` (string)   
-//   The path to upload or the container followed by the path to download.
-// * `target` (string)   
-//   The path to download or the container followed by the path to upload.
-
 // ## Uploading a file
 
 // ```javascript
@@ -49,44 +38,56 @@
 // ```
 
 // ## Schema
-var docker, handler, misc, path, schema;
+var handler, path, schema, utils;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'source': {
+      type: 'string',
+      description: `The path to upload or the container followed by the path to download.`
+    },
+    'target': {
+      type: 'string',
+      description: `The path to download or the container followed by the path to upload.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['source', 'target']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var _, k, ref, source_container, source_mkdir, source_path, ssh, target_container, target_mkdir, target_path, v;
+  var _, err, k, ref, source_container, source_mkdir, source_path, stats, target_container, target_mkdir, target_path, v;
   log({
     message: "Entering Docker cp",
     level: 'DEBUG',
     module: 'nikita/lib/docker/cp'
   });
-  // SSH connection
-  ssh = this.ssh(config.ssh);
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
     if (config[k] == null) {
       config[k] = v;
     }
-  }
-  if (!config.source) {
-    // Validate parameters
-    throw Error('Missing option "source"');
-  }
-  if (!config.target) {
-    throw Error('Missing option "target"');
   }
   [_, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
   [_, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
@@ -99,71 +100,58 @@ handler = function({
   source_mkdir = false;
   target_mkdir = false;
   // Source is on the host, normalize path
-  this.call(function({}, callback) {
-    if (source_container) {
-      return callback();
-    }
+  if (!source_container) {
     if (/\/$/.test(source_path)) {
       source_path = `${source_path}/${path.basename(target_path)}`;
-      return callback();
     }
-    return this.fs.stat({
-      ssh: config.ssh,
-      target: source_path
-    }, function(err, {stats}) {
-      if (err && err.code !== 'ENOENT') {
-        return callback(err);
-      }
-      if ((err != null ? err.code : void 0) === 'ENOENT') {
-        // TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
-        return target_mkdir = true && callback();
-      }
-      if (misc.stats.isDirectory(stats.mode)) {
+    try {
+      ({stats} = (await this.fs.base.stat({
+        ssh: config.ssh,
+        target: source_path
+      })));
+      if (utils.stats.isDirectory(stats.mode)) {
         source_path = `${source_path}/${path.basename(target_path)}`;
       }
-      return callback();
-    });
-  });
-  this.system.mkdir({
-    target: source_path,
-    if: function() {
-      return source_mkdir;
+    } catch (error) {
+      err = error;
+      if (err.code !== 'NIKITA_FS_STAT_TARGET_ENOENT') {
+        throw err;
+      }
+      // TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
+      target_mkdir = true;
     }
+  }
+  this.fs.mkdir({
+    target: source_path,
+    if: source_mkdir
   });
   // Destination is on the host
-  this.call(function({}, callback) {
-    if (target_container) {
-      return callback();
-    }
+  if (!target_container) {
     if (/\/$/.test(target_path)) {
       target_path = `${target_path}/${path.basename(target_path)}`;
-      return callback();
     }
-    return this.fs.stat({
-      ssh: config.ssh,
-      target: target_path
-    }, function(err, {stats}) {
-      if (err && err.code !== 'ENOENT') {
-        return callback(err);
-      }
-      if ((err != null ? err.code : void 0) === 'ENOENT') {
-        return target_mkdir = true && callback();
-      }
-      if (misc.stats.isDirectory(stats.mode)) {
+    try {
+      ({stats} = (await this.fs.base.stat({
+        target: target_path
+      })));
+      if (utils.stats.isDirectory(stats.mode)) {
         target_path = `${target_path}/${path.basename(target_path)}`;
       }
-      return callback();
-    });
-  });
-  this.system.mkdir({
-    target: target_path,
-    if: function() {
-      return target_mkdir;
+    } catch (error) {
+      err = error;
+      if (err.code !== 'NIKITA_FS_STAT_TARGET_ENOENT') {
+        throw err;
+      }
+      target_mkdir = true;
     }
+  }
+  this.fs.base.mkdir({
+    target: target_path,
+    if: target_mkdir
   });
   return this.docker.tools.execute({
     cmd: `cp ${config.source} ${config.target}`
-  }, docker.callback);
+  });
 };
 
 // ## Exports
@@ -175,6 +163,4 @@ module.exports = {
 // ## Dependencies
 path = require('path');
 
-docker = require('./utils');
-
-misc = require('@nikitajs/core/lib/misc');
+utils = require('@nikitajs/engine/lib/utils');

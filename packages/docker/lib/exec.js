@@ -3,23 +3,6 @@
 
 // Run a command in a running container
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.
-// * `code_skipped` (int | array)   
-//   The exit code(s) to skip.
-// * `machine` (string)   
-//   Name of the docker-machine, required using docker-machine.
-// * `service` (boolean)   
-//   if true, run container as a service, else run as a command, true by default.
-// * `uid` (name | uid)   
-//   Username or uid.
-// * `gid` (name | gid)   
-//   Groupname or gid.
-
 // ## Callback parameters
 
 // * `err`   
@@ -44,18 +27,74 @@
 // ```
 
 // ## Schema
-var docker, handler, schema;
+var handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container`
+    },
+    'code_skipped': {
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'integer'
+          }
+        }
+      ],
+      description: `The exit code(s) to skip.`
+    },
+    'service': {
+      type: 'boolean',
+      default: false,
+      description: `If true, run container as a service, else run as a command, true by default.`
+    },
+    'uid': {
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
+      description: `Username or uid.`
+    },
+    'gid': {
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
+      description: `Groupname or gid.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  required: ['container', 'cmd']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
   var cmd, k, ref, v;
   log({
@@ -64,22 +103,17 @@ handler = function({
     module: 'nikita/lib/docker/exec'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
     if (config[k] == null) {
       config[k] = v;
     }
-  }
-  if (config.container == null) {
-    // Validate parameters
-    throw Error('Missing container');
-  }
-  if (config.cmd == null) {
-    throw Error('Missing cmd');
   }
   if (config.service == null) {
     config.service = false;
@@ -100,19 +134,9 @@ handler = function({
   }
   cmd += ` ${config.container} ${config.cmd}`;
   delete config.cmd;
-  return this.execute({
-    cmd: docker.wrap(config, cmd),
+  return this.docker.tools.execute({
+    cmd: cmd,
     code_skipped: config.code_skipped
-  }, function() {    // Note: There is no way to pass additionnal arguments in sync mode without
-    // a callback, or we would have ', docker.callback' as next line
-    var e;
-    try {
-      docker.callback.call(null, ...arguments);
-    } catch (error) {
-      e = error;
-      arguments[0] = e;
-    }
-    return callback(...arguments);
   });
 };
 
@@ -121,6 +145,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');

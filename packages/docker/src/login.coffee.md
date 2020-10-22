@@ -49,7 +49,7 @@ Register or log in to a Docker registry server.
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

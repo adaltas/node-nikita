@@ -135,7 +135,7 @@ handler = async function({
     config,
     log,
     metadata,
-    operations: {path},
+    tools: {path},
     ssh
   }) {
   var attr, creates, err, i, j, k, l, len, len1, len2, opts, parents, ref, ref1, ref2, stats, target, val;

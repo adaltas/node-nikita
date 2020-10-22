@@ -38,7 +38,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

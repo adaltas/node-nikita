@@ -13,7 +13,7 @@ for engine, _ of db
       nikita
         ssh: ssh
         db: db[engine]
-      , ({operations: {status}}) ->
+      , ({tools: {status}}) ->
         {exists} = await @db.database.exists database: 'test_database_exists_0_db'
         exists.should.be.false()
         {exists} = await @db.database.exists 'test_database_exists_0_db'
@@ -24,7 +24,7 @@ for engine, _ of db
       nikita
         ssh: ssh
         db: db[engine]
-      , ({operations: {status}}) ->
+      , ({tools: {status}}) ->
         @db.database.remove 'test_database_exists_1_db', shy: true
         @db.database 'test_database_exists_1_db', shy: true
         {exists} = await @db.database.exists database: 'test_database_exists_1_db'

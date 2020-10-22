@@ -75,7 +75,7 @@ handler = async function({
     config,
     log,
     metadata,
-    operations: {path, status},
+    tools: {path, status},
     ssh
   }) {
   var content, exists;

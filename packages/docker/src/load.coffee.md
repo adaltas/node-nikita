@@ -57,7 +57,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

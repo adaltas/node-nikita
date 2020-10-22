@@ -42,13 +42,13 @@ schema = {
       description: `Tag of the Docker image, default to latest.`
     },
     'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
     },
     'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
     },
     'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
     }
   },
   required: ['image']
@@ -58,7 +58,7 @@ schema = {
 handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
   var k, ref, v;
   log({
@@ -96,7 +96,7 @@ handler = async function({
       config.tag != null ? `:${config.tag}` : void 0
     ].join(''),
     if: function({parent}) {
-      return parent.parent.operations.status(-1);
+      return parent.parent.tools.status(-1);
     }
   }));
 };

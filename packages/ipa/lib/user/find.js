@@ -3,7 +3,7 @@
 
 // Find the users registed inside FreeIPA. "https://ipa.domain.com/ipa/session/json"
 
-// ## Exemple
+// ## Example
 
 // ```js
 // require('nikita')
@@ -23,9 +23,16 @@
 // ```
 
 // ## Schema
-var handler, merge, schema;
+var handler, schema;
 
 schema = {
+  type: 'object',
+  properties: {
+    'connection': {
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
+    }
+  },
   criterias: {
     type: 'object',
     properties: {
@@ -229,43 +236,28 @@ schema = {
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, data, error;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.connection.http(options.connection, {
+  ({data} = (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
       method: 'user_find/1',
-      params: [[], options.criterias || {}],
+      params: [[], config.criterias || {}],
       id: 0
-    },
-    http_headers: options.http_headers
-  }, function(err, {data}) {
-    var error;
-    if (err) {
-      return callback(err);
     }
-    if (data.error) {
-      error = Error(data.error.message);
-      error.code = data.error.code;
-      return callback(error);
-    }
-    return callback(error, {
-      result: data.result.result
-    });
-  });
+  })));
+  if (data.error) {
+    error = Error(data.error.message);
+    error.code = data.error.code;
+    throw error;
+  }
+  return {
+    result: data.result.result
+  };
 };
 
 // ## Export
@@ -273,6 +265,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-({merge} = require('mixme'));

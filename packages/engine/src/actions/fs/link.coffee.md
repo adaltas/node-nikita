@@ -62,7 +62,7 @@ require('nikita').fs.link({
 
 ## Handler
 
-    handler = ({config, log, metadata, operations: {path, status}, ssh}) ->
+    handler = ({config, log, metadata, tools: {path, status}, ssh}) ->
       # @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       # Set default
       config.mode ?= 0o0755

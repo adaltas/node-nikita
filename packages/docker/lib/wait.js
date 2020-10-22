@@ -3,20 +3,6 @@
 
 // Block until a container stops.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, optional.
-// * `machine` (string)   
-//   Name of the docker-machine, optional if using docker-machine.
-// * `code` (int|array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will
-//   not be incremented, int or array of int.
-
 // ## Callback parameters
 
 // * `err`   
@@ -35,29 +21,46 @@
 // ```
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  },
+  require: ['container']
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var k, ref, v;
   log({
     message: "Entering Docker wait",
     level: 'DEBUG',
     module: 'nikita/lib/docker/wait'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -65,16 +68,8 @@ handler = function({
       config[k] = v;
     }
   }
-  if (config.container == null) {
-    // Validation
-    return callback(Error('Missing container parameter'));
-  }
-  // rm is false by default only if config.service is true
-  cmd = `wait ${config.container} | read r; return $r`;
-  // Construct other exec parameter
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
+  // Old implementation was `wait {container} | read r; return $r`
+  return this.docker.tools.execute(`wait ${config.container}`);
 };
 
 // ## Exports
@@ -82,8 +77,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

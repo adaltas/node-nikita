@@ -56,7 +56,7 @@ describe 'network.tcp.wait', ->
       srv = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv.listen()
@@ -72,7 +72,7 @@ describe 'network.tcp.wait', ->
       srv2 = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv1.listen() unless srv1.listening
@@ -93,7 +93,7 @@ describe 'network.tcp.wait', ->
       srv2 = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv1.listen()
@@ -112,7 +112,7 @@ describe 'network.tcp.wait', ->
       srv = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv.listen()
@@ -126,7 +126,7 @@ describe 'network.tcp.wait', ->
       srv = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv.listen()
@@ -144,7 +144,7 @@ describe 'network.tcp.wait', ->
       await srv.listen()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         {status} = await @network.tcp.wait
           interval: 200
           host: 'localhost'
@@ -156,7 +156,7 @@ describe 'network.tcp.wait', ->
       srv = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if /Connection failed/.test log.message?.toString()
             srv.listen()
@@ -175,7 +175,7 @@ describe 'network.tcp.wait', ->
       srv3 = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
             srv1.listen()
@@ -197,7 +197,7 @@ describe 'network.tcp.wait', ->
       srv2 = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
             srv1.listen()
@@ -217,7 +217,7 @@ describe 'network.tcp.wait', ->
       srv3 = server()
       await nikita
         ssh: ssh
-      , ({operations: {events}}) ->
+      , ({tools: {events}}) ->
         events.on 'stderr_stream', (log) ->
           if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
             srv1.listen()

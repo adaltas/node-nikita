@@ -23,7 +23,7 @@ for engine, _ of db
       nikita
         ssh: ssh
         db: db[engine]
-      , ({operations: {status}})->
+      , ({tools: {status}})->
         @db.user.remove 'test_user_exists_2_user', shy: true
         @db.user
           username: 'test_user_exists_2_user'

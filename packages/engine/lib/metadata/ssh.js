@@ -35,7 +35,7 @@ module.exports = function() {
       'nikita:session:action': async function(action, handler) {
         var ssh;
         // return handler if action.metadata.namespace[0] is 'ssh'
-        ssh = (await action.operations.find(function(action) {
+        ssh = (await action.tools.find(function(action) {
           if (action.ssh === void 0) {
             return void 0;
           }

@@ -53,7 +53,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, operations: {find}}) ->
+    handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker

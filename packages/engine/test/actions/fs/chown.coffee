@@ -20,7 +20,7 @@ describe 'actions.fs.chown', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, log, operations: {events}}) ->
+    , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
       userdel 'toto'; groupdel 'toto'
@@ -39,7 +39,7 @@ describe 'actions.fs.chown', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, log, operations: {events}}) ->
+    , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
       userdel 'toto'; groupdel 'toto'
@@ -57,7 +57,7 @@ describe 'actions.fs.chown', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, log, operations: {events}}) ->
+    , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
       userdel 'toto'; groupdel 'toto'
@@ -74,7 +74,7 @@ describe 'actions.fs.chown', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}, log, operations: {events}}) ->
+    , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
       userdel 'toto'; groupdel 'toto'

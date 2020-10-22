@@ -39,7 +39,7 @@ handler = async function({config, parent}) {
     // Local execution, we dont want an SSH connection, no need to pursue
     return void 0;
   }
-  conn = (await this.operations.find(function(action) {
+  conn = (await this.tools.find(function(action) {
     return action.state['nikita:ssh:connection'];
   }));
   // We dont force the retrieval of a connection, returning what we found

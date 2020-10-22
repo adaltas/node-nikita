@@ -74,7 +74,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
+    handler = ({config, log, metadata, tools: {status, events}, ssh}) ->
       log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/fs/remove'
       # SSH connection
       ssh = @ssh config.ssh

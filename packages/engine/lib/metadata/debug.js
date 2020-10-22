@@ -57,10 +57,10 @@ module.exports = function() {
             }
           }
         };
-        action.operations.events.addListener('text', debug.listener);
-        action.operations.events.addListener('stdin', debug.listener);
-        action.operations.events.addListener('stdout_stream', debug.listener);
-        return action.operations.events.addListener('stderr_stream', debug.listener);
+        action.tools.events.addListener('text', debug.listener);
+        action.tools.events.addListener('stdin', debug.listener);
+        action.tools.events.addListener('stdout_stream', debug.listener);
+        return action.tools.events.addListener('stderr_stream', debug.listener);
       },
       'nikita:session:result': {
         // after: '@nikitajs/engine/src/plugins/log'
@@ -70,10 +70,10 @@ module.exports = function() {
           if (!(debug && debug.listener)) { // undefined with invalid value error
             return;
           }
-          action.operations.events.removeListener('text', debug.listener);
-          action.operations.events.removeListener('stdin', debug.listener);
-          action.operations.events.removeListener('stdout_stream', debug.listener);
-          return action.operations.events.removeListener('stderr_stream', debug.listener);
+          action.tools.events.removeListener('text', debug.listener);
+          action.tools.events.removeListener('stdin', debug.listener);
+          action.tools.events.removeListener('stdout_stream', debug.listener);
+          return action.tools.events.removeListener('stderr_stream', debug.listener);
         }
       }
     }

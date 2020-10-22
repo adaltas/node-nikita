@@ -89,7 +89,7 @@ copied into its final destination, default to
 // ## Handler
 handler = function({
     config,
-    operations: {path},
+    tools: {path},
     ssh
   }) {
   this.log({

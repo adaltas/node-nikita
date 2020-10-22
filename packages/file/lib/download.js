@@ -69,7 +69,7 @@ var curl, fs, handler, on_action, path, schema, url, utils,
 
 on_action = async function({
     config,
-    operations: {find}
+    tools: {find}
   }) {
   config.cache = (await find(function({
       config: {cache}
@@ -223,7 +223,7 @@ handler = async function({
     config,
     log,
     ssh,
-    operations: {path}
+    tools: {path}
   }) {
   var algo, cookie, err, exists, hash, hash_source, hash_target, header, match, p, protocols_ftp, protocols_http, ref, ref1, ref2, ref3, ref4, ref5, shortcircuit, source_hash, source_url, stageDestination, stats;
   log({

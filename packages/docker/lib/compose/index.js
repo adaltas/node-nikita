@@ -4,36 +4,6 @@
 // Create and start containers according to a docker-compose file
 // `nikita.docker.compose` is an alias to `nikita.docker.compose.up`
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `content` (string)   
-//   The content of the docker-compose.yml to write if not exist.
-// * `eof` (string)   
-//   Inherited from nikita.file use when writing docker-compose.yml file.
-// * `backup` (string|boolean)   
-//   Create a backup, append a provided string to the filename extension or a
-//   timestamp if value is not a string, only apply if the target file exists and
-//   is modified.
-// * `detached` (boolean)   
-//   Run Containers in detached mode. Default to true.
-// * `force` (boolean)   
-//   Force to re-create the containers if the config and image have not changed
-//   Default to false
-// * `services` (string|array)
-//   Specify specific services to create.
-// * `target` (string)   
-//   The docker-compose.yml absolute's file's path, required if no content is 
-//   specified.
-// * `code` (int|array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will
-//   not be incremented, int or array of int.
-
 // ## Callback parameters
 
 // *   `err`   
@@ -45,24 +15,86 @@
 // *   `stderr`   
 //     Stderr value(s) unless `stderr` option is provided.   
 
-// ## Source Code
-var docker, path;
+// ## Schema
+var docker, handler, path, schema;
 
-module.exports = function({
+schema = {
+  type: 'object',
+  properties: {
+    'content': {
+      type: 'object',
+      description: `The content of the docker-compose.yml to write if not exist.`
+    },
+    'eof': {
+      type: 'boolean',
+      default: true,
+      description: `Inherited from nikita.file use when writing docker-compose.yml file.`
+    },
+    'backup': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean'
+        }
+      ],
+      default: false,
+      description: `Create a backup, append a provided string to the filename extension or a
+timestamp if value is not a string, only apply if the target file exists and
+is modified.`
+    },
+    'detached': {
+      type: 'boolean',
+      default: true,
+      description: `Run Containers in detached mode. Default to true.`
+    },
+    'force': {
+      type: 'boolean',
+      default: false,
+      description: `Force to re-create the containers if the config and image have not changed
+Default to false`
+    },
+    'services': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      ],
+      description: `Specify specific services to create.`
+    },
+    'target': {
+      type: 'string',
+      description: `The docker-compose.yml absolute's file's path, required if no content is 
+specified.`
+    }
+  }
+};
+
+// ## Source Code
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var clean_target, cmd, cmd_ps, cmd_up, k, ref, services, source_dir, v;
+  var clean_target, containers, k, ref, status, stdout, v;
   log({
     message: "Entering Docker Compose",
     level: 'DEBUG',
     module: 'nikita/lib/docker/compose/up'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -80,14 +112,8 @@ module.exports = function({
     }
     clean_target = true;
   }
-  if (config.detached == null) {
-    config.detached = true;
-  }
-  if (config.force == null) {
-    config.force = false;
-  }
   if (config.recreate == null) {
-    config.recreate = false;
+    config.recreate = false; // TODO: move to schema
   }
   if (config.services == null) {
     config.services = [];
@@ -95,77 +121,57 @@ module.exports = function({
   if (!Array.isArray(config.services)) {
     config.services = [config.services];
   }
-  services = config.services.join(' ');
-  // Construct exec command
-  cmd = ` --file ${config.target}`;
-  cmd_ps = `${cmd} ps -q | xargs docker ${docker.opts(config)} inspect`;
-  cmd_up = `${cmd} up`;
-  if (config.detached) {
-    cmd_up += ' -d ';
-  }
-  if (config.force) {
-    cmd_up += ' --force-recreate ';
-  }
-  cmd_up += ` ${services}`;
-  source_dir = `${path.dirname(config.target)}`;
-  if (config.eof == null) {
-    config.eof = true;
-  }
-  if (config.backup == null) {
-    config.backup = false;
-  }
-  config.compose = true;
-  this.call(function() {
-    return this.file.yaml({
-      if: config.content != null,
-      eof: config.eof,
-      backup: config.backup,
-      target: config.target,
-      content: config.content
-    });
-  });
-  this.call(function(_, callback) {
-    return this.execute({
-      cmd: docker.wrap(config, cmd_ps),
-      cwd: config.cwd,
-      uid: config.uid,
-      code_skipped: 123,
-      stdout_log: false
-    }, function(err, {status, stdout}) {
-      var containers;
-      if (err) {
-        return callback(err);
-      }
-      if (!status) {
-        return callback(null, true);
-      }
-      containers = JSON.parse(stdout);
-      status = containers.some(function(container) {
-        return !container.State.Running;
-      });
-      if (status) {
-        log("Docker created, need start");
-      }
-      return callback(null, status);
-    });
-  });
-  this.execute({
-    if: function() {
-      return config.force || this.status();
-    },
-    cwd: source_dir,
-    uid: config.uid,
-    cmd: docker.wrap(config, cmd_up)
-  }, docker.callback);
-  return this.system.remove({
-    if: clean_target,
+  // services = config.services.join ' '
+  this.file.yaml({
+    if: config.content != null,
+    eof: config.eof,
+    backup: config.backup,
     target: config.target,
-    always: true // Not yet implemented
+    content: config.content
   });
+  ({status, stdout} = (await this.docker.tools.execute({
+    cmd: `--file ${config.target} ps -q | xargs docker ${docker.opts(config)} inspect`,
+    compose: true,
+    cwd: config.cwd,
+    uid: config.uid,
+    code_skipped: 123,
+    stdout_log: false,
+    shy: true
+  })));
+  if (!status) {
+    status = true;
+  } else {
+    containers = JSON.parse(stdout);
+    status = containers.some(function(container) {
+      return !container.State.Running;
+    });
+    if (status) {
+      log("Docker created, need start");
+    }
+  }
+  try {
+    return (await this.docker.tools.execute({
+      if: config.force || status,
+      cmd: [`--file ${config.target} up`, config.detached ? '-d' : void 0, config.force ? '--force-recreate' : void 0, ...config.services].join(' '),
+      compose: true,
+      cwd: path.dirname(config.target),
+      uid: config.uid
+    }));
+  } finally {
+    this.fs.remove({
+      if: clean_target,
+      target: config.target
+    });
+  }
 };
 
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
 
 // ## Dependencies
-docker = require('./utils');
+docker = require('../utils');
 
 path = require('path');

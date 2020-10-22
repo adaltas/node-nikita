@@ -91,7 +91,7 @@ handler = async function({
     config,
     log,
     metadata,
-    operations: {status, events},
+    tools: {status, events},
     ssh
   }) {
   var file, files, i, len;

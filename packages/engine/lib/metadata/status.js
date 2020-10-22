@@ -51,10 +51,10 @@ module.exports = function() {
           // Handler execution
           action = handler.apply(null, arguments);
           // Register `status` operation
-          if (action.operations == null) {
-            action.operations = {};
+          if (action.tools == null) {
+            action.tools = {};
           }
-          action.operations.status = function(index) {
+          action.tools.status = function(index) {
             var i, l, sibling;
             if (arguments.length === 0) {
               return action.children.some(function(sibling) {

@@ -3,20 +3,6 @@
 
 // Load Docker images.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `input` (string)   
-//   TAR archive file to read from.
-// * `source` (string)   
-//   Alias for the "input" option.
-// * `checksum` (string)   
-//   If provided, will check if attached input archive to checksum already exist,
-//   not native to docker but implemented to get better performance.
-
 // ## Callback parameters
 
 // * `err`   
@@ -42,29 +28,54 @@
 // ```
 
 // ## Schema
-var docker, handler, schema, string, util;
+var handler, schema, string;
 
 schema = {
   type: 'object',
-  properties: {}
+  properties: {
+    'input': {
+      type: 'string',
+      description: `TAR archive file to read from.`
+    },
+    'source': {
+      type: 'string',
+      description: `Alias for the "input" option.`
+    },
+    'checksum': {
+      type: 'string',
+      description: `If provided, will check if attached input archive to checksum already exist,
+not native to docker but implemented to get better performance.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    }
+  }
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     log,
-    operations: {find}
+    tools: {find}
   }) {
-  var cmd, images, k, ref, v;
+  var cmd, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, ref2, status, stderr, stdout, v;
   log({
     message: "Entering Docker load",
     level: 'DEBUG',
     module: 'nikita/lib/docker/load'
   });
   // Global config
-  if (config.docker == null) {
-    config.docker = {};
-  }
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
   ref = config.docker;
   for (k in ref) {
     v = ref[k];
@@ -77,7 +88,7 @@ handler = function({
     config.input = config.source;
   }
   if (config.input == null) {
-    return callback(Error('Missing input parameter'));
+    throw Error('Missing input parameter');
   }
   cmd = `load -i ${config.input}`;
   // need to records the list of image to see if status is modified or not after load
@@ -107,96 +118,86 @@ handler = function({
   if (config.checksum == null) {
     config.checksum = '';
   }
-  return this.execute({
-    cmd: docker.wrap(config, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'")
-  }, (err, {stdout}) => {
-    var i, image, infos, len, ref1;
-    if (err) {
-      return callback(err);
-    }
-    // skip header line, wi skip it here instead of in the grep  to have
-    // an array with at least one not empty line
-    if (string.lines(stdout).length > 1) {
-      ref1 = string.lines(stdout);
-      for (i = 0, len = ref1.length; i < len; i++) {
-        image = ref1[i];
-        image = image.trim();
-        if (image !== '') {
-          infos = image.split(':');
-          if (infos[2] === config.checksum) {
-            // if image is here we skip
-            log({
-              message: `Image already exist checksum :${config.checksum}, repo:tag ${`${infos[0]}:${infos[1]}`}`,
-              level: 'INFO',
-              module: 'nikita/lib/docker/load'
-            });
-          }
-          if (infos[2] === config.checksum) {
-            return callback(null, false);
-          }
-          images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
+  ({stdout} = (await this.docker.tools.execute({
+    cmd: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
+  })));
+  // skip header line, wi skip it here instead of in the grep  to have
+  // an array with at least one not empty line
+  if (string.lines(stdout).length > 1) {
+    ref1 = string.lines(stdout);
+    for (i = 0, len = ref1.length; i < len; i++) {
+      image = ref1[i];
+      image = image.trim();
+      if (image !== '') {
+        infos = image.split(':');
+        if (infos[2] === config.checksum) {
+          // if image is here we skip
+          log({
+            message: `Image already exist checksum :${config.checksum}, repo:tag ${`${infos[0]}:${infos[1]}`}`,
+            level: 'INFO',
+            module: 'nikita/lib/docker/load'
+          });
         }
+        if (infos[2] === config.checksum) {
+          return false;
+        }
+        images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
       }
     }
-    log({
-      message: `Start Loading ${config.input} `,
-      level: 'INFO',
-      module: 'nikita/lib/docker/load'
-    });
-    this.execute({
-      cmd: docker.wrap(config, cmd)
-    });
-    return this.execute({
-      cmd: docker.wrap(config, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'')
-    }, function(err, {stdout, stderr}) {
-      var j, len1, new_image, new_images, new_k, ref2, status;
-      if (err) {
-        return callback(err);
-      }
-      new_images = {};
-      status = false;
-      log({
-        message: 'Comparing new images',
-        level: 'INFO',
-        module: 'nikita/lib/docker/load'
-      });
-      if (string.lines(stdout).length > 1) {
-        ref2 = string.lines(stdout.toString());
-        for (j = 0, len1 = ref2.length; j < len1; j++) {
-          image = ref2[j];
-          if (image !== '') {
-            infos = image.split(':');
-            new_images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
-          }
-        }
-      }
-      for (new_k in new_images) {
-        new_image = new_images[new_k];
-        if (images[new_k] == null) {
-          status = true;
-          break;
-        } else {
-          for (k in images) {
-            image = images[k];
-            if (image !== new_image && new_k === k) {
-              status = true;
-              log({
-                message: 'Identical images',
-                level: 'INFO',
-                module: 'nikita/lib/docker/load'
-              });
-              break;
-            }
-          }
-        }
-      }
-      return callback(err, {
-        status: status,
-        stdout: stdout,
-        stderr: stderr
-      });
-    });
+  }
+  log({
+    message: `Start Loading ${config.input} `,
+    level: 'INFO',
+    module: 'nikita/lib/docker/load'
   });
+  this.docker.tools.execute({
+    cmd: cmd
+  });
+  ({stdout, stderr} = (await this.docker.tools.execute({
+    cmd: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+  })));
+  new_images = {};
+  status = false;
+  log({
+    message: 'Comparing new images',
+    level: 'INFO',
+    module: 'nikita/lib/docker/load'
+  });
+  if (string.lines(stdout).length > 1) {
+    ref2 = string.lines(stdout.toString());
+    for (j = 0, len1 = ref2.length; j < len1; j++) {
+      image = ref2[j];
+      if (image !== '') {
+        infos = image.split(':');
+        new_images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
+      }
+    }
+  }
+  for (new_k in new_images) {
+    new_image = new_images[new_k];
+    if (images[new_k] == null) {
+      status = true;
+      break;
+    } else {
+      for (k in images) {
+        image = images[k];
+        if (image !== new_image && new_k === k) {
+          status = true;
+          log({
+            message: 'Identical images',
+            level: 'INFO',
+            module: 'nikita/lib/docker/load'
+          });
+          break;
+        }
+      }
+    }
+  }
+  return {
+    status: status,
+    stdout: stdout,
+    stderr: stderr
+  };
 };
 
 
@@ -207,8 +208,4 @@ module.exports = {
 };
 
 // ## Dependencies
-docker = require('./utils');
-
-string = require('@nikitajs/core/lib/misc/string');
-
-util = require('util');
+string = require('@nikitajs/engine/lib/utils/string');

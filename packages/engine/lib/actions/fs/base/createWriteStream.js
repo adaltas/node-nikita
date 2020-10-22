@@ -77,7 +77,7 @@ stream.`
 handler = async function({
     config,
     metadata,
-    operations: {find},
+    tools: {find},
     ssh
   }) {
   var err, sudo;

@@ -32,7 +32,7 @@ was created and available.
     handler = ({config, parent}) ->
       # Local execution, we dont want an SSH connection, no need to pursue
       return undefined if config.ssh is false
-      conn = await @operations.find (action) ->
+      conn = await @tools.find (action) ->
         action.state['nikita:ssh:connection']
       # We dont force the retrieval of a connection, returning what we found
       if conn or not config.ssh?

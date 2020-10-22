@@ -4,38 +4,6 @@
 // Add certificates, private keys and certificate authorities to java keystores
 // and truststores.
 
-// ## Options
-
-// * `name` (string)   
-//   Name of the certificate, required if a certificate is provided.
-// * `caname` (string)   
-//   Name of the certificate authority (CA), required.
-// * `cacert` (string)   
-//   Path to the certificate authority (CA), required.
-// * `keytool` (boolean, optioanl)   
-//   Path to the `keytool` command, detetected from `$PATH` by default.
-// * `local` (boolean)    
-//   treat the source file (key, cert or cacert) as a local file present on the 
-//   host, only apply with remote actions over SSH, default is "false".
-// * `openssl` (string)   
-//   Path to OpenSSl command line tool, default to "openssl".
-// * `parent` (boolean|object)   
-//   Create parent directory with provided options if an object or default 
-//   system options if "true".
-// * `storepass` (string)   
-//   Password to manage the keystore.
-// * `tmpdir` (string)   
-//   Temporary directory used to isolate certificate from their container file as
-//   well as to store uploaded file when the option `local`
-//   is "true"; default to "/tmp/nikita/java_keystore_#{Date.now()}". 
-
-// ## Callback parameters
-
-// * `err` (object|null)   
-//   Error object if any.
-// * `status` (boolean)   
-//   Indicates if the certificated was inserted.
-
 // ## CA Cert Chains
 
 // In case the CA file reference a chain of certificates, each certificate will be
@@ -98,147 +66,184 @@
 // from the path, Nikita will look for "/usr/java/default/bin/keytool" which is the
 // default location of the Oracle JDK installation.
 
-// ## Source Code
-var path;
+// ## Schema
+var handler, path, schema;
 
-module.exports = function({options}) {
-  var files, p, ssh;
-  this.log({
-    message: "Entering java.keystore_add",
-    level: 'DEBUG',
-    module: 'nikita/lib/java/keystore_add'
-  });
-  ssh = this.ssh(options.ssh);
+schema = {
+  type: 'object',
+  properties: {
+    'name': {
+      type: 'string',
+      description: `Name of the certificate.`
+    },
+    'caname': {
+      type: 'string',
+      description: `Name of the certificate authority (CA).`
+    },
+    'cacert': {
+      type: 'string',
+      description: `Path to the certificate authority (CA).`
+    },
+    'cert': {
+      type: 'string',
+      description: `Path to the certificate.`
+    },
+    'keytool': {
+      type: 'string',
+      default: 'keytool',
+      description: `Path to the \`keytool\` command, detetected from \`$PATH\` by default.`
+    },
+    'local': {
+      type: 'boolean',
+      default: false,
+      description: `Treat the source file (key, cert or cacert) as a local file present on
+the host, only apply with remote actions over SSH.`
+    },
+    'openssl': {
+      type: 'string',
+      default: 'openssl',
+      description: `Path to OpenSSl command line tool.`
+    },
+    'parent': {
+      $ref: 'module://@nikitajs/engine/src/actions/fs/mkdir#/properties/parent'
+    },
+    'keystore': {
+      type: 'string',
+      description: `Path to the keystore.`
+    },
+    'storepass': {
+      type: 'string',
+      description: `Password to manage the keystore.`
+    }
+  },
+  required: ['keystore', 'storepass'],
+  anyOf: [
+    {
+      required: ['cacert',
+    'caname']
+    },
+    {
+      required: ['cert',
+    'name',
+    'key',
+    'keypass']
+    }
+  ]
+};
+
+// ## Handler
+handler = async function({
+    config,
+    ssh,
+    metadata: {tmpdir}
+  }) {
+  var err, files, p;
+  // log message: "Entering java.keystore_add", level: 'DEBUG', module: 'nikita/lib/java/keystore_add'
   p = ssh ? path.posix : path;
-  if (!options.keystore) {
-    // Validate options
-    throw Error("Required Option: 'keystore'");
-  }
-  if (!options.storepass) {
-    throw Error("Required Option: 'storepass'");
-  }
-  if (!(options.cacert || options.cert)) {
-    throw Error("Required Options: 'cacert' or 'cert'");
-  }
-  if (options.cert && !options.key) {
-    throw Error("Required Option: 'key' for certificate");
-  }
-  if (options.cert && !options.keypass) {
-    throw Error("Required Option: 'keypass' for certificate");
-  }
-  if (options.cert && !options.name) {
-    throw Error("Required Option: 'name' for certificate");
-  }
-  // Default options
-  if (options.parent == null) {
-    options.parent = {};
-  }
-  if (options.keytool == null) {
-    options.keytool = 'keytool';
-  }
-  if (options.openssl == null) {
-    options.openssl = 'openssl';
-  }
-  if (options.tmpdir == null) {
-    options.tmpdir = `/tmp/nikita/java_keystore_${Date.now()}`;
-  }
   // Update paths in case of download
   files = {
-    cert: ssh && options.local && (options.cert != null) ? `${options.tmpdir}/${path.basename(options.cert)}` : options.cert,
-    cacert: ssh && options.local && (options.cacert != null) ? `${options.tmpdir}/${path.basename(options.cacert)}` : options.cacert,
-    key: ssh && options.local && (options.key != null) ? `${options.tmpdir}/${path.basename(options.key)}` : options.key
+    cert: ssh && config.local && (config.cert != null) ? `${tmpdir}/${path.basename(config.cert)}` : config.cert,
+    cacert: ssh && config.local && (config.cacert != null) ? `${tmpdir}/${path.basename(config.cacert)}` : config.cacert,
+    key: ssh && config.local && (config.key != null) ? `${tmpdir}/${path.basename(config.key)}` : config.key
   };
   // Temporary directory
   // Used to upload certificates and to isolate certificates from their file
-  this.system.mkdir({
-    if: options.tmpdir,
-    target: `${options.tmpdir}`,
-    mode: 0o0700,
-    shy: true
-  });
+  if (tmpdir) {
+    this.fs.mkdir({
+      target: tmpdir,
+      mode: 0o0700,
+      shy: true
+    });
+  }
   // Upload certificates
-  this.file.download({
-    if: ssh && options.local && options.cacert,
-    source: options.cacert,
-    target: files.cacert,
-    mode: 0o0600,
-    shy: true
-  });
-  this.file.download({
-    if: ssh && options.local && options.cert,
-    source: options.cert,
-    target: files.cert,
-    mode: 0o0600,
-    shy: true
-  });
-  this.file.download({
-    if: ssh && options.local && options.key,
-    source: options.key,
-    target: files.key,
-    mode: 0o0600,
-    shy: true
-  });
+  if (ssh && config.local && config.cacert) {
+    await this.file.download({
+      source: config.cacert,
+      target: files.cacert,
+      mode: 0o0600,
+      shy: true
+    });
+  }
+  if (ssh && config.local && config.cert) {
+    await this.file.download({
+      source: config.cert,
+      target: files.cert,
+      mode: 0o0600,
+      shy: true
+    });
+  }
+  if (ssh && config.local && config.key) {
+    await this.file.download({
+      source: config.key,
+      target: files.key,
+      mode: 0o0600,
+      shy: true
+    });
+  }
   // Prepare parent directory
-  this.system.mkdir(options, options.parent, {
-    // header: null
-    unless_exists: true,
-    target: p.dirname(options.keystore)
+  await this.fs.mkdir({
+    parent: config.parent,
+    target: p.dirname(config.keystore)
   });
-  // Deal with key and certificate
-  this.system.execute({
-    if: !!options.cert,
-    bash: true,
-    cmd: `cleanup () {
-  [ -n "${options.cacert ? '1' : ''}" ] || rm -rf ${options.tmpdir};
+  try {
+    if (!!config.cert) {
+      await this.execute({
+        bash: true,
+        cmd: `cleanup () {
+  [ -n "${config.cacert ? '1' : ''}" ] || rm -rf ${tmpdir};
 }
-if ! command -v ${options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
+if ! command -v ${config.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
 # Detect keytool command
-keytoolbin=${options.keytool}
+keytoolbin=${config.keytool}
 command -v $keytoolbin >/dev/null || {
   if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
   else exit 7; fi
 }
 [ -f ${files.cert} ] || (cleanup; exit 6)
-# mkdir -p -m 700 ${options.tmpdir}
-user=\`${options.openssl} x509  -noout -in "${files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat\`
+# mkdir -p -m 700 ${tmpdir}
+user=\`${config.openssl} x509  -noout -in "${files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat\`
 # We are only retrieving the first certificate found in the chain with \`head -n 1\`
-keystore=\`\${keytoolbin} -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias ${options.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'\`
+keystore=\`\${keytoolbin} -list -v -keystore ${config.keystore} -storepass ${config.storepass} -alias ${config.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'\`
 echo "User Certificate: $user"
 echo "Keystore Certificate: $keystore"
 if [ "$user" = "$keystore" ]; then cleanup; exit 5; fi
 # Create a PKCS12 file that contains key and certificate
-${options.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out "${options.tmpdir}/pkcs12" -name ${options.name} -password pass:${options.keypass}
+${config.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out "${tmpdir}/pkcs12" -name ${config.name} -password pass:${config.keypass}
 # Import PKCS12 into keystore
-\${keytoolbin} -noprompt -importkeystore -destkeystore ${options.keystore} -deststorepass ${options.storepass} -destkeypass ${options.keypass} -srckeystore "${options.tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass ${options.keypass} -alias ${options.name}`,
-    trap: true,
-    code_skipped: 5 // OpenSSL exit 3 if file does not exists
-  }, function(err) {
-    if ((err != null ? err.code : void 0) === 4) {
+\${keytoolbin} -noprompt -importkeystore -destkeystore ${config.keystore} -deststorepass ${config.storepass} -destkeypass ${config.keypass} -srckeystore "${tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass ${config.keypass} -alias ${config.name}`,
+        trap: true,
+        code_skipped: 5 // OpenSSL exit 3 if file does not exists
+      });
+    }
+  } catch (error) {
+    err = error;
+    if ((err != null ? err.exit_code : void 0) === 4) {
       throw Error("OpenSSL command line tool not detected");
     }
-    if ((err != null ? err.code : void 0) === 6) {
+    if ((err != null ? err.exit_code : void 0) === 6) {
       throw Error("Keystore file does not exists");
     }
-    if ((err != null ? err.code : void 0) === 6) {
+    if ((err != null ? err.exit_code : void 0) === 6) {
       throw Error("Missing Requirement: command keytool is not detected");
     }
-  });
-  // Deal with CACert
-  this.system.execute({
-    if: options.cacert,
-    bash: true,
-    cmd: `# cleanup () { rm -rf ${options.tmpdir}; }
+  }
+  try {
+    // Deal with CACert
+    if (config.cacert) {
+      await this.execute({
+        bash: true,
+        cmd: `# cleanup () { rm -rf ${tmpdir}; }
 cleanup () { echo 'clean'; }
 # Detect keytool command
-keytoolbin=${options.keytool}
+keytoolbin=${config.keytool}
 command -v $keytoolbin >/dev/null || {
   if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
   else exit 7; fi
 }
 # Check password
-if [ -f ${options.keystore} ] && ! \${keytoolbin} -list -keystore ${options.keystore} -storepass ${options.storepass} >/dev/null; then
+if [ -f ${config.keystore} ] && ! \${keytoolbin} -list -keystore ${config.keystore} -storepass ${config.storepass} >/dev/null; then
   # Keystore password is invalid, change it manually with:
-  # keytool -storepasswd -keystore ${options.keystore} -storepass \${old_pasword} -new ${options.storepass}
+  # keytool -storepasswd -keystore ${config.keystore} -storepass \${old_pasword} -new ${config.storepass}
   cleanup; exit 2
 fi
 [ -f ${files.cacert} ] || (echo 'CA file doesnt not exists: ${files.cacert} 1>&2'; cleanup; exit 3)
@@ -248,54 +253,62 @@ CERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)
 code=5
 for N in $(seq 0 $(($CERTS - 1))); do
   if [ $CERTS -eq '1' ]; then
-    ALIAS="${options.caname}"
+    ALIAS="${config.caname}"
   else
-    ALIAS="${options.caname}-$N"
+    ALIAS="${config.caname}-$N"
   fi
   # Isolate cert into a file
-  CACERT_FILE=${options.tmpdir}/$ALIAS
+  CACERT_FILE=${tmpdir}/$ALIAS
   cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE
   # Read user CACert signature
-  user=\`${options.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'\`
+  user=\`${config.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'\`
   # Read registered CACert signature
-  keystore=\`\${keytoolbin} -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'\`
+  keystore=\`\${keytoolbin} -list -v -keystore ${config.keystore} -storepass ${config.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'\`
   echo "User CA Cert: $user"
   echo "Keystore CA Cert: $keystore"
   if [ "$user" = "$keystore" ]; then echo 'Identical Signature'; code=5; continue; fi
   # Remove CACert if signature doesnt match
   if [ "$keystore" != "" ]; then
-    \${keytoolbin} -delete -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS
+    \${keytoolbin} -delete -keystore ${config.keystore} -storepass ${config.storepass} -alias $ALIAS
   fi
-  \${keytoolbin} -noprompt -import -trustcacerts -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS -file ${options.tmpdir}/$ALIAS
+  \${keytoolbin} -noprompt -import -trustcacerts -keystore ${config.keystore} -storepass ${config.storepass} -alias $ALIAS -file ${tmpdir}/$ALIAS
   code=0
 done
 cleanup
 exit $code`,
-    trap: true,
-    code_skipped: 5
-  }, function(err) {
-    if ((err != null ? err.code : void 0) === 3) {
+        trap: true,
+        code_skipped: 5
+      });
+    }
+  } catch (error) {
+    err = error;
+    if (err.exit_code === 3) {
       throw Error(`CA file does not exist: ${files.cacert}`);
     }
-  });
+  }
   // Ensure ownerships and permissions
-  this.system.chown({
-    target: options.keystore,
-    uid: options.uid,
-    gid: options.gid,
-    if: (options.uid != null) || (options.gid != null)
-  });
-  this.system.chmod({
-    target: options.keystore,
-    mode: options.mode,
-    if: options.mode != null
-  });
-  // Cleanup
-  return this.system.remove({
-    shy: true,
-    always: true, // TODO: not yet implemented
-    target: `${options.tmpdir}`
-  });
+  if ((config.uid != null) || (config.gid != null)) {
+    this.fs.chown({
+      target: config.keystore,
+      uid: config.uid,
+      gid: config.gid
+    });
+  }
+  if (config.mode != null) {
+    return this.fs.chmod({
+      target: config.keystore,
+      mode: config.mode
+    });
+  }
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  metadata: {
+    tmpdir: true
+  },
+  schema: schema
 };
 
 // ## Dependencies

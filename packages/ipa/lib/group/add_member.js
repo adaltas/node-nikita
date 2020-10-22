@@ -3,15 +3,7 @@
 
 // Add member to a group in FreeIPA.
 
-// ## Options
-
-// * `attributes` (object, required)   
-//   Attributes associated with the group such as `ipaexternalmember`,
-//   `no_members`, `user` and `group`.
-// * `cn` (string, required)   
-//   Name of the group to add.
-
-// ## Exemple
+// ## Example
 
 // ```js
 // require("nikita")
@@ -32,13 +24,14 @@
 // ```
 
 // ## Schema
-var handler, schema, string;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'cn': {
-      type: 'string'
+      type: 'string',
+      description: `Name of the group to add.`
     },
     'attributes': {
       type: 'object',
@@ -51,54 +44,43 @@ schema = {
             type: 'string'
           }
         }
-      }
+      },
+      description: `Attributes associated with the group such as \`ipaexternalmember\`,
+\`no_members\`, \`user\` and \`group\`.`
     },
     'connection': {
-      $ref: '/nikita/connection/http'
+      $ref: 'module://@nikitajs/network/src/http',
+      required: ['principal', 'password']
     }
   },
   required: ['cn', 'connection']
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var base, base1;
-  if ((base = options.connection).http_headers == null) {
-    base.http_headers = {};
+handler = async function({config}) {
+  var base, data, error;
+  if ((base = config.connection.http_headers)['Referer'] == null) {
+    base['Referer'] = config.connection.referer || config.connection.url;
   }
-  if ((base1 = options.connection.http_headers)['Referer'] == null) {
-    base1['Referer'] = options.connection.referer || options.connection.url;
-  }
-  if (!options.connection.principal) {
-    throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
-  }
-  if (!options.connection.password) {
-    throw Error(`Required Option: password is required, got ${options.connection.password}`);
-  }
-  return this.connection.http(options.connection, {
+  ({data} = (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
       method: "group_add_member/1",
-      params: [[options.cn], options.attributes],
+      params: [[config.cn], config.attributes],
       id: 0
-    },
-    http_headers: options.http_headers
-  }, function(err, {data}) {
-    var error;
-    if (err) {
-      return callback(err);
     }
-    if (data.error) {
-      error = Error(data.error.message);
-      error.code = data.error.code;
-      return callback(error);
-    }
-    return callback(null, {
+  })));
+  if (data.error) {
+    error = Error(data.error.message);
+    error.code = data.error.code;
+    throw error;
+  } else {
+    return {
       status: true,
       result: data.result.result
-    });
-  });
+    };
+  }
 };
 
 // ## Export
@@ -106,6 +88,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
