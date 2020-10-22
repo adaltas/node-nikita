@@ -3,23 +3,6 @@
 
 // Register or log in to a Docker registry server.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.   
-// * `registry` (string)   
-//   Address of the registry server. "https://index.docker.io/v1/" by default   
-// * `machine` (string)   
-//   Name of the docker-machine, require if using docker-machine   
-// * `email` (string)   
-//   Email   
-// * `user` (string)   
-//   Username   
-// * `password` (string)   
-//   Remove intermediate containers after build. Default to false   
-// * `cwd` (string)   
-//   change the working directory for the build.   
-
 // ## Callback parameters
 
 // * `err`   
@@ -32,14 +15,22 @@
 //   Stderr value(s) unless `stderr` option is provided.
 
 // ## Schema
-var docker, handler, path, schema, util;
+var handler, path, schema, utils;
 
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: '',
-      description: `          `
+    'email': {
+      type: 'string',
+      description: `User email.`
+    },
+    'user': {
+      type: 'string',
+      description: `Username of the user.`
+    },
+    'password': {
+      type: 'string',
+      description: `User password.`
     },
     'boot2docker': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -54,62 +45,41 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var cmd, i, k, len, opt, ref, ref1, v;
   log({
     message: "Entering Docker login",
     level: 'DEBUG',
     module: 'nikita/lib/docker/login'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
-  if (config.image == null) {
-    // Validate parameters and madatory conditions
-    return callback(Error('Missing image parameter'));
-  }
-  if ((config.content != null) && (config.dockerfile != null)) {
-    return callback(Error('Can not build from Dockerfile and content'));
-  }
-  cmd = 'login';
-  ref1 = ['email', 'user', 'password'];
-  for (i = 0, len = ref1.length; i < len; i++) {
-    opt = ref1[i];
-    if (config[opt] != null) {
-      cmd += ` -${opt.charAt(0)} ${config[opt]}`;
-    }
-  }
-  if (config.registry != null) {
-    cmd += ` \"${config.registry}\"`;
-  }
-  return this.execute({
-    cmd: docker.wrap(config, cmd)
-  }, docker.callback);
+  return this.docker.tools.execute({
+    cmd: [
+      'login',
+      ...(['email',
+      'user',
+      'password'].filter(function(opt) {
+        return config[opt] != null;
+      }).map(function(opt) {
+        return `-${opt.charAt(0)} ${config[opt]}`;
+      })),
+      config.registry != null ? `${utils.string.escapeshellarg(config.registry)}` : void 0
+    ].join(' ')
+  });
 };
 
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 
 // ## Dependencies
-docker = require('./utils');
+utils = require('@nikitajs/engine/lib/utils');
 
 path = require('path');
-
-util = require('util');
