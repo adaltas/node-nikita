@@ -8,16 +8,7 @@ following components:
 
 - Code (including tests and supporting utilities)
 - Documentation
-- gemspec
-
-## Options
-
-* `gem_bin` (string)   
-  Path to the gem command, default to 'gem'
-* `name` (string)   
-  Name of the gem, required.   
-* `version` (string)   
-  Version of the gem, default to all versions.   
+- gemspec   
 
 ## Callback parameters
 
@@ -35,20 +26,51 @@ Any attempt to remove a gem installed globally and not in the user repository
 will result with the error "{gem} is not installed in GEM_HOME, try: gem 
 uninstall -i /usr/share/gems json"
 
-## Source code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
-      # Global Options
-      options.ruby ?= {}
-      options[k] ?= v for k, v of options.ruby
-      options.gem_bin ?= 'gem'
-      version = if options.version then "-v #{options.version}" else '-a'
+    schema =
+      type: 'object'
+      properties:
+        'gem_bin':
+          type: 'string'
+          default: 'gem'
+          description: """
+          Path to the gem command.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Name of the gem, required.
+          """
+        'version':
+          type: 'string'
+          description: """
+          Version of the gem.
+          """
+      required: ['name']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
+      # Global config
+      config.ruby ?= {}
+      config[k] ?= v for k, v of config.ruby
+      config.gem_bin ?= 'gem'
+      version = if config.version then "-v #{config.version}" else '-a'
       gems = null
-      @system.execute
+      @execute
         cmd: """
-        #{options.gem_bin} list -i #{options.name} || exit 3
-        #{options.gem_bin} uninstall #{options.name} #{version}
+        #{config.gem_bin} list -i #{config.name} || exit 3
+        #{config.gem_bin} uninstall #{config.name} #{version}
         """
         code_skipped: 3
-        bash: options.bash
+        bash: config.bash
+
+## Export
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'ruby'
+      schema: schema

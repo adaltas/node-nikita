@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, ruby} = require '../test'
+{tags, ssh} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -10,17 +10,17 @@ describe 'tools.ssh.keygen', ->
   they 'a new key', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.ssh.keygen
-      target: "#{scratch}/folder/id_rsa"
-      bits: 2048
-      comment: 'nikita'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.ssh.keygen
-      target: "#{scratch}/folder/id_rsa"
-      bits: 2048
-      comment: 'nikita'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.ssh.keygen
+        target: "#{tmpdir}/folder/id_rsa"
+        bits: 2048
+        comment: 'nikita'
+      status.should.be.true()
+      {status} = await @tools.ssh.keygen
+        target: "#{tmpdir}/folder/id_rsa"
+        bits: 2048
+        comment: 'nikita'
+      status.should.be.false()
+
     

@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.tools_npm
 
@@ -9,71 +9,73 @@ describe 'tools.npm', ->
 
   describe 'schema', ->
 
-    they 'name is required', ({ssh}) ->
+    it 'name is required', ->
+      nikita
+      .tools.npm {}
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `tools.npm`:'
+          '#/required config should have required property \'name\'.'
+        ].join ' '
+
+  describe 'action', ->
+
+    # combined, since the tests are time consuming
+    they 'install a package localy and globaly', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.npm
-        global: true
-      , (err, {status}) ->
-        err.message.should.eql "should have required property '.name'"
-      .promise()
-
-    they 'name is valid', ({ssh}) ->
+      , ->
+        await @tools.npm.uninstall
+          name: 'coffeescript'
+        await @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        {status} = await @tools.npm
+          name: 'coffeescript'
+        status.should.be.true()
+        {status} = await @tools.npm
+          name: 'coffeescript'
+        status.should.be.false()
+        {status} = await @tools.npm
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        status.should.be.true()
+        {status} = await @tools.npm
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        status.should.be.false()
+    
+    they 'install many packages', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.npm
-        name: 'coffeescript'
-      , ({options}) ->
-        options.name.should.eql 'coffeescript'
-      .promise()
+      , ->
+        await @tools.npm.uninstall
+          name: ['coffeescript', 'csv']
+        {status} = await @tools.npm
+          name: ['coffeescript', 'csv']
+        status.should.be.true()
+        {status} = await @tools.npm
+          name: ['coffeescript', 'csv']
+        status.should.be.false()
 
-    they 'use defaults', ({ssh}) ->
+    they 'upgrade a package', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.npm
-        name: 'coffeescript'
-      , ({options}) ->
-        options.global.should.be.false()
-        options.upgrade.should.be.false()
-      .promise()
-
-  describe 'usage', ->
-
-    they 'new package', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm.uninstall
-        name: 'coffeescript'
-        global: true
-      .tools.npm
-        global: true
-        name: 'coffeescript'
-      , (err, {status}) ->
-        status.should.be.true() unless err
-      .promise()
-
-    they 'already installed packages', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm.uninstall
-        name: 'coffeescript'
-        global: true
-      .tools.npm
-        name: 'coffeescript'
-        global: true
-      .tools.npm
-        name: 'coffeescript'
-        global: true
-      , (err, {status}) ->
-        status.should.be.false() unless err
-      .promise()
-
-    they 'upgrade', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm
-        name: 'coffeescript'
-        upgrade: true
-      , (err, {status}) ->
-        status.should.be.true() unless err
-      .promise()
+      , ->
+        await @tools.npm.uninstall
+          name: 'coffeescript'
+        await @tools.npm
+          name: 'coffeescript@2.0'
+        {status} = await @tools.npm
+          name: 'coffeescript'
+          upgrade: true
+        status.should.be.true()
+  

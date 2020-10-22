@@ -7,6 +7,7 @@ module.exports =
     tools_repo: false
     tools_rubygems: false
     tools_apm: false
+    tools_npm: false
   ssh: [
     null
   ,

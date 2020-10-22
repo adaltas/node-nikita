@@ -40,6 +40,9 @@ nikita
       tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
       rm -f "/tmp/node.tar.xz"
       npm update -g
+      ln -s /usr/local/bin/node /usr/bin/node
+      ln -s /usr/local/bin/npm /usr/bin/npm
+      ln -s /usr/local/bin/npx /usr/bin/npx
       """
       trap: true
       code_skipped: 42

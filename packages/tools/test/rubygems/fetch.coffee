@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, ruby} = require '../test'
+{tags, ssh, ruby} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.tools_rubygems
@@ -11,31 +11,29 @@ describe 'tools.rubygems.fetch', ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.fetch
-      name: 'execjs'
-      version: '2.7.0'
-      cwd: "#{scratch}"
-    , (err, {status, filename, filepath}) ->
-      throw err if err
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status, filename, filepath} = await @tools.rubygems.fetch
+        name: 'execjs'
+        version: '2.7.0'
+        cwd: "#{tmpdir}"
       status.should.be.true()
       filename.should.eql 'execjs-2.7.0.gem'
-      filepath.should.eql "#{scratch}/execjs-2.7.0.gem"
-    .file.assert
-      target: "#{scratch}/execjs-2.7.0.gem"
-    .promise()
+      filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
+      @fs.assert
+        target: "#{tmpdir}/execjs-2.7.0.gem"
 
   they 'without a version', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.fetch
-      name: 'execjs'
-      cwd: "#{scratch}"
-    , (err, {status, filename, filepath}) ->
-      throw err if err
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status, filename, filepath} = await @tools.rubygems.fetch
+        name: 'execjs'
+        cwd: "#{tmpdir}"
       status.should.be.true()
       filename.should.eql 'execjs-2.7.0.gem'
-      filepath.should.eql "#{scratch}/execjs-2.7.0.gem"
-    .file.assert
-      target: "#{scratch}/execjs-2.7.0.gem"
-    .promise()
+      filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
+      @fs.assert
+        target: "#{tmpdir}/execjs-2.7.0.gem"
