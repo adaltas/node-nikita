@@ -35,7 +35,7 @@
   //   image: 'ryba/targe-build',
   //   source: '/home/ryba/Dockerfile'
   // }, function(err, {status}){
-  //   console.log( err ? err.message : 'Container built: ' + status);
+  //   console.info( err ? err.message : 'Container built: ' + status);
   // });
   // ```
 
@@ -66,7 +66,7 @@
   //   source: '/home/ryba/Dockerfile',
   //   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
   // }, function(err, {status}){
-  //   console.log( err ? err.message : 'Container built: ' + status);
+  //   console.info( err ? err.message : 'Container built: ' + status);
   // });
   // ```
 
@@ -79,7 +79,7 @@
   //   tag: 'ryba/target-build'
   //   content: "FROM ubuntu\nRUN echo 'helloworld'"
   // }, function(err, {status}){
-  //   console.log( err ? err.message : 'Container built: ' + status);
+  //   console.info( err ? err.message : 'Container built: ' + status);
   // });
   // ```
 
@@ -175,8 +175,7 @@ a global scale.`
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var cmd, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
   log({

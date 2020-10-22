@@ -52,7 +52,7 @@ force options is set.
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       await @docker.tools.execute
         cmd: [

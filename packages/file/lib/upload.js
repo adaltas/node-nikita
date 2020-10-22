@@ -99,7 +99,10 @@ with content.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var algo, stage_target, stats, status;
   if (config.md5 != null) {
     algo = 'md5';

@@ -68,7 +68,7 @@ require('nikita')({
 
 ## Hooks
 
-    on_action = ({config, state}) ->
+    on_action = ({config}) ->
       # Merge SSH config namespace
       # if config.ssh and not ssh.is config.ssh
       #   config[k] ?= v for k, v of config.ssh or {}
@@ -155,8 +155,8 @@ pass all the properties through the `ssh` property.
 
 ## Handler
 
-    handler = ({config, parent: {state}}) ->
-      @log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+    handler = ({config, parent: {state}, tools: {log}}) ->
+      log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
       if ssh.is config.ssh
         if not state['nikita:ssh:connection']
@@ -192,7 +192,7 @@ pass all the properties through the `ssh` property.
       ] unless config.private_key or config.password or config.private_key_path
       # Read private key if option is a path
       unless config.private_key or config.password
-        @log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         location = await tilde.normalize config.private_key_path
         try
           {data: config.private_key} = await fs.readFile location, 'ascii'
@@ -201,18 +201,18 @@ pass all the properties through the `ssh` property.
           throw err
       # Establish connection
       try
-        @log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         conn = await connect config
         state['nikita:ssh:connection'] = conn
-        @log message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
+        log message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
         return status: true, ssh: conn
       catch err
-        @log message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
+        log message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
       # Enable root access
       if config.root.username
-        @log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
+        log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
         @ssh.root config.root
-      @log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+      log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       @call retry: 3, ->
         conn = await connect config
         state['nikita:ssh:connection'] = conn

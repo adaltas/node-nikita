@@ -100,8 +100,7 @@ require('nikita')
         
 ## Handler
 
-    handler = ({config, log, metadata, tools: {path}, ssh}) ->
-      # @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+    handler = ({config, metadata, tools: {log, path}, ssh}) ->
       # Configuration validation
       config.cwd = process.cwd() if not ssh and (config.cwd is true or not config.cwd)
       config.parent = {} if config.parent is true

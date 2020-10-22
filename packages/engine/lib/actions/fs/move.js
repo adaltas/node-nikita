@@ -65,9 +65,8 @@ the action and disable the \`moved\` indicator in the callback.`
 // ## Handler
 handler = async function({
     config,
-    log,
     metadata,
-    tools: {path},
+    tools: {log, path},
     ssh
   }) {
   var exists, hash;

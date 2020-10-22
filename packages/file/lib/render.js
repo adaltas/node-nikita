@@ -27,7 +27,7 @@
 //     username: 'a_user'
 //   }
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'File rendered: ' + status);
+//   console.info(err ? err.message : 'File rendered: ' + status);
 // });
 // ```
 
@@ -94,7 +94,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var data;
   log({
     message: "Entering file.render",

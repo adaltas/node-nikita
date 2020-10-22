@@ -57,11 +57,6 @@ return a Buffer instance.`
 // ## Handler
 handler = async function({config}) {
   var buffers, data;
-  this.log({
-    message: "Entering fs.readFile",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/readFile'
-  });
   // Normalize options
   buffers = [];
   await this.fs.base.createReadStream({

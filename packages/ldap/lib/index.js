@@ -74,7 +74,10 @@ configuration.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var _, add, attrlist, dn, i, indexes, indices, k, len, line, match, modified, modify, operations, ref, ref1, stdout, v;
   modified = false;
   indexes = {};

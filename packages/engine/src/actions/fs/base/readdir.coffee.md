@@ -69,7 +69,6 @@ require('nikita')
 ## Source Code
 
     handler = ({config}) ->
-      @log message: "Entering fs.readdir", level: 'DEBUG', module: 'nikita/lib/fs/readdir'
       # Note: -w work on macos, not on linux, it force raw printing of
       # non-printable characters. This is the default when output is not to a
       # terminal.

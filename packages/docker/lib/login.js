@@ -47,8 +47,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker login",

@@ -53,7 +53,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       if /^\S+@\S+$/.test config.admin.principal
         config.realm ?= config.admin.principal.split('@')[1]
       else

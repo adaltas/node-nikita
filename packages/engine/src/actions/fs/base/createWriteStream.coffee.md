@@ -61,8 +61,7 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, metadata, tools: {find}, ssh}) ->
-      @log message: "Entering fs.createWriteStream", level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
+    handler = ({config, metadata, tools: {find, log}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalize config
       config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if sudo or config.flags[0] is 'a'
@@ -73,12 +72,12 @@ require('nikita')
         [ ! -f '#{config.target}' ] && exit
         cp '#{config.target}' '#{config.target_tmp}'
         """
-        @log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO', module: 'nikita/lib/fs/createWriteStream'
+        log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO', module: 'nikita/lib/fs/createWriteStream'
       catch err
-        @log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createWriteStream'
+        log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createWriteStream'
         throw err
       # Start writing the content
-      @log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
+      log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
       await new Promise (resolve, reject) ->
         ws = await fs.createWriteStream ssh, config.target_tmp or config.target, flags: config.flags, mode: config.mode
         config.stream ws

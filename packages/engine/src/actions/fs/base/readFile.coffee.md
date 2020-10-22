@@ -47,7 +47,6 @@ console.log(data)
 ## Handler
 
     handler = ({config}) ->
-      @log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
       buffers = []
       await @fs.base.createReadStream

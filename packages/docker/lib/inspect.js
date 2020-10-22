@@ -21,7 +21,7 @@
 // {info} = await require('nikita').docker.inspect({
 //   name: 'my_container'
 // })
-// console.log(`Container id is ${info.Id}`)
+// console.info(`Container id is ${info.Id}`)
 // ```
 
 // Inspect multiple containers.
@@ -31,7 +31,7 @@
 //   name: 'my_container'
 // })
 // info.map( (container) =>
-//   console.log(`Container id is ${container.Id}`)
+//   console.info(`Container id is ${container.Id}`)
 // )
 // ```
 
@@ -72,8 +72,7 @@ schema = {
 handler = async function({
     args,
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var arg, exists, i, info, isCointainerArray, len;
   for (i = 0, len = args.length; i < len; i++) {

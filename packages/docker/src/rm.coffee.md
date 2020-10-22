@@ -18,7 +18,7 @@ require('nikita')
 .docker.rm({
   container: 'toto'
 }, function(err, status){
-  console.log( err ? err.message : 'Container removed: ' + status);
+  console.info( err ? err.message : 'Container removed: ' + status);
 })
 ```
 
@@ -57,7 +57,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # cmd = for opt in ['link', 'volumes', 'force']
       #   "-#{opt.charAt 0}" if config[opt]

@@ -72,7 +72,10 @@ configuration file to get initial value from, optional.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var data, err, fnl_props, i, j, k, keys, l, len, len1, len2, org_props, ref, ref1, ref2, ref3, v;
   fnl_props = {};
   org_props = {};

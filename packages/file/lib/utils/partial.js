@@ -2,6 +2,8 @@
 // # Partial
 
 // Replace partial elements in a text.
+var utils;
+
 module.exports = function(config, log) {
   var from, from_index, i, len, linebreak, opts, orgContent, place_before, pos, posoffset, ref, ref1, res, results, to;
   if (!((ref = config.write) != null ? ref.length : void 0)) {
@@ -28,7 +30,7 @@ module.exports = function(config, log) {
         });
       }
       if (typeof opts.match === 'string') {
-        opts.match = RegExp(`${quote(opts.match)}`, "mg");
+        opts.match = RegExp(`${utils.regexp.quote(opts.match)}`, "mg");
       }
       if (!(opts.match instanceof RegExp)) {
         throw Error("Invalid match option");
@@ -42,7 +44,7 @@ module.exports = function(config, log) {
         }));
       } else if (opts.place_before && typeof opts.replace === 'string') {
         if (typeof opts.place_before === "string") {
-          opts.place_before = new RegExp(RegExp(`^.*${quote(opts.place_before)}.*$`, "mg"));
+          opts.place_before = new RegExp(RegExp(`^.*${utils.regexp.quote(opts.place_before)}.*$`, "mg"));
         }
         if (opts.place_before instanceof RegExp) {
           log({
@@ -82,7 +84,7 @@ module.exports = function(config, log) {
             level: 'DEBUG',
             module: 'nikita/lib/misc/string'
           });
-          opts.append = new RegExp(`^.*${quote(opts.append)}.*$`, 'mg');
+          opts.append = new RegExp(`^.*${utils.regexp.quote(opts.append)}.*$`, 'mg');
         }
         if (opts.append instanceof RegExp) {
           log({
@@ -127,8 +129,8 @@ module.exports = function(config, log) {
       }));
     } else if (opts.from || opts.to) {
       if (opts.from && opts.to) {
-        from = RegExp(`(^${quote(opts.from)}$)`, "m").exec(config.content);
-        to = RegExp(`(^${quote(opts.to)}$)`, "m").exec(config.content);
+        from = RegExp(`(^${utils.regexp.quote(opts.from)}$)`, "m").exec(config.content);
+        to = RegExp(`(^${utils.regexp.quote(opts.to)}$)`, "m").exec(config.content);
         if ((from != null) && (to == null)) {
           results.push(log({
             message: "Found 'from' but missing 'to', skip writing",
@@ -155,7 +157,7 @@ module.exports = function(config, log) {
           results.push(config.content = config.content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + config.content.substr(to.index));
         }
       } else if (opts.from && !opts.to) {
-        from = RegExp(`(^${quote(opts.from)}$)`, "m").exec(config.content);
+        from = RegExp(`(^${utils.regexp.quote(opts.from)}$)`, "m").exec(config.content);
         if (from != null) {
           results.push(config.content = config.content.substr(0, from.index + from[1].length) + '\n' + opts.replace); // TODO: honors append
         } else {
@@ -167,7 +169,7 @@ module.exports = function(config, log) {
         }
       } else if (!opts.from && opts.to) {
         from_index = 0;
-        to = RegExp(`(^${quote(opts.to)}$)`, "m").exec(config.content);
+        to = RegExp(`(^${utils.regexp.quote(opts.to)}$)`, "m").exec(config.content);
         if (to != null) {
           results.push(config.content = opts.replace + '\n' + config.content.substr(to.index)); // TODO: honors append
         } else {
@@ -186,3 +188,6 @@ module.exports = function(config, log) {
   }
   return results;
 };
+
+// ## Dependencies
+utils = require('@nikitajs/engine/lib/utils');

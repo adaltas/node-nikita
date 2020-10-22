@@ -41,11 +41,6 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  this.log({
-    message: "Entering fs.chown",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/chown'
-  });
   if (config.uid === false) {
     // Normalization
     config.uid = null;

@@ -13,7 +13,7 @@ describe 'actions.log.md', ->
       tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.md basedir: tmpdir
-      @call ({log}) ->
+      @call ({tools: {log}}) ->
         log message: 'ok'
       # @file.assert
       #   source: "#{tmpdir}/localhost.log"
@@ -29,7 +29,7 @@ describe 'actions.log.md', ->
       tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.md basedir: tmpdir
-      @call ({log}) ->
+      @call ({tools: {log}}) ->
         log message: 'ok', module: 'nikita/test/log/md'
       @fs.assert
         target: "#{tmpdir}/localhost.log"
@@ -43,14 +43,14 @@ describe 'actions.log.md', ->
         tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
-        @call header: 'h1', ({log}) ->
+        @call header: 'h1', ({tools: {log}}) ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
               setTimeout -> 
                 resolve()
               , 500
-          @call header: 'h2', ({log}) ->
+          @call header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           target: "#{tmpdir}/localhost.log"
@@ -75,7 +75,7 @@ describe 'actions.log.md', ->
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @call header: 'h1', ->
-          @call header: 'h2', ({log}) ->
+          @call header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           target: "#{tmpdir}/localhost.log"

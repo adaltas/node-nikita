@@ -62,34 +62,6 @@ Execute a docker command.
           Expected code(s) returned by the command, int or array of int, default
           to 0.
           """
-        # ...(
-        #   "#{property}":
-        #     $ref: "module://@nikitajs/engine/lib/actions/execute#/properties/#{property}"
-        # ) for property in [
-        #   'code_skipped', 'dry', 'env', 'gid',
-        #   'stdout_log', 'sudo', 'target', 'trap', 'uid'
-        # ]
-        # ...{
-        #   key: 'value'
-        # }
-        # 'code_skipped':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/code_skipped'
-        # 'dry':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/dry'
-        # 'env':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/env'
-        # 'gid':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/gid'
-        # 'stdout_log':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/stdout_log'
-        # 'sudo':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
-        # 'target':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/target'
-        # 'trap':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
-        # 'uid':
-        #   $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/uid'
       required: ['cmd']
       additionalProperties: false
     (

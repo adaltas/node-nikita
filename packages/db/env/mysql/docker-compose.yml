@@ -10,15 +10,15 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_mysql5_nodejs
+    image: nikita_mysql_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:
       - mysql
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/db/env/mysql5/test.coffee
+      NIKITA_TEST_MODULE: /nikita/packages/db/env/mysql/test.coffee
   mysql:
-    image: mysql:5.7
+    image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: rootme
     expose:

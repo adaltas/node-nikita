@@ -18,7 +18,7 @@
 //   },
 //   target: '/tmp/my_file'
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'Content was updated: ' + status);
+//   console.info(err ? err.message : 'Content was updated: ' + status);
 // });
 // ```
 
@@ -76,7 +76,10 @@ is modified.`
 };
 
 // ## Source Code
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var data, err;
   log({
     message: "Entering file.yaml",

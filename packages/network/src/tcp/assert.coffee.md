@@ -55,7 +55,6 @@ Assert a TCP or HTTP server is listening.
 ## Handler
 
     handler = ({config}) ->
-      # @log message: "Entering connection.assert", level: 'DEBUG', module: 'nikita/lib/connection/assert'
       error = null
       for server in config.server
         try

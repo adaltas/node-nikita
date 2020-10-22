@@ -21,7 +21,7 @@
 //   source: readable_stream or '/path/to/source'
 //   target: 'my_container:/path/to/target'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container copied' + status)
+//   console.info( err ? err.message : 'Container copied' + status)
 // )
 // ```
 
@@ -33,7 +33,7 @@
 //   source: 'my_container:/path/to/source',
 //   target: writable_stream or '/path/to/target'
 // }, function(err, status){
-//   console.log( err ? err.message : 'Container copied: ' + status);
+//   console.info( err ? err.message : 'Container copied: ' + status);
 // });
 // ```
 
@@ -67,8 +67,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var _, err, source_container, source_mkdir, source_path, stats, target_container, target_mkdir, target_path;
   log({

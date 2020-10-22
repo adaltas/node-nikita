@@ -67,8 +67,7 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Source Code
 
-    handler = ({config, hooks, metadata, tools: {path, find}, ssh}) ->
-      @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+    handler = ({config, hooks, metadata, tools: {path, log, find}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalization
       # throw Error "Required Option: the \"target\" option is mandatory" unless config.target
@@ -84,12 +83,12 @@ console.info(Buffer.concat(buffers).toString())
           cp '#{config.target}' '#{config.target_tmp}'
           chown '#{current_username}' '#{config.target_tmp}'
           """
-        @log message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
+        log message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
       catch err
-        @log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'
+        log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'
         throw err
       # Read the stream
-      @log message: "Reading file #{config.target_tmp or config.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+      log message: "Reading file #{config.target_tmp or config.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       new Promise (resolve, reject) ->
         buffers = []
         rs = await fs.createReadStream ssh, config.target_tmp or config.target

@@ -16,7 +16,7 @@ Remove a volume.
 nikita.docker.volume_rm({
   name: 'my_volume'
 }, function(err, status){
-  console.log( err ? err.message : 'Volume removed: ' + status);
+  console.info( err ? err.message : 'Volume removed: ' + status);
 })
 ```
 
@@ -39,7 +39,7 @@ nikita.docker.volume_rm({
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Validation
       throw Error "Missing required option name" unless config.name

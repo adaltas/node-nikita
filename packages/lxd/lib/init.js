@@ -37,7 +37,7 @@
 //   image: "ubuntu:18.04",
 //   container: "my_container"
 // }, function(err, {status}) {
-//   console.log( err ? err.message : 'The container was created')
+//   console.info( err ? err.message : 'The container was created')
 // });
 // ```
 

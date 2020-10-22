@@ -27,7 +27,7 @@
   //   name: 'json',
   //   version: '2.1.0',
   // }, function(err, {status}){
-  //   console.log( err ? err.messgage : 'Gem installed: ' + status);
+  //   console.info( err ? err.messgage : 'Gem installed: ' + status);
   // });
   // ```
 
@@ -38,7 +38,7 @@
   // .tools.rubygems.install({
   //   source: '/path/to/json-2.1.0.gem',
   // }, function(err, {status}){
-  //   console.log( err ? err.messgage : 'Gem installed: ' + status);
+  //   console.info( err ? err.messgage : 'Gem installed: ' + status);
   // });
   // ```
 
@@ -49,7 +49,7 @@
   // .tools.rubygems.install({
   //   source: '/path/to/*.gem',
   // }, function(err, {status}){
-  //   console.log( err ? err.messgage : 'Gem installed: ' + status);
+  //   console.info( err ? err.messgage : 'Gem installed: ' + status);
   // });
   // ```
 

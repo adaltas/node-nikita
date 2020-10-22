@@ -23,7 +23,7 @@ require('nikita')
 .docker.pull({
   tag: 'postgresql'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container pulled: ' + status);
+  console.info( err ? err.message : 'Container pulled: ' + status);
 })
 ```
 
@@ -56,7 +56,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Validate parameters
       version = config.version or config.tag.split(':')[1] or 'latest'

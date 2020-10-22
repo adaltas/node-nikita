@@ -38,7 +38,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
       # Validate parameters
       return callback Error 'Missing container parameter' unless config.container?

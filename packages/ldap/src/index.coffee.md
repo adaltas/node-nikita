@@ -78,7 +78,7 @@ console.info(`Index created or modified: ${status}`)
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       modified = false
       indexes = {}
       add = {}

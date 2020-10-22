@@ -21,7 +21,7 @@ require('nikita')
   container: 'toto',
   signal: 9
 }, function(err, status){  
-  console.log( err ? err.message : 'Container killed: ' + status);
+  console.info( err ? err.message : 'Container killed: ' + status);
 })
 ```
 
@@ -53,7 +53,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       {status} = await @docker.tools.execute
         cmd: "ps | egrep ' #{config.container}$' | grep 'Up'"

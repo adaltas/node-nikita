@@ -75,7 +75,8 @@
   "scripts": {
     "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'"
+    "test": "mocha 'test/**/*.coffee'",
+    "testall": "npm test && env/run.sh"
   },
   "dependencies": {
     "mixme": "^0.4.0"

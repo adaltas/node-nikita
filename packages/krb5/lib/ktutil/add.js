@@ -64,7 +64,10 @@ provided.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var _, cmd, code, enctype, entries, entry, i, j, k, kvno, len, len1, len2, line, match, mdate, princ, princ_entries, principal, ref, ref1, ref2, slot, status, stdout, timestamp, tmp_keytab, values;
   if (/^\S+@\S+$/.test(config.principal)) {
     if (config.realm == null) {

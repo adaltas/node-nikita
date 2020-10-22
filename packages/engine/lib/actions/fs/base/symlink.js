@@ -44,11 +44,6 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  this.log({
-    message: "Entering fs.symlink",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/symlink'
-  });
   return this.execute({
     cmd: `ln -sf ${config.source} ${config.target}`
   });

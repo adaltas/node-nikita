@@ -77,15 +77,10 @@ stream.`
 handler = async function({
     config,
     metadata,
-    tools: {find},
+    tools: {find, log},
     ssh
   }) {
   var err, sudo;
-  this.log({
-    message: "Entering fs.createWriteStream",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/createWriteStream'
-  });
   sudo = (await find(function({
       config: {sudo}
     }) {
@@ -103,7 +98,7 @@ handler = async function({
     if (config.flags[0] === 'a') {
       await this.execute(`[ ! -f '${config.target}' ] && exit
 cp '${config.target}' '${config.target_tmp}'`);
-      this.log({
+      log({
         message: "Append prepared by placing a copy of the original file in a temporary path",
         level: 'INFO',
         module: 'nikita/lib/fs/createWriteStream'
@@ -111,7 +106,7 @@ cp '${config.target}' '${config.target_tmp}'`);
     }
   } catch (error1) {
     err = error1;
-    this.log({
+    log({
       message: "Failed to place original file in temporary path",
       level: 'ERROR',
       module: 'nikita/lib/fs/createWriteStream'
@@ -119,7 +114,7 @@ cp '${config.target}' '${config.target_tmp}'`);
     throw err;
   }
   // Start writing the content
-  this.log({
+  log({
     message: 'Writting file',
     level: 'DEBUG',
     module: 'nikita/lib/fs/createWriteStream'

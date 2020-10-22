@@ -26,7 +26,7 @@
 // .docker.pause({
 //   container: 'toto'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container was unpaused: ' + status);
+//   console.info( err ? err.message : 'Container was unpaused: ' + status);
 // })
 // ```
 
@@ -51,8 +51,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker unpause",

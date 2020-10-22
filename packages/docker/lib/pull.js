@@ -23,7 +23,7 @@
 // .docker.pull({
 //   tag: 'postgresql'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container pulled: ' + status);
+//   console.info( err ? err.message : 'Container pulled: ' + status);
 // })
 // ```
 
@@ -60,8 +60,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var cmd, status, version;
   log({

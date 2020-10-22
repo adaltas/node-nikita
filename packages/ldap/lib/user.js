@@ -64,7 +64,10 @@ configuration.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var added, entry, i, k, len, loggedin, modified, new_password, ref, updated, user, v;
   if (!Array.isArray(config.user)) {
     // Auth related config

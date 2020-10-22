@@ -24,7 +24,7 @@
 //   compression: 'gzip'
 //   entrypoint: '/bin/true'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container saved: ' + status);
+//   console.info( err ? err.message : 'Container saved: ' + status);
 // })
 // ```
 
@@ -71,8 +71,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker save",

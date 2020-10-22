@@ -80,8 +80,7 @@ specified.`
 // ## Source Code
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var clean_target, containers, k, ref, status, stdout, v;
   log({

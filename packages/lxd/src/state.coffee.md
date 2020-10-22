@@ -26,7 +26,7 @@ require('nikita')
 .lxd.state({
   container: 'container1',
 }, function(err, {config}){
-  console.log( err ? err.message : config);
+  console.info( err ? err.message : config);
   // See below for an output example
 })
 ```

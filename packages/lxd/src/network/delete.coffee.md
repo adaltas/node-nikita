@@ -22,7 +22,7 @@ require('nikita')
 .lxd.network.delete({
   network: 'network0'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Network deleted: ' + status);
+  console.info( err ? err.message : 'Network deleted: ' + status);
 })
 ```
 

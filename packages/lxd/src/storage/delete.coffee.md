@@ -22,7 +22,7 @@ require('nikita')
 .lxd.storage.delete({
   name: 'system'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Storage deleted: ' + status);
+  console.info( err ? err.message : 'Storage deleted: ' + status);
 })
 ```
 

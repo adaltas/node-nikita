@@ -27,8 +27,7 @@ schema.required.push('container');
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var k, ref, v;
   log({

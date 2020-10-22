@@ -83,7 +83,7 @@ console.info(`ACL modified: ${status}`)
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       status = false
       # Get DN
       unless config.dn

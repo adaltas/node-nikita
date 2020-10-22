@@ -99,7 +99,10 @@ into JSON.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var data, err;
   log({
     message: "Entering file.json",

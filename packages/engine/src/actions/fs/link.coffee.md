@@ -62,8 +62,7 @@ require('nikita').fs.link({
 
 ## Handler
 
-    handler = ({config, log, metadata, tools: {path, status}, ssh}) ->
-      # @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
+    handler = ({config, metadata, tools: {log, path, status}, ssh}) ->
       # Set default
       config.mode ?= 0o0755
       # It is possible to have collision if two symlink

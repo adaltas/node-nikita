@@ -1,7 +1,8 @@
 
 # `nikita.fs.remove`
 
-Recursively remove files, directories and links.
+Recursively remove files, directories and links. This is a much more aggressive
+version of `unlink` based on the `rm` command.
 
 ## Callback parameters
 
@@ -74,16 +75,14 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, metadata, tools: {status, events}, ssh}) ->
-      log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/fs/remove'
-      # SSH connection
-      ssh = @ssh config.ssh
+    handler = ({config, metadata, tools: {log}}) ->
       # Start real work
       {files} = await @fs.glob config.target
       for file in files
         log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/fs/remove'
-        @execute
+        {status} = await @execute
           cmd: "rm -rf '#{file}'"
+        log message: "File #{file} removed", level: 'WARN', module: 'nikita/lib/fs/remove' if status
       {}
 
 ## Exports

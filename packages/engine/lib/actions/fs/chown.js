@@ -76,7 +76,10 @@ stat object associated with the target if one is already available.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var changes, err, gid, stats, stdout, uid;
   if (!((config.uid != null) || (config.gid != null))) {
     throw Error("Missing one of uid or gid option");

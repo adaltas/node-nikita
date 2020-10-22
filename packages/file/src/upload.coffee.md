@@ -68,7 +68,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       if config.md5?
         algo = 'md5'
       else if config.sha1?

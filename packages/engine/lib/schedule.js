@@ -38,14 +38,12 @@ module.exports = function() {
             });
           } else if (res.then) {
             return res.then(function() {
-              // console.log 'pump done', running, stack.length
               running = false;
               resolve.apply(handler, arguments);
               return setImmediate(function() {
                 return scheduler.pump();
               });
             }, function(err) {
-              // console.log 'pump done', running, stack.length
               running = false;
               reject(err);
               return setImmediate(function() {
@@ -53,9 +51,6 @@ module.exports = function() {
               });
             });
           } else {
-            // for prom in events.end
-            //   {reject} = prom
-            //   reject.call()
             throw error('SCHEDULER_INVALID_HANDLER', ['scheduled handler must return a promise or an array of handlers,', `got ${JSON.stringify(res)}`]);
           }
         });

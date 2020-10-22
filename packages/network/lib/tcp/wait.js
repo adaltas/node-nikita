@@ -227,9 +227,11 @@ information. It default to a temporary location.`
 };
 
 // ## Handler
-handler = function({config, log}) {
+handler = function({
+    config,
+    tools: {log}
+  }) {
   var quorum_target, ref;
-  // @log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
   if (!((ref = config.server) != null ? ref.length : void 0)) {
     log({
       message: "No connection to wait for",

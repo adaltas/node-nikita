@@ -25,7 +25,7 @@ require('nikita')
   network: 'network0'
   container: 'container1'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Network detached  : ' + status);
+  console.info( err ? err.message : 'Network detached  : ' + status);
 })
 ```
 

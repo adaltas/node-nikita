@@ -50,7 +50,7 @@ require('nikita')
   ssh: ssh,
   name: 'ntp'
 }, function(err, {status}){
-  console.log(err || "Package installed: " + status ? 'yes' : 'no');
+  console.info(err || "Package installed: " + status ? 'yes' : 'no');
 });
 ```
 

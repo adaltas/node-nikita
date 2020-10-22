@@ -19,7 +19,7 @@ on_action = function({
     config.port = parseInt(config.port);
   }
   if (config.engine === 'postgres') {
-    console.log('Deprecated Value: config "postgres" is deprecated in favor of "postgresql"');
+    console.warn('Deprecated Value: config "postgres" is deprecated in favor of "postgresql"');
     return config.engine = 'postgresql';
   }
 };

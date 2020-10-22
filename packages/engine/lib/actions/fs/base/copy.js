@@ -31,11 +31,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var err;
-  this.log({
-    message: "Entering fs.copy",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/copy'
-  });
   try {
     return (await this.execute(`[ ! -d \`dirname "${config.target}"\` ] && exit 2
 cp ${config.source} ${config.target}`));

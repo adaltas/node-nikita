@@ -21,7 +21,7 @@ require('nikita')
   source: readable_stream or '/path/to/source'
   target: 'my_container:/path/to/target'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container copied' + status)
+  console.info( err ? err.message : 'Container copied' + status)
 )
 ```
 
@@ -33,7 +33,7 @@ require('nikita')
   source: 'my_container:/path/to/source',
   target: writable_stream or '/path/to/target'
 }, function(err, status){
-  console.log( err ? err.message : 'Container copied: ' + status);
+  console.info( err ? err.message : 'Container copied: ' + status);
 });
 ```
 
@@ -62,7 +62,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       [_, source_container, source_path] = /(.*:)?(.*)/.exec config.source
       [_, target_container, target_path] = /(.*:)?(.*)/.exec config.target

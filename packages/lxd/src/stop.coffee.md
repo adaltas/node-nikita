@@ -15,7 +15,7 @@ require('nikita')
 .lxd.stop({
   container: "myubuntu"
 }, function(err, {status}) {
-  console.log( err ? err.message : 'The container was stopped')
+  console.info( err ? err.message : 'The container was stopped')
 });
 ```
 

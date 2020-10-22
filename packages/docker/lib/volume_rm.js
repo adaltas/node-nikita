@@ -16,7 +16,7 @@
 // nikita.docker.volume_rm({
 //   name: 'my_volume'
 // }, function(err, status){
-//   console.log( err ? err.message : 'Volume removed: ' + status);
+//   console.info( err ? err.message : 'Volume removed: ' + status);
 // })
 // ```
 
@@ -45,8 +45,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   log({
     message: "Entering Docker volume_rm",

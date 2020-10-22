@@ -221,17 +221,15 @@ is provided without any.`
 // ## Handler
 handler = async function({
     config,
-    log,
     ssh,
-    tools: {path}
+    tools: {log, path}
   }) {
-  var algo, cookie, err, exists, hash, hash_source, hash_target, header, match, p, protocols_ftp, protocols_http, ref, ref1, ref2, ref3, ref4, ref5, shortcircuit, source_hash, source_url, stageDestination, stats;
+  var algo, cookie, err, exists, hash, hash_source, hash_target, header, match, protocols_ftp, protocols_http, ref, ref1, ref2, ref3, ref4, ref5, shortcircuit, source_hash, source_url, stageDestination, stats;
   log({
     message: 'Entering file.download',
     level: 'DEBUG',
     module: 'nikita/lib/file/download'
   });
-  p = ssh ? path.posix : path;
   if (config.md5 != null) {
     if ((ref = typeof config.md5) !== 'string' && ref !== 'boolean') {
       throw Error(`Invalid MD5 Hash:${config.md5}`);
@@ -278,8 +276,8 @@ handler = async function({
     config.cookies = [];
   }
   // Normalization
-  config.target = config.cwd ? p.resolve(config.cwd, config.target) : p.normalize(config.target);
-  if (ssh && !p.isAbsolute(config.target)) {
+  config.target = config.cwd ? path.resolve(config.cwd, config.target) : path.normalize(config.target);
+  if (ssh && !path.isAbsolute(config.target)) {
     throw Error(`Non Absolute Path: target is ${JSON.stringify(config.target)}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option`);
   }
   // Shortcircuit accelerator:

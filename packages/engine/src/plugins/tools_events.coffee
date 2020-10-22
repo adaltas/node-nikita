@@ -2,7 +2,7 @@
 {EventEmitter} = require 'events'
 
 module.exports = ->
-  module: '@nikitajs/engine/src/plugins/events'
+  module: '@nikitajs/engine/src/plugins/tools_events'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->
@@ -25,7 +25,6 @@ module.exports = ->
             action.tools.events.emit 'nikita:action:end', action, null, output
             output
           catch err
-            # console.log action
             action.tools.events.emit 'nikita:action:end', action, err, output
             throw err
     'nikita:session:resolved': ({action}) ->

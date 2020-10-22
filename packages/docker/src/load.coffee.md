@@ -23,7 +23,7 @@ require('nikita')
   machine: machine,
   source: source + "/nikita_load.tar"
 }, function(err, {status}) {
-  console.log( err ? err.message : 'Container loaded: ' + status);
+  console.info( err ? err.message : 'Container loaded: ' + status);
 })
 ```
 
@@ -57,7 +57,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Validate parameters
       config.input ?= config.source

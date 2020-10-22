@@ -30,7 +30,7 @@ require('nikita')
   source: 'https://github.com/wdavidw/node-nikita.git'
   target: '/tmp/nikita'
 }, function(err, {status}){
-  console.log(err ? err.message : 'Repo was synchronized: ' + status);
+  console.info(err ? err.message : 'Repo was synchronized: ' + status);
 });
 ```
 

@@ -20,7 +20,7 @@ require('nikita')
 .docker.stop({
   container: 'toto'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container state changed to stopped: ' + status);
+  console.info( err ? err.message : 'Container state changed to stopped: ' + status);
 })
 ```
 
@@ -50,7 +50,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
       # rm is false by default only if config.service is true
       {status} = await @docker.tools.status shy: true, config

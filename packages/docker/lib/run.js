@@ -25,7 +25,7 @@
 //   env: ["FOO=bar",]
 //   entrypoint: '/bin/true'
 // }, function(err, status, stdout, stderr){
-//   console.log( err ? err.message : 'Container state changed to running: ' + status);
+//   console.info( err ? err.message : 'Container state changed to running: ' + status);
 // })
 // ```
 
@@ -358,8 +358,7 @@ container ID.`
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var cmd, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
   log({

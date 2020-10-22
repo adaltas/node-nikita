@@ -169,9 +169,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 ## Handler
 
-    handler = ({config, log, ssh, tools: {path}}) ->
+    handler = ({config, ssh, tools: {log, path}}) ->
       log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
-      p = if ssh then path.posix else path
       if config.md5?
         throw Error "Invalid MD5 Hash:#{config.md5}" unless typeof config.md5 in ['string', 'boolean']
         algo = 'md5'
@@ -197,8 +196,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       config.http_headers ?= []
       config.cookies ?= []
       # Normalization
-      config.target = if config.cwd then p.resolve config.cwd, config.target else p.normalize config.target
-      throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute config.target
+      config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
+      throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
       # Shortcircuit accelerator:
       # If we know the source signature and if the target file exists
       # we compare it with the target file signature and stop if they match

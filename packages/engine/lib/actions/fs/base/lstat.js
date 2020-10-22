@@ -27,11 +27,6 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  this.log({
-    message: "Entering fs.lstat",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/lstat'
-  });
   return this.fs.base.stat({
     target: config.target,
     dereference: false

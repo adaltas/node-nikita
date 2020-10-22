@@ -38,11 +38,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var err;
-  this.log({
-    message: "Entering fs.exists",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/exists'
-  });
   try {
     await this.fs.base.stat({
       target: config.target,

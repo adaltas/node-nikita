@@ -17,7 +17,7 @@ require('nikita')
 .docker.restart({
   container: 'toto'
 }, function(err, {status}){
-  console.log( err ? err.message : 'Container restarted: ' + status);
+  console.info( err ? err.message : 'Container restarted: ' + status);
 })
 ```
 
@@ -46,7 +46,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       @docker.tools.execute
         cmd: [

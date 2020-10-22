@@ -5,7 +5,7 @@ describe 'plugins.output.logs', ->
   
   it 'return logs', ->
     nikita ->
-      {logs} = await @call ({log}) ->
+      {logs} = await @call ({tools: {log}}) ->
         log key: 'value'
         true
       logs.some (log) ->
@@ -14,14 +14,14 @@ describe 'plugins.output.logs', ->
         
   it 'argument is immutable', ->
     arg = key: 'value'
-    {logs} = await nikita.call ({log}) ->
+    {logs} = await nikita.call ({tools: {log}}) ->
       log arg
       true
     arg.should.eql key: 'value'
         
   it 'dont alter file and filename', ->
     nikita ->
-      {logs} = await @call ({log}) ->
+      {logs} = await @call ({tools: {log}}) ->
         log key: 'value'
         true
       logs.some (log) ->

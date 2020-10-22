@@ -65,7 +65,7 @@
 //   ssh: ssh,
 //   name: 'ganglia-web-3.5.7-99'
 // }], function(err, {status}){
-//   console.log(err ? err.message : 'Service status: ' + status);
+//   console.info(err ? err.message : 'Service status: ' + status);
 // });
 // ```
 

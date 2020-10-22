@@ -22,7 +22,7 @@ require('nikita')
   ssh: ssh,
   target: '/tmp/a_file'
 }, function(err, {status}){
-  console.log(err ? err.message : 'File touched: ' + status);
+  console.info(err ? err.message : 'File touched: ' + status);
 });
 ```
 
@@ -52,7 +52,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # status is false if the file doesn't exist and true otherwise
       {status} = await @call ->

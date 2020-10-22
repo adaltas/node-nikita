@@ -92,11 +92,6 @@ handler = function({
     tools: {path},
     ssh
   }) {
-  this.log({
-    message: "Entering fs.writeFile",
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/writeFile'
-  });
   // Normalization
   config.target = config.cwd ? path.resolve(config.cwd, config.target) : path.normalize(config.target);
   if (ssh && !path.isAbsolute(config.target)) {

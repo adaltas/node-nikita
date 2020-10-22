@@ -7,7 +7,7 @@ describe 'plugins.log', ->
   describe 'events', ->
     
     it 'are emitted', ->
-      nikita ({log, tools: {events}}) ->
+      nikita ({tools: {events, log}}) ->
         new Promise (resolve) ->
           events.on 'text', (msg) ->
             resolve msg
@@ -37,11 +37,11 @@ describe 'plugins.log', ->
           config: {}
           file: 'log.coffee'
           filename: __filename
-          line: 19
+          line: 18
           
     it 'argument is immutable', ->
       arg = key: 'value'
-      {logs} = await nikita.call ({log}) ->
+      {logs} = await nikita.call ({tools: {log}}) ->
         log arg
         true
       arg.should.eql key: 'value'
@@ -53,9 +53,9 @@ describe 'plugins.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call log: true, ({log}) ->
+      .call log: true, ({tools: {log}}) ->
         log message: 'enabled parent'
-        @call ({log}) ->
+        @call ({tools: {log}}) ->
           log message: 'enabled child'
       data.should.eql ['enabled parent', 'enabled child']
     
@@ -64,9 +64,9 @@ describe 'plugins.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call log: false, ({log}) ->
+      .call log: false, ({tools: {log}}) ->
         log message: 'disabled'
-        @call ({log}) ->
+        @call ({tools: {log}}) ->
           log message: 'enabled child'
       data.should.eql []
   
@@ -78,9 +78,9 @@ describe 'plugins.log', ->
       .call
         log: ({log}) ->
           data.push log.message
-      , ({log}) ->
+      , ({tools: {log}}) ->
         log message: 'enabled parent'
-        @call ({log}) ->
+        @call ({tools: {log}}) ->
           log message: 'enabled child'
       data.should.eql ['enabled parent', 'enabled child']
       
@@ -90,6 +90,6 @@ describe 'plugins.log', ->
       .call
         log: (args) ->
           data = Object.keys(args).sort()
-      , ({log}) ->
+      , ({tools: {log}}) ->
         log message: 'enabled parent'
       data.should.eql ['config', 'log', 'metadata']

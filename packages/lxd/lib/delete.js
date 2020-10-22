@@ -17,7 +17,7 @@
 // .lxd.delete({
 //   container: "myubuntu"
 // }, function(err, {status}) {
-//   console.log( err ? err.message : 'The container was deleted')
+//   console.info( err ? err.message : 'The container was deleted')
 // });
 // ```
 

@@ -94,8 +94,8 @@ require('nikita')
 
 ## Handler
 
-    handler = ({metadata, config}) ->
-      @log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+    handler = ({metadata, config, tools: {log}}) ->
+      log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       config.host ?= config.ip
       # config.cmd ?= 'su -'
       config.username ?= null
@@ -115,7 +115,7 @@ require('nikita')
           throw err
       # Read private key if option is a path
       if config.private_key_path and not config.private_key
-        @log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+        log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         location = await tilde.normalize config.private_key_path
         try
           {data: config.private_key} = await fs.readFile location, 'ascii'
@@ -123,11 +123,11 @@ require('nikita')
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err
       await @call ->
-        @log message: "Connecting", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+        log message: "Connecting", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         conn = unless metadata.dry
         then await connect config
         else null
-        @log message: "Connected", level: 'INFO', module: 'nikita/lib/ssh/root'
+        log message: "Connected", level: 'INFO', module: 'nikita/lib/ssh/root'
         cmd = []
         cmd.push """
         sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
@@ -159,26 +159,26 @@ require('nikita')
             config.cmd = "echo -e \"#{config.password}\\n\" | #{config.cmd} -S " if config.password
             config.cmd += "-- sh -c \"#{cmd}\""
             cmd = config.cmd
-        @log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-        @log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
+        log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+        log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
         unless metadata.dry
           child = exec
             ssh: conn
             cmd: cmd
           , (err) =>
             if err?.code is 2
-              @log message: "Root Access Enabled", level: 'WARN', module: 'nikita/lib/ssh/root'
+              log message: "Root Access Enabled", level: 'WARN', module: 'nikita/lib/ssh/root'
               err = null
               rebooting = true
             else throw err
           child.stdout.on 'data', (data) =>
-            @log message: data, type: 'stdout', module: 'nikita/lib/ssh/root'
+            log message: data, type: 'stdout', module: 'nikita/lib/ssh/root'
           child.stdout.on 'end', (data) =>
-            @log message: null, type: 'stdout', module: 'nikita/lib/ssh/root'
+            log message: null, type: 'stdout', module: 'nikita/lib/ssh/root'
           child.stderr.on 'data', (data) =>
-            @log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
+            log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) =>
-            @log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
+            log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
       @call retry: true, sleep: 3000, if: rebooting, ->
         conn = await connect config
         conn.end()

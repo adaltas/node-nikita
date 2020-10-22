@@ -36,7 +36,7 @@ require('nikita').cron.add({
   when: '0 */9 * * *'
   user: 'service'
 }, function(err, status){
-  console.log(err ? err.message : 'Cron entry created or modified: ' + status);
+  console.info(err ? err.message : 'Cron entry created or modified: ' + status);
 });
 ```
 

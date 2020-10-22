@@ -1,4 +1,6 @@
 
+quote = require 'regexp-quote'
+
 module.exports =
   # Escape RegExp related charracteres
   # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`
@@ -6,3 +8,4 @@ module.exports =
     str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
   is: (reg) ->
     reg instanceof RegExp
+  quote: quote

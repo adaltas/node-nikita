@@ -25,7 +25,7 @@
 //   compression: 'gzip'
 //   entrypoint: '/bin/true'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Container running: ' + status);
+//   console.info( err ? err.message : 'Container running: ' + status);
 // })
 // ```
 
@@ -65,8 +65,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var k, ref, v;
   // Global config

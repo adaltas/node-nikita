@@ -18,7 +18,7 @@ require('nikita')
   container: "my-container"
   cmd: "whoami"
 }, function(err, {status, stdout, stderr}) {
-  console.log( err ? err.message : stdout)
+  console.info( err ? err.message : stdout)
 });
 
 ```

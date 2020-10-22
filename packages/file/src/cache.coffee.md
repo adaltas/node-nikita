@@ -126,7 +126,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
       config.target ?= config.cache_file
       config.target ?= path.basename config.source

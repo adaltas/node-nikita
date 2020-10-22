@@ -25,7 +25,7 @@
 //   network: 'network0',
 //   container: 'container1'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Network attached: ' + status);
+//   console.info( err ? err.message : 'Network attached: ' + status);
 // })
 // ```
 

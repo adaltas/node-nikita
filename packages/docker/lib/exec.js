@@ -22,7 +22,7 @@
 //   container: 'myContainer',
 //   cmd: '/bin/bash -c "echo toto"'
 // }, function(err, {status}){
-//   console.log( err ? err.message : 'Command executed: ' + status);
+//   console.info( err ? err.message : 'Command executed: ' + status);
 // });
 // ```
 
@@ -93,8 +93,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    log,
-    tools: {find}
+    tools: {find, log}
   }) {
   var cmd;
   log({

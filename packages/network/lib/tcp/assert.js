@@ -93,7 +93,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var err, error, i, len, ref, server;
-  // @log message: "Entering connection.assert", level: 'DEBUG', module: 'nikita/lib/connection/assert'
   error = null;
   ref = config.server;
   for (i = 0, len = ref.length; i < len; i++) {

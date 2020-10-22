@@ -10,7 +10,7 @@ Check if a user exists in the database.
       config.engine = config.engine?.toLowerCase()
       config.port = parseInt config.port if typeof config.port is 'string' and /^\d+$/.test config.port
       if config.engine is 'postgres'
-        console.log 'Deprecated Value: config "postgres" is deprecated in favor of "postgresql"'
+        console.warn 'Deprecated Value: config "postgres" is deprecated in favor of "postgresql"'
         config.engine = 'postgresql'
 
 ## Schema

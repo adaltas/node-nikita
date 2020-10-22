@@ -25,20 +25,15 @@ module.exports = ->
               scheduler.pump()
           else if res.then
             res.then ->
-              # console.log 'pump done', running, stack.length
               running = false
               resolve.apply handler, arguments
               setImmediate ->
                 scheduler.pump()
             , (err) ->
-              # console.log 'pump done', running, stack.length
               running = false
               reject err
               setImmediate ->
                 scheduler.pump()
-                # for prom in events.end
-                #   {reject} = prom
-                #   reject.call()
           else
             throw error 'SCHEDULER_INVALID_HANDLER', [
               'scheduled handler must return a promise or an array of handlers,'

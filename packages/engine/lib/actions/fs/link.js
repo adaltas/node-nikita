@@ -73,13 +73,11 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
 // ## Handler
 handler = async function({
     config,
-    log,
     metadata,
-    tools: {path, status},
+    tools: {log, path, status},
     ssh
   }) {
   var content, exists;
-  // @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
   // Set default
   if (config.mode == null) {
     config.mode = 0o0755;

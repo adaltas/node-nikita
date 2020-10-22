@@ -392,7 +392,10 @@ options.`
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var backup, char, contentChanged, context, err, exists, i, j, k, len, len1, raw, ref, ref1, source, target, targetContent, targetContentHash, targetStats, text, w;
   log({
     message: "Entering file",
@@ -599,7 +602,7 @@ handler = async function({config, log}) {
     config.content = config.content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1");
   }
   if (config.write.length) {
-    partial.call(this, config);
+    partial(config, log);
   }
   if (config.eof) {
     log({

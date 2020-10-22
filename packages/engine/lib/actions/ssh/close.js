@@ -25,10 +25,11 @@ connection avaible to the action.`
 // ## Source code
 handler = function({
     config,
-    parent: {state}
+    parent: {state},
+    tools: {log}
   }) {
   var conn, ref, ref1;
-  this.log({
+  log({
     message: "Entering ssh.close",
     level: 'DEBUG',
     module: 'nikita/lib/ssh/close'

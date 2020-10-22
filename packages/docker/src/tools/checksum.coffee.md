@@ -48,7 +48,7 @@ native docker command.
 
 ## Handler
 
-    handler = ({config, log, tools: {find}}) ->
+    handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker checksum", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
