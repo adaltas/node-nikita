@@ -1,18 +1,7 @@
 
-# `nikita.tools.gem.fetch`
+# `nikita.tools.rubygems.fetch`
 
 Fetch a Ruby gem.
-
-## Options
-
-* `cwd` (string)   
-  Directory storing gems.
-* `gem_bin` (string)   
-  Path to the gem command, default to 'gem'
-* `name` (string)   
-  Name of the gem, required.   
-* `version` (string)   
-  Version of the gem.
 
 ## Callback parameters
 
@@ -25,7 +14,7 @@ Fetch a Ruby gem.
 * `filepath`   
   Path of the gem file.   
 
-## Exemple
+## Example
 
 ```js
 require('nikita')
@@ -43,38 +32,70 @@ require('nikita')
 We do not support gem returning specification with binary strings because we
 couldn't find any suitable parser on NPM.
 
-## Source code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
-      # Global Options
-      options.ruby ?= {}
-      options[k] ?= v for k, v of options.ruby
-      options.gem_bin ?= 'gem'
-      @system.execute
-        unless: options.version
-        cmd: """
-        #{options.gem_bin} specification #{options.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
-        """
-        cwd: options.cwd
-        shy: true
-        bash: options.bash
-      , (err, {status, stdout}) ->
-        throw err if err
-        options.version = stdout.trim() if status
-        options.target = "#{options.name}-#{options.version}.gem"
-      @call ->
-        @system.execute
-          cmd: """
-          #{options.gem_bin} fetch #{options.name} -v #{options.version}
+    schema =
+      type: 'object'
+      properties:
+        'cwd':
+          type: 'string'
+          description: """
+          Directory storing gems.
           """
-          cwd: options.cwd
-          bash: options.bash
-      @next (err, {status}) ->
-        callback err, 
-          status: status,
-          filename: options.target
-          filepath: path.resolve options.cwd, options.target
+        'gem_bin':
+          type: 'string'
+          default: 'gem'
+          description: """
+          Path to the gem command.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Name of the gem.
+          """
+        'version':
+          type: 'string'
+          description: """
+          Version of the gem.
+          """
+      required: ['name']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
+      # Global Options
+      config.ruby ?= {}
+      config[k] ?= v for k, v of config.ruby
+      # Get version
+      unless config.version
+        {status, stdout} = await @execute
+          cmd: """
+          #{config.gem_bin} specification #{config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
+          """
+          cwd: config.cwd
+          shy: true
+          bash: config.bash
+        config.version = stdout.trim() if status
+      config.target = "#{config.name}-#{config.version}.gem"
+      # Fetch package
+      {status} = await @execute
+        cmd: """
+        #{config.gem_bin} fetch #{config.name} -v #{config.version}
+        """
+        cwd: config.cwd
+        bash: config.bash
+      status: status
+      filename: config.target
+      filepath: path.resolve config.cwd, config.target
+
+## Export
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'ruby'
+      schema: schema
 
 ## Dependencies
 

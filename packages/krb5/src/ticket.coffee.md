@@ -46,15 +46,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, ssh}) ->
-      # SSH connection
-      # @system.uid_gid
-      #   uid: config.uid
-      #   gid: config.gid
-      #   shy: true
-      # , (err, {status, uid, gid, default_gid}) ->
-      #   config.uid = uid
-      #   config.gid = gid
+    handler = ({config}) ->
       await @execute
         cmd: """
         if #{utils.krb5.su config, 'klist -s'}; then exit 3; fi

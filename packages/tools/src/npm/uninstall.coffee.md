@@ -3,20 +3,6 @@
 
 Remove one or more NodeJS packages.
 
-## Options
-
-* `name` (string|array, required)
-  Name of the package(s).
-* `global` (boolean)
-  Uninstalls the current package context as a global package.
-
-## Callback Parameters
-
-* `err`
-  Error object if any.
-* `status`
-  Value "true" if the package was uninstalled.
-
 ## Example
 
 The following action uninstalls the coffescript package globally.
@@ -31,14 +17,23 @@ require('nikita')
 });
 ```
 
+## Hooks
+
+    on_action = ({config}) ->
+      throw Error 'Deprecated config `argument`' if config.argument?
+      config.name = [config.name] if typeof config.name is 'string'
+      
 ## Schema
 
     schema =
       type: 'object'
       properties:
         'name':
-          oneOf: [{type: 'string'}, {type: 'array', items: type: 'string'}]
-          description: 'Name of the package(s).'
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: 'Name of the package(s) to remove.'
         'global':
           type: 'boolean'
           default: false
@@ -47,36 +42,30 @@ require('nikita')
 
 ## Handler
 
-    handler = ({options}, callback) ->
-      options.name = options.argument if options.argument?
-      options.name = [options.name] if typeof options.name is 'string'
-      global = if options.global then ' -g' else ''
+    handler = ({config, log}) ->
+      global = if config.global then '-g' else ''
+      # Get installed packages
       installed = []
-      @system.execute
-        cmd: "npm list --installed --json #{global}"
+      {stdout} = await @execute
+        cmd: "npm list --json #{global}"
         code: [0, 1]
         stdout_log: false
         shy: true
-      , (err, {stdout}) ->
-        throw err if err
-        pkgs = JSON.parse stdout
-        pkgs = Object.keys pkgs.dependencies
-        installed = pkgs
-      @call ->
-        uninstall = options.name.filter (pkg) -> pkg in installed
-        @system.execute
-          if: uninstall.length
+        sudo: config.sudo
+      pkgs = JSON.parse stdout
+      installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
+      # Uninstall
+      uninstall = config.name.filter (pkg) -> pkg in installed
+      if uninstall.length
+        await @execute
           cmd: "npm uninstall #{global} #{uninstall.join ' '}"
-          sudo: options.sudo
-        , (err) =>
-          @log message: "NPM uninstalled packages: #{install.join ', '}"
+          sudo: config.sudo
+        log message: "NPM uninstalled packages: #{uninstall.join ', '}"
 
 ## Export
 
     module.exports =
       handler: handler
+      hooks:
+        on_action: on_action
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'

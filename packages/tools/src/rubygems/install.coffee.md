@@ -10,29 +10,7 @@ following components:
 - Documentation
 - gemspec
 
-## Options
-
-* `bindir` (string)   
-  Directory where binary files are located.
-* `build_flags` (string)   
-  Pass flags to the compiler.
-* `gem_bin` (string)   
-  Path to the gem command, default to 'gem'
-* `name` (string)   
-  Name of the gem, required.   
-* `target` (string)   
-  Install directory.
-* `version` (string)   
-  Version of the gem.
-
-## Callback parameters
-
-* `err`   
-  Error object if any.
-* `status`   
-  Indicate if a gem was installed.
-
-## Exemples
+## Example
 
 Install a gem from its name and version:
 
@@ -68,85 +46,135 @@ require('nikita')
 });
 ```
 
-## Source code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
-      # SSH connection
-      ssh = @ssh options.ssh
-      # Global Options
-      options.ruby ?= {}
-      options[k] ?= v for k, v of options.ruby
-      options.gem_bin ?= 'gem'
-      options.gems ?= {}
-      options.gems[options.name] ?= options.version if options.name
-      options.sources ?= []
+    schema =
+      type: 'object'
+      properties:
+        'bindir':
+          type: 'string'
+          description: """
+          Directory where binary files are located.
+          """
+        'build_flags':
+          type: 'string'
+          description: """
+          Pass flags to the compiler.
+          """
+        'bash':
+          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/bash'
+        'gem_bin':
+          type: 'string'
+          default: 'gem'
+          description: """
+          Path to the gem command.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Name of the gem.
+          """
+        'source':
+          type: 'string'
+          description: """
+          Path to the gem package.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Install directory.
+          """
+        'version':
+          type: 'string'
+          description: """
+          Version of the gem.
+          """
+      required: ['name']
+
+## Handler
+
+    handler = ({config, ssh}) ->
+      # log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
+      # Global config
+      config.ruby ?= {}
+      config[k] ?= v for k, v of config.ruby
+      gems = {}
+      gems[config.name] ?= config.version
+      # Get all current gems
       current_gems = {}
-      @system.execute
+      {stdout} = await @execute
         cmd: """
-        #{options.gem_bin} list --versions
+        #{config.gem_bin} list --versions
         """
         shy: true
-        bash: options.bash
-      , (err, {stdout}) ->
-        for line in string.lines stdout
-          continue if line.trim() is ''
-          [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]
-          current_gems[name] = version.split(', ')
-      @call if: options.source, (_, callback) ->
-        @file.glob options.source, (err, {files}) ->
-          return callback err if err
-          options.source = files.filter (source) ->
-            filename = path.basename source
-            current_filenames = for n, v of current_gems then "#{n}-#{v}.gem"
-            true unless filename in current_filenames
-          callback()
-      @call ->
-        for name, version of options.gems
-          # Install if Gem isnt yet there
-          continue unless current_gems[name]
-          # Install if a version is demanded and no installed versio satisfy it
-          is_version_matching = current_gems[name].some (current_version) -> semver.satisfies version, current_version
-          continue if version and not is_version_matching
-          delete options.gems[name]
-      @call ->
-        if: options.sources.length
-      , ->
-        @system.execute
-          if: options.sources.length
+        bash: config.bash
+      for line in utils.string.lines stdout
+        continue if line.trim() is ''
+        [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]
+        current_gems[name] = version.split(', ')
+      # Make array of sources and filter
+      sources = []
+      if config.source
+        {files} = await @fs.glob config.source
+        current_filenames = []
+        for name, versions of current_gems
+          for version in versions
+            current_filenames.push "#{name}-#{version}.gem"
+        sources = files.filter (source) ->
+          filename = path.basename source
+          true unless filename in current_filenames
+      # Filter gems
+      for name, version of gems
+        # Install if Gem isnt yet there
+        continue unless current_gems[name]
+        # Install if a version is demanded and no installed version satisfy it
+        is_version_matching = current_gems[name].some (current_version) -> semver.satisfies version, current_version
+        continue if version and not is_version_matching
+        delete gems[name]
+      # Install from sources
+      if sources.length
+        @execute
           cmd: (
-            for source in options.sources
+            for source in sources
               [
-                "#{options.gem_bin}"
+                "#{config.gem_bin}"
                 "install"
-                "--bindir '#{options.bindir}'" if options.bindir
-                "--install-dir '#{options.target}'" if options.target
-                "--local '#{options.source}'" if options.source
-                "--build-flags options.build_flags" if options.build_flags
+                "--bindir '#{config.bindir}'" if config.bindir
+                "--install-dir '#{config.target}'" if config.target
+                "--local '#{source}'" if source
+                "--build-flags config.build_flags" if config.build_flags
               ].join ' '
             ).join '\n'
           code: [0, 2]
-          bash: options.bash
-      @call ->
-        @system.execute
-          if: Object.keys(options.gems).length
+          bash: config.bash
+      # Install from gems
+      if Object.keys(gems).length
+        @execute
           cmd: (
-            for name, version of options.gems
+            for name, version of gems
               [
-                "#{options.gem_bin}"
+                "#{config.gem_bin}"
                 "install"
-                "#{options.name}"
-                "--bindir '#{options.bindir}'" if options.bindir
-                "--install-dir '#{options.target}'" if options.target
-                "--version '#{options.version}'" if options.version
-                "--build-flags options.build_flags" if options.build_flags
+                "#{name}"
+                "--bindir '#{config.bindir}'" if config.bindir
+                "--install-dir '#{config.target}'" if config.target
+                "--version '#{version}'" if version
+                "--build-flags config.build_flags" if config.build_flags
               ].join ' '
             ).join '\n'
           code: [0, 2]
-          bash: options.bash
-      
+          bash: config.bash
+
+## Export
+
+    module.exports =
+      handler: handler
+      metadata:
+        global: 'ruby'
+      schema: schema
+
 ## Dependencies
 
     path = require 'path'
     semver = require 'semver'
-    string = require '@nikitajs/core/lib/misc/string'
+    utils = require '@nikitajs/engine/src/utils'

@@ -3,22 +3,6 @@
 
 Generates keys for use by SSH protocol version 2.
 
-## Options
-
-* `bits` (string|number, options, 4096)   
-  Specifies the number of bits in the key to create.
-* `comment` (string, optional)   
-  Comment such as a name or email.
-* `key_format` (string, optional)   
-  Specify a key format. The supported key formats are: `RFC4716` (RFC 4716/SSH2 public or
-  private key), `PKCS8` (PEM PKCS8 public key) or `PEM` (PEM public key).
-* `passphrase` (string, optional, "")
-  Key passphrase, empty string for no passphrase.
-* `target` (string, required)   
-  Path of the generated private key.
-* `type` (string, optional, "rsa")   
-  Type of key to create.
-
 ## Force the generation of a key compatible with SSH2
 
 For exemple in OSX Mojave, the default export format is RFC4716.
@@ -32,29 +16,67 @@ require('nikita')
   key_format: 'PEM'
 })
 
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'bits':
+          oneOf: [
+            {type: 'string'}
+            {type: 'number'}
+          ]
+          default: 4096
+          description: """
+          Specifies the number of bits in the key to create.
+          """
+        'comment':
+          type: 'string'
+          description: """
+          Comment such as a name or email.
+          """
+        'key_format':
+          type: 'string'
+          description: """
+          Specify a key format. The supported key formats are: `RFC4716` (RFC
+          4716/SSH2 public or private key), `PKCS8` (PEM PKCS8 public key) or
+          `PEM` (PEM public key).
+          """
+        'passphrase':
+          type: 'string'
+          default: ''
+          description: """
+          Key passphrase, empty string for no passphrase.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Path of the generated private key.
+          """
+        'type':
+          type: 'string'
+          default: 'rsa'
+          description: """
+          Type of key to create.
+          """
+      required: ['target']
 ## Source code
 
-    module.exports = ({options}) ->
-      options.bits ?= 4096
-      options.type ?= 'rsa'
-      options.passphrase ?= ''
-      options.key_format ?= null
-      throw Error "Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got #{JSON.stringify options.key_format}" if options.key_format and options.key_format not in ['RFC4716', 'PKCS8', 'PEM']
-      # Validation
-      throw Error 'Required Option: target is required' unless options.target
-      @system.mkdir
-        target: "#{path.dirname options.target}"
-      @system.execute
-        unless_exists: "#{options.target}"
+    module.exports = ({config}) ->
+      throw Error "Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got #{JSON.stringify config.key_format}" if config.key_format and config.key_format not in ['RFC4716', 'PKCS8', 'PEM']
+      await @fs.mkdir
+        target: "#{path.dirname config.target}"
+      @execute
+        unless_exists: "#{config.target}"
         cmd: [
           'ssh-keygen'
           "-q" # Silence
-          "-t #{options.type}"
-          "-b #{options.bits}"
-          "-m #{options.key_format}" if options.key_format
-          "-C '#{options.comment.replace '\'', '\\\''}'" if options.comment
-          "-N '#{options.passphrase.replace '\'', '\\\''}'"
-          "-f #{options.target}"
+          "-t #{config.type}"
+          "-b #{config.bits}"
+          "-m #{config.key_format}" if config.key_format
+          "-C '#{config.comment.replace '\'', '\\\''}'" if config.comment
+          "-N '#{config.passphrase.replace '\'', '\\\''}'"
+          "-f #{config.target}"
         ].join ' '
 
 ## Dependencies

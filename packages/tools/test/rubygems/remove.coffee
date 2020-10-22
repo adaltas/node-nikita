@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, ruby} = require '../test'
+{tags, ssh, ruby} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.tools_rubygems
@@ -11,44 +11,40 @@ describe 'tools.rubygems.remove', ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.install
-      name: 'execjs'
-    .tools.rubygems.remove
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+    , ->
+      await @tools.rubygems.install
+        name: 'execjs'
+      {status} = await @tools.rubygems.remove
+        name: 'execjs'
+      status.should.be.true()
 
   they 'remove a non existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.install
-      name: 'execjs'
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.remove
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      await @tools.rubygems.install
+        name: 'execjs'
+      await @tools.rubygems.remove
+        name: 'execjs'
+      {status} = await @tools.rubygems.remove
+        name: 'execjs'
+      status.should.be.false()
 
   they 'remove multiple versions', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.6.0'
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.7.0'
-    .tools.rubygems.remove
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.6.0'
+      await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.7.0'
+      {status} = await @tools.rubygems.remove
+        name: 'execjs'
+      status.should.be.true()
+      {status} = await @tools.rubygems.remove
+        name: 'execjs'
+      status.should.be.false()

@@ -8,16 +8,7 @@
 
 // - Code (including tests and supporting utilities)
 // - Documentation
-// - gemspec
-
-// ## Options
-
-// * `gem_bin` (string)   
-//   Path to the gem command, default to 'gem'
-// * `name` (string)   
-//   Name of the gem, required.   
-// * `version` (string)   
-//   Version of the gem, default to all versions.   
+// - gemspec   
 
 // ## Callback parameters
 
@@ -35,8 +26,31 @@
 // will result with the error "{gem} is not installed in GEM_HOME, try: gem 
 // uninstall -i /usr/share/gems json"
 
-// ## Source code
-module.exports = function({options}) {
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'gem_bin': {
+      type: 'string',
+      default: 'gem',
+      description: `Path to the gem command.`
+    },
+    'name': {
+      type: 'string',
+      description: `Name of the gem, required.`
+    },
+    'version': {
+      type: 'string',
+      description: `Version of the gem.`
+    }
+  },
+  required: ['name']
+};
+
+// ## Handler
+handler = function({options}) {
   var gems, k, ref, v, version;
   this.log({
     message: "Entering rubygem.remove",
@@ -65,4 +79,13 @@ ${options.gem_bin} uninstall ${options.name} ${version}`,
     code_skipped: 3,
     bash: options.bash
   });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  metadata: {
+    global: 'ruby'
+  },
+  schema: schema
 };
