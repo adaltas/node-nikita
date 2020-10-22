@@ -55,9 +55,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       {status} = await @docker.tools.execute
         cmd: "ps | egrep ' #{config.container}$' | grep 'Up'"
         code_skipped: 1
@@ -73,4 +70,6 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

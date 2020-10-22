@@ -83,25 +83,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var k, ref, status, v;
+  var status;
   log({
     message: "Entering Docker volume_create",
     level: 'DEBUG',
     module: 'nikita/lib/docker/volume_create'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   if (typeof config.label === 'string') {
     // Normalize config
     config.label = [config.label];
@@ -127,6 +114,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 

@@ -59,9 +59,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validate parameters
       config.input ?= config.source
       throw Error 'Missing input parameter' unless config.input?
@@ -117,6 +114,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

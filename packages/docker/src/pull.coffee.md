@@ -58,9 +58,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validate parameters
       version = config.version or config.tag.split(':')[1] or 'latest'
       delete config.version # present in misc.docker.config, will probably disappear at some point
@@ -84,4 +81,6 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

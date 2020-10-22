@@ -361,25 +361,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var cmd, flag, i, k, len, opt, p, ref, ref1, ref2, ref3, ref4, ref5, result, status, v;
+  var cmd, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
   log({
     message: "Entering Docker run",
     level: 'DEBUG',
     module: 'nikita/lib/docker/run'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   if (!((config.name != null) || config.rm)) {
     // Validate parameters
     log({
@@ -390,7 +377,7 @@ handler = async function({
   }
   // Construct exec command
   cmd = 'run';
-  ref1 = {
+  ref = {
     name: '--name',
     hostname: '-h',
     cpu_shares: '-c',
@@ -409,8 +396,8 @@ handler = async function({
     cwd: '-w'
   };
   // Classic config
-  for (opt in ref1) {
-    flag = ref1[opt];
+  for (opt in ref) {
+    flag = ref[opt];
     if (config[opt] != null) {
       cmd += ` ${flag} ${config[opt]}`;
     }
@@ -418,20 +405,20 @@ handler = async function({
   if (config.detach) { // else ' -t'
     cmd += ' -d';
   }
-  ref2 = {
+  ref1 = {
     rm: '--rm',
     publish_all: '-P',
     privileged: '--privileged',
     read_only: '--read-only'
   };
   // Flag config
-  for (opt in ref2) {
-    flag = ref2[opt];
+  for (opt in ref1) {
+    flag = ref1[opt];
     if (config[opt]) {
       cmd += ` ${flag}`;
     }
   }
-  ref3 = {
+  ref2 = {
     port: '-p',
     volume: '-v',
     device: '--device',
@@ -449,16 +436,16 @@ handler = async function({
     add_host: '--add-host'
   };
   // Arrays config
-  for (opt in ref3) {
-    flag = ref3[opt];
+  for (opt in ref2) {
+    flag = ref2[opt];
     if (config[opt] != null) {
       if (typeof config[opt] === 'string' || typeof config[opt] === 'number') {
         cmd += ` ${flag} ${config[opt]}`;
       } else if (Array.isArray(config[opt])) {
-        ref4 = config[opt];
-        for (i = 0, len = ref4.length; i < len; i++) {
-          p = ref4[i];
-          if ((ref5 = typeof p) === 'string' || ref5 === 'number') {
+        ref3 = config[opt];
+        for (i = 0, len = ref3.length; i < len; i++) {
+          p = ref3[i];
+          if ((ref4 = typeof p) === 'string' || ref4 === 'number') {
             cmd += ` ${flag} ${p}`;
           } else {
             callback(Error(`Invalid parameter, '${opt}' array should only contains string or number`));
@@ -509,6 +496,9 @@ module.exports = {
   handler: handler,
   hooks: {
     on_action: on_action
+  },
+  metadata: {
+    global: 'docker'
   },
   schema: schema
 };

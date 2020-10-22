@@ -40,9 +40,6 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validate parameters
       return callback Error 'Missing container parameter' unless config.container?
       # rm is false by default only if config.service is true
@@ -56,6 +53,8 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

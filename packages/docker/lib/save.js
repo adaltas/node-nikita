@@ -69,30 +69,16 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var k, ref, v;
   log({
     message: "Entering Docker save",
     level: 'DEBUG',
     module: 'nikita/lib/docker/save'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   // Saves image to local tmp path, than copy it
   log({
     message: `Extracting image ${config.output} to file:${config.image}`,
@@ -109,6 +95,9 @@ module.exports = {
   handler: handler,
   hooks: {
     on_action: on_action
+  },
+  metadata: {
+    global: 'docker'
   },
   schema: schema
 };

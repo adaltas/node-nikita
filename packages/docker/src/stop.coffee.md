@@ -52,9 +52,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # rm is false by default only if config.service is true
       {status} = await @docker.tools.status shy: true, config
       if status
@@ -72,6 +69,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

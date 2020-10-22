@@ -63,25 +63,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var cmd, k, ref, status, v, version;
+  var cmd, status, version;
   log({
     message: "Entering Docker pull",
     level: 'DEBUG',
     module: 'nikita/lib/docker/pull'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   // Validate parameters
   version = config.version || config.tag.split(':')[1] || 'latest';
   delete config.version; // present in misc.docker.config, will probably disappear at some point
@@ -107,5 +94,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

@@ -78,9 +78,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       config.service ?= false
       # Construct exec command
       cmd = 'exec'
@@ -99,4 +96,6 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

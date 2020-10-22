@@ -178,25 +178,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var cmd, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, ref6, source, stderr, stdout, userargs, v;
+  var cmd, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
   log({
     message: "Entering Docker build",
     level: 'DEBUG',
     module: 'nikita/lib/docker/build'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   number_of_step = 0;
   userargs = [];
   // status unmodified if final tag already exists
@@ -214,21 +201,21 @@ handler = async function({
   }
   // Build cmd
   cmd = 'build';
-  ref1 = ['force_rm', 'quiet', 'no_cache'];
-  for (i = 0, len = ref1.length; i < len; i++) {
-    opt = ref1[i];
+  ref = ['force_rm', 'quiet', 'no_cache'];
+  for (i = 0, len = ref.length; i < len; i++) {
+    opt = ref[i];
     if (config[opt]) {
       cmd += ` --${opt.replace('_', '-')}`;
     }
   }
-  ref2 = ['build_arg'];
-  for (j = 0, len1 = ref2.length; j < len1; j++) {
-    opt = ref2[j];
+  ref1 = ['build_arg'];
+  for (j = 0, len1 = ref1.length; j < len1; j++) {
+    opt = ref1[j];
     if (config[opt] != null) {
       if (Array.isArray(config[opt])) {
-        ref3 = config[opt];
-        for (l = 0, len2 = ref3.length; l < len2; l++) {
-          k = ref3[l];
+        ref2 = config[opt];
+        for (l = 0, len2 = ref2.length; l < len2; l++) {
+          k = ref2[l];
           cmd += ` --${opt.replace('_', '-')} ${k}`;
         }
       } else {
@@ -298,11 +285,11 @@ handler = async function({
       encoding: 'utf8'
     })));
   }
-  ref4 = utils.string.lines(config.content);
+  ref3 = utils.string.lines(config.content);
   // Count steps
-  for (m = 0, len3 = ref4.length; m < len3; m++) {
-    line = ref4[m];
-    if (ref5 = (ref6 = /^(.*?)\s/.exec(line)) != null ? ref6[1] : void 0, indexOf.call(dockerfile_cmds, ref5) >= 0) {
+  for (m = 0, len3 = ref3.length; m < len3; m++) {
+    line = ref3[m];
+    if (ref4 = (ref5 = /^(.*?)\s/.exec(line)) != null ? ref5[1] : void 0, indexOf.call(dockerfile_cmds, ref4) >= 0) {
       number_of_step++;
     }
   }
@@ -344,6 +331,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   hooks: {
     on_action: on_action
   },

@@ -64,9 +64,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       [_, source_container, source_path] = /(.*:)?(.*)/.exec config.source
       [_, target_container, target_path] = /(.*:)?(.*)/.exec config.target
       throw Error 'Incompatible source and target config' if source_container and target_container
@@ -107,6 +104,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

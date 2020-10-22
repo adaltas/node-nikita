@@ -65,25 +65,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var k, ref, status, v;
+  var status;
   log({
     message: "Entering Docker kill",
     level: 'DEBUG',
     module: 'nikita/lib/docker/kill'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   ({status} = (await this.docker.tools.execute({
     cmd: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1
@@ -99,5 +86,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

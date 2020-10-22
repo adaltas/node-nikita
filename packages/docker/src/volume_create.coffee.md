@@ -66,9 +66,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Normalize config
       config.label = [config.label] if typeof config.label is 'string'
       config.opt = [config.opt] if typeof config.opt is 'string'
@@ -92,6 +89,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

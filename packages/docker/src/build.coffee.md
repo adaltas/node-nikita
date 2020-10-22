@@ -171,9 +171,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       number_of_step = 0
       userargs = []
       # status unmodified if final tag already exists
@@ -253,6 +250,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       hooks:
         on_action: on_action
       schema: schema

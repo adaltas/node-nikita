@@ -70,25 +70,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var _, err, k, ref, source_container, source_mkdir, source_path, stats, target_container, target_mkdir, target_path, v;
+  var _, err, source_container, source_mkdir, source_path, stats, target_container, target_mkdir, target_path;
   log({
     message: "Entering Docker cp",
     level: 'DEBUG',
     module: 'nikita/lib/docker/cp'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   [_, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
   [_, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
   if (source_container && target_container) {
@@ -157,6 +144,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 

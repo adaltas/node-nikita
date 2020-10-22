@@ -49,30 +49,16 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var k, ref, v;
   log({
     message: "Entering Docker restart",
     level: 'DEBUG',
     module: 'nikita/lib/docker/restart'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   return this.docker.tools.execute({
     cmd: ['restart', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
   });
@@ -81,5 +67,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

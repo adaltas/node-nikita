@@ -54,8 +54,6 @@ force options is set.
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       await @docker.tools.execute
         cmd: [
           'images'
@@ -83,6 +81,8 @@ force options is set.
       handler: handler
       hooks:
         on_action: on_action
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

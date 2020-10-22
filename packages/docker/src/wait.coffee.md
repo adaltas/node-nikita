@@ -42,9 +42,6 @@ nikita.docker.wait({
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Old implementation was `wait {container} | read r; return $r`
       @docker.tools.execute "wait #{config.container}"
 
@@ -52,4 +49,6 @@ nikita.docker.wait({
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

@@ -57,25 +57,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var k, ref, status, v;
+  var status;
   log({
     message: "Entering Docker stop",
     level: 'DEBUG',
     module: 'nikita/lib/docker/stop'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   // rm is false by default only if config.service is true
   ({status} = (await this.docker.tools.status({
     shy: true
@@ -102,6 +89,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 
