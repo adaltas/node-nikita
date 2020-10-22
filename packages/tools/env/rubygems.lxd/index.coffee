@@ -18,7 +18,7 @@ nikita
   container: 'tools-rubygem'
   cmd: """
   NPM_CONFIG_LOGLEVEL=info
-  NODE_VERSION=9.4.0
+  NODE_VERSION=12.13.1
   yum install -y xz \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
