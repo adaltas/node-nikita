@@ -2,5 +2,6 @@
 module.exports = {
   curl: require('./curl'),
   diff: require('./diff'),
-  ini: require('./ini')
+  ini: require('./ini'),
+  partial: require('./partial')
 };
