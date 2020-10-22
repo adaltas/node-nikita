@@ -63,9 +63,6 @@ info.map( (container) =>
     handler = ({args, config, log, tools: {find}}) ->
       isCointainerArray = Array.isArray arg?.container for arg in args
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Ensure target container exists
       {status: exists} = await @docker.tools.execute
         cmd: "ps -a | egrep ' #{config.container}$'"
@@ -84,4 +81,6 @@ info.map( (container) =>
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

@@ -268,9 +268,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validate parameters
       log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm
       # Construct exec command
@@ -322,4 +319,6 @@ require('nikita')
       handler: handler
       hooks:
         on_action: on_action
+      metadata:
+        global: 'docker'
       schema: schema

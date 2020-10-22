@@ -43,30 +43,17 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var cmd;
   log({
     message: "Entering Docker logout",
     level: 'DEBUG',
     module: 'nikita/lib/docker/logout'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   if (config.container == null) {
     // Validate parameters
     return callback(Error('Missing container parameter'));
@@ -84,6 +71,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 

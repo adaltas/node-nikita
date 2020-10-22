@@ -59,9 +59,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # cmd = for opt in ['link', 'volumes', 'force']
       #   "-#{opt.charAt 0}" if config[opt]
       # cmd = "rm #{cmd.join ' '} #{config.container}"
@@ -87,6 +84,8 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema
 
 ## Dependencies

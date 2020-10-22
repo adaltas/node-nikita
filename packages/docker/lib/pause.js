@@ -45,30 +45,16 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var k, ref, v;
   log({
     message: "Entering Docker pause",
     level: 'DEBUG',
     module: 'nikita/lib/docker/pause'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   return this.docker.tools.execute({
     cmd: `pause ${config.container}`
   });
@@ -77,5 +63,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

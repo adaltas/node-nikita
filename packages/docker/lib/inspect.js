@@ -75,7 +75,7 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var arg, exists, i, info, isCointainerArray, k, len, ref, v;
+  var arg, exists, i, info, isCointainerArray, len;
   for (i = 0, len = args.length; i < len; i++) {
     arg = args[i];
     isCointainerArray = Array.isArray(arg != null ? arg.container : void 0);
@@ -85,19 +85,6 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/docker/kill'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   ({
     // Ensure target container exists
     status: exists
@@ -123,5 +110,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

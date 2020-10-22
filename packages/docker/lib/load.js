@@ -64,25 +64,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var cmd, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, ref2, status, stderr, stdout, v;
+  var cmd, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, status, stderr, stdout;
   log({
     message: "Entering Docker load",
     level: 'DEBUG',
     module: 'nikita/lib/docker/load'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   // Validate parameters
   if (config.input == null) {
     config.input = config.source;
@@ -124,9 +111,9 @@ handler = async function({
   // skip header line, wi skip it here instead of in the grep  to have
   // an array with at least one not empty line
   if (string.lines(stdout).length > 1) {
-    ref1 = string.lines(stdout);
-    for (i = 0, len = ref1.length; i < len; i++) {
-      image = ref1[i];
+    ref = string.lines(stdout);
+    for (i = 0, len = ref.length; i < len; i++) {
+      image = ref[i];
       image = image.trim();
       if (image !== '') {
         infos = image.split(':');
@@ -164,9 +151,9 @@ handler = async function({
     module: 'nikita/lib/docker/load'
   });
   if (string.lines(stdout).length > 1) {
-    ref2 = string.lines(stdout.toString());
-    for (j = 0, len1 = ref2.length; j < len1; j++) {
-      image = ref2[j];
+    ref1 = string.lines(stdout.toString());
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      image = ref1[j];
       if (image !== '') {
         infos = image.split(':');
         new_images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
@@ -204,6 +191,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 

@@ -91,30 +91,17 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var cmd, k, ref, v;
+  var cmd;
   log({
     message: "Entering Docker exec",
     level: 'DEBUG',
     module: 'nikita/lib/docker/exec'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   if (config.service == null) {
     config.service = false;
   }
@@ -143,5 +130,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

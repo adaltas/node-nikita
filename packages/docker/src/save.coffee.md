@@ -70,9 +70,6 @@ nikita.docker({
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Saves image to local tmp path, than copy it
       log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO', module: 'nikita/lib/docker/save'
       @docker.tools.execute
@@ -87,4 +84,6 @@ nikita.docker({
       handler: handler
       hooks:
         on_action: on_action
+      metadata:
+        global: 'docker'
       schema: schema

@@ -46,9 +46,6 @@ require('nikita')
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validation
       throw Error 'Missing container parameter' unless config.container?
       @docker.tools.execute
@@ -58,4 +55,6 @@ require('nikita')
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

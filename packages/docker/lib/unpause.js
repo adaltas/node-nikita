@@ -49,30 +49,16 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
+handler = function({
     config,
     log,
     tools: {find}
   }) {
-  var k, ref, v;
   log({
     message: "Entering Docker unpause",
     level: 'DEBUG',
     module: 'nikita/lib/docker/unpause'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   if (config.container == null) {
     // Validation
     throw Error('Missing container parameter');
@@ -85,5 +71,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };

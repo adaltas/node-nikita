@@ -63,25 +63,12 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var k, ref, status, v;
+  var status;
   log({
     message: "Entering Docker rm",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rm'
   });
-  // Global config
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   // cmd = for opt in ['link', 'volumes', 'force']
   //   "-#{opt.charAt 0}" if config[opt]
   // cmd = "rm #{cmd.join ' '} #{config.container}"
@@ -117,6 +104,9 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
+  metadata: {
+    global: 'docker'
+  },
   schema: schema
 };
 

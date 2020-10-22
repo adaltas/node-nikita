@@ -41,9 +41,6 @@ nikita.docker.volume_rm({
 
     handler = ({config, log, tools: {find}}) ->
       log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
-      # Global config
-      config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
       # Validation
       throw Error "Missing required option name" unless config.name
       @docker.tools.execute
@@ -55,4 +52,6 @@ nikita.docker.volume_rm({
 
     module.exports =
       handler: handler
+      metadata:
+        global: 'docker'
       schema: schema

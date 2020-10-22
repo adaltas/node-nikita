@@ -60,24 +60,11 @@ handler = async function({
     log,
     tools: {find}
   }) {
-  var k, ref, v;
   log({
     message: "Entering Docker rmi",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rmi'
   });
-  config.docker = (await find(function({
-      config: {docker}
-    }) {
-    return docker;
-  }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
   await this.docker.tools.execute({
     cmd: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
     code_skipped: [1]
@@ -106,6 +93,9 @@ module.exports = {
   handler: handler,
   hooks: {
     on_action: on_action
+  },
+  metadata: {
+    global: 'docker'
   },
   schema: schema
 };
