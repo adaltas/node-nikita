@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch, ruby} = require '../test'
+{tags, ssh, ruby} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.tools_rubygems
@@ -11,109 +11,101 @@ describe 'tools.rubygems.install', ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.install
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    .promise()
+    , ->
+      await @tools.rubygems.remove
+        name: 'execjs'
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+      status.should.be.true()
+      await @tools.rubygems.remove
+        name: 'execjs'
 
   they 'bypass existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.install
-      name: 'execjs'
-    .tools.rubygems.install
-      name: 'execjs'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    .promise()
+    , ->
+      await @tools.rubygems.remove
+        name: 'execjs'
+      await @tools.rubygems.install
+        name: 'execjs'
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+      status.should.be.false()
+      await @tools.rubygems.remove
+        name: 'execjs'
 
   they 'install multiple versions', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.6.0'
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.7.0'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.6.0'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.7.0'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    .promise()
+    , ->
+      await @tools.rubygems.remove
+        name: 'execjs'
+      await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.6.0'
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.7.0'
+      status.should.be.true()
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.6.0'
+      status.should.be.false()
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.7.0'
+      status.should.be.false()
+      await @tools.rubygems.remove
+        name: 'execjs'
 
   they 'local gem from file', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.fetch
-      name: 'execjs'
-      version: '2.7.0'
-      cwd: "#{scratch}"
-    .tools.rubygems.install
-      name: 'execjs'
-      source: "#{scratch}/execjs-2.7.0.gem"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.7.0'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @tools.rubygems.remove
+        name: 'execjs'
+      await @tools.rubygems.fetch
+        name: 'execjs'
+        version: '2.7.0'
+        cwd: "#{tmpdir}"
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        source: "#{tmpdir}/execjs-2.7.0.gem"
+      status.should.be.true()
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.7.0'
+      status.should.be.false()
+      await @tools.rubygems.remove
+        name: 'execjs'
 
   they 'local gem from glob', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
-    .tools.rubygems.remove
-      name: 'execjs'
-    .tools.rubygems.fetch
-      name: 'execjs'
-      version: '2.7.0'
-      cwd: "#{scratch}"
-    .tools.rubygems.install
-      name: 'execjs'
-      source: "#{scratch}/*.gem"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .tools.rubygems.install
-      name: 'execjs'
-      source: "#{scratch}/*.gem"
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.install
-      name: 'execjs'
-      version: '2.7.0'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .tools.rubygems.remove
-      name: 'execjs'
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @tools.rubygems.remove
+        name: 'execjs'
+      await @tools.rubygems.fetch
+        name: 'execjs'
+        version: '2.7.0'
+        cwd: "#{tmpdir}"
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        source: "#{tmpdir}/*.gem"
+      status.should.be.true()
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        source: "#{tmpdir}/*.gem"
+      status.should.be.false()
+      {status} = await @tools.rubygems.install
+        name: 'execjs'
+        version: '2.7.0'
+      status.should.be.false()
+      await @tools.rubygems.remove
+        name: 'execjs'

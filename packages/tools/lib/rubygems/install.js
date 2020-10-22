@@ -10,21 +10,6 @@
   // - Documentation
   // - gemspec
 
-// ## Options
-
-// * `bindir` (string)   
-  //   Directory where binary files are located.
-  // * `build_flags` (string)   
-  //   Pass flags to the compiler.
-  // * `gem_bin` (string)   
-  //   Path to the gem command, default to 'gem'
-  // * `name` (string)   
-  //   Name of the gem, required.   
-  // * `target` (string)   
-  //   Install directory.
-  // * `version` (string)   
-  //   Version of the gem.
-
 // ## Callback parameters
 
 // * `err`   
@@ -32,7 +17,7 @@
   // * `status`   
   //   Indicate if a gem was installed.
 
-// ## Exemples
+// ## Examples
 
 // Install a gem from its name and version:
 
@@ -68,71 +53,94 @@
   // });
   // ```
 
-// ## Source code
-var path, semver, string,
+// ## Schema
+var handler, path, schema, semver, utils,
   indexOf = [].indexOf;
 
-module.exports = function({options}) {
-  var base, current_gems, k, name1, ref, ssh, v;
-  this.log({
-    message: "Entering rubygem.install",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/rubygem/install'
-  });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  // Global Options
-  if (options.ruby == null) {
-    options.ruby = {};
+schema = {
+  type: 'object',
+  properties: {
+    'bindir': {
+      type: 'string',
+      description: `Directory where binary files are located.`
+    },
+    'build_flags': {
+      type: 'string',
+      description: `Pass flags to the compiler.`
+    },
+    'gem_bin': {
+      type: 'string',
+      default: 'gem',
+      description: `Path to the gem command.`
+    },
+    'name': {
+      type: 'string',
+      description: `Name of the gem.`
+    },
+    'target': {
+      type: 'string',
+      description: `Install directory.`
+    },
+    'version': {
+      type: 'string',
+      description: `Version of the gem.`
+    }
+  },
+  required: ['name']
+};
+
+// ## Handler
+handler = async function({config, ssh}) {
+  var base, current_gems, i, k, len, line, name, name1, ref, ref1, stdout, v, version;
+  // log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
+  // Global config
+  if (config.ruby == null) {
+    config.ruby = {};
   }
-  ref = options.ruby;
+  ref = config.ruby;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.gem_bin == null) {
-    options.gem_bin = 'gem';
+  if (config.gem_bin == null) {
+    config.gem_bin = 'gem';
   }
-  if (options.gems == null) {
-    options.gems = {};
+  if (config.gems == null) {
+    config.gems = {};
   }
-  if (options.name) {
-    if ((base = options.gems)[name1 = options.name] == null) {
-      base[name1] = options.version;
+  if (config.name) {
+    if ((base = config.gems)[name1 = config.name] == null) {
+      base[name1] = config.version;
     }
   }
-  if (options.sources == null) {
-    options.sources = [];
+  if (config.sources == null) {
+    config.sources = [];
   }
   current_gems = {};
-  this.system.execute({
-    cmd: `${options.gem_bin} list --versions`,
+  ({stdout} = (await this.execute({
+    cmd: `${config.gem_bin} list --versions`,
     shy: true,
-    bash: options.bash
-  }, function(err, {stdout}) {
-    var i, len, line, name, ref1, results, version;
-    ref1 = string.lines(stdout);
-    results = [];
-    for (i = 0, len = ref1.length; i < len; i++) {
-      line = ref1[i];
-      if (line.trim() === '') {
-        continue;
-      }
-      [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/).slice(1, 4);
-      results.push(current_gems[name] = version.split(', '));
+    bash: config.bash
+  })));
+  ref1 = utils.string.lines(stdout);
+  for (i = 0, len = ref1.length; i < len; i++) {
+    line = ref1[i];
+    if (line.trim() === '') {
+      continue;
     }
-    return results;
-  });
+    [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/).slice(1, 4);
+    current_gems[name] = version.split(', ');
+  }
   this.call({
-    if: options.source
+    if: config.source
   }, function(_, callback) {
-    return this.file.glob(options.source, function(err, {files}) {
+    return this.file.glob(config.source, function(err, {files}) {
       if (err) {
         return callback(err);
       }
-      options.source = files.filter(function(source) {
+      config.source = files.filter(function(source) {
         var current_filenames, filename, n;
         filename = path.basename(source);
         current_filenames = (function() {
@@ -152,11 +160,11 @@ module.exports = function({options}) {
     });
   });
   this.call(function() {
-    var is_version_matching, name, ref1, results, version;
-    ref1 = options.gems;
+    var is_version_matching, ref2, results;
+    ref2 = config.gems;
     results = [];
-    for (name in ref1) {
-      version = ref1[name];
+    for (name in ref2) {
+      version = ref2[name];
       if (!current_gems[name]) {
         // Install if Gem isnt yet there
         continue;
@@ -168,56 +176,63 @@ module.exports = function({options}) {
       if (version && !is_version_matching) {
         continue;
       }
-      results.push(delete options.gems[name]);
+      results.push(delete config.gems[name]);
     }
     return results;
   });
   this.call(function() {
     return {
-      if: options.sources.length
+      if: config.sources.length
     };
   }, function() {
     var source;
-    return this.system.execute({
-      if: options.sources.length,
+    return this.execute({
+      if: config.sources.length,
       cmd: ((function() {
-        var i, len, ref1, results;
-        ref1 = options.sources;
+        var j, len1, ref2, results;
+        ref2 = config.sources;
         results = [];
-        for (i = 0, len = ref1.length; i < len; i++) {
-          source = ref1[i];
-          results.push([`${options.gem_bin}`, "install", options.bindir ? `--bindir '${options.bindir}'` : void 0, options.target ? `--install-dir '${options.target}'` : void 0, options.source ? `--local '${options.source}'` : void 0, options.build_flags ? "--build-flags options.build_flags" : void 0].join(' '));
+        for (j = 0, len1 = ref2.length; j < len1; j++) {
+          source = ref2[j];
+          results.push([`${config.gem_bin}`, "install", config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, config.source ? `--local '${config.source}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
         }
         return results;
       })()).join('\n'),
       code: [0, 2],
-      bash: options.bash
+      bash: config.bash
     });
   });
   return this.call(function() {
-    var name, version;
-    return this.system.execute({
-      if: Object.keys(options.gems).length,
+    return this.execute({
+      if: Object.keys(config.gems).length,
       cmd: ((function() {
-        var ref1, results;
-        ref1 = options.gems;
+        var ref2, results;
+        ref2 = config.gems;
         results = [];
-        for (name in ref1) {
-          version = ref1[name];
-          results.push([`${options.gem_bin}`, "install", `${options.name}`, options.bindir ? `--bindir '${options.bindir}'` : void 0, options.target ? `--install-dir '${options.target}'` : void 0, options.version ? `--version '${options.version}'` : void 0, options.build_flags ? "--build-flags options.build_flags" : void 0].join(' '));
+        for (name in ref2) {
+          version = ref2[name];
+          results.push([`${config.gem_bin}`, "install", `${config.name}`, config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, config.version ? `--version '${config.version}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
         }
         return results;
       })()).join('\n'),
       code: [0, 2],
-      bash: options.bash
+      bash: config.bash
     });
   });
 };
 
+// ## Export
+module.exports = {
+  handler: handler,
+  metadata: {
+    global: 'ruby'
+  },
+  schema: schema
+};
 
 // ## Dependencies
 path = require('path');
 
 semver = require('semver');
 
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('@nikitajs/engine/src/utils');

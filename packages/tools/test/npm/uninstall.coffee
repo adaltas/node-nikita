@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.tools_npm
 
@@ -9,60 +9,55 @@ describe 'tools.npm.uninstall', ->
 
   describe 'schema', ->
 
-    they 'name is required', ({ssh}) ->
+    it 'name is required', ->
+      nikita
+      .tools.npm.uninstall {}
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `tools.npm.uninstall`:'
+          '#/required config should have required property \'name\'.'
+        ].join ' '
+
+  describe 'action', ->
+
+    # combined, since the tests are time consuming
+    they 'uninstall a package localy and globaly', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.npm.uninstall
-        global: true
-      , (err, {status}) ->
-        err.message.should.eql "should have required property '.name'"
-      .promise()
+      , ->
+        await @tools.npm
+          name: 'coffeescript'
+        await @tools.npm
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        {status} = await @tools.npm.uninstall
+          name: 'coffeescript'
+        status.should.be.true()
+        {status} = await @tools.npm.uninstall
+          name: 'coffeescript'
+        status.should.be.false()
+        {status} = await @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        status.should.be.true()
+        {status} = await @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+        status.should.be.false()
 
-    they 'name is valid', ({ssh}) ->
+    they 'uninstall many packages', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.npm.uninstall
-        name: 'coffeescript'
-      , ({options}) ->
-        options.name.should.eql 'coffeescript'
-      .promise()
-
-    they 'use defaults', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm.uninstall
-        name: 'coffeescript'
-      , ({options}) ->
-        options.global.should.be.false()
-      .promise()
-
-  describe 'usage', ->
-
-    they 'uninstall package', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm
-        global: true
-        name: 'coffeescript'
-      .tools.npm.uninstall
-        name: 'coffeescript'
-        global: true
-      , (err, {status}) ->
-        status.should.be.true() unless err
-      .promise()
-
-    they 'uninstall not existing package', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .tools.npm
-        name: 'coffeescript'
-        global: true
-      .tools.npm.uninstall
-        name: 'coffeescript'
-        global: true
-      .tools.npm.uninstall
-        name: 'coffeescript'
-        global: true
-      , (err, {status}) ->
-        status.should.be.false() unless err
-      .promise()
+      , ->
+        await @tools.npm
+          name: ['coffeescript', 'csv']
+        {status} = await @tools.npm.uninstall
+          name: ['coffeescript', 'csv']
+        status.should.be.true()
