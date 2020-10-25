@@ -40,60 +40,60 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({config}) ->
       @log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
       # SSH connection
-      ssh = @ssh options.ssh
+      ssh = @ssh config.ssh
       # Options
-      throw Error "Can not specify source and content"if options.source and options.content
-      throw Error "Missing source or content: " unless options.source or options.content
+      throw Error "Can not specify source and content"if config.source and config.content
+      throw Error "Missing source or content: " unless config.source or config.content
       # TODO wdavidw 180115, target should be mandatory and not default to the source filename
-      options.target ?= path.resolve "/etc/yum.repos.d", path.basename options.source if options.source?
-      throw Error "Missing target" unless options.target?
-      options.target = path.posix.resolve '/etc/yum.repos.d', options.target
-      options.verify ?= true
-      throw Error "Invalid Option: option 'clean' must be a 'string'" if options.clean and typeof options.clean isnt 'string'
-      options.clean = path.resolve '/etc/yum.repos.d', options.clean if options.clean
-      options.update ?= false
-      options.gpg_dir ?= '/etc/pki/rpm-gpg'
+      config.target ?= path.resolve "/etc/yum.repos.d", path.basename config.source if config.source?
+      throw Error "Missing target" unless config.target?
+      config.target = path.posix.resolve '/etc/yum.repos.d', config.target
+      config.verify ?= true
+      throw Error "Invalid Option: option 'clean' must be a 'string'" if config.clean and typeof config.clean isnt 'string'
+      config.clean = path.resolve '/etc/yum.repos.d', config.clean if config.clean
+      config.update ?= false
+      config.gpg_dir ?= '/etc/pki/rpm-gpg'
       remote_files = []
       repoids = []
       # Delete
       @call
-        if: options.clean
+        if: config.clean
       , (_, callback) ->
         @log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-        @file.glob options.clean, (err, {files}) ->
+        @file.glob config.clean, (err, {files}) ->
           return callback err if err
           remote_files = for file in files
-            continue if file is options.target
+            continue if file is config.target
             file
           callback()
       @call -> @system.remove remote_files
       # Download source
       @file.download
-        if: options.source?
-        source: options.source
-        target: options.target
-        headers: options.headers
-        md5: options.md5
-        proxy: options.proxy
-        location: options.location
+        if: config.source?
+        source: config.source
+        target: config.target
+        headers: config.headers
+        md5: config.md5
+        proxy: config.proxy
+        location: config.location
         cache: false
       # Write
       @file.types.yum_repo
-        if: options.content?
-        content: options.content
-        mode: options.mode
-        uid: options.uid
-        gid: options.gid
-        target: options.target
+        if: config.content?
+        content: config.content
+        mode: config.mode
+        uid: config.uid
+        gid: config.gid
+        target: config.target
       # Parse the definition file
       keys = []
       @call ->
-        @log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+        @log "Read GPG keys from #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
         @fs.readFile
-          target: options.target
+          target: config.target
           encoding: 'utf8'
         , (err, {data}) =>
           throw err if err
@@ -106,28 +106,28 @@ require('nikita')
             section.gpgkey
       # Download GPG Keys
       @call
-        if: options.verify
+        if: config.verify
       , ->
         for key in keys
           @log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
           @file.download
             source: key
-            target: "#{options.gpg_dir}/#{path.basename key}"
-          @system.execute
+            target: "#{config.gpg_dir}/#{path.basename key}"
+          @execute
             if: -> @status -1
-            cmd: "rpm --import #{options.gpg_dir}/#{path.basename key}"
+            cmd: "rpm --import #{config.gpg_dir}/#{path.basename key}"
       # Clean Metadata
-      @system.execute
-        if: -> path.relative('/etc/yum.repos.d', options.target) isnt '..' and @status()
+      @execute
+        if: -> path.relative('/etc/yum.repos.d', config.target) isnt '..' and @status()
         # wdavidw: 180114, was "yum clean metadata", ensure an appropriate
         # explanation is provided in case of revert.
         # expire-cache is much faster,  It forces yum to go redownload the small
         # repo files only, then if there's newer repo data, it will downloaded it.
         cmd: 'yum clean expire-cache; yum repolist -y'
       @call 
-        if: -> options.update and @status()
+        if: -> config.update and @status()
       , ->
-        @system.execute
+        @execute
           cmd: """
           yum update -y --disablerepo=* --enablerepo='#{repoids.join(',')}'
           yum repolist

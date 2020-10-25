@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -11,120 +11,118 @@ describe 'tools.extract', ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+      status.should.be.true()
 
   they 'should see extension .zip', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.zip"
-      target: scratch
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.zip"
+        target: tmpdir
+      status.should.be.true()
 
   they 'should see extension .tar.bz2', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tar.bz2"
-      target: scratch
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tar.bz2"
+        target: tmpdir
+      status.should.be.true()
 
   they 'should see extension .tar.xz', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tar.xz"
-      target: scratch
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tar.xz"
+        target: tmpdir
+      status.should.be.true()
 
   they 'should validate a created file', ({ssh}) ->
-    # Test with invalid creates option
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-      creates: "#{scratch}/oh_no"
-    .next (err, {status}) ->
-      err.message.should.eql "Failed to create 'oh_no'"
-    # Test with valid creates option
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-      creates: "#{scratch}/a_dir"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      # Test with invalid creates option
+      @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+        creates: "#{tmpdir}/oh_no"
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_ASSERT_FILE_MISSING'
+      # Test with valid creates option
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+        creates: "#{tmpdir}/a_dir"
+      status.should.be.true()
 
   they 'should # option # unless_exists', ({ssh}) ->
     # Test with invalid creates option
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-      unless_exists: __dirname
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+        unless_exists: __dirname
+      status.should.be.false()
 
   they 'should pass error for invalid extension', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.extract
-      source: __filename
-      relax: true
-    , (err) ->
-      err.message.should.eql 'Unsupported extension, got ".coffee"'
-    .promise()
+    , ->
+      @tools.extract
+        source: __filename
+      .should.be.rejectedWith
+        message: 'Unsupported extension, got ".coffee"'
 
   they 'should pass error for missing source file', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.extract
-      source: '/does/not/exist.tgz'
-      relax: true
-    , (err) ->
-      err.message.should.eql 'File does not exist: /does/not/exist.tgz'
-    .promise()
+    , ->
+      @tools.extract
+        source: '/does/not/exist.tgz'
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_STAT_TARGET_ENOENT'
 
   they 'should strip component level 1', ({ssh}) ->
     # Test a non existing status dir
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-      strip: 1
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/a_file"
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+        strip: 1
+      status.should.be.true()
+      @fs.assert
+        target: "#{tmpdir}/a_file"
 
   they 'should strip component level 2', ({ssh}) ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh
-    .tools.extract
-      source: "#{__dirname}/resources/a_dir.tgz"
-      target: scratch
-      strip: 2
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/a_file"
-      not: true
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {status} = await @tools.extract
+        source: "#{__dirname}/resources/a_dir.tgz"
+        target: tmpdir
+        strip: 2
+      status.should.be.true()
+      @fs.assert
+        target: "#{tmpdir}/a_file"
+        not: true
   

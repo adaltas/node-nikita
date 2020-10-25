@@ -5,7 +5,7 @@ Configure kernel parameters at runtime.
 
 Target file will be overwritten by default, use the `merge` option to preserve existing variables.
 
-Comments will be preserved if the `comments` and `merge` options are enabled.
+Comments will be preserved if the `comments` and `merge` config are enabled.
 
 ## Options
 
@@ -57,19 +57,19 @@ require('nikita').tools.sysctl({
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({config}) ->
       @log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
       # Options
-      options.load ?= true
-      options.target ?= '/etc/sysctl.conf'
+      config.load ?= true
+      config.target ?= '/etc/sysctl.conf'
       # Read current properties
       current = {}
       @call (_, callback) ->
         status = false
-        @log message: "Read target: #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
+        @log message: "Read target: #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
         @fs.readFile
-          ssh: options.ssh
-          target: options.target
+          ssh: config.ssh
+          target: config.target
           encoding: 'ascii'
         , (err, {data}) =>
           return callback() if err and err.code is 'ENOENT'
@@ -77,7 +77,7 @@ require('nikita').tools.sysctl({
           for line in string.lines data
             # Preserve comments
             if /^#/.test line
-              current[line] = null if options.comment
+              current[line] = null if config.comment
               continue
             if /^\s*$/.test line
               current[line] = null
@@ -87,7 +87,7 @@ require('nikita').tools.sysctl({
             key = key.trim()
             value = value.trim()
             # Skip property
-            if key in options.properties and not options.properties[key]?
+            if key in config.properties and not config.properties[key]?
               @log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
               status = true
               continue
@@ -97,9 +97,9 @@ require('nikita').tools.sysctl({
       # Merge user properties
       final = {}
       @call (_, callback) ->
-        final[k] = v for k, v of current if options.merge
+        final[k] = v for k, v of current if config.merge
         status = false
-        for key, value of options.properties
+        for key, value of config.properties
           continue unless value?
           value = "#{value}" if typeof value is 'number'
           continue if current[key] is value
@@ -111,8 +111,8 @@ require('nikita').tools.sysctl({
         if: -> @status()
       , ->
         @file
-          target: options.target
-          backup: options.backup
+          target: config.target
+          backup: config.backup
           content: (
             for key, value of final
               if value?
@@ -120,12 +120,12 @@ require('nikita').tools.sysctl({
               else
                 "#{key}"
           ).join '\n'
-      @system.execute
+      @execute
         if: [
-          options.load
+          config.load
           -> @status()
         ]
-        cmd: "sysctl -p #{options.target}"
+        cmd: "sysctl -p #{config.target}"
 
 ## Dependencies
 

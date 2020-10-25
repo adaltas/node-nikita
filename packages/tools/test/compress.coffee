@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -10,104 +10,104 @@ describe 'tools.compress', ->
   they 'should see extension .tgz', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'some content'
-    .tools.compress
-      source: "#{scratch}/a_dir/a_file"
-      target: "#{scratch}/a_dir.tgz"
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'some content'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir/a_file"
+        target: "#{tmpdir}/a_dir.tgz"
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir.tgz"
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir.tgz"
 
   they 'should see extension .zip', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'some content'
-    .tools.compress
-      source: "#{scratch}/a_dir/a_file"
-      target: "#{scratch}/a_dir.zip"
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'some content'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir/a_file"
+        target: "#{tmpdir}/a_dir.zip"
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir.zip"
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir.zip"
 
   they 'should see extension .tar.bz2', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'some content'
-    .tools.compress
-      source: "#{scratch}/a_dir/a_file"
-      target: "#{scratch}/a_dir.tar.bz2"
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'some content'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir/a_file"
+        target: "#{tmpdir}/a_dir.tar.bz2"
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir.tar.bz2"
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir.tar.bz2"
 
   they 'should see extension .tar.xz', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'some content'
-    .tools.compress
-      source: "#{scratch}/a_dir/a_file"
-      target: "#{scratch}/a_dir.tar.xz"
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'some content'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir/a_file"
+        target: "#{tmpdir}/a_dir.tar.xz"
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir.tar.xz"
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir.tar.xz"
   
   they 'remove source file with clean option', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'hellow'
-    .tools.compress
-      source: "#{scratch}/a_dir/a_file"
-      target: "#{scratch}/a_dir.tar.xz"
-      clean: true
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'hellow'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir/a_file"
+        target: "#{tmpdir}/a_dir.tar.xz"
+        clean: true
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir/a_file"
-      not: true
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir/a_file"
+        not: true
   
   they 'remove source directory with clean option', ({ssh}) ->
     nikita
       ssh: ssh
-    .file
-      target: "#{scratch}/a_dir/a_file"
-      content: 'hellow'
-    .tools.compress
-      source: "#{scratch}/a_dir"
-      target: "#{scratch}/a_dir.tar.xz"
-      clean: true
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @file
+        target: "#{tmpdir}/a_dir/a_file"
+        content: 'hellow'
+      {status} = await @tools.compress
+        source: "#{tmpdir}/a_dir"
+        target: "#{tmpdir}/a_dir.tar.xz"
+        clean: true
       status.should.be.true()
-    .file.assert
-      source: "#{scratch}/a_dir"
-      not: true
-    .promise()
+      @fs.assert
+        target: "#{tmpdir}/a_dir"
+        not: true
 
   they 'should pass error for invalid extension', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.compress
-      source: __filename
-      target: __filename
-      relax: true
-    , (err) ->
-      err.message.should.eql 'Unsupported Extension: ".coffee"'
-    .promise()
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @tools.compress
+        source: __filename
+        target: __filename
+      .should.be.rejectedWith
+        message: 'Unsupported Extension: ".coffee"'

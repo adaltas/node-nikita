@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
@@ -12,54 +12,57 @@ describe 'tools.backup', ->
     they 'backup to a directory', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.backup
-        name: 'my_backup'
-        source: "#{__filename}"
-        target: "#{scratch}/backup"
-      , (err, {status, filename}) ->
-        status.should.be.true() unless err
-        @file.assert
-          target: "#{scratch}/backup/my_backup/#{filename}"
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        {status, filename} = await @tools.backup
+          name: 'my_backup'
+          source: "#{__filename}"
+          target: "#{tmpdir}/backup"
+        status.should.be.true()
+        @fs.assert
+          target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
-      .wait 1000
-      .tools.backup
-        name: 'my_backup'
-        source: "#{__filename}"
-        target: "#{scratch}/backup"
-      , (err, {status, filename}) ->
-        status.should.be.true() unless err
-        @file.assert
-          target: "#{scratch}/backup/my_backup/#{filename}"
+        @wait 1000
+        {status, filename} = await @tools.backup
+          name: 'my_backup'
+          source: "#{__filename}"
+          target: "#{tmpdir}/backup"
+        status.should.be.true()
+        @fs.assert
+          target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
-      .promise()
 
     they 'compress', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.backup
-        name: 'my_backup'
-        source: "#{__filename}"
-        target: "#{scratch}/backup"
-        compress: true
-      , (err, {status, filename}) ->
-        status.should.be.true() unless err
-        @file.assert
-          target: "#{scratch}/backup/my_backup/#{filename}.tgz"
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        {status, base_dir, name, filename, target} = await @tools.backup
+          name: 'my_backup'
+          source: "#{__filename}"
+          target: "#{tmpdir}/backup"
+          compress: true
+        status.should.be.true()
+        base_dir.should.eql "#{tmpdir}/backup"
+        name.should.eql 'my_backup'
+        filename.should.match /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z\.tgz/
+        target.should.eql "#{base_dir}/my_backup/#{filename}"
+        @fs.assert
+          target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
-      .promise()
 
   describe 'cmd', ->
 
     they 'pipe to a file', ({ssh}) ->
       nikita
         ssh: ssh
-      .tools.backup
-        name: 'my_backup'
-        cmd: "echo hello"
-        target: "#{scratch}/backup"
-      , (err, {status, filename}) ->
-        status.should.be.true() unless err
-        @file.assert
-          target: "#{scratch}/backup/my_backup/#{filename}"
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        {status, filename} = await @tools.backup
+          name: 'my_backup'
+          cmd: "echo hello"
+          target: "#{tmpdir}/backup"
+        status.should.be.true()
+        @fs.assert
+          target: "#{tmpdir}/backup/my_backup/#{filename}"
           content: "hello\n"
-      .promise()

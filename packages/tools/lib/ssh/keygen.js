@@ -3,22 +3,6 @@
 
 // Generates keys for use by SSH protocol version 2.
 
-// ## Options
-
-// * `bits` (string|number, options, 4096)   
-//   Specifies the number of bits in the key to create.
-// * `comment` (string, optional)   
-//   Comment such as a name or email.
-// * `key_format` (string, optional)   
-//   Specify a key format. The supported key formats are: `RFC4716` (RFC 4716/SSH2 public or
-//   private key), `PKCS8` (PEM PKCS8 public key) or `PEM` (PEM public key).
-// * `passphrase` (string, optional, "")
-//   Key passphrase, empty string for no passphrase.
-// * `target` (string, required)   
-//   Path of the generated private key.
-// * `type` (string, optional, "rsa")   
-//   Type of key to create.
-
 // ## Force the generation of a key compatible with SSH2
 
 // For exemple in OSX Mojave, the default export format is RFC4716.
@@ -32,46 +16,74 @@
 //   key_format: 'PEM'
 // })
 
-// ## Source code
-var path;
+// ## Schema
+var path, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    'bits': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'number'
+        }
+      ],
+      default: 4096,
+      description: `Specifies the number of bits in the key to create.`
+    },
+    'comment': {
+      type: 'string',
+      description: `Comment such as a name or email.`
+    },
+    'key_format': {
+      type: 'string',
+      description: `Specify a key format. The supported key formats are: \`RFC4716\` (RFC
+4716/SSH2 public or private key), \`PKCS8\` (PEM PKCS8 public key) or
+\`PEM\` (PEM public key).`
+    },
+    'passphrase': {
+      type: 'string',
+      default: '',
+      description: `Key passphrase, empty string for no passphrase.`
+    },
+    'target': {
+      type: 'string',
+      description: `Path of the generated private key.`
+    },
+    'type': {
+      type: 'string',
+      default: 'rsa',
+      description: `Type of key to create.`
+    }
+  },
+  required: ['target']
+};
+
+// ## Source code
+module.exports = async function({config}) {
   var ref;
-  if (options.bits == null) {
-    options.bits = 4096;
+  if (config.key_format && ((ref = config.key_format) !== 'RFC4716' && ref !== 'PKCS8' && ref !== 'PEM')) {
+    throw Error(`Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got ${JSON.stringify(config.key_format)}`);
   }
-  if (options.type == null) {
-    options.type = 'rsa';
-  }
-  if (options.passphrase == null) {
-    options.passphrase = '';
-  }
-  if (options.key_format == null) {
-    options.key_format = null;
-  }
-  if (options.key_format && ((ref = options.key_format) !== 'RFC4716' && ref !== 'PKCS8' && ref !== 'PEM')) {
-    throw Error(`Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got ${JSON.stringify(options.key_format)}`);
-  }
-  if (!options.target) {
-    // Validation
-    throw Error('Required Option: target is required');
-  }
-  this.system.mkdir({
-    target: `${path.dirname(options.target)}`
+  await this.fs.mkdir({
+    target: `${path.dirname(config.target)}`
   });
-  return this.system.execute({
-    unless_exists: `${options.target}`,
+  return this.execute({
+    unless_exists: `${config.target}`,
     cmd: [
       'ssh-keygen',
       "-q", // Silence
-      `-t ${options.type}`,
-      `-b ${options.bits}`,
-      options.key_format ? `-m ${options.key_format}` : void 0,
-      options.comment ? `-C '${options.comment.replace('\'',
+      `-t ${config.type}`,
+      `-b ${config.bits}`,
+      config.key_format ? `-m ${config.key_format}` : void 0,
+      config.comment ? `-C '${config.comment.replace('\'',
       '\\\'')}'` : void 0,
-      `-N '${options.passphrase.replace('\'',
+      `-N '${config.passphrase.replace('\'',
       '\\\'')}'`,
-      `-f ${options.target}`
+      `-f ${config.target}`
     ].join(' ')
   });
 };

@@ -10,14 +10,7 @@
   // - Documentation
   // - gemspec
 
-// ## Callback parameters
-
-// * `err`   
-  //   Error object if any.
-  // * `status`   
-  //   Indicate if a gem was installed.
-
-// ## Examples
+// ## Example
 
 // Install a gem from its name and version:
 
@@ -68,6 +61,9 @@ schema = {
       type: 'string',
       description: `Pass flags to the compiler.`
     },
+    'bash': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/bash'
+    },
     'gem_bin': {
       type: 'string',
       default: 'gem',
@@ -76,6 +72,10 @@ schema = {
     'name': {
       type: 'string',
       description: `Name of the gem.`
+    },
+    'source': {
+      type: 'string',
+      description: `Path to the gem package.`
     },
     'target': {
       type: 'string',
@@ -91,7 +91,7 @@ schema = {
 
 // ## Handler
 handler = async function({config, ssh}) {
-  var base, current_gems, i, k, len, line, name, name1, ref, ref1, stdout, v, version;
+  var current_filenames, current_gems, files, gems, i, is_version_matching, j, k, len, len1, line, name, name1, ref, ref1, source, sources, stdout, v, version, versions;
   // log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
   // Global config
   if (config.ruby == null) {
@@ -104,20 +104,11 @@ handler = async function({config, ssh}) {
       config[k] = v;
     }
   }
-  if (config.gem_bin == null) {
-    config.gem_bin = 'gem';
+  gems = {};
+  if (gems[name1 = config.name] == null) {
+    gems[name1] = config.version;
   }
-  if (config.gems == null) {
-    config.gems = {};
-  }
-  if (config.name) {
-    if ((base = config.gems)[name1 = config.name] == null) {
-      base[name1] = config.version;
-    }
-  }
-  if (config.sources == null) {
-    config.sources = [];
-  }
+  // Get all current gems
   current_gems = {};
   ({stdout} = (await this.execute({
     cmd: `${config.gem_bin} list --versions`,
@@ -133,92 +124,74 @@ handler = async function({config, ssh}) {
     [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/).slice(1, 4);
     current_gems[name] = version.split(', ');
   }
-  this.call({
-    if: config.source
-  }, function(_, callback) {
-    return this.file.glob(config.source, function(err, {files}) {
-      if (err) {
-        return callback(err);
+  // Make array of sources and filter
+  sources = [];
+  if (config.source) {
+    ({files} = (await this.fs.glob(config.source)));
+    current_filenames = [];
+    for (name in current_gems) {
+      versions = current_gems[name];
+      for (j = 0, len1 = versions.length; j < len1; j++) {
+        version = versions[j];
+        current_filenames.push(`${name}-${version}.gem`);
       }
-      config.source = files.filter(function(source) {
-        var current_filenames, filename, n;
-        filename = path.basename(source);
-        current_filenames = (function() {
-          var results;
-          results = [];
-          for (n in current_gems) {
-            v = current_gems[n];
-            results.push(`${n}-${v}.gem`);
-          }
-          return results;
-        })();
-        if (indexOf.call(current_filenames, filename) < 0) {
-          return true;
-        }
-      });
-      return callback();
-    });
-  });
-  this.call(function() {
-    var is_version_matching, ref2, results;
-    ref2 = config.gems;
-    results = [];
-    for (name in ref2) {
-      version = ref2[name];
-      if (!current_gems[name]) {
-        // Install if Gem isnt yet there
-        continue;
-      }
-      // Install if a version is demanded and no installed versio satisfy it
-      is_version_matching = current_gems[name].some(function(current_version) {
-        return semver.satisfies(version, current_version);
-      });
-      if (version && !is_version_matching) {
-        continue;
-      }
-      results.push(delete config.gems[name]);
     }
-    return results;
-  });
-  this.call(function() {
-    return {
-      if: config.sources.length
-    };
-  }, function() {
-    var source;
-    return this.execute({
-      if: config.sources.length,
+    sources = files.filter(function(source) {
+      var filename;
+      filename = path.basename(source);
+      if (indexOf.call(current_filenames, filename) < 0) {
+        return true;
+      }
+    });
+  }
+// Filter gems
+  for (name in gems) {
+    version = gems[name];
+    if (!current_gems[name]) {
+      // Install if Gem isnt yet there
+      continue;
+    }
+    // Install if a version is demanded and no installed version satisfy it
+    is_version_matching = current_gems[name].some(function(current_version) {
+      return semver.satisfies(version, current_version);
+    });
+    if (version && !is_version_matching) {
+      continue;
+    }
+    delete gems[name];
+  }
+  // Install from sources
+  if (sources.length) {
+    this.execute({
       cmd: ((function() {
-        var j, len1, ref2, results;
-        ref2 = config.sources;
+        var l, len2, results;
         results = [];
-        for (j = 0, len1 = ref2.length; j < len1; j++) {
-          source = ref2[j];
-          results.push([`${config.gem_bin}`, "install", config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, config.source ? `--local '${config.source}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
+        for (l = 0, len2 = sources.length; l < len2; l++) {
+          source = sources[l];
+          results.push([`${config.gem_bin}`, "install", config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, source ? `--local '${source}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
         }
         return results;
       })()).join('\n'),
       code: [0, 2],
       bash: config.bash
     });
-  });
-  return this.call(function() {
+  }
+  // Install from gems
+  if (Object.keys(gems).length) {
     return this.execute({
-      if: Object.keys(config.gems).length,
       cmd: ((function() {
-        var ref2, results;
-        ref2 = config.gems;
+        var results;
         results = [];
-        for (name in ref2) {
-          version = ref2[name];
-          results.push([`${config.gem_bin}`, "install", `${config.name}`, config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, config.version ? `--version '${config.version}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
+        for (name in gems) {
+          version = gems[name];
+          results.push([`${config.gem_bin}`, "install", `${name}`, config.bindir ? `--bindir '${config.bindir}'` : void 0, config.target ? `--install-dir '${config.target}'` : void 0, version ? `--version '${version}'` : void 0, config.build_flags ? "--build-flags config.build_flags" : void 0].join(' '));
         }
         return results;
       })()).join('\n'),
       code: [0, 2],
       bash: config.bash
     });
-  });
+  }
 };
 
 // ## Export

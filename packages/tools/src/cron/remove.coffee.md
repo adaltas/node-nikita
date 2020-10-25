@@ -38,24 +38,24 @@ require('nikita').cron.remove({
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
-      return callback Error 'valid cmd is required' unless options.cmd?.length > 0
-      if options.user?
-        @log message: "Using user #{options.user}", level: 'INFO', module: 'nikita/cron/remove'
-        crontab = "crontab -u #{options.user}"
+    module.exports = ({config}, callback) ->
+      return callback Error 'valid cmd is required' unless config.cmd?.length > 0
+      if config.user?
+        @log message: "Using user #{config.user}", level: 'INFO', module: 'nikita/cron/remove'
+        crontab = "crontab -u #{config.user}"
       else
         @log message: "Using default user", level: 'INFO', module: 'nikita/cron/remove'
         crontab = "crontab"
       status = false
       jobs = []
-      @system.execute
+      @execute
         cmd: "#{crontab} -l"
         shy: true
       , (err, {stdout, stderr}) ->
         throw err if err
         throw Error 'User crontab not found' if /^no crontab for/.test stderr
-        myjob = if options.when then regexp.escape options.when else '.*'
-        myjob += regexp.escape " #{options.cmd}"
+        myjob = if config.when then regexp.escape config.when else '.*'
+        myjob += regexp.escape " #{config.cmd}"
         regex = new RegExp myjob
         jobs = stdout.trim().split '\n'
         for job, i in jobs
@@ -64,7 +64,7 @@ require('nikita').cron.remove({
           status = true
           jobs.splice i, 1
         @log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/cron/remove'
-      .system.execute
+      .execute
         cmd: """
         #{crontab} - <<EOF
         #{jobs.join '\n'}

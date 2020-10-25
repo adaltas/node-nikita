@@ -1,22 +1,25 @@
 
 # `nikita.tools.gsettings`
 
-GSettings configuration tool
+GSettings configuration tool.
 
 ## Example
 
-require('nikita').system.gsettings({
+```js
+const {status} = await nikita.tools.gsettings({
   properties: {
-    'org.gnome.desktop.input-sources': 'xkb-options': '[\'ctrl:swap_lalt_lctl\']'
+    'org.gnome.desktop.input-sources': 'xkb-config': '[\'ctrl:swap_lalt_lctl\']'
   }
 })
+console.log(`Property modified: ${status}`)
+```
 
-    module.exports = ({options}) ->
-      options.properties = options.argument if options.argument?
-      options.properties ?= {}
-      for path, properties of options.properties
+    module.exports = ({config}) ->
+      config.properties = config.argument if config.argument?
+      config.properties ?= {}
+      for path, properties of config.properties
         for key, value of properties
-          @system.execute """
+          @execute """
           gsettings get #{path} #{key} | grep -x "#{value}" && exit 3
           gsettings set #{path} #{key} "#{value}"
           """, code_skipped: 3

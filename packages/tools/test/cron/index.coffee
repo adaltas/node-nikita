@@ -43,7 +43,6 @@ describe 'cron', ->
       when: '0 * * * *'
     , (err, {status}) ->
       status.should.be.false()
-    .promise()
 
   describe 'match', ->
 
@@ -77,7 +76,6 @@ describe 'cron', ->
       .tools.cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
-      .promise()
 
     they 'string', ({ssh}) ->
       nikita
@@ -109,7 +107,6 @@ describe 'cron', ->
       .tools.cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
-      .promise()
 
   describe 'error', ->
 
@@ -122,7 +119,6 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid when is required'
-      .promise()
 
     they 'invalid job: invalid time', ({ssh}) ->
       nikita
@@ -134,7 +130,6 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid when is required'
-      .promise()
 
     they 'invalid job: no cmd', ({ssh}) ->
       nikita
@@ -145,7 +140,6 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid cmd is required'
-      .promise()
 
     they 'invalid job: invalid cmd', ({ssh}) ->
       nikita
@@ -157,7 +151,6 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid cmd is required'
-      .promise()
 
     they 'invalid job: invalid cmd to exec', ({ssh}) ->
       nikita
@@ -170,4 +163,3 @@ describe 'cron', ->
         relax: true
       , (err, added) ->
         err.code.should.eql 127
-      .promise()

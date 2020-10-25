@@ -5,17 +5,6 @@ Compress an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
 moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zip'.
 
-## Options
-
-* `format`   
-  One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
-* `source`   
-  Archive to compress.   
-* `target`   
-  Default to the source parent directory.   
-* `clean`   
-  Remove the source file or directory
-
 ## Callback Parameters
 
 * `err`   
@@ -35,45 +24,66 @@ require('nikita')
 });
 ```
 
-## Source Code
 
-    module.exports = ({options}) ->
-      @log message: "Entering compress", level: 'DEBUG', module: 'nikita/lib/tools/compress'
-      # Validate parameters
-      throw Error "Missing source: #{options.source}" unless options.source
-      throw Error "Missing target: #{options.target}" unless options.target
-      options.source = path.normalize options.source
-      options.target = path.normalize options.target
-      dir = path.dirname options.source
-      name = path.basename options.source
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        clean:
+          type: 'boolean'
+          description: """
+          Remove the source file or directory on completion.
+          """
+        format:
+          type: 'string'
+          enum: ['tgz', 'tar', 'zip', 'bz2', 'xz']
+          description: """
+          Compression tool and format to be used.
+          """
+        source:
+          type: 'string'
+          description: """
+          Source of the file or directory to compress.
+          """
+        target:
+          type: 'string'
+          description: """
+          Destination path of the generated archive, default to the source
+          parent directory.
+          """
+      required: ['source', 'target']
+
+## Handler
+
+    handler = ({config, tools: {path}}) ->
+      config.source = path.normalize config.source
+      config.target = path.normalize config.target
+      dir = path.dirname config.source
+      name = path.basename config.source
       # Deal with format option
-      if options.format?
-        format = options.format
+      if config.format?
+        format = config.format
       else
-        format = module.exports.ext_to_type options.target
+        format = ext_to_type config.target, path
       # Run compression
-      @system.execute switch format
-        when 'tgz' then "tar czf #{options.target} -C #{dir} #{name}"
-        when 'tar' then "tar cf  #{options.target} -C #{dir} #{name}"
-        when 'bz2' then "tar cjf #{options.target} -C #{dir} #{name}"
-        when 'xz'  then "tar cJf #{options.target} -C #{dir} #{name}"
-        when 'zip' then "(cd #{dir} && zip -r #{options.target} #{name} && cd -)"
-      @system.remove
-        if: options.clean
-        source: options.source
-
-## Type of extension
-
-    module.exports.type_to_ext = (type) ->
-      return ".#{type}" if type in ['tgz', 'tar', 'zip', 'bz2', 'xz']
-      throw Error "Unsupported Type: #{JSON.stringify(type)}"
+      output = await @execute switch format
+        when 'tgz' then "tar czf #{config.target} -C #{dir} #{name}"
+        when 'tar' then "tar cf  #{config.target} -C #{dir} #{name}"
+        when 'bz2' then "tar cjf #{config.target} -C #{dir} #{name}"
+        when 'xz'  then "tar cJf #{config.target} -C #{dir} #{name}"
+        when 'zip' then "(cd #{dir} && zip -r #{config.target} #{name} && cd -)"
+      @fs.remove
+        if: config.clean
+        source: config.source
+      output
 
 ## Extention to type
 
 Convert a full path, a filename or an extension into a supported compression 
 type.
 
-    module.exports.ext_to_type = (name) ->
+    ext_to_type = (name, path) ->
       if /((.+\.)|^\.|^)(tar\.gz|tgz)$/.test name then 'tgz'
       else if /((.+\.)|^\.|^)tar$/.test name then 'tar'
       else if /((.+\.)|^\.|^)zip$/.test name then 'zip'
@@ -82,6 +92,10 @@ type.
       else
         throw Error "Unsupported Extension: #{JSON.stringify(path.extname name)}"
 
-## Dependencies
+## Exports
 
-    path = require 'path'
+    module.exports =
+      handler: handler
+      schema: schema
+      tools:
+        ext_to_type: ext_to_type

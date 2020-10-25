@@ -3,20 +3,6 @@
 
 // Remove one or more NodeJS packages.
 
-// ## Options
-
-// * `name` (string|array, required)
-  //   Name of the package(s).
-  // * `global` (boolean)
-  //   Uninstalls the current package context as a global package.
-
-// ## Callback Parameters
-
-// * `err`
-  //   Error object if any.
-  // * `status`
-  //   Value "true" if the package was uninstalled.
-
 // ## Example
 
 // The following action uninstalls the coffescript package globally.
@@ -31,10 +17,21 @@
   // });
   // ```
 
-// ## Schema
-var handler, schema, string,
+// ## Hooks
+var handler, on_action, schema,
   indexOf = [].indexOf;
 
+on_action = function({config}) {
+  if (config.argument != null) {
+    throw Error('Deprecated config `argument`');
+  }
+  if (typeof config.name === 'string') {
+    return config.name = [config.name];
+  }
+};
+
+
+// ## Schema
 schema = {
   type: 'object',
   properties: {
@@ -50,7 +47,7 @@ schema = {
           }
         }
       ],
-      description: 'Name of the package(s).'
+      description: 'Name of the package(s) to remove.'
     },
     'global': {
       type: 'boolean',
@@ -62,52 +59,42 @@ schema = {
 };
 
 // ## Handler
-handler = function({options}, callback) {
-  var global, installed;
-  if (options.argument != null) {
-    options.name = options.argument;
-  }
-  if (typeof options.name === 'string') {
-    options.name = [options.name];
-  }
-  global = options.global ? ' -g' : '';
+handler = async function({config, log}) {
+  var global, installed, pkgs, stdout, uninstall;
+  global = config.global ? '-g' : '';
+  // Get installed packages
   installed = [];
-  this.system.execute({
-    cmd: `npm list --installed --json ${global}`,
+  ({stdout} = (await this.execute({
+    cmd: `npm list --json ${global}`,
     code: [0, 1],
     stdout_log: false,
-    shy: true
-  }, function(err, {stdout}) {
-    var pkgs;
-    if (err) {
-      throw err;
-    }
-    pkgs = JSON.parse(stdout);
-    pkgs = Object.keys(pkgs.dependencies);
-    return installed = pkgs;
+    shy: true,
+    sudo: config.sudo
+  })));
+  pkgs = JSON.parse(stdout);
+  if (Object.keys(pkgs).length) {
+    installed = Object.keys(pkgs.dependencies);
+  }
+  // Uninstall
+  uninstall = config.name.filter(function(pkg) {
+    return indexOf.call(installed, pkg) >= 0;
   });
-  return this.call(function() {
-    var uninstall;
-    uninstall = options.name.filter(function(pkg) {
-      return indexOf.call(installed, pkg) >= 0;
-    });
-    return this.system.execute({
-      if: uninstall.length,
+  if (uninstall.length) {
+    await this.execute({
       cmd: `npm uninstall ${global} ${uninstall.join(' ')}`,
-      sudo: options.sudo
-    }, (err) => {
-      return this.log({
-        message: `NPM uninstalled packages: ${install.join(', ')}`
-      });
+      sudo: config.sudo
     });
-  });
+    return log({
+      message: `NPM uninstalled packages: ${uninstall.join(', ')}`
+    });
+  }
 };
 
 // ## Export
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');

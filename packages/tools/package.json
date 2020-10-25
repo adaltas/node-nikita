@@ -37,14 +37,18 @@
       "email": "david@adaltas.com"
     }
   ],
-  "peerDependencies": {
-    "@nikitajs/core": "^0.9.5"
+  "dependencies": {
+    "dayjs": "^1.9.4",
+    "luxon": "^1.25.0"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
     "mocha": "^8.2.0",
     "should": "^13.2.3",
     "ssh2-they": "^2.2.0"
+  },
+  "peerDependencies": {
+    "@nikitajs/engine": "^0.9.7"
   },
   "engines": {
     "node": ">= 10.0.0"
