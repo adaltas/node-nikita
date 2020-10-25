@@ -41,7 +41,7 @@
     "@nikitajs/file": "^0.9.7-alpha.2"
   },
   "peerDependencies": {
-    "@nikitajs/engine": "^0.9.5"
+    "@nikitajs/engine": "^0.9.7"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",

@@ -71,7 +71,7 @@
     "ssh2-they": "^2.2.0"
   },
   "peerDependencies": {
-    "@nikitajs/engine": "^0.9.5"
+    "@nikitajs/engine": "^0.9.7"
   },
   "engines": {
     "node": ">= 10.0.0"

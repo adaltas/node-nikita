@@ -38,7 +38,7 @@
     "object-diff": "^0.0.4"
   },
   "peerDependencies": {
-    "@nikitajs/core": "^0.9.5"
+    "@nikitajs/engine": "^0.9.7"
   },
   "devDependencies": {
     "@nikitajs/lxd": "^0.9.7-alpha.0",
