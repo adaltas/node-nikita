@@ -44,7 +44,7 @@
     "parameters": "^0.7.3"
   },
   "peerDependencies": {
-    "@nikitajs/core": "^0.9.5"
+    "@nikitajs/engine": "^0.9.7"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
