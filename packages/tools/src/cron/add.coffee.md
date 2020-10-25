@@ -42,28 +42,28 @@ require('nikita').cron.add({
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
-      return callback Error 'valid when is required' unless options.when and typeof options.when is 'string'
-      return callback Error 'valid cmd is required' unless options.cmd
-      if options.user?
-        @log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
-        crontab = "crontab -u #{options.user}"
+    module.exports = ({config}, callback) ->
+      return callback Error 'valid when is required' unless config.when and typeof config.when is 'string'
+      return callback Error 'valid cmd is required' unless config.cmd
+      if config.user?
+        @log message: "Using user #{config.user}", level: 'DEBUG', module: 'nikita/cron/add'
+        crontab = "crontab -u #{config.user}"
       else
         @log message: "Using default user", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab"
       jobs = null
-      @system.execute
+      @execute
         cmd: "#{crontab} -l"
         code: [0, 1]
       , (err, {stdout, stderr}) ->
         throw err if err and not /^no crontab for/.test stderr
         # throw Error 'User crontab not found' if /^no crontab for/.test stderr
-        new_job = "#{options.when} #{options.cmd}"
+        new_job = "#{config.when} #{config.cmd}"
         # remove useless last element
         regex =
-          unless options.match then new RegExp ".* #{regexp.escape options.cmd}"
-          else if typeof options.match is 'string' then new RegExp options.match
-          else if util.isRegExp options.match then options.match
+          unless config.match then new RegExp ".* #{regexp.escape config.cmd}"
+          else if typeof config.match is 'string' then new RegExp config.match
+          else if util.isRegExp config.match then config.match
           else throw Error "Invalid option 'match'"
         added = true
         jobs = for job, i in string.lines stdout.trim()
@@ -71,7 +71,7 @@ require('nikita').cron.add({
             added = false
             break if job is new_job # Found job, stop here
             @log message: "Entry has changed", level: 'WARN', module: 'nikita/cron/add'
-            diff job, new_job, options
+            diff job, new_job, config
             job = new_job
             modified = true
           job
@@ -82,10 +82,10 @@ require('nikita').cron.add({
       .next (err) ->
         return callback err if err
         return callback() unless jobs
-        @system.execute
-          cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
-          if: options.exec
-        @system.execute
+        @execute
+          cmd: if config.user? then "su -l #{config.user} -c '#{config.cmd}'" else config.cmd
+          if: config.exec
+        @execute
           cmd: """
           #{crontab} - <<EOF
           #{jobs.join '\n'}

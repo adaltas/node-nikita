@@ -6,39 +6,34 @@ registry = require('@nikitajs/engine/lib/registry');
 
 module.exports = {
   tools: {
+    // apm:
+    //   'install': '@nikitajs/tools/lib/apm/install'
+    //   'uninstall': '@nikitajs/tools/lib/apm/uninstall'
+    // backup: '@nikitajs/tools/lib/backup'
+    // compress: '@nikitajs/tools/lib/compress'
+    // cron:
+    //   add: '@nikitajs/tools/lib/cron/add'
+    //   remove: '@nikitajs/tools/lib/cron/remove'
+    // extract: '@nikitajs/tools/lib/extract'
+    // dconf: '@nikitajs/tools/lib/dconf'
+    // iptables: '@nikitajs/tools/lib/iptables'
+    // git: '@nikitajs/tools/lib/git'
+    npm: {
+      '': '@nikitajs/tools/lib/npm',
+      uninstall: '@nikitajs/tools/lib/npm/uninstall'
+    },
+    // repo: '@nikitajs/tools/lib/repo'
     rubygems: {
-      'fetch': '@nikitajs/tools/lib/rubygems/fetch'
+      'fetch': '@nikitajs/tools/lib/rubygems/fetch',
+      'install': '@nikitajs/tools/lib/rubygems/install',
+      'remove': '@nikitajs/tools/lib/rubygems/remove'
+    },
+    ssh: {
+      keygen: '@nikitajs/tools/lib/ssh/keygen'
     }
   }
 };
 
-(async function() {  // 'install': '@nikitajs/tools/lib/rubygems/install'
-  // 'remove': '@nikitajs/tools/lib/rubygems/remove'
+(async function() {  // sysctl: '@nikitajs/tools/lib/sysctl'
   return (await registry.register(module.exports));
 })();
-
-// register module.exports =
-// tools:
-// backup: '@nikitajs/tools/lib/backup'
-// compress: '@nikitajs/tools/lib/compress'
-// cron:
-//   add: '@nikitajs/tools/lib/cron/add'
-//   remove: '@nikitajs/tools/lib/cron/remove'
-// extract: '@nikitajs/tools/lib/extract'
-// dconf: '@nikitajs/tools/lib/dconf'
-// rubygems:
-// 'fetch': '@nikitajs/tools/lib/rubygems/fetch'
-// 'install': '@nikitajs/tools/lib/rubygems/install'
-// 'remove': '@nikitajs/tools/lib/rubygems/remove'
-// iptables: '@nikitajs/tools/lib/iptables'
-// git: '@nikitajs/tools/lib/git'
-// repo: '@nikitajs/tools/lib/repo'
-// ssh:
-//   keygen: '@nikitajs/tools/lib/ssh/keygen'
-// sysctl: '@nikitajs/tools/lib/sysctl'
-// npm:
-//   '': '@nikitajs/tools/lib/npm'
-//   uninstall: '@nikitajs/tools/lib/npm/uninstall'
-// apm:
-//   'install': '@nikitajs/tools/lib/apm/install'
-//   'uninstall': '@nikitajs/tools/lib/apm/uninstall'

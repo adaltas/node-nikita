@@ -94,21 +94,21 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({config}, callback) ->
       @log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
       @log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
-      @system.execute
+      @execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
       , (err, data) =>
         return callback err if err
         return callback Error "Service iptables not started" unless data.status
         oldrules = iptables.parse data.stdout
-        newrules = iptables.normalize options.rules
+        newrules = iptables.normalize config.rules
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
         @log message: "#{cmd.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
-        @system.execute
+        @execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap: true
         , (err, data) ->

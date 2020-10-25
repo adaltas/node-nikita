@@ -36,39 +36,39 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({config}) ->
       @log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
       # SSH connection
-      ssh = @ssh options.ssh
-      # Sanitize options
-      options.revision ?= 'HEAD'
+      ssh = @ssh config.ssh
+      # Sanitize config
+      config.revision ?= 'HEAD'
       # Start real work
       repo_exists = false
       repo_uptodate = false
       @call (_, callback) ->
-        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
+        @fs.exists ssh: config.ssh, target: config.target, (err, {exists}) ->
           return callback err if err
           repo_exists = exists
           return callback() unless exists # todo, isolate inside call when they receive conditions
-          # return callback Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
-          gitDir = "#{options.target}/.git"
-          @fs.exists ssh: options.ssh, target: gitDir, (err, {exists}) ->
+          # return callback Error "Destination not a directory, got #{config.target}" unless stat.isDirectory()
+          gitDir = "#{config.target}/.git"
+          @fs.exists ssh: config.ssh, target: gitDir, (err, {exists}) ->
             return callback Error "Not a git repository" unless exists
             callback()
-      @system.execute
-        cmd: "git clone #{options.source} #{options.target}"
-        cwd: path.dirname options.target
+      @execute
+        cmd: "git clone #{config.source} #{config.target}"
+        cwd: path.dirname config.target
         unless: -> repo_exists
-      @system.execute
+      @execute
         cmd: """
         current=`git log --pretty=format:'%H' -n 1`
-        target=`git rev-list --max-count=1 #{options.revision}`
+        target=`git rev-list --max-count=1 #{config.revision}`
         echo "current revision: $current"
         echo "expected revision: $target"
         if [ $current != $target ]; then exit 3; fi
         """
         # stdout: process.stdout
-        cwd: options.target
+        cwd: config.target
         trap: true
         code_skipped: 3
         if: -> repo_exists
@@ -76,9 +76,9 @@ require('nikita')
       , (err, {status}) ->
         throw err if err
         repo_uptodate = status
-      @system.execute
-        cmd: "git checkout #{options.revision}"
-        cwd: options.target
+      @execute
+        cmd: "git checkout #{config.revision}"
+        cwd: config.target
         unless: -> repo_uptodate
 
 ## Dependencies

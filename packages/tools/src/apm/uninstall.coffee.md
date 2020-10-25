@@ -10,12 +10,12 @@ Remove one or more apm packages.
 
 ## Source code
 
-    handler = ({options}) ->
-      options.name = options.argument if options.argument?
-      options.name = [options.name] if typeof options.name is 'string'
-      options.name = options.name.map (pkg) -> pkg.toLowerCase()
+    handler = ({config}) ->
+      config.name = config.argument if config.argument?
+      config.name = [config.name] if typeof config.name is 'string'
+      config.name = config.name.map (pkg) -> pkg.toLowerCase()
       installed = []
-      @system.execute
+      @execute
         shy: true
         cmd: "apm list --installed --json"
       , (err, {stdout}) ->
@@ -24,12 +24,12 @@ Remove one or more apm packages.
         pkgs = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
         installed = pkgs
       @call ->
-        to_uninstall = options.name.filter (pkg) -> pkg in installed
-        @system.execute
-          cmd: "apm uninstall #{options.name.join ' '}"
+        to_uninstall = config.name.filter (pkg) -> pkg in installed
+        @execute
+          cmd: "apm uninstall #{config.name.join ' '}"
           if: to_uninstall.length
         , (err) =>
-          @log message: "APM Uninstalled Packages: #{options.name.join ', '}"
+          @log message: "APM Uninstalled Packages: #{config.name.join ', '}"
 
 ## Exports
 

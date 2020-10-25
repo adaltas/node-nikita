@@ -50,34 +50,30 @@ schema = {
 };
 
 // ## Handler
-handler = function({options}) {
+handler = function({config}) {
   var gems, k, ref, v, version;
-  this.log({
-    message: "Entering rubygem.remove",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/rubygem/remove'
-  });
-  // Global Options
-  if (options.ruby == null) {
-    options.ruby = {};
+  // log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
+  // Global config
+  if (config.ruby == null) {
+    config.ruby = {};
   }
-  ref = options.ruby;
+  ref = config.ruby;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.gem_bin == null) {
-    options.gem_bin = 'gem';
+  if (config.gem_bin == null) {
+    config.gem_bin = 'gem';
   }
-  version = options.version ? `-v ${options.version}` : '-a';
+  version = config.version ? `-v ${config.version}` : '-a';
   gems = null;
-  return this.system.execute({
-    cmd: `${options.gem_bin} list -i ${options.name} || exit 3
-${options.gem_bin} uninstall ${options.name} ${version}`,
+  return this.execute({
+    cmd: `${config.gem_bin} list -i ${config.name} || exit 3
+${config.gem_bin} uninstall ${config.name} ${version}`,
     code_skipped: 3,
-    bash: options.bash
+    bash: config.bash
   });
 };
 
