@@ -1,10 +1,16 @@
 
 nikita = require '../../src'
-schedule = require '../../src/schedule'
+schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.flow', ->
 
   it 'throw error and keep going', ->
+    # Errors inside action doesn't stop
+    # the flow of the parent action,
+    # it is the responsibility of the user
+    # to wait on the action promise,
+    # to catch the error and eventually
+    # to halt the flow execution.
     stack = []
     scheduler = schedule()
     await scheduler.add -> new Promise (resolve) ->
@@ -19,7 +25,10 @@ describe 'scheduler.flow', ->
       stack.push 3
       resolve 3
     new Promise (accept, reject) ->
-      scheduler.on_end accept, reject
+      scheduler.on_end ->
+        stack.should.eql [1, 2, 3]
+        accept()
+      , reject
     .should.be.resolved()
 
   it 'throw error and keep going', ->
@@ -40,3 +49,17 @@ describe 'scheduler.flow', ->
       @call ->
         throw Error 'Catch me'
     .should.be.rejectedWith 'Catch me'
+
+  it.skip 'should validate a created file', ({ssh}) ->
+    try
+      output = await nikita  ->
+        ouptut = await @call ->
+          true
+        @call ->
+          throw Error 'catchme'
+        ouptut
+      console.log 'should not get here'
+      throw Error 'Oh no!'
+    catch err
+      err.message.should.eql 'catchme'
+      console.log 'should get here', err.message

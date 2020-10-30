@@ -1,6 +1,6 @@
 
 nikita = require '../../src'
-schedule = require '../../src/schedule'
+schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.schedule', ->
 

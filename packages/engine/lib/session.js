@@ -5,7 +5,7 @@ var contextualize, error, merge, normalize, plugins, registry, run, schedule, se
 
 registry = require('./registry');
 
-schedule = require('./schedule');
+schedule = require('./schedulers/native');
 
 plugins = require('./plugins');
 
