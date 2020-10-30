@@ -1,7 +1,7 @@
 
 {merge} = require 'mixme'
 registry = require './registry'
-schedule = require './schedule'
+schedule = require './schedulers/native'
 plugins = require './plugins'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'

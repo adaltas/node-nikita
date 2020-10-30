@@ -1,5 +1,5 @@
 
-error = require './utils/error'
+error = require '../utils/error'
 
 module.exports = ->
   stack = []
