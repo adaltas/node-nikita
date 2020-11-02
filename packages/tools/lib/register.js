@@ -2,27 +2,30 @@
 // registration of `nikita.tools` actions
 var registry;
 
+require('@nikitajs/file/lib/register');
+
 registry = require('@nikitajs/engine/lib/registry');
 
 module.exports = {
   tools: {
     // apm:
+    //   'installed': '@nikitajs/tools/lib/apm/installed'
     //   'install': '@nikitajs/tools/lib/apm/install'
     //   'uninstall': '@nikitajs/tools/lib/apm/uninstall'
-    // backup: '@nikitajs/tools/lib/backup'
-    // compress: '@nikitajs/tools/lib/compress'
+    backup: '@nikitajs/tools/lib/backup',
+    compress: '@nikitajs/tools/lib/compress',
     // cron:
     //   add: '@nikitajs/tools/lib/cron/add'
     //   remove: '@nikitajs/tools/lib/cron/remove'
-    // extract: '@nikitajs/tools/lib/extract'
-    // dconf: '@nikitajs/tools/lib/dconf'
+    extract: '@nikitajs/tools/lib/extract',
+    dconf: '@nikitajs/tools/lib/dconf',
     // iptables: '@nikitajs/tools/lib/iptables'
-    // git: '@nikitajs/tools/lib/git'
+    git: '@nikitajs/tools/lib/git',
     npm: {
       '': '@nikitajs/tools/lib/npm',
       uninstall: '@nikitajs/tools/lib/npm/uninstall'
     },
-    // repo: '@nikitajs/tools/lib/repo'
+    repo: '@nikitajs/tools/lib/repo',
     rubygems: {
       'fetch': '@nikitajs/tools/lib/rubygems/fetch',
       'install': '@nikitajs/tools/lib/rubygems/install',

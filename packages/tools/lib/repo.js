@@ -3,29 +3,6 @@
 
 // Setup packet manager repository. Only support yum for now.
 
-// ## Options
-
-// * `source` (string)   
-//   The source file(s) containing the repository(ies)   
-// * `local` (boolean)   
-//   Treat the source as local instead of remote, only apply with "ssh"
-//   option.   
-// * `content`   
-//   Content to write inside the file. can not be used with source.   
-// * `clean` (string)   
-//   Globing expression used to match replaced files, path will resolve to
-//   '/etc/yum.repos.d' if relative.   
-// * `gpg_dir` (string)   
-//   Directory storing GPG keys.   
-// * `target` (string)   
-//   Path of the repository definition file, relative to '/etc/yum.repos.d'.
-// * `update` (boolean)   
-//   Run yum update enabling only the ids present in repo file. Default to false.   
-// * `verify`   
-//   Download the PGP keys if it's enabled in the repo file, keys are by default
-//   placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option and the 
-//   filename is derivated from the url.   
-
 // ## Example
 
 // ```js
@@ -38,195 +15,187 @@
 // });
 // ```
 
-// ## Source Code
-var misc, path, string, url;
+// ## Schema
+var handler, schema, utils;
 
-module.exports = function({options}) {
-  var keys, remote_files, repoids, ssh;
-  this.log({
-    message: "Entering tools.repo",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/repo'
-  });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  if (options.source && options.content) {
-    // Options
+schema = {
+  type: 'object',
+  properties: {
+    'source': {
+      type: 'string',
+      description: `The source file containing the repository`
+    },
+    'content': {
+      type: 'string',
+      description: `Content to write inside the file. can not be used with source.`
+    },
+    'clean': {
+      type: 'string',
+      description: `Globing expression used to match replaced files, path will resolve to
+'/etc/yum.repos.d' if relative.`
+    },
+    'gpg_dir': {
+      type: 'string',
+      default: '/etc/pki/rpm-gpg',
+      description: `Directory storing GPG keys.`
+    },
+    'target': {
+      type: 'string',
+      description: `Path of the repository definition file, relative to '/etc/yum.repos.d'.`
+    },
+    'update': {
+      type: 'boolean',
+      default: false,
+      description: `Run yum update enabling only the ids present in repo file. Default to false.`
+    },
+    'verify': {
+      type: 'boolean',
+      default: 'true',
+      description: `Download the PGP keys if it's enabled in the repo file, keys are by default
+placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option and the 
+filename is derivated from the url.`
+    }
+  },
+  required: ['target']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    tools: {log, path, status}
+  }) {
+  var data, file, files, i, key, keys, len, name, remote_files, repoids, section;
+  if (config.source && config.content) {
     throw Error("Can not specify source and content");
   }
-  if (!(options.source || options.content)) {
+  if (!(config.source || config.content)) {
     throw Error("Missing source or content: ");
   }
-  if (options.source != null) {
+  if (config.source != null) {
     // TODO wdavidw 180115, target should be mandatory and not default to the source filename
-    if (options.target == null) {
-      options.target = path.resolve("/etc/yum.repos.d", path.basename(options.source));
+    if (config.target == null) {
+      config.target = path.resolve("/etc/yum.repos.d", path.basename(config.source));
     }
   }
-  if (options.target == null) {
-    throw Error("Missing target");
-  }
-  options.target = path.posix.resolve('/etc/yum.repos.d', options.target);
-  if (options.verify == null) {
-    options.verify = true;
-  }
-  if (options.clean && typeof options.clean !== 'string') {
-    throw Error("Invalid Option: option 'clean' must be a 'string'");
-  }
-  if (options.clean) {
-    options.clean = path.resolve('/etc/yum.repos.d', options.clean);
-  }
-  if (options.update == null) {
-    options.update = false;
-  }
-  if (options.gpg_dir == null) {
-    options.gpg_dir = '/etc/pki/rpm-gpg';
+  config.target = path.resolve('/etc/yum.repos.d', config.target);
+  if (config.clean) {
+    config.clean = path.resolve('/etc/yum.repos.d', config.clean);
   }
   remote_files = [];
   repoids = [];
   // Delete
-  this.call({
-    if: options.clean
-  }, function(_, callback) {
-    this.log({
+  if (config.clean) {
+    log({
       message: "Searching repositories inside \"/etc/yum.repos.d/\"",
       level: 'DEBUG',
       module: 'nikita/lib/tools/repo'
     });
-    return this.file.glob(options.clean, function(err, {files}) {
-      var file;
-      if (err) {
-        return callback(err);
-      }
-      remote_files = (function() {
-        var i, len, results;
-        results = [];
-        for (i = 0, len = files.length; i < len; i++) {
-          file = files[i];
-          if (file === options.target) {
-            continue;
-          }
-          results.push(file);
+    ({files} = (await this.fs.glob(config.clean)));
+    remote_files = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = files.length; i < len; i++) {
+        file = files[i];
+        if (file === config.target) {
+          continue;
         }
-        return results;
-      })();
-      return callback();
-    });
-  });
-  this.call(function() {
-    return this.system.remove(remote_files);
-  });
+        results.push(file);
+      }
+      return results;
+    })();
+  }
+  this.fs.remove(remote_files);
   // Download source
   this.file.download({
-    if: options.source != null,
-    source: options.source,
-    target: options.target,
-    headers: options.headers,
-    md5: options.md5,
-    proxy: options.proxy,
-    location: options.location,
+    if: config.source != null,
+    source: config.source,
+    target: config.target,
+    headers: config.headers,
+    md5: config.md5,
+    proxy: config.proxy,
+    location: config.location,
     cache: false
   });
   // Write
   this.file.types.yum_repo({
-    if: options.content != null,
-    content: options.content,
-    mode: options.mode,
-    uid: options.uid,
-    gid: options.gid,
-    target: options.target
+    if: config.content != null,
+    content: config.content,
+    mode: config.mode,
+    uid: config.uid,
+    gid: config.gid,
+    target: config.target
   });
   // Parse the definition file
   keys = [];
-  this.call(function() {
-    this.log(`Read GPG keys from ${options.target}`, {
-      level: 'DEBUG',
-      module: 'nikita/lib/tools/repo'
-    });
-    return this.fs.readFile({
-      target: options.target,
-      encoding: 'utf8'
-    }, (err, {data}) => {
-      var name, section;
-      if (err) {
-        throw err;
-      }
-      data = misc.ini.parse_multi_brackets(data);
-      return keys = (function() {
-        var results;
-        results = [];
-        for (name in data) {
-          section = data[name];
-          repoids.push(name);
-          if (section.gpgcheck !== '1') {
-            continue;
-          }
-          if (section.gpgkey == null) {
-            throw Error('Missing gpgkey');
-          }
-          if (!/^http(s)??:\/\//.test(section.gpgkey)) {
-            continue;
-          }
-          results.push(section.gpgkey);
-        }
-        return results;
-      })();
-    });
+  log(`Read GPG keys from ${config.target}`, {
+    level: 'DEBUG',
+    module: 'nikita/lib/tools/repo'
   });
-  // Download GPG Keys
-  this.call({
-    if: options.verify
-  }, function() {
-    var i, key, len, results;
+  ({data} = (await this.fs.base.readFile({
+    target: config.target,
+    encoding: 'utf8'
+  })));
+  data = utils.ini.parse_multi_brackets(data);
+  keys = (function() {
+    var results;
     results = [];
+    for (name in data) {
+      section = data[name];
+      repoids.push(name);
+      if (section.gpgcheck !== '1') {
+        continue;
+      }
+      if (section.gpgkey == null) {
+        throw Error('Missing gpgkey');
+      }
+      if (!/^http(s)??:\/\//.test(section.gpgkey)) {
+        continue;
+      }
+      results.push(section.gpgkey);
+    }
+    return results;
+  })();
+  // Download GPG Keys
+  if (config.verify) {
     for (i = 0, len = keys.length; i < len; i++) {
       key = keys[i];
-      this.log(`Downloading GPG keys from ${key}`, {
+      log(`Downloading GPG keys from ${key}`, {
         level: 'DEBUG',
         module: 'nikita/lib/tools/repo'
       });
-      this.file.download({
+      ({status} = (await this.file.download({
         source: key,
-        target: `${options.gpg_dir}/${path.basename(key)}`
+        target: `${config.gpg_dir}/${path.basename(key)}`
+      })));
+      await this.execute({
+        if: status,
+        cmd: `rpm --import ${config.gpg_dir}/${path.basename(key)}`
       });
-      results.push(this.system.execute({
-        if: function() {
-          return this.status(-1);
-        },
-        cmd: `rpm --import ${options.gpg_dir}/${path.basename(key)}`
-      }));
     }
-    return results;
-  });
+  }
   // Clean Metadata
-  this.system.execute({
-    if: function() {
-      return path.relative('/etc/yum.repos.d', options.target) !== '..' && this.status();
-    },
+  await this.execute({
+    if: path.relative('/etc/yum.repos.d', config.target) !== '..' && status(),
     // wdavidw: 180114, was "yum clean metadata", ensure an appropriate
     // explanation is provided in case of revert.
     // expire-cache is much faster,  It forces yum to go redownload the small
     // repo files only, then if there's newer repo data, it will downloaded it.
     cmd: 'yum clean expire-cache; yum repolist -y'
   });
-  return this.call({
-    if: function() {
-      return options.update && this.status();
-    }
-  }, function() {
-    return this.system.execute({
+  if (config.update && status()) {
+    return this.execute({
       cmd: `yum update -y --disablerepo=* --enablerepo='${repoids.join(',')}'
 yum repolist`,
       trap: true
     });
-  });
+  }
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies
-path = require('path');
-
-misc = require('@nikitajs/core/lib/misc');
-
-string = require('@nikitajs/core/lib/misc/string');
-
-url = require('url');
+utils = require('@nikitajs/file/lib/utils');

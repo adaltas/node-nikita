@@ -16,20 +16,20 @@ module.exports =
     #   add: '@nikitajs/tools/src/cron/add'
     #   remove: '@nikitajs/tools/src/cron/remove'
     extract: '@nikitajs/tools/src/extract'
-    # dconf: '@nikitajs/tools/lib/dconf'
+    dconf: '@nikitajs/tools/lib/dconf'
     # iptables: '@nikitajs/tools/src/iptables'
-    # git: '@nikitajs/tools/src/git'
+    git: '@nikitajs/tools/src/git'
     npm:
       '': '@nikitajs/tools/src/npm'
       uninstall: '@nikitajs/tools/src/npm/uninstall'
-    # repo: '@nikitajs/tools/src/repo'
+    repo: '@nikitajs/tools/src/repo'
     rubygems:
       'fetch': '@nikitajs/tools/src/rubygems/fetch'
       'install': '@nikitajs/tools/src/rubygems/install'
       'remove': '@nikitajs/tools/src/rubygems/remove'
     ssh:
       keygen: '@nikitajs/tools/src/ssh/keygen'
-    # sysctl: '@nikitajs/tools/src/sysctl'
+    sysctl: '@nikitajs/tools/src/sysctl'
 (->
   await registry.register module.exports
 )()

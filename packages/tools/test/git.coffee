@@ -7,53 +7,57 @@ return unless tags.posix
 
 describe 'tools.git', ->
 
-  beforeEach ->
-    nikita
-    .tools.extract
-      source: "#{__dirname}/resources/repo.git.zip"
-      target: "#{tmpdir}"
-
   they 'clones repo into new dir', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @tools.extract
+        source: "#{__dirname}/resources/repo.git.zip"
+        target: "#{tmpdir}"
+      {status} = await @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
       status.should.be.true()
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-    , (err, {status}) ->
+      {status} = await @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
       status.should.be.false()
 
   they 'honores revision', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-      revision: 'v0.0.1'
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @tools.extract
+        source: "#{__dirname}/resources/repo.git.zip"
+        target: "#{tmpdir}"
+      @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
+      {status} = await @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
+        revision: 'v0.0.1'
       status.should.be.true()
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-      revision: 'v0.0.1'
-    , (err, {status}) ->
+      {status} = await @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
+        revision: 'v0.0.1'
       status.should.be.false()
 
   they 'preserves existing directory', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.mkdir
-      target: "#{tmpdir}/my_repo"
-    .tools.git
-      source: "#{tmpdir}/repo.git"
-      target: "#{tmpdir}/my_repo"
-      relax: true
-    , (err) ->
-      err.message.should.eql 'Not a git repository'
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @tools.extract
+        source: "#{__dirname}/resources/repo.git.zip"
+        target: "#{tmpdir}"
+      @fs.mkdir
+        target: "#{tmpdir}/my_repo"
+      @tools.git
+        source: "#{tmpdir}/repo.git"
+        target: "#{tmpdir}/my_repo"
+      .should.be.rejectedWith
+        message: 'Not a git repository'

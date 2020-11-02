@@ -5,7 +5,7 @@
 
 // Target file will be overwritten by default, use the `merge` option to preserve existing variables.
 
-// Comments will be preserved if the `comments` and `merge` options are enabled.
+// Comments will be preserved if the `comments` and `merge` config are enabled.
 
 // ## Options
 
@@ -55,11 +55,22 @@
   // });
   // ```
 
-// ## Source Code
-var string,
+// ## Schema
+var handler, schema, string,
   indexOf = [].indexOf;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}) {
   var current, final;
   this.log({
     message: "Entering sysctl",
@@ -67,11 +78,11 @@ module.exports = function({options}) {
     module: 'nikita/lib/tools/sysctl'
   });
   // Options
-  if (options.load == null) {
-    options.load = true;
+  if (config.load == null) {
+    config.load = true;
   }
-  if (options.target == null) {
-    options.target = '/etc/sysctl.conf';
+  if (config.target == null) {
+    config.target = '/etc/sysctl.conf';
   }
   // Read current properties
   current = {};
@@ -79,13 +90,13 @@ module.exports = function({options}) {
     var status;
     status = false;
     this.log({
-      message: `Read target: ${options.target}`,
+      message: `Read target: ${config.target}`,
       level: 'DEBUG',
       module: 'nikita/lib/tools/sysctl'
     });
     return this.fs.readFile({
-      ssh: options.ssh,
-      target: options.target,
+      ssh: config.ssh,
+      target: config.target,
       encoding: 'ascii'
     }, (err, {data}) => {
       var i, key, len, line, ref, value;
@@ -100,7 +111,7 @@ module.exports = function({options}) {
         line = ref[i];
         // Preserve comments
         if (/^#/.test(line)) {
-          if (options.comment) {
+          if (config.comment) {
             current[line] = null;
           }
           continue;
@@ -114,7 +125,7 @@ module.exports = function({options}) {
         key = key.trim();
         value = value.trim();
         // Skip property
-        if (indexOf.call(options.properties, key) >= 0 && (options.properties[key] == null)) {
+        if (indexOf.call(config.properties, key) >= 0 && (config.properties[key] == null)) {
           this.log(`Removing Property: ${key}, was ${value}`, {
             level: 'INFO',
             module: 'nikita/lib/tools/sysctl'
@@ -132,14 +143,14 @@ module.exports = function({options}) {
   final = {};
   this.call(function(_, callback) {
     var k, key, ref, status, v, value;
-    if (options.merge) {
+    if (config.merge) {
       for (k in current) {
         v = current[k];
         final[k] = v;
       }
     }
     status = false;
-    ref = options.properties;
+    ref = config.properties;
     for (key in ref) {
       value = ref[key];
       if (value == null) {
@@ -167,8 +178,8 @@ module.exports = function({options}) {
   }, function() {
     var key, value;
     return this.file({
-      target: options.target,
-      backup: options.backup,
+      target: config.target,
+      backup: config.backup,
       content: ((function() {
         var results;
         results = [];
@@ -184,15 +195,21 @@ module.exports = function({options}) {
       })()).join('\n')
     });
   });
-  return this.system.execute({
+  return this.execute({
     if: [
-      options.load,
+      config.load,
       function() {
         return this.status();
       }
     ],
-    cmd: `sysctl -p ${options.target}`
+    cmd: `sysctl -p ${config.target}`
   });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

@@ -40,24 +40,35 @@
 // });
 // ```
 
-// ## Source Code
-var diff, regexp, string, util;
+// ## Schema
+var diff, handler, regexp, schema, string, util;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}, callback) {
   var crontab, jobs;
-  if (!(options.when && typeof options.when === 'string')) {
+  if (!(config.when && typeof config.when === 'string')) {
     return callback(Error('valid when is required'));
   }
-  if (!options.cmd) {
+  if (!config.cmd) {
     return callback(Error('valid cmd is required'));
   }
-  if (options.user != null) {
+  if (config.user != null) {
     this.log({
-      message: `Using user ${options.user}`,
+      message: `Using user ${config.user}`,
       level: 'DEBUG',
       module: 'nikita/cron/add'
     });
-    crontab = `crontab -u ${options.user}`;
+    crontab = `crontab -u ${config.user}`;
   } else {
     this.log({
       message: "Using default user",
@@ -67,7 +78,7 @@ module.exports = function({options}, callback) {
     crontab = "crontab";
   }
   jobs = null;
-  return this.system.execute({
+  return this.execute({
     cmd: `${crontab} -l`,
     code: [0, 1]
   }, function(err, {stdout, stderr}) {
@@ -76,15 +87,15 @@ module.exports = function({options}, callback) {
       throw err;
     }
     // throw Error 'User crontab not found' if /^no crontab for/.test stderr
-    new_job = `${options.when} ${options.cmd}`;
+    new_job = `${config.when} ${config.cmd}`;
     // remove useless last element
     regex = (function() {
-      if (!options.match) {
-        return new RegExp(`.* ${regexp.escape(options.cmd)}`);
-      } else if (typeof options.match === 'string') {
-        return new RegExp(options.match);
-      } else if (util.isRegExp(options.match)) {
-        return options.match;
+      if (!config.match) {
+        return new RegExp(`.* ${regexp.escape(config.cmd)}`);
+      } else if (typeof config.match === 'string') {
+        return new RegExp(config.match);
+      } else if (util.isRegExp(config.match)) {
+        return config.match;
       } else {
         throw Error("Invalid option 'match'");
       }
@@ -106,7 +117,7 @@ module.exports = function({options}, callback) {
             level: 'WARN',
             module: 'nikita/cron/add'
           });
-          diff(job, new_job, options);
+          diff(job, new_job, config);
           job = new_job;
           modified = true;
         }
@@ -132,16 +143,22 @@ module.exports = function({options}, callback) {
     if (!jobs) {
       return callback();
     }
-    this.system.execute({
-      cmd: options.user != null ? `su -l ${options.user} -c '${options.cmd}'` : options.cmd,
-      if: options.exec
+    this.execute({
+      cmd: config.user != null ? `su -l ${config.user} -c '${config.cmd}'` : config.cmd,
+      if: config.exec
     });
-    return this.system.execute({
+    return this.execute({
       cmd: `${crontab} - <<EOF
 ${jobs.join('\n')}
 EOF`
     }).next(callback);
   });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

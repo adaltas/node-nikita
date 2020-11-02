@@ -14,7 +14,19 @@ const {status} = await nikita.tools.gsettings({
 console.log(`Property modified: ${status}`)
 ```
 
-    module.exports = ({config}) ->
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
+
+    handler = ({config}) ->
       config.properties = config.argument if config.argument?
       config.properties ?= {}
       for path, properties of config.properties
@@ -23,3 +35,9 @@ console.log(`Property modified: ${status}`)
           gsettings get #{path} #{key} | grep -x "#{value}" && exit 3
           gsettings set #{path} #{key} "#{value}"
           """, code_skipped: 3
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema

@@ -5,23 +5,6 @@
 // specified as an option, format is derived from the source extension. At the
 // moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'.
 
-// ## Options
-
-// * `creates`   
-//   Ensure the given file is created or an error is send in the callback.  
-// * `format`   
-//   One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
-// * `preserve_owner`   
-//   Preserve ownership when extracting. True by default if runned as root, else false.   
-// * `preserve_permissions`   
-//   Preserve permissions when extracting. True by default if runned as root, else false.   
-// * `source`   
-//   Archive to decompress.   
-// * `strip`   
-//   Remove the specified number of leading path elements. Apply only to tar(s) formats.   
-// * `target`   
-//   Default to the source parent directory.   
-
 // ## Callback parameters
 
 // * `err`   
@@ -40,128 +23,144 @@
 // });
 // ```
 
-// ## Source Code
-var misc, path;
+// ## Hooks
+var handler, on_action, schema, utils;
 
-module.exports = function({options}, callback) {
-  var creates, ext, extract, format, ref, ssh, stat, success, tar_opts, target;
-  this.log({
-    message: "Entering extract",
+on_action = function({config}) {
+  if (config.preserve_permissions != null) {
+    config.preserve_mode = config.preserve_permissions;
+    return console.warn('Deprecated property: "preserve_permissions" is renamed "preserve_mode"');
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'creates': {
+      type: 'string',
+      description: `Ensure the given file is created or an error is send in the callback.`
+    },
+    'format': {
+      type: 'string',
+      description: `One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.`
+    },
+    'preserve_owner': {
+      type: 'boolean',
+      description: `Preserve ownership when extracting. True by default if runned as root, else false.`
+    },
+    'preserve_mode': {
+      type: 'boolean',
+      description: `Preserve permissions when extracting. True by default if runned as root, else false.`
+    },
+    'source': {
+      type: 'string',
+      description: `Archive to decompress.`
+    },
+    'strip': {
+      type: 'number',
+      description: `Remove the specified number of leading path elements. Apply only to tar(s) formats.`
+    },
+    'target': {
+      type: 'string',
+      description: `Default to the source parent directory.`
+    }
+  },
+  required: ['source']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    tools: {log, path}
+  }) {
+  var cmd, ext, format, ouptut, ref, stats, tar_opts, target;
+  // Validate config
+  target = (ref = config.target) != null ? ref : path.dirname(config.source);
+  tar_opts = [];
+  // If undefined, we do not apply flag. Default behaviour depends on the user
+  if (config.preserve_owner === true) {
+    tar_opts.push('--same-owner');
+  } else if (config.preserve_owner === false) {
+    tar_opts.push('--no-same-owner');
+  }
+  if (config.preserve_mode === true) {
+    tar_opts.push('-p');
+  } else if (config.preserve_mode === false) {
+    tar_opts.push('--no-same-permissions');
+  }
+  if (typeof config.strip === 'number') {
+    tar_opts.push(`--strip-components ${config.strip}`);
+  }
+  // Deal with format option
+  if (config.format != null) {
+    format = config.format;
+  } else {
+    if (/\.(tar\.gz|tgz)$/.test(config.source)) {
+      format = 'tgz';
+    } else if (/\.tar$/.test(config.source)) {
+      format = 'tar';
+    } else if (/\.zip$/.test(config.source)) {
+      format = 'zip';
+    } else if (/\.tar\.bz2$/.test(config.source)) {
+      format = 'bz2';
+    } else if (/\.tar\.xz$/.test(config.source)) {
+      format = 'xz';
+    } else {
+      ext = path.extname(config.source);
+      throw Error(`Unsupported extension, got ${JSON.stringify(ext)}`);
+    }
+  }
+  // Stat the source file
+  ({stats} = (await this.fs.base.stat({
+    target: config.source
+  })));
+  if (!utils.stats.isFile(stats.mode)) {
+    throw Error(`Not a File: ${config.source}`);
+  }
+  // Extract the source archive
+  cmd = null;
+  log({
+    message: `Format is ${format}`,
     level: 'DEBUG',
     module: 'nikita/lib/tools/extract'
   });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  if (!options.source) {
-    // Validate options
-    return callback(Error(`Missing source: ${options.source}`));
+  switch (format) {
+    case 'tgz':
+      cmd = `tar xzf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      break;
+    case 'tar':
+      cmd = `tar xf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      break;
+    case 'bz2':
+      cmd = `tar xjf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      break;
+    case 'xz':
+      cmd = `tar xJf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      break;
+    case 'zip':
+      cmd = `unzip -u ${config.source} -d ${target}`;
   }
-  target = (ref = options.target) != null ? ref : path.dirname(options.source);
-  tar_opts = [];
-  // If undefined, we do not apply flag. Default behaviour depends on the user
-  if (options.preserve_owner === true) {
-    tar_opts.push('--same-owner');
-  } else if (options.preserve_owner === false) {
-    tar_opts.push('--no-same-owner');
-  }
-  if (options.preserve_permissions === true) {
-    tar_opts.push('-p');
-  } else if (options.preserve_permissions === false) {
-    tar_opts.push('--no-same-permissions');
-  }
-  if (typeof options.strip === 'number') {
-    tar_opts.push(`--strip-components ${options.strip}`);
-  }
-  // Deal with format option
-  if (options.format != null) {
-    format = options.format;
-  } else {
-    if (/\.(tar\.gz|tgz)$/.test(options.source)) {
-      format = 'tgz';
-    } else if (/\.tar$/.test(options.source)) {
-      format = 'tar';
-    } else if (/\.zip$/.test(options.source)) {
-      format = 'zip';
-    } else if (/\.tar\.bz2$/.test(options.source)) {
-      format = 'bz2';
-    } else if (/\.tar\.xz$/.test(options.source)) {
-      format = 'xz';
-    } else {
-      ext = path.extname(options.source);
-      return callback(Error(`Unsupported extension, got ${JSON.stringify(ext)}`));
-    }
-  }
-  // Start real work
-  stat = () => {
-    return this.fs.stat({
-      ssh: options.ssh,
-      target: options.source
-    }, function(err, {stats}) {
-      if (err) {
-        return callback(Error(`File does not exist: ${options.source}`));
-      }
-      if (!misc.stats.isFile(stats.mode)) {
-        return callback(Error(`Not a File: ${options.source}`));
-      }
-      return extract();
+  ouptut = (await this.execute({
+    cmd: cmd
+  }));
+  // Assert the target creation
+  if (config.creates) {
+    await this.fs.assert({
+      target: config.creates
     });
-  };
-  extract = () => {
-    var cmd;
-    cmd = null;
-    this.log({
-      message: `Format is ${format}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/tools/extract'
-    });
-    switch (format) {
-      case 'tgz':
-        cmd = `tar xzf ${options.source} -C ${target} ${tar_opts.join(' ')}`;
-        break;
-      case 'tar':
-        cmd = `tar xf ${options.source} -C ${target} ${tar_opts.join(' ')}`;
-        break;
-      case 'bz2':
-        cmd = `tar xjf ${options.source} -C ${target} ${tar_opts.join(' ')}`;
-        break;
-      case 'xz':
-        cmd = `tar xJf ${options.source} -C ${target} ${tar_opts.join(' ')}`;
-        break;
-      case 'zip':
-        cmd = `unzip -u ${options.source} -d ${target}`;
-    }
-    return this.system.execute({
-      cmd: cmd
-    }, function(err, created) {
-      if (err) {
-        return callback(err);
-      }
-      return creates();
-    });
-  };
-  // Step for `creates`
-  creates = () => {
-    if (options.creates == null) {
-      return success();
-    }
-    return this.fs.exists({
-      ssh: options.ssh,
-      target: options.creates
-    }, function(err, {exists}) {
-      if (!exists) {
-        return callback(Error(`Failed to create '${path.basename(options.creates)}'`));
-      }
-      return success();
-    });
-  };
-  // Final step
-  success = function() {
-    return callback(null, true);
-  };
-  return stat();
+  }
+  return ouptut;
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  schema: schema
 };
 
 // ## Dependencies
-path = require('path');
-
-misc = require('@nikitajs/core/lib/misc');
+utils = require('@nikitajs/engine/lib/utils');

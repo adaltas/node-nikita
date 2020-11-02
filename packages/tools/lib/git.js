@@ -34,85 +34,80 @@
 // });
 // ```
 
-// ## Source Code
-var path;
+// ## Schema
+var handler, path, schema;
 
-module.exports = function({options}) {
-  var repo_exists, repo_uptodate, ssh;
-  this.log({
-    message: "Entering git",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/git'
-  });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  // Sanitize options
-  if (options.revision == null) {
-    options.revision = 'HEAD';
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = async function({config}) {
+  var gitDir, is_git, repo_exists, repo_uptodate;
+  // Sanitize config
+  if (config.revision == null) {
+    config.revision = 'HEAD';
   }
   // Start real work
-  repo_exists = false;
   repo_uptodate = false;
-  this.call(function(_, callback) {
-    return this.fs.exists({
-      ssh: options.ssh,
-      target: options.target
-    }, function(err, {exists}) {
-      var gitDir;
-      if (err) {
-        return callback(err);
-      }
-      repo_exists = exists;
-      if (!exists) { // todo, isolate inside call when they receive conditions
-        return callback();
-      }
-      // return callback Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
-      gitDir = `${options.target}/.git`;
-      return this.fs.exists({
-        ssh: options.ssh,
-        target: gitDir
-      }, function(err, {exists}) {
-        if (!exists) {
-          return callback(Error("Not a git repository"));
-        }
-        return callback();
-      });
-    });
-  });
-  this.system.execute({
-    cmd: `git clone ${options.source} ${options.target}`,
-    cwd: path.dirname(options.target),
-    unless: function() {
-      return repo_exists;
+  ({
+    exists: repo_exists
+  } = (await this.fs.base.exists({
+    target: config.target
+  })));
+  if (repo_exists) {
+    // return callback Error "Destination not a directory, got #{config.target}" unless stat.isDirectory()
+    gitDir = `${config.target}/.git`;
+    ({
+      exists: is_git
+    } = (await this.fs.base.exists({
+      ssh: config.ssh,
+      target: gitDir
+    })));
+    if (!is_git) {
+      throw Error("Not a git repository");
     }
-  });
-  this.system.execute({
+  } else {
+    this.execute({
+      cmd: `git clone ${config.source} ${config.target}`,
+      cwd: path.dirname(config.target)
+    });
+  }
+  ({
+    status: repo_uptodate
+  } = (await this.execute({
     cmd: `current=\`git log --pretty=format:'%H' -n 1\`
-target=\`git rev-list --max-count=1 ${options.revision}\`
+target=\`git rev-list --max-count=1 ${config.revision}\`
 echo "current revision: $current"
 echo "expected revision: $target"
 if [ $current != $target ]; then exit 3; fi`,
     // stdout: process.stdout
-    cwd: options.target,
+    cwd: config.target,
     trap: true,
     code_skipped: 3,
     if: function() {
       return repo_exists;
     },
     shy: true
-  }, function(err, {status}) {
-    if (err) {
-      throw err;
-    }
-    return repo_uptodate = status;
-  });
-  return this.system.execute({
-    cmd: `git checkout ${options.revision}`,
-    cwd: options.target,
-    unless: function() {
-      return repo_uptodate;
-    }
-  });
+  })));
+  if (!repo_uptodate) {
+    return this.execute({
+      cmd: `git checkout ${config.revision}`,
+      cwd: config.target
+    });
+  }
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

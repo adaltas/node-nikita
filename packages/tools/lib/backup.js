@@ -3,26 +3,6 @@
 
 // Backup a file, a directory or the output of a command.
 
-// ## Options
-
-// * `name` (string)   
-//   Backup file name, required.   
-// * `cmd` (string)      
-//   Command from which to pipe the ouptut or generating a file if the "target" 
-//   option is defined.   
-// * `format` (string)   
-//   Format used to name the backup directory, used by [Moment.js], default to 
-//   "ISO-8601".   
-// * `locale` (string)   
-//   Locale used to name the backup directory, used by [Moment.js], default to 
-//   UTC.   
-// * `compress`   
-//   One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a directory otherwise no compression.   
-// * `source` (string)   
-//   Path to a file or a directory to backup.   
-// * `target` (string)
-//   Directory storing the backup, required.
-
 // ## Callback parameters
 
 // * `err` (Error)   
@@ -54,87 +34,145 @@
 // });
 // ```
 
-// ## Source code
-var moment, path;
+// ## Schema
+var dayjs, handler, schema;
 
-module.exports = function({options}, callback) {
-  var compress, filename, m, target;
-  this.log({
-    message: "Entering backup",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/backup'
-  });
-  if (!options.target) {
-    throw Error('Missing option: "target"');
+schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      description: `Backup file name, required.`
+    },
+    cmd: {
+      type: 'string',
+      description: `Command from which to pipe the ouptut or generating a file if the
+"target" option is defined.`
+    },
+    format: {
+      type: 'string',
+      description: `Format used to name the backup directory, used by [Moment.js], default
+to "ISO-8601".`
+    },
+    locale: {
+      type: 'string',
+      description: `Locale used to name the backup directory, used by [Moment.js], default
+to  UTC.`
+    },
+    compress: {
+      oneOf: [
+        {
+          $ref: 'module://@nikitajs/tools/src/compress#/properties/format'
+        },
+        {
+          type: 'boolean'
+        }
+      ],
+      description: `One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a
+directory otherwise no compression.`
+    },
+    source: {
+      oneOf: [
+        {
+          type: 'boolean'
+        },
+        {
+          type: 'string'
+        }
+      ],
+      description: `Path to a file or a directory to backup.`
+    },
+    target: {
+      type: 'string',
+      description: `Directory storing the backup, required.`
+    },
+    timezone: {
+      type: 'string',
+      default: 'UTC',
+      description: `The time zone to use. The only value implementations must recognize is
+"UTC"; the default is the runtime's default time zone. Implementations
+may also recognize the time zone names of the [IANA time zone
+database](https://www.iana.org/time-zones), such as "Asia/Shanghai",
+"Asia/Kolkata", "America/New_York".`
+    }
+  },
+  required: ['name', 'target']
+};
+
+// # Handler
+handler = function({
+    config,
+    tools: {log, path}
+  }) {
+  var compress, filename, target;
+  filename = dayjs();
+  if (config.local) {
+    filename = filename.locale(config.locale);
   }
-  if (!options.name) {
-    throw Error('Missing option: "name"');
-  }
-  m = moment();
-  if (options.locale) {
-    m.locale(options.locale);
+  if (config.timezone) {
+    filename = filename.tz(config.timezone);
   } else {
-    m.utc();
+    filename = filename.utc();
   }
-  filename = m.format(options.format);
-  target = `${options.target}/${options.name}/${filename}`;
-  compress = options.compress;
-  if (compress === true || !compress) {
-    compress = 'tgz';
+  if (config.format) {
+    filename = filename.format(config.format);
+  } else {
+    filename = filename.toISOString();
   }
-  this.log({
-    message: `Source is ${JSON.stringify(options.source)}`,
+  compress = config.compress === true ? 'tgz' : config.compress;
+  if (compress) {
+    filename = `${filename}.${compress}`;
+  }
+  target = `${config.target}/${config.name}/${filename}`;
+  log({
+    message: `Source is ${JSON.stringify(config.source)}`,
     level: 'INFO',
     module: 'nikita/lib/tools/backup'
   });
-  this.log({
+  log({
     message: `Target is ${JSON.stringify(target)}`,
     level: 'INFO',
     module: 'nikita/lib/tools/backup'
   });
-  this.system.mkdir(`${path.dirname(target)}`);
-  this.call({
-    if: options.source
-  }, function() {
-    this.system.copy({
-      if: options.source,
-      // if_exec: "[ -f #{options.source} ]"
-      unless: options.compress,
-      target: `${target}`,
-      source: `${options.source}`
+  this.fs.mkdir(`${path.dirname(target)}`);
+  if (config.source && !config.compress) {
+    this.fs.copy({
+      source: `${config.source}`,
+      target: `${target}`
     });
-    return this.tools.compress({
-      source: `${options.source}`,
-      target: `${target}.${compress}`,
+  }
+  if (config.source && config.compress) {
+    this.tools.compress({
       format: `${compress}`,
-      if: function() {
-        return options.compress;
-      }
-    }, function(err) {
-      if (!err) {
-        throw err;
-      }
-      return filename = `${filename}.tgz`;
+      source: `${config.source}`,
+      target: `${target}`
     });
-  });
-  this.system.execute({
-    cmd: `${options.cmd} > ${target}`,
-    if: options.cmd
-  });
-  return this.next(function(err, {status}) {
-    return callback(err, {
-      status: status,
-      base_dir: options.target,
-      name: options.name,
-      filename: filename,
-      target: target
+  }
+  if (config.cmd) {
+    this.execute({
+      cmd: `${config.cmd} > ${target}`
     });
-  });
+  }
+  return {
+    base_dir: config.target,
+    name: config.name,
+    filename: filename,
+    target: target
+  };
+};
+
+
+// ## Source code
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies
-moment = require('moment');
+dayjs = require('dayjs');
 
-path = require('path');
+dayjs.extend(require('dayjs/plugin/utc'));
+
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 // [backmeup]: https://github.com/adaltas/node-backmeup

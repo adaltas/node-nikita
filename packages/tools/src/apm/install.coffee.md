@@ -10,7 +10,17 @@ Install Atom packages with APM.
 *   `upgrade` (boolean)
     Upgrade all packages, default to "false".
 
-## Source code
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
 
     handler = ({config}) ->
       config.name = config.argument if config.argument?
@@ -58,6 +68,7 @@ Install Atom packages with APM.
 
     module.exports =
       handler: handler
+      schema: schema
 
 ## Dependencies
 

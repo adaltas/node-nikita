@@ -92,10 +92,21 @@
 // });
 // ```
 
-// ## Source Code
-var iptables;
+// ## Schema
+var handler, iptables, schema;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}, callback) {
   this.log({
     message: "Entering iptables",
     level: 'DEBUG',
@@ -106,7 +117,7 @@ module.exports = function({options}, callback) {
     level: 'INFO',
     module: 'nikita/lib/iptables'
   });
-  return this.system.execute({
+  return this.execute({
     cmd: "service iptables status &>/dev/null && iptables -S",
     code_skipped: 3
   }, (err, data) => {
@@ -118,7 +129,7 @@ module.exports = function({options}, callback) {
       return callback(Error("Service iptables not started"));
     }
     oldrules = iptables.parse(data.stdout);
-    newrules = iptables.normalize(options.rules);
+    newrules = iptables.normalize(config.rules);
     cmd = iptables.cmd(oldrules, newrules);
     if (!cmd.length) {
       return callback();
@@ -128,13 +139,19 @@ module.exports = function({options}, callback) {
       level: 'WARN',
       module: 'nikita/lib/iptables'
     });
-    return this.system.execute({
+    return this.execute({
       cmd: `${cmd.join('; ')}; service iptables save;`,
       trap: true
     }, function(err, data) {
       return callback(err, true);
     });
   });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

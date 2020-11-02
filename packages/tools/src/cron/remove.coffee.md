@@ -36,9 +36,19 @@ require('nikita').cron.remove({
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({config}, callback) ->
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
+
+    handler = ({config}, callback) ->
       return callback Error 'valid cmd is required' unless config.cmd?.length > 0
       if config.user?
         @log message: "Using user #{config.user}", level: 'INFO', module: 'nikita/cron/remove'
@@ -72,6 +82,12 @@ require('nikita').cron.remove({
         """
         if: -> status
       .next callback
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

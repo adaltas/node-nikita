@@ -17,7 +17,7 @@
 // })
 
 // ## Schema
-var path, schema;
+var handler, path, schema;
 
 schema = {
   type: 'object',
@@ -62,8 +62,8 @@ schema = {
   required: ['target']
 };
 
-// ## Source code
-module.exports = async function({config}) {
+// ## Handler
+handler = async function({config}) {
   var ref;
   if (config.key_format && ((ref = config.key_format) !== 'RFC4716' && ref !== 'PKCS8' && ref !== 'PEM')) {
     throw Error(`Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got ${JSON.stringify(config.key_format)}`);
@@ -86,6 +86,12 @@ module.exports = async function({config}) {
       `-f ${config.target}`
     ].join(' ')
   });
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

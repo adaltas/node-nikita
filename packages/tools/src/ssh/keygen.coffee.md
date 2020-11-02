@@ -60,9 +60,10 @@ require('nikita')
           Type of key to create.
           """
       required: ['target']
-## Source code
 
-    module.exports = ({config}) ->
+## Handler
+
+    handler = ({config}) ->
       throw Error "Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got #{JSON.stringify config.key_format}" if config.key_format and config.key_format not in ['RFC4716', 'PKCS8', 'PEM']
       await @fs.mkdir
         target: "#{path.dirname config.target}"
@@ -78,6 +79,12 @@ require('nikita')
           "-N '#{config.passphrase.replace '\'', '\\\''}'"
           "-f #{config.target}"
         ].join ' '
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 
