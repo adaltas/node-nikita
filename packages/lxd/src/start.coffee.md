@@ -3,11 +3,6 @@
 
 Start containers.
 
-## Options
-
-* `container` (string, required)
-  The name of the container.
-
 ## Callback Parameters
 
 * `err`
@@ -27,25 +22,32 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}) ->
-      @log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      required: ['container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
       cmd_init = [
-        'lxc', 'start', options.container
+        'lxc', 'start', config.container
       ].join ' '
       # Execution
-      @system.execute
-        container: options.container
+      @execute
         cmd: """
-        lxc list -c ns --format csv | grep '#{options.container},RUNNING' && exit 42
+        lxc list -c ns --format csv | grep '#{config.container},RUNNING' && exit 42
         #{cmd_init}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

@@ -3,13 +3,6 @@
 
 Detach a network from a container.
 
-## Options
-
-* `network` (required, string)   
-  The network name.
-* `container` (required, string)   
-  The container name.
-
 ## Callback parameters
 
 * `err`
@@ -29,28 +22,40 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      throw Error "Invalid Option: network is required" unless options.network
+    schema =
+      type: 'object'
+      properties:
+        'network':
+          type: 'string'
+          description: """
+          The network name to detach.
+          """
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      required: ['network', 'container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
       #Execute
-      @system.execute
+      @execute
         cmd: """
-        lxc config device list #{options.container} | grep #{options.network} || exit 42
+        lxc config device list #{config.container} | grep #{config.network} || exit 42
         #{[
           'lxc'
           'network'
           'detach'
-           options.network
-           options.container
+           config.network
+           config.container
         ].join ' '}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require '../misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

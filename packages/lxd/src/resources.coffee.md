@@ -1,23 +1,15 @@
 
 # `nikita.lxd.resources`
 
-Show full device configuration for containers or profiles
-
-## Options
-
-* `container` (string, required)
-  The name of the container.
-* `device` (string, required)
-  Name of the device in LXD configuration, for example "eth0".
+Show full information about the resources available to the LXD server.
 
 ## Output parameters
 
 * `err`
   Error object if any.
 * `result.status` (boolean)
-  True if the device was created or the configuraion updated.
 * `result.config` (object)   
-  Devince configuration.
+  Information about the resources available to the LXD server.
 
 ## Example
 
@@ -31,31 +23,38 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = handler: ({options}, callback) ->
-      @log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
-      #Check args
-      valid_devices = ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy']
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      throw Error "Invalid Option: Device name (options.device) is required" unless options.device=
-      @system.execute
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+        'device':
+          enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy']
+          description: """
+          Name of the device in LXD configuration, for example "eth0".
+          """
+      required: ['container', 'device']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
+      {stdout} = await @execute
         cmd: [
           'lxc', 'query',
-          [
+          '/' + [
             '1.0', 'resources'
           ].join '/'
         ].join ' '
-      , (err, {stdout}) ->
-        return callback err if err
-        config = JSON.parse stdout
-        callback null, config: config
+      config: JSON.parse stdout
 
-## Dependencies
+## Export
 
-    validate_container_name = require '../../misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Output example
 

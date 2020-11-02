@@ -5,43 +5,47 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
 
+before () ->
+  await nikita
+  .execute
+    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+
 describe 'lxd.config.device.exists', ->
 
-  they 'does not exist', ({ssh}) ->
+  they 'Device does not exist', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'c1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'c1'
-    .lxd.config.device.exists
-      container: 'c1'
-      device: 'test'
-    , (err, {status}) ->
+    , ->
+      @lxd.delete
+        container: 'c1'
+        force: true
+      @lxd.init
+        image: 'ubuntu:'
+        container: 'c1'
+      {status} = await @lxd.config.device.exists
+        container: 'c1'
+        device: 'test'
       status.should.be.false()
-    .promise()
 
-  they 'device exists', ({ssh}) ->
+  they 'Device exists', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'c1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'c1'
-    .lxd.config.device
-      container: 'c1'
-      device: 'test'
-      type: 'unix-char'
-      config:
-        source: '/dev/urandom'
-        path: '/testrandom'
-    .lxd.config.device.exists
-      container: 'c1'
-      device: 'test'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+    , ->
+      @lxd.delete
+        container: 'c1'
+        force: true
+      @lxd.init
+        image: 'ubuntu:'
+        container: 'c1'
+      @lxd.config.device
+        config:
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          config:
+            source: '/dev/urandom'
+            path: '/testrandom'
+      {status} = await @lxd.config.device.exists
+        container: 'c1'
+        device: 'test'
+      status.should.be.true()

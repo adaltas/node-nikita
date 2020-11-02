@@ -3,13 +3,6 @@
 
 Delete a Linux Container using lxd.
 
-## Options
-
-* `container` (required, string)
-  The name of the container
-* `force` (optional default: false)
-  If true, the container will be deleted even if running
-
 ## Example
 
 ```
@@ -21,26 +14,39 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}) ->
-      @log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      # Execution
-      @system.execute
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+        'force':
+          type: 'boolean'
+          default: false
+          description: """
+          If true, the container will be deleted even if running.
+          """
+      required: ['container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
+      @execute
         cmd: """
-        lxc info #{options.container} > /dev/null || exit 42
+        lxc info #{config.container} > /dev/null || exit 42
         #{[
           'lxc',
           'delete',
-          options.container
-          "--force" if options.force
+          config.container
+          "--force" if config.force
         ].join ' '}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema
