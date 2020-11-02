@@ -8,23 +8,34 @@
 // * `name` (string|array, required)
   //   Name of the package(s).
 
-// ## Source code
-var handler, string,
+// ## Schema
+var handler, schema, string,
   indexOf = [].indexOf;
 
-handler = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}) {
   var installed;
-  if (options.argument != null) {
-    options.name = options.argument;
+  if (config.argument != null) {
+    config.name = config.argument;
   }
-  if (typeof options.name === 'string') {
-    options.name = [options.name];
+  if (typeof config.name === 'string') {
+    config.name = [config.name];
   }
-  options.name = options.name.map(function(pkg) {
+  config.name = config.name.map(function(pkg) {
     return pkg.toLowerCase();
   });
   installed = [];
-  this.system.execute({
+  this.execute({
     shy: true,
     cmd: "apm list --installed --json"
   }, function(err, {stdout}) {
@@ -40,15 +51,15 @@ handler = function({options}) {
   });
   return this.call(function() {
     var to_uninstall;
-    to_uninstall = options.name.filter(function(pkg) {
+    to_uninstall = config.name.filter(function(pkg) {
       return indexOf.call(installed, pkg) >= 0;
     });
-    return this.system.execute({
-      cmd: `apm uninstall ${options.name.join(' ')}`,
+    return this.execute({
+      cmd: `apm uninstall ${config.name.join(' ')}`,
       if: to_uninstall.length
     }, (err) => {
       return this.log({
-        message: `APM Uninstalled Packages: ${options.name.join(', ')}`
+        message: `APM Uninstalled Packages: ${config.name.join(', ')}`
       });
     });
   });
@@ -56,7 +67,8 @@ handler = function({options}) {
 
 // ## Exports
 module.exports = {
-  handler: handler
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

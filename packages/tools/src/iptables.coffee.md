@@ -92,9 +92,19 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({config}, callback) ->
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
+
+    handler = ({config}, callback) ->
       @log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
       @log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
       @execute
@@ -113,6 +123,12 @@ require('nikita')
           trap: true
         , (err, data) ->
           callback err, true
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

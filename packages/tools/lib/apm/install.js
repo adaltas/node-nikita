@@ -10,25 +10,36 @@
   // *   `upgrade` (boolean)
   //     Upgrade all packages, default to "false".
 
-// ## Source code
-var handler, string,
+// ## Schema
+var handler, schema, string,
   indexOf = [].indexOf;
 
-handler = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}) {
   var installed, outdated;
-  if (options.argument != null) {
-    options.name = options.argument;
+  if (config.argument != null) {
+    config.name = config.argument;
   }
-  if (typeof options.name === 'string') {
-    options.name = [options.name];
+  if (typeof config.name === 'string') {
+    config.name = [config.name];
   }
-  options.name = options.name.map(function(pkg) {
+  config.name = config.name.map(function(pkg) {
     return pkg.toLowerCase();
   });
   outdated = [];
   installed = [];
   // Note, cant see a difference between update and upgrade after printing help
-  this.system.execute({
+  this.execute({
     cmd: "apm outdated --json",
     shy: true
   }, function(err, {stdout}) {
@@ -41,10 +52,10 @@ handler = function({options}) {
       return pkg.name.toLowerCase();
     });
   });
-  this.system.execute({
+  this.execute({
     cmd: "apm upgrade --no-confirm",
     if: function() {
-      return options.upgrade && outdated.length;
+      return config.upgrade && outdated.length;
     }
   }, function(err) {
     if (err) {
@@ -52,7 +63,7 @@ handler = function({options}) {
     }
     return outdated = [];
   });
-  this.system.execute({
+  this.execute({
     cmd: "apm list --installed --json",
     shy: true
   }, function(err, {stdout}) {
@@ -68,13 +79,13 @@ handler = function({options}) {
   });
   return this.call(function() {
     var install, upgrade;
-    upgrade = options.name.filter(function(pkg) {
+    upgrade = config.name.filter(function(pkg) {
       return indexOf.call(outdated, pkg) >= 0;
     });
-    install = options.name.filter(function(pkg) {
+    install = config.name.filter(function(pkg) {
       return indexOf.call(installed, pkg) < 0;
     });
-    this.system.execute({
+    this.execute({
       cmd: `apm upgrade ${upgrade.join(' ')}`,
       if: upgrade.length
     }, (err) => {
@@ -82,7 +93,7 @@ handler = function({options}) {
         message: `APM Updated Packages: ${upgrade.join(', ')}`
       });
     });
-    return this.system.execute({
+    return this.execute({
       cmd: `apm install ${install.join(' ')}`,
       if: install.length
     }, (err) => {
@@ -95,7 +106,8 @@ handler = function({options}) {
 
 // ## Exports
 module.exports = {
-  handler: handler
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

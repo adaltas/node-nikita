@@ -36,21 +36,32 @@
 // });
 // ```
 
-// ## Source Code
-var regexp;
+// ## Schema
+var handler, regexp, schema;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {
+    '': {
+      type: 'object',
+      description: `          `
+    }
+  }
+};
+
+// ## Handler
+handler = function({config}, callback) {
   var crontab, jobs, ref, status;
-  if (!(((ref = options.cmd) != null ? ref.length : void 0) > 0)) {
+  if (!(((ref = config.cmd) != null ? ref.length : void 0) > 0)) {
     return callback(Error('valid cmd is required'));
   }
-  if (options.user != null) {
+  if (config.user != null) {
     this.log({
-      message: `Using user ${options.user}`,
+      message: `Using user ${config.user}`,
       level: 'INFO',
       module: 'nikita/cron/remove'
     });
-    crontab = `crontab -u ${options.user}`;
+    crontab = `crontab -u ${config.user}`;
   } else {
     this.log({
       message: "Using default user",
@@ -61,7 +72,7 @@ module.exports = function({options}, callback) {
   }
   status = false;
   jobs = [];
-  return this.system.execute({
+  return this.execute({
     cmd: `${crontab} -l`,
     shy: true
   }, function(err, {stdout, stderr}) {
@@ -72,8 +83,8 @@ module.exports = function({options}, callback) {
     if (/^no crontab for/.test(stderr)) {
       throw Error('User crontab not found');
     }
-    myjob = options.when ? regexp.escape(options.when) : '.*';
-    myjob += regexp.escape(` ${options.cmd}`);
+    myjob = config.when ? regexp.escape(config.when) : '.*';
+    myjob += regexp.escape(` ${config.cmd}`);
     regex = new RegExp(myjob);
     jobs = stdout.trim().split('\n');
     for (i = j = 0, len = jobs.length; j < len; i = ++j) {
@@ -94,7 +105,7 @@ module.exports = function({options}, callback) {
       level: 'INFO',
       module: 'nikita/cron/remove'
     });
-  }).system.execute({
+  }).execute({
     cmd: `${crontab} - <<EOF
 ${jobs.join('\n')}
 EOF`,
@@ -102,6 +113,12 @@ EOF`,
       return status;
     }
   }).next(callback);
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

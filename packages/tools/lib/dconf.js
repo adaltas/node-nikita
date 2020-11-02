@@ -5,38 +5,57 @@
 // Gnome. It is a replacemet of gconf, replacing its XML based database with a
 // BLOB based database.
 
-// ## Options
-
-// * `properties` (object)
-//   Name of the module.
-
 // ## Example
+
 // ```javascript
-// require('nikita').tools.dconf({ properties: 
-//   {'/org/gnome/desktop/datetime/automatic-timezone': 'true'} });
+// const {status} = await nikita.tools.dconf({
+//   properties: {
+//     '/org/gnome/desktop/datetime/automatic-timezone': 'true'
+//   }
+// });
+// console.info(`Property modified: ${status}`)
 // ```
 
 // ## Note
 
 // Run the command "dconf-editor" to navigate the database with a UI.
 
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'properties': {
+      type: 'object',
+      description: `Name of the module.`
+    }
+  }
+};
+
 // ## Source Code
-module.exports = function({metadata, options}) {
+handler = function({metadata, config}) {
   var key, ref, results, value;
   if (metadata.argument != null) {
-    options.properties = metadata.argument;
+    config.properties = metadata.argument;
   }
-  if (options.properties == null) {
-    options.properties = {};
+  if (config.properties == null) {
+    config.properties = {};
   }
-  ref = options.properties;
+  ref = config.properties;
   results = [];
   for (key in ref) {
     value = ref[key];
-    results.push(this.system.execute(`dconf read ${key} | grep -x "${value}" && exit 3
+    results.push(this.execute(`dconf read ${key} | grep -x "${value}" && exit 3
 dconf write ${key} "${value}"`, {
       code_skipped: 3
     }));
   }
   return results;
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };

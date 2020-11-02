@@ -40,9 +40,19 @@ require('nikita').cron.add({
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({config}, callback) ->
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
+
+    handler = ({config}, callback) ->
       return callback Error 'valid when is required' unless config.when and typeof config.when is 'string'
       return callback Error 'valid cmd is required' unless config.cmd
       if config.user?
@@ -92,6 +102,12 @@ require('nikita').cron.add({
           EOF
           """
         .next callback
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

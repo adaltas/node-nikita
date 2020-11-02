@@ -7,23 +7,6 @@ Target file will be overwritten by default, use the `merge` option to preserve e
 
 Comments will be preserved if the `comments` and `merge` config are enabled.
 
-## Options
-
-* `backup` (string|boolean)   
-  Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string, only apply if the target file exists and
-  is modified.
-* `comment` (boolean)   
-  Preserve comments.
-* `load` (boolean)   
-  Load properties if target is modified, default is "true".
-* `merge` (boolean)    
-  Preserve existing variables in the target file.
-* `properties` (object)   
-  Key/value object representing sysctl properties and values.
-* `target` (string)
-  Destination to write properties and load in sysctl settings, default to "/etc/sysctl.conf" if none given.
-
 ## Callback parameters
 
 * `err` (Error)   
@@ -55,61 +38,96 @@ require('nikita').tools.sysctl({
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({config}) ->
-      @log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
-      # Options
-      config.load ?= true
-      config.target ?= '/etc/sysctl.conf'
+    schema =
+      type: 'object'
+      properties:
+        'backup':
+          oneOf: [
+            type: 'string'
+          ,
+            type: 'boolean'
+          ]
+          description: """ 
+          Create a backup, append a provided string to the filename extension or
+          a timestamp if value is not a string, only apply if the target file
+          exists and is modified.
+          """
+        'comment':
+          type: 'boolean'
+          description: """
+          Preserve comments.
+          """
+        'load':
+          type: 'boolean'
+          default: true
+          description: """
+          Load properties if target is modified.
+          """
+        'merge':
+          type: 'boolean'
+          description: """
+          Preserve existing variables in the target file.
+          """
+        'properties':
+          type: 'object'
+          description: """
+          Key/value object representing sysctl properties and values.
+          """
+        'target':
+          type: 'string'
+          default: '/etc/sysctl.conf'
+          description: """
+          Destination to write properties and load in sysctl settings, default
+          to "/etc/sysctl.conf" if none given.
+          """
+
+## Handler
+
+    handler = ({config, tools: {log}}) ->
       # Read current properties
       current = {}
-      @call (_, callback) ->
-        status = false
-        @log message: "Read target: #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
-        @fs.readFile
+      status = false
+      log message: "Read target: #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
+      try
+        {data} = await @fs.base.readFile
           ssh: config.ssh
           target: config.target
           encoding: 'ascii'
-        , (err, {data}) =>
-          return callback() if err and err.code is 'ENOENT'
-          return callback err if err
-          for line in string.lines data
-            # Preserve comments
-            if /^#/.test line
-              current[line] = null if config.comment
-              continue
-            if /^\s*$/.test line
-              current[line] = null
-              continue
-            [key, value] = line.split '='
-            # Trim
-            key = key.trim()
-            value = value.trim()
-            # Skip property
-            if key in config.properties and not config.properties[key]?
-              @log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
-              status = true
-              continue
-            # Set property
-            current[key] = value
-          callback null, status
+        for line in utils.string.lines data
+          # Preserve comments
+          if /^#/.test line
+            current[line] = null if config.comment
+            continue
+          if /^\s*$/.test line
+            current[line] = null
+            continue
+          [key, value] = line.split '='
+          # Trim
+          key = key.trim()
+          value = value.trim()
+          # Skip property
+          if key in config.properties and not config.properties[key]?
+            log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+            status = true
+            continue
+          # Set property
+          current[key] = value
+      catch err
+        throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       # Merge user properties
       final = {}
-      @call (_, callback) ->
-        final[k] = v for k, v of current if config.merge
-        status = false
-        for key, value of config.properties
-          continue unless value?
-          value = "#{value}" if typeof value is 'number'
-          continue if current[key] is value
-          @log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
-          final[key] = value
-          status = true
-        callback null, status
-      @call
-        if: -> @status()
-      , ->
+      final[k] = v for k, v of current if config.merge
+      status = false
+      for key, value of config.properties
+        continue unless value?
+        value = "#{value}" if typeof value is 'number'
+        continue if current[key] is value
+        log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+        final[key] = value
+        status = true
+      if status
         @file
           target: config.target
           backup: config.backup
@@ -120,13 +138,15 @@ require('nikita').tools.sysctl({
               else
                 "#{key}"
           ).join '\n'
-      @execute
-        if: [
-          config.load
-          -> @status()
-        ]
-        cmd: "sysctl -p #{config.target}"
+      if config.load and status
+        @execute "sysctl -p #{config.target}"
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 
-    string = require '@nikitajs/core/lib/misc/string'
+    utils = require '@nikitajs/engine/lib/utils'

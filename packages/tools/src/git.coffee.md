@@ -34,32 +34,34 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({config}) ->
-      @log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
-      # SSH connection
-      ssh = @ssh config.ssh
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
+
+    handler = ({config}) ->
       # Sanitize config
       config.revision ?= 'HEAD'
       # Start real work
-      repo_exists = false
       repo_uptodate = false
-      @call (_, callback) ->
-        @fs.exists ssh: config.ssh, target: config.target, (err, {exists}) ->
-          return callback err if err
-          repo_exists = exists
-          return callback() unless exists # todo, isolate inside call when they receive conditions
-          # return callback Error "Destination not a directory, got #{config.target}" unless stat.isDirectory()
-          gitDir = "#{config.target}/.git"
-          @fs.exists ssh: config.ssh, target: gitDir, (err, {exists}) ->
-            return callback Error "Not a git repository" unless exists
-            callback()
-      @execute
-        cmd: "git clone #{config.source} #{config.target}"
-        cwd: path.dirname config.target
-        unless: -> repo_exists
-      @execute
+      {exists: repo_exists} = await @fs.base.exists target: config.target
+      if repo_exists
+        # return callback Error "Destination not a directory, got #{config.target}" unless stat.isDirectory()
+        gitDir = "#{config.target}/.git"
+        {exists: is_git} = await @fs.base.exists ssh: config.ssh, target: gitDir
+        throw Error "Not a git repository" unless is_git
+      else
+        @execute
+          cmd: "git clone #{config.source} #{config.target}"
+          cwd: path.dirname config.target
+      {status: repo_uptodate} = await @execute
         cmd: """
         current=`git log --pretty=format:'%H' -n 1`
         target=`git rev-list --max-count=1 #{config.revision}`
@@ -73,13 +75,16 @@ require('nikita')
         code_skipped: 3
         if: -> repo_exists
         shy: true
-      , (err, {status}) ->
-        throw err if err
-        repo_uptodate = status
-      @execute
-        cmd: "git checkout #{config.revision}"
-        cwd: config.target
-        unless: -> repo_uptodate
+      unless repo_uptodate
+        @execute
+          cmd: "git checkout #{config.revision}"
+          cwd: config.target
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

@@ -5,17 +5,6 @@
 // specified as an option, format is derived from the source extension. At the
 // moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zip'.
 
-// ## Options
-
-// * `format`   
-//   One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
-// * `source`   
-//   Archive to compress.   
-// * `target`   
-//   Default to the source parent directory.   
-// * `clean`   
-//   Remove the source file or directory
-
 // ## Callback Parameters
 
 // * `err`   
@@ -35,67 +24,77 @@
 // });
 // ```
 
-// ## Source Code
-var path;
+// ## Schema
+var ext_to_type, handler, schema;
 
-module.exports = function({options}) {
-  var dir, format, name;
-  this.log({
-    message: "Entering compress",
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/compress'
-  });
-  if (!options.source) {
-    // Validate parameters
-    throw Error(`Missing source: ${options.source}`);
-  }
-  if (!options.target) {
-    throw Error(`Missing target: ${options.target}`);
-  }
-  options.source = path.normalize(options.source);
-  options.target = path.normalize(options.target);
-  dir = path.dirname(options.source);
-  name = path.basename(options.source);
-  // Deal with format option
-  if (options.format != null) {
-    format = options.format;
-  } else {
-    format = module.exports.ext_to_type(options.target);
-  }
-  // Run compression
-  this.system.execute((function() {
-    switch (format) {
-      case 'tgz':
-        return `tar czf ${options.target} -C ${dir} ${name}`;
-      case 'tar':
-        return `tar cf  ${options.target} -C ${dir} ${name}`;
-      case 'bz2':
-        return `tar cjf ${options.target} -C ${dir} ${name}`;
-      case 'xz':
-        return `tar cJf ${options.target} -C ${dir} ${name}`;
-      case 'zip':
-        return `(cd ${dir} && zip -r ${options.target} ${name} && cd -)`;
+schema = {
+  type: 'object',
+  properties: {
+    clean: {
+      type: 'boolean',
+      description: `Remove the source file or directory on completion.`
+    },
+    format: {
+      type: 'string',
+      enum: ['tgz', 'tar', 'zip', 'bz2', 'xz'],
+      description: `Compression tool and format to be used.`
+    },
+    source: {
+      type: 'string',
+      description: `Source of the file or directory to compress.`
+    },
+    target: {
+      type: 'string',
+      description: `Destination path of the generated archive, default to the source
+parent directory.`
     }
-  })());
-  return this.system.remove({
-    if: options.clean,
-    source: options.source
-  });
+  },
+  required: ['source', 'target']
 };
 
-// ## Type of extension
-module.exports.type_to_ext = function(type) {
-  if (type === 'tgz' || type === 'tar' || type === 'zip' || type === 'bz2' || type === 'xz') {
-    return `.${type}`;
+// ## Handler
+handler = async function({
+    config,
+    tools: {path}
+  }) {
+  var dir, format, name, output;
+  config.source = path.normalize(config.source);
+  config.target = path.normalize(config.target);
+  dir = path.dirname(config.source);
+  name = path.basename(config.source);
+  // Deal with format option
+  if (config.format != null) {
+    format = config.format;
+  } else {
+    format = ext_to_type(config.target, path);
   }
-  throw Error(`Unsupported Type: ${JSON.stringify(type)}`);
+  // Run compression
+  output = (await this.execute((function() {
+    switch (format) {
+      case 'tgz':
+        return `tar czf ${config.target} -C ${dir} ${name}`;
+      case 'tar':
+        return `tar cf  ${config.target} -C ${dir} ${name}`;
+      case 'bz2':
+        return `tar cjf ${config.target} -C ${dir} ${name}`;
+      case 'xz':
+        return `tar cJf ${config.target} -C ${dir} ${name}`;
+      case 'zip':
+        return `(cd ${dir} && zip -r ${config.target} ${name} && cd -)`;
+    }
+  })()));
+  this.fs.remove({
+    if: config.clean,
+    source: config.source
+  });
+  return output;
 };
 
 // ## Extention to type
 
 // Convert a full path, a filename or an extension into a supported compression 
 // type.
-module.exports.ext_to_type = function(name) {
+ext_to_type = function(name, path) {
   if (/((.+\.)|^\.|^)(tar\.gz|tgz)$/.test(name)) {
     return 'tgz';
   } else if (/((.+\.)|^\.|^)tar$/.test(name)) {
@@ -111,5 +110,11 @@ module.exports.ext_to_type = function(name) {
   }
 };
 
-// ## Dependencies
-path = require('path');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema,
+  tools: {
+    ext_to_type: ext_to_type
+  }
+};

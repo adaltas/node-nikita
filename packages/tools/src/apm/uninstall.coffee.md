@@ -8,7 +8,17 @@ Remove one or more apm packages.
 * `name` (string|array, required)
   Name of the package(s).
 
-## Source code
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: 'object'
+          description: """
+          """
+
+## Handler
 
     handler = ({config}) ->
       config.name = config.argument if config.argument?
@@ -35,6 +45,7 @@ Remove one or more apm packages.
 
     module.exports =
       handler: handler
+      schema: schema
 
 ## Dependencies
 
