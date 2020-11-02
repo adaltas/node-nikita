@@ -1,14 +1,7 @@
 
 # `nikita.lxd.exec`
 
-Push files into containers.
-
-## Options
-
-* `container` (string, required)
-  The name of the container.
-* `cmd` (string, required)
-  The command to execute.
+Execute command in containers.
 
 ## Example
 
@@ -27,22 +20,36 @@ require('nikita')
 
 * Support `env` option
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}, callback) ->
-      @log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      @system.execute options, trap: false,
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+        'cmd':
+          type: 'string'
+          description: """
+          The command to execute.
+          """
+        'trap':
+          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/trap'
+      required: ['container', 'cmd']
+
+## Handler
+
+    handler =  ({config}) ->
+      # log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
+      @execute config, trap: false,
         cmd: [
-          "cat <<'NIKITALXDEXEC' | lxc exec #{options.container} -- bash"
-          'set -e' if options.trap
-          options.cmd
+          "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- bash"
+          'set -e' if config.trap
+          config.cmd
           'NIKITALXDEXEC'
         ].join '\n'
-      , callback
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

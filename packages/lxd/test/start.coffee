@@ -5,36 +5,39 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
 
+before () ->
+  await nikita
+  .execute
+    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+
 describe 'lxd.start', ->
 
   they 'Start a container', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'u1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'u1'
-    .lxd.start
-      container: 'u1'
-    , (err, {status}) ->
+    , ->
+      await @lxd.delete
+        container: 'u1'
+        force: true
+      await @lxd.init
+        image: 'ubuntu:'
+        container: 'u1'
+      {status} = await @lxd.start
+        container: 'u1'
       status.should.be.true()
-    .promise()
 
   they 'Already started', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'u1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'u1'
-    .lxd.start
-      container: 'u1'
-    .lxd.start
-      container: 'u1'
-    , (err, {status}) ->
+    , ->
+      await @lxd.delete
+        container: 'u1'
+        force: true
+      await @lxd.init
+        image: 'ubuntu:'
+        container: 'u1'
+      await @lxd.start
+        container: 'u1'
+      {status} = await @lxd.start
+        container: 'u1'
       status.should.be.false()
-    .promise()

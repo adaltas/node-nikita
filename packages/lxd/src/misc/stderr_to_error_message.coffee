@@ -1,6 +1,6 @@
 
-{lines} = require '@nikitajs/core/lib/misc/string'
+utils = require '@nikitajs/engine/src/utils'
 
 module.exports = (err, stderr) ->
   stderr = stderr.trim()
-  err.message = stderr if lines(stderr).length is 1
+  err.message = stderr if utils.string.lines(stderr).length is 1

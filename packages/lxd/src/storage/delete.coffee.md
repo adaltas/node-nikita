@@ -3,11 +3,6 @@
 
 Delete an existing lxd storage.
 
-## Options
-
-* `name` (required, string)
-  The storage name
-
 ## Callback parameters
 
 * `err`
@@ -26,23 +21,38 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
-      #Check args
-      throw Error "Argument 'name' is required to delete a storage" unless options.name
-      #Build command
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          type: 'string'
+          description: """
+          The storage name to delete.
+          """
+      required: ['name']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
       cmd_delete = [
         'lxc'
         'storage'
         'delete'
-         options.name
+         config.name
       ].join ' '
       #Execute
-      @system.execute
+      @execute
         cmd: """
-        lxc storage list | grep #{options.name} || exit 42
+        lxc storage list | grep #{config.name} || exit 42
         #{cmd_delete}
         """
         code_skipped: 42
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
