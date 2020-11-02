@@ -1,26 +1,7 @@
 
 # `nikita.lxd.init`
 
-Initialize a Linux Container with given image name, container name and options.
-
-## Options
-
-* `image` (required, string)
-  The image the container will use, name:[version] e.g: ubuntu:16.04
-* `container` (required, string)
-  The name of the container
-* `network` (optional, string, )
-  Network name to add to the container (see lxd.network)
-* `storage` (optional, string, [default_storage])
-  Storage name where to store the container
-* `profile` (optional, string, default)
-  Profile to set this container up
-* `ephemeral` (optional, boolean, false)
-  If true, the container will be deleted when stopped
-* `vm` (optional, boolean, false)
-  If true, instantiate a VM instead of a container
-* `target` (optional, string)
-  If the LXC is clustered, instantiate the container on a specific node
+Initialize a Linux Container with given image name, container name and config.
 
 ## Callback Parameters
 
@@ -53,32 +34,84 @@ fix is to prepend the init command with `echo '' | `.
 We do not honors the configuration (`-c`) argument. Use the `lxd.config.set` for
 now.
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}) ->
-      @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
+    schema =
+      type: 'object'
+      properties:
+        'image':
+          type: 'string'
+          description: """
+          The image the container will use, name:[version] (e.g: ubuntu:16.04.).
+          """
+        'container':
+          type: 'string'
+          pattern: "(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)"
+          description: """
+          The name of the container. Must:
+          - be between 1 and 63 characters long
+          - be made up exclusively of letters, numbers and dashes from the ASCII table
+          - not start with a digit or a dash
+          - not end with a dash
+          """
+        'network':
+          type: 'string'
+          description: """
+          Network name to add to the container (see lxd.network).
+          """
+        'storage':
+          type: 'string'
+          description: """
+          Storage name where to store the container, [default_storage] by default.
+          """
+        'profile':
+          type: 'string'
+          description: """
+          Profile to set this container up.
+          """
+        'ephemeral':
+          type: 'boolean'
+          default: false
+          description: """
+          If true, the container will be deleted when stopped.
+          """
+        'vm':
+          type: 'boolean'
+          default: false
+          description: """
+          If true, instantiate a VM instead of a container.
+          """
+        'target':
+          type: 'string'
+          description: """
+          If the LXC is clustered, instantiate the container on a specific node.
+          """
+      required: ['image', 'container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
       cmd_init = [
-        'lxc', 'init', options.image, options.container
-        "--network #{options.network}" if options.network
-        "--storage #{options.storage}" if options.storage
-        "--ephemeral" if options.ephemeral
-        "--vm" if options.vm
-        "--profile #{options.profile}" if options.profile
-        "--target #{options.target}" if options.target
+        'lxc', 'init', config.image, config.container
+        "--network #{config.network}" if config.network
+        "--storage #{config.storage}" if config.storage
+        "--ephemeral" if config.ephemeral
+        "--vm" if config.vm
+        "--profile #{config.profile}" if config.profile
+        "--target #{config.target}" if config.target
       ].join ' '
       # Execution
-      @system.execute
-        container: options.container
+      @execute
         cmd: """
         lxc remote get-default
-        lxc info #{options.container} >/dev/null && exit 42
+        lxc info #{config.container} >/dev/null && exit 42
         echo '' | #{cmd_init}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

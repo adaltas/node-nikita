@@ -3,11 +3,6 @@
 
 Delete an existing lxd network.
 
-## Options
-
-* `network` (required, string)   
-  The network name.
-
 ## Callback parameters
 
 * `err`   
@@ -26,21 +21,37 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
-      #Check args
-      throw Error "Invalid Option: network is required" unless options.network
+    schema =
+      type: 'object'
+      properties:
+        'network':
+          type: 'string'
+          description: """
+          The network name to delete.
+          """
+      required: ['network']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
       #Execute
-      @system.execute
+      @execute
         cmd: """
-        lxc network list --format csv | grep #{options.network} || exit 42
+        lxc network list --format csv | grep #{config.network} || exit 42
         #{[
           'lxc'
           'network'
           'delete'
-           options.network
+           config.network
         ].join ' '}
         """
         code_skipped: 42
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema

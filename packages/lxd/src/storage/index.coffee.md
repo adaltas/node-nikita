@@ -1,23 +1,14 @@
 
 # `nikita.lxd.storage`
 
-Creates or updates a storage configuration.
-
-## Options
-
-* `name` (required, string)
-  The storage name
-* `driver` (required, string)
-  The underlying driver name. Can be btrfs, ceph, dir, lvm, zfs
-* `config` (optional, object, {})
-  The configuration to use to configure this storage, depends on the driver
+Create a storage or update a storage configuration.
 
 ## Callback Parameters
 
 * `err`
   Error object if any
 * `status`
-  Was the storage created
+  Was the storage created or updated
 
 ## Example
 
@@ -34,37 +25,71 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}) ->
-      @log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
-      throw Error "Invalid Option: name is required" unless options.name
-      throw Error "Invalid Option: driver is required" unless options.driver
-      throw Error "Invalid driver: #{options.driver}"　unless options.driver in ["btrfs", "ceph", "dir", "lvm", "zfs"]
-      @system.execute
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          type: 'string'
+          description: """
+          The storage name to create or update.
+          """
+        'driver':
+          type: 'string'
+          enum: ["btrfs", "ceph", "cephfs", "dir", "lvm", "zfs"]
+          description: """
+          The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs.
+          """
+        'config':
+          type: 'object',
+          patternProperties: '': type: ['string', 'boolean', 'number']
+          description: """
+          The configuration to use to configure this storage, depends on the
+          driver. See [available
+          fields](https://lxd.readthedocs.io/en/latest/storage/).
+          """
+      required: ['name', 'driver']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
+      # Normalize config
+      for k, v of config.config
+        continue if typeof v is 'string'
+        config.config[k] = v.toString()
+      # Check if exists
+      {stdout, code} = await @execute
         cmd: """
-        lxc storage show #{options.name} && exit 42
+        lxc storage show #{config.name} && exit 42
         #{['lxc', 'storage', 'create'
-          options.name
-          options.driver
-          "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
+          config.name
+          config.driver
+          (("#{key}='#{value.replace '\'', '\\\''}'") for key, value of config.config).join ' '
         ].join ' '}
         """
         code_skipped: 42
-      , (err, {stdout, code}) ->
-      # Storage created
-        return unless code is 42
-        # Storage already exists, find the changes
-        {config} = yaml.safeLoad stdout
-        changes = diff config, options.config
-        # if config is empty status is false because no command were executed
-        @system.execute (
-          cmd: [
-            'lxc', 'storage', 'set'
-            options.name
-            key, "'#{value.replace '\'', '\\\''}'"
-          ].join ' '
-        ) for key, value of changes
+      return unless code is 42
+      # Storage already exists, find the changes
+      return unless config?.config
+      stdout = yaml.safeLoad stdout
+      changes = diff stdout.config, config.config
+      # if changes is empty status is false because no command were executed
+      {status} = await @execute (
+        cmd: [
+          'lxc', 'storage', 'set'
+          config.name
+          key, "'#{value.replace '\'', '\\\''}'"
+        ].join ' '
+      ) for key, value of changes
+      status: status
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

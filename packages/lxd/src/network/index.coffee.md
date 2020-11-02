@@ -3,14 +3,6 @@
 
 Create a network or update a network configuration
 
-## Options
-
-* `network` (required, string)
-  The network name.
-* `config` (optional, object, {})
-  The network configuration, see
-  [available fields](https://lxd.readthedocs.io/en/latest/networks/).
-
 ## Callback parameters
 
 * `err`
@@ -33,45 +25,71 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
-      #Check args
-      throw Error "Invalid Option: network is required to create a network" unless options.network
-      for k, v of options.config
+    schema =
+      type: 'object'
+      properties:
+        'network':
+          type: 'string'
+          description: """
+          The network name to create.
+          """
+        'config':
+          type: 'object'
+          patternProperties: '': type: ['string', 'boolean', 'number']
+          description: """
+          The network configuration, see [available
+          fields](https://lxd.readthedocs.io/en/latest/networks/).
+          """
+      required: ['network']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
+      # Normalize config
+      for k, v of config.config
         continue if typeof v is 'string'
-        options.config[k] = if typeof v is 'boolean' then if v then 'true' else 'false'
+        config.config[k] = v.toString()
       # Command if the network does not yet exist
-      @system.execute
+      {stdout, code, status} = await @execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented
         cmd: """
         lxc network > /dev/null || exit 5
-        lxc network show #{options.network} && exit 42
+        lxc network show #{config.network} && exit 42
         #{[
           'lxc',
           'network',
           'create'
-          options.network
+          config.network
           ...(
-            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
+            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config.config
           )
         ].join ' '}
         """
-        code_skipped: 42
-      , (err, {stdout, code, status}) ->
-        return callback Error "This version of lxc does not support the network command" if code is 5
-        return callback err, status: status unless code is 42 # was created
-        {config} = yaml.safeLoad stdout
-        changes = diff config, options.config
-        @system.execute (
-          cmd: [
-            'lxc', 'network', 'set'
-            options.network
-            key, "'#{value.replace '\'', '\\\''}'"
-          ].join ' '
-        ) for key, value of changes
-        return callback null, Object.keys(changes).length > 0
+        code_skipped: [5, 42]
+      throw Error "This version of lxc does not support the network command." if code is 5
+      return status: status unless code is 42 # was created
+      # Network already exists, find the changes
+      return unless config?.config
+      config_orig = config
+      {config} = yaml.safeLoad stdout
+      changes = diff config, config_orig.config
+      {status} = await @execute (
+        cmd: [
+          'lxc', 'network', 'set'
+          config_orig.network
+          key, "'#{value.replace '\'', '\\\''}'"
+        ].join ' '
+      ) for key, value of changes
+      status: status
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

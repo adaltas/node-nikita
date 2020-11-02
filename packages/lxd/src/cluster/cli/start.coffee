@@ -9,23 +9,23 @@ module.exports = ({params}) ->
     debug: params.debug
   .log.cli pad: host: 20, header: 60
   .log.md basename: 'start', basedir: params.log, archive: false, if: params.log
-  .system.execute
+  .execute
     header: 'Dependencies'
     unless_exec: 'vagrant plugin list | egrep \'^vagrant-vbguest \''
     cmd: '''
     vagrant plugin install vagrant-vbguest
     '''
-  .system.execute
+  .execute
     cwd: "#{__dirname}/../../../assets"
     cmd: '''
     vagrant up
     '''
-  .system.execute
+  .execute
     cmd: '''
     lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
     lxc remote switch nikita
     '''
-  .system.execute
+  .execute
     debug: true
     cmd: '''
     lxc ls || {

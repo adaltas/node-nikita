@@ -3,13 +3,6 @@
 
 Delete a device from a container
 
-## Options
-
-* `container` (string, required)
-  The name of the container.
-* `device` (string, required)
-  Name of the device in LXD configuration, for example "eth0".
-
 ## Callback parameters
 
 * `err`
@@ -29,29 +22,39 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = handler: ({options}, callback) ->
-      @log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      throw Error "Invalid Option: Device name (options.device) is required" unless options.device
-      @lxd.config.device.show
-        container: options.container
-        device: options.device
-      , (err, {status, config}) ->
-        return callback err, status: false if err or not config
-        @system.execute
-          cmd: [
-            'lxc', 'config', 'device', 'remove'
-            options.container
-            options.device
-          ].join ' '
-        , (err, {status}) ->
-        return callback err if err
-        return callback null, status: true
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+        'device':
+          type: 'string'
+          description: """
+          Name of the device in LXD configuration, for example "eth0".
+          """
+      required: ['container', 'device']
 
-## Dependencies
+## Handler
 
-    validate_container_name = require '../../misc/validate_container_name'
+    handler = ({config}) ->
+      # log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
+      config_orig = config
+      {config} = await @lxd.config.device.show
+        container: config.container
+        device: config.device
+      return status: false if not config
+      {status} = await @execute
+        cmd: [
+          'lxc', 'config', 'device', 'remove'
+          config_orig.container
+          config_orig.device
+        ].join ' '
+      status: status
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema

@@ -1,9 +1,9 @@
 
 # `nikita.lxd.running`
 
-Start containers.
+Check if container is running.
 
-## Options
+## config
 
 * `container` (string, required)
   The name of the container.
@@ -27,20 +27,29 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = shy: true, handler: ({options}) ->
-      @log message: "Entering lxd.running", level: 'DEBUG', module: '@nikitajs/lxd/lib/running'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      @system.execute
-        container: options.container
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      required: ['container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.running", level: 'DEBUG', module: '@nikitajs/lxd/lib/running'
+      @execute
         cmd: """
-        lxc list -c ns --format csv | grep '#{options.container},RUNNING' || exit 42
+        lxc list -c ns --format csv | grep '#{config.container},RUNNING' || exit 42
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema
+      metadata:
+        shy: true

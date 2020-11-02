@@ -1,110 +1,115 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh} = require '../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
+
+before () ->
+  await nikita
+  .execute
+    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.file.push', ->
 
   they 'a new file', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'c1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'c1'
-    .lxd.start
-      container: 'c1'
-    .file
-      target: "#{scratch}/a_file"
-      content: 'something'
-    .lxd.file.push
-      container: 'c1'
-      source: "#{scratch}/a_file"
-      target: '/root/a_file'
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @lxd.delete
+        container: 'c1'
+        force: true
+      @lxd.init
+        image: 'ubuntu:'
+        container: 'c1'
+      @lxd.start
+        container: 'c1'
+      @file
+        target: "#{tmpdir}/a_file"
+        content: 'something'
+      {status} = await @lxd.file.push
+        container: 'c1'
+        source: "#{tmpdir}/a_file"
+        target: '/root/a_file'
       status.should.be.true()
-    .lxd.file.exists
-      container: 'c1'
-      target: '/root/a_file'
-    , (err, {status}) ->
+      {status} = await @lxd.file.exists
+        container: 'c1'
+        target: '/root/a_file'
       status.should.be.true()
-    .promise()
+  
 
   they 'the same file', ({ssh}) ->
     nikita
       ssh: ssh
-    .lxd.delete
-      container: 'c1'
-      force: true
-    .lxd.init
-      image: 'ubuntu:18.04'
-      container: 'c1'
-    .lxd.start
-      container: 'c1'
-    .file
-      target: "#{scratch}/a_file"
-      content: 'something'
-    .lxd.file.push
-      container: 'c1'
-      source: "#{scratch}/a_file"
-      target: '/root/a_file'
-    .lxd.file.push
-      container: 'c1'
-      source: "#{scratch}/a_file"
-      target: '/root/a_file'
-    , (err, {status}) ->
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @lxd.delete
+        container: 'c1'
+        force: true
+      @lxd.init
+        image: 'ubuntu:'
+        container: 'c1'
+      @lxd.start
+        container: 'c1'
+      @file
+        target: "#{tmpdir}/a_file"
+        content: 'something'
+      @lxd.file.push
+        container: 'c1'
+        source: "#{tmpdir}/a_file"
+        target: '/root/a_file'
+      {status} = await @lxd.file.push
+        container: 'c1'
+        source: "#{tmpdir}/a_file"
+        target: '/root/a_file'
       status.should.be.false()
-    .promise()
+  
 
   describe 'content', ->
 
     they 'a new file', ({ssh}) ->
       nikita
         ssh: ssh
-      .lxd.delete
-        container: 'c1'
-        force: true
-      .lxd.init
-        image: 'ubuntu:18.04'
-        container: 'c1'
-      .lxd.start
-        container: 'c1'
-      .lxd.file.push
-        container: 'c1'
-        target: '/root/a_file'
-        content: 'something'
-      , (err, {status}) ->
+      , ->
+        @lxd.delete
+          container: 'c1'
+          force: true
+        @lxd.init
+          image: 'ubuntu:'
+          container: 'c1'
+        @lxd.start
+          container: 'c1'
+        {status} = await @lxd.file.push
+          container: 'c1'
+          target: '/root/a_file'
+          content: 'something'
         status.should.be.true()
-      .lxd.exec
-        container: 'c1'
-        cmd: 'cat /root/a_file'
-      , (err, {stdout}) ->
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          cmd: 'cat /root/a_file'
         stdout.trim().should.eql 'something'
-      .promise()
+    
 
     they 'the same file', ({ssh}) ->
       nikita
         ssh: ssh
-      .lxd.delete
-        container: 'c1'
-        force: true
-      .lxd.init
-        image: 'ubuntu:18.04'
-        container: 'c1'
-      .lxd.start
-        container: 'c1'
-      .lxd.file.push
-        container: 'c1'
-        target: '/root/a_file'
-        content: 'something'
-      .lxd.file.push
-        container: 'c1'
-        target: '/root/a_file'
-        content: 'something'
-      , (err, {status}) ->
+      , ->
+        @lxd.delete
+          container: 'c1'
+          force: true
+        @lxd.init
+          image: 'ubuntu:'
+          container: 'c1'
+        @lxd.start
+          container: 'c1'
+        @lxd.file.push
+          container: 'c1'
+          target: '/root/a_file'
+          content: 'something'
+        {status} = await @lxd.file.push
+          container: 'c1'
+          target: '/root/a_file'
+          content: 'something'
         status.should.be.false()
-      .promise()
+    

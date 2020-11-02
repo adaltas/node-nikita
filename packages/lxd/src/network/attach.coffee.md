@@ -3,13 +3,6 @@
 
 Attach an existing network to a container.
 
-## Options
-
-* `network` (required, string)   
-  The network network.
-* `container` (required, string)   
-  The container name.
-
 ## Callback parameters
 
 * `err`   
@@ -29,30 +22,42 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      throw Error "Invalid Option: container is required" unless options.container
+    schema =
+      type: 'object'
+      properties:
+        'network':
+          type: 'string'
+          description: """
+          The network name to attach.
+          """
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      required: ['network', 'container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
       #Build command
       cmd_attach = [
         'lxc'
         'network'
         'attach'
-        options.network
-        options.container
+        config.network
+        config.container
       ].join ' '
       #Execute
-      @system.execute
+      @execute
         cmd: """
-        lxc config device list #{options.container} | grep #{options.network} && exit 42
+        lxc config device list #{config.container} | grep #{config.network} && exit 42
         #{cmd_attach}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require '../misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

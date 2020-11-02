@@ -3,11 +3,6 @@
 
 Stop a running Linux Container.
 
-## Options
-
-* `container` (required, string)
-  The name of the container
-
 ## Example
 
 ```
@@ -19,20 +14,28 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports =  ({options}) ->
-      @log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
-      # Validation
-      throw Error "Invalid Option: container is required" unless options.container
-      validate_container_name options.container
-      @system.execute
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      required: ['container']
+
+## Handler
+
+    handler = ({config}) ->
+      # log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
+      @execute
         cmd: """
-        lxc list -c ns --format csv | grep '#{options.container},STOPPED' && exit 42
-        lxc stop #{options.container}
+        lxc list -c ns --format csv | grep '#{config.container},STOPPED' && exit 42
+        lxc stop #{config.container}
         """
         code_skipped: 42
 
-## Dependencies
+## Export
 
-    validate_container_name = require './misc/validate_container_name'
+    module.exports =
+      handler: handler
+      schema: schema

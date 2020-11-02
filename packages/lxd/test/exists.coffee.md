@@ -1,7 +1,7 @@
 
 # `nikita.lxd.file.exists`
 
-Check if the file exists in a container.
+Push files into containers.
 
 ## Example
 
@@ -28,18 +28,24 @@ require('nikita')
       type: 'object'
       properties:
         'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+          type: 'string'
+          description: """
+          The name of the container in which the file will be checked for
+          existence.
+          """
         'target':
           type: 'string'
           description: """
           File destination in the form of "<path>".
           """
-      required: ['container']
+      required: ['container', 'target']
 
 ## Handler
 
     handler = ({config}) ->
       # log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
+      # Validation
+      validate_container_name config.container
       @execute
         cmd: """
         lxc exec #{config.container} -- stat #{config.target}
@@ -50,6 +56,10 @@ require('nikita')
 
     module.exports =
       handler: handler
-      schema: schema
       metadata:
         shy: true
+      schema: schema
+
+## Dependencies
+
+    validate_container_name = require '../misc/validate_container_name'
