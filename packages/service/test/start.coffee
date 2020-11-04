@@ -12,30 +12,25 @@ describe 'service.start', ->
   they 'should start', ({ssh}) ->
     nikita
       ssh: ssh
-    .service
-      name: service.name
-    .service.stop
-      name: service.srv_name
-    .service.start
-      name: service.srv_name
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .service.status
-      name: service.srv_name
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .service.start # Detect already started
-      name: service.srv_name
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      @service
+        name: service.name
+      @service.stop
+        name: service.srv_name
+      {status} = await @service.start
+        name: service.srv_name
+      status.should.be.true()
+      {status} = await @service.status
+        name: service.srv_name
+      status.should.be.true()
+      {status} = await @service.start # Detect already started
+        name: service.srv_name
+      status.should.be.false()
   
   they 'no error when invalid service name', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.start
-      name: 'thisdoenstexit'
-    , (err, {status}) ->
-      (!!err).should.be.false()
+    , ->
+      {status} = await @service.start
+        name: 'thisdoenstexit'
       status.should.be.false()
-    .promise()

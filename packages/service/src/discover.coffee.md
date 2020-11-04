@@ -3,14 +3,7 @@
 
 Discover the OS init loader.
 For now it only supports Centos/Redhat OS in version 6 or 7, Ubuntu.
-Store properties in the nikita store object.
-
-## Options
-
-* `strict` (boolean)   
-  Throw an error if the OS is not supported. false by default.   
-* `cache`   
-  Disable cache. false by default   
+Store properties in the nikita state object.
 
 ## Callback parameters
 
@@ -22,30 +15,53 @@ Store properties in the nikita store object.
 * `loader`   
   the init loader name   
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
+    schema =
+      type: 'object'
+      properties:
+        'strict':
+          type: 'boolean'
+          default: false
+          description: """
+          Throw an error if the OS is not supported.
+          """
+        'shy':
+          type: 'boolean'
+          default: true
+        'cache':
+          type: 'boolean'
+          default: true
+          description: """
+          Disable cache.
+          """
+
+## Handler
+
+    handler = ({config, parent: {state}}) ->
       detected = false
       loader = null
-      options.strict ?= false
-      options.shy ?= true
-      options.cache ?= true
-      @system.execute
-        shy: options.shy
-        unless: @store['nikita:service:loader']?
-        cmd: """
-        if command -v systemctl >/dev/null; then exit 1; fi ;
-        if command -v service >/dev/null; then exit 2; fi ;
-        exit 3 ;
-        """
-        code: [1, 2]
-        shy: true
-      , (err, data) ->
-        throw Error "Undetected Operating System Loader" if err?.code is 3 and options.strict
-        loader = switch data.code
-          when 1 then 'systemctl'
-          when 2 then 'service'
-        @store['nikita:service:loader'] = options.loader if options.cache
-      @next (err, data) ->
-        loader = @store['nikita:service:loader']? if options.cache and not loader?
-        callback err, status: data.status, loader: loader
+      unless state['nikita:service:loader']?
+        try
+          data = await @execute
+            shy: config.shy
+            cmd: """
+            if command -v systemctl >/dev/null; then exit 1; fi ;
+            if command -v service >/dev/null; then exit 2; fi ;
+            exit 3 ;
+            """
+            code: [1, 2]
+          loader = switch data.code
+            when 1 then 'systemctl'
+            when 2 then 'service'
+          state['nikita:service:loader'] = loader if config.cache
+          loader = state['nikita:service:loader']? if config.cache and not loader?
+          status: data.status, loader: loader
+        catch err
+          throw Error "Undetected Operating System Loader" if err.exit_code is 3 and config.strict
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
