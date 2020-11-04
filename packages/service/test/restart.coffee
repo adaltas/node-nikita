@@ -12,12 +12,11 @@ describe 'service.restart', ->
   they 'should restart', ({ssh}) ->
     nikita
       ssh: ssh
-    .service
-      name: service.name
-    .service.start
-      name: service.srv_name
-    .service.restart
-      name: service.srv_name
-    , (err, {status}) ->
+    , ->
+      @service
+        name: service.name
+      @service.start
+        name: service.srv_name
+      {status} = await @service.restart
+        name: service.srv_name
       status.should.be.true()
-    .promise()
