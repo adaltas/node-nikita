@@ -12,14 +12,12 @@ describe 'service.remove', ->
   they 'new package', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.install
-      name: service.name
-    .service.remove
-      name: service.name
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .service.remove
-      name: service.name
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      @service.install
+        name: service.name
+      {status} = await @service.remove
+        name: service.name
+      status.should.be.true()
+      {status} = await @service.remove
+        name: service.name
+      status.should.be.false()

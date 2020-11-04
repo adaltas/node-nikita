@@ -3,42 +3,10 @@
 
 Install, start/stop/restart and startup a service.
 
-The option "state" takes 3 possible values: "started", "stopped" and
+The config "state" takes 3 possible values: "started", "stopped" and
 "restarted". A service will only be restarted if it leads to a change of status.
 Set the value to "['started', 'restarted']" to ensure the service will be always
 started.
-
-## Options
-
-* `cache`   
-  Run entirely from system cache to list installed and outdated packages.
-* `cacheonly` (boolean)   
-  Run the yum command entirely from system cache, don't update cache.
-* `chk_name` (string)   
-  Name used by the chkconfig utility, default to "srv_name" and "name".
-* `installed`   
-  Cache a list of installed services. If an object, the service will be
-  installed if a key of the same name exists; if anything else (default), no
-  caching will take place.
-* `name` (string)   
-  Package name, required unless provided as main argument.
-* `outdated`   
-  Cache a list of outdated services. If an object, the service will be updated
-  if a key of the same name exists; If true, the option will be converted to
-  an object with all the outdated service names as keys; if anything else
-  (default), no caching will take place.
-* `srv_name` (string)   
-  Name used by the service utility, default to "name".
-* `startup` (boolean|string)   
-  Run service daemon on startup. If true, startup will be set to '2345', use
-  an empty string to not define any run level.
-* `state` (string)   
-  Ensure the service in the requested state; one of "started", "stopped", "restarted".
-* `yum_name` (string)
-  Name used by the yum utility, default to "name".
-
-The following options are passed to `nikita.service.install`: `pacman_flags`, 
-`yaourt_flags`.
 
 ## Callback parameters
 
@@ -69,43 +37,121 @@ require('nikita').service([{
 });
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({metadata, options}) ->
-      @log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
-      # Options
-      options.name ?= metadata.argument if typeof metadata.argument is 'string'
-      pkgname = options.yum_name or options.name
-      chkname = options.chk_name or options.srv_name or options.name
-      srvname = options.srv_name or options.chk_name or options.name
-      options.state = options.state.split(',') if typeof options.state is 'string'
-      @service.install
-        name: pkgname
-        cache: options.cache
-        cacheonly: options.cacheonly
-        if: pkgname # option name and yum_name are optional, skill installation if not present
-        installed: options.installed
-        outdated: options.outdated
-        pacman_flags: options.pacman_flags
-        yaourt_flags: options.yaourt_flags
-      @service.startup
-        name: chkname
-        startup: options.startup
-        if: options.startup?
-      @call
-        if: -> options.state
-      , ->
-        @service.status
+    on_action = ({config, metadata}) ->
+      config.name = metadata.argument if typeof metadata.argument is 'string'
+      config.state = config.state.split(',') if typeof config.state is 'string'
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'cache':
+          $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+        'cacheonly':
+          $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+        'chk_name':
+          type: 'string'
+          description: """
+          Name used by the chkconfig utility, default to "srv_name" and "name".
+          """
+        'installed':
+          $ref: 'module://@nikitajs/service/src/install#/properties/installed'
+        'name':
+          $ref: 'module://@nikitajs/service/src/install#/properties/name'
+        'outdated':
+          $ref: 'module://@nikitajs/service/src/install#/properties/outdated'
+        'pacman_flags':
+          $ref: 'module://@nikitajs/service/src/install#/properties/pacman_flags'
+        'srv_name':
+          type: 'string'
+          description: """
+          Name used by the service utility, default to "name".
+          """
+        'startup':
+          type: ['boolean', 'string']
+          description: """
+          Run service daemon on startup. If true, startup will be set to '2345',
+          use an empty string to not define any run level.
+          """
+        'state':
+          type: 'array'
+          items:
+            type: 'string'
+            enum: ['started', 'stopped', 'restarted']
+          description: """
+          Ensure the service in the requested state.
+          """
+        'yaourt_flags':
+          $ref: 'module://@nikitajs/service/src/install#/properties/yaourt_flags'
+        'yum_name':
+          type: 'string'
+          description: """
+          Name used by the yum utility, default to "name".
+          """
+      dependencies:
+        'state':
+          anyOf: [
+            required: ['name']
+          ,
+            required: ['srv_name']
+          ,
+            required: ['chk_name']
+          ]
+        'startup':
+          anyOf: [
+            required: ['name']
+          ,
+            required: ['srv_name']
+          ,
+            required: ['chk_name']
+          ]
+        
+## Handler
+
+    handler = ({config, parent, state}) ->
+      # log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
+      pkgname = config.yum_name or config.name
+      chkname = config.chk_name or config.srv_name or config.name
+      srvname = config.srv_name or config.chk_name or config.name
+      if pkgname  # option name and yum_name are optional, skill installation if not present
+        await @service.install
+          name: pkgname
+          cache: config.cache
+          cacheonly: config.cacheonly
+          installed: config.installed
+          outdated: config.outdated
+          pacman_flags: config.pacman_flags
+          yaourt_flags: config.yaourt_flags
+        parent.state = merge parent.state, state
+      if config.startup?
+        @service.startup
+          name: chkname
+          startup: config.startup
+      if config.state
+        {status} = await @service.status
           name: srvname
-          code_started: options.code_started
-          code_stopped: options.code_stopped
           shy: true
-        @service.start
-          name: srvname
-          if: -> not @status(-1) and 'started' in options.state
-        @service.stop
-          name: srvname
-          if: -> @status(-2) and 'stopped' in options.state
-        @service.restart
-          name: srvname
-          if: -> @status(-3) and 'restarted' in options.state
+        if not status and 'started' in config.state
+          await @service.start
+            name: srvname
+        if status and 'stopped' in config.state
+          await @service.stop
+            name: srvname
+        if status and 'restarted' in config.state
+          await @service.restart
+            name: srvname
+
+## Export
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema
+
+## Dependencies
+
+    {merge} = require 'mixme'

@@ -1,21 +1,7 @@
 
 # `nikita.service.restart`
 
-Start a service.
-
-## Options
-
-* `name` (string)   
-  Service name.   
-* `ssh` (object|ssh2)   
-  Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
-* `stdout` (stream.Writable)   
-  Writable EventEmitter in which the standard output of executed commands will
-  be piped.   
-* `stderr` (stream.Writable)   
-  Writable EventEmitter in which the standard error output of executed command
-  will be piped.   
+Restart a service.
 
 ## Callback parameters
 
@@ -33,24 +19,39 @@ require('nikita').service.start([{
 }, function(err, {status}){ /* do sth */ });
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({metadata, options}) ->
-      @log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
-      # Options
-      options.name ?= metadata.argument if typeof metadata.argument is 'string'
-      # Validation
-      throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
-      # Action
-      @log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
-      @service.discover (err, system) -> 
-        options.loader ?= system.loader
-      @call ->
-        @system.execute
-          cmd: switch options.loader
-            when 'systemctl' then "systemctl restart #{options.name}"
-            when 'service' then "service #{options.name} restart"
-            else throw Error 'Init System not supported'
-        , (err, {status}) ->
-          throw err if err
-          @store["nikita.service.#{options.name}.status"] = 'started' if status
+    on_action = ({config, metadata}) ->
+      config.name = metadata.argument if typeof metadata.argument is 'string'
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      required: ['name']
+
+## Handler
+
+    handler = ({config, parent: {state}, tools: {log}}) ->
+      # log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
+      log message: "Restart service #{config.name}", level: 'INFO', module: 'nikita/lib/service/restart'
+      {loader} = await @service.discover {}
+      config.loader ?= loader
+      {status} = await @execute
+        cmd: switch config.loader
+          when 'systemctl' then "systemctl restart #{config.name}"
+          when 'service' then "service #{config.name} restart"
+          else throw Error 'Init System not supported'
+      state["nikita.service.#{config.name}.status"] = 'started' if status
+      status: status
+
+## Export
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema

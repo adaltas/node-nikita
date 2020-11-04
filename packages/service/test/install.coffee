@@ -12,61 +12,57 @@ describe 'service.install', ->
   they 'new package', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.remove
-      name: service.name
-    .service
-      name: service.name
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+    , ->
+      @service.remove
+        name: service.name
+      {status} = await @service
+        name: service.name
+      status.should.be.true()
   
   they 'already installed packages', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.remove
-      name: service.name
-    .service
-      name: service.name
-    .service
-      name: service.name
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      @service.remove
+        name: service.name
+      @service
+        name: service.name
+      {status} = await @service
+        name: service.name
+      status.should.be.false()
 
   they 'name as default argument', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.remove
-      name: service.name
-    .service service.name, (err, {status}) ->
-      status.should.be.true() unless err
-    .promise()
+    , ->
+      @service.remove
+        name: service.name
+      {status} = await @service service.name
+      status.should.be.true()
   
   they 'cache', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.remove
-      name: service.name
-    .call ->
-      (@store['nikita:execute:installed'] is undefined).should.be.true()
-    .service
-      name: service.name
-      cache: true
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .call ->
-      @store['nikita:execute:installed'].should.containEql service.name
-    .promise()
+    , ->
+      @service.remove
+        name: service.name
+      @call ({parent: {state}}) ->
+        (state['nikita:execute:installed'] is undefined).should.be.true()
+      {status} = await @service
+        name: service.name
+        cache: true
+      status.should.be.true()
+      @call ({parent: {state}}) ->
+        state['nikita:execute:installed'].should.containEql service.name
 
   they 'skip code when error', ({ssh}) ->
     nikita
       ssh: ssh
-    .service.install
-      name: 'thisservicedoesnotexist'
-      code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    , ->
+      {status} = await @service.install
+        name: 'thisservicedoesnotexist'
+        code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
+      status.should.be.false()
   
   describe 'specific', ->
     
@@ -74,43 +70,40 @@ describe 'service.install', ->
       message = null
       nikita
         ssh: ssh
-      .on 'stdin', (log) ->
-        message = log.message
-      .service.remove
-        name: service.name
-      .service.install
-        name: service.name
-        pacman_flags: ['u', 'y']
-      .call ->
-        message.should.containEql "pacman --noconfirm -S #{service.name} -u -y"
-      .promise()
+      , ({tools: {events}}) ->
+        events.on 'stdin', (log) -> message = log.message
+        @service.remove
+          name: service.name
+        @service.install
+          name: service.name
+          pacman_flags: ['u', 'y']
+        @call ->
+          message.should.containEql "pacman --noconfirm -S #{service.name} -u -y"
         
     they 'add yaourt options', ({ssh}) ->
       message = null
       nikita
         ssh: ssh
-      .on 'stdin', (log) ->
-        message = log.message
-      .service.remove
-        name: service.name
-      .service.install
-        name: service.name
-        yaourt_flags: ['u', 'y']
-      .call ->
-        message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
-      .promise()
+      , ({tools: {events}}) ->
+        events.on 'stdin', (log) -> message = log.message
+        @service.remove
+          name: service.name
+        @service.install
+          name: service.name
+          yaourt_flags: ['u', 'y']
+        @call ->
+          message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
         
     they 'add yay options', ({ssh}) ->
       message = null
       nikita
         ssh: ssh
-      .on 'stdin', (log) ->
-        message = log.message
-      .service.remove
-        name: service.name
-      .service.install
-        name: service.name
-        yay_flags: ['u', 'y']
-      .call ->
-        message.should.containEql "yay --noconfirm -S #{service.name} -u -y"
-      .promise()
+      , ({tools: {events}}) ->
+        events.on 'stdin', (log) -> message = log.message
+        @service.remove
+          name: service.name
+        @service.install
+          name: service.name
+          yay_flags: ['u', 'y']
+        @call ->
+          message.should.containEql "yay --noconfirm -S #{service.name} -u -y"
