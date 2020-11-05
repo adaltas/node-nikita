@@ -37,7 +37,7 @@ handlers =
         final_run = false unless status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped
-        throw err if code_skipped and parseInt(code_skipped) isnt err.exit_code
+        throw err if code_skipped and parseInt(code_skipped, 10) isnt err.exit_code
         final_run = false
     final_run
   unless_execute: (action) ->
@@ -56,5 +56,5 @@ handlers =
         final_run = false if status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped
-        throw err if code_skipped and parseInt(code_skipped) isnt err.exit_code
+        throw err if code_skipped and parseInt(code_skipped, 10) isnt err.exit_code
     final_run
