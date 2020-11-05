@@ -16,17 +16,20 @@ module.exports = ({params}) ->
     vagrant plugin install vagrant-vbguest
     '''
   .execute
+    header: 'Vagrant'
     cwd: "#{__dirname}/../../../assets"
     cmd: '''
     vagrant up
     '''
   .execute
+    header: 'LXC remote'
     cmd: '''
     lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
     lxc remote switch nikita
     '''
   .execute
-    debug: true
+    header: 'LXC remote (update)'
+    # todo: use condition for `lxc ls`
     cmd: '''
     lxc ls || {
       lxc remote switch local
@@ -44,6 +47,7 @@ module.exports = ({params}) ->
     stderr: process.stderr
     stdout: process.stdout
   .call ->
+    header: 'Connection'
     process.stdout.write """
     ssh -i #{key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n
     """
