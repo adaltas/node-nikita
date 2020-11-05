@@ -3,13 +3,6 @@
 
 // Attach an existing network to a container.
 
-// ## Options
-
-// * `network` (required, string)   
-//   The network network.
-// * `container` (required, string)   
-//   The container name.
-
 // ## Callback parameters
 
 // * `err`   
@@ -29,33 +22,39 @@
 // })
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    'network': {
+      type: 'string',
+      description: `The network name to attach.`
+    },
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    }
+  },
+  required: ['network', 'container']
+};
+
+// ## Handler
+handler = function({config}) {
   var cmd_attach;
-  this.log({
-    message: "Entering lxd.network.attach",
-    level: "DEBUG",
-    module: "@nikitajs/lxd/lib/network/attach"
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  if (!options.container) {
-    throw Error("Invalid Option: container is required");
-  }
+  // log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
   //Build command
-  cmd_attach = ['lxc', 'network', 'attach', options.network, options.container].join(' ');
+  cmd_attach = ['lxc', 'network', 'attach', config.network, config.container].join(' ');
   //Execute
-  return this.system.execute({
-    cmd: `lxc config device list ${options.container} | grep ${options.network} && exit 42
+  return this.execute({
+    cmd: `lxc config device list ${config.container} | grep ${config.network} && exit 42
 ${cmd_attach}`,
     code_skipped: 42
   });
 };
 
-// ## Dependencies
-validate_container_name = require('../misc/validate_container_name');
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

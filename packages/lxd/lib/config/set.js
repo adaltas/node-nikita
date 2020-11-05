@@ -3,13 +3,6 @@
 
 // Set container or server configuration keys.
 
-// ## Options
-
-// * `container` (string, required)
-//   The name of the container.
-// * `config` (object, required)
-//   One or multiple keys to set.
-
 // ## Set a configuration key
 
 // ```js
@@ -24,52 +17,66 @@
 // });
 // ```
 
-// ## Source Code
-var diff, merge, validate_container_name, yaml;
+// ## Schema
+var diff, handler, merge, schema, yaml;
 
-module.exports = function({options}) {
-  var keys;
-  this.log({
-    message: "Entering lxd.config.set",
-    level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/config/set'
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
+schema = {
+  type: 'object',
+  properties: {
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    },
+    'config': {
+      type: 'object',
+      patternProperties: {
+        '': {
+          type: ['string', 'boolean', 'number']
+        }
+      },
+      description: `One or multiple keys to set.`
+    }
+  },
+  required: ['container', 'config']
+};
+
+// ## Handler
+handler = async function({config}) {
+  var changes, k, key, keys, ref, status, stdout, v, value;
+  ref = config.config;
+  // log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
+  // Normalize config
+  for (k in ref) {
+    v = ref[k];
+    if (typeof v === 'string') {
+      continue;
+    }
+    config.config[k] = v.toString();
   }
-  validate_container_name(options.container);
-  // Execution
   keys = {};
-  this.system.execute({
-    cmd: `${['lxc', 'config', 'show', options.container].join(' ')}`,
+  ({stdout} = (await this.execute({
+    cmd: `${['lxc', 'config', 'show', config.container].join(' ')}`,
     shy: true,
     code_skipped: 42
-  }, function(err, {stdout}) {
-    var config;
-    if (err) {
-      throw err;
-    }
-    config = yaml.safeLoad(stdout);
-    return keys = diff(config.config, merge(config.config, options.config));
-  });
-  return this.call(function() {
-    var k, v;
+  })));
+  stdout = yaml.safeLoad(stdout);
+  changes = diff(stdout.config, merge(stdout.config, config.config));
+  for (key in changes) {
+    value = changes[key];
+    // if changes is empty status is false because no command were executed
     // Note, it doesnt seem possible to set multiple keys in one command
-    return this.system.execute({
-      if: Object.keys(keys).length,
-      cmd: `${((function() {
-        var results;
-        results = [];
-        for (k in keys) {
-          v = keys[k];
-          results.push(['lxc', 'config', 'set', options.container, `${k} '${v.replace('\'', '\\\'')}'`].join(' '));
-        }
-        return results;
-      })()).join('\n')}`,
-      code_skipped: 42
-    });
-  });
+    ({status} = (await this.execute({
+      cmd: ['lxc', 'config', 'set', config.container, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+    })));
+  }
+  return {
+    status: status
+  };
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies
@@ -78,5 +85,3 @@ module.exports = function({options}) {
 yaml = require('js-yaml');
 
 diff = require('object-diff');
-
-validate_container_name = require('../misc/validate_container_name');

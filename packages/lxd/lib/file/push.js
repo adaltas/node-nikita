@@ -3,29 +3,6 @@
 
 // Push files into containers.
 
-// ## Options
-
-// * `container` (string, required)
-//   The name of the container.
-// * `content` (string, optional*)
-//   Content of the target file; required if `source` is not set
-// * `create_dirs` (boolean, optional, false)
-//   Create any directories necessary.
-// * `gid` (integer, optional)
-//   Set the file's gid on push.
-//   overwrite the `source` option.
-// * `lxd_target` (string, required)
-//   File destination in the form of "[<remote>:]<container>/<path>",
-//   overwrite the `target` option.
-// * `mode` (integer|string, optional)
-//   Set the file's perms on push.
-// * `source` (string, optional*)
-//   File to push in the form of "<path>"; required if `content` is not set.
-// * `target` (string, required)
-//   File destination in the form of "<path>".
-// * `uid` (integer, optional)
-//   Set the file's uid on push.
-
 // ## Example
 
 // ```js
@@ -44,102 +21,151 @@
 // * Handle unmatched target ownerships
 // * Detect name from lxd_target
 
-// ## Source Code
-var path, validate_container_name;
+// ## Schema
+var handler, path, schema;
 
-module.exports = function({options}) {
-  this.log({
-    message: "Entering lxd.file.push",
-    level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/file/push'
-  });
-  if (!options.container) {
-    // Validation
-    // note, name could be obtained from lxd_target
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  if (!(options.source || (options.content != null))) {
-    throw Error("Invalid Option: source or content are required");
-  }
-  if (!options.target && !options.lxd_target) {
-    throw Error("Invalid Option: target is required");
-  }
-  if (options.algo == null) {
-    options.algo = 'md5';
-  }
-  if (options.lxd_target == null) {
-    options.lxd_target = `${path.join(options.container, options.target)}`;
-  }
-  if (options.tmp_file == null) {
-    options.tmp_file = `/tmp/nikita.${Date.now()}${Math.round(Math.random() * 1000)}`;
-  }
-  // Execution
-  this.fs.writeFile({
-    if: options.content != null,
-    target: options.tmp_file,
-    content: options.content
-  });
-  this.lxd.running({
-    container: options.container
-  });
-  this.system.execute({
-    if: function() {
-      return this.status(-1);
+schema = {
+  type: 'object',
+  properties: {
+    'algo': {
+      default: 'md5',
+      $ref: 'module://@nikitajs/engine/src/actions/fs/hash#/properties/algo'
     },
-    cmd: `# Ensure source is a file
-[ -f "${options.source || options.tmp_file}" ] || exit 2
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    },
+    'content': {
+      type: 'string',
+      description: `Content of the target file.`
+    },
+    'create_dirs': {
+      type: 'boolean',
+      default: false,
+      description: `Create any directories necessary.`
+    },
+    'gid': {
+      type: ['integer', 'string'],
+      description: `Set the file's gid on push, overwrite the \`source\` option.`
+    },
+    'lxd_target': {
+      type: 'string',
+      description: `File destination in the form of "[<remote>:]<container>/<path>",
+overwrite the \`target\` option.`
+    },
+    'mode': {
+      type: ['integer', 'string'],
+      description: `Set the file's perms on push.`
+    },
+    'source': {
+      type: 'string',
+      description: `File to push in the form of "<path>".`
+    },
+    'target': {
+      type: 'string',
+      description: `File destination in the form of "<path>".`
+    },
+    'uid': {
+      type: ['integer', 'string'],
+      description: `Set the file's uid on push.`
+    }
+  },
+  required: ['container', 'target'],
+  oneOf: [
+    {
+      required: ['content']
+    },
+    {
+      required: ['source']
+    }
+  ]
+};
+
+// ## Handler
+handler = async function({
+    config,
+    metadata: {tmpdir}
+  }) {
+  var err, status, status_running, tmpfile;
+  // log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/push'
+  // Make source file with content
+  if (config.content != null) {
+    tmpfile = path.join(tmpdir, `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`);
+    this.fs.base.writeFile({
+      target: tmpfile,
+      content: config.content
+    });
+    config.source = tmpfile;
+  }
+  // note, name could be obtained from lxd_target
+  // throw Error "Invalid Option: target is required" if not config.target and not config.lxd_target
+  if (config.lxd_target == null) {
+    config.lxd_target = `${path.join(config.container, config.target)}`;
+  }
+  ({status} = (await this.lxd.running({
+    container: config.container
+  })));
+  status_running = status;
+  if (status) {
+    try {
+      ({status} = (await this.execute({
+        cmd: `# Ensure source is a file
+[ -f "${config.source}" ] || exit 2
 command -v openssl >/dev/null || exit 3
-sourceDgst=\`openssl dgst -${options.algo} ${options.source || options.tmp_file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`
+sourceDgst=\`openssl dgst -${config.algo} ${config.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`
 # Get target hash
-targetDgst=\`cat <<EOF | lxc exec ${options.container} -- bash
+targetDgst=\`cat <<EOF | lxc exec ${config.container} -- bash
 # Ensure openssl is available
 command -v openssl >/dev/null || exit 4
 # Target does not exist
-[ ! -f "${options.target}" ] && exit 0
-openssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
+[ ! -f "${config.target}" ] && exit 0
+openssl dgst -${config.algo} ${config.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
 EOF\`
 [ "$sourceDgst" != "$targetDgst" ] || exit 42`,
-    code_skipped: 42,
-    trap: true
-  }, function(err) {
-    if ((err != null ? err.code : void 0) === 2) {
-      throw Error(`Invalid Option: source is not a file, got ${JSON.stringify(options.source || options.tmp_file)}`);
+        code_skipped: 42,
+        trap: true
+      })));
+    } catch (error) {
+      err = error;
+      if (err.exit_code === 2) {
+        throw Error(`Invalid Option: source is not a file, got ${JSON.stringify(config.source)}`);
+      }
+      if (err.exit_code === 3) {
+        throw Error("Invalid Requirement: openssl not installed on host");
+      }
+      if (err.exit_code === 4) {
+        throw Error("Invalid Requirement: openssl not installed on container");
+      }
     }
-    if ((err != null ? err.code : void 0) === 3) {
-      throw Error("Invalid Requirement: openssl not installed on host");
-    }
-    if ((err != null ? err.code : void 0) === 4) {
-      throw Error("Invalid Requirement: openssl not installed on container");
-    }
-  });
-  this.system.execute({
-    if: function() {
-      return !this.status(-2) || this.status(-1);
-    },
-    cmd: `${['lxc', 'file', 'push', options.source || options.tmp_file, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, (options.gid != null) && typeof options.gid === 'number' ? '--gid' : void 0, (options.uid != null) && typeof options.uid === 'number' ? '--uid' : void 0, options.mode ? `--mode ${options.mode}` : void 0].join(' ')}`,
-    trap: true,
-    trim: true
-  });
-  this.lxd.exec({
-    if: typeof options.gid === 'string',
-    container: options.container,
-    cmd: `chgrp ${options.gid} ${options.target}`
-  });
-  this.lxd.exec({
-    if: typeof options.uid === 'string',
-    container: options.container,
-    cmd: `chown ${options.uid} ${options.target}`
-  });
-  return this.fs.unlink({
-    if: options.content != null,
-    target: options.tmp_file,
-    tolerant: true // TODO, not yet implemented
-  });
+  }
+  if (!status_running || status) {
+    this.execute({
+      cmd: `${['lxc', 'file', 'push', config.source, config.lxd_target, config.create_dirs ? '--create-dirs' : void 0, (config.gid != null) && typeof config.gid === 'number' ? '--gid' : void 0, (config.uid != null) && typeof config.uid === 'number' ? '--uid' : void 0, config.mode ? `--mode ${config.mode}` : void 0].join(' ')}`,
+      trap: true,
+      trim: true
+    });
+  }
+  if (typeof config.gid === 'string') {
+    this.lxd.exec({
+      container: config.container,
+      cmd: `chgrp ${config.gid} ${config.target}`
+    });
+  }
+  if (typeof config.uid === 'string') {
+    return this.lxd.exec({
+      container: config.container,
+      cmd: `chown ${config.uid} ${config.target}`
+    });
+  }
 };
 
+// ## Export
+module.exports = {
+  handler: handler,
+  metadata: {
+    tmpdir: true
+  },
+  schema: schema
+};
 
 // ## Dependencies
 path = require('path');
-
-validate_container_name = require('../misc/validate_container_name');

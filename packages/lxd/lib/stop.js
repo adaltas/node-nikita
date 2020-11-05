@@ -3,11 +3,6 @@
 
 // Stop a running Linux Container.
 
-// ## Options
-
-// * `container` (required, string)
-//   The name of the container
-
 // ## Example
 
 // ```
@@ -19,26 +14,31 @@
 // });
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = function({options}) {
-  this.log({
-    message: "Entering stop",
-    level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/stop'
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  return this.system.execute({
-    cmd: `lxc list -c ns --format csv | grep '${options.container},STOPPED' && exit 42
-lxc stop ${options.container}`,
+schema = {
+  type: 'object',
+  properties: {
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    }
+  },
+  required: ['container']
+};
+
+// ## Handler
+handler = function({config}) {
+  // log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
+  return this.execute({
+    cmd: `lxc list -c ns --format csv | grep '${config.container},STOPPED' && exit 42
+lxc stop ${config.container}`,
     code_skipped: 42
   });
 };
 
-// ## Dependencies
-validate_container_name = require('./misc/validate_container_name');
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

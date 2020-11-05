@@ -3,14 +3,6 @@
 
 // Create a network or update a network configuration
 
-// ## Options
-
-// * `network` (required, string)
-//   The network name.
-// * `config` (optional, object, {})
-//   The network configuration, see
-//   [available fields](https://lxd.readthedocs.io/en/latest/networks/).
-
 // ## Callback parameters
 
 // * `err`
@@ -33,42 +25,57 @@
 // })
 // ```
 
-// ## Source Code
-var diff, yaml;
+// ## Schema
+var diff, handler, schema, yaml;
 
-module.exports = function({options}, callback) {
-  var k, key, ref, v, value;
-  this.log({
-    message: "Entering lxd.network",
-    level: "DEBUG",
-    module: "@nikitajs/lxd/lib/network"
-  });
-  if (!options.network) {
-    //Check args
-    throw Error("Invalid Option: network is required to create a network");
-  }
-  ref = options.config;
+schema = {
+  type: 'object',
+  properties: {
+    'network': {
+      type: 'string',
+      description: `The network name to create.`
+    },
+    'config': {
+      type: 'object',
+      patternProperties: {
+        '': {
+          type: ['string', 'boolean', 'number']
+        }
+      },
+      description: `The network configuration, see [available
+fields](https://lxd.readthedocs.io/en/latest/networks/).`
+    }
+  },
+  required: ['network']
+};
+
+// ## Handler
+handler = async function({config}) {
+  var changes, code, config_orig, k, key, ref, status, stdout, v, value;
+  ref = config.config;
+  // log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
+  // Normalize config
   for (k in ref) {
     v = ref[k];
     if (typeof v === 'string') {
       continue;
     }
-    options.config[k] = typeof v === 'boolean' ? v ? 'true' : 'false' : void 0;
+    config.config[k] = v.toString();
   }
   // Command if the network does not yet exist
-  return this.system.execute({
+  ({stdout, code, status} = (await this.execute({
     // return code 5 indicates a version of lxc where 'network' command is not implemented
     cmd: `lxc network > /dev/null || exit 5
-lxc network show ${options.network} && exit 42
+lxc network show ${config.network} && exit 42
 ${[
       'lxc',
       'network',
       'create',
-      options.network,
+      config.network,
       ...((function() {
         var ref1,
       results;
-        ref1 = options.config;
+        ref1 = config.config;
         results = [];
         for (key in ref1) {
           value = ref1[key];
@@ -78,27 +85,38 @@ ${[
         return results;
       })())
     ].join(' ')}`,
-    code_skipped: 42
-  }, function(err, {stdout, code, status}) {
-    var changes, config;
-    if (code === 5) {
-      return callback(Error("This version of lxc does not support the network command"));
-    }
-    if (code !== 42) { // was created
-      return callback(err, {
-        status: status
-      });
-    }
-    ({config} = yaml.safeLoad(stdout));
-    changes = diff(config, options.config);
-    for (key in changes) {
-      value = changes[key];
-      this.system.execute({
-        cmd: ['lxc', 'network', 'set', options.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
-      });
-    }
-    return callback(null, Object.keys(changes).length > 0);
-  });
+    code_skipped: [5, 42]
+  })));
+  if (code === 5) {
+    throw Error("This version of lxc does not support the network command.");
+  }
+  if (code !== 42) { // was created
+    return {
+      status: status
+    };
+  }
+  // Network already exists, find the changes
+  if (!(config != null ? config.config : void 0)) {
+    return;
+  }
+  config_orig = config;
+  ({config} = yaml.safeLoad(stdout));
+  changes = diff(config, config_orig.config);
+  for (key in changes) {
+    value = changes[key];
+    ({status} = (await this.execute({
+      cmd: ['lxc', 'network', 'set', config_orig.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+    })));
+  }
+  return {
+    status: status
+  };
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
 };
 
 // ## Dependencies

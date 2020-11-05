@@ -3,11 +3,6 @@
 
 // Delete an existing lxd storage.
 
-// ## Options
-
-// * `name` (required, string)
-//   The storage name
-
 // ## Callback parameters
 
 // * `err`
@@ -26,24 +21,35 @@
 // })
 // ```
 
-// ## Source Code
-module.exports = function({options}) {
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'name': {
+      type: 'string',
+      description: `The storage name to delete.`
+    }
+  },
+  required: ['name']
+};
+
+// ## Handler
+handler = function({config}) {
   var cmd_delete;
-  this.log({
-    message: "Entering lxd.storage.delete",
-    level: "DEBUG",
-    module: "@nikitajs/lxd/lib/storage/delete"
-  });
-  if (!options.name) {
-    //Check args
-    throw Error("Argument 'name' is required to delete a storage");
-  }
-  //Build command
-  cmd_delete = ['lxc', 'storage', 'delete', options.name].join(' ');
+  // log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
+  cmd_delete = ['lxc', 'storage', 'delete', config.name].join(' ');
   //Execute
-  return this.system.execute({
-    cmd: `lxc storage list | grep ${options.name} || exit 42
+  return this.execute({
+    cmd: `lxc storage list | grep ${config.name} || exit 42
 ${cmd_delete}`,
     code_skipped: 42
   });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
 };
