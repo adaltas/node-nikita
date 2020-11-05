@@ -4,16 +4,15 @@ nikita = require '@nikitajs/engine/src'
 
 return unless tags.lxd
 
-before () ->
-  await nikita
-  .execute
+before ->
+  @timeout(-1)
+  await nikita.execute
     cmd: "lxc image copy images:centos/7 `lxc remote get-default`:"
 
 describe 'lxd.cluster', ->
 
   it 'Create container with devices', ->
-    nikita {}
-    , ->
+    nikita ->
       @lxd.delete
         container: 'c1'
         force: true
