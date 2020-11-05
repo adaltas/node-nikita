@@ -6,6 +6,7 @@ they = require('ssh2-they').configure ssh
 return unless tags.lxd
   
 before () ->
+  @timeout(-1)
   await nikita
   .execute
     cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
