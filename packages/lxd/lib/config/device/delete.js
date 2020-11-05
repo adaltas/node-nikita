@@ -3,13 +3,6 @@
 
 // Delete a device from a container
 
-// ## Options
-
-// * `container` (string, required)
-//   The name of the container.
-// * `device` (string, required)
-//   Name of the device in LXD configuration, for example "eth0".
-
 // ## Callback parameters
 
 // * `err`
@@ -29,45 +22,47 @@
 // })
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = {
-  handler: function({options}, callback) {
-    this.log({
-      message: "Entering lxd config.device.delete",
-      level: "DEBUG",
-      module: "@nikitajs/lxd/lib/config/device/delete"
-    });
-    if (!options.container) {
-      // Validation
-      throw Error("Invalid Option: container is required");
+schema = {
+  type: 'object',
+  properties: {
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    },
+    'device': {
+      type: 'string',
+      description: `Name of the device in LXD configuration, for example "eth0".`
     }
-    validate_container_name(options.container);
-    if (!options.device) {
-      throw Error("Invalid Option: Device name (options.device) is required");
-    }
-    return this.lxd.config.device.show({
-      container: options.container,
-      device: options.device
-    }, function(err, {status, config}) {
-      if (err || !config) {
-        return callback(err, {
-          status: false
-        });
-      }
-      this.system.execute({
-        cmd: ['lxc', 'config', 'device', 'remove', options.container, options.device].join(' ')
-      }, function(err, {status}) {});
-      if (err) {
-        return callback(err);
-      }
-      return callback(null, {
-        status: true
-      });
-    });
-  }
+  },
+  required: ['container', 'device']
 };
 
-// ## Dependencies
-validate_container_name = require('../../misc/validate_container_name');
+// ## Handler
+handler = async function({config}) {
+  var config_orig, status;
+  // log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
+  config_orig = config;
+  ({config} = (await this.lxd.config.device.show({
+    container: config.container,
+    device: config.device
+  })));
+  if (!config) {
+    return {
+      status: false
+    };
+  }
+  ({status} = (await this.execute({
+    cmd: ['lxc', 'config', 'device', 'remove', config_orig.container, config_orig.device].join(' ')
+  })));
+  return {
+    status: status
+  };
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

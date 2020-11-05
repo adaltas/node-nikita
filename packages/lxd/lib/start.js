@@ -3,11 +3,6 @@
 
 // Start containers.
 
-// ## Options
-
-// * `container` (string, required)
-//   The name of the container.
-
 // ## Callback Parameters
 
 // * `err`
@@ -27,30 +22,34 @@
 // });
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    }
+  },
+  required: ['container']
+};
+
+// ## Handler
+handler = function({config}) {
   var cmd_init;
-  this.log({
-    message: "Entering lxd.start",
-    level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/start'
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  cmd_init = ['lxc', 'start', options.container].join(' ');
+  // log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
+  cmd_init = ['lxc', 'start', config.container].join(' ');
   // Execution
-  return this.system.execute({
-    container: options.container,
-    cmd: `lxc list -c ns --format csv | grep '${options.container},RUNNING' && exit 42
+  return this.execute({
+    cmd: `lxc list -c ns --format csv | grep '${config.container},RUNNING' && exit 42
 ${cmd_init}`,
     code_skipped: 42
   });
 };
 
-// ## Dependencies
-validate_container_name = require('./misc/validate_container_name');
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

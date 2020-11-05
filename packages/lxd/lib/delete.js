@@ -3,13 +3,6 @@
 
 // Delete a Linux Container using lxd.
 
-// ## Options
-
-// * `container` (required, string)
-//   The name of the container
-// * `force` (optional default: false)
-//   If true, the container will be deleted even if running
-
 // ## Example
 
 // ```
@@ -21,27 +14,36 @@
 // });
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = function({options}) {
-  this.log({
-    message: "Entering lxd.delete",
-    level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/delete'
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  // Execution
-  return this.system.execute({
-    cmd: `lxc info ${options.container} > /dev/null || exit 42
-${['lxc', 'delete', options.container, options.force ? "--force" : void 0].join(' ')}`,
+schema = {
+  type: 'object',
+  properties: {
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    },
+    'force': {
+      type: 'boolean',
+      default: false,
+      description: `If true, the container will be deleted even if running.`
+    }
+  },
+  required: ['container']
+};
+
+// ## Handler
+handler = function({config}) {
+  // log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
+  return this.execute({
+    cmd: `lxc info ${config.container} > /dev/null || exit 42
+${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' ')}`,
     code_skipped: 42
   });
 };
 
-// ## Dependencies
-validate_container_name = require('./misc/validate_container_name');
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

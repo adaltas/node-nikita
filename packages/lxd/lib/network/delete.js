@@ -3,11 +3,6 @@
 
 // Delete an existing lxd network.
 
-// ## Options
-
-// * `network` (required, string)   
-//   The network name.
-
 // ## Callback parameters
 
 // * `err`   
@@ -26,21 +21,33 @@
 // })
 // ```
 
-// ## Source Code
-module.exports = function({options}) {
-  this.log({
-    message: "Entering lxd.network.delete",
-    level: "DEBUG",
-    module: "@nikitajs/lxd/lib/network/delete"
-  });
-  if (!options.network) {
-    //Check args
-    throw Error("Invalid Option: network is required");
-  }
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {
+    'network': {
+      type: 'string',
+      description: `The network name to delete.`
+    }
+  },
+  required: ['network']
+};
+
+// ## Handler
+handler = function({config}) {
+  // log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
   //Execute
-  return this.system.execute({
-    cmd: `lxc network list --format csv | grep ${options.network} || exit 42
-${['lxc', 'network', 'delete', options.network].join(' ')}`,
+  return this.execute({
+    cmd: `lxc network list --format csv | grep ${config.network} || exit 42
+${['lxc', 'network', 'delete', config.network].join(' ')}`,
     code_skipped: 42
   });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
 };

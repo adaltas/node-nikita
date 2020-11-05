@@ -3,13 +3,6 @@
 
 // Detach a network from a container.
 
-// ## Options
-
-// * `network` (required, string)   
-//   The network name.
-// * `container` (required, string)   
-//   The container name.
-
 // ## Callback parameters
 
 // * `err`
@@ -29,30 +22,36 @@
 // })
 // ```
 
-// ## Source Code
-var validate_container_name;
+// ## Schema
+var handler, schema;
 
-module.exports = function({options}) {
-  this.log({
-    message: "Entering lxd.network.detach",
-    level: "DEBUG",
-    module: "@nikitajs/lxd/lib/network/detach"
-  });
-  if (!options.container) {
-    // Validation
-    throw Error("Invalid Option: container is required");
-  }
-  validate_container_name(options.container);
-  if (!options.network) {
-    throw Error("Invalid Option: network is required");
-  }
+schema = {
+  type: 'object',
+  properties: {
+    'network': {
+      type: 'string',
+      description: `The network name to detach.`
+    },
+    'container': {
+      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+    }
+  },
+  required: ['network', 'container']
+};
+
+// ## Handler
+handler = function({config}) {
+  // log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
   //Execute
-  return this.system.execute({
-    cmd: `lxc config device list ${options.container} | grep ${options.network} || exit 42
-${['lxc', 'network', 'detach', options.network, options.container].join(' ')}`,
+  return this.execute({
+    cmd: `lxc config device list ${config.container} | grep ${config.network} || exit 42
+${['lxc', 'network', 'detach', config.network, config.container].join(' ')}`,
     code_skipped: 42
   });
 };
 
-// ## Dependencies
-validate_container_name = require('../misc/validate_container_name');
+// ## Export
+module.exports = {
+  handler: handler,
+  schema: schema
+};

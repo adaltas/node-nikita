@@ -16,7 +16,7 @@ module.exports = function({params}) {
     basedir: params.log,
     archive: false,
     if: params.log
-  }).system.execute({
+  }).execute({
     cwd: `${__dirname}/../../../assets`,
     cmd: `vagrant halt`
   });

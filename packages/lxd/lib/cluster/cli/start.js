@@ -20,18 +20,21 @@ module.exports = function({params}) {
     basedir: params.log,
     archive: false,
     if: params.log
-  }).system.execute({
+  }).execute({
     header: 'Dependencies',
     unless_exec: 'vagrant plugin list | egrep \'^vagrant-vbguest \'',
     cmd: `vagrant plugin install vagrant-vbguest`
-  }).system.execute({
+  }).execute({
+    header: 'Vagrant',
     cwd: `${__dirname}/../../../assets`,
     cmd: `vagrant up`
-  }).system.execute({
+  }).execute({
+    header: 'LXC remote',
     cmd: `lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
 lxc remote switch nikita`
-  }).system.execute({
-    debug: true,
+  }).execute({
+    header: 'LXC remote (update)',
+    // todo: use condition for `lxc ls`
     cmd: `lxc ls || {
   lxc remote switch local
   lxc remote remove nikita
@@ -47,6 +50,9 @@ lxc remote switch nikita`
       stdout: process.stdout
     };
   }).call(function() {
+    ({
+      header: 'Connection'
+    });
     return process.stdout.write(`ssh -i ${key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n`);
   });
 };
