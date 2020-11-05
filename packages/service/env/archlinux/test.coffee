@@ -2,7 +2,7 @@
 module.exports =
   tags:
     service_install: true
-  conditions_is_os:
+  conditions_if_os:
     arch: '64'
     name: 'arch'
     version: '4.10.0-1'

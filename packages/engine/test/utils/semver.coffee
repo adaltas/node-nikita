@@ -1,10 +1,10 @@
 
-semver = require '../../src/misc/semver'
+semver = require '../../src/utils/semver'
 {tags} = require '../test'
 
 return unless tags.api
 
-describe 'misc semver', ->
+describe 'utils.semver', ->
 
   it 'sanitize', ->
     semver.sanitize('5').should.eql '5.x.x'

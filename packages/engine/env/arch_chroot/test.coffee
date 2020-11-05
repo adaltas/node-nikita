@@ -1,8 +1,9 @@
 
 module.exports =
   tags:
+    conditions_if_os: true
     system_execute_arc_chroot: true
-  conditions_is_os:
+  conditions_if_os:
     arch: '64'
     name: 'arch'
     version: '4.10.0-1'

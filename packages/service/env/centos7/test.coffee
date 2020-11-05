@@ -4,7 +4,7 @@ module.exports =
     service_install: true
     service_startup: true
     service_systemctl: false # cant be activated because systemctl not compatible with Docker
-  conditions_is_os:
+  conditions_if_os:
     arch: '64'
     name: 'centos'
     version: '7.5'
