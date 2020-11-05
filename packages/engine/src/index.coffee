@@ -23,6 +23,7 @@ create = ->
     require './plugins/conditions'
     require './plugins/conditions_execute'
     require './plugins/conditions_exists'
+    require './plugins/conditions_os'
     require './plugins/global'
     require './plugins/history'
     require './plugins/output_logs'

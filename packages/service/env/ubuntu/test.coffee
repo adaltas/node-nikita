@@ -4,7 +4,7 @@ module.exports =
     service_install: true
     service_startup: true
     service_systemctl: false
-  conditions_is_os:
+  conditions_if_os:
     arch: '64'
     name: 'ubuntu'
     version: '14.04'

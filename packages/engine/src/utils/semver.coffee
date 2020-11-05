@@ -11,7 +11,7 @@ module.exports =
       version.push fill for _ in [0...3-version.length]
       version = version.map (v) ->
         # Ubuntu style, remove trailing '0'
-        return "#{parseInt v}" unless isNaN parseInt v
+        return "#{parseInt v, 10}" unless isNaN parseInt v, 10
         # Arch style, strip /-\d$/
         v = v.split('-')[0] if /\d+-\d+/.test v
         v
