@@ -8,6 +8,7 @@ module.exports = {
   os: require('./os'),
   regexp: require('./regexp'),
   schema: require('./schema'),
+  semver: require('./semver'),
   ssh: require('./ssh'),
   stats: require('./stats'),
   string: require('./string'),
