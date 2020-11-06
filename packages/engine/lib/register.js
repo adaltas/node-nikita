@@ -9,6 +9,7 @@ module.exports = {
   '': {
     handler: (function() {})
   },
+  'assert': '@nikitajs/engine/lib/actions/assert',
   'call': {
     '': {}
   },

@@ -4,6 +4,7 @@ error = require './utils/error'
 
 module.exports =
   '': handler: (->)
+  'assert': '@nikitajs/engine/src/actions/assert'
   'call':
     '': {}
   'execute':
