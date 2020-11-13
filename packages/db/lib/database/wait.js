@@ -6,14 +6,12 @@
 // ## Create Database example
 
 // ```js
-// require('nikita')
-// .db.db.wait({
+// const {status} = await nikita.db.wait({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_db'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Did database existed initially: ' + !status);
-// });
+// })
+// console.info(`Did database existed initially: ${!status}`);
 // ```
 
 // ## Schema

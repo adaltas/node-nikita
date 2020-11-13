@@ -6,7 +6,7 @@ Create a database inside the destination datababse server.
 ## Create database example
 
 ```js
-{status} = await nikita.database.db({
+const {status} = await nikita.database.db({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',
