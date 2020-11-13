@@ -6,12 +6,12 @@
 // ## Create Schema example
 
 // ```js
-// {exists} = await nikita.db.schema.exists({
+// const {exists} = await nikita.db.schema.exists({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_db'
 // })
-// console.log('Schema exists: ' + exists);
+// console.info(`Schema exists: ${exists}`);
 // ```
 
 // ## Schema

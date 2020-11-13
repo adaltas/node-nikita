@@ -12,13 +12,13 @@
 // ## Create Schema example
 
 // ```js
-// {status} = await nikita.db.schema({
+// const {status} = await nikita.db.schema({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_database'
 //   schema: 'my_schema'
 // })
-// console.log('Schema created or modified:', status);
+// console.info(`Schema created or modified: ${status}`);
 // ```
 
 // ## Schema

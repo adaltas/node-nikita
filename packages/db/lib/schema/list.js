@@ -6,14 +6,14 @@
 // ## Create Schema example
 
 // ```js
-// {schemas} = await nikita.db.schema.list({
+// const {schemas} = await nikita.db.schema.list({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_db'
 // })
-// schemas.map ({name, owner}) => {
+// schemas.map( ({name, owner}) => {
 //   console.info(`Schema is ${name} and owner is ${owner}`)
-// }
+// })
 // ```
 
 // ## Schema

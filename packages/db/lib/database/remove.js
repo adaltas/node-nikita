@@ -40,11 +40,7 @@ are converted to lower cases.`
 };
 
 // ## Source Code
-handler = function({
-    config,
-    metadata,
-    tools: {find}
-  }) {
+handler = function({config}) {
   // Avoid errors when database argument is provided in the command:
   // - Postgres: "ERROR:  cannot drop the currently open database"
   // - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
