@@ -22,7 +22,7 @@ RUN pacman --noconfirm -S zip git
 
 # Install arch-chroot
 RUN pacman --noconfirm -S arch-install-scripts tar gzip \
- && curl -L https://mirrors.edge.kernel.org/archlinux/iso/latest/archlinux-bootstrap-2020.04.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap.tar.gz \
+ && curl -L https://mirrors.edge.kernel.org/archlinux/iso/latest/archlinux-bootstrap-2020.11.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap.tar.gz \
  && tar xzf /var/tmp/archlinux-bootstrap.tar.gz -C /var/tmp \
  && rm -f /var/tmp/archlinux-bootstrap.tar.gz
 
