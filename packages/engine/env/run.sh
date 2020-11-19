@@ -1,7 +1,7 @@
 #!/bin/bash
-HOME=`pwd`/`dirname ${BASH_SOURCE}`
+PWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $HOME/arch_chroot
+cd $PWD/arch_chroot
 docker-compose up --abort-on-container-exit
 
 cd $HOME/sudo

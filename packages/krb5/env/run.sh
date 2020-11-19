@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOME=`pwd`/`dirname ${BASH_SOURCE}`
+PWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $HOME/krb5
+cd $PWD/krb5
 docker-compose up --abort-on-container-exit
