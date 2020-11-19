@@ -7,5 +7,5 @@ module.exports =
     tools_rubygems: false
   ssh: [
     null
-    { ssh: host: 'localhost', username: 'sshuser' }
+    { ssh: host: 'localhost', username: 'root' }
   ]

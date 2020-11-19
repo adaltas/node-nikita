@@ -6,14 +6,14 @@ require '@nikitajs/tools/src/register'
 
 nikita
 .log.cli pad: host: 20, header: 60
-.log.md filename: '/tmp/nikita_tools_apm_lxd_install'
+.log.md filename: '/tmp/nikita_tools_rubygems_lxd_install'
 .lxd.cluster
   header: 'Container'
   containers:
-    'tools-apm':
+    'tools-rubygems':
       image: 'images:centos/7'
       config:
-        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/apm/test.coffee'
+        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/rubygems.lxd/test.coffee'
       disk:
         nikitadir:
           path: '/nikita'
@@ -21,7 +21,7 @@ nikita
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
-  prevision: ({config}) ->
+  prevision: ->
     @tools.ssh.keygen
       header: 'SSH key'
       target: "#{__dirname}/../../assets/id_rsa"
@@ -34,11 +34,20 @@ nikita
       container: config.container
       cmd: """
       command -v node && exit 42
+      NPM_CONFIG_LOGLEVEL=info
       NODE_VERSION=12.13.1
       yum install -y xz
       curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
       tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
       rm -f "/tmp/node.tar.xz"
+      """
+      trap: true
+      code_skipped: 42
+    @lxd.exec
+      header: 'Ruby'
+      container: config.container
+      cmd: """
+      yum install -y gcc ruby ruby-devel
       """
       trap: true
       code_skipped: 42
@@ -60,13 +69,3 @@ nikita
       uid: 'root'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/root/.ssh/id_rsa'
-    @lxd.exec
-      header: 'Install Atom'
-      container: config.container
-      cmd: """
-      yum install -y wget
-      wget https://github.com/atom/atom/releases/download/v1.53.0/atom.x86_64.rpm
-      yum install -y atom.x86_64.rpm
-      """
-      trap: true
-      code_skipped: 42

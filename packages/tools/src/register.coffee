@@ -2,22 +2,23 @@
 # registration of `nikita.tools` actions
 
 require '@nikitajs/file/src/register'
+require '@nikitajs/service/src/register'
 registry = require '@nikitajs/engine/src/registry'
 
 module.exports =
   tools:
-    # apm:
-    #   'installed': '@nikitajs/tools/src/apm/installed'
-    #   'install': '@nikitajs/tools/src/apm/install'
-    #   'uninstall': '@nikitajs/tools/src/apm/uninstall'
+    apm:
+      'installed': '@nikitajs/tools/src/apm/installed'
+      'install': '@nikitajs/tools/src/apm/install'
+      'uninstall': '@nikitajs/tools/src/apm/uninstall'
     backup: '@nikitajs/tools/src/backup'
     compress: '@nikitajs/tools/src/compress'
-    # cron:
-    #   add: '@nikitajs/tools/src/cron/add'
-    #   remove: '@nikitajs/tools/src/cron/remove'
+    cron:
+      add: '@nikitajs/tools/src/cron/add'
+      remove: '@nikitajs/tools/src/cron/remove'
     extract: '@nikitajs/tools/src/extract'
-    dconf: '@nikitajs/tools/lib/dconf'
-    # iptables: '@nikitajs/tools/src/iptables'
+    dconf: '@nikitajs/tools/src/dconf'
+    iptables: '@nikitajs/tools/src/iptables'
     git: '@nikitajs/tools/src/git'
     npm:
       '': '@nikitajs/tools/src/npm'

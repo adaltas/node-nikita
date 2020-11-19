@@ -7,28 +7,47 @@ return unless tags.tools_dconf
 
 describe 'tools.dconf', ->
 
-  they 'testing some dconf settings', ({ssh}) ->
+  they 'set single config', ({ssh}) ->
     nikita
       ssh: ssh
-    .tools.dconf
-      key: '/org/gnome/desktop/datetime/automatic-timezone'
-      value: "true"
-    .tools.dconf
-      key: '/org/gnome/desktop/peripherals/touchpad/click-method'
-      value: "fingers"
-    .tools.dconf
-      key: '/org/gnome/desktop/input-sources/xkb-options'
-      value: '[\'ctrl:swap_lalt_lctl\']'
+    , ->
+      @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': false
+      {status} = await @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': true
+      status.should.be.true()
+      {status} = await @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': true
+      status.should.be.false()
+      @execute.assert
+        cmd: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
+        assert: 'true'
   
-  they 'checking if the settings were changed', ({ssh}) ->
+  they 'set multiple configs', ({ssh}) ->
     nikita
       ssh: ssh
-    .execute.assert
-      cmd: "dconf read /org/gnome/desktop/datetime/automatic-timezone"
-      assert: "true"
-    .execute.assert
-      cmd: "dconf read /org/gnome/desktop/peripherals/touchpad/click-method"
-      assert: "fingers"
-    .execute.assert
-      cmd: 'dconf read /org/gnome/desktop/input-sources/xkb-options'
-      assert: '[\'ctrl:swap_lalt_lctl\']'
+    , ->
+      @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': false
+          '/org/gnome/desktop/peripherals/touchpad/click-method': 'none'
+      {status} = await @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': true
+          '/org/gnome/desktop/peripherals/touchpad/click-method': 'fingers'
+      status.should.be.true()
+      {status} = await @tools.dconf
+        properties:
+          '/org/gnome/desktop/datetime/automatic-timezone': true
+          '/org/gnome/desktop/peripherals/touchpad/click-method': 'fingers'
+      status.should.be.false()
+      @execute.assert
+        cmd: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
+        assert: 'true'
+      @execute.assert
+        cmd: 'dconf read /org/gnome/desktop/peripherals/touchpad/click-method'
+        assert: 'fingers'
+  

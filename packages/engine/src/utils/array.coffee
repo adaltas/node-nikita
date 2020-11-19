@@ -18,15 +18,15 @@ module.exports =
     ret = [arr.length]
     ret[i] = el for el, i in arr
     ret
-  # intersect: (array) ->
-  #   return [] if array is null
-  #   result = []
-  #   for item, i in array
-  #     continue if result.indexOf(item) isnt -1
-  #     for argument, j in arguments
-  #       break if argument.indexOf(item) is -1
-  #     result.push item if j is arguments.length
-  #   result
+  intersect: (array) ->
+    return [] if array is null
+    result = []
+    for item, i in array
+      continue if result.indexOf(item) isnt -1
+      for argument, j in arguments
+        break if argument.indexOf(item) is -1
+      result.push item if j is arguments.length
+    result
   flatten: (arr, depth=-1) ->
     ret = []
     for i in [0 ... arr.length]
@@ -54,19 +54,19 @@ module.exports =
             [action..., arg_element]
       results = module.exports.flatten newresults, 0
     results
-  # merge: (arrays...) ->
-  #   r = []
-  #   for array in arrays
-  #     for el in array
-  #       r.push el
-  #   r
+  merge: (arrays...) ->
+    r = []
+    for array in arrays
+      for el in array
+        r.push el
+    r
   shuffle: (a) ->
     return a if a.length <= 1
     for i in [a.length-1..0]
       j = Math.floor Math.random() * (i + 1)
       [a[i], a[j]] = [a[j], a[i]]
     a
-  # unique: (array) ->
-  #   o = {}
-  #   for el in array then o[el] = true
-  #   Object.keys o
+  unique: (array) ->
+    o = {}
+    for el in array then o[el] = true
+    Object.keys o

@@ -3,50 +3,44 @@
 
 Remove one or more apm packages.
 
-## Options
+## Hooks
 
-* `name` (string|array, required)
-  Name of the package(s).
+    on_action = ({config, metadata}) ->
+      config.name = metadata.argument if typeof metadata.argument is 'string'
+      config.name = [config.name] if typeof config.name is 'string'
 
 ## Schema
 
     schema =
       type: 'object'
       properties:
-        '':
-          type: 'object'
+        'name':
+          type: 'array', items: type: 'string'
           description: """
+          Name of the package(s) to install.
           """
 
 ## Handler
 
-    handler = ({config}) ->
-      config.name = config.argument if config.argument?
-      config.name = [config.name] if typeof config.name is 'string'
+    handler = ({config, tools: {log}}) ->
       config.name = config.name.map (pkg) -> pkg.toLowerCase()
       installed = []
-      @execute
+      {stdout} = await @execute
         shy: true
         cmd: "apm list --installed --json"
-      , (err, {stdout}) ->
-        throw err if err
-        pkgs = JSON.parse stdout
-        pkgs = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
-        installed = pkgs
-      @call ->
-        to_uninstall = config.name.filter (pkg) -> pkg in installed
-        @execute
+      pkgs = JSON.parse stdout
+      installed = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
+      # Uninstall
+      uninstall = config.name.filter (pkg) -> pkg in installed
+      if uninstall.length
+        await @execute
           cmd: "apm uninstall #{config.name.join ' '}"
-          if: to_uninstall.length
-        , (err) =>
-          @log message: "APM Uninstalled Packages: #{config.name.join ', '}"
+        log message: "APM Uninstalled Packages: #{config.name.join ', '}"
 
 ## Exports
 
     module.exports =
       handler: handler
+      hooks:
+        on_action: on_action
       schema: schema
-
-## Dependencies
-
-    string = require '@nikitajs/core/lib/misc/string'

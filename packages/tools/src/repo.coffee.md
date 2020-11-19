@@ -20,15 +20,10 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'source':
-          type: 'string'
-          description: """
-          The source file containing the repository
-          """
         'content':
-          type: 'string'
+          type: ['string', 'object']
           description: """
-          Content to write inside the file. can not be used with source.
+          Content to write inside the file.
           """
         'clean':
           type: 'string'
@@ -42,32 +37,43 @@ require('nikita')
           description: """
           Directory storing GPG keys.
           """
+        'source':
+          type: 'string'
+          description: """
+          The source file containing the repository
+          """
         'target':
           type: 'string'
           description: """
-          Path of the repository definition file, relative to '/etc/yum.repos.d'.
+          Path of the repository definition file, relative to
+          '/etc/yum.repos.d'.
           """
         'update':
           type: 'boolean'
           default: false
           description: """
-          Run yum update enabling only the ids present in repo file. Default to false.
+          Run yum update enabling only the ids present in repo file.
           """
         'verify':
           type: 'boolean'
-          default: 'true'
+          default: true
           description: """
-          Download the PGP keys if it's enabled in the repo file, keys are by default
-          placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option and the 
-          filename is derivated from the url.
+          Download the PGP keys if it's enabled in the repo file, keys are by
+          default placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option
+          and the filename is derivated from the url.
           """
-      required: ['target']
+      oneOf: [
+        {
+          required: ['content']
+        },
+        {
+          required: ['source']
+        }
+      ]
 
 ## Handler
 
-    handler = ({config, tools: {log, path, status}}) ->
-      throw Error "Can not specify source and content" if config.source and config.content
-      throw Error "Missing source or content: " unless config.source or config.content
+    handler = ({config, tools: {log, path}}) ->
       # TODO wdavidw 180115, target should be mandatory and not default to the source filename
       config.target ?= path.resolve "/etc/yum.repos.d", path.basename config.source if config.source?
       config.target = path.resolve '/etc/yum.repos.d', config.target
@@ -120,19 +126,19 @@ require('nikita')
           {status} = await @file.download
             source: key
             target: "#{config.gpg_dir}/#{path.basename key}"
-          await @execute
+          {status} = await @execute
             if: status
             cmd: "rpm --import #{config.gpg_dir}/#{path.basename key}"
       # Clean Metadata
-      await @execute
-        if: path.relative('/etc/yum.repos.d', config.target) isnt '..' and status()
+      {status} = await @execute
+        if: path.relative('/etc/yum.repos.d', config.target) isnt '..' and status
         # wdavidw: 180114, was "yum clean metadata", ensure an appropriate
         # explanation is provided in case of revert.
         # expire-cache is much faster,  It forces yum to go redownload the small
         # repo files only, then if there's newer repo data, it will downloaded it.
         cmd: 'yum clean expire-cache; yum repolist -y'
-      if config.update and status()
-        @execute
+      if config.update and status
+        await @execute
           cmd: """
           yum update -y --disablerepo=* --enablerepo='#{repoids.join(',')}'
           yum repolist
@@ -147,4 +153,4 @@ require('nikita')
 
 ## Dependencies
 
-    utils = require '@nikitajs/file/lib/utils'
+    utils = require './utils'

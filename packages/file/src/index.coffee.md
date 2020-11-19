@@ -397,7 +397,7 @@ require('nikita')
       if config.remove_empty_lines
         log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
         config.content = config.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
-      partial config, log if config.write.length
+      utils.partial config, log if config.write.length
       if config.eof
         log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
         if config.eof is true
@@ -422,7 +422,7 @@ require('nikita')
       if config.content?
         contentChanged = not targetStats? or targetContentHash isnt utils.string.hash config.content
       if contentChanged
-        {raw, text} = diff targetContent, config.content, config
+        {raw, text} = utils.diff targetContent, config.content, config
         config.diff text, raw if typeof config.diff is 'function'
         log type: 'diff', message: text, level: 'INFO', module: 'nikita/lib/file'
       if config.backup and contentChanged
@@ -484,8 +484,6 @@ require('nikita')
 ## Dependencies
 
     path = require 'path'
-    utils = require '@nikitajs/engine/src/utils'
-    diff = require './utils/diff'
-    partial = require './utils/partial'
+    utils = require './utils'
 
 [diffLines]: https://github.com/kpdecker/jsdiff

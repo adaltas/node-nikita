@@ -1,8 +1,32 @@
 
-{multiply, shuffle} = require '../../src/utils/array'
+{intersect, flatten, merge, multiply, shuffle, unique} = require '../../src/utils/array'
 
 describe 'utils.array', ->
-  
+
+  # it 'compare', ->
+  #   array.compare(['a'], ['a']).should.be.true()
+  #   array.compare(['a', 'b'], ['a', 'b']).should.be.true()
+  #   array.compare(['a', 'b'], ['a']).should.be.false()
+  #   array.compare(['a'], ['a', 'b']).should.be.false()
+
+  it 'flatten', ->
+    flatten([['a'], ['b']]).should.eql ['a', 'b']
+    flatten([['a',['b']], [['c', ['d']]]]).should.eql ['a', 'b', 'c', 'd']
+    flatten([['a',['b']], [['c', ['d']]], ['e']], -1).should.eql ['a', 'b', 'c', 'd', 'e']
+    flatten([['a',['b']], [['c', ['d']]], ['e']], 0).should.eql ['a', ['b'], ['c', ['d']], 'e']
+    flatten([['a',['b']], [['c', ['d']]], ['e']], 1).should.eql ['a', 'b', 'c', ['d'], 'e']
+
+  it 'intersect', ->
+    intersect(['a', 'c', 'd'], ['e', 'd', 'c']).should.eql ['c', 'd']
+    intersect(['a', 'c', 'd'], []).should.eql []
+    intersect([], ['e', 'd', 'c']).should.eql []
+
+  it 'merge', ->
+    merge(['a', 'b'], ['c', 'a']).should.eql ['a', 'b', 'c', 'a']
+
+  it 'unique', ->
+    unique(['a', 'b', 'c', 'a']).should.eql ['a', 'b', 'c']
+
   describe 'multiply', ->
   
     it 'object with object', ->
@@ -51,3 +75,4 @@ describe 'utils.array', ->
       
     it 'ensure all elements are still inside', ->
       shuffle([1,2,3]).sort().should.eql [1,2,3]
+  

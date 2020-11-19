@@ -1,12 +1,12 @@
 
 path = require 'path'
-nikita = require '@nikitajs/core'
-require '@nikitajs/lxd/lib/register'
-require '@nikitajs/tools/lib/register'
+nikita = require '@nikitajs/engine/src'
+require '@nikitajs/lxd/src/register'
+require '@nikitajs/tools/src/register'
 
 nikita
 .log.cli pad: host: 20, header: 60
-.log.md filename: '/tmp/nikita_ipa_lxd_install'
+.log.md filename: '/tmp/nikita_tools_npm_lxd_install'
 .lxd.cluster
   header: 'Container'
   containers:
@@ -21,17 +21,17 @@ nikita
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
-  prevision: ({options}) ->
+  prevision: ->
     @tools.ssh.keygen
       header: 'SSH key'
       target: "#{__dirname}/../../assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
-  provision_container: ({options}) ->
+  provision_container: ({config}) ->
     @lxd.exec
       header: 'Node.js'
-      container: options.container
+      container: config.container
       cmd: """
       command -v node && exit 42
       NODE_VERSION=12.13.1
@@ -39,30 +39,26 @@ nikita
       curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
       tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
       rm -f "/tmp/node.tar.xz"
-      npm update -g
       ln -s /usr/local/bin/node /usr/bin/node
       ln -s /usr/local/bin/npm /usr/bin/npm
-      ln -s /usr/local/bin/npx /usr/bin/npx
       """
       trap: true
       code_skipped: 42
     @lxd.file.push
       header: 'User Private Key'
-      container: options.container
+      container: config.container
       gid: 'nikita'
       uid: 'nikita'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
       header: 'Root SSH dir'
-      container: options.container
+      container: config.container
       cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
-      container: options.container
+      container: config.container
       gid: 'root'
       uid: 'root'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/root/.ssh/id_rsa'
-.next (err) ->
-  throw err if err
