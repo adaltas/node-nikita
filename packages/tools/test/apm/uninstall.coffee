@@ -24,3 +24,11 @@ describe 'tools.apm.uninstall', ->
     .tools.apm.uninstall
       name: 'package-list'
     status.should.be.false()
+
+  they 'name as argument', ({ssh}) ->
+    {status} = await nikita
+      ssh: ssh
+    .tools.apm.install
+      name: 'package-list'
+    .tools.apm.uninstall 'package-list'
+    status.should.be.true()

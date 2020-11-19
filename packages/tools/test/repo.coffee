@@ -40,7 +40,7 @@ describe 'tools.repo', ->
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @system.mkdir "#{tmpdir}/repo"
+      @fs.mkdir "#{tmpdir}/repo"
       {status} = await @tools.repo
         target: "#{tmpdir}/repo/centos.repo"
         content:
@@ -186,6 +186,8 @@ describe 'tools.repo', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
+      @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
+      @fs.remove '/etc/pki/rpm-gpg/server-3.4.asc'
       @service.remove 'mongodb-org-shell'
       @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'

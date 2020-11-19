@@ -22,24 +22,45 @@ describe 'tools.npm', ->
 
   describe 'action', ->
 
-    # combined, since the tests are time consuming
-    they 'install a package localy and globaly', ({ssh}) ->
+    they 'install localy', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        {status} = await @tools.npm
+          cwd: tmpdir
+          name: 'coffeescript'
+        status.should.be.true()
+        {status} = await @tools.npm
+          cwd: tmpdir
+          name: 'coffeescript'
+        status.should.be.false()
+
+    they 'install localy in a current working directory', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.mkdir "#{tmpdir}/1_dir"
+        @fs.mkdir "#{tmpdir}/2_dir"
+        {status} = await @tools.npm
+          name: 'coffeescript'
+          cwd: "#{tmpdir}/1_dir"
+        status.should.be.true()
+        {status} = await @tools.npm
+          name: 'coffeescript'
+          cwd: "#{tmpdir}/2_dir"
+        status.should.be.true()
+
+    they 'install globaly', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         await @tools.npm.uninstall
-          name: 'coffeescript'
-        await @tools.npm.uninstall
           config:
             name: 'coffeescript'
             global: true
             sudo: true
-        {status} = await @tools.npm
-          name: 'coffeescript'
-        status.should.be.true()
-        {status} = await @tools.npm
-          name: 'coffeescript'
-        status.should.be.false()
         {status} = await @tools.npm
           config:
             name: 'coffeescript'
@@ -52,30 +73,41 @@ describe 'tools.npm', ->
             global: true
             sudo: true
         status.should.be.false()
-    
+
     they 'install many packages', ({ssh}) ->
       nikita
         ssh: ssh
-      , ->
-        await @tools.npm.uninstall
-          name: ['coffeescript', 'csv']
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm
+          cwd: tmpdir
           name: ['coffeescript', 'csv']
         status.should.be.true()
         {status} = await @tools.npm
+          cwd: tmpdir
           name: ['coffeescript', 'csv']
         status.should.be.false()
 
     they 'upgrade a package', ({ssh}) ->
       nikita
         ssh: ssh
-      , ->
-        await @tools.npm.uninstall
-          name: 'coffeescript'
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
         await @tools.npm
+          cwd: tmpdir
           name: 'coffeescript@2.0'
         {status} = await @tools.npm
-          name: 'coffeescript'
+          cwd: tmpdir
+          
           upgrade: true
+        status.should.be.true()
+
+    they 'name as argument', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        {status} = await @tools.npm 'coffeescript',
+          cwd: tmpdir
         status.should.be.true()
   

@@ -29,4 +29,4 @@ Report the difference between 2 strings.
 
     pad = require 'pad'
     diff = require 'diff'
-    string = require '@nikitajs/engine/src/utils/string'
+    string = require './string'

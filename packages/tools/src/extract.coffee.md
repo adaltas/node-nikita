@@ -136,4 +136,4 @@ require('nikita').tools.extract({
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require './utils'

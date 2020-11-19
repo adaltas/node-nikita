@@ -27,20 +27,30 @@ Run the command "dconf-editor" to navigate the database with a UI.
       properties:
         'properties':
           type: 'object'
-          description: """
-          Name of the module.
-          """
+          patternProperties:
+            '^/.*$':
+              type: ['string', 'boolean', 'number']
+              description: """
+              A value of a key.
+              """
+          additionalProperties: false
+      required: ['properties']
 
 ## Source Code
 
-    handler = ({metadata, config}) ->
-      config.properties = metadata.argument if metadata.argument?
-      config.properties ?= {}
-      for key, value of config.properties
-        @execute """
+    handler = ({config}) ->
+      # Normalize properties
+      for k, v of config.properties
+        continue if typeof v is 'string'
+        config.properties[k] = v.toString()
+      # Execute
+      await @execute (
+        cmd: """
         dconf read #{key} | grep -x "#{value}" && exit 3
         dconf write #{key} "#{value}"
-        """, code_skipped: 3
+        """
+        code_skipped: 3
+      ) for key, value of config.properties
 
 ## Exports
 

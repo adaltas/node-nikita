@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'file options diff', ->
+describe 'file config diff', ->
 
   they 'type is a function', ({ssh}) ->
     diffcalled = false
