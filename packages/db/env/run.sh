@@ -1,12 +1,12 @@
 #!/bin/bash
 
-HOME=`pwd`/`dirname ${BASH_SOURCE}`
+PWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $HOME/mariadb
+cd $PWD/mariadb
 docker-compose up --abort-on-container-exit
 
-cd $HOME/mysql
+cd $PWD/mysql
 docker-compose up --abort-on-container-exit
 
-cd $HOME/postgresql
+cd $PWD/postgresql
 docker-compose up --abort-on-container-exit
