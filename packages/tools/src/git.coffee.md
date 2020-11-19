@@ -3,15 +3,6 @@
 
 Create and synchronize a git repository.
 
-## Options
-
-* `source`   
-  Git source repository address.   
-* `target`   
-  Directory where to clone the repository.   
-* `revision`   
-  Git revision, branch or tag.   
-
 ## Callback Parameters
 
 * `err`   
@@ -39,42 +30,53 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        '':
-          type: 'object'
+        'revision':
+          type: 'string'
+          default: 'HEAD'
           description: """
+          Git revision, branch or tag.
           """
+        'source':
+          type: 'string'
+          description: """
+          Git source repository address.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Directory where to clone the repository.
+          """
+      required: ['source', 'target']
 
 ## Handler
 
-    handler = ({config}) ->
-      # Sanitize config
-      config.revision ?= 'HEAD'
+    handler = ({config, ssh, tools: {path}}) ->
       # Start real work
       repo_uptodate = false
       {exists: repo_exists} = await @fs.base.exists target: config.target
       if repo_exists
         # return callback Error "Destination not a directory, got #{config.target}" unless stat.isDirectory()
         gitDir = "#{config.target}/.git"
-        {exists: is_git} = await @fs.base.exists ssh: config.ssh, target: gitDir
+        {exists: is_git} = await @fs.base.exists target: gitDir
         throw Error "Not a git repository" unless is_git
       else
         @execute
           cmd: "git clone #{config.source} #{config.target}"
           cwd: path.dirname config.target
-      {status: repo_uptodate} = await @execute
-        cmd: """
-        current=`git log --pretty=format:'%H' -n 1`
-        target=`git rev-list --max-count=1 #{config.revision}`
-        echo "current revision: $current"
-        echo "expected revision: $target"
-        if [ $current != $target ]; then exit 3; fi
-        """
-        # stdout: process.stdout
-        cwd: config.target
-        trap: true
-        code_skipped: 3
-        if: -> repo_exists
-        shy: true
+      if repo_exists
+        {status: repo_uptodate} = await @execute
+          cmd: """
+          current=`git log --pretty=format:'%H' -n 1`
+          target=`git rev-list --max-count=1 #{config.revision}`
+          echo "current revision: $current"
+          echo "expected revision: $target"
+          if [ $current != $target ]; then exit 3; fi
+          """
+          # stdout: process.stdout
+          cwd: config.target
+          trap: true
+          code_skipped: 3
+          shy: true
       unless repo_uptodate
         @execute
           cmd: "git checkout #{config.revision}"
@@ -85,7 +87,3 @@ require('nikita')
     module.exports =
       handler: handler
       schema: schema
-
-## Dependencies
-
-    path = require 'path'

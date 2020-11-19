@@ -1,10 +1,8 @@
 
-iptables = require '../../src/misc/iptables'
+iptables = require '../../src/utils/iptables'
 {tags} = require '../test'
 
-return unless tags.api
-
-describe 'misc iptables', ->
+describe 'utils.iptables', ->
 
   describe 'normalize', ->
 

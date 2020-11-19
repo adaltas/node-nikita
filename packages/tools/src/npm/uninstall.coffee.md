@@ -19,8 +19,8 @@ require('nikita')
 
 ## Hooks
 
-    on_action = ({config}) ->
-      throw Error 'Deprecated config `argument`' if config.argument?
+    on_action = ({config, metadata}) ->
+      config.name = metadata.argument if typeof metadata.argument is 'string'
       config.name = [config.name] if typeof config.name is 'string'
       
 ## Schema
@@ -28,11 +28,10 @@ require('nikita')
     schema =
       type: 'object'
       properties:
+        'cwd':
+          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
         'name':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array', items: type: 'string'}
-          ]
+          type: 'array', items: type: 'string'
           description: 'Name of the package(s) to remove.'
         'global':
           type: 'boolean'
@@ -42,16 +41,16 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       global = if config.global then '-g' else ''
       # Get installed packages
       installed = []
       {stdout} = await @execute
         cmd: "npm list --json #{global}"
         code: [0, 1]
+        cwd: config.cwd
         stdout_log: false
         shy: true
-        sudo: config.sudo
       pkgs = JSON.parse stdout
       installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
       # Uninstall
@@ -59,6 +58,7 @@ require('nikita')
       if uninstall.length
         await @execute
           cmd: "npm uninstall #{global} #{uninstall.join ' '}"
+          cwd: config.cwd
           sudo: config.sudo
         log message: "NPM uninstalled packages: #{uninstall.join ', '}"
 

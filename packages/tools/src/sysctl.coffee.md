@@ -49,7 +49,7 @@ require('nikita').tools.sysctl({
           ,
             type: 'boolean'
           ]
-          description: """ 
+          description: """
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
@@ -149,4 +149,4 @@ require('nikita').tools.sysctl({
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require './utils'

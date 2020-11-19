@@ -63,7 +63,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config}) ->
+    handler = ({config, tools: {path}}) ->
       throw Error "Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got #{JSON.stringify config.key_format}" if config.key_format and config.key_format not in ['RFC4716', 'PKCS8', 'PEM']
       await @fs.mkdir
         target: "#{path.dirname config.target}"
@@ -85,7 +85,3 @@ require('nikita')
     module.exports =
       handler: handler
       schema: schema
-
-## Dependencies
-
-    path = require 'path'

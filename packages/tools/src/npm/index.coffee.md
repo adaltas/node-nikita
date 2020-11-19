@@ -19,8 +19,8 @@ require('nikita')
 
 ## Hooks
 
-    on_action = ({config}) ->
-      throw Error 'Deprecated config `argument`' if config.argument?
+    on_action = ({config, metadata}) ->
+      config.name = metadata.argument if typeof metadata.argument is 'string'
       config.name = [config.name] if typeof config.name is 'string'
 
 ## Schema
@@ -28,16 +28,15 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'name':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array', items: type: 'string'}
-          ]
-          description: 'Name of the package(s) to install.'
+        'cwd':
+          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
         'global':
           type: 'boolean'
           default: false
           description: 'Installs the current package context as a global package.'
+        'name':
+          type: 'array', items: type: 'string'
+          description: 'Name of the package(s) to install.'
         'sudo':
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
         'upgrade':
@@ -48,23 +47,23 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log}) ->
+    handler = ({config, tools: {log}}) ->
       global = if config.global then '-g' else ''
       # Get outdated packages
       outdated = []
       {stdout} = await @execute
         cmd: "npm outdated --json #{global}"
         code: [0, 1]
+        cwd: config.cwd
         stdout_log: false
         shy: true
-        sudo: config.sudo
-      if stdout
-        pkgs = JSON.parse stdout
-        outdated = Object.keys pkgs if Object.keys(pkgs).length
+      pkgs = JSON.parse stdout
+      outdated = Object.keys pkgs if Object.keys(pkgs).length
       # Upgrade outdated packages if upgrade config is set
       if config.upgrade and outdated.length
         await @execute
           cmd: "npm update #{global}"
+          cwd: config.cwd
           sudo: config.sudo
         outdated = []
       # Upgrade outdated packages
@@ -72,6 +71,7 @@ require('nikita')
       if upgrade.length
         await @execute
           cmd: "npm update #{global} #{upgrade.join ' '}"
+          cwd: config.cwd
           sudo: config.sudo
         log message: "NPM Updated Packages: #{upgrade.join ', '}"
       # Get installed packages
@@ -79,17 +79,17 @@ require('nikita')
       {stdout} = await @execute
         cmd: "npm list --json #{global}"
         code: [0, 1]
+        cwd: config.cwd
         stdout_log: false
         shy: true
-        sudo: config.sudo
-      if stdout
-        pkgs = JSON.parse stdout
-        installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
+      pkgs = JSON.parse stdout
+      installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
       # Install packages
       install = config.name.filter (pkg) -> pkg not in installed
       if install.length
         await @execute
           cmd: "npm install #{global} #{install.join ' '}"
+          cwd: config.cwd
           sudo: config.sudo
         log message: "NPM Installed Packages: #{install.join ', '}"
 

@@ -1,21 +1,19 @@
 
-misc = require './index'
-string = require './string'
+utils = require '@nikitajs/engine/src/utils'
 jsesc = require 'jsesc'
-array = require '../misc/array'
 {merge} = require 'mixme'
 
-module.exports = iptables = 
+module.exports = iptables =
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'target']
   add_properties: [
     '--protocol', '--source', '---target', '--jump', '--goto'
     '--in-interface', '--out-interface', '--fragment'
     'tcp|--source-port', 'tcp|--sport', 'tcp|--target-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
     'udp|--source-port', 'udp|--sport', 'udp|--target-port', 'udp|--dport'
-  ] # 
+  ]
   # modify_properties: ['state', 'comment']
   modify_properties: [
-    '--set-counters', 
+    '--set-counters',
     '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
     '--log-ip-options', '--log-uid', # LOG
     'state|--state', 'comment|--comment'
@@ -45,16 +43,16 @@ module.exports = iptables =
   # parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c'] # , '--log-prefix'
   # parameters_inverted:
   #   '--protocol': '-p', '--source': '-s', '--target': '-d', '--jump': '-j'
-  #   '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
+  #   '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o',
   #   '--fragment': '-f', '--set-counters': '-c'
-  parameters: ['--protocol', '--source', '--target', '--jump', '--goto', 
-    '--in-interface', '--out-interface', '--fragment', '--set-counters', 
+  parameters: ['--protocol', '--source', '--target', '--jump', '--goto',
+    '--in-interface', '--out-interface', '--fragment', '--set-counters',
     '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
     '--log-ip-options', '--log-uid' # LOG
   ]
   parameters_inverted:
     '-p': '--protocol', '-s': '--source', '-d': '--target', '-j': '--jump'
-    '-g': '--goto', '-i': '--in-interface', '-o': '--out-interface', 
+    '-g': '--goto', '-i': '--in-interface', '-o': '--out-interface',
     '-f': '--fragment', '-c': '--set-counters'
   protocols:
     tcp: ['--source-port', '--sport', '--target-port', '--dport', '--tcp-flags', '--syn', '--tcp-option']
@@ -108,7 +106,7 @@ module.exports = iptables =
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
-          if misc.object.equals newrule.after, oldrule, Object.keys newrule.after
+          if utils.object.equals newrule.after, oldrule, Object.keys newrule.after
             # newrule.rulenum = rulenum + 1
             newrule.rulenum = oldrule.rulenum + 1
             # break
@@ -118,21 +116,21 @@ module.exports = iptables =
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
-          if misc.object.equals newrule.before, oldrule, Object.keys newrule.before
+          if utils.object.equals newrule.before, oldrule, Object.keys newrule.before
             # newrule.rulenum = rulenum
             newrule.rulenum = oldrule.rulenum
             break
         delete newrule.before
       create = true
       # Get add properties present in new rule
-      add_properties = array.intersect iptables.add_properties, Object.keys newrule
+      add_properties = utils.array.intersect iptables.add_properties, Object.keys newrule
       for oldrule in oldrules
         continue if oldrule.chain isnt newrule.chain
         # Add properties are the same
-        if misc.object.equals newrule, oldrule, add_properties
+        if utils.object.equals newrule, oldrule, add_properties
           create = false
           # Check if we need to update
-          if not misc.object.equals newrule, oldrule, iptables.modify_properties
+          if not utils.object.equals newrule, oldrule, iptables.modify_properties
             # Remove the command
             baserule = merge oldrule
             for k, v of baserule
@@ -216,7 +214,7 @@ module.exports = iptables =
   parse: (stdout) ->
     rules = []
     command_index = {}
-    for line in string.lines stdout
+    for line in utils.string.lines stdout
       continue if line.length is 0
       rule = {}
       i = 0

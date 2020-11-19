@@ -8,7 +8,7 @@ Check if APM is installed and available on the system.
 console.log(`Is APM installed: ${status}`)
 ```
 
-## Source code
+## Handler
 
     handler = ->
       @execute

@@ -93,7 +93,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, ssh}) ->
+    handler = ({config, ssh, tools: {path}}) ->
       # log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
       # Global config
       config.ruby ?= {}
@@ -175,6 +175,5 @@ require('nikita')
 
 ## Dependencies
 
-    path = require 'path'
     semver = require 'semver'
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require '../utils'

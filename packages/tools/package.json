@@ -39,7 +39,8 @@
   ],
   "dependencies": {
     "dayjs": "^1.9.4",
-    "luxon": "^1.25.0"
+    "jsesc": "^2.5.2",
+    "mixme": "^0.4.0"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
@@ -81,6 +82,7 @@
   "scripts": {
     "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'"
+    "test": "mocha 'test/**/*.coffee'",
+    "testall": "mocha 'test/**/*.coffee' && env/run.sh"
   }
 }

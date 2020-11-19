@@ -6,14 +6,14 @@ require '@nikitajs/tools/src/register'
 
 nikita
 .log.cli pad: host: 20, header: 60
-.log.md filename: '/tmp/nikita_tools_apm_lxd_install'
+.log.md filename: '/tmp/nikita_tools_npm_lxd_install'
 .lxd.cluster
   header: 'Container'
   containers:
-    'tools-apm':
+    'tools-iptables':
       image: 'images:centos/7'
       config:
-        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/apm/test.coffee'
+        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
       disk:
         nikitadir:
           path: '/nikita'
@@ -21,7 +21,7 @@ nikita
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
-  prevision: ({config}) ->
+  prevision: ->
     @tools.ssh.keygen
       header: 'SSH key'
       target: "#{__dirname}/../../assets/id_rsa"
@@ -60,13 +60,3 @@ nikita
       uid: 'root'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/root/.ssh/id_rsa'
-    @lxd.exec
-      header: 'Install Atom'
-      container: config.container
-      cmd: """
-      yum install -y wget
-      wget https://github.com/atom/atom/releases/download/v1.53.0/atom.x86_64.rpm
-      yum install -y atom.x86_64.rpm
-      """
-      trap: true
-      code_skipped: 42

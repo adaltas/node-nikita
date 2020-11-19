@@ -1,13 +1,14 @@
 
 module.exports =
   tags:
-    cron: false # disable_cron
     posix: true
+    tools_cron: false # disable_cron
     tools_dconf: false
     tools_repo: false
     tools_rubygems: false
     tools_apm: false
     tools_npm: false
+    tools_iptables: false
   ssh: [
     null
   ,

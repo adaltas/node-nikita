@@ -22,42 +22,88 @@ describe 'tools.npm.uninstall', ->
 
   describe 'action', ->
 
-    # combined, since the tests are time consuming
-    they 'uninstall a package localy and globaly', ({ssh}) ->
+    they 'uninstall localy', ({ssh}) ->
       nikita
         ssh: ssh
-      , ->
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
         await @tools.npm
+          cwd: tmpdir
           name: 'coffeescript'
-        await @tools.npm
-          config:
-            name: 'coffeescript'
-            global: true
-            sudo: true
         {status} = await @tools.npm.uninstall
+          cwd: tmpdir
           name: 'coffeescript'
         status.should.be.true()
         {status} = await @tools.npm.uninstall
+          cwd: tmpdir
           name: 'coffeescript'
-        status.should.be.false()
-        {status} = await @tools.npm.uninstall
-          config:
-            name: 'coffeescript'
-            global: true
-            sudo: true
-        status.should.be.true()
-        {status} = await @tools.npm.uninstall
-          config:
-            name: 'coffeescript'
-            global: true
         status.should.be.false()
 
-    they 'uninstall many packages', ({ssh}) ->
+    they 'uninstall localy in a current working directory', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.mkdir "#{tmpdir}/1_dir"
+        @fs.mkdir "#{tmpdir}/2_dir"
+        @tools.npm
+          name: 'coffeescript'
+          cwd: "#{tmpdir}/1_dir"
+        @tools.npm
+          name: 'coffeescript'
+          cwd: "#{tmpdir}/2_dir"
+        {status} = await @tools.npm.uninstall
+          cwd: "#{tmpdir}/1_dir"
+          name: 'coffeescript'
+        status.should.be.true()
+        {status} = await @tools.npm.uninstall
+          cwd: "#{tmpdir}/2_dir"
+          name: 'coffeescript'
+        status.should.be.true()
+
+    they 'uninstall globaly', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         await @tools.npm
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        {status} = await @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        status.should.be.true()
+        {status} = await @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+            sudo: true
+        status.should.be.false()
+
+    they 'uninstall multiple packages', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @tools.npm
+          cwd: tmpdir
           name: ['coffeescript', 'csv']
         {status} = await @tools.npm.uninstall
+          cwd: tmpdir
           name: ['coffeescript', 'csv']
+        status.should.be.true()
+    
+    they 'name as argument', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @tools.npm
+          cwd: tmpdir
+          name: 'coffeescript'
+        {status} = await @tools.npm.uninstall 'coffeescript',
+          cwd: tmpdir
         status.should.be.true()
