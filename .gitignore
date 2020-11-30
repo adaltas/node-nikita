@@ -2,6 +2,7 @@
 /playground
 /node_modules
 /packages/*/node_modules
+!.eslintrc
 !.travis.yml
 !.gitignore
 !.gitattributes
