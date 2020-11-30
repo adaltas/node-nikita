@@ -13,13 +13,11 @@ Install a service. Yum, Yay, Yaourt, Pacman and apt-get are supported.
 ## Example
 
 ```js
-require('nikita')
-.service.install({
+const {status} = await nikita.service.install({
   ssh: ssh,
   name: 'ntp'
-}, function(err, {status}){
-  console.info(err || "Package installed: " + status ? 'yes' : 'no');
-});
+})
+console.info(`Package installed: ${status}`)
 ```
 
 ## Hooks

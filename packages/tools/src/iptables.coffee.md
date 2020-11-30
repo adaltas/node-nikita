@@ -36,17 +36,15 @@ modules are:
 
 ## Example
 
-```coffee
+```js
 var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
-require('nikita')
-.tools.iptables({
+const {status} = await nikita.tools.iptables({
   ssh: ssh,
   rules: [
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
   ]
-}, function(err, {status}){
-  console.info(err ? err.message : 'Iptables was updated: ' + status);
-});
+})
+console.info(`Iptables was updated: ${status}`)
 ```
 
 ## Hooks
@@ -92,8 +90,8 @@ require('nikita')
               'state':
                 type: 'string'
                 description: """
-                This module, when combined with connection tracking, allows access
-                to the connection tracking state for this packet.
+                This module, when combined with connection tracking, allows
+                access to the connection tracking state for this packet.
                 """
               'tcp':
                 type: ['string', 'integer']
@@ -147,7 +145,8 @@ require('nikita')
             'sport':
               type: ['string', 'integer']
               description: """
-              Source port or port range specification, see the "tcp" and "udp" modules.
+              Source port or port range specification, see the "tcp" and "udp"
+              modules.
               """
             'target':
               type: 'string'

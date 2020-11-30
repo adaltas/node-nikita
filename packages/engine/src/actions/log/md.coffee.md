@@ -19,8 +19,8 @@ Write log to the host filesystem in Markdown.
             type: 'string'
             default: ' : '
             description: """
-            The characters used to join the hierarchy of headers to create
-            a markdown header.
+            The characters used to join the hierarchy of headers to create a
+            markdown header.
             """
       ]
 

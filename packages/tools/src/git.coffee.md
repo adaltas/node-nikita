@@ -15,14 +15,12 @@ Create and synchronize a git repository.
 The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
-```javascript
-require('nikita')
-.tools.git({
+```js
+const {status} = await nikita.tools.git({
   source: 'https://github.com/wdavidw/node-nikita.git'
   target: '/tmp/nikita'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Repo was synchronized: ' + status);
-});
+})
+console.info(`Repo was synchronized: ${status}`)
 ```
 
 ## Schema

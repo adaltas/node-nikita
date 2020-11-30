@@ -3,18 +3,20 @@
 
 Generates keys for use by SSH protocol version 2.
 
-## Force the generation of a key compatible with SSH2
+## Example
 
-For exemple in OSX Mojave, the default export format is RFC4716.
+Force the generation of a key compatible with SSH2. For exemple in OSX Mojave,
+the default export format is RFC4716.
 
-```
-require('nikita')
-.tools.ssh.keygen({
+```js
+const {status} = await nikita.tools.ssh.keygen({
   bits: 2048,
-  comment: 'my@email.com'
+  comment: 'my@email.com',
   target: './id_rsa',
   key_format: 'PEM'
 })
+console.info(`Key was generated: ${status}`)
+```
 
 ## Schema
 

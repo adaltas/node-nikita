@@ -15,13 +15,11 @@ Download a file and place it on a local or remote folder for later usage.
 Cache can be used from the `file.download` action:
 
 ```js
-require('nikita')
-.file.download({
+const {status} = await nikita.file.download({
   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   cache_dir: '/var/tmp'
-}, function(err, {status}){
-  console.info(err ? err.message : 'File downloaded: ' + status);
-});
+})
+console.info(`File downloaded: ${status}`)
 ```
 
 ## Hooks
@@ -49,20 +47,21 @@ require('nikita')
         'cache_local':
           type: 'boolean'
           description: """
-          Apply to SSH mode, treat the cache file and directories as local from where
-          the command is used instead of over SSH.
+          Apply to SSH mode, treat the cache file and directories as local from
+          where the command is used instead of over SSH.
           """
         'cookies':
           type: 'array', items: type: 'string'
           default: []
           description: """
-          Extra cookies  to include in the request when sending HTTP to a server.
+          Extra cookies  to include in the request when sending HTTP to a
+          server.
           """
         'fail':
           type: 'boolean'
           description: """
-          Send an error if the HTTP response code is invalid. Similar to the curl
-          option of the same name.
+          Send an error if the HTTP response code is invalid. Similar to the
+          curl option of the same name.
           """
         'force':
           type: 'boolean'
@@ -79,8 +78,8 @@ require('nikita')
           type: 'boolean'
           description: """
           If the server reports that the requested page has moved to a different
-          location (indicated with a Location: header and a 3XX response code), this
-          option will make curl redo the request on the new place.
+          location (indicated with a Location: header and a 3XX response code),
+          this option will make curl redo the request on the new place.
           """
         'md5':
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
@@ -92,8 +91,8 @@ require('nikita')
         'proxy':
           type: 'string'
           description: """
-          Use the specified HTTP proxy. If the port number is not specified, it is
-          assumed at port 1080. See curl(1) man page.
+          Use the specified HTTP proxy. If the port number is not specified, it
+          is assumed at port 1080. See curl(1) man page.
           """
         'sha1':
           default: false
@@ -112,15 +111,15 @@ require('nikita')
         'source':
           type: 'string'
           description: """
-          File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-          is provided without any.
+          File, HTTP URL, FTP, GIT repository. File is the default protocol if
+          source is provided without any.
           """
         'target':
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           description: """
-          Cache the file on the executing machine, equivalent to cache unless an ssh
-          connection is provided. If a string is provided, it will be the cache path.
-          Default to the basename of source.
+          Cache the file on the executing machine, equivalent to cache unless an
+          ssh connection is provided. If a string is provided, it will be the
+          cache path. Default to the basename of source.
           """
       required: ['source']
 

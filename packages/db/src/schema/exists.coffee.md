@@ -11,7 +11,7 @@ const {exists} = await nikita.db.schema.exists({
   admin_password: 'test',
   database: 'my_db'
 })
-console.info(`Schema exists: ${exists}`);
+console.info(`Schema exists: ${exists}`)
 ```
 
 ## Schema

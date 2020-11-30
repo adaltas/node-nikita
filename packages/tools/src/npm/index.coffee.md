@@ -7,14 +7,12 @@ Install Node.js packages with NPM.
 
 The following action installs the coffescript package globally.
 
-```javascript
-require('nikita')
-.tools.npm({
+```js
+const {status} = await nikita.tools.npm({
   name: 'coffeescript',
   global: true
-}, (err, {status}) => {
-  console.log(err ? err.message : 'Package installed ' + status);
-});
+})
+console.info(`Package was installed: ${status}`)
 ```
 
 ## Hooks
@@ -33,10 +31,14 @@ require('nikita')
         'global':
           type: 'boolean'
           default: false
-          description: 'Installs the current package context as a global package.'
+          description: """
+          Installs the current package context as a global package.
+          """
         'name':
           type: 'array', items: type: 'string'
-          description: 'Name of the package(s) to install.'
+          description: """
+          Name of the package(s) to install.
+          """
         'sudo':
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
         'upgrade':

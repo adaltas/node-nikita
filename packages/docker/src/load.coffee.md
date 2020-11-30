@@ -16,15 +16,13 @@ Load Docker images.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.load({
+```js
+const {status} = await nikita.docker.load({
   image: 'nikita/load_test:latest',
   machine: machine,
   source: source + "/nikita_load.tar"
-}, function(err, {status}) {
-  console.info( err ? err.message : 'Container loaded: ' + status);
 })
+console.info(`Image was loaded: ${status}`);
 ```
 
 ## Schema
@@ -45,8 +43,8 @@ require('nikita')
         'checksum':
           type: 'string'
           description: """
-          If provided, will check if attached input archive to checksum already exist,
-          not native to docker but implemented to get better performance.
+          If provided, will check if attached input archive to checksum already
+          exist, not native to docker but implemented to get better performance.
           """
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'

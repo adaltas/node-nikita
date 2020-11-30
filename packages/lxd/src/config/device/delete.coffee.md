@@ -13,13 +13,11 @@ Delete a device from a container
 ## Example
 
 ```js
-require('nikita')
-.lxd.config.device.delete({
+const {status} = await nikita.lxd.config.device.delete({
   container: 'container1',
-  device: 'root',
-}, function(err, {status}){
-  console.info( err ? err.message : 'Device removed: ' + status);
+  device: 'root'
 })
+console.info(`Device was removed: ${status}`)
 ```
 
 ## Schema

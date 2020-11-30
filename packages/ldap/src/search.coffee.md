@@ -7,13 +7,11 @@ specified parameters.
 ## Example
 
 ```js
-{status} = await nikita.ldap.delete({
-  uri: 'ldap://openldap.server/',
-  binddn: 'cn=admin,cn=config',
-  passwd: 'password',
-  dn: 'cn=group1,ou=groups,dc=company,dc=com'
-});
-console.log(`Entry deleted: ${status}`)
+const {stdout} = await nikita.ldap.search({
+  base: 'dc=example,dc=org'
+})
+console.info(stdout)
+// dn: dc=example,dc=org
 ```
 
 ## Schema

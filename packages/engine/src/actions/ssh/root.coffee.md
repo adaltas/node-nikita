@@ -12,17 +12,15 @@ Additionnally, it disables SELINUX which require a restart. The restart is
 handled by Masson and the installation procedure will continue as soon as an 
 SSH connection is again available.
 
-## Exemple
+## Example
 
 ```js
-require('nikita')
-.ssh.root({
+const {status} = await nikita.ssh.root({
   "username": "vagrant",
   "private_key_path": "/Users/wdavidw/.vagrant.d/insecure_private_key"
   "public_key_path": "~/.ssh/id_rsa.pub"
-}, function(err){
-  console.info(err || "Public key updoaded for root user");
-});
+})
+console.info(`Public key was updoaded for root user: ${status}`)
 ```
 
 ## Schema

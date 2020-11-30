@@ -6,18 +6,15 @@ Check if a group exists inside FreeIPA.
 ## Example
 
 ```js
-require('nikita')
-.ipa.group.exists({
+const {status} = await nikita.ipa.group.exists({
   cn: 'somegroup',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(err, {status, exists}){
-  console.info(err ? err.message : status ?
-    'Group was updated' : 'Group was already set')
 })
+console.info(`Group exists: ${status}`)
 ```
 
 ## Schema

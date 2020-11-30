@@ -16,17 +16,15 @@ Run Docker Containers
 
 ## Example
 
-```javascript
-require('nikita')
-.docker({
+```js
+const {status} = await nikita.docker.run({
   ssh: ssh
   name: 'myContainer'
   image: 'test-image'
   env: ["FOO=bar",]
   entrypoint: '/bin/true'
-}, function(err, status, stdout, stderr){
-  console.info( err ? err.message : 'Container state changed to running: ' + status);
 })
+console.info(`Container was run: ${status}`)
 ```
 
 ## Hooks
@@ -55,12 +53,12 @@ require('nikita')
         'image':
           type: 'string'
           description: """
-          Name/ID of base image, required.
+          Name/ID of base image.
           """
         'entrypoint':
           type: 'string'
           description: """
-          Overwrite the default ENTRYPOINT of the image, equivalent to 
+          Overwrite the default ENTRYPOINT of the image, equivalent to
           `--entrypoint docker parameter`
           """
         'hostname':

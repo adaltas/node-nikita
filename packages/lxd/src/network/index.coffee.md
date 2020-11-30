@@ -13,16 +13,14 @@ Create a network or update a network configuration
 ## Example
 
 ```js
-require('nikita')
-.lxd.network({
+const {status} = await nikita.lxd.network({
   network: 'lxbr0'
   config: {
     'ipv4.address': '172.89.0.0/24',
     'ipv6.address': 'none'
   }
-}, function(err, {status}){
-  console.info( err ? err.message : 'Network created: ' + status);
 })
+console.info(`Network was created: ${status}`)
 ```
 
 ## Schema

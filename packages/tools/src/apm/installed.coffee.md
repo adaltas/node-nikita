@@ -3,8 +3,10 @@
 
 Check if APM is installed and available on the system.
 
+## Example
+
 ```js
-{status} = await nikita.tools.apm.installed()
+const {status} = await nikita.tools.apm.installed()
 console.log(`Is APM installed: ${status}`)
 ```
 

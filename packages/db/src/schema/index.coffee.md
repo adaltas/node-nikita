@@ -18,7 +18,7 @@ const {status} = await nikita.db.schema({
   database: 'my_database'
   schema: 'my_schema'
 })
-console.info(`Schema created or modified: ${status}`);
+console.info(`Schema created or modified: ${status}`)
 ```
 
 ## Schema

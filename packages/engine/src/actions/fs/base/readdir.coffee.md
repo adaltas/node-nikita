@@ -1,5 +1,5 @@
 
-# `nikita.fs.readdir(options, callback)`
+# `nikita.fs.base.readdir`
 
 Reads the contents of a directory. The implementation is conformed with the
 Node.js native
@@ -16,26 +16,24 @@ function.
 Return an array of files if only the target options is provided:
 
 ```js
-require('nikita')
-.fs.mkdir('/parent/dir/a_dir')
-.fs.writeFile('/parent/dir/a_file', '')
-.fs.readdir("/parent/dir/a_dir", function(err, {files}){
-  assert(files, ['my_dir', 'my_file'])
-})
+const {files} = await nikita
+.fs.base.mkdir('/parent/dir/a_dir')
+.fs.base.writeFile('/parent/dir/a_file', '')
+.fs.base.readdir("/parent/dir/a_dir")
+assert(files, ['my_dir', 'my_file'])
 ```
 
 Return an array of `Dirent` objects if the `withFileTypes` options is provided:
 
 ```js
-require('nikita')
-.fs.writeFile('/parent/dir/a_file', '')
-.fs.readdir({
+const {files} = await nikita
+.fs.base.writeFile('/parent/dir/a_file', '')
+.fs.base.readdir({
   target: "/parent/dir/a_dir",
   withFileTypes: true
-}, function(err, {files}){
-  assert(files[0].name, 'a_file'
-  assert(files[0].isFile(), true)
 })
+assert(files[0].name, 'a_file')
+assert(files[0].isFile(), true)
 ```
 
 ## Hook
@@ -66,7 +64,7 @@ require('nikita')
           """
       required: ['target']
 
-## Source Code
+## Handler
 
     handler = ({config}) ->
       # Note: -w work on macos, not on linux, it force raw printing of
@@ -137,11 +135,9 @@ require('nikita')
           errno: -2
           syscall: 'rmdir'
           path: config.target
-        
 
 ## Dependencies
 
     {lines} = require '../../../utils/string'
     error = require '../../../utils/error'
     {Dirent, constants} = require 'fs'
-        

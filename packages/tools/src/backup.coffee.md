@@ -14,24 +14,24 @@ Backup a file, a directory or the output of a command.
 * `filename` (string)   
 * `target` (string)   
 
-## Backup a directory
+## Example
+
+Backup a directory:
 
 ```js
-require('nikita')
-.tools.backup({
-  name: 'my_backup'
-  source: '/etc'
-  target: '/tmp/backup'
-  algorithm: 'gzip' # Value are "gzip", "bzip2", "xz" or "none"
+const {status} = await nikita.tools.backup({
+  name: 'my_backup',
+  source: '/etc',
+  target: '/tmp/backup',
+  algorithm: 'gzip',  # Value are "gzip", "bzip2", "xz" or "none"
   extension: 'tgz'
-  # retention: {
-  #   count: 3
-  #   date: '2015-01-01-00:00:00'
-  #   age: month: 2
-  # }
-}, function(err, {status, info}){
-  console.info(info);
-});
+  // retention: {
+  //  count: 3
+  //  date: '2015-01-01-00:00:00'
+  //  age: month: 2
+  // }
+})
+console.info(`File was backed up: ${status}`)
 ```
 
 ## Schema
@@ -69,8 +69,8 @@ require('nikita')
             type: 'boolean'
           ]
           description: """
-          One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a
-          directory otherwise no compression.
+          One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or
+          a directory otherwise no compression.
           """
         source:
           oneOf: [
@@ -137,7 +137,7 @@ require('nikita')
       filename: filename
       target: target
           
-## Source code
+## Handler
 
     module.exports =
       handler: handler

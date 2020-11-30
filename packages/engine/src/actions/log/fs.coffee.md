@@ -14,11 +14,6 @@ created inside the base directory. A symbolic link named as "latest" will point
 this is direction. The paths look like "{config.basedir}/{time}/{hostname}.log"
 and "{config.basedir}/latest".
 
-## Hook
-
-    on_action = ({}) ->
-      
-
 ## Schema
 
     schema =
@@ -37,7 +32,7 @@ and "{config.basedir}/latest".
           Directory where to store logs relative to the process working
           directory. Default to the "log" directory. Note, when the `archive`
           option is activated, the log files will be stored accessible from
-          "./log/latest".   
+          "./log/latest".
           """
         'filename':
           type: 'string'

@@ -6,7 +6,7 @@ List the databases of the OpenLDAP server. It returns the `olcDatabase` value.
 ## Example
 
 ```js
-{databases} = await nikita.ldap.tools.databases({
+const {databases} = await nikita.ldap.tools.databases({
   uri: 'ldap://localhost',
   binddn: 'cn=admin,cn=config',
   passwd: 'config'

@@ -3,9 +3,6 @@
 
 Stop a started container.
 
-## Options
-
-
 ## Callback parameters
 
 * `err`   
@@ -15,13 +12,11 @@ Stop a started container.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.stop({
+```js
+const {status} = await nikita.docker.stop({
   container: 'toto'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container state changed to stopped: ' + status);
 })
+console.info(`Container was stopped: ${status}`)
 ```
 
 ## Schema

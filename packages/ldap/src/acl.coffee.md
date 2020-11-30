@@ -6,7 +6,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 ## Example
 
 ```js
-nikita.ldap.acl({
+const {status} = await nikita.ldap.acl({
   dn: '',
   acls: [{
     place_before: 'dn.subtree="dc=domain,dc=com"',
@@ -39,7 +39,8 @@ console.info(`ACL modified: ${status}`)
         'acls':
           type: 'array'
           description: """
-          In case of multiple acls, regroup "place_before", "to" and "by" as an array.
+          In case of multiple acls, regroup "place_before", "to" and "by" as an
+          array.
           """
           items:
             type: 'object'

@@ -13,13 +13,11 @@ Detach a network from a container.
 ## Example
 
 ```js
-require('nikita')
-.lxd.network.detach({
-  network: 'network0'
+const {status} = await nikita.lxd.network.detach({
+  network: 'network0',
   container: 'container1'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Network detached  : ' + status);
 })
+console.info(`Network was detached: ${status}`)
 ```
 
 ## Schema

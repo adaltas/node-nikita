@@ -1,5 +1,5 @@
 
-# `nikita.fs.stat`
+# `nikita.fs.base.stat`
 
 Retrieve file information.
 
@@ -9,28 +9,26 @@ The `mode` parameter indicates the file type. For conveniency, the
 `@nikitajs/engine/lib/utils/stats` module provide functions to check each
 possible file types.
 
-## Examples
+## Example
 
 Check if target is a file:
 
 ```js
-stats = require('@nikitajs/core/lib/misc/stats')
-require('nikita')
+utils = require('@nikitajs/engine/lib/utils')
+const {stats} = await nikita
 .file.touch("#{scratch}/a_file")
-.fs.stat("#{scratch}/a_file", function(err, {stats}){
-  assert(stats.isFile(stats.mode) === true)
-})
+.fs.base.stat("#{scratch}/a_file")
+assert(utils.stats.isFile(stats.mode) === true)
 ```
 
 Check if target is a directory:
 
 ```js
-stats = require('@nikitajs/engine/lib/utils/stats')
-require('nikita')
-.system.mkdir("#{scratch}/a_file")
-.fs.stat("#{scratch}/a_file", function(err, {stats}){
-  assert(stats.isDirectory(stats.mode) === true)
-})
+utils = require('@nikitajs/engine/lib/utils')
+const {stats} = await nikita
+.fs.base.mkdir("#{scratch}/a_file")
+.fs.base.stat("#{scratch}/a_file")
+assert(utils.stats.isDirectory(stats.mode) === true)
 ```
 
 ## Note
@@ -44,7 +42,7 @@ confguration properties.
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
 The parameters include a subset as the one of the Node.js native 
 [`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object.
@@ -66,12 +64,14 @@ returned values.
             'uid':
               type: 'integer'
               description: """
-              The numeric user identifier of the user that owns the file (POSIX).
+              The numeric user identifier of the user that owns the file
+              (POSIX).
               """
             'gid':
               type: 'integer'
               description: """
-              The numeric group identifier of the group that owns the file (POSIX).
+              The numeric group identifier of the group that owns the file
+              (POSIX).
               """
             'size':
               type: 'integer'

@@ -14,13 +14,10 @@ Show the current state of instances.
 ## Example
 
 ```js
-require('nikita')
-.lxd.state({
-  container: 'container1',
-}, function(err, {config}){
-  console.info( err ? err.message : config);
-  // See below for an output example
+const {config} = await nikita.lxd.state({
+  container: 'container1'
 })
+console.info(config)
 ```
 
 ## Schema

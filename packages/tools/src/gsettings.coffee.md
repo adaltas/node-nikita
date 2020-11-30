@@ -11,7 +11,7 @@ const {status} = await nikita.tools.gsettings({
     'org.gnome.desktop.input-sources': 'xkb-config': '[\'ctrl:swap_lalt_lctl\']'
   }
 })
-console.log(`Property modified: ${status}`)
+console.log(`Property was modified: ${status}`)
 ```
 
 ## Schema

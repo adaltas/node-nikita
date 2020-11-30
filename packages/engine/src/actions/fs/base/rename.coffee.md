@@ -1,5 +1,5 @@
 
-# `nikita.fs.rename`
+# `nikita.fs.base.rename`
 
 Change the name or location of a file.
 

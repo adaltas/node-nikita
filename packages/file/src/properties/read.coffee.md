@@ -1,20 +1,18 @@
 
-# `nikita.file.properties`
+# `nikita.file.properties.read`
 
-Write a file in the Java properties format.
+Read a file in the Java properties format.
 
-## Exemple
+## Example
 
 Use a custom delimiter with spaces around the equal sign.
 
-```javascript
-require('nikita')
-.file.properties.read({
+```js
+const {properties} = await nikita.file.properties.read({
   target: "/path/to/target.json",
   separator: ' = '
-}, function(err, properties){
-  console.info(err || properties);
 })
+console.info(`Properties:`, properties)
 ```
 
 ## On config

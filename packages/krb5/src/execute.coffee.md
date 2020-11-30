@@ -5,19 +5,11 @@ Execute a Kerberos command.
 
 ## Example
 
-```
-require('nikita')
-.krb5_delrinc({
-  principal: 'myservice/my.fqdn@MY.REALM',
-  keytab: '/etc/security/keytabs/my.service.keytab',
-  admin: {
-    principal: 'me/admin@MY_REALM',
-    password: 'pass',
-    server: 'localhost'
-  }
-}, function(err, status){
-  console.info(err ? err.message : 'Principal removed: ' + status);
-});
+```js
+const {status} = await nikita.krb5.exec({
+  cmd: 'listprincs'
+})
+console.info(`Command was executed: ${status}`)
 ```
 
 ## Hooks
@@ -46,7 +38,8 @@ require('nikita')
             'server':
               type: 'string'
               description: """
-              Address of the kadmin server; optional, use "kadmin.local" if missing.
+              Address of the kadmin server; optional, use "kadmin.local" if
+              missing.
               """
             'password':
               type: 'string'
@@ -63,7 +56,7 @@ require('nikita')
             {instanceof: 'RegExp'}
           ]
           description: """
-          Ensure the execute output match a string or a regular expression
+          Ensure the execute output match a string or a regular expression.
           """
       required: ['admin', 'cmd']
 

@@ -9,8 +9,7 @@ secret-key cryptography.
 ## Example registering a new realm
 
 ```js
-require('nikita')
-.file.types.krb_conf({
+const {status} = await nikita.file.types.krb_conf({
   merge: true,
   content: {
     realms: {
@@ -21,11 +20,8 @@ require('nikita')
       }
     }
   }
-}, function(err, {status}){
-  console.info( err ? err.message : status
-    ? 'Configuration was updated'
-    : 'No change occured' )
 })
+console.info(`Configuration was updated: ${status}`)
 ```
 
 ## Schema

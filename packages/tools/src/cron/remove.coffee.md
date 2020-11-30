@@ -6,13 +6,12 @@ Remove job(s) on crontab.
 ## Example
 
 ```js
-require('nikita').cron.remove({
+const {status} = await nikita.cron.remove({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
-  when: '0 */9 * * *'
+  when: '0 */9 * * *',
   user: 'service'
-}, function(err, status){
-  console.info(err ? err.message : 'Cron entry created or modified: ' + status);
-});
+})
+console.info(`Cron entry was removed: ${status}`)
 ```
 
 ## Schema

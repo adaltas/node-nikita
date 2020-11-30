@@ -1,18 +1,10 @@
 
-# `nikita.fs.readFile(options, callback)`
+# `nikita.fs.base.readFile`
 
-Options:
-
-* `target` (string)   
-  Path of the file to read; required.
-* `encoding` (string)
-  Return a string with a particular encoding, otherwise a buffer is returned; 
-  optional.
-
-Exemple:
+## Example
 
 ```js
-{data} = await nikita.fs.readFile({
+const {data} = await nikita.fs.base.readFile({
   target: "#{scratch}/a_file",
   encoding: 'ascii'
 })
@@ -24,7 +16,7 @@ console.log(data)
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'

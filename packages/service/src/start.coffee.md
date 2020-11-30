@@ -15,10 +15,11 @@ Note, does not throw an error if service is not installed.
 ## Example
 
 ```js
-require('nikita').service.start([{
+const {status} = await nikita.service.start([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, {status}){ /* do sth */ });
+})
+console.info(`Service was started: ${status}`)
 ```
 
 ## Hooks

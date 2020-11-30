@@ -5,9 +5,8 @@
 
 Merge the destination file with user provided content.
 
-```javascript
-require('nikita')
-.file.json({
+```js
+const {status} = await nikita.file.json({
   target: "/path/to/target.json",
   content: { preferences: { colors: 'blue' } },
   transform: function(data){
@@ -17,9 +16,10 @@ require('nikita')
   merge: true,
   pretty: true
 })
+console.info(`File was merged: ${status}`)
 ```
 
-## On config
+## Hooks
 
     on_action = ({config, metadata}) ->
       # Options
@@ -38,9 +38,9 @@ require('nikita')
           oneOf: [{type: 'string'}, {type: 'boolean'}]
           default: false
           description: """
-          Create a backup, append a provided string to the filename extension or a
-          timestamp if value is not a string, only apply if the target file exists and
-          is modified.
+          Create a backup, append a provided string to the filename extension or
+          a timestamp if value is not a string, only apply if the target file
+          exists and is modified.
           """
         'content':
           type: 'object'
@@ -57,8 +57,8 @@ require('nikita')
           oneOf: [{type: 'integer'}, {type: 'boolean'}]
           default: false
           description: """
-          Prettify the JSON output, accept the number of spaces as an integer, default
-          to none if false or to 2 spaces indentation if true.
+          Prettify the JSON output, accept the number of spaces as an integer,
+          default to none if false or to 2 spaces indentation if true.
           """
         'source':
           type: 'string'
@@ -73,8 +73,8 @@ require('nikita')
         'transform':
           # typeof: 'function'
           description: """
-          User provided function to modify the javascript before it is stringified
-          into JSON.
+          User provided function to modify the javascript before it is
+          stringified into JSON.
           """
       required: ['target']
 

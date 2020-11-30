@@ -63,7 +63,7 @@ used for comparaison.
         throw errors.NIKITA_FS_HASH_FILETYPE_UNSUPPORTED config: config, stats: stats
       hash = null
       try
-      # Target is a directory
+        # Target is a directory
         if utils.stats.isDirectory stats.mode
           {files} = await @fs.glob  "#{config.target}/**", dot: true
           {stdout} = await @execute

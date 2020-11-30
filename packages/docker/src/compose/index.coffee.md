@@ -38,22 +38,22 @@ Create and start containers according to a docker-compose file
           ]
           default: false
           description: """
-          Create a backup, append a provided string to the filename extension or a
-          timestamp if value is not a string, only apply if the target file exists and
-          is modified.
+          Create a backup, append a provided string to the filename extension or
+          a timestamp if value is not a string, only apply if the target file
+          exists and is modified.
           """
         'detached':
           type: 'boolean'
           default: true
           description: """
-          Run Containers in detached mode. Default to true.
+          Run containers in detached mode.
           """
         'force':
           type: 'boolean'
           default: false
           description: """
-          Force to re-create the containers if the config and image have not changed
-          Default to false
+          Force to re-create the containers if the config and image have not
+          changed.
           """
         'services':
           oneOf: [
@@ -65,12 +65,12 @@ Create and start containers according to a docker-compose file
           """
         'target':
           type: 'string'
-          description: """ 
-          The docker-compose.yml absolute's file's path, required if no content is 
-          specified.
+          description: """
+          The docker-compose.yml absolute's file's path, required if no content
+          is specified.
           """
 
-## Source Code
+## Handler
 
     handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'

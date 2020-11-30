@@ -5,15 +5,13 @@ Execute command in containers.
 
 ## Example
 
-```
-require('nikita')
-.lxd.exec({
-  container: "my-container"
+```js
+const {status, stdout, stderr} = await nikita.lxd.exec({
+  container: "my-container",
   cmd: "whoami"
-}, function(err, {status, stdout, stderr}) {
-  console.info( err ? err.message : stdout)
-});
-
+})
+console.info(`Command was executed: ${status}`)
+console.info(stdout)
 ```
 
 ## Todo

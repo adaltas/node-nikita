@@ -1,16 +1,14 @@
 
-string = require '@nikitajs/engine/lib/utils/string'
-
 module.exports =
   options: [
-    'api-cors-header', 'bridge', 'bip', 'debug', 'daemon', 
-    'default-gateway', 'default-gateway-v6', 'default-ulimit', 'dns', 
-    'dns-search', 'exec-driver', 'exec-opt', 'exec-root', 'fixed-cidr', 
-    'fixed-cidr-v6', 'group', 'graph', 'host', 'help', 'icc', 
-    'insecure-registry', 'ip', 'ip-forward', 'ip-masq', 'iptables', 'ipv6', 
-    'log-level', 'label', 'log-driver', 'log-opt', 'mtu', 'pidfile', 
-    'registry-mirror', 'storage-driver', 'selinux-enabled', 'storage-opt', 
-    'tls', 'tlscacert', 'tlscert', 'tlskey', 'tlsverify', 'userland-proxy', 
+    'api-cors-header', 'bridge', 'bip', 'debug', 'daemon',
+    'default-gateway', 'default-gateway-v6', 'default-ulimit', 'dns',
+    'dns-search', 'exec-driver', 'exec-opt', 'exec-root', 'fixed-cidr',
+    'fixed-cidr-v6', 'group', 'graph', 'host', 'help', 'icc',
+    'insecure-registry', 'ip', 'ip-forward', 'ip-masq', 'iptables', 'ipv6',
+    'log-level', 'label', 'log-driver', 'log-opt', 'mtu', 'pidfile',
+    'registry-mirror', 'storage-driver', 'selinux-enabled', 'storage-opt',
+    'tls', 'tlscacert', 'tlscert', 'tlskey', 'tlsverify', 'userland-proxy',
     'version'
   ]
   compose_options: [
@@ -29,7 +27,7 @@ module.exports =
     opts.join ' '
   ###
   Build the docker command
-  Accepted options are referenced in "module.exports.options". Also accept 
+  Accepted options are referenced in "module.exports.options". Also accept
   "machine" and "boot2docker".
   `compose` option allow to wrap the command for docker-compose instead of docker
   ###

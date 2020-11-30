@@ -18,13 +18,14 @@ Write log to the host filesystem in a user provided format.
 
 Global config can be alternatively set with the "log_cli" property.
 
-## Exemple with the depth_max option
+## Example with the depth_max option
 
 ```js
-require('nikita')(
-  log: { cli: { colors: true } }
-)
-.log.cli({ depth_max: 2 })
+nikita
+.log.cli({
+  colors: true,
+  depth_max: 2
+})
 .call({
   header: 'Print my header'
 }, function(){
@@ -35,23 +36,21 @@ require('nikita')(
       header: 'Header not printed'
     }, function(){
       // do sth
-    });
-  });
-});
+    })
+  })
+})
 ```
 
-## Exemple with global config
+## Example with global config
 
 ```js
-require('nikita')(
-  log_cli: { colors: true }
-)
-.log.cli()
+nikita
+.log.cli({ colors: true })
 .call({
   header: 'Print my header'
 }, function(){
   // do sth
-});
+})
 ```
 
 ## Handler

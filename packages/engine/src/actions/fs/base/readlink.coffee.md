@@ -1,5 +1,5 @@
 
-# `nikita.fs.readlink`
+# `nikita.fs.base.readlink`
 
 Read a link to retrieve its destination path.
 
@@ -8,7 +8,7 @@ Read a link to retrieve its destination path.
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'

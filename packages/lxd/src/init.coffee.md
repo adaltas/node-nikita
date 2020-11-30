@@ -12,14 +12,12 @@ Initialize a Linux Container with given image name, container name and config.
 
 ## Example
 
-```
-require('nikita')
-.lxd.init({
+```js
+const {status} = await nikita.lxd.init({
   image: "ubuntu:18.04",
   container: "my_container"
-}, function(err, {status}) {
-  console.info( err ? err.message : 'The container was created')
-});
+})
+console.info(`Container was created: ${status}`)
 ```
 
 ## Implementation details
@@ -62,7 +60,8 @@ now.
         'storage':
           type: 'string'
           description: """
-          Storage name where to store the container, [default_storage] by default.
+          Storage name where to store the container, [default_storage] by
+          default.
           """
         'profile':
           type: 'string'

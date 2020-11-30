@@ -1,5 +1,5 @@
 
-# `nikita.fs.writeFile`
+# `nikita.fs.base.writeFile`
 
 Write a Buffer or a string to a file. This action mimic the behavior of the
 Node.js native [`fs.writeFile`](https://nodejs.org/api/fs.html#fs_fs_writefile_file_data_options_callback)
@@ -10,12 +10,12 @@ the configuration properties.
 
 ## Example
 
-```
-require('nikita')
-.fs.writeFile({
+```js
+const {status} = await nikita.fs.base.writeFile({
   target: "#{scratch}/a_file",
   content: 'Some data, a string or a Buffer'
 })
+console.info(`File was written: ${status}`)
 ```
 
 ## Hook
