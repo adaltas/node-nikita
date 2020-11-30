@@ -7,13 +7,13 @@ BLOB based database.
 
 ## Example
 
-```javascript
+```js
 const {status} = await nikita.tools.dconf({
   properties: {
     '/org/gnome/desktop/datetime/automatic-timezone': 'true'
   }
 });
-console.info(`Property modified: ${status}`)
+console.info(`Property was modified: ${status}`)
 ```
 
 ## Note
@@ -36,7 +36,7 @@ Run the command "dconf-editor" to navigate the database with a UI.
           additionalProperties: false
       required: ['properties']
 
-## Source Code
+## Handler
 
     handler = ({config}) ->
       # Normalize properties

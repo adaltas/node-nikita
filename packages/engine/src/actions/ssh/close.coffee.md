@@ -20,7 +20,7 @@ Close the existing connection if any.
           connection avaible to the action.
           """
 
-## Source code
+## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
       log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'

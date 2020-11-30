@@ -35,8 +35,7 @@ alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"...
 ## Uploading public and private keys into a keystore
 
 ```js
-require('nikita')
-.java.keystore_add([{
+const {status} = await nikita.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -45,19 +44,20 @@ require('nikita')
   cert: "/tmp/public_cert.pem",
   keypass: 'mypassword',
   name: 'node_1'
-}, function(err, status){ /* do sth */ });
+})
+console.info(`Keystore was updated: ${status}`)
 ```
 
 ## Uploading a certificate authority
 
 ```js
-require('nikita')
-.java.keystore_add([{
+const {status} = await nikita.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
   cacert: '/tmp/cacert.pem'
-}, function(err, status){ /* do sth */ });
+})
+console.info(`Keystore was updated: ${status}`)
 ```
 
 ## Requirements

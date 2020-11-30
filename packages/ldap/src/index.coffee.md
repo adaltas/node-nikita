@@ -8,7 +8,7 @@ Create new [index](index) for the OpenLDAP server.
 Using the database DN:
 
 ```js
-{status} = await nikita.ldap.index({
+const {status} = await nikita.ldap.index({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -23,7 +23,7 @@ console.info(`Index created or modified: ${status}`)
 Using the database suffix:
 
 ```js
-{status} = await nikita.ldap.index({
+const {status} = await nikita.ldap.index({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',

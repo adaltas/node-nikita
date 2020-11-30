@@ -15,16 +15,14 @@ Show full device configuration for containers or profiles.
 ## Example
 
 ```js
-require('nikita')
-.lxd.config.device.show({
+const {config} = await nikita.lxd.config.device.show({
   container: 'container1',
   device: 'vpn'
-}, function(err, {config}){
-  console.info( err ? err.message : config);
-  # { connect: "udp:127.0.0.1:1194",
-  #   listen: "udp:51.68.116.44:1194",
-  #   type: proxy } }
 })
+console.info(config)
+// { connect: "udp:127.0.0.1:1194",
+// listen: "udp:51.68.116.44:1194",
+// type: proxy } }
 ```
 
 ## Schema

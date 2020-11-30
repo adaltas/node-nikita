@@ -13,11 +13,11 @@ Remove a package or service.
 ## Example
 
 ```js
-require('nikita')
-.service.start([{
+const {status} = await nikita.service.remove([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, {status}){ /* do sth */ });
+})
+console.info(`Package or service was removed: ${status}`)
 ```
 
 ## Hooks
@@ -33,7 +33,8 @@ require('nikita')
         'cache':
           type: 'boolean'
           description: """
-          Run entirely from system cache to list installed and outdated packages.
+          Run entirely from system cache to list installed and outdated
+          packages.
           """
         'cacheonly':
           $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'

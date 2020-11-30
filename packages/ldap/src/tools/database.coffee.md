@@ -6,7 +6,7 @@ Return the database associated with a suffix.
 ## Example
 
 ```js
-{databases} = await nikita.ldap.tools.databases({
+const {databases} = await nikita.ldap.tools.databases({
   uri: 'ldap://localhost',
   binddn: 'cn=admin,cn=config',
   passwd: 'config'

@@ -12,14 +12,11 @@ Start containers.
 
 ## Example
 
-```
-require('nikita')
-.lxd.start({
+```js
+const {status} = await nikita.lxd.start({
   container: "my_container"
-}, function(err, {status}) {
-  console.info( err ? err.message :
-    status ? 'Container now running' : 'Container already running' )
-});
+})
+console.info(`Container was started: ${status}`)
 ```
 
 ## Schema

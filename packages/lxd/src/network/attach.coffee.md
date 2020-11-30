@@ -13,13 +13,11 @@ Attach an existing network to a container.
 ## Example
 
 ```js
-require('nikita')
-.lxd.network.attach({
+const {status} = await nikita.lxd.network.attach({
   network: 'network0',
   container: 'container1'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Network attached: ' + status);
 })
+console.info(`Network was attached: ${status}`)
 ```
 
 ## Schema

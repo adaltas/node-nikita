@@ -5,9 +5,8 @@ Remove a Kerberos principal and optionally its keytab.
 
 ## Example
 
-```
-require('nikita')
-.krb5_delrinc({
+```js
+const {status} = await nikita.krb5.delrinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   admin: {
@@ -15,9 +14,8 @@ require('nikita')
     password: 'pass',
     server: 'localhost'
   }
-}, function(err, status){
-  console.info(err ? err.message : 'Principal removed: ' + status);
-});
+})
+console.info(`Principal was removed: ${status}`)
 ```
 
 ## Schema

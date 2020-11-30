@@ -12,17 +12,15 @@ Create a storage or update a storage configuration.
 
 ## Example
 
-```
-require('nikita')
-.lxd.storage({
+```js
+const {status} = await nikita.lxd.storage({
   name: "system",
   driver: "zfs",
   config: {
     source: "syspool/lxd"
   }
-}, function(err, {status}) {
-  console.info( err ? err.message : 'The storage was created or config updated')
-});
+})
+console.info(`Storage was created or config updated: ${status}`)
 ```
 
 ## Schema

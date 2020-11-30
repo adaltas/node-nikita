@@ -9,23 +9,21 @@ All configuration properties are passed to `nikita.execute`.
 
 ## Assert a command succeed
 
-```javascript
-nikita.execute.assert({
+```js
+const {status} = await nikita.execute.assert({
   cmd: 'exit 0'
-}, function(err){
-  console.info(err || 'ok');
-});
+})
+console.info(`Command was succeeded: ${status}`)
 ```
 
 ## Assert a command stdout
 
-```javascript
-nikita.execute.assert({
-  cmd: 'echo hello'
+```js
+const {status} = await nikita.execute.assert({
+  cmd: 'echo hello',
   assert: 'hello'
-}, function(err){
-  console.info(err || 'ok');
-});
+})
+console.info(`Stdout was asserted: ${status}`)
 ```
 
 ## Hook

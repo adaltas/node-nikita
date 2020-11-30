@@ -16,15 +16,11 @@ Pull a container.
 
 ## Example
 
-1- builds an image from dockerfile without any resourcess
-
-```javascript
-require('nikita')
-.docker.pull({
+```js
+const {status} = await nikita.docker.pull({
   tag: 'postgresql'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container pulled: ' + status);
 })
+console.info(`Image was pulled: ${status}`)
 ```
 
 ## Schema

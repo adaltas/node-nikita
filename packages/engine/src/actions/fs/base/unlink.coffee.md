@@ -1,5 +1,5 @@
 
-# `nikita.fs.unlink`
+# `nikita.fs.base.unlink`
 
 Remove a non-directory type file.
 

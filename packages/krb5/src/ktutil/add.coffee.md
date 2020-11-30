@@ -1,19 +1,18 @@
 
-# `nikita.krb5.ktutil`
+# `nikita.krb5.ktutil.add`
 
 Create and manage a keytab for an existing principal. It's different than ktadd
 in the way it can manage several principal on one keytab.
 
 ## Example
 
-```
-require('nikita').krb5.ktutil.add({
+```js
+const {status} = await nikita.krb5.ktutil.add({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   password: 'password'
-}, function(err, status){
-  console.info(err ? err.message : 'Keytab created or modified: ' + status);
-});
+})
+console.info(`Keytab was created or modified: ${status}`)
 ```
 
 ## Schema
@@ -27,7 +26,7 @@ require('nikita').krb5.ktutil.add({
           type: 'array', items: type: 'string'
           default: ['aes256-cts-hmac-sha1-96', 'aes128-cts-hmac-sha1-96', 'des3-cbc-sha1','arcfour-hmac']
           description: """
-          The enctypes used by krb5_server
+          The enctypes used by krb5_server.
           """
         'gid':
           $ref: 'module://@nikitajs/file/src/index#/properties/gid'

@@ -1,10 +1,7 @@
 
-# `nikita.volume_create`
+# `nikita.docker.volume_create`
 
-Create a volume. 
-
-## Options
-
+Create a volume.
 
 ## Callback parameters
 
@@ -15,13 +12,11 @@ Create a volume.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.pause({
+```js
+const {status} = await nikita.docker.volume_create({
   name: 'my_volume'
-}, function(err, status){
-  console.info( err ? err.message : 'Volume created: ' + status);
 })
+console.info(`Volume was created: ${status}`)
 ```
 
 ## Schema

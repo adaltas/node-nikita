@@ -13,12 +13,10 @@ Delete an existing lxd network.
 ## Example
 
 ```js
-require('nikita')
-.lxd.network.delete({
+const {status} = await nikita.lxd.network.delete({
   network: 'network0'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Network deleted: ' + status);
 })
+console.info(`Network was deleted: ${status}`)
 ```
 
 ## Schema

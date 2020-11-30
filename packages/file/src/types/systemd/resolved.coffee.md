@@ -1,19 +1,20 @@
 
-# `resolved.coffee.md`
+# `nikita.file.types.systemd.resolved`
 
 ## Example
 
 Overwrite `/usr/lib/systemd/resolved.conf.d/10_resolved.conf` in `/mnt` to set
 a list of fallback dns servers by using an array and set ReadEtcHosts to true.
 
-```javascript
-require("nikita").file.types.systemd.resolved({
+```js
+const {status} = await nikita.file.types.systemd.resolved({
   target: "/etc/systemd/resolved.conf",
   rootdir: "/mnt",
   content:
     FallbackDNS: ["1.1.1.1", "9.9.9.10", "8.8.8.8", "2606:4700:4700::1111"]
     ReadEtcHosts: true
 })
+console.info(`File was overwritten: ${status}`)
 ```
 
 Write to the default target file (`/etc/systemd/resolved.conf`). Set a single
@@ -21,13 +22,14 @@ DNS server using a string and also modify the value of DNSSEC.  Note: with
 `merge` set to true, this wont overwrite the target file, only specified values
 will be updated.
 
-```javascript
-require("nikita").file.types.systemd.resolved({
+```js
+const {status} = await nikita.file.types.systemd.resolved({
   content:
     DNS: "ns0.fdn.fr"
     DNSSEC: "allow-downgrade"
   merge: true
 })
+console.info(`File was written: ${status}`)
 ```
 
 ## Schema

@@ -37,8 +37,8 @@ Execute a docker command.
         'rootdir':
           type: 'string'
           description: """
-          Path to the mount point corresponding to the root directory, required if
-          the "arch_chroot" option is activated.
+          Path to the mount point corresponding to the root directory, required
+          if the "arch_chroot" option is activated.
           """
         'cmd':
           oneOf: [{type: 'string'}, typeof: 'function']

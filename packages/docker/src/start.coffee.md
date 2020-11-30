@@ -1,5 +1,5 @@
 
-# `nikita.docker.restart`
+# `nikita.docker.start`
 
 Start a container.
 
@@ -16,16 +16,12 @@ Start a container.
 
 ## Example
 
-1- builds an image from dockerfile without any resourcess
-
-```javascript
-require('nikita')
-.docker.start({
+```js
+const {status} = await nikita.docker.start({
   container: 'toto',
   attach: true
-}, function(err, is_true, stdout, stderr){
-  console.info( err ? err.message : 'Container state changed to started: ' + status);
 })
+console.info(`Container was started: ${status}`)
 ```
 
 ## Schema

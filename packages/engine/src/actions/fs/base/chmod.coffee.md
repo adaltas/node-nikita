@@ -1,5 +1,5 @@
 
-# `nikita.fs.chmod`
+# `nikita.fs.base.chmod`
 
 Change permissions of a file.
 

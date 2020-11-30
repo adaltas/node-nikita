@@ -13,18 +13,18 @@ Create a device or update its configuration.
 ## Example
 
 ```js
-require('nikita')
-.lxd.config.device({
-  container: 'container1',
-  device: 'root',
-  type: 'disk'
+const {status} = await nikita.lxd.config.device({
   config: {
-    'pool': 'system',
-    'size': '10GB'
+    container: 'container1',
+    device: 'root',
+    type: 'disk',
+    config: {
+      'pool': 'system',
+      'size': '10GB'
+    }
   }
-}, function(err, {status}){
-  console.info( err ? err.message : 'Network created: ' + status);
 })
+console.info(`Disk was created: ${status}`)
 ```
 
 ## Schema

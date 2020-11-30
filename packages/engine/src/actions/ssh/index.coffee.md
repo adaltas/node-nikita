@@ -27,9 +27,9 @@ was created and available.
           connection opened and available.
           """
 
-## Source code
+## Handler
 
-    handler = ({config, parent}) ->
+    handler = ({config}) ->
       # Local execution, we dont want an SSH connection, no need to pursue
       return undefined if config.ssh is false
       conn = await @tools.find (action) ->

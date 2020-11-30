@@ -1,5 +1,5 @@
 
-# `nikita.tools.gem.install`
+# `nikita.tools.rubygems.install`
 
 Install a Ruby gem.
 
@@ -15,35 +15,29 @@ following components:
 Install a gem from its name and version:
 
 ```js
-require('nikita')
-.tools.rubygems.install({
+const {status} = await nikita.tools.rubygems.install({
   name: 'json',
   version: '2.1.0',
-}, function(err, {status}){
-  console.info( err ? err.messgage : 'Gem installed: ' + status);
-});
+})
+console.info(`Gem installed: ${status}`)
 ```
 
 Install a gem from a local file:
 
 ```js
-require('nikita')
-.tools.rubygems.install({
-  source: '/path/to/json-2.1.0.gem',
-}, function(err, {status}){
-  console.info( err ? err.messgage : 'Gem installed: ' + status);
-});
+const {status} = await nikita.tools.rubygems.install({
+  source: '/path/to/json-2.1.0.gem'
+})
+console.info(`Gem installed: ${status}`)
 ```
 
-Install gems from a glob expressoin:
+Install gems from a glob expression:
 
 ```js
-require('nikita')
-.tools.rubygems.install({
+const {status} = await nikita.tools.rubygems.install({
   source: '/path/to/*.gem',
-}, function(err, {status}){
-  console.info( err ? err.messgage : 'Gem installed: ' + status);
-});
+})
+console.info(`Gem installed: ${status}`)
 ```
 
 ## Schema

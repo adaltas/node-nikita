@@ -6,34 +6,32 @@ Retrieve user information from FreeIPA.
 ## Example
 
 ```js
-require("nikita")
-.ipa.user.show({
+const {result} = await nikita.ipa.user.show({
   uid: "someone",
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(err, {result}){
-  console.info(err ? err.message :
-    `User is ${result.uid[0]}`)
-  // If user is missing, `err` looks like:
-  // { code: 4001
-  // message: 'missing: user not found' }
-  // If user exists, `result` looks like:
-  // { dn: 'uid=admin,cn=users,cn=accounts,dc=nikita,dc=local',
-  // memberof_group: [ 'admins', 'trust admins' ],
-  // uid: [ 'admin' ],
-  // loginshell: [ '/bin/bash' ],
-  // uidnumber: [ '754600000' ],
-  // gidnumber: [ '754600000' ],
-  // has_keytab: true,
-  // has_password: true,
-  // sn: [ 'Administrator' ],
-  // homedirectory: [ '/home/admin' ],
-  // krbprincipalname: [ 'admin@NIKITA.LOCAL' ],
-  // nsaccountlock: false }
 })
+console.info(`User is ${result.uid[0]}`)
+
+// If user is missing, `err` looks like:
+// { code: 4001
+// message: 'missing: user not found' }
+// If user exists, `result` looks like:
+// { dn: 'uid=admin,cn=users,cn=accounts,dc=nikita,dc=local',
+// memberof_group: [ 'admins', 'trust admins' ],
+// uid: [ 'admin' ],
+// loginshell: [ '/bin/bash' ],
+// uidnumber: [ '754600000' ],
+// gidnumber: [ '754600000' ],
+// has_keytab: true,
+// has_password: true,
+// sn: [ 'Administrator' ],
+// homedirectory: [ '/home/admin' ],
+// krbprincipalname: [ 'admin@NIKITA.LOCAL' ],
+// nsaccountlock: false }
 ```
 
 ## Hooks

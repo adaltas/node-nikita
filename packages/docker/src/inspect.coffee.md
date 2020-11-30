@@ -13,12 +13,12 @@ SIGNAL is not sent.
 * `status`   
   True if container was killed.
 
-## Examples
+## Example
 
 Inspect a single container.
 
 ```js
-{info} = await require('nikita').docker.inspect({
+const {info} = await nikita.docker.inspect({
   name: 'my_container'
 })
 console.info(`Container id is ${info.Id}`)
@@ -27,7 +27,7 @@ console.info(`Container id is ${info.Id}`)
 Inspect multiple containers.
 
 ```js
-{info} = await require('nikita').docker.inspect({
+const {info} = await nikita.docker.inspect({
   name: 'my_container'
 })
 info.map( (container) =>

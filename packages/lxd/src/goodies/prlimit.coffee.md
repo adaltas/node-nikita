@@ -16,12 +16,10 @@ Print the process limit associated with a running container.
 ## Example
 
 ```js
-require('nikita')
-.lxd.goodies.prlimit({
+const {stdout, limits} = await nikita.lxd.goodies.prlimit({
   container: "my_container"
-}, function(err, {stdout, limits}) {
-  console.info( err ? err.message : stdout + JSON.decode(limits))
-});
+})
+console.info( `${stdout} ${JSON.decode(limits)}`)
 ```
 
 ## Schema

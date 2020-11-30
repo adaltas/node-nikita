@@ -146,21 +146,21 @@ Register new actions.
 
 With an action path:
 
-```javascript
+```js
 nikita.register('first_action', 'path/to/action')
 nikita.first_action(options);
 ```
 
 With a namespace and an action path:
 
-```javascript
+```js
 nikita.register(['second', 'action'], 'path/to/action')
 nikita.second.action(options);
 ```
 
 With an action object:
 
-```javascript
+```js
 nikita.register('third_action', {
   relax: true,
   handler: function(options){ console.info(options.relax) }
@@ -170,7 +170,7 @@ nikita.third_action(options);
 
 With a namespace and an action object:
 
-```javascript
+```js
 nikita.register(['fourth', 'action'], {
   relax: true,
   handler: function(options){ console.info(options.relax) }
@@ -180,7 +180,7 @@ nikita.fourth.action(options);
 
 Multiple actions:
 
-```javascript
+```js
 nikita.register({
   'fifth_action': 'path/to/action'
   'sixth': {
@@ -243,7 +243,7 @@ Deprecate an old or renamed action. Internally, it leverages
 
 For example:
 
-```javascript
+```js
 nikita.deprecate('old_function', 'new_function', -> 'my_function')
 nikita.old_function()
 # Print

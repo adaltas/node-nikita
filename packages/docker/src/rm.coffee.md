@@ -13,13 +13,11 @@ force options is set.
 
 ## Example Code
 
-```javascript
-require('nikita')
-.docker.rm({
+```js
+const {status} = await nikita.docker.rm({
   container: 'toto'
-}, function(err, status){
-  console.info( err ? err.message : 'Container removed: ' + status);
 })
+console.info(`Container was removed: ${status}`)
 ```
 
 ## Schema
@@ -30,7 +28,7 @@ require('nikita')
         'container':
           type: 'string'
           description: """
-          Name/ID of the container, required.
+          Name/ID of the container.
           """
         'link':
           type: 'boolean'

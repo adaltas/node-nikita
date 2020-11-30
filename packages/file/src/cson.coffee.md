@@ -11,15 +11,13 @@
 ## Example
 
 ```js
-require('nikita')
-.file.yaml({
+const {status} = await nikita.file.yaml({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Content was updated: ' + status);
-});
+})
+console.info(`Content was updated: ${status}`)
 ```
 
 ## On config
@@ -58,7 +56,7 @@ require('nikita')
           """
       required: ['target', 'content']
 
-## Source Code
+## Handler
 
     handler = ({config, tools: {log}}) ->
       log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'

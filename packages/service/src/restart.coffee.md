@@ -13,10 +13,11 @@ Restart a service.
 ## Example
 
 ```js
-require('nikita').service.start([{
+const {status} = await nikita.service.restart([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, {status}){ /* do sth */ });
+})
+console.info(`Service was restarted: ${status}`)
 ```
 
 ## Hooks

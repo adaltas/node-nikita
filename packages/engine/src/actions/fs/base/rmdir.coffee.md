@@ -1,5 +1,5 @@
 
-# `nikita.fs.rmdir`
+# `nikita.fs.base.rmdir`
 
 Delete a directory.
 
@@ -8,7 +8,7 @@ Delete a directory.
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'

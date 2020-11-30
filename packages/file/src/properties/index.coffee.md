@@ -3,18 +3,18 @@
 
 Write a file in the Java properties format.
 
-## Exemple
+## Example
 
 Use a custom delimiter with spaces around the equal sign.
 
-```javascript
-require('nikita')
-.file.properties({
+```js
+const {status} = await nikita.file.properties({
   target: "/path/to/target.json",
   content: { key: "value" },
   separator: ' = '
   merge: true
 })
+console.info(`File was written: ${status}`)
 ```
 
 ## On config
@@ -67,7 +67,7 @@ require('nikita')
       # Trim
       unless config.trim
         fnl_props = config.content
-      else 
+      else
         fnl_props = {}
         for k, v of config.content
           k = k.trim()

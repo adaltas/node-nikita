@@ -25,21 +25,17 @@ Status unmodified if the repository is identical to a previous one
 * `stderr`   
   Stderr value(s) unless `stderr` option is provided.   
 
-## Examples
+## Builds a repository from dockerfile without any resourcess
 
-### Builds a repository from dockerfile without any resourcess
-
-```javascript
-require('nikita')
-.docker.build({
+```js
+const {status} = await nikita.docker.build({
   image: 'ryba/targe-build',
   source: '/home/ryba/Dockerfile'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container built: ' + status);
-});
+})
+console.info(`Container was built: ${status}`)
 ```
 
-### Builds an repository from dockerfile with external resources
+## Builds a repository from dockerfile with external resources
 
 In this case nikita download all the external files into a resources directory in the same location
 than the Dockerfile. The Dockerfile content:
@@ -59,28 +55,24 @@ Build directory tree :
 │   ├── configuration.sh
 ```
 
-```javascript
-require('nikita')
-.docker.build({
+```js
+const {status} = await nikita.docker.build({
   tag: 'ryba/target-build',
   source: '/home/ryba/Dockerfile',
   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container built: ' + status);
-});
+})
+console.info(`Container was built: ${status}`)
 ```
 
-### Builds an repository from stdin
+## Builds a repository from stdin
 
-```javascript
-require('nikita')
-.docker.build({
+```js
+const {status} = await nikita.docker.build({
   ssh: ssh,
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container built: ' + status);
-});
+})
+console.info(`Container was built: ${status}`)
 ```
 
 ## Hooks
@@ -97,7 +89,7 @@ require('nikita')
           oneOf: [{
             type: 'string'
           }, {
-            type: 'object', 
+            type: 'object',
             patternProperties: '.*': typeof: 'string'
           }]
           description: """
@@ -242,7 +234,7 @@ require('nikita')
         stdout: stdout
         stderr: stderr
       log if userargs.status
-      then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build' 
+      then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
       else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
       userargs
 

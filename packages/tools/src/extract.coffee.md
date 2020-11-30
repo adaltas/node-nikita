@@ -14,13 +14,12 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 
 ## Example
 
-```javascript
-require('nikita').tools.extract({
+```js
+const {status} = await nikita.tools.extract({
   source: '/path/to/file.tgz'
   destation: '/tmp'
-}, function(err, {status}){
-  console.info(err ? err.message : 'File was extracted: ' + status);
-});
+})
+console.info(`File was extracted: ${status}`)
 ```
 
 ## Hooks
@@ -48,12 +47,14 @@ require('nikita').tools.extract({
         'preserve_owner':
           type: 'boolean'
           description: """
-          Preserve ownership when extracting. True by default if runned as root, else false.
+          Preserve ownership when extracting. True by default if runned as root,
+          else false.
           """
         'preserve_mode':
           type: 'boolean'
           description: """
-          Preserve permissions when extracting. True by default if runned as root, else false.
+          Preserve permissions when extracting. True by default if runned as
+          root, else false.
           """
         'source':
           type: 'string'
@@ -63,7 +64,8 @@ require('nikita').tools.extract({
         'strip':
           type: 'number'
           description: """
-          Remove the specified number of leading path elements. Apply only to tar(s) formats.
+          Remove the specified number of leading path elements. Apply only to
+          tar(s) formats.
           """
         'target':
           type: 'string'

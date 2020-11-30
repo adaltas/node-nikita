@@ -6,13 +6,12 @@ Register a job on crontab.
 ## Example
 
 ```js
-require('nikita').cron.add({
+const {status} = await nikita.cron.add({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
-  when: '0 */9 * * *'
+  when: '0 */9 * * *',
   user: 'service'
-}, function(err, status){
-  console.info(err ? err.message : 'Cron entry created or modified: ' + status);
-});
+})
+console.info(`Cron entry created or modified: ${status}`)
 ```
 
 ## Schema

@@ -6,13 +6,11 @@ Setup packet manager repository. Only support yum for now.
 ## Example
 
 ```js
-require('nikita')
-.tools.repo({
+const {status} = await nikita.tools.repo({
   source: '/tmp/centos.repo',
   clean: 'CentOs*'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Repo updated: ' + status);
-});
+})
+console.info(`Repo was updated: ${status}`)
 ```
 
 ## Schema

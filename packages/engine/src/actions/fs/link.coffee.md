@@ -16,12 +16,11 @@ Note, it is valid for the "source" file to not exist.
 ## Example
 
 ```js
-require('nikita').fs.link({
+const {status} = await nikita.fs.link({
   source: __dirname,
   target: '/tmp/a_link'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Link created: ' + status);
-});
+})
+console.info(`Link was created: ${status}`)
 ```
 
 ## Hook
@@ -43,12 +42,12 @@ require('nikita').fs.link({
         'target':
           type: 'string'
           description: """
-          Symbolic link to be created.   
+          Symbolic link to be created.
           """
         'exec':
           type: 'boolean'
           description: """
-          Create an executable file with an `exec` command.   
+          Create an executable file with an `exec` command.
           """
         'mode':
           oneOf: [{type: 'integer'}, {type: 'string'}]

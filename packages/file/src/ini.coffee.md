@@ -34,15 +34,13 @@ The default stringify function accepts:
 ## Example
 
 ```js
-require('nikita')
-.file.ini({
+const {status} = await nikita.file.ini({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Content was updated: ' + status);
-});
+})
+console.info(`Content was updated: ${status}`)
 ```
 
 ## Schema
@@ -90,7 +88,8 @@ require('nikita')
           type: 'boolean'
           default: true
           description: """
-          Escape the section's header title replace '.' by '\.'; "true" by default.
+          Escape the section's header title replace '.' by '\.'; "true" by
+          default.
           """
         'merge':
           type: 'boolean'

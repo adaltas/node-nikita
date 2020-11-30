@@ -6,7 +6,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Example
 
 ```js
-require('nikita').krb5.addprinc({
+const {status} = await nikita.krb5.addprinc({
   admin: {
     password: 'pass',
     principal: 'me/admin@MY_REALM',
@@ -17,9 +17,8 @@ require('nikita').krb5.addprinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   randkey: true,
   uid: 'myservice'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Principal created or modified: ' + status);
-});
+})
+console.info(`Principal was created or modified: ${status}`)
 ```
 
 ## Schema

@@ -13,12 +13,12 @@ Activate or desactivate a service on startup.
 ## Example
 
 ```js
-require('nikita')
-.service.startup([{
+const {status} = await nikita.service.startup([{
   ssh: ssh,
   name: 'gmetad',
   startup: false
-}, function(err, modified){ /* do sth */ });
+})
+console.info(`Service was desactivated on startup: ${status}`)
 ```
 
 ## Hooks

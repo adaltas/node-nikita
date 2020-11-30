@@ -15,14 +15,12 @@ SIGNAL is not sent.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.kill({
+```js
+const {status} = await nikita.docker.kill({
   container: 'toto',
   signal: 9
-}, function(err, status){  
-  console.info( err ? err.message : 'Container killed: ' + status);
 })
+console.info(`Container was killed: ${status}`)
 ```
 
 ## Schema

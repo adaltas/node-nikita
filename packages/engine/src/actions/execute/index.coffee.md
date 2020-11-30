@@ -41,26 +41,23 @@ succeed.
 An exit code equal to "9" defined by the "code_skipped" option indicates that
 the command is considered successfull but without any impact.
 
-```javascript
-nikita.execute({
+```js
+const {status} = await nikita.execute({
   ssh: ssh,
   cmd: 'useradd myfriend',
   code_skipped: 9
-}, function(err, {status}){
-  if(err) return;
-  console.info(status ? 'User created' : 'User already exists')
-});
+})
+console.info(`User was created: ${status}`)
 ```
 
 ## Run a command with bash
 
-```javascript
-nikita.execute({
+```js
+const {stdout} = await nikita.execute({
   bash: true,
   cmd: 'env'
-}, function(err, {stdout}){
-  console.info(err || stdout);
-});
+})
+console.info(stdout)
 ```
 
 ## Hook
@@ -89,8 +86,8 @@ nikita.execute({
         'rootdir':
           type: 'string'
           description: """
-          Path to the mount point corresponding to the root directory, required if
-          the "arch_chroot" option is activated.
+          Path to the mount point corresponding to the root directory, required
+          if the "arch_chroot" option is activated.
           """
         'cmd':
           oneOf: [{type: 'string'}, typeof: 'function']
@@ -234,7 +231,7 @@ nikita.execute({
           """
       required: ['cmd']
           
-## Source Code
+## Handler
 
     handler = ({config, metadata, tools: {find, log, path}, ssh}) ->
       # Validate parameters

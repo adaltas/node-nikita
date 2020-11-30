@@ -16,17 +16,11 @@ Return true if container is running. This function is not native to docker.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker({
-  ssh: ssh
-  target: 'test-image.tar'
-  image: 'test-image'
-  compression: 'gzip'
-  entrypoint: '/bin/true'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container running: ' + status);
+```js
+const {status} = await nikita.docker.tools.status({
+  container: 'container1'
 })
+console.info(`Container is running: ${status}`)
 ```
 
 ## Schema
@@ -40,7 +34,7 @@ require('nikita')
             {type: 'array', items: type: 'string'}
           ]
           description: """
-          Name or Id of the container
+          Name or Id of the container.
           """
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -56,7 +50,7 @@ require('nikita')
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
-      # Construct exec command 
+      # Construct exec command
       @docker.tools.execute
         cmd: "ps | egrep ' #{config.container}$'"
         code_skipped: 1

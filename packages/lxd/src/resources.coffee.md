@@ -14,13 +14,11 @@ Show full information about the resources available to the LXD server.
 ## Example
 
 ```js
-require('nikita')
-.lxd.state({
+const {config} = await nikita.lxd.resources({
   container: 'container1',
-}, function(err, {config}){
-  console.info( err ? err.message : config);
-  // See below for an output example
+  device: 'disk'
 })
+console.info(config)
 ```
 
 ## Schema

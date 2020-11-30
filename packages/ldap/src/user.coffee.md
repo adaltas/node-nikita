@@ -6,13 +6,13 @@ Create and modify a user store inside an OpenLDAP server.
 ## Example
 
 ```js
-{status} = await nikita.ldap.user({
+const {status} = await nikita.ldap.user({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   user: {}
-});
-console.info(`User created or modified: ${status}`);
+})
+console.info(`User created or modified: ${status}`)
 ```
 
 ## Schema

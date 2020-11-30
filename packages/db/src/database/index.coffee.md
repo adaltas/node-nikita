@@ -45,7 +45,7 @@ console.info(`Database created or modified: ${status}`)
           $ref: 'module://@nikitajs/db/src/query#/properties/port'
       required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
 
-## Source Code
+## Handler
 
     handler = ({config, tools: {log}}) ->
       config.user ?= []

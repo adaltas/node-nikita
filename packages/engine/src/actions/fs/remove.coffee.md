@@ -19,34 +19,28 @@ SSH would be too slow.
 ## Simple example
 
 ```js
-require('nikita')
-.system.remove('./some/dir', function(err, {status}){
-  console.log(err ? err.message : "File removed: " + status);
-});
+const {status} = await nikita.fs.remove('./some/dir')
+console.info(`Directory was removed: ${status}`)
 ```
 
 ## Removing a directory unless a given file exists
 
 ```js
-require('nikita')
-.system.remove({
+const {status} = await nikita.fs.remove({
   target: './some/dir',
   unless_exists: './some/file'
-}, function(err, {status}){
-  console.log(err ? err.message : "File removed: " + status);
-});
+})
+console.info(`Directory was removed: ${status}`)
 ```
 
 ## Removing multiple files and directories
 
 ```js
-require('nikita')
-.system.remove([
+const {status} = await nikita.fs.remove([
   { target: './some/dir', unless_exists: './some/file' },
   './some/file'
-], function(err, status){
-  console.log(err ? err.message : 'File removed: ' + status);
-});
+])
+console.info(`Directories was removed: ${status}`)
 ```
 
 ## Hook
@@ -70,7 +64,8 @@ require('nikita')
         'target':
           oneOf:[{type: 'string'}, {type: 'array'}]
           description: """
-          File, directory or glob (pattern matching based on wildcard characters).   
+          File, directory or glob (pattern matching based on wildcard
+          characters).
           """
 
 ## Handler

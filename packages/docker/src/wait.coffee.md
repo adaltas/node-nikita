@@ -12,12 +12,11 @@ Block until a container stops.
 
 ## Example
 
-```javascript
-nikita.docker.wait({
+```js
+const {status} = await nikita.docker.wait({
   container: 'toto'
-}, function(err, status){
-  console.info( err ? err.message : 'Did we really had to wait: ' + status);
 })
+console.info(`Did we really had to wait: ${status}`)
 ```
 
 ## Schema
