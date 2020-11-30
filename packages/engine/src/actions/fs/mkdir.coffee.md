@@ -96,7 +96,7 @@ console.info(`Directory was created: ${status}`)
         
 ## Handler
 
-    handler = ({config, metadata, tools: {log, path}, ssh}) ->
+    handler = ({config, tools: {log, path}, ssh}) ->
       # Configuration validation
       config.cwd = process.cwd() if not ssh and (config.cwd is true or not config.cwd)
       config.parent = {} if config.parent is true
@@ -158,14 +158,14 @@ console.info(`Directory was created: ${status}`)
 
     errors =
       NIKITA_MKDIR_TARGET_RELATIVE: ({config}) ->
-        error 'NIKITA_MKDIR_TARGET_RELATIVE', [
+        utils.error 'NIKITA_MKDIR_TARGET_RELATIVE', [
           'only absolute path are supported over SSH,'
           'target is relative and config `cwd` is not provided,'
           "got #{JSON.stringify config.target}"
         ],
           target: config.target
       NIKITA_MKDIR_TARGET_INVALID_TYPE: ({stats, target}) ->
-        error 'NIKITA_MKDIR_TARGET_INVALID_TYPE', [
+        utils.error 'NIKITA_MKDIR_TARGET_INVALID_TYPE', [
           'target exists but it is not a directory,'
           "got #{JSON.stringify utils.stats.type stats.mode} type"
         ],
@@ -174,4 +174,3 @@ console.info(`Directory was created: ${status}`)
 ## Dependencies
 
     utils = require '../../utils'
-    error = require '../../utils/error'

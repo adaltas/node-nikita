@@ -70,7 +70,7 @@ console.info(`Directories was removed: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {log}}) ->
+    handler = ({config, tools: {log}}) ->
       # Start real work
       {files} = await @fs.glob config.target
       for file in files

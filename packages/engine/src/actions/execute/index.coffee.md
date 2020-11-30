@@ -347,7 +347,7 @@ console.info(stdout)
             if config.stderr
               child.stderr.unpipe config.stderr
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
-              return reject error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
+              return reject utils.error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
                 "command is #{JSON.stringify utils.string.max config.cmd_original, 50},"
                 "got #{JSON.stringify result.code}"
@@ -376,4 +376,3 @@ console.info(stdout)
 
     exec = require 'ssh2-exec'
     utils = require '../../utils'
-    error = require '../../utils/error'

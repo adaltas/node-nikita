@@ -3,20 +3,6 @@
 
 Log out from a Docker registry or the one defined by the `registry` option.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `registry` (string)   
-  Address of the registry server, default to "https://index.docker.io/v1/".
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -35,6 +21,11 @@ Log out from a Docker registry or the one defined by the `registry` option.
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
         'machine':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+        'registry':
+          type: 'string'
+          description: """
+          Address of the registry server, default to "https://index.docker.io/v1/".
+          """
 
 ## Handler
 

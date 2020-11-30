@@ -143,7 +143,7 @@ nikita
           # action = ids[action.index]
           return null if action.metadata.disabled
           # delete ids[action.index]
-          time = if config.time then string.print_time Date.now() - action.metadata.time else ''
+          time = if config.time then utils.string.print_time Date.now() - action.metadata.time else ''
           headers = get_headers action
           line = format_line
             host: config.host
@@ -168,7 +168,7 @@ nikita
     colors = require 'colors/safe'
     pad = require 'pad'
     stream = require './stream'
-    string = require '../../utils/string'
+    utils = require '../../utils'
 
     get_headers = (action) ->
       walk = (parent) ->

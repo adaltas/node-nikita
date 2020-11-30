@@ -85,7 +85,7 @@ console.info(`File was written: ${status}`)
 
     errors =
       NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) ->
-        error 'NIKITA_FS_TARGET_INVALID', [
+        utils.error 'NIKITA_FS_TARGET_INVALID', [
           'the target location is absolute'
           'but this is not suported in SSH mode,'
           'you must provide an absolute path or the cwd option,'
@@ -106,3 +106,7 @@ console.info(`File was written: ${status}`)
         log: false
         raw_output: true
       schema: schema
+
+## Dependencies
+
+    utils = require '../../../utils'
