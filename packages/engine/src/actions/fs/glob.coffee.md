@@ -48,7 +48,7 @@ paths locally using the Minimatch package.
 
 ## Handler
 
-    handler = ({config, metadata, tools: {path}}) ->
+    handler = ({config, tools: {path}}) ->
       config.minimatch ?= {}
       config.minimatch.dot ?= config.dot if config.dot?
       config.target = path.normalize config.target

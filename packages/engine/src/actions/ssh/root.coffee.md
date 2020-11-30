@@ -105,7 +105,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
       rebooting = false
       # Read public key if option is a path
       if config.public_key_path and not config.public_key
-        location = await tilde.normalize config.public_key_path
+        location = await utils.tilde.normalize config.public_key_path
         try
           {data: config.public_key} = await fs.readFile location, 'ascii'
         catch err
@@ -114,7 +114,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
       # Read private key if option is a path
       if config.private_key_path and not config.private_key
         log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-        location = await tilde.normalize config.private_key_path
+        location = await utils.tilde.normalize config.private_key_path
         try
           {data: config.private_key} = await fs.readFile location, 'ascii'
         catch err
@@ -192,4 +192,4 @@ console.info(`Public key was updoaded for root user: ${status}`)
     fs = require('fs').promises
     connect = require 'ssh2-connect'
     exec = require 'ssh2-exec'
-    tilde = require '../../utils/tilde'
+    utils = require '../../utils'

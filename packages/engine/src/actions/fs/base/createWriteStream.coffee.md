@@ -64,7 +64,7 @@ console.info(`Stream was created: ${status}`)
     handler = ({config, metadata, tools: {find, log}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalize config
-      config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if sudo or config.flags[0] is 'a'
+      config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}" if sudo or config.flags[0] is 'a'
       # config.mode ?= 0o644 # Node.js default to 0o666
       # In append mode, we write to a copy of the target file located in a temporary location
       try if config.flags[0] is 'a'
@@ -113,7 +113,7 @@ console.info(`Stream was created: ${status}`)
 
     errors =
       NIKITA_FS_CWS_TARGET_ENOENT: ({config}) ->
-        error 'NIKITA_FS_CWS_TARGET_ENOENT', [
+        utils.error 'NIKITA_FS_CWS_TARGET_ENOENT', [
           'fail to write a file,'
           unless config.target_tmp
           then "location is #{JSON.stringify config.target}."
@@ -126,5 +126,4 @@ console.info(`Stream was created: ${status}`)
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    error = require '../../../utils/error'
-    string = require '../../../utils/string'
+    utils = require '../../../utils'

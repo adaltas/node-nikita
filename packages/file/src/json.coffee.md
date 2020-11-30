@@ -22,12 +22,7 @@ console.info(`File was merged: ${status}`)
 ## Hooks
 
     on_action = ({config, metadata}) ->
-      # Options
-      config.content ?= {}
-      config.pretty ?= false
       config.pretty = 2 if config.pretty is true
-      config.transform ?= null
-      throw Error "Invalid config: \"transform\"" if config.transform and typeof config.transform isnt 'function'
 
 ## Schema
 
@@ -44,6 +39,7 @@ console.info(`File was merged: ${status}`)
           """
         'content':
           type: 'object'
+          default: {}
           description: """
           The javascript code to stringify.
           """
@@ -71,7 +67,7 @@ console.info(`File was merged: ${status}`)
           Path to the destination file.
           """
         'transform':
-          # typeof: 'function'
+          typeof: 'function'
           description: """
           User provided function to modify the javascript before it is
           stringified into JSON.

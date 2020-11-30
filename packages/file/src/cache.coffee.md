@@ -22,13 +22,6 @@ const {status} = await nikita.file.download({
 console.info(`File downloaded: ${status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      throw Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless config.cache_file or config.target or config.cache_dir
-      # config.http_headers ?= []
-      # config.cookies ?= []
-
 ## Schema
 
     schema =
@@ -122,6 +115,13 @@ console.info(`File downloaded: ${status}`)
           cache path. Default to the basename of source.
           """
       required: ['source']
+      anyOf: [
+        required: ['target']
+      ,
+        required: ['cache_file']
+      ,
+        required: ['cache_dir']
+      ]
 
 ## Handler
 
@@ -220,8 +220,6 @@ console.info(`File downloaded: ${status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
         argument_name: 'source'
       schema: schema
@@ -232,7 +230,7 @@ console.info(`File downloaded: ${status}`)
 
     errors =
       NIKITA_FILE_INVALID_TARGET_HASH: ({config, hash, _hash}) ->
-        error 'NIKITA_FILE_INVALID_TARGET_HASH', [
+        utils.error 'NIKITA_FILE_INVALID_TARGET_HASH', [
           "target #{JSON.stringify config.target} got #{hash} instead of #{_hash}"
         ]
 
@@ -240,5 +238,4 @@ console.info(`File downloaded: ${status}`)
 
     path = require 'path'
     url = require 'url'
-    curl = require './utils/curl'
-    error = require '@nikitajs/engine/src/utils/error'
+    utils = require './utils'

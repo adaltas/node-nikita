@@ -15,12 +15,6 @@ const {properties} = await nikita.file.properties.read({
 console.info(`Properties:`, properties)
 ```
 
-## On config
-
-    on_action = ({config}) ->
-      # Options
-      config.encoding ?= 'utf8'
-
 ## Schema
 
     schema =
@@ -32,6 +26,9 @@ console.info(`Properties:`, properties)
           description: """
           Preserve comments, key is the comment while value is "null".
           """
+        'encoding':
+          $ref: 'module://@nikitajs/file/src/index#/properties/encoding'
+          default: 'utf8'
         'separator':
           type: 'string'
           default: '='
@@ -75,8 +72,6 @@ console.info(`Properties:`, properties)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       schema: schema
 
 ## Dependencies

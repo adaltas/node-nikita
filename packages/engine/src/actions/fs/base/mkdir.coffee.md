@@ -71,7 +71,7 @@ Create a directory. Missing parent directories are created as required.
 
     errors =
       NIKITA_FS_MKDIR_TARGET_EEXIST: ({config}) ->
-        error 'NIKITA_FS_MKDIR_TARGET_EEXIST', [
+        utils.error 'NIKITA_FS_MKDIR_TARGET_EEXIST', [
           'fail to create a directory,'
           'one already exists,'
           "location is #{JSON.stringify config.target}."
@@ -83,4 +83,4 @@ Create a directory. Missing parent directories are created as required.
 
 ## Dependencies
 
-    error = require '../../../utils/error'
+    utils = require '../../../utils'

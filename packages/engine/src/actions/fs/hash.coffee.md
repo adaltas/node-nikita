@@ -55,7 +55,7 @@ used for comparaison.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       {stats} = if config.stats
       then config.stats
       else await @fs.base.stat config.target

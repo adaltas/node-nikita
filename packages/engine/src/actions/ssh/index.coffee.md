@@ -37,7 +37,7 @@ was created and available.
       # We dont force the retrieval of a connection, returning what we found
       if conn or not config.ssh?
       then conn
-      else throw error 'SSH_UNAVAILABLE_CONNECTION', [
+      else throw utils.error 'SSH_UNAVAILABLE_CONNECTION', [
         'action was requested to return an SSH connection'
         'but none is opened and available'
       ]
@@ -53,4 +53,4 @@ was created and available.
 
 ## Dependencies
 
-    error = require '../../utils/error'
+    utils = require '../../utils'

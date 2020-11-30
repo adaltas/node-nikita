@@ -26,10 +26,16 @@ console.info(`Container was unpaused: ${status}`)
       properties:
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container
+          """
         'compose':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
         'machine':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
 
 ## Handler
 

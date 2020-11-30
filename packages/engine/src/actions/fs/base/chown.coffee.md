@@ -56,7 +56,3 @@ Change ownership of a file.
         log: false
         raw_output: true
       schema: schema
-
-## Dependencies
-
-    error = require '../../../utils/error'

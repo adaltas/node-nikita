@@ -38,7 +38,7 @@ console.info(`Did database existed initially: ${!status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {find}}) ->
+    handler = ({config}) ->
       # Command
       @execute.wait
         cmd: switch config.engine

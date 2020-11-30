@@ -110,7 +110,7 @@ returned values.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       # Normalize configuration
       config.dereference ?= true
       dereference = if config.dereference then '-L' else ''
@@ -156,7 +156,7 @@ returned values.
 
     errors =
       NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) ->
-        error 'NIKITA_FS_STAT_TARGET_ENOENT', [
+        utils.error 'NIKITA_FS_STAT_TARGET_ENOENT', [
           'failed to stat the target, no file exists for target,'
           "got #{JSON.stringify config.target}"
         ],
@@ -167,8 +167,7 @@ returned values.
 
 ## Dependencies
 
-    constants = require('fs').constants
-    error = require '../../../utils/error'
+    utils = require '../../../utils'
 
 ## Stat implementation
 

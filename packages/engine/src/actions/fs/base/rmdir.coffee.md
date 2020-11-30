@@ -49,7 +49,7 @@ Delete a directory.
 
     errors =
       NIKITA_FS_RMDIR_TARGET_ENOENT: ({config, err}) ->
-        error 'NIKITA_FS_RMDIR_TARGET_ENOENT', [
+        utils.error 'NIKITA_FS_RMDIR_TARGET_ENOENT', [
           'fail to remove a directory, target is not a directory,'
           "got #{JSON.stringify config.target}"
         ],
@@ -60,4 +60,4 @@ Delete a directory.
 
 ## Dependencies
 
-    error = require '../../../utils/error'
+    utils = require '../../../utils'

@@ -24,11 +24,6 @@ Execute a docker command.
           description: """
           Name of the docker-machine, required if using docker-machine.
           """
-        'cmd':
-          type: 'string'
-          description: """
-          The docker command to be executed.
-          """
         'bash':
           oneOf: [{type: 'boolean'}, {type: 'string'}]
           description: """

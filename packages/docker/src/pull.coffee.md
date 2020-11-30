@@ -40,8 +40,9 @@ console.info(`Image was pulled: ${status}`)
           """
         'all':
           type: 'boolean'
+          default: false
           description: """
-          Download all tagged images in the repository.  Default to false.
+          Download all tagged images in the repository.
           """
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -57,7 +58,6 @@ console.info(`Image was pulled: ${status}`)
       # Validate parameters
       version = config.version or config.tag.split(':')[1] or 'latest'
       delete config.version # present in misc.docker.config, will probably disappear at some point
-      config.all ?= false
       throw Error 'Missing Tag Name' unless config.tag?
       # rm is false by default only if config.service is true
       cmd = 'pull'
