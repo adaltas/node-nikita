@@ -84,8 +84,8 @@ assert(files[0].isFile(), true)
           ls -#{opts} #{config.target}
           """
         # Convert the output into a `files` array
-        files: 
-          lines stdout
+        files:
+          utils.string.lines stdout
           .filter (line, i) -> not config.extended or i isnt 0 # First line in extended mode
           .filter (line) -> line isnt '' # Empty lines
           .map (line, i) ->
@@ -127,7 +127,7 @@ assert(files[0].isFile(), true)
 
     errors =
       NIKITA_FS_READDIR_TARGET_ENOENT = ({config, err}) ->
-        error 'NIKITA_FS_READDIR_TARGET_ENOENT', [
+        utils.error 'NIKITA_FS_READDIR_TARGET_ENOENT', [
           'fail to read a directory, target is not a directory,'
           "got #{JSON.stringify config.target}"
         ],
@@ -138,6 +138,5 @@ assert(files[0].isFile(), true)
 
 ## Dependencies
 
-    {lines} = require '../../../utils/string'
-    error = require '../../../utils/error'
+    utils = require '../../../utils'
     {Dirent, constants} = require 'fs'

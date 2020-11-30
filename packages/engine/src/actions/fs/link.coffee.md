@@ -61,7 +61,7 @@ console.info(`Link was created: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {log, path, status}, ssh}) ->
+    handler = ({config, tools: {path}}) ->
       # Set default
       config.mode ?= 0o0755
       # It is possible to have collision if two symlink
@@ -111,7 +111,3 @@ console.info(`Link was created: ${status}`)
       hooks:
         on_action: on_action
       schema: schema
-
-## Dependencies
-
-    # path = require 'path'

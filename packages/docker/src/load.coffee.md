@@ -99,13 +99,13 @@ console.info(`Image was loaded: ${status}`);
       for new_k, new_image of new_images
         if !images[new_k]?
           status = true
-          break;
+          break
         else
           for k, image of images
             if image != new_image && new_k == k
               status = true
               log message: 'Identical images', level: 'INFO', module: 'nikita/lib/docker/load'
-              break;
+              break
       status: status, stdout: stdout, stderr: stderr
           
 ## Exports

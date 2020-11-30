@@ -116,7 +116,7 @@ console.info(`File exists: ${status}`)
 
 ## Handler
 
-    handler = ({metadata, config}) ->
+    handler = ({config}) ->
       config.filetype = for filetype in config.filetype or []
         continue unless filetype
         if typeof filetype is 'string'
@@ -237,92 +237,92 @@ console.info(`File exists: ${status}`)
 
     errors =
       NIKITA_FS_ASSERT_FILE_MISSING: ({config}) ->
-        error 'NIKITA_FS_ASSERT_FILE_MISSING', [
+        utils.error 'NIKITA_FS_ASSERT_FILE_MISSING', [
           'file does not exists,'
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_FILE_EXISTS: ({config}) ->
-        error 'NIKITA_FS_ASSERT_FILE_EXISTS', [
+        utils.error 'NIKITA_FS_ASSERT_FILE_EXISTS', [
           'file exists,'
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_FILETYPE_INVALID: ({config, expect, stats}) ->
-        error 'NIKITA_FS_ASSERT_FILETYPE_INVALID', [
+        utils.error 'NIKITA_FS_ASSERT_FILETYPE_INVALID', [
           'filetype is invalid,'
           "expect #{JSON.stringify expect} type,"
           "got #{JSON.stringify utils.stats.type stats.mode} type,"
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_CONTENT_UNEQUAL: ({config, expect}) ->
-        error 'NIKITA_FS_ASSERT_CONTENT_UNEQUAL', [
+        utils.error 'NIKITA_FS_ASSERT_CONTENT_UNEQUAL', [
           'content does not equal the expected value,'
           "expect #{JSON.stringify expect.toString()}"
           "to equal #{JSON.stringify config.content.toString()},"
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_CONTENT_EQUAL: ({config, expect}) ->
-        error 'NIKITA_FS_ASSERT_CONTENT_EQUAL', [
+        utils.error 'NIKITA_FS_ASSERT_CONTENT_EQUAL', [
           'content is matching,'
           "not expecting to equal #{JSON.stringify expect.toString()},"
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_CONTENT_UNMATCH: ({config, expect}) ->
-        error 'NIKITA_FS_ASSERT_CONTENT_UNMATCH', [
+        utils.error 'NIKITA_FS_ASSERT_CONTENT_UNMATCH', [
           'content does not match the provided regexp,'
           "expect #{JSON.stringify expect.toString()}"
           "to match #{config.content.toString()},"
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_CONTENT_MATCH: ({config, expect}) ->
-        error 'NIKITA_FS_ASSERT_CONTENT_MATCH', [
+        utils.error 'NIKITA_FS_ASSERT_CONTENT_MATCH', [
           'content is matching the provided regexp,'
           "got #{JSON.stringify expect.toString()}"
           "to match #{config.content.toString()},"
           "location is #{JSON.stringify config.target}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_HASH_UNMATCH: ({config, algo, hash}) ->
-        error 'NIKITA_FS_ASSERT_HASH_UNMATCH', [
+        utils.error 'NIKITA_FS_ASSERT_HASH_UNMATCH', [
           "an invalid #{algo} signature was computed,"
           "expect #{JSON.stringify hash.expected},"
           "got #{JSON.stringify hash.actual}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_HASH_MATCH: ({config, algo, hash}) ->
-        error 'NIKITA_FS_ASSERT_HASH_MATCH', [
+        utils.error 'NIKITA_FS_ASSERT_HASH_MATCH', [
           "the #{algo} signatures are matching,"
           "not expecting to equal #{JSON.stringify hash}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_MODE_UNMATCH: ({config, mode}) ->
         expect = config.mode.map (mode) -> "#{pad 4, utils.mode.stringify(mode), '0'}"
-        error "NIKITA_FS_ASSERT_MODE_UNMATCH", [
+        utils.error "NIKITA_FS_ASSERT_MODE_UNMATCH", [
           'content permission don\'t match the provided mode,'
           "expect #{expect},"
           "got #{utils.mode.stringify(mode).substr -4}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_MODE_MATCH: ({config}) ->
         expect = config.mode.map (mode) -> "#{pad 4, utils.mode.stringify(mode), '0'}"
-        error "NIKITA_FS_ASSERT_MODE_MATCH", [
+        utils.error "NIKITA_FS_ASSERT_MODE_MATCH", [
           'the content permission match the provided mode,'
           "not expecting to equal #{expect}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_UID_UNMATCH: ({config, actual}) ->
-        error 'NIKITA_FS_ASSERT_UID_UNMATCH', [
+        utils.error 'NIKITA_FS_ASSERT_UID_UNMATCH', [
           'the uid of the target does not match the expected value,'
           "expected #{JSON.stringify config.uid},"
           "got #{JSON.stringify actual}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_UID_MATCH: ({config}) ->
-        error 'NIKITA_FS_ASSERT_UID_MATCH', [
+        utils.error 'NIKITA_FS_ASSERT_UID_MATCH', [
           'the uid of the target  match the provided value,'
           "not expecting to equal #{JSON.stringify config.uid}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_GID_UNMATCH: ({config, actual}) ->
-        error 'NIKITA_FS_ASSERT_GID_UNMATCH', [
+        utils.error 'NIKITA_FS_ASSERT_GID_UNMATCH', [
           'the gid of the target does not match the expected value,'
           "expected #{JSON.stringify config.uid},"
           "got #{JSON.stringify actual}."
         ], target: config.target, message: config.error
       NIKITA_FS_ASSERT_GID_MATCH: ({config}) ->
-        error 'NIKITA_FS_ASSERT_GID_MATCH', [
+        utils.error 'NIKITA_FS_ASSERT_GID_MATCH', [
           'the gid of the target  match the provided value,'
           "not expecting to equal #{JSON.stringify config.uid}."
         ], target: config.target, message: config.error
@@ -332,5 +332,3 @@ console.info(`File exists: ${status}`)
     pad = require 'pad'
     fs = require 'fs'
     utils = require '../../utils'
-    error = require '../../utils/error'
-    # buffer = require '../../utils/buffer'

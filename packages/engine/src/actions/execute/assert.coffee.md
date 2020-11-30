@@ -80,7 +80,7 @@ console.info(`Stdout was asserted: ${status}`)
         {code} = await @execute config, relax: true
         unless config.not
           unless code in config.code
-            throw error 'NIKITA_EXECUTE_ASSERT_EXIT_CODE', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_EXIT_CODE', [
               'an unexpected exit code was encountered,'
               "got #{JSON.stringify code}"
               if config.code.length is 1
@@ -89,7 +89,7 @@ console.info(`Stdout was asserted: ${status}`)
             ]
         else
           if code in config.code
-            throw error 'NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', [
               'an unexpected exit code was encountered,'
               "got #{JSON.stringify code}"
               if config.code.length is 1
@@ -103,31 +103,31 @@ console.info(`Stdout was asserted: ${status}`)
         stdout = stdout.trim() if config.trim
         unless config.not
           unless stdout is config.content
-            throw error 'NIKITA_EXECUTE_ASSERT_CONTENT', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_CONTENT', [
               'the command output is not matching the content,'
               "got #{JSON.stringify stdout}"
               "while expecting to match #{JSON.stringify config.content}."
             ]
         else
           if stdout is config.content
-            throw error 'NIKITA_EXECUTE_ASSERT_NOT_CONTENT', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_NOT_CONTENT', [
               'the command output is unfortunately matching the content,'
               "got #{JSON.stringify stdout}."
             ]
       # Content is a regexp
-      if config.content? and regexp.is config.content
+      if config.content? and utils.regexp.is config.content
         {stdout} = await @execute config
         stdout = stdout.trim() if config.trim
         unless config.not
           unless config.content.test stdout
-            throw error 'NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', [
               'the command output is not matching the content regexp,'
               "got #{JSON.stringify stdout}"
               "while expecting to match #{JSON.stringify config.content}."
             ]
         else
           if config.content.test stdout
-            throw error 'NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', [
+            throw utils.error 'NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', [
               'the command output is unfortunately matching the content regexp,'
               "got #{JSON.stringify stdout}"
               "matching #{JSON.stringify config.content}."
@@ -143,5 +143,4 @@ console.info(`Stdout was asserted: ${status}`)
 
 ## Dependencies
 
-    error = require '../../utils/error'
-    regexp = require '../../utils/regexp'
+    utils = require '../../utils'

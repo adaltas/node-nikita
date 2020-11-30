@@ -35,7 +35,7 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       new Promise (resolve) ->
         setTimeout resolve, config.time
 

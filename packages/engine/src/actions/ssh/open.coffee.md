@@ -158,34 +158,34 @@ pass all the properties through the `ssh` property.
     handler = ({config, parent: {state}, tools: {log}}) ->
       log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
-      if ssh.is config.ssh
+      if utils.ssh.is config.ssh
         if not state['nikita:ssh:connection']
           state['nikita:ssh:connection'] = config.ssh
           return status: true, ssh: state['nikita:ssh:connection']
-        else if ssh.compare state['nikita:ssh:connection'], config.ssh
+        else if utils.ssh.compare state['nikita:ssh:connection'], config.ssh
           return status: false, ssh: state['nikita:ssh:connection']
         else
-          throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', [
+          throw utils.error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', [
             'attempting to set an SSH connection'
             'while an instance is already registered with a different configuration'
-            "got #{JSON.stringify object.copy config.ssh.config, ['host', 'port', 'username']}"
+            "got #{JSON.stringify utils.object.copy config.ssh.config, ['host', 'port', 'username']}"
           ]
       # Get from cache
       if state['nikita:ssh:connection']
         # The new connection refer to the same target and the current one
-        if ssh.compare state['nikita:ssh:connection'], config
+        if utils.ssh.compare state['nikita:ssh:connection'], config
           return status: false, ssh: state['nikita:ssh:connection']
         else
-          throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', [
+          throw utils.error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', [
             'attempting to retrieve an SSH connection'
             'with user SSH configuration not matching'
             'the current SSH connection stored in state,'
             'one possible solution is to close the current connection'
             'with `nikita.ssh.close` before attempting to open a new one'
-            "got #{JSON.stringify object.copy config, ['host', 'port', 'username']}"
+            "got #{JSON.stringify utils.object.copy config, ['host', 'port', 'username']}"
           ]
       # Validate authentication
-      throw error 'NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', [
+      throw utils.error 'NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', [
         'unable to authenticate the SSH connection,'
         'one of the "private_key", "password", "private_key_path"'
         'configuration properties must be provided'
@@ -193,7 +193,7 @@ pass all the properties through the `ssh` property.
       # Read private key if option is a path
       unless config.private_key or config.password
         log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
-        location = await tilde.normalize config.private_key_path
+        location = await utils.tilde.normalize config.private_key_path
         try
           {data: config.private_key} = await fs.readFile location, 'ascii'
         catch err
@@ -228,9 +228,6 @@ pass all the properties through the `ssh` property.
     
 ## Dependencies
 
-    fs = require('fs').promises
-    error = require '../../utils/error'
-    object = require '../../utils/object'
-    tilde = require '../../utils/tilde'
-    ssh = require '../../utils/ssh'
     connect = require 'ssh2-connect'
+    fs = require('fs').promises
+    utils = require '../../utils'

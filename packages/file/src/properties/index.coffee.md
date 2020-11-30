@@ -17,13 +17,6 @@ const {status} = await nikita.file.properties({
 console.info(`File was written: ${status}`)
 ```
 
-## On config
-
-    on_action = ({config}) ->
-      # Options
-      config.separator ?= '='
-      config.content ?= {}
-
 ## Schema
 
     schema =
@@ -35,6 +28,7 @@ console.info(`File was written: ${status}`)
           $ref: 'module://@nikitajs/file/src/properties/read#/properties/comment'
         'content':
           type: 'object'
+          default: {}
           description: """
           List of properties to write.
           """
@@ -47,6 +41,7 @@ console.info(`File was written: ${status}`)
         'local':
           $ref: 'module://@nikitajs/file/src/index#/properties/local'
         'separator':
+          default: '='
           $ref: 'module://@nikitajs/file/src/properties/read#/properties/separator'
         'sort':
           type: 'boolean'
@@ -127,6 +122,4 @@ console.info(`File was written: ${status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       schema: schema

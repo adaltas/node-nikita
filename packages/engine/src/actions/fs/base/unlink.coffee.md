@@ -54,16 +54,16 @@ Remove a non-directory type file.
 
     errors =
       NIKITA_FS_UNLINK_ENOENT: ({config}) ->
-        error 'NIKITA_FS_UNLINK_ENOENT', [
+        utils.error 'NIKITA_FS_UNLINK_ENOENT', [
           'the file to remove does not exists,'
           "got #{JSON.stringify config.target}"
         ]
       NIKITA_FS_UNLINK_EPERM: ({config}) ->
-        error 'NIKITA_FS_UNLINK_EPERM', [
+        utils.error 'NIKITA_FS_UNLINK_EPERM', [
           'you do not have the permission to remove the file,'
           "got #{JSON.stringify config.target}"
         ]
 
 ## Dependencies
 
-    error = require '../../../utils/error'
+    utils = require '../../../utils'

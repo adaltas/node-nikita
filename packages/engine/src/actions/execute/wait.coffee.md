@@ -74,7 +74,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {log}}, callback) ->
+    handler = ({config, tools: {log}}) ->
       # Validate parameters
       config.cmd = [config.cmd] unless Array.isArray config.cmd
       if config.quorum and config.quorum is true

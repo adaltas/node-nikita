@@ -180,11 +180,6 @@ console.info(`Container was run: ${status}`)
           description: """
           CPUs in which to allow execution (ex: 0-3 0,1 ...).
           """
-        'entrypoint':
-          type: 'string'
-          description: """
-          Overwrite the default ENTRYPOINT of the image.
-          """
         'ipc':
           type: 'string'
           description: """

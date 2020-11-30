@@ -53,7 +53,7 @@ Change permissions of a file.
 
     errors =
       NIKITA_FS_COPY_TARGET_ENOENT: ({config, err}) ->
-        error 'NIKITA_FS_COPY_TARGET_ENOENT', [
+        utils.error 'NIKITA_FS_COPY_TARGET_ENOENT', [
           'target parent directory does not exists or is not a directory,'
           "got #{JSON.stringify config.target}"
         ],
@@ -64,4 +64,4 @@ Change permissions of a file.
 
 ## Dependencies
 
-    error = require '../../../utils/error'
+    utils = require '../../../utils'

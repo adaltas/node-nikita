@@ -27,7 +27,7 @@ Check if a database exists.
 
 ## Handler
 
-    handler = ({config, metadata, tools: {find}}) ->
+    handler = ({config}) ->
       {status} = await @db.query connection_config(config),
         cmd: switch config.engine
           when 'mariadb', 'mysql'
