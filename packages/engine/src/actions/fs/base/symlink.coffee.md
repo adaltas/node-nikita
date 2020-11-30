@@ -1,5 +1,5 @@
 
-# `nikita.fs.symlink`
+# `nikita.fs.base.symlink`
 
 Delete a name and possibly the file it refers to.
 
@@ -8,7 +8,7 @@ Delete a name and possibly the file it refers to.
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'

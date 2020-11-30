@@ -1,5 +1,5 @@
 
-# `nikita.tools.gem.remove`
+# `nikita.tools.rubygems.remove`
 
 Remove a Ruby gem.
 

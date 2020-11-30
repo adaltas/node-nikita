@@ -6,12 +6,12 @@ Push files into containers.
 ## Example
 
 ```js
-require('nikita')
-.lxd.file.push({
-  container: "my_container"
-}, function(err, {status}) {
-  console.info( err ? err.message : 'The container was deleted')
-});
+const {status} = await nikita.lxd.file.push({
+  container: 'my_container',
+  source: `#{scratch}/a_file`,
+  target: '/root/a_file'
+})
+console.info(`File was pushed: ${status}`)
 ```
 
 ## Todo

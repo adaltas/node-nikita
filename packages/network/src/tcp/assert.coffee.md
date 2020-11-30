@@ -1,17 +1,7 @@
 
-# `nikita.connection.assert`
+# `nikita.network.tcp.assert`
 
 Assert a TCP or HTTP server is listening. 
-
-## Options
-
-* `host` (string)  
-  Host of the targeted server, could be a FQDN, a hostname or an IP.
-* `port` (number)  
-  Port of the targeted server.
-* `server`, `servers` (array|object|string)  
-  One or multiple servers, string must be in the form of "{host}:{port}",
-  object must have the properties "host" and "port".
 
 ## Hooks
 
@@ -47,8 +37,14 @@ Assert a TCP or HTTP server is listening.
       properties:
         'host':
           '$ref': 'module://@nikitajs/network/src/tcp/wait#/properties/host'
+          description: """
+          Host of the targeted server, could be a FQDN, a hostname or an IP.
+          """
         'port':
           '$ref': 'module://@nikitajs/network/src/tcp/wait#/properties/port'
+          description: """
+          Port of the targeted server.
+          """
         'server':
           '$ref': 'module://@nikitajs/network/src/tcp/wait#/properties/server'
 

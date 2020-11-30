@@ -13,12 +13,10 @@ Delete an existing lxd storage.
 ## Example
 
 ```js
-require('nikita')
-.lxd.storage.delete({
+const {status} = await nikita.lxd.storage.delete({
   name: 'system'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Storage deleted: ' + status);
 })
+console.info(`Storage was deleted: ${status}`)
 ```
 
 ## Schema

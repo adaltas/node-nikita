@@ -17,19 +17,16 @@ Status will only be true if the file was created.
 ## Example
 
 ```js
-require('nikita')
-.file.touch({
+const {status} = await nikita.file.touch({
   ssh: ssh,
   target: '/tmp/a_file'
-}, function(err, {status}){
-  console.info(err ? err.message : 'File touched: ' + status);
-});
+})
+console.info(`File was touched: ${status}`)
 ```
 
-## On config
+## Hooks
 
     on_action = ({config, metadata}) ->
-      # Options
       config.target = metadata.argument if metadata.argument?
 
 ## Schema
@@ -44,7 +41,8 @@ require('nikita')
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
           description: """
-          File path where to write file or a function that returns a valid file path.
+          File path where to write file or a function that returns a valid file
+          path.
           """
         'uid':
           $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'

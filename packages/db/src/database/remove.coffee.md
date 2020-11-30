@@ -42,7 +42,7 @@ Create a user for the destination database.
           """
       required: ['admin_username', 'admin_password']
 
-## Source Code
+## Handler
 
     handler = ({config}) ->
       # Avoid errors when database argument is provided in the command:

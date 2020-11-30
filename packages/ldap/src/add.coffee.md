@@ -6,8 +6,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('nikita')
-.ldap.index({
+const {status} = await nikita.ldap.index({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -18,9 +17,8 @@ require('nikita')
     objectClass: 'posixGroup'
     gidNumber: 9601
   }
-}, function(err, status){
-  console.log(err ? err.message : 'Entry modified: ' + status);
-});
+})
+console.info(`Entry modified: ${status}`)
 ```
 
 ## Hooks

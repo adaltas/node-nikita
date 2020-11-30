@@ -16,16 +16,12 @@ Save Docker images.
 
 ## Example
 
-```javascript
-nikita.docker({
-  ssh: ssh
-  output: 'test-image.tar'
-  image: 'test-image'
-  compression: 'gzip'
-  entrypoint: '/bin/true'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container saved: ' + status);
+```js
+const {status} = await nikita.docker.save({
+  image: 'nikita/load_test:latest',
+  output: `${scratch}/nikita_saved.tar`,
 })
+console.info(`Container was saved: ${status}`)
 ```
 
 ## Hooks
@@ -41,17 +37,17 @@ nikita.docker({
         'image':
           type: 'string'
           description: """
-          Name/ID of base image, required.
+          Name/ID of base image.
           """
         'tag':
           type: 'string'
           description: """
           Tag of the image.
-          """  
+          """
         'output':
           type: 'string'
           description: """
-          TAR archive output path, required.
+          TAR archive output path.
           """
         'target':
           type: 'string'

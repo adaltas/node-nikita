@@ -14,14 +14,12 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 ## Example
 
-```javascript
-require('nikita')
-.tools.compress({
+```js
+const {status} = await nikita.tools.compress({
   source: '/path/to/file.tgz'
   destation: '/tmp'
-}, function(err, status){
-  console.info(err ? err.message : 'File was compressed: ' + status);
-});
+})
+console.info(`File was compressed: ${status}`)
 ```
 
 

@@ -6,7 +6,7 @@ Insert, modify or remove entries inside an OpenLDAP server.
 ## Example
 
 ```js
-{status} = await require('nikita').ldap.modify({
+const {status} = await nikita.ldap.modify({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,dc=company,dc=com',
   passwd: 'secret',

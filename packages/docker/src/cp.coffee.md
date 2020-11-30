@@ -15,26 +15,22 @@ Note, stream are not yet supported.
 
 ## Uploading a file
 
-```javascript
-require('nikita')
-.docker({
+```js
+const {status} = await nikita.docker.cp({
   source: readable_stream or '/path/to/source'
   target: 'my_container:/path/to/target'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container copied' + status)
-)
+})
+console.info(`Container was copied: ${status}`)
 ```
 
 ## Downloading a file
 
-```javascript
-require('nikita')
-.docker({
+```js
+const {status} = await nikita.docker.cp({
   source: 'my_container:/path/to/source',
   target: writable_stream or '/path/to/target'
-}, function(err, status){
-  console.info( err ? err.message : 'Container copied: ' + status);
-});
+})
+console.info(`Container was copied: ${status}`)
 ```
 
 ## Schema

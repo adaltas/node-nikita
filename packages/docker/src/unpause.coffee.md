@@ -3,15 +3,6 @@
 
 Unpause all processes within a container.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-
 ## Callback parameters
 
 * `err`   
@@ -21,13 +12,11 @@ Unpause all processes within a container.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.pause({
+```js
+const {status} = await nikita.docker.unpause({
   container: 'toto'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container was unpaused: ' + status);
 })
+console.info(`Container was unpaused: ${status}`)
 ```
 
 ## Schema

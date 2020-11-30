@@ -1,5 +1,5 @@
 
-# `nikita.system.mkdir`
+# `nikita.fs.mkdir`
 
 Recursively create a directory. The behavior is similar to the Unix command
 `mkdir -p`. It supports an alternative syntax where config is simply the path
@@ -15,25 +15,21 @@ of the directory to create.
 ## Simple usage
 
 ```js
-require('nikita')
-.fs.mkdir('./some/dir', function(err, {status}){
-  console.info(err ? err.message : "Directory created: " + status);
-});
+const {status} = await nikita.fs.mkdir('./some/dir')
+console.info(`Directory was created: ${status}`)
 ```
 
 ## Advanced usage
 
 ```js
-require('nikita')
-.fs.mkdir({
+const {status} = await nikita.fs.mkdir({
   ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
   gid: 'a_group'
   mode: 0o0777 // or '777'
-}, function(err, {status}){
-  console.info(err ? err.message : 'Directory created: ' + status);
-});
+})
+console.info(`Directory was created: ${status}`)
 ```
 
 ## Hook
@@ -57,7 +53,7 @@ require('nikita')
           description: """
           Exclude directories matching a regular expression. For exemple, the
           expression `/\${/` on './var/cache/${user}' exclude the directories
-          containing a variables and only apply to `./var/cache/`. 
+          containing a variables and only apply to `./var/cache/`.
           """
         'gid':
           oneOf: [{type: 'integer'}, {type: 'string'}]
@@ -82,9 +78,9 @@ require('nikita')
                 $ref: '#/properties/mode'
           }]
           description: """
-          Create parent directory with provided attributes if an object or default 
-          system options if "true", supported attributes include 'mode', 'uid', 'gid', 
-          'size', 'atime', and 'mtime'.
+          Create parent directory with provided attributes if an object or
+          default system options if "true", supported attributes include 'mode',
+          'uid', 'gid', 'size', 'atime', and 'mtime'.
           """
         'target':
           type: 'string'

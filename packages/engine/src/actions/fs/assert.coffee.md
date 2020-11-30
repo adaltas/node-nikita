@@ -1,5 +1,5 @@
 
-# `nikita.file.assert`
+# `nikita.fs.assert`
 
 Assert a file exists or a provided text match the content of a text file.
 
@@ -8,31 +8,26 @@ Assert a file exists or a provided text match the content of a text file.
 * `err` (Error)   
   Error if assertion failed.   
 
-## Examples
+## Example
 
 Validate the content of a file:
 
 ```js
-nikita.file.assert({
-  ssh: connection
-  target: '/tmp/a_file'     
-  content: 'nikita is around' 
-}, function(err){
-  console.info(err);
-});
+const {status} = await nikita.fs.assert({
+  target: '/tmp/a_file', 
+  content: 'nikita is around'
+})
+console.info(`Content was validated: ${status}`)
 ```
 
 Ensure a file does not exists:
 
 ```js
-require('nikita')
-.file.assert({
-  ssh: connection
-  target: '/tmp/a_file'     
+const {status} = await nikita.fs.assert({
+  target: '/tmp/a_file',
   not: true
-}, function(err){
-  console.info(err);
-});
+})
+console.info(`File exists: ${status}`)
 ```
 
 ## Hook
@@ -67,7 +62,7 @@ require('nikita')
           constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
           one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
           'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
-          'ifsock',  'socket'.   
+          'ifsock',  'socket'.
           """
         'gid':
           oneOf: [{type: 'integer'}, {type: 'string'}]
@@ -119,7 +114,7 @@ require('nikita')
           """
       required: ['target']
 
-## Source code
+## Handler
 
     handler = ({metadata, config}) ->
       config.filetype = for filetype in config.filetype or []

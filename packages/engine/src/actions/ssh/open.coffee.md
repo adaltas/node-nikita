@@ -3,14 +3,14 @@
 
 Initialize an SSH connection.
 
-## Exemples
+## Examples
 
 Once an SSH connection is establish, it is possible to retrieve the connection
 by calling the `ssh` action. If no ssh connection is available, it will
 simply return null.
 
-```
-require('nikita')
+```js
+nikita
 .ssh.open({
   host: 'localhost',
   user: 'my_account',
@@ -30,7 +30,7 @@ Set the `ssh` option to `null` or `false` to disabled SSH and force an action to
 locally:
 
 ```js
-require('nikita')
+nikita
 .ssh.open({
   host: 'localhost',
   user: 'my_account',

@@ -28,14 +28,13 @@ Comments will be preserved if the `comments` and `merge` config are enabled.
 ## Example
 
 ```js
-require('nikita').tools.sysctl({
+const {status} = await nikita.tools.sysctl({
   source: '/etc/sysctl.conf',
   properties: {
     'vm.swappiness': 1
   }
-}, function(err, {status}){
-  console.info(err ? err.message : 'Systcl reloaded: ' + status);
-});
+})
+console.info(`Systcl was reloaded: ${status}`)
 ```
 
 ## Schema

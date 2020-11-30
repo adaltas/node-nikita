@@ -16,14 +16,12 @@ Run a command in a running container
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.exec({
+```js
+const {status} = await nikita.docker.exec({
   container: 'myContainer',
   cmd: '/bin/bash -c "echo toto"'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Command executed: ' + status);
-});
+})
+console.info(`Command was executed: ${status}`)
 ```
 
 ## Schema
@@ -48,7 +46,8 @@ require('nikita')
           type: 'boolean'
           default: false
           description: """
-          If true, run container as a service, else run as a command, true by default.
+          If true, run container as a service, else run as a command, true by
+          default.
           """
         'uid':
           oneOf: [

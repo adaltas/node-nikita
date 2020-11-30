@@ -6,15 +6,15 @@ Set container or server configuration keys.
 ## Set a configuration key
 
 ```js
-require('nikita')
-.lxd.config.set({
-  name: "my_container",
-  config:
-    'boot.autostart.priority': 100,
-}, function(err, {status}) {
-  console.info( err ? err.message : status ?
-    'Property set' : 'Property already present')
-});
+const {status} = await nikita.lxd.config.set({
+  config: {
+    name: "my_container",
+    config: {
+      'boot.autostart.priority': 100
+    }
+  }
+})
+console.info(`Property was set: ${status}`)
 ```
 
 ## Schema

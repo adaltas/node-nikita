@@ -23,7 +23,7 @@ started.
 ## Example
 
 ```js
-require('nikita').service([{
+const {status} = await nikita.service([{
   ssh: ssh,
   name: 'ganglia-gmetad-3.5.0-99',
   srv_name: 'gmetad',
@@ -32,9 +32,8 @@ require('nikita').service([{
 },{
   ssh: ssh,
   name: 'ganglia-web-3.5.7-99'
-}], function(err, {status}){
-  console.info(err ? err.message : 'Service status: ' + status);
-});
+}])
+console.info(`Service status: ${status}`)
 ```
 
 ## Hooks

@@ -6,8 +6,7 @@ Add member to a group in FreeIPA.
 ## Example
 
 ```js
-require("nikita")
-.ipa.group.add_member({
+const {status} = await nikita.ipa.group.add_member({
   cn: "somegroup",
   attributes: {
     user: ["someone"]
@@ -17,10 +16,8 @@ require("nikita")
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(){
-  console.info(err ? err.message : status ?
-    "Group was updated" : "Group was already set")
 })
+console.info(`Member was added to the group: ${status}`)
 ```
 
 ## Schema

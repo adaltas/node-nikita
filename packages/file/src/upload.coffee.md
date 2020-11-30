@@ -14,14 +14,12 @@ function with the addition of the "binary" option.
 ## Example
 
 ```js
-require('nikita')
-.file.upload({
+const {status} = await nikita.file.upload({
   ssh: ssh
   source: '/tmp/local_file',
   target: '/tmp/remote_file'
-}, function(err, {status}){
-  console.info(err ? err.message : 'File uploaded: ' + status);
-});
+})
+console.info(`File was uploaded: ${status}`)
 ```
 
 ## Schema
@@ -43,15 +41,17 @@ require('nikita')
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           default: false
           description: """
-          Validate uploaded file with md5 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
+          Validate uploaded file with md5 checksum (only for binary upload for
+          now), may be the string checksum or will be deduced from source if
+          "true".
           """
         'sha1':
           default: false
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           description: """
-          Validate uploaded file with sha1 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
+          Validate uploaded file with sha1 checksum (only for binary upload for
+          now), may be the string checksum or will be deduced from source if
+          "true".
           """
         'source':
           type: 'string'
@@ -108,7 +108,7 @@ require('nikita')
         hash_target = hash
         match = hash_source is hash_target
         log if match
-        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         not match
       return unless status

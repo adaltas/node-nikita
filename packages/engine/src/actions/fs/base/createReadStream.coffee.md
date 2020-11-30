@@ -1,17 +1,16 @@
 
-# `nikita.fs.createReadStream`
+# `nikita.fs.base.createReadStream`
 
 ## Example
 
 ```js
 buffers = []
-await require('nikita')
-.fs.createReadStream({
+await nikita.fs.base.createReadStream({
   target: '/path/to/file'
   stream: function(rs){
-    stream.on('readable', function(){
+    rs.on('readable', function(){
       while(buffer = rs.read()){
-        buffers.push(buffer);
+        buffers.push(buffer)
       }
     })
   }
@@ -21,12 +20,11 @@ console.info(Buffer.concat(buffers).toString())
 
 ```js
 buffers = []
-await require('nikita')
-.fs.createReadStream({
+await nikita.fs.base.createReadStream({
   target: '/path/to/file'
   on_readable: function(rs){
     while(buffer = rs.read()){
-      buffers.push(buffer);
+      buffers.push(buffer)
     }
   }
 })
@@ -38,7 +36,7 @@ console.info(Buffer.concat(buffers).toString())
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'
@@ -65,7 +63,7 @@ console.info(Buffer.concat(buffers).toString())
           """
       required: ['target']
 
-## Source Code
+## Handler
 
     handler = ({config, hooks, metadata, tools: {path, log, find}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo

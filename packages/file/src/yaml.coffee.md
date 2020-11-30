@@ -22,15 +22,13 @@ provided in the `content` option.
 ## Example
 
 ```js
-require('nikita')
-.file.yaml({
+const {status} = await nikita.file.yaml({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
-}, function(err, status){
-  console.info('Content was updated: ' + status);
-});
+})
+console.info(`Content was written: ${status}`)
 ```
 
 ## Schema
@@ -42,18 +40,18 @@ require('nikita')
           type: 'boolean'
           default: false
           description: """
-          Append the content to the target file. If target does not exist,
-          the file will be created. When used with the `match` and `replace` config,
-          it will append the `replace` value at the end of the file if no match if
-          found and if the value is a string.
+          Append the content to the target file. If target does not exist, the
+          file will be created. When used with the `match` and `replace` config,
+          it will append the `replace` value at the end of the file if no match
+          if found and if the value is a string.
           """
         'backup':
           oneOf: [{type: 'string'}, {type: 'boolean'}]
           default: false
           description: """
-          Create a backup, append a provided string to the filename extension or a
-          timestamp if value is not a string, only apply if the target file exists and
-          is modified.
+          Create a backup, append a provided string to the filename extension or
+          a timestamp if value is not a string, only apply if the target file
+          exists and is modified.
           """
         'clean':
           type: 'boolean'
@@ -87,7 +85,8 @@ require('nikita')
           type: 'boolean'
           default: false
           description: """
-          Treat the source as local instead of remote, only apply with "ssh" option.
+          Treat the source as local instead of remote, only apply with "ssh"
+          option.
           """
         'match':
           oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
@@ -121,14 +120,14 @@ require('nikita')
         'stdout':
           # instanceof: 'Writable'
           description: """
-          Writable EventEmitter in which the standard output of executed commands will
-          be piped.
+          Writable EventEmitter in which the standard output of executed
+          commands will be piped.
           """
         'stderr':
           # instanceof: 'Writable'
           description: """
-          Writable EventEmitter in which the standard error output of executed command
-          will be piped.
+          Writable EventEmitter in which the standard error output of executed
+          command will be piped.
           """
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]

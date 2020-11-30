@@ -6,18 +6,15 @@ Add or modify a group in FreeIPA.
 ## Example
 
 ```js
-require('nikita')
-.ipa.group({
+const {status} = await nikita.ipa.group({
   cn: 'somegroup',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(){
-  console.info(err ? err.message : status ?
-    'Group was updated' : 'Group was already set')
 })
+console.info(`Group was updated: ${status}`)
 ```
 
 ## Schema

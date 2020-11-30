@@ -19,19 +19,17 @@ its first argument.
 ## Rendering with Nunjucks
 
 ```js
-require('nikita')
-.file.render({
+const {status} = await nikita.file.render({
   source: './some/a_template.j2',
   target: '/tmp/a_file',
   context: {
     username: 'a_user'
   }
-}, function(err, {status}){
-  console.info(err ? err.message : 'File rendered: ' + status);
-});
+})
+console.info(`File was rendered: ${status}`)
 ```
 
-## On config
+## Hooks
 
     on_action = ({config}) ->
       # Validate parameters

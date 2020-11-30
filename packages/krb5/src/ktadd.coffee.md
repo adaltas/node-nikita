@@ -6,19 +6,12 @@ called by the `krb5.addprinc` function.
 
 ## Example
 
-```
-require('nikita')
-.krb5_delrinc({
+```js
+const {status} = await nikita.krb5.ktadd({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
-  admin: {
-    principal: 'me/admin@MY_REALM',
-    password: 'pass',
-    server: 'localhost'
-  }
-}, function(err, status){
-  console.info(err ? err.message : 'Principal removed: ' + status);
-});
+})
+console.info(`keytab was created or updated: ${status}`)
 ```
 
 ## Schema

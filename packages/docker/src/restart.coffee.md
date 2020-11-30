@@ -1,5 +1,5 @@
 
-# `nikita.docker.start`
+# `nikita.docker.restart`
 
 Start stopped containers or restart (stop + starts) a started container.
 
@@ -12,13 +12,11 @@ Start stopped containers or restart (stop + starts) a started container.
 
 ## Example
 
-```javascript
-require('nikita')
-.docker.restart({
+```js
+const {status} = await nikita.docker.restart({
   container: 'toto'
-}, function(err, {status}){
-  console.info( err ? err.message : 'Container restarted: ' + status);
 })
+console.info(`Container was started or restarted: ${status}`)
 ```
 
 ## Schema
@@ -29,7 +27,7 @@ require('nikita')
         'container':
           type: 'string'
           description: """
-          Name/ID of the container, required.
+          Name/ID of the container.
           """
         'timeout':
           type: 'integer'

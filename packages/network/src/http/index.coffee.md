@@ -52,7 +52,8 @@ Perform an HTTP request. It uses internaly the curl command.
         gid:
           $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
           description: """
-          Group name or id who owns the target file; only apply if `target` is provided.
+          Group name or id who owns the target file; only apply if `target` is
+          provided.
           """
         http_headers:
           type: 'object'
@@ -64,14 +65,15 @@ Perform an HTTP request. It uses internaly the curl command.
         insecure:
           type: 'boolean'
           description: """
-          Allow insecure server connections when using SSL; disabled if `cacert` is provided.
+          Allow insecure server connections when using SSL; disabled if `cacert`
+          is provided.
           """
         location:
           type: 'boolean'
           description: """
           If the server reports that the requested page has moved to a different
-          location (indicated with a Location: header and a 3XX response code), this
-          option will make curl redo the request on the new place.
+          location (indicated with a Location: header and a 3XX response code),
+          this option will make curl redo the request on the new place.
           """
         method:
           type: 'string'

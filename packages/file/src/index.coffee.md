@@ -39,79 +39,99 @@ string value will be converted to a regular expression. For example the string
 ## Replacing part of a file using from and to markers
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
-  content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin',
+  content: 'Start\n# from\nlets try to replace that one\n# to\nEnd',
   from: '# from\n',
   to: '# to',
-  replace: 'my friend\n',
-  target: scratch+'/a_file'
-}, function(err, {status}){
-  // '# here we are\n# from\nmy friend\n# to\nyou coquin'
+  replace: 'New string\n',
+  target: `${scratch}/a_file`
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// Start\n# from\nNew string\n# to\nEnd
 ```
 
 ## Replacing a matched line by a string
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
   content: 'email=david(at)adaltas(dot)com\nusername=root',
   match: /(username)=(.*)/,
   replace: '$1=david (was $2)',
-  target: scratch+'/a_file'
-}, function(err, {status}){
-  // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
+  target: `${scratch}/a_file`
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// email=david(at)adaltas(dot)com\nusername=david (was root)
 ```
 
 ## Replacing part of a file using a regular expression
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
-  content: 'here we are\nlets try to replace that one\nyou coquin',
+  content: 'Start\nlets try to replace that one\nEnd',
   match: /(.*try) (.*)/,
-  replace: ['my friend, $1'],
-  target: scratch+'/a_file'
-}, function(err, {status}){
-  // '# here we are\nmy friend, lets try\nyou coquin'
+  replace: ['New string, $1'],
+  target: `${scratch}/a_file`
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// Start\nNew string, lets try\nEnd
 ```
 
 ## Replacing with the global and multiple lines options
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
-  content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+  content: '# Start\n#property=30\nproperty=10\n# End',
   match: /^property=.*$/mg,
   replace: 'property=50',
-  target: scratch+'/a_file'
-}, function(err, {status}){
-  // '# A config file\n#property=30\nproperty=50\n#End of Config'
+  target: `${scratch}/a_file`
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// # Start\n#property=30\nproperty=50\n# End
 ```
 
 ## Appending a line after each line containing "property"
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
-  content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+  content: '# Start\n#property=30\nproperty=10\n# End',
   match: /^.*comment.*$/mg,
   replace: '# comment',
-  target: scratch+'/a_file',
+  target: `${scratch}/a_file`,
   append: 'property'
-}, function(err, {status}){
-  // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// # Start\n#property=30\n# comment\nproperty=50\n# comment\n# End
 ```
 
 ## Multiple transformations
 
 ```js
-require('nikita')
+const {data} = await nikita
 .file({
   content: 'username: me\nemail: my@email\nfriends: you',
   write: [
@@ -119,10 +139,14 @@ require('nikita')
     {match: /^email.*$/mg, replace: ''},
     {match: /^(friends).*$/mg, replace: '$1: me'}
   ],
-  target: scratch+'/a_file'
-}, function(err, {status}){
-  // 'username: you\n\nfriends: me'
+  target: `${scratch}/a_file`
 })
+.fs.base.readFile({
+  target: `${scratch}/a_file`,
+  encoding: 'ascii'
+})
+console.info(data)
+// username: you\n\nfriends: me
 ```
 
 ## Hook
@@ -180,16 +204,17 @@ require('nikita')
         'diff':
           typeof: 'function'
           description: """
-          Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
-          arguments if a function, default to true.
+          Print diff information, pass a readable diff and the result of
+          [jsdiff.diffLines][diffLines] as arguments if a function, default to
+          true.
           """
         'eof':
           oneOf:[{type: 'string'}, {type: 'boolean'}]
           description: """
           Ensure the file ends with this charactere sequence, special values are
-          'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
-          "\u2028"), will be auto-detected if "true", default to false or "\n" if
-          "true" and not detected.
+          'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r",
+          "\n", "\u2028"), will be auto-detected if "true", default to false or
+          "\n" if "true" and not detected.
           """
         'encoding':
           type: 'string', default: 'utf8'
@@ -246,7 +271,7 @@ require('nikita')
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
           description: """
-          File path where to write content to. Pass the content 
+          File path where to write content to. Pass the content.
           """
         'to':
           oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
@@ -272,8 +297,8 @@ require('nikita')
               'from':
                 oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
                 description: """
-                File path from where to extract the content, do not use conjointly
-                with content.
+                File path from where to extract the content, do not use
+                conjointly with content.
                 """
               'to':
                 oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
@@ -288,8 +313,8 @@ require('nikita')
               'replace':
                 type: 'string'
                 description: """
-                The content to be inserted, used conjointly with the from, to or match
-                options.
+                The content to be inserted, used conjointly with the from, to or
+                match options.
                 """
 
 ## Handler

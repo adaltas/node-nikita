@@ -6,18 +6,15 @@ Check if a user exists inside FreeIPA.
 ## Example
 
 ```js
-require('nikita')
-.ipa.user.exists({
+const {status} = await nikita.ipa.user.exists({
   uid: 'someone',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(err, {status, exists}){
-  console.info(err ? err.message : status ?
-    'User was updated' : 'User was already set')
 })
+console.info(`User exists: ${status}`)
 ```
 
 ## Hooks

@@ -6,13 +6,11 @@ Check if the file exists in a container.
 ## Example
 
 ```js
-require('nikita')
-.lxd.file.exists({
-  container: "my_container"
-}, function(err, {status}) {
-  console.info( err ? err.message : 'The container was deleted')
-});
-
+const {status} = await nikita.lxd.file.exists({
+  container: 'my_container',
+  target: '/root/a_file'
+})
+console.info(`File exists: ${status}`)
 ```
 
 ## Todo

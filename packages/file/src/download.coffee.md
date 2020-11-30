@@ -38,32 +38,28 @@ calculated if neither sha256, sh1 nor md5 is provided.
 ## File example
 
 ```js
-require('nikita')
-.download({
+const {status} = await nikita.file.download({
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
-}, function(err, {status}){
-  console.info(err ? err.message : 'File downloaded ' + status)
 })
+console.info(`File downloaded: ${status}`)
 ```
 
 ## HTTP example
 
-```javascript
-require('nikita')
-.file.download({
+```js
+const {status} = await nikita.file.download({
   source: 'https://github.com/adaltas/node-nikita/tarball/v0.0.1',
   target: 'node-sigar.tgz'
-}, (err, {status}) => {
-  console.info(err ? err.message : 'File downloaded ' + status)
 })
+console.info(`File downloaded: ${status}`)
 ```
 
 ## TODO
 
 It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
-## On config
+## Hooks
 
     on_action = ({config, tools: {find}}) ->
       config.cache = await find ({config: {cache}}) -> cache
@@ -79,8 +75,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         'cache':
           type: 'boolean'
           description: """
-          Activate the cache, default to true if either "cache_dir" or "cache_file" is
-          activated.
+          Activate the cache, default to true if either "cache_dir" or
+          "cache_file" is activated.
           """
         'cache_dir':
           type: 'string'
@@ -90,15 +86,16 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         'cache_file':
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           description: """
-          Cache the file on the executing machine, equivalent to cache unless an ssh
-          connection is provided. If a string is provided, it will be the cache path.
-          By default: basename of source
+          Cache the file on the executing machine, equivalent to cache unless an
+          ssh connection is provided. If a string is provided, it will be the
+          cache path. By default: basename of source
           """
         'cookies':
           type: 'array', items: type: 'string'
           description: """
-          Extra cookies  to include in the request when sending HTTP to a server.
-          """ 
+          Extra cookies  to include in the request when sending HTTP to a
+          server.
+          """
         'force':
           type: 'boolean'
           description: """
@@ -120,37 +117,40 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           type: 'boolean'
           description: """
           If the server reports that the requested page has moved to a different
-          location (indicated with a Location: header and a 3XX response code), this
-          option will make curl redo the request on the new place.
+          location (indicated with a Location: header and a 3XX response code),
+          this option will make curl redo the request on the new place.
           """
         'md5':
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           default: false
           description: """
-          Validate uploaded file with md5 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
+          Validate uploaded file with md5 checksum (only for binary upload for
+          now), may be the string checksum or will be deduced from source if
+          "true".
           """
         'mode':
           $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
         'proxy':
           type: 'string'
           description: """
-          Use the specified HTTP proxy. If the port number is not specified, it is
-          assumed at port 1080. See curl(1) man page.
+          Use the specified HTTP proxy. If the port number is not specified, it
+          is assumed at port 1080. See curl(1) man page.
           """
         'sha1':
           default: false
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           description: """
-          Validate uploaded file with sha1 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
+          Validate uploaded file with sha1 checksum (only for binary upload for
+          now), may be the string checksum or will be deduced from source if
+          "true".
           """
         'sha256':
           default: false
           oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           description: """
-          Validate uploaded file with sha1 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
+          Validate uploaded file with sha1 checksum (only for binary upload for
+          now), may be the string checksum or will be deduced from source if
+          "true".
           """
         'source':
           type: 'string'
@@ -231,7 +231,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         source_url = url.parse config.source
       # TODO
       # The current implementation seems inefficient. By modifying stageDestination,
-      # we download the file, check the hash, and again treat it the HTTP URL 
+      # we download the file, check the hash, and again treat it the HTTP URL
       # as a local file and check hash again.
       try
         {stats} = await @fs.base.stat
@@ -275,7 +275,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           hash_target = hash
         match = hash_source is hash_target
         log if match
-        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         if match
           @fs.remove
@@ -292,7 +292,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           hash_target = hash
         match = hash_source is hash_target
         log if match
-        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           @fs.mkdir
@@ -312,7 +312,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           hash_target = hash
         match = hash_source is hash_target
         log if match
-        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+        then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           @fs.mkdir

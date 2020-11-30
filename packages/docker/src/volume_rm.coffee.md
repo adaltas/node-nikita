@@ -1,5 +1,5 @@
 
-# `nikita.volume_rm`
+# `nikita.docker.volume_rm`
 
 Remove a volume.
 
@@ -12,12 +12,11 @@ Remove a volume.
 
 ## Example
 
-```javascript
-nikita.docker.volume_rm({
+```js
+const {status} = await nikita.docker.volume_rm({
   name: 'my_volume'
-}, function(err, status){
-  console.info( err ? err.message : 'Volume removed: ' + status);
 })
+console.info(`Volume was removed: ${status}`)
 ```
 
 ## Schema

@@ -6,13 +6,11 @@ Renew the Kerberos ticket of a user principal inside a Unix session.
 ## Example
 
 ```js
-require('nikita')
-.krb5.ticket({
+const {status} = await nikita.krb5.ticket({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
-}, function(err, {status}){
-  console.info(err ? err.message : 'Is ticket renewed: ' + status);
-});
+})
+console.info(`ticket was renewed: ${status}`)
 ```
 
 ## Schema

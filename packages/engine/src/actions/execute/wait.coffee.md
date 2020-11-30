@@ -1,5 +1,5 @@
 
-# `nikita.wait.execute`
+# `nikita.execute.wait`
 
 Run a command periodically and continue once the command succeed. Status will be
 set to "false" if the user command succeed right away, considering that no
@@ -8,12 +8,10 @@ change had occured. Otherwise it will be set to "true".
 ## Example
 
 ```js
-require('nikita')
-.wait.execute({
+const {status} = await nikita.execute.wait({
   cmd: "test -f /tmp/sth"
-}, function(err, {status}){
-  // Command succeed, the file "/tmp/sth" now exists
 })
+console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 ```
 
 ## Schema
@@ -40,8 +38,8 @@ require('nikita')
           type: 'integer'
           default: 2000
           description: """
-          Time interval between which we should wait before re-executing the command,
-          default to 2s.
+          Time interval between which we should wait before re-executing the
+          command, default to 2s.
           """
         'code':
           oneOf: [
@@ -51,7 +49,8 @@ require('nikita')
             items: type: 'integer'
           ]
           description: """
-          Expected exit code to recieve to exit and call the user callback, default to "0".
+          Expected exit code to recieve to exit and call the user callback,
+          default to "0".
           """
         'code_skipped':
           oneOf: [
@@ -62,10 +61,9 @@ require('nikita')
           ]
           default: 1
           description: """
-          Expected code to be returned when the command failed and should be scheduled
-          for later execution, default to "1".
+          Expected code to be returned when the command failed and should be
+          scheduled for later execution, default to "1".
           """
-
         'stdin_log':
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stdin_log'
         'stdout_log':
@@ -74,7 +72,7 @@ require('nikita')
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stderr_log'
       required: ['cmd']
 
-## Source Code
+## Handler
 
     handler = ({config, metadata, tools: {log}}, callback) ->
       # Validate parameters

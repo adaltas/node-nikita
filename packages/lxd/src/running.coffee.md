@@ -17,14 +17,11 @@ Check if container is running.
 
 ## Example
 
-```
-require('nikita')
-.lxd.running({
+```js
+const {status} = await nikita.lxd.running({
   container: "my_container"
-}, function(err, {status}) {
-  console.info( err ? err.message :
-    status ? 'Container is running' : 'Container is not running' )
-});
+})
+console.info(`Container is running: ${status}`)
 ```
 
 ## Schema

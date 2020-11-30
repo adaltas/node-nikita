@@ -1,17 +1,17 @@
 
-# `nikita.fs.createWriteStream`
+# `nikita.fs.base.createWriteStream`
 
 ## Example
 
-```javascript
-require('nikita')
-.fs.createWriteStream({
+```js
+const {status} = await nikita.fs.base.createWriteStream({
   target: '/path/to/file'
   stream: function(ws){
-    ws.write('some content');
-    ws.end();
+    ws.write('some content')
+    ws.end()
   }
 })
+console.info(`Stream was created: ${status}`)
 ```
 
 ## Hook
@@ -59,7 +59,7 @@ require('nikita')
           """
       required: ['target', 'stream']
 
-## Source Code
+## Handler
 
     handler = ({config, metadata, tools: {find, log}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo

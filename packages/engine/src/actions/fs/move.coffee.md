@@ -14,13 +14,11 @@ exists, in which case the source file will no longer exists.
 ## Example
 
 ```js
-require('nikita')
-.system.move({
+const {status} = await nikita.fs.move({
   source: __dirname,
-  desination: '/tmp/my_dir'
-}, function(err, {status}){
-  console.log(err ? err.message : 'File moved: ' + status);
-});
+  target: '/tmp/my_dir'
+})
+console.info(`Directory was moved: ${status}`)
 ```
 
 ## Schema
@@ -32,8 +30,8 @@ require('nikita')
           oneOf: [{type: 'integer'}, {type: 'boolean'}]
           default: false
           description: """
-          Force the replacement of the file without checksum verification, speed up
-          the action and disable the `moved` indicator in the callback.
+          Force the replacement of the file without checksum verification, speed
+          up the action and disable the `moved` indicator in the callback.
           """
         'source':
           type: 'string'

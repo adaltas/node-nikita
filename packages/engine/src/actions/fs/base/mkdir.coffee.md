@@ -1,5 +1,5 @@
 
-# `nikita.fs.mkdir`
+# `nikita.fs.base.mkdir`
 
 Create a directory. Missing parent directories are created as required.
 

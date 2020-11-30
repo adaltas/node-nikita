@@ -5,13 +5,11 @@ Stop a running Linux Container.
 
 ## Example
 
-```
-require('nikita')
-.lxd.stop({
+```js
+const {status} = await nikita.lxd.stop({
   container: "myubuntu"
-}, function(err, {status}) {
-  console.info( err ? err.message : 'The container was stopped')
-});
+})
+console.info(`The container was stopped: ${status}`)
 ```
 
 ## Schema

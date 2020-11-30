@@ -17,14 +17,12 @@ Fetch a Ruby gem.
 ## Example
 
 ```js
-require('nikita')
-.tools.rubygems.fetch({
+const {status, filename, filepath} = await nikita.tools.rubygems.fetch({
   name: 'json',
   version: '2.1.0',
   cwd: '/tmp/my_gems'
-}, function(err, {status, filename, filepath}){
-  console.info( err ? err.messgage : 'Gem fetched: ' + status);
-});
+})
+console.info(`Gem fetched: ${status}`)
 ```
 
 ## Implementation

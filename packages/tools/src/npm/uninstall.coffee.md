@@ -7,14 +7,12 @@ Remove one or more NodeJS packages.
 
 The following action uninstalls the coffescript package globally.
 
-```javascript
-require('nikita')
-.tools.npm({
+```js
+const {status} = await nikita.tools.npm.uninstall({
   name: 'coffeescript',
   global: true
-}, (err, {status}) => {
-  console.info(err ? err.message : 'Package uninstalled ' + status);
-});
+})
+console.info(`Package was uninstalled: ${status}`)
 ```
 
 ## Hooks
@@ -32,11 +30,15 @@ require('nikita')
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
         'name':
           type: 'array', items: type: 'string'
-          description: 'Name of the package(s) to remove.'
+          description: """
+          Name of the package(s) to remove.
+          """
         'global':
           type: 'boolean'
           default: false
-          description: 'Uninstalls the current package context as a global package.'
+          description: """
+          Uninstalls the current package context as a global package.
+          """
       required: ['name']
 
 ## Handler
