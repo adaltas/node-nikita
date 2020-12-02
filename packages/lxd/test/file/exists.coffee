@@ -8,7 +8,7 @@ return unless tags.lxd
 before () ->
   await nikita
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.file.exists', ->
 
@@ -25,7 +25,7 @@ describe 'lxd.file.exists', ->
       @lxd.start
         container: 'c1'
       @execute
-        cmd: "lxc exec c1 -- touch /root/a_file"
+        command: "lxc exec c1 -- touch /root/a_file"
       {status} = await @lxd.file.exists
         container: 'c1'
         target: '/root/a_file'

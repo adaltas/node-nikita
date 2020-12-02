@@ -51,13 +51,13 @@ console.info(`Principal was removed: ${status}`)
       # Prepare commands
       {status} = await @krb5.execute
         admin: config.admin
-        cmd: "getprinc #{config.principal}"
+        command: "getprinc #{config.principal}"
         grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
         shy: true
       if status
         await  @krb5.execute
           admin: config.admin
-          cmd: "delprinc -force #{config.principal}"
+          command: "delprinc -force #{config.principal}"
       if config.keytab
         await @fs.remove
           target: config.keytab

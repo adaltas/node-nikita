@@ -105,10 +105,10 @@ describe 'utils.iptables', ->
         { rulenum: 1, '-A': 'LOGGING', command: '-A', chain: 'LOGGING', '--jump': 'LOG', '--log-level': '5', '--log-prefix': '"IPTables-Dropped: "' }
       ]
 
-  describe 'cmd', ->
+  describe 'command', ->
 
     it 'see change in protocol', ->
-      iptables.cmd([
+      iptables.command([
         { rulenum: 5, '-A': 'INPUT', chain: 'INPUT', '--in-interface': 'eth1', '--protocol': 'tcp', 'tcp|--dport': '88', '-j': 'ACCEPT' }
       ], [
         { chain: 'INPUT', '-j': 'ACCEPT', '--in-interface': 'eth0', '--protocol': 'tcp', 'tcp|--dport': '88' }
@@ -117,7 +117,7 @@ describe 'utils.iptables', ->
       ]
 
     it 'see change in comment', ->
-      iptables.cmd([
+      iptables.command([
         { rulenum: 5, '-A': 'INPUT', chain: 'INPUT', '--in-interface': 'eth1', 'comment|--comment': '"kadmin daemon"', '-j': 'ACCEPT' }
       ], [
         { chain: 'INPUT', '-j': 'ACCEPT', '--in-interface': 'eth1', 'comment|--comment': '"krb5kdc daemon"' }
@@ -141,7 +141,7 @@ describe 'utils.iptables', ->
       -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level 7
       -A LOGGING -j DROP
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'LOGGING', command: '-A', '--limit': '2/min', jump: 'LOG', 'log-prefix': 'IPTables-Dropped: ', 'log-level': 5 }
       ]).should.eql [
         'iptables -R LOGGING 1 -m limit --limit 2/min --jump LOG --log-prefix "IPTables-Dropped: " --log-level 5'
@@ -161,7 +161,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         # Removing state
         chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'krb5kdc daemon'
       ]).should.eql [ 'iptables -R INPUT 4 --protocol tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" --jump ACCEPT' ]
@@ -171,7 +171,7 @@ describe 'utils.iptables', ->
       -A INPUT -p tcp -m tcp --dport 389 -m state --state NEW -m comment --comment "LDAP (non-secured)" -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 636 -m state --state NEW -m comment --comment "LDAP (secured)" -j ACCEPT
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', dport: 389, protocol: 'tcp', state: 'NEW', comment: "LDAP (non-secured)" }
         { chain: 'INPUT', jump: 'ACCEPT', dport: 636, protocol: 'tcp', state: 'NEW', comment: "LDAP (secured)" }
       ]).should.eql []
@@ -181,7 +181,7 @@ describe 'utils.iptables', ->
       -A INPUT -p udp -m udp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'tcp', state: 'NEW', comment: "Named" }
         { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'udp', state: 'NEW', comment: "Named" }
       ]).should.eql []
@@ -197,7 +197,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', command: '-A', jump: 'LOGGING' }
         { chain: 'LOGGING', command: '-A', '--limit': '2/min', jump: 'LOG', 'log-prefix': 'IPTables-Dropped: ', 'log-level': 5 }
         { chain: 'LOGGING', command: '-A', jump: 'DROP' }
@@ -216,7 +216,7 @@ describe 'utils.iptables', ->
       -A LOGGING -m limit --limit 2/min -j LOG --log-level 5 --log-prefix "IPTables-Dropped: "
       -A LOGGING -j DROP
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', command: '-A', jump: 'LOGGING' }
         { chain: 'LOGGING', command: '-A', '--limit': '2/min', jump: 'LOG', 'log-prefix': 'IPTables-Dropped: ', 'log-level': 5 }
         { chain: 'LOGGING', command: '-A', jump: 'DROP' }
@@ -236,7 +236,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network' }
       ]).should.eql ['iptables -I INPUT 5 --jump ACCEPT --source 10.10.10.0/24 -m comment --comment "Local Network"']
 
@@ -252,7 +252,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql ['iptables -I INPUT 4 --jump ACCEPT --source 10.10.10.0/24 -m comment --comment "Local Network"']
 
@@ -269,7 +269,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql []
 
@@ -285,7 +285,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         # Removing state
         {chain: 'INPUT', jump: 'ACCEPT', dport: '22', '-p': 'tcp', '--comment': 'SSH'}
         {chain: 'INPUT', jump: 'ACCEPT', dport: '88', '-p': 'tcp', '--comment': 'krb5kdc daemon'}
@@ -306,7 +306,7 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql ['iptables -I INPUT 3 --jump ACCEPT --source 10.10.10.0/24 -m comment --comment "Local Network"']
 
@@ -323,6 +323,6 @@ describe 'utils.iptables', ->
       -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
-      iptables.cmd(oldrules, iptables.normalize [
+      iptables.command(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql []

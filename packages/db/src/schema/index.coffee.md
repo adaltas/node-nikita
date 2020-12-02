@@ -58,17 +58,17 @@ console.info(`Schema created or modified: ${status}`)
     handler = ({config}) ->
       {status} = await @execute
         code_skipped: 2
-        cmd: cmd config, '\\dt'
+        command: command config, '\\dt'
         shy: true
       throw Error "Database does not exist #{config.database}" if !status
       @db.query config: config,
-        cmd: "CREATE SCHEMA #{config.schema};"
-        unless_execute: cmd(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
+        command: "CREATE SCHEMA #{config.schema};"
+        unless_execute: command(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
       # Check if owner is the good one
       {stderr} = await @execute
         if: config.owner?
-        unless_execute: cmd(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
-        cmd: cmd config, "ALTER SCHEMA #{config.schema} OWNER TO #{config.owner};"
+        unless_execute: command(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
+        command: command config, "ALTER SCHEMA #{config.schema} OWNER TO #{config.owner};"
         code_skipped: 1
       throw Error "Owner #{config.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
 
@@ -82,4 +82,4 @@ console.info(`Schema created or modified: ${status}`)
       
 ## Dependencies
 
-    {cmd} = require '../query'
+    {command} = require '../query'

@@ -44,7 +44,7 @@ console.info(`File was backed up: ${status}`)
           description: """
           Backup file name, required.
           """
-        cmd:
+        command:
           type: 'string'
           description: """
           Command from which to pipe the ouptut or generating a file if the
@@ -129,9 +129,9 @@ console.info(`File was backed up: ${status}`)
           format: "#{compress}"
           source: "#{config.source}"
           target: "#{target}"
-      if config.cmd
+      if config.command
         @execute
-          cmd: "#{config.cmd} > #{target}"
+          command: "#{config.command} > #{target}"
       base_dir: config.target
       name: config.name
       filename: filename

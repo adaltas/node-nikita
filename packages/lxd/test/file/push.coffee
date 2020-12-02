@@ -8,7 +8,7 @@ return unless tags.lxd
 before () ->
   await nikita
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.file.push', ->
 
@@ -87,7 +87,7 @@ describe 'lxd.file.push', ->
         status.should.be.true()
         {stdout} = await @lxd.exec
           container: 'c1'
-          cmd: 'cat /root/a_file'
+          command: 'cat /root/a_file'
         stdout.trim().should.eql 'something'
     
 

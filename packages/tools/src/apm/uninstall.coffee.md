@@ -27,14 +27,14 @@ Remove one or more apm packages.
       installed = []
       {stdout} = await @execute
         shy: true
-        cmd: "apm list --installed --json"
+        command: "apm list --installed --json"
       pkgs = JSON.parse stdout
       installed = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
       # Uninstall
       uninstall = config.name.filter (pkg) -> pkg in installed
       if uninstall.length
         await @execute
-          cmd: "apm uninstall #{config.name.join ' '}"
+          command: "apm uninstall #{config.name.join ' '}"
         log message: "APM Uninstalled Packages: #{config.name.join ', '}"
 
 ## Exports

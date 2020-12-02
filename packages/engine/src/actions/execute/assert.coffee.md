@@ -11,7 +11,7 @@ All configuration properties are passed to `nikita.execute`.
 
 ```js
 const {status} = await nikita.execute.assert({
-  cmd: 'exit 0'
+  command: 'exit 0'
 })
 console.info(`Command was succeeded: ${status}`)
 ```
@@ -20,7 +20,7 @@ console.info(`Command was succeeded: ${status}`)
 
 ```js
 const {status} = await nikita.execute.assert({
-  cmd: 'echo hello',
+  command: 'echo hello',
   assert: 'hello'
 })
 console.info(`Stdout was asserted: ${status}`)
@@ -29,7 +29,7 @@ console.info(`Stdout was asserted: ${status}`)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      # config.cmd = metadata.argument if metadata.argument?
+      # config.command = metadata.argument if metadata.argument?
       config.code ?= [0] unless config.content
       config.code = [config.code] if config.code? and not Array.isArray config.code
 

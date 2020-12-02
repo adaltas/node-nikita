@@ -32,14 +32,14 @@ console.info(`Container was started: ${status}`)
 
     handler = ({config}) ->
       # log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
-      cmd_init = [
+      command_init = [
         'lxc', 'start', config.container
       ].join ' '
       # Execution
       @execute
-        cmd: """
+        command: """
         lxc list -c ns --format csv | grep '#{config.container},RUNNING' && exit 42
-        #{cmd_init}
+        #{command_init}
         """
         code_skipped: 42
 

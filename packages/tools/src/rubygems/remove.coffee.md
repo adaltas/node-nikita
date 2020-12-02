@@ -60,7 +60,7 @@ uninstall -i /usr/share/gems json"
       version = if config.version then "-v #{config.version}" else '-a'
       gems = null
       @execute
-        cmd: """
+        command: """
         #{config.gem_bin} list -i #{config.name} || exit 3
         #{config.gem_bin} uninstall #{config.name} #{version}
         """

@@ -76,8 +76,8 @@ console.info(`Link was created: ${status}`)
           {data} = await @fs.base.readFile
             target: config.target
             encoding: 'utf8'
-          exec_cmd = /exec (.*) \$@/.exec(data)[1]
-          exec_cmd and exec_cmd is config.source
+          exec_command = /exec (.*) \$@/.exec(data)[1]
+          exec_command and exec_command is config.source
         return if exists
         content = """
         #!/bin/bash

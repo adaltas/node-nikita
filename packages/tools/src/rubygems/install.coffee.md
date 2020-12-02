@@ -97,7 +97,7 @@ console.info(`Gem installed: ${status}`)
       # Get all current gems
       current_gems = {}
       {stdout} = await @execute
-        cmd: """
+        command: """
         #{config.gem_bin} list --versions
         """
         shy: true
@@ -128,7 +128,7 @@ console.info(`Gem installed: ${status}`)
       # Install from sources
       if sources.length
         @execute
-          cmd: (
+          command: (
             for source in sources
               [
                 "#{config.gem_bin}"
@@ -144,7 +144,7 @@ console.info(`Gem installed: ${status}`)
       # Install from gems
       if Object.keys(gems).length
         @execute
-          cmd: (
+          command: (
             for name, version of gems
               [
                 "#{config.gem_bin}"

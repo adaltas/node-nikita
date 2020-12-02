@@ -53,7 +53,7 @@ handlers =
         parent: action
       , ->
         {status, stdout} = await @execute
-          cmd: utils.os.os
+          command: utils.os.os
         return final_run = false unless status
         [arch, name, version] = stdout.split '|'
         name = 'redhat' if name.toLowerCase() is 'red hat'
@@ -85,7 +85,7 @@ handlers =
         parent: action
       , ->
         {status, stdout} = await @execute
-          cmd: utils.os.os
+          command: utils.os.os
         return final_run = false unless status
         [arch, name, version] = stdout.split '|'
         name = 'redhat' if name.toLowerCase() is 'red hat'

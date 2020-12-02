@@ -229,7 +229,7 @@ containers:
           container: container
         # Wait until container is running
         @execute.wait
-          cmd: "lxc info #{container} | grep 'Status: Running'"
+          command: "lxc info #{container} | grep 'Status: Running'"
         @network.tcp.wait
           host: 'linuxfoundation.org'
           port: 80
@@ -238,7 +238,7 @@ containers:
         @lxd.exec
           header: 'OpenSSL'
           container: container
-          cmd: """
+          command: """
           #yum update -y
           yum install -y openssl
           command -v openssl
@@ -251,7 +251,7 @@ containers:
           @lxd.exec
             header: 'SSH'
             container: container
-            cmd: """
+            command: """
             # systemctl status sshd
             # yum install -y openssh-server
             # systemctl start sshd
@@ -276,7 +276,7 @@ containers:
           @lxd.exec
             header: 'Create'
             container: container
-            cmd: """
+            command: """
             id #{user} && exit 42
             useradd --create-home --system #{user}
             mkdir -p /home/#{user}/.ssh
@@ -290,7 +290,7 @@ containers:
             @lxd.exec
               header: 'Sudo'
               container: container
-              cmd: """
+              command: """
               yum install -y sudo
               command -v sudo
               cat /etc/sudoers | grep "#{user}" && exit 42

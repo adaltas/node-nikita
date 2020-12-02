@@ -42,7 +42,7 @@ Check if a user exists in the database.
     handler = ({config}) ->
       {stdout} = await @db.query connection_config(config),
         database: undefined
-        cmd: switch config.engine
+        command: switch config.engine
           when 'mariadb', 'mysql'
             "SELECT User FROM mysql.user WHERE User = '#{config.username}'"
           when 'postgresql'

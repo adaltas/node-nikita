@@ -87,7 +87,7 @@ describe 'java.keystore_add', ->
           cacert: "#{__dirname}/keystore/certs2/cacert.pem"
         status.should.be.true()
         await @execute.assert
-          cmd: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias"
+          command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias"
           content: /^my_alias,/m
 
     they 'fail if CA file does not exist', ({ssh}) ->
@@ -109,7 +109,7 @@ describe 'java.keystore_add', ->
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @execute
-          cmd: """
+          command: """
           mkdir #{tmpdir}/tmp
           cd #{tmpdir}/tmp
           openssl req -new -nodes -out ca_int1.req -keyout ca_int1.key.pem -subj /CN=CAIntermediate1 -newkey rsa:2048 -sha512
@@ -131,13 +131,13 @@ describe 'java.keystore_add', ->
           cacert: "#{tmpdir}/tmp/ca.cert.pem"
         status.should.be.false()
         await @execute.assert
-          cmd: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-0"
+          command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-0"
           content: /^my_alias-0,/m
         await @execute.assert
-          cmd: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-1"
+          command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-1"
           content: /^my_alias-1,/m
         await @execute.assert
-          cmd: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-2"
+          command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-2"
           content: /^my_alias-2,/m
 
     they 'honors status with certificate chain', ({ssh}) ->
@@ -146,7 +146,7 @@ describe 'java.keystore_add', ->
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute
-          cmd: """
+          command: """
           mkdir #{tmpdir}/ca
           cd #{tmpdir}/ca
           openssl req -new -nodes -out ca_int1.req -keyout ca_int1.key.pem -subj /CN=CAIntermediate1 -newkey rsa:2048 -sha512

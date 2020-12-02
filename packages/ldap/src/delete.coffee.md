@@ -69,7 +69,7 @@ console.log(`Entry deleted: ${status}`)
       @execute
         # Check that the entry exists
         if_execute: "ldapsearch #{binddn} #{passwd} #{uri} -b #{dn} -s base"
-        cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
+        command: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68
       # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
       # added = modified # For now, we dont modify

@@ -116,7 +116,7 @@ returned values.
       dereference = if config.dereference then '-L' else ''
       try
         {stdout} = await @execute
-          cmd: """
+          command: """
           [ ! -e #{config.target} ] && exit 3
           if [ -d /private ]; then
             stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{config.target} # MacOS

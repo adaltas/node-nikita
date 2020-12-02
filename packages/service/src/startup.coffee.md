@@ -56,9 +56,9 @@ console.info(`Service was desactivated on startup: ${status}`)
       config.startup = [config.startup] if Array.isArray config.startup
       # Action
       log message: "Startup service #{config.name}", level: 'INFO', module: 'nikita/lib/service/startup'
-      unless config.cmd
+      unless config.command
         {stdout} = await @execute
-          cmd: """
+          command: """
           if command -v systemctl >/dev/null 2>&1; then
             echo 'systemctl'
           elif command -v chkconfig >/dev/null 2>&1; then
@@ -71,12 +71,12 @@ console.info(`Service was desactivated on startup: ${status}`)
           fi
           """
           shy: true
-        config.cmd = stdout.trim()
-        throw Error "Unsupported Loader" unless config.cmd in ['systemctl', 'chkconfig', 'update-rc']
-      if config.cmd is 'systemctl'
+        config.command = stdout.trim()
+        throw Error "Unsupported Loader" unless config.command in ['systemctl', 'chkconfig', 'update-rc']
+      if config.command is 'systemctl'
         try
           {status} = await @execute
-            cmd: """
+            command: """
               startup=#{if config.startup then '1' else ''}
               if systemctl is-enabled #{config.name}; then
                 [ -z "$startup" ] || exit 3
@@ -99,9 +99,9 @@ console.info(`Service was desactivated on startup: ${status}`)
         catch err
           throw Error "Startup Enable Failed: #{config.name}" if config.startup
           throw Error "Startup Disable Failed: #{config.name}" if not config.startup
-      if config.cmd is 'chkconfig'
+      if config.command is 'chkconfig'
         {status, stdout, stderr} = await @execute
-          cmd: "chkconfig --list #{config.name}"
+          command: "chkconfig --list #{config.name}"
           code_skipped: 1
         # Invalid service name return code is 0 and message in stderr start by error
         if /^error/.test stderr
@@ -116,34 +116,34 @@ console.info(`Service was desactivated on startup: ${status}`)
         status = false if config.startup is current_startup
         status = false if status and config.startup is false and current_startup is ''
         if config.startup
-          cmd = "chkconfig --add #{config.name};"
+          command = "chkconfig --add #{config.name};"
           if typeof config.startup is 'string'
             startup_on = startup_off = ''
             for i in [0...6]
               if config.startup.indexOf(i) isnt -1
               then startup_on += i
               else startup_off += i
-            cmd += "chkconfig --level #{startup_on} #{config.name} on;" if startup_on
-            cmd += "chkconfig --level #{startup_off} #{config.name} off;" if startup_off
+            command += "chkconfig --level #{startup_on} #{config.name} on;" if startup_on
+            command += "chkconfig --level #{startup_off} #{config.name} off;" if startup_off
           else
-            cmd += "chkconfig #{config.name} on;"
+            command += "chkconfig #{config.name} on;"
           await @execute
-            cmd: cmd
+            command: command
           status = true
         unless config.startup
           log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/lib/service/startup'
           log? "Mecano `service.startup`: s"
           # Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
           await @execute
-            cmd: "chkconfig #{config.name} off"
+            command: "chkconfig #{config.name} off"
           status = true
         message = if config.startup then 'activated' else 'disabled'
         log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
         else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
-      if config.cmd is 'update-rc'
+      if config.command is 'update-rc'
         {status} = await @execute
-          cmd: """
+          command: """
             startup=#{if config.startup then '1' else ''}
             if ls /etc/rc*.d/S??#{config.name}; then
               [ -z "$startup" ] || exit 3

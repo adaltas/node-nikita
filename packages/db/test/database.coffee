@@ -2,7 +2,7 @@
 nikita = require '@nikitajs/engine/src'
 {tags, ssh, db} = require './test'
 they = require('ssh2-they').configure ssh
-{cmd} = require '../src/query'
+{command} = require '../src/query'
 
 return unless tags.db
 
@@ -48,9 +48,9 @@ for engine, _ of db then do (engine) ->
             user: 'db_create_user_3'
           # Todo: why not using nikita.user.exists ?
           {status: user_exists} = await @execute
-            cmd: switch engine
-              when 'mariadb', 'mysql' then cmd(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
-              when 'postgresql' then cmd(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
+            command: switch engine
+              when 'mariadb', 'mysql' then command(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
+              when 'postgresql' then command(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
           user_exists.should.be.true()
           @db.database.remove 'db_create_3'
           @db.user.remove 'db_create_user_3'

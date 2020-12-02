@@ -46,7 +46,7 @@ console.info(`Service was started: ${status}`)
       # log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
       try
         {status} = await @execute
-          cmd: """
+          command: """
           ls \
             /lib/systemd/system/*.service \
             /etc/systemd/system/*.service \

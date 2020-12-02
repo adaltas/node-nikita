@@ -47,7 +47,7 @@ console.info(`Service was stopped: ${status}`)
       log message: "Stop service #{config.name}", level: 'INFO', module: 'nikita/lib/service/stop'
       try
         {status} = await @execute
-          cmd: """
+          command: """
           ls \
             /lib/systemd/system/*.service \
             /etc/systemd/system/*.service \

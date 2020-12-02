@@ -44,7 +44,7 @@ console.info(`Device was removed: ${status}`)
         device: config.device
       return status: false if not config
       {status} = await @execute
-        cmd: [
+        command: [
           'lxc', 'config', 'device', 'remove'
           config_orig.container
           config_orig.device

@@ -25,7 +25,7 @@ Delete a directory.
     handler = ({config}) ->
       try
         await @execute
-          cmd: """
+          command: """
           [ ! -d '#{config.target}' ] && exit 2
           rmdir '#{config.target}'
           """

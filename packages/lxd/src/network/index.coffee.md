@@ -53,7 +53,7 @@ console.info(`Network was created: ${status}`)
       # Command if the network does not yet exist
       {stdout, code, status} = await @execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented
-        cmd: """
+        command: """
         lxc network > /dev/null || exit 5
         lxc network show #{config.network} && exit 42
         #{[
@@ -75,7 +75,7 @@ console.info(`Network was created: ${status}`)
       {config} = yaml.safeLoad stdout
       changes = diff config, config_orig.config
       {status} = await @execute (
-        cmd: [
+        command: [
           'lxc', 'network', 'set'
           config_orig.network
           key, "'#{value.replace '\'', '\\\''}'"

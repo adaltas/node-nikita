@@ -149,7 +149,7 @@ console.info(`Disk was created: ${status}`)
       try
         unless config
           {status} = await @execute
-            cmd: [
+            command: [
               'lxc', 'config', 'device', 'add',
               config_orig.container
               config_orig.device
@@ -161,7 +161,7 @@ console.info(`Disk was created: ${status}`)
         else
           changes = diff config, config_orig.config
           {status} = await @execute (
-            cmd: [
+            command: [
               'lxc', 'config', 'device', 'set'
               config_orig.container
               config_orig.device

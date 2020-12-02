@@ -60,18 +60,18 @@ console.info(`Image was loaded: ${status}`);
       # Validate parameters
       config.input ?= config.source
       throw Error 'Missing input parameter' unless config.input?
-      cmd = "load -i #{config.input}"
+      command = "load -i #{config.input}"
       # need to records the list of image to see if status is modified or not after load
       # for this we print the existing images as REPOSITORY:TAG:IMAGE
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
       images = {}
-      delete config.cmd
+      delete config.command
       log message: 'Storing previous state of image', level: 'INFO', module: 'nikita/lib/docker/load'
       log message: 'No checksum provided', level: 'INFO', module: 'nikita/lib/docker/load' if !config.checksum?
       log message: "Checksum provided :#{config.checksum}", level: 'INFO', module: 'nikita/lib/docker/load' if config.checksum
       config.checksum ?= ''
       {stdout} = await @docker.tools.execute
-        cmd: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
+        command: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
       # skip header line, wi skip it here instead of in the grep  to have
       # an array with at least one not empty line
       if string.lines(stdout).length > 1
@@ -85,9 +85,9 @@ console.info(`Image was loaded: ${status}`);
             images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
       log message: "Start Loading #{config.input} ", level: 'INFO', module: 'nikita/lib/docker/load'
       @docker.tools.execute
-        cmd: cmd
+        command: command
       {stdout, stderr} = await @docker.tools.execute
-        cmd: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+        command: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
       new_images = {}
       status = false
       log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'

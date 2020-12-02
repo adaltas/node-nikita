@@ -70,7 +70,7 @@ console.info(`File was touched: ${status}`)
       else
         # todo check uid/gid/mode
         @execute
-          cmd: "touch #{config.target}"
+          command: "touch #{config.target}"
           shy: true
       {}
 

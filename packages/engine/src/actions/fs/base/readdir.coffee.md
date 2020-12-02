@@ -79,7 +79,7 @@ assert(files[0].isFile(), true)
       try
         # List the directory
         {stdout} = await @execute
-          cmd: """
+          command: """
           [ ! -d '#{config.target}' ] && exit 2
           ls -#{opts} #{config.target}
           """

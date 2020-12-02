@@ -56,7 +56,7 @@ describe 'service.init', ->
         @fs.remove
           target: '/etc/init.d/crond'
         @execute
-          cmd: 'systemctl daemon-reload;systemctl reset-failed'
+          command: 'systemctl daemon-reload;systemctl reset-failed'
         @service.init
           source: "#{__dirname}/crond.j2"
           name: 'crond'

@@ -32,7 +32,7 @@ nikita
     @lxd.exec
       header: 'Node.js'
       container: config.container
-      cmd: """
+      command: """
       command -v node && exit 42
       NODE_VERSION=12.13.1
       yum install -y xz
@@ -54,7 +54,7 @@ nikita
     @lxd.exec
       header: 'Root SSH dir'
       container: config.container
-      cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
+      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
       container: config.container

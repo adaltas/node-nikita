@@ -119,7 +119,7 @@ console.info(`Package installed: ${status}`)
       unless config.installed?
         try
           {status, stdout} = await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n"
             elif command -v pacman >/dev/null 2>&1; then
@@ -146,7 +146,7 @@ console.info(`Package installed: ${status}`)
       if not config.outdated?
         try
           {status, stdout} = await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               yum #{cacheonly} check-update -q | sed 's/\\([^\\.]*\\).*/\\1/'
             elif command -v pacman >/dev/null 2>&1; then
@@ -175,7 +175,7 @@ console.info(`Package installed: ${status}`)
       if config.installed?.indexOf(config.name) is -1 or config.outdated?.indexOf(config.name) isnt -1
         try
           {status} = await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               yum install -y #{cacheonly} #{config.name}
             elif command -v yay >/dev/null 2>&1; then

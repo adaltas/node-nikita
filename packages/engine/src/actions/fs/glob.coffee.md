@@ -54,7 +54,7 @@ paths locally using the Minimatch package.
       config.target = path.normalize config.target
       minimatch = new Minimatch config.target, config.minimatch
       {stdout, exit_code} = await @execute
-        cmd: [
+        command: [
           'find'
           ...(getprefix s for s in minimatch.set)
           # trailing slash

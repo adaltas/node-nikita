@@ -16,7 +16,7 @@ describe 'docker.tools.status', ->
         container: 'nikita_status'
         force: true
       @docker.run
-        cmd: "/bin/echo 'test'"
+        command: "/bin/echo 'test'"
         image: 'alpine'
         rm: false
         name: 'nikita_status'

@@ -46,7 +46,7 @@ console.info(`ticket was renewed: ${status}`)
 
     handler = ({config}) ->
       await @execute
-        cmd: """
+        command: """
         if #{utils.krb5.su config, 'klist -s'}; then exit 3; fi
         #{utils.krb5.kinit config}
         """

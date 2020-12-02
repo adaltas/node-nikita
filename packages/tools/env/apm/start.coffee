@@ -32,7 +32,7 @@ nikita
     @lxd.exec
       header: 'Node.js'
       container: config.container
-      cmd: """
+      command: """
       command -v node && exit 42
       NODE_VERSION=12.13.1
       yum install -y xz
@@ -52,7 +52,7 @@ nikita
     @lxd.exec
       header: 'Root SSH dir'
       container: config.container
-      cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
+      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
       container: config.container
@@ -63,7 +63,7 @@ nikita
     @lxd.exec
       header: 'Install Atom'
       container: config.container
-      cmd: """
+      command: """
       yum install -y wget
       wget https://github.com/atom/atom/releases/download/v1.53.0/atom.x86_64.rpm
       yum install -y atom.x86_64.rpm

@@ -16,7 +16,7 @@ describe "db.query", ->
         nikita
           ssh: ssh
         .db.query
-          cmd: 'select * from doesntmatter'
+          command: 'select * from doesntmatter'
         .should.be.rejectedWith [
           "NIKITA_SCHEMA_VALIDATION_CONFIG:"
           "multiple errors where found in the configuration of action `db.query`:"
@@ -26,7 +26,7 @@ describe "db.query", ->
           "#/required config should have required property 'host'."
         ].join ' '
 
-      they 'config cmd', ({ssh}) ->
+      they 'config command', ({ssh}) ->
         nikita
           ssh: ssh
           db: db[engine]
@@ -35,7 +35,7 @@ describe "db.query", ->
           @db.database 'test_query_1'
           {status, stdout} = await @db.query
             database: 'test_query_1'
-            cmd: """
+            command: """
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             select * from a_table
@@ -52,7 +52,7 @@ describe "db.query", ->
           @db.database 'test_query_1'
           {stdout} = await @db.query
             database: 'test_query_1'
-            cmd: """
+            command: """
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             select * from a_table
@@ -69,20 +69,20 @@ describe "db.query", ->
           @db.database 'test_query_1'
           @db.query
             database: 'test_query_1'
-            cmd: '''
+            command: '''
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             '''
           {status} = await @db.query
             database: 'test_query_1'
-            cmd: '''
+            command: '''
             select * from a_table
             '''
             grep: 'value'
           status.should.be.true()
           {status} = await @db.query
             database: 'test_query_1'
-            cmd: 'select * from a_table'
+            command: 'select * from a_table'
             grep: 'invalid value'
           status.should.be.false()
 
@@ -95,18 +95,18 @@ describe "db.query", ->
           @db.database 'test_query_1'
           @db.query
             database: 'test_query_1'
-            cmd: '''
+            command: '''
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             '''
           {status} = await @db.query
             database: 'test_query_1'
-            cmd: 'select * from a_table'
+            command: 'select * from a_table'
             grep: /^val.*$/
           status.should.be.true()
           {status} = await @db.query
             database: 'test_query_1'
-            cmd: 'select * from a_table'
+            command: 'select * from a_table'
             grep: /^val$/
           status.should.be.false()
 

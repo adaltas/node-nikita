@@ -29,7 +29,7 @@ Delete a name and possibly the file it refers to.
 
     handler = ({config}) ->
       @execute
-        cmd: """
+        command: """
         ln -sf #{config.source} #{config.target}
         """
 

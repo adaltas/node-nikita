@@ -36,7 +36,7 @@ Remove a schema from a database.
       {exists} = await @db.schema.exists config: config
       return false unless exists
       @db.query config: config,
-        cmd: "DROP SCHEMA IF EXISTS #{config.schema};"
+        command: "DROP SCHEMA IF EXISTS #{config.schema};"
 
 ## Exports
 
@@ -49,4 +49,4 @@ Remove a schema from a database.
 
 ## Dependencies
 
-    {cmd} = require '../query'
+    {command} = require '../query'

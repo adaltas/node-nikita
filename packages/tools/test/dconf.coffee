@@ -23,7 +23,7 @@ describe 'tools.dconf', ->
           '/org/gnome/desktop/datetime/automatic-timezone': true
       status.should.be.false()
       @execute.assert
-        cmd: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
+        command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
         assert: 'true'
   
   they 'set multiple configs', ({ssh}) ->
@@ -45,9 +45,9 @@ describe 'tools.dconf', ->
           '/org/gnome/desktop/peripherals/touchpad/click-method': 'fingers'
       status.should.be.false()
       @execute.assert
-        cmd: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
+        command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
         assert: 'true'
       @execute.assert
-        cmd: 'dconf read /org/gnome/desktop/peripherals/touchpad/click-method'
+        command: 'dconf read /org/gnome/desktop/peripherals/touchpad/click-method'
         assert: 'fingers'
   

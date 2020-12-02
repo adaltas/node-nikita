@@ -6,7 +6,7 @@ describe('core', () => {
   it('load nikita', () =>
     nikita()
     .system.execute({
-      cmd: 'hostname'
+      command: 'hostname'
     }, (err, {stdout}) => {
       if(err) throw err
       assert(typeof stdout === 'string')

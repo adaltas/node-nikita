@@ -178,7 +178,7 @@ console.info(`Servers listening: ${status}`)
       config.timeout = Math.round config.timeout / 1000
       @execute
         bash: true
-        cmd: """
+        command: """
         function compute_md5 {
           echo $1 | openssl md5 | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
         }

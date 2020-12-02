@@ -161,7 +161,7 @@ Perform an HTTP request. It uses internaly the curl command.
         type: undefined
       try
         {code, stdout} = await @execute
-          cmd: """
+          command: """
           #{ unless config.principal then '' else [
             'echo', config.password, '|', 'kinit', config.principal, '>/dev/null'
           ].join ' '}

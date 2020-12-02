@@ -9,7 +9,7 @@ describe 'tools.cron.remove', ->
 
   describe 'schema', ->
 
-    it 'invalid job: no cmd', ->
+    it 'invalid job: no command', ->
       nikita
       .service 'cronie'
       .tools.cron.remove
@@ -19,7 +19,7 @@ describe 'tools.cron.remove', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.remove`:'
-          '#/required config should have required property \'cmd\'.'
+          '#/required config should have required property \'command\'.'
         ].join ' '
 
   describe 'action', ->
@@ -32,13 +32,13 @@ describe 'tools.cron.remove', ->
       , ->
         @service 'cronie'
         @tools.cron.add
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         {status} = await @tools.cron.remove
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         status.should.be.true()
         {status} = await @tools.cron.remove
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         status.should.be.false()

@@ -59,7 +59,7 @@ console.info(`Storage was created or config updated: ${status}`)
         config.config[k] = v.toString()
       # Check if exists
       {stdout, code} = await @execute
-        cmd: """
+        command: """
         lxc storage show #{config.name} && exit 42
         #{['lxc', 'storage', 'create'
           config.name
@@ -75,7 +75,7 @@ console.info(`Storage was created or config updated: ${status}`)
       changes = diff stdout.config, config.config
       # if changes is empty status is false because no command were executed
       {status} = await @execute (
-        cmd: [
+        command: [
           'lxc', 'storage', 'set'
           config.name
           key, "'#{value.replace '\'', '\\\''}'"

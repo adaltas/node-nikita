@@ -12,12 +12,12 @@ describe 'actions.execute.assert', ->
     they 'assert command succeed', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: 'exit 0'
+          command: 'exit 0'
 
     they 'assert command fail', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: 'exit 1'
+          command: 'exit 1'
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_EXIT_CODE:'
           'an unexpected exit code was encountered,'
@@ -27,10 +27,10 @@ describe 'actions.execute.assert', ->
     they 'assert custom code', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: 'exit 1'
+          command: 'exit 1'
           code: 1
         @execute.assert
-          cmd: 'exit 0'
+          command: 'exit 0'
           code: 1
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_EXIT_CODE:'
@@ -41,11 +41,11 @@ describe 'actions.execute.assert', ->
     they 'assert custom code with negation', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: 'exit 1'
+          command: 'exit 1'
           not: true
           code: 0
         @execute.assert
-          cmd: 'exit 0'
+          command: 'exit 0'
           not: true
           code: 0
         .should.be.rejectedWith [
@@ -59,10 +59,10 @@ describe 'actions.execute.assert', ->
     they 'assert stdout match content', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: 'text=hello; echo $text'
+          command: 'text=hello; echo $text'
           content: 'hello\n'
         @execute.assert
-          cmd: 'text=hello; echo $text'
+          command: 'text=hello; echo $text'
           content: 'hello'
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_CONTENT:'
@@ -73,10 +73,10 @@ describe 'actions.execute.assert', ->
     they 'assert stdout match regexp', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: "echo \"toto\nest\r\nau\rbistrot\""
+          command: "echo \"toto\nest\r\nau\rbistrot\""
           content: /^bistrot$/m
         @execute.assert
-          cmd: "echo \"toto\nest\r\nau\rbistrot\""
+          command: "echo \"toto\nest\r\nau\rbistrot\""
           content: /^ohno$/m
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_CONTENT_REGEX:'
@@ -84,10 +84,10 @@ describe 'actions.execute.assert', ->
           'got "toto\\nest\\r\\nau\\rbistrot\\n" while expecting to match {}.'
         ].join ' '
 
-    they 'option trim on cmd', ({ssh}) ->
+    they 'option trim on command', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute.assert
-          cmd: "echo '' && echo 'yo'"
+          command: "echo '' && echo 'yo'"
           content: 'yo'
           trim: true
 
@@ -95,6 +95,6 @@ describe 'actions.execute.assert', ->
       nikita ssh: ssh, ->
         @execute.assert
           bash: true
-          cmd: "echo -n 'yo'"
+          command: "echo -n 'yo'"
           content: '\nyo\n'
           trim: true

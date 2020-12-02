@@ -59,7 +59,7 @@ native docker command.
       # - `--quiet`: discard headers
       {status, stdout} = await @docker.tools.execute
         boot2docker: config.boot2docker
-        cmd: "images --no-trunc --quiet #{config.image}:#{config.tag}"
+        command: "images --no-trunc --quiet #{config.image}:#{config.tag}"
         compose: config.compose
         machine: config.machine
       checksum = if stdout is '' then undefined else stdout.toString().trim()

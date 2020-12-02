@@ -76,7 +76,7 @@ console.info(`Directories was removed: ${status}`)
       for file in files
         log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/fs/remove'
         {status} = await @execute
-          cmd: "rm -rf '#{file}'"
+          command: "rm -rf '#{file}'"
         log message: "File #{file} removed", level: 'WARN', module: 'nikita/lib/fs/remove' if status
       {}
 
