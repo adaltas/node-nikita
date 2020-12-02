@@ -251,7 +251,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           target: path.dirname stageDestination
         # Download the file
         @execute
-          cmd: [
+          command: [
             'curl'
             '--fail' if config.fail
             '--insecure' if source_url.protocol is 'https:'

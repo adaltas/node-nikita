@@ -44,7 +44,7 @@ console.info(config)
     handler = ({config}) ->
       # log message: "Entering lxd config.device.show", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/show"
       {stdout} = await @execute
-        cmd: [
+        command: [
           'lxc', 'query'
           '/' + [
             '1.0', 'instances', config.container

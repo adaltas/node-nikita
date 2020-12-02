@@ -55,14 +55,14 @@ force options is set.
     handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       await @docker.tools.execute
-        cmd: [
+        command: [
           'images'
           "| grep '#{config.image} '"
           "| grep ' #{config.tag} '" if config.tag?
         ].join ' '
         code_skipped: [1]
       await @docker.tools.execute
-        cmd: [
+        command: [
           'rmi'
           (
             ['force', 'no_prune']

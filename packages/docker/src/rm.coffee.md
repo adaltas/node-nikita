@@ -57,18 +57,18 @@ console.info(`Container was removed: ${status}`)
 
     handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
-      # cmd = for opt in ['link', 'volumes', 'force']
+      # command = for opt in ['link', 'volumes', 'force']
       #   "-#{opt.charAt 0}" if config[opt]
-      # cmd = "rm #{cmd.join ' '} #{config.container}"
+      # command = "rm #{command.join ' '} #{config.container}"
       {status} = await @docker.tools.execute
-        cmd: "ps | egrep ' #{config.container}$'"
+        command: "ps | egrep ' #{config.container}$'"
         code_skipped: 1
       throw Error 'Container must be stopped to be removed without force' if status and not config.force
       {status} = await @docker.tools.execute
-        cmd: "ps -a | egrep ' #{config.container}$'"
+        command: "ps -a | egrep ' #{config.container}$'"
         code_skipped: 1
       @docker.tools.execute
-        cmd: [
+        command: [
           'rm'
           ...( ['link', 'volumes', 'force']
             .filter (opt) -> config[opt]

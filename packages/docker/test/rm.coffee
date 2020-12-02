@@ -17,7 +17,7 @@ describe 'docker.rm', ->
         force: true
         container: 'nikita_rm'
       @docker.run
-        cmd: "/bin/echo 'test'"
+        command: "/bin/echo 'test'"
         image: 'alpine'
         name: 'nikita_rm'
         rm: false

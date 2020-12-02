@@ -13,7 +13,7 @@ describe 'actions.execute.config.cwd', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {stdout} = await @execute
-        cmd: 'pwd'
+        command: 'pwd'
         cwd: tmpdir
       stdout.should.eql "#{tmpdir}\n"
   

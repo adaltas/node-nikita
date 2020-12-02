@@ -9,7 +9,7 @@ return unless tags.lxd
 before () ->
   await nikita
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.config.device', ->
 
@@ -116,7 +116,7 @@ describe 'lxd.config.device', ->
               path: '/testrandom'
         status.should.be.true()
         {status} = await @execute
-          cmd: "lxc config device list c1 | grep test"
+          command: "lxc config device list c1 | grep test"
         status.should.be.true()
 
     they 'Device already created', ({ssh}) ->
@@ -174,7 +174,7 @@ describe 'lxd.config.device', ->
               source: '/dev/null'
         status.should.be.true()
         {status} = await @execute
-          cmd: "lxc config device show c1 | grep 'source: /dev/null'"
+          command: "lxc config device show c1 | grep 'source: /dev/null'"
         status.should.be.true()
 
     they 'Catch and format error when creating device', ({ssh}) ->

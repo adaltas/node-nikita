@@ -45,7 +45,7 @@ Run the command "dconf-editor" to navigate the database with a UI.
         config.properties[k] = v.toString()
       # Execute
       await @execute (
-        cmd: """
+        command: """
         dconf read #{key} | grep -x "#{value}" && exit 3
         dconf write #{key} "#{value}"
         """

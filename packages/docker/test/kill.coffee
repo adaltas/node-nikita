@@ -50,7 +50,7 @@ describe 'docker.kill', ->
       @docker.rm
         container: 'nikita_test_kill'
       @docker.run
-        cmd: "/bin/echo 'test'"
+        command: "/bin/echo 'test'"
         image: 'alpine'
         rm: false
         name: 'nikita_test_kill'

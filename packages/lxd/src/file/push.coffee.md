@@ -99,7 +99,7 @@ console.info(`File was pushed: ${status}`)
       if status
         try
           {status} = await @execute
-            cmd: """
+            command: """
             # Ensure source is a file
             [ -f "#{config.source}" ] || exit 2
             command -v openssl >/dev/null || exit 3
@@ -122,7 +122,7 @@ console.info(`File was pushed: ${status}`)
           throw Error "Invalid Requirement: openssl not installed on container" if err.exit_code is 4
       if not status_running or status
         @execute
-          cmd: """
+          command: """
           #{[
             'lxc', 'file', 'push'
             config.source
@@ -138,11 +138,11 @@ console.info(`File was pushed: ${status}`)
       if typeof config.gid is 'string'
         @lxd.exec
           container: config.container
-          cmd: "chgrp #{config.gid} #{config.target}"
+          command: "chgrp #{config.gid} #{config.target}"
       if typeof config.uid is 'string'
         @lxd.exec
           container: config.container
-          cmd: "chown #{config.uid} #{config.target}"
+          command: "chown #{config.uid} #{config.target}"
 
 ## Export
 

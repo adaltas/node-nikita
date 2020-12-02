@@ -26,7 +26,7 @@ describe 'tools.iptables', ->
       status.should.be.true()
       {stdout} = await @execute
         sudo: true
-        cmd: 'iptables -S'
+        command: 'iptables -S'
       stdout.should.containEql [
         '-A INPUT -i lo -j ACCEPT'
         '-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT'

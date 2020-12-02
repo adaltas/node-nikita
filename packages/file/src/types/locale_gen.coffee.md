@@ -76,7 +76,7 @@ console.info(`File was updated: ${status}`)
           then config.generate
           else status
         rootdir: config.rootdir
-        cmd: "locale-gen"
+        command: "locale-gen"
       status: status || config.generate
 
 ## Exports

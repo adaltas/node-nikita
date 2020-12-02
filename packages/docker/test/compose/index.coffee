@@ -31,7 +31,7 @@ describe 'docker.compose', ->
             ports: ['499:80']
       status.should.be.true()
       {status} = await @execute
-        cmd: 'ping dind -c 1'
+        command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
         if: status # Inside docker-compose
@@ -63,7 +63,7 @@ describe 'docker.compose', ->
         target: "#{tmpdir}/docker_compose_up_content_to_file/docker-compose.yml"
       status.should.be.true()
       {status} = await @execute
-        cmd: 'ping dind -c 1'
+        command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
         if: status # Inside docker-compose
@@ -96,7 +96,7 @@ describe 'docker.compose', ->
       @docker.compose
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       {status} = await @execute
-        cmd: 'ping dind -c 1'
+        command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
         if: status # Inside docker-compose
@@ -130,7 +130,7 @@ describe 'docker.compose', ->
         service: 'compose'
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       {status} = await @execute
-        cmd: 'ping dind -c 1'
+        command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
         if: status # Inside docker-compose

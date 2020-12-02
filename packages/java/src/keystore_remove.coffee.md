@@ -79,7 +79,7 @@ console.info(`Certificate authority was removed: ${status}`)
       config.keytool ?= 'keytool'
       @execute
         bash: true
-        cmd: """
+        command: """
         # Detect keytool command
         keytoolbin=#{config.keytool}
         command -v $keytoolbin >/dev/null || {

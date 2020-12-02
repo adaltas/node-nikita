@@ -87,7 +87,7 @@ under a "Time" key so that the user doesn't have to do it manually.
           then config.reload
           else @status -1
         sudo: true
-        cmd: """
+        command: """
         systemctl daemon-reload
         systemctl restart systemd-resolved
         """

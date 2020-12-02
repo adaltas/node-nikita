@@ -123,7 +123,7 @@ describe 'tools.sysctl', ->
         backup: true
       @execute.assert
         bash: true
-        cmd: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
+        command: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
       @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
         properties:
@@ -132,7 +132,7 @@ describe 'tools.sysctl', ->
         backup: true
       @execute.assert
         bash: true
-        cmd: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '2' ]]"
+        command: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '2' ]]"
 
   describe 'comment', ->
 

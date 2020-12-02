@@ -12,22 +12,22 @@ describe 'docker.tools.execute', ->
     it 'valid', ->
       nikita
       .docker.tools.execute
-        cmd: 'ok'
+        command: 'ok'
         dry: true
 
-    it 'cmd is required', ->
+    it 'command is required', ->
       nikita
       .docker.tools.execute()
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `docker.tools.execute`:'
-        '#/required config should have required property \'cmd\'.'
+        '#/required config should have required property \'command\'.'
       ].join ' '
 
     it 'machine is validated', ->
       nikita
       .docker.tools.execute
-        cmd: 'ok'
+        command: 'ok'
         machine: 111
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
@@ -39,5 +39,5 @@ describe 'docker.tools.execute', ->
       nikita
       .docker.tools.execute
         invalid: 'property'
-        cmd: 'ok'
+        command: 'ok'
       .should.be.rejectedWith /should NOT have additional properties/

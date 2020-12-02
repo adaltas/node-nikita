@@ -165,16 +165,16 @@ console.info(`Iptables was updated: ${status}`)
         name: 'iptables'
       throw Error "Service iptables not started" unless status
       {stdout} = await @execute
-        cmd: 'iptables -S'
+        command: 'iptables -S'
         shy: true
         sudo: config.sudo
       oldrules = utils.iptables.parse stdout
       newrules = utils.iptables.normalize config.rules
-      cmd = utils.iptables.cmd oldrules, newrules
-      return unless cmd.length
-      log message: "#{cmd.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
+      command = utils.iptables.command oldrules, newrules
+      return unless command.length
+      log message: "#{command.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
       await @execute
-        cmd: "#{cmd.join '; '}; service iptables save;"
+        command: "#{command.join '; '}; service iptables save;"
         sudo: config.sudo
         trap: true
 

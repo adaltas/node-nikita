@@ -21,7 +21,7 @@ nikita
 })
 .execute({
   header: 'Print remote hostname',
-  cmd: 'hostname'
+  command: 'hostname'
 })
 .ssh.close()
 ```
@@ -42,7 +42,7 @@ nikita
 .execute({
   ssh: false
   header: 'Print local hostname',
-  cmd: 'hostname'
+  command: 'hostname'
 })
 .ssh.close()
 ```

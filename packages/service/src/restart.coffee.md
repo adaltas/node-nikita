@@ -42,7 +42,7 @@ console.info(`Service was restarted: ${status}`)
       {loader} = await @service.discover {}
       config.loader ?= loader
       {status} = await @execute
-        cmd: switch config.loader
+        command: switch config.loader
           when 'systemctl' then "systemctl restart #{config.name}"
           when 'service' then "service #{config.name} restart"
           else throw Error 'Init System not supported'

@@ -166,7 +166,7 @@ console.info(`Container was built: ${status}`)
       number_of_step = 0
       userargs = []
       # status unmodified if final tag already exists
-      dockerfile_cmds = ['CMD','LABEL','EXPOSE','ENV','ADD','COPY','ENTRYPOINT',
+      dockerfile_commands = ['CMD','LABEL','EXPOSE','ENV','ADD','COPY','ENTRYPOINT',
        'VOLUME','USER','WORKDIR','ARG','ONBUILD','RUN','STOPSIGNAL','MAINTAINER']
       source = undefined
       if config.file
@@ -174,28 +174,28 @@ console.info(`Container was built: ${status}`)
       else if config.cwd
         source = "#{config.cwd}/Dockerfile"
       config.cwd ?= path.dirname config.file if config.file
-      # Build cmd
-      cmd = 'build'
+      # Build command
+      command = 'build'
       for opt in ['force_rm', 'quiet', 'no_cache']
-        cmd += " --#{opt.replace '_', '-'}" if config[opt]
+        command += " --#{opt.replace '_', '-'}" if config[opt]
       for opt in ['build_arg'] then if config[opt]?
         if Array.isArray config[opt]
-          cmd += " --#{opt.replace '_', '-'} #{k}" for k in config[opt]
+          command += " --#{opt.replace '_', '-'} #{k}" for k in config[opt]
         else
-          cmd += " --#{opt.replace '_', '-'} #{config[opt]}"
-      cmd += " --rm=#{if config.rm then 'true' else 'false'}"
-      cmd += " -t \"#{config.image}#{if config.tag then ":#{config.tag}" else ''}\""
+          command += " --#{opt.replace '_', '-'} #{config[opt]}"
+      command += " --rm=#{if config.rm then 'true' else 'false'}"
+      command += " -t \"#{config.image}#{if config.tag then ":#{config.tag}" else ''}\""
       # custom command for content option0
       config.file ?= path.resolve config.cwd, 'Dockerfile' if config.cwd
       if config.content?
         log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
-        cmd += " - <<DOCKERFILE\n#{config.content}\nDOCKERFILE" if config.content?
+        command += " - <<DOCKERFILE\n#{config.content}\nDOCKERFILE" if config.content?
       else if config.file?
         log message: "Building from Dockerfile: \"#{config.file}\"", level: 'INFO', module: 'nikita/docker/build'
-        cmd += " -f #{config.file} #{config.cwd}"
+        command += " -f #{config.file} #{config.cwd}"
       else
         log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
-        cmd += ' .'
+        command += ' .'
       await @file
         if: config.content
         content: config.content
@@ -215,9 +215,9 @@ console.info(`Container was built: ${status}`)
         {data: config.content} = await @fs.base.readFile ssh: config.ssh, target: config.file, encoding: 'utf8'
       # Count steps
       for line in utils.string.lines config.content
-        number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
+        number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_commands
       {stdout, stderr} = await @docker.tools.execute
-        cmd: cmd
+        command: command
         cwd: config.cwd
       image_id = null
       # Count cache

@@ -59,11 +59,11 @@ console.info(`Repo was synchronized: ${status}`)
         throw Error "Not a git repository" unless is_git
       else
         @execute
-          cmd: "git clone #{config.source} #{config.target}"
+          command: "git clone #{config.source} #{config.target}"
           cwd: path.dirname config.target
       if repo_exists
         {status: repo_uptodate} = await @execute
-          cmd: """
+          command: """
           current=`git log --pretty=format:'%H' -n 1`
           target=`git rev-list --max-count=1 #{config.revision}`
           echo "current revision: $current"
@@ -77,7 +77,7 @@ console.info(`Repo was synchronized: ${status}`)
           shy: true
       unless repo_uptodate
         @execute
-          cmd: "git checkout #{config.revision}"
+          command: "git checkout #{config.revision}"
           cwd: config.target
 
 ## Exports

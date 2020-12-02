@@ -24,7 +24,7 @@ Read a link to retrieve its destination path.
 
     handler = ({config}) ->
       {stdout} = await @execute
-        cmd: "readlink #{config.target}"
+        command: "readlink #{config.target}"
       target: stdout.trim()
 
 ## Exports

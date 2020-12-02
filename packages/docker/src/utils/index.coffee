@@ -31,7 +31,7 @@ module.exports =
   "machine" and "boot2docker".
   `compose` option allow to wrap the command for docker-compose instead of docker
   ###
-  wrap: (config, cmd) ->
+  wrap: (config, command) ->
     docker = {}
     opts = module.exports.opts config
     exe = if config.compose then 'bin_compose' else 'bin_docker'
@@ -56,7 +56,7 @@ module.exports =
       #docker="eval \\$(\\${bin_boot2docker} shellinit) && $#{exe}"
       eval "$(${bin_boot2docker} shellinit)"
     fi
-    $#{exe} #{opts} #{cmd}
+    $#{exe} #{opts} #{command}
     """
   wrap_schema:
     'boot2docker':

@@ -29,7 +29,7 @@ Check if a database exists.
 
     handler = ({config}) ->
       {status} = await @db.query connection_config(config),
-        cmd: switch config.engine
+        command: switch config.engine
           when 'mariadb', 'mysql'
             'SHOW DATABASES'
           when 'postgresql'
@@ -51,4 +51,4 @@ Check if a database exists.
 
 ## Dependencies
 
-    {cmd, connection_config} = require '../query'
+    {command, connection_config} = require '../query'

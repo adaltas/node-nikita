@@ -23,7 +23,7 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.execute
         debug: ws
-        cmd: """
+        command: """
         echo to_stdout; echo to_stderr 1>&2
         """
       data.join().should.eql [

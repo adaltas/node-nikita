@@ -8,6 +8,6 @@ module.exports = ({params}) ->
   .log.md basename: 'start', basedir: params.log, archive: false, if: params.log
   .execute
     cwd: "#{__dirname}/../../../assets"
-    cmd: '''
+    command: '''
     vagrant halt
     '''

@@ -60,7 +60,7 @@ console.info(`Package or service was removed: ${status}`)
       unless installed?
         try
           {status, stdout} = await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n"
             elif command -v pacman >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ console.info(`Package or service was removed: ${status}`)
       if installed.indexOf(config.name) isnt -1
         try
           {status} = await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               yum remove -y #{cacheonly} '#{config.name}'
             elif command -v pacman >/dev/null 2>&1; then

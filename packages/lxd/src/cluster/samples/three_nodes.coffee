@@ -91,7 +91,7 @@ nikita
     @lxd.exec
       header: 'Node.js'
       container: options.container
-      cmd: """
+      command: """
       command -v node && exit 42
       curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
       bash n lts

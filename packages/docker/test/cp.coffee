@@ -21,7 +21,7 @@ describe 'docker.cp', ->
       @docker.run
         name: 'nikita_extract'
         image: 'alpine'
-        cmd: "whoami"
+        command: "whoami"
         rm: false
       {status} = await @docker.cp
         source: 'nikita_extract:/etc/apk/repositories'
@@ -42,7 +42,7 @@ describe 'docker.cp', ->
       @docker.run
         name: 'nikita_extract'
         image: 'alpine'
-        cmd: "whoami"
+        command: "whoami"
         rm: false
       {status} = await @docker.cp
         source: 'nikita_extract:/etc/apk/repositories'
@@ -63,7 +63,7 @@ describe 'docker.cp', ->
         name: 'nikita_extract'
         image: 'alpine'
         volume: "#{tmpdir}:/root"
-        cmd: "whoami"
+        command: "whoami"
         rm: false
       {status} = await @docker.cp
         source: "#{__filename}"
@@ -87,7 +87,7 @@ describe 'docker.cp', ->
         name: 'nikita_extract'
         image: 'alpine'
         volume: "#{tmpdir}:/root"
-        cmd: "whoami"
+        command: "whoami"
         rm: false
       {status} = await @docker.cp
         source: "#{__filename}"

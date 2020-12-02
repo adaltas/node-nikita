@@ -103,7 +103,7 @@ console.info(`User created or modified: ${status}`)
             #   -s #{user.userPassword} \
             #   '#{user.dn}'
             # """
-            cmd: [
+            command: [
               'ldappasswd'
               "-Y #{utils.string.escapeshellarg config.mesh}" if config.mesh
               "-D #{utils.string.escapeshellarg config.binddn}" if config.binddn

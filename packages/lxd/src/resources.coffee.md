@@ -40,7 +40,7 @@ console.info(config)
     handler = ({config}) ->
       # log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
       {stdout} = await @execute
-        cmd: [
+        command: [
           'lxc', 'query',
           '/' + [
             '1.0', 'resources'

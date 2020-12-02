@@ -44,11 +44,11 @@
     "@nikitajs/engine": "^0.9.7"
   },
   "devDependencies": {
+    "@nikitajs/network": "^0.9.7-alpha.0",
     "coffeescript": "^2.5.1",
     "mocha": "^8.2.0",
-    "@nikitajs/network": "^0.9.7-alpha.0",
     "should": "^13.2.3",
-    "ssh2-they": "^2.2.0"
+    "ssh2-they": "^2.2.1"
   },
   "engines": {
     "node": ">= 10.0.0"

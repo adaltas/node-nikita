@@ -8,7 +8,7 @@ return unless tags.lxd
 before () ->
   @timeout(-1)
   await nikita.execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.exec', ->
 
@@ -26,7 +26,7 @@ describe 'lxd.exec', ->
         container: 'c1'
       {status, stdout} = await @lxd.exec
         container: 'c1'
-        cmd: """
+        command: """
         cat /etc/lsb-release | grep DISTRIB_ID
         """
       stdout.trim().should.eql 'DISTRIB_ID=Ubuntu'
@@ -49,7 +49,7 @@ describe 'lxd.exec', ->
         @lxd.exec
           container: 'c1'
           trap: true
-          cmd: """
+          command: """
           false
           true
           """
@@ -71,7 +71,7 @@ describe 'lxd.exec', ->
         res = {status, code} = await @lxd.exec
           container: 'c1'
           trap: false
-          cmd: """
+          command: """
           false
           true
           """

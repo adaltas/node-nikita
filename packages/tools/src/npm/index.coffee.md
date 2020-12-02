@@ -54,7 +54,7 @@ console.info(`Package was installed: ${status}`)
       # Get outdated packages
       outdated = []
       {stdout} = await @execute
-        cmd: "npm outdated --json #{global}"
+        command: "npm outdated --json #{global}"
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
@@ -64,7 +64,7 @@ console.info(`Package was installed: ${status}`)
       # Upgrade outdated packages if upgrade config is set
       if config.upgrade and outdated.length
         await @execute
-          cmd: "npm update #{global}"
+          command: "npm update #{global}"
           cwd: config.cwd
           sudo: config.sudo
         outdated = []
@@ -72,14 +72,14 @@ console.info(`Package was installed: ${status}`)
       upgrade = config.name.filter (pkg) -> pkg in outdated
       if upgrade.length
         await @execute
-          cmd: "npm update #{global} #{upgrade.join ' '}"
+          command: "npm update #{global} #{upgrade.join ' '}"
           cwd: config.cwd
           sudo: config.sudo
         log message: "NPM Updated Packages: #{upgrade.join ', '}"
       # Get installed packages
       installed = []
       {stdout} = await @execute
-        cmd: "npm list --json #{global}"
+        command: "npm list --json #{global}"
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
@@ -90,7 +90,7 @@ console.info(`Package was installed: ${status}`)
       install = config.name.filter (pkg) -> pkg not in installed
       if install.length
         await @execute
-          cmd: "npm install #{global} #{install.join ' '}"
+          command: "npm install #{global} #{install.join ' '}"
           cwd: config.cwd
           sudo: config.sudo
         log message: "NPM Installed Packages: #{install.join ', '}"

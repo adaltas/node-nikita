@@ -8,12 +8,12 @@ return unless tags.posix
 
 describe 'actions.execute', ->
 
-  describe 'config `cmd`', ->
+  describe 'config `command`', ->
 
     they 'as a string', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: 'text=yes; echo $text'
+          command: 'text=yes; echo $text'
         .should.be.finally.containEql
           status: true
           stdout: 'yes\n'
@@ -31,7 +31,7 @@ describe 'actions.execute', ->
       nikita ssh: ssh, ->
         @execute
           a_key: 'test context'
-          cmd: ({config}) ->
+          command: ({config}) ->
             "text='#{config.a_key}'; echo $text"
         .should.be.finally.containEql
           stdout: 'test context\n'
@@ -40,7 +40,7 @@ describe 'actions.execute', ->
       nikita ssh: ssh, ->
         @execute
           a_key: 'test context'
-          cmd: ({config}) ->
+          command: ({config}) ->
             new Promise (resolve, reject) ->
               resolve "text='#{config.a_key}'; echo $text"
         .should.be.finally.containEql
@@ -66,10 +66,10 @@ describe 'actions.execute', ->
         ssh: ssh
       , ->
       .execute
-        cmd: "cat #{__filename} | grep #{search1}"
+        command: "cat #{__filename} | grep #{search1}"
         stdout: out
       .execute
-        cmd: "cat #{__filename} | grep #{search2}"
+        command: "cat #{__filename} | grep #{search2}"
         stdout: out
       unpiped.should.eql 2
       data.should.containEql search1
@@ -79,7 +79,7 @@ describe 'actions.execute', ->
       nikita
         ssh: ssh
       .execute
-        cmd: "echo 'some text' | grep nothing"
+        command: "echo 'some text' | grep nothing"
         code: 1
       .should.be.finally.containEql
         stdout: ''
@@ -90,14 +90,14 @@ describe 'actions.execute', ->
     they 'valid exit code', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: "exit 42"
+          command: "exit 42"
           code: [42, 43]
         .should.be.resolved()
 
     they 'invalid exit code', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: "exit 42"
+          command: "exit 42"
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
           'an unexpected exit code was encountered,'
@@ -105,7 +105,7 @@ describe 'actions.execute', ->
           'got 42 instead of 0.'
         ].join ' '
         @execute
-          cmd: "exit 42"
+          command: "exit 42"
           code: [1,2,3]
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
@@ -117,11 +117,11 @@ describe 'actions.execute', ->
     they 'should honor code skipped', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: "exit 42"
+          command: "exit 42"
           code_skipped: 42
         .should.be.finally.containEql status: false
         @execute
-          cmd: "exit 42"
+          command: "exit 42"
           code_skipped: [42,43]
         .should.be.finally.containEql status: false
 
@@ -130,7 +130,7 @@ describe 'actions.execute', ->
     they 'both stdout and stderr', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: """
+          command: """
           echo '  bonjour  '
           echo ' monde  ' >&2
           """
@@ -142,7 +142,7 @@ describe 'actions.execute', ->
     they 'with trim_stdout and trim_stderr', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: """
+          command: """
           echo '  bonjour  '
           echo ' monde  ' >&2
           """
@@ -162,7 +162,7 @@ describe 'actions.execute', ->
       .on 'stdout', (log) -> stdout = log
       .on 'stderr', (log) -> stderr = log
       .execute
-        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+        command: "echo 'to stderr' >&2; echo 'to stdout';"
       , (err) ->
         stdin.message.should.match /^echo.*;$/
         stdout.message.should.eql 'to stdout\n'
@@ -179,7 +179,7 @@ describe 'actions.execute', ->
       .on 'stderr', (log) -> stderr = log
       .on 'stderr_stream', (log) -> stderr_stream.push log
       .execute
-        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+        command: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: false
         stderr_log: false
       , (err) ->
@@ -194,12 +194,12 @@ describe 'actions.execute', ->
     they 'trap on error', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: """
+          command: """
           sh -c '>&2 echo "exit 2'
           echo 'ok'
           """
         @execute
-          cmd: """
+          command: """
           sh -c '>&2 echo "exit 2'
           echo 'ok'
           """
@@ -211,7 +211,7 @@ describe 'actions.execute', ->
     they 'provide `stdout` and `stderr`', ({ssh}) ->
       nikita ssh: ssh, ->
         @execute
-          cmd: """
+          command: """
           sh -c '>&2 echo "Some Error"; exit 2'
           """
         .should.be.rejectedWith
@@ -231,7 +231,7 @@ describe 'actions.execute', ->
     
     they 'dont execute the command', ({ssh}) ->
       res = await nikita.execute
-        cmd: "exit 1"
+        command: "exit 1"
         dry: true
       res.should.match
         stdout: []

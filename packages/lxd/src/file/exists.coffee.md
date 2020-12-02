@@ -39,7 +39,7 @@ console.info(`File exists: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
       @execute
-        cmd: """
+        command: """
         lxc exec #{config.container} -- stat #{config.target}
         """
         code_skipped: 1

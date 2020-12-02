@@ -26,7 +26,7 @@ describe 'plugin.condition unless_execute', ->
     nikita
       unless_execute:
         code_skipped: 1
-        cmd: 'exit 42'
+        command: 'exit 42'
       handler: -> true
       ssh: ssh
     .should.be.rejectedWith
@@ -40,7 +40,7 @@ describe 'plugin.condition unless_execute', ->
     {status} = await nikita
       unless_execute:
         code_skipped: 42
-        cmd: 'exit 42'
+        command: 'exit 42'
       handler: -> true
       ssh: ssh
     status.should.be.true()

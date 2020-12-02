@@ -44,7 +44,7 @@ console.info(`Container was unpaused: ${status}`)
       # Validation
       throw Error 'Missing container parameter' unless config.container?
       @docker.tools.execute
-        cmd: "unpause #{config.container}"
+        command: "unpause #{config.container}"
 
 ## Exports
 

@@ -41,11 +41,11 @@ console.info(`Did database existed initially: ${!status}`)
     handler = ({config}) ->
       # Command
       @execute.wait
-        cmd: switch config.engine
+        command: switch config.engine
           when 'mariadb', 'mysql'
-            cmd(config, database: null, "show databases") + " | grep '#{config.database}'"
+            command(config, database: null, "show databases") + " | grep '#{config.database}'"
           when 'postgresql'
-            cmd(config, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{config.database}'"
+            command(config, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{config.database}'"
 
 ## Exports
 
@@ -58,4 +58,4 @@ console.info(`Did database existed initially: ${!status}`)
 
 ## Dependencies
 
-    {cmd} = require '../query'
+    {command} = require '../query'

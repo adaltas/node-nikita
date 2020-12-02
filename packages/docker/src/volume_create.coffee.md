@@ -66,13 +66,13 @@ console.info(`Volume was created: ${status}`)
       config.opt = [config.opt] if typeof config.opt is 'string'
       {status} = await @docker.tools.execute
         if: config.name
-        cmd: "volume inspect #{config.name}"
+        command: "volume inspect #{config.name}"
         code: 1
         code_skipped: 0
         shy: true
       @docker.tools.execute
         if: -> not config.name or status
-        cmd: [
+        command: [
           "volume create"
           "--driver #{config.driver}" if config.driver
           "--label #{config.label.join ','}" if config.label

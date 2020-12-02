@@ -55,7 +55,7 @@ Assert a TCP or HTTP server is listening.
       for server in config.server
         try
           await @execute
-            cmd: "bash -c 'echo > /dev/tcp/#{server.host}/#{server.port}'"
+            command: "bash -c 'echo > /dev/tcp/#{server.host}/#{server.port}'"
           if config.not is true
             error = "Address listening: \"#{server.host}:#{server.port}\""
             break

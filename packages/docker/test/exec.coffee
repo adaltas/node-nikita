@@ -20,7 +20,7 @@ describe 'docker.exec', ->
         container: 'nikita_test_exec'
       {status, stdout} = await @docker.exec
         container: 'nikita_test_exec'
-        cmd: 'echo toto'
+        command: 'echo toto'
       status.should.be.true()
       stdout.trim().should.eql 'toto'
       @docker.rm
@@ -42,7 +42,7 @@ describe 'docker.exec', ->
         container: 'nikita_test_exec'
       @docker.exec
         container: 'nikita_test_exec'
-        cmd: 'echo toto'
+        command: 'echo toto'
       .should.be.rejectedWith  /Container [a-z0-9]+ is not running/
       @docker.rm
         container: 'nikita_test_exec'
@@ -55,7 +55,7 @@ describe 'docker.exec', ->
     , ->
       @docker.exec
         container: 'nikita_fake_container'
-        cmd: 'echo toto'
+        command: 'echo toto'
       .should.be.rejectedWith 'Error: No such container: nikita_fake_container'
 
   they 'skip exit code', ({ssh}) ->
@@ -71,7 +71,7 @@ describe 'docker.exec', ->
         container: 'nikita_test_exec'
       {status} = await @docker.exec
         container: 'nikita_test_exec'
-        cmd: 'toto'
+        command: 'toto'
         code_skipped: 126
       status.should.be.false()
       @docker.rm

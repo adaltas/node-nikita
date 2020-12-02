@@ -71,7 +71,7 @@ console.info(`Key was generated: ${status}`)
         target: "#{path.dirname config.target}"
       @execute
         unless_exists: "#{config.target}"
-        cmd: [
+        command: [
           'ssh-keygen'
           "-q" # Silence
           "-t #{config.type}"

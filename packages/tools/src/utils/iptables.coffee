@@ -67,29 +67,29 @@ module.exports = iptables =
     state: ['--state']
     comment: ['--comment']
     limit: ['--limit']
-  cmd_args: (cmd, rule) ->
+  command_args: (command, rule) ->
     for k, v of rule
       continue if ['chain', 'rulenum', 'command'].indexOf(k) isnt -1
       continue unless v?
       if match = /^([\w]+)\|([-\w]+)$/.exec k
         module = match[1]
         arg = match[2]
-        cmd += " -m #{module}"
-        cmd += " #{arg} #{v}"
+        command += " -m #{module}"
+        command += " #{arg} #{v}"
       else
-        cmd += " #{k} #{v}"
-    cmd
-  cmd_replace: (rule) ->
+        command += " #{k} #{v}"
+    command
+  command_replace: (rule) ->
     rule.rulenum ?= 1
-    iptables.cmd_args "iptables -R #{rule.chain} #{rule.rulenum}", rule
-  cmd_insert: (rule) ->
+    iptables.command_args "iptables -R #{rule.chain} #{rule.rulenum}", rule
+  command_insert: (rule) ->
     rule.rulenum ?= 1
-    iptables.cmd_args "iptables -I #{rule.chain} #{rule.rulenum}", rule
-  cmd_append: (rule) ->
+    iptables.command_args "iptables -I #{rule.chain} #{rule.rulenum}", rule
+  command_append: (rule) ->
     rule.rulenum ?= 1
-    iptables.cmd_args "iptables -A #{rule.chain}", rule
-  cmd: (oldrules, newrules) ->
-    cmds = []
+    iptables.command_args "iptables -A #{rule.chain}", rule
+  command: (oldrules, newrules) ->
+    commands = []
     new_chains = []
     old_chains = oldrules
     .map (oldrule) -> oldrule.chain
@@ -98,7 +98,7 @@ module.exports = iptables =
     for newrule in newrules
       if ['INPUT', 'FORWARD', 'OUTPUT'].indexOf(newrule.chain) < 0 and new_chains.indexOf(newrule.chain) < 0 and old_chains.indexOf(newrule.chain) < 0
         new_chains.push newrule.chain
-        cmds.push "iptables -N #{newrule.chain}"
+        commands.push "iptables -N #{newrule.chain}"
     for newrule in newrules
       # break if newrule.rulenum? #or newrule.command is '-A'
       if newrule.after and not newrule.rulenum
@@ -137,11 +137,11 @@ module.exports = iptables =
               baserule[k] = undefined if iptables.commands_arguments[k]
               baserule.command = undefined
               newrule.rulenum = undefined
-            cmds.push iptables.cmd_replace merge baserule, newrule
+            commands.push iptables.command_replace merge baserule, newrule
         # Add properties are different
       if create
-        cmds.push if newrule.command is '-A' then iptables.cmd_append newrule else iptables.cmd_insert newrule
-    cmds
+        commands.push if newrule.command is '-A' then iptables.command_append newrule else iptables.command_insert newrule
+    commands
   normalize: (rules, position = true) ->
     oldrules = if Array.isArray rules then rules else [rules]
     newrules = []

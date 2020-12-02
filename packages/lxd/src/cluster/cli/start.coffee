@@ -12,25 +12,25 @@ module.exports = ({params}) ->
   .execute
     header: 'Dependencies'
     unless_exec: 'vagrant plugin list | egrep \'^vagrant-vbguest \''
-    cmd: '''
+    command: '''
     vagrant plugin install vagrant-vbguest
     '''
   .execute
     header: 'Vagrant'
     cwd: "#{__dirname}/../../../assets"
-    cmd: '''
+    command: '''
     vagrant up
     '''
   .execute
     header: 'LXC remote'
-    cmd: '''
+    command: '''
     lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
     lxc remote switch nikita
     '''
   .execute
     header: 'LXC remote (update)'
     # todo: use condition for `lxc ls`
-    cmd: '''
+    command: '''
     lxc ls || {
       lxc remote switch local
       lxc remote remove nikita
@@ -40,7 +40,7 @@ module.exports = ({params}) ->
     '''
   .call ->
     disabled: true
-    cmd: """
+    command: """
     ssh -i #{key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n
     """
     stdin: process.stdin

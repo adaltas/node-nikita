@@ -47,7 +47,7 @@ console.info(`Container was started or restarted: ${status}`)
     handler = ({config, tools: {find, log}}) ->
       log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       @docker.tools.execute
-        cmd: [
+        command: [
           'restart'
           "-t #{config.timeout}" if config.timeout?
           "#{config.container}"

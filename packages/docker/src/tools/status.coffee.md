@@ -52,7 +52,7 @@ console.info(`Container is running: ${status}`)
       config[k] ?= v for k, v of config.docker
       # Construct exec command
       @docker.tools.execute
-        cmd: "ps | egrep ' #{config.container}$'"
+        command: "ps | egrep ' #{config.container}$'"
         code_skipped: 1
 
 ## Exports

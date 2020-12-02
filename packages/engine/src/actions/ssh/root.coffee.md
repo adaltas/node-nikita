@@ -5,7 +5,7 @@ Prepare the system to receive password-less root login with SSL/TLS keys.
 
 Prior executing this handler, a user with appropriate sudo permissions must be 
 created. The script will use those credentials
-to loggin and will try to become root with the "sudo" command. Use the "cmd" 
+to loggin and will try to become root with the "sudo" command. Use the "command" 
 property if you must use a different command (such as "sudo su -").
 
 Additionnally, it disables SELINUX which require a restart. The restart is 
@@ -28,7 +28,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
     schema =
       type: 'object'
       properties:
-        'cmd':
+        'command':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
         'host':
           type: 'string'
@@ -95,7 +95,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
     handler = ({metadata, config, tools: {log}}) ->
       log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       config.host ?= config.ip
-      # config.cmd ?= 'su -'
+      # config.command ?= 'su -'
       config.username ?= null
       config.password ?= null
       config.selinux ?= false
@@ -126,15 +126,15 @@ console.info(`Public key was updoaded for root user: ${status}`)
         then await connect config
         else null
         log message: "Connected", level: 'INFO', module: 'nikita/lib/ssh/root'
-        cmd = []
-        cmd.push """
+        command = []
+        command.push """
         sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
         """
-        cmd.push """
+        command.push """
         mkdir -p /root/.ssh; chmod 700 /root/.ssh;
         echo '#{config.public_key}' >> /root/.ssh/authorized_keys;
         """ if config.public_key
-        cmd.push """
+        command.push """
         sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
         selinux="#{config.selinux or ''}";
         if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
@@ -144,25 +144,25 @@ console.info(`Public key was updoaded for root user: ${status}`)
           exit 2;
         fi;
         """
-        cmd = cmd.join '\n'
+        command = command.join '\n'
         if config.username isnt 'root'
-          cmd = cmd.replace /\n/g, ' '
-          if typeof config.cmd is 'function'
-            cmd = config.cmd cmd
-          else if typeof config.cmd is 'string'
-            cmd = "#{config.cmd} #{cmd}"
+          command = command.replace /\n/g, ' '
+          if typeof config.command is 'function'
+            command = config.command command
+          else if typeof config.command is 'string'
+            command = "#{config.command} #{command}"
           else
-            config.cmd = 'sudo '
-            config.cmd += "-u #{config.user} " if config.user
-            config.cmd = "echo -e \"#{config.password}\\n\" | #{config.cmd} -S " if config.password
-            config.cmd += "-- sh -c \"#{cmd}\""
-            cmd = config.cmd
+            config.command = 'sudo '
+            config.command += "-u #{config.user} " if config.user
+            config.command = "echo -e \"#{config.password}\\n\" | #{config.command} -S " if config.password
+            config.command += "-- sh -c \"#{command}\""
+            command = config.command
         log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-        log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
+        log message: command, type: 'stdin', module: 'nikita/lib/ssh/root'
         unless metadata.dry
           child = exec
             ssh: conn
-            cmd: cmd
+            command: command
           , (err) =>
             if err?.code is 2
               log message: "Root Access Enabled", level: 'WARN', module: 'nikita/lib/ssh/root'

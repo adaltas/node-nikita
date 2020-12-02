@@ -189,7 +189,7 @@ console.info(`File downloaded: ${status}`)
           ssh: if config.cache_local then false else config.ssh
           target: path.dirname config.target
         await @execute
-          cmd: [
+          command: [
             'curl'
             '--fail' if config.fail
             '--insecure' if u.protocol is 'https:'
