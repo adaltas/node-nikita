@@ -67,7 +67,7 @@ used for comparaison.
         if utils.stats.isDirectory stats.mode
           {files} = await @fs.glob  "#{config.target}/**", dot: true
           {stdout} = await @execute
-            cmd: [
+            command: [
               'command -v openssl >/dev/null || exit 2'
               ...files.map (file) -> "[ -f #{file} ] && openssl dgst -#{config.algo} #{file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
               'exit 0'
@@ -81,7 +81,7 @@ used for comparaison.
         # Target is a file
         else if utils.stats.isFile stats.mode
           {stdout} = await @execute
-            cmd: """
+            command: """
             command -v openssl >/dev/null || exit 2
             openssl dgst -#{config.algo} #{config.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
             """

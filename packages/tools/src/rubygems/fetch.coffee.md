@@ -68,7 +68,7 @@ couldn't find any suitable parser on NPM.
       # Get version
       unless config.version
         {status, stdout} = await @execute
-          cmd: """
+          command: """
           #{config.gem_bin} specification #{config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
           """
           cwd: config.cwd
@@ -78,7 +78,7 @@ couldn't find any suitable parser on NPM.
       config.target = "#{config.name}-#{config.version}.gem"
       # Fetch package
       {status} = await @execute
-        cmd: """
+        command: """
         #{config.gem_bin} fetch #{config.name} -v #{config.version}
         """
         cwd: config.cwd

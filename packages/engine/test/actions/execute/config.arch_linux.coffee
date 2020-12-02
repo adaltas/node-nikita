@@ -13,7 +13,7 @@ describe 'actions.execute.config.arch_linux', ->
       ssh: ssh
     , ->
       @execute
-        cmd: "mount --bind /var/tmp/root.x86_64 /mnt"
+        command: "mount --bind /var/tmp/root.x86_64 /mnt"
       @fs.base.writeFile
         target: '/mnt/root/hello'
         content: "you"
@@ -23,11 +23,11 @@ describe 'actions.execute.config.arch_linux', ->
         # target is written to "/tmp" by default which is a mount point
         # so a file in host isnt visible from jail
         target: '/root/my_script'
-        cmd: "cat /root/hello"
+        command: "cat /root/hello"
       stdout.should.eql 'you'
       @execute
         always: true # todo, need to create this option (run even on error)
-        cmd: """
+        command: """
         umount /mnt
         """
       {stats} = await @fs.base.stat
@@ -38,7 +38,7 @@ describe 'actions.execute.config.arch_linux', ->
     nikita
       ssh: ssh
     .execute
-      cmd: "echo $BASH"
+      command: "echo $BASH"
       arch_chroot: true
     .should.be.rejectedWith
       message: 'Required Option: "rootdir" with "arch_chroot"'

@@ -50,7 +50,7 @@ console.info(`Schema exists: ${exists}`)
 
     handler = ({config}) ->
       {status} = await @db.query config: config,
-        cmd: "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';"
+        command: "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';"
         grep: '1'
       exists: status
 
@@ -64,4 +64,4 @@ console.info(`Schema exists: ${exists}`)
       
 ## Dependencies
 
-    {cmd} = require '../query'
+    {command} = require '../query'

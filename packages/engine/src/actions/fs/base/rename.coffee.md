@@ -29,7 +29,7 @@ Change the name or location of a file.
 
     handler = ({config}) ->
       @execute
-        cmd: "mv #{config.source} #{config.target}"
+        command: "mv #{config.source} #{config.target}"
         trim: true
 
 ## Exports

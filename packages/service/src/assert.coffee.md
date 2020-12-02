@@ -55,7 +55,7 @@ to "['start', 'restart']" to ensure the service will be always started.
       if config.installed?
         try
           await @execute
-            cmd: """
+            command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n" | grep '^#{config.name.join '|'}$'
             elif command -v pacman >/dev/null 2>&1; then
@@ -80,7 +80,7 @@ to "['start', 'restart']" to ensure the service will be always started.
       return unless config.started? or config.stopped?
       try
         {status} = await @execute
-          cmd: """
+          command: """
             ls \
               /lib/systemd/system/*.service \
               /etc/systemd/system/*.service \

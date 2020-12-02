@@ -13,7 +13,7 @@ describe 'docker.run', ->
       docker: docker
     , ->
       {status, stdout} = await @docker.run
-        cmd: "/bin/echo 'test'"
+        command: "/bin/echo 'test'"
         image: 'alpine'
       status.should.be.true()
       stdout.should.match /^test.*/
@@ -27,7 +27,7 @@ describe 'docker.run', ->
         force: true
         container: 'nikita_test_rm'
       {stdout} = await @docker.run
-        cmd: "/bin/echo 'test'"
+        command: "/bin/echo 'test'"
         image: 'alpine'
         container: 'nikita_test_rm'
         rm: false
@@ -85,12 +85,12 @@ describe 'docker.run', ->
         force: true
         container: 'nikita_test'
       @docker.run
-        cmd: 'echo test'
+        command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
         rm: false
       {status} = await @docker.run
-        cmd: "echo test"
+        command: "echo test"
         image: 'alpine'
         container: 'nikita_test'
         rm: false
@@ -108,12 +108,12 @@ describe 'docker.run', ->
         force: true
         container: 'nikita_test'
       @docker.run
-        cmd: 'echo test'
+        command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
         rm: false
       {status} = await @docker.run
-        cmd: 'echo test'
+        command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
         rm: false

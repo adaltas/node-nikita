@@ -7,30 +7,30 @@ return unless tags.posix
 
 describe 'actions.execute.wait', ->
 
-  they 'take a single cmd', ({ssh}) ->
+  they 'take a single command', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @execute.wait
-        cmd: "test -d #{tmpdir}"
+        command: "test -d #{tmpdir}"
       status.should.be.false()
       @call ->
         setTimeout ->
           nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
         , 100
       {status} = await @execute.wait
-        cmd: "test -d #{tmpdir}/a_file"
+        command: "test -d #{tmpdir}/a_file"
         interval: 60
       status.should.be.true()
 
-  they 'take a multiple cmds', ({ssh}) ->
+  they 'take a multiple commands', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @execute.wait
-        cmd: [
+        command: [
           "test -d #{tmpdir}"
           "test -d #{tmpdir}"
         ]
@@ -41,7 +41,7 @@ describe 'actions.execute.wait', ->
           nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
         , 100
       {status} = await @execute.wait
-        cmd: [
+        command: [
           "test -d #{tmpdir}/file_1"
           "test -d #{tmpdir}/file_2"
         ]
@@ -62,7 +62,7 @@ describe 'actions.execute.wait', ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
           , 200
         @execute.wait
-          cmd: "test -d #{tmpdir}/a_file"
+          command: "test -d #{tmpdir}/a_file"
           interval: 100
           log: ({log}) ->
             logs.push log if /Attempt #\d/.test log.message
@@ -75,7 +75,7 @@ describe 'actions.execute.wait', ->
       , ->
         logs = 0
         @execute.wait
-          cmd: "echo stdout; echo stderr >&2"
+          command: "echo stdout; echo stderr >&2"
           stdin_log: true
           stdout_log: true
           stderr_log: true
@@ -90,7 +90,7 @@ describe 'actions.execute.wait', ->
       , ->
         logs = 0
         @execute.wait
-          cmd: "echo stdout; echo stderr >&2"
+          command: "echo stdout; echo stderr >&2"
           stdin_log: false
           stdout_log: false
           stderr_log: false
@@ -117,7 +117,7 @@ describe 'actions.execute.wait', ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 90
         {status} = await @execute.wait
-          cmd: [
+          command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
@@ -145,7 +145,7 @@ describe 'actions.execute.wait', ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 200
         {status} = await @execute.wait
-          cmd: [
+          command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
@@ -173,7 +173,7 @@ describe 'actions.execute.wait', ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
           , 90
         {status} = await @execute.wait
-          cmd: [
+          command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"

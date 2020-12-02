@@ -65,12 +65,12 @@ info.map( (container) =>
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Ensure target container exists
       {status: exists} = await @docker.tools.execute
-        cmd: "ps -a | egrep ' #{config.container}$'"
+        command: "ps -a | egrep ' #{config.container}$'"
         code_skipped: 1
       throw Error "Container #{JSON.stringify config.container} does not exists" unless exists
       # Get information
       {stdout: info} = await @docker.tools.execute
-        cmd: [
+        command: [
           'inspect'
           "#{config.container}"
         ].join ' '

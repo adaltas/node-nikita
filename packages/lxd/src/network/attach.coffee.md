@@ -39,7 +39,7 @@ console.info(`Network was attached: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
       #Build command
-      cmd_attach = [
+      command_attach = [
         'lxc'
         'network'
         'attach'
@@ -48,9 +48,9 @@ console.info(`Network was attached: ${status}`)
       ].join ' '
       #Execute
       @execute
-        cmd: """
+        command: """
         lxc config device list #{config.container} | grep #{config.network} && exit 42
-        #{cmd_attach}
+        #{command_attach}
         """
         code_skipped: 42
 

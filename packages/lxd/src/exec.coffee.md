@@ -8,7 +8,7 @@ Execute command in containers.
 ```js
 const {status, stdout, stderr} = await nikita.lxd.exec({
   container: "my-container",
-  cmd: "whoami"
+  command: "whoami"
 })
 console.info(`Command was executed: ${status}`)
 console.info(stdout)
@@ -25,24 +25,24 @@ console.info(stdout)
       properties:
         'container':
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'cmd':
+        'command':
           type: 'string'
           description: """
           The command to execute.
           """
         'trap':
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/trap'
-      required: ['container', 'cmd']
+      required: ['container', 'command']
 
 ## Handler
 
     handler =  ({config}) ->
       # log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
       @execute config, trap: false,
-        cmd: [
+        command: [
           "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- bash"
           'set -e' if config.trap
-          config.cmd
+          config.command
           'NIKITALXDEXEC'
         ].join '\n'
 

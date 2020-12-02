@@ -126,7 +126,7 @@ console.info(`Repo was updated: ${status}`)
             target: "#{config.gpg_dir}/#{path.basename key}"
           {status} = await @execute
             if: status
-            cmd: "rpm --import #{config.gpg_dir}/#{path.basename key}"
+            command: "rpm --import #{config.gpg_dir}/#{path.basename key}"
       # Clean Metadata
       {status} = await @execute
         if: path.relative('/etc/yum.repos.d', config.target) isnt '..' and status
@@ -134,10 +134,10 @@ console.info(`Repo was updated: ${status}`)
         # explanation is provided in case of revert.
         # expire-cache is much faster,  It forces yum to go redownload the small
         # repo files only, then if there's newer repo data, it will downloaded it.
-        cmd: 'yum clean expire-cache; yum repolist -y'
+        command: 'yum clean expire-cache; yum repolist -y'
       if config.update and status
         await @execute
-          cmd: """
+          command: """
           yum update -y --disablerepo=* --enablerepo='#{repoids.join(',')}'
           yum repolist
           """

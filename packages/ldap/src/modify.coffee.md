@@ -133,7 +133,7 @@ console.log(`Entry modified: ${status}`)
           ldif += "#{attribute.name}: #{attribute.value}\n" if attribute.value
           ldif += '-\n'
       result = await @execute
-        cmd: [
+        command: [
           [
             'ldapmodify'
             '-c' if config.continuous

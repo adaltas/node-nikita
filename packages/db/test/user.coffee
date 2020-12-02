@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/src'
-{cmd} = require '../src/query'
+{command} = require '../src/query'
 {tags, ssh, db} = require './test'
 they = require('ssh2-they').configure ssh...
 
@@ -73,7 +73,7 @@ for engine, _ of db
           database: 'test_user_2_db'
           admin_username: 'test_user_2_user'
           admin_password: 'test_user_2_valid'
-          cmd: switch engine
+          command: switch engine
             when 'mariadb', 'mysql'
               'show tables'
             when 'postgresql'

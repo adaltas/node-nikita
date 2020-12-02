@@ -49,7 +49,7 @@ Create a user for the destination database.
       # - Postgres: "ERROR:  cannot drop the currently open database"
       # - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
       @db.query config,
-        cmd: "DROP DATABASE IF EXISTS #{config.database};"
+        command: "DROP DATABASE IF EXISTS #{config.database};"
         code_skipped: 2
         database: null
 
@@ -64,4 +64,4 @@ Create a user for the destination database.
 
 ## Dependencies
 
-    {cmd, connection_config} = require '../query'
+    {command, connection_config} = require '../query'

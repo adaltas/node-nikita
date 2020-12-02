@@ -9,7 +9,7 @@ describe 'krb5.execute', ->
 
   describe 'schema', ->
 
-    it 'admin and cmd must be provided', ->
+    it 'admin and command must be provided', ->
       nikita
       .krb5.execute {}
       .should.be.rejectedWith
@@ -18,7 +18,7 @@ describe 'krb5.execute', ->
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors where found in the configuration of action `krb5.execute`:'
           '#/required config should have required property \'admin\';'
-          '#/required config should have required property \'cmd\'.'
+          '#/required config should have required property \'command\'.'
         ].join ' '
 
   describe 'action', ->
@@ -29,16 +29,16 @@ describe 'krb5.execute', ->
         krb5: admin: krb5
       , ->
         {stdout} = await @krb5.execute
-          cmd: 'listprincs'
+          command: 'listprincs'
         stdout.should.containEql 'kadmin/admin'
 
-    they 'option cmd', ({ssh}) ->
+    they 'option command', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         {stdout} = await @krb5.execute
           admin: krb5
-          cmd: 'listprincs'
+          command: 'listprincs'
         stdout.should.containEql 'kadmin/admin'
 
     they 'config grep with string', ({ssh}) ->
@@ -47,12 +47,12 @@ describe 'krb5.execute', ->
       , ->
         {status} = await @krb5.execute
           admin: krb5
-          cmd: 'listprincs'
+          command: 'listprincs'
           grep: krb5.principal
         status.should.be.true()
         {status} = await @krb5.execute
           admin: krb5
-          cmd: 'listprincs'
+          command: 'listprincs'
           grep: "missing string"
         status.should.be.false()
 
@@ -62,12 +62,12 @@ describe 'krb5.execute', ->
       , ->
         {status, stdout} = await @krb5.execute
           admin: krb5
-          cmd: 'listprincs'
+          command: 'listprincs'
           grep: /^.*@.*$/
         status.should.be.true()
         {status, stdout} = await @krb5.execute
           admin: krb5
-          cmd: 'listprincs'
+          command: 'listprincs'
           grep: /^.*missing.*$/
         status.should.be.false()
         

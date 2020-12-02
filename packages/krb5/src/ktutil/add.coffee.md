@@ -68,10 +68,10 @@ console.info(`Keytab was created or modified: ${status}`)
       entries = []
       princ_entries = []
       princ = {}
-      cmd = null
+      command = null
       # Get keytab entries
       {status, stdout, code} = await @execute
-        cmd: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
+        command: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
         code_skipped: 1
         shy: true
       if status
@@ -90,7 +90,7 @@ console.info(`Keytab was created or modified: ${status}`)
       # Get principal information and compare to keytab entries kvnos
       {status, stdout} = await @krb5.execute
         admin: config.admin
-        cmd: "getprinc -terse #{config.principal}"
+        command: "getprinc -terse #{config.principal}"
         shy: true
       if status
         values = utils.string.lines(stdout)[1]
@@ -101,38 +101,38 @@ console.info(`Keytab was created or modified: ${status}`)
         kvno = parseInt values[8], 10
         princ = mdate: mdate, kvno: kvno
       # read keytab and check kvno validities
-      cmd = null
+      command = null
       tmp_keytab = "#{config.keytab}.tmp_nikita_#{Date.now()}"
       for enctype in config.enctypes
         entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
         #entries.filter( (entry) -> entry.enctype is enctype).length is 1
-        # add_entry_cmd = "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
+        # add_entry_command = "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
         if entry? and (entry?.kvno isnt princ.kvno)
-          cmd ?= "echo -e 'rkt #{config.keytab}\n"
+          command ?= "echo -e 'rkt #{config.keytab}\n"
           # remove entry if kvno not identical
           log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
-          cmd += "delete_entry #{entry?.slot}\n"
+          command += "delete_entry #{entry?.slot}\n"
       if entries.length > princ_entries.length
-        if cmd?
+        if command?
           await @execute
-            cmd: cmd + "wkt #{tmp_keytab}\nquit\n' | ktutil"
-        if cmd?
+            command: command + "wkt #{tmp_keytab}\nquit\n' | ktutil"
+        if command?
           await @fs.move
             source: tmp_keytab
             target: config.keytab
-      if (entries.length is princ_entries.length) and cmd?
+      if (entries.length is princ_entries.length) and command?
         await @fs.remove
           target: config.keytab
       # write entries in keytab
-      cmd = null
+      command = null
       for enctype in config.enctypes
         entry = if princ_entries.filter( (entry) -> entry.enctype is enctype).length is 1 then entries.filter( (entry) -> entry.enctype is enctype)[0] else null
         if (entry?.kvno isnt princ.kvno) or !entry?
-          cmd ?= "echo -e '"
-          cmd += "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
-      if cmd?
+          command ?= "echo -e '"
+          command += "add_entry -password -p #{config.principal} -k #{princ.kvno} -e #{enctype}\n#{config.password}\n"
+      if command?
         await @execute
-          cmd: cmd + "wkt #{config.keytab}\n' | ktutil"
+          command: command + "wkt #{config.keytab}\n' | ktutil"
       # Keytab ownership and permissions
       if config.uid? or config.gid?
         await @fs.chown

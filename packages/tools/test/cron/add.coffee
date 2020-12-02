@@ -23,7 +23,7 @@ describe 'tools.cron.add', ->
       nikita
       .service 'cronie'
       .tools.cron.add
-        cmd: '/remove/me'
+        command: '/remove/me'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -36,7 +36,7 @@ describe 'tools.cron.add', ->
       nikita
       .service 'cronie'
       .tools.cron.add
-        cmd: '/remove/me'
+        command: '/remove/me'
         when: true
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -46,7 +46,7 @@ describe 'tools.cron.add', ->
           '#/properties/when/type config.when should be string, type is "string".'
         ].join ' '
 
-    it 'invalid job: no cmd', ->
+    it 'invalid job: no command', ->
       nikita
       .service 'cronie'
       .tools.cron.add
@@ -56,21 +56,21 @@ describe 'tools.cron.add', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/required config should have required property \'cmd\'.'
+          '#/required config should have required property \'command\'.'
         ].join ' '
 
-    it 'invalid job: invalid cmd', ->
+    it 'invalid job: invalid command', ->
       nikita
       .service 'cronie'
       .tools.cron.add
-        cmd: ''
+        command: ''
         when: '1 2 3 4 5'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/properties/cmd/minLength config.cmd should NOT be shorter than 1 characters, limit is 1.'
+          '#/properties/command/minLength config.command should NOT be shorter than 1 characters, limit is 1.'
         ].join ' '
 
   describe 'action', ->
@@ -83,15 +83,15 @@ describe 'tools.cron.add', ->
       , ->
         @service 'cronie'
         {status} = await @tools.cron.add
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         status.should.be.true()
         {status} = await @tools.cron.add
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         status.should.be.false()
         @tools.cron.remove
-          cmd: "/bin/true #{rand}/toto - *.mp3"
+          command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
 
     describe 'match', ->
@@ -102,12 +102,12 @@ describe 'tools.cron.add', ->
         , ->
           @service 'cronie'
           {status} = await @tools.cron.add
-            cmd: "/bin/true #{rand}"
+            command: "/bin/true #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
           status.should.be.true()
           {status} = await @tools.cron.add
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: /.*bin.*/
             diff: (diff) ->
@@ -117,12 +117,12 @@ describe 'tools.cron.add', ->
               ]
           status.should.be.true()
           {status} = await @tools.cron.add
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: /.*bin.*/
           status.should.be.false()
           @tools.cron.remove
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
 
       they 'string', ({ssh}) ->
@@ -131,12 +131,12 @@ describe 'tools.cron.add', ->
         , ->
           @service 'cronie'
           {status} = await @tools.cron.add
-            cmd: "/bin/true #{rand}"
+            command: "/bin/true #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
           status.should.be.true()
           {status} = await @tools.cron.add
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
             diff: (diff) ->
@@ -146,23 +146,23 @@ describe 'tools.cron.add', ->
               ]
           status.should.be.true()
           {status} = await @tools.cron.add
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
           status.should.be.false()
           @tools.cron.remove
-            cmd: "/bin/false #{rand}"
+            command: "/bin/false #{rand}"
             when: '0 * * * *'
 
     describe 'error', ->
 
-      they 'invalid job: invalid cmd to exec', ({ssh}) ->
+      they 'invalid job: invalid command to exec', ({ssh}) ->
         nikita
           ssh: ssh
         , ->
           @service 'cronie'
           @tools.cron.add
-            cmd: 'azertyytreza'
+            command: 'azertyytreza'
             when: '1 2 3 4 5'
             exec: true
           .should.be.rejectedWith

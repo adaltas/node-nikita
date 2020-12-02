@@ -46,7 +46,7 @@ describe 'krb5.ticket', ->
           password: 'myprecious'
         status.should.be.false()
         await @execute
-          cmd: 'klist -s'
+          command: 'klist -s'
 
     they 'create a new ticket with a keytab', ({ssh}) ->
       nikita
@@ -70,4 +70,4 @@ describe 'krb5.ticket', ->
           keytab: "#{tmpdir}/nikita.keytab"
         status.should.be.false()
         await @execute
-          cmd: 'klist -s'
+          command: 'klist -s'

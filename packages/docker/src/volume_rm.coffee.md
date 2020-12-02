@@ -43,7 +43,7 @@ console.info(`Volume was removed: ${status}`)
       # Validation
       throw Error "Missing required option name" unless config.name
       @docker.tools.execute
-        cmd: "volume rm #{config.name}"
+        command: "volume rm #{config.name}"
         code: 0
         code_skipped: 1
 

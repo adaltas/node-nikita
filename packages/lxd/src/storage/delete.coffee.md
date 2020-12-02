@@ -35,7 +35,7 @@ console.info(`Storage was deleted: ${status}`)
 
     handler = ({config}) ->
       # log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
-      cmd_delete = [
+      command_delete = [
         'lxc'
         'storage'
         'delete'
@@ -43,9 +43,9 @@ console.info(`Storage was deleted: ${status}`)
       ].join ' '
       #Execute
       @execute
-        cmd: """
+        command: """
         lxc storage list | grep #{config.name} || exit 42
-        #{cmd_delete}
+        #{command_delete}
         """
         code_skipped: 42
 

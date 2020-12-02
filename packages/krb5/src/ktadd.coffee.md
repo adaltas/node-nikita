@@ -56,7 +56,7 @@ console.info(`keytab was created or updated: ${status}`)
       princ = {} # {kvno: null, mdate: null}
       # Get keytab information
       {status, stdout} = await @execute
-        cmd: "export TZ=GMT; klist -kt #{config.keytab}"
+        command: "export TZ=GMT; klist -kt #{config.keytab}"
         code_skipped: 1
         shy: true
       if status
@@ -73,7 +73,7 @@ console.info(`keytab was created or updated: ${status}`)
       if keytab[config.principal]?
         {status, stdout} = await @krb5.execute
           admin: config.admin
-          cmd: "getprinc -terse #{config.principal}"
+          command: "getprinc -terse #{config.principal}"
           shy: true
         if status
           # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
@@ -90,7 +90,7 @@ console.info(`keytab was created or updated: ${status}`)
       if keytab[config.principal]? and (keytab[config.principal]?.kvno isnt princ.kvno or keytab[config.principal].mdate isnt princ.mdate)
         await @krb5.execute
           admin: config.admin
-          cmd: "ktremove -k #{config.keytab} #{config.principal}"
+          command: "ktremove -k #{config.keytab} #{config.principal}"
       # Create keytab and add principal
       if not keytab[config.principal]? or (keytab[config.principal]?.kvno isnt princ.kvno or keytab[config.principal].mdate isnt princ.mdate)
         await @fs.mkdir
@@ -98,7 +98,7 @@ console.info(`keytab was created or updated: ${status}`)
       if not keytab[config.principal]? or (keytab[config.principal]?.kvno isnt princ.kvno or keytab[config.principal].mdate isnt princ.mdate)
         await @krb5.execute
           admin: config.admin
-          cmd: "ktadd -k #{config.keytab} #{config.principal}"
+          command: "ktadd -k #{config.keytab} #{config.principal}"
       # Keytab ownership and permissions
       if config.uid? or config.gid?
         await @fs.chown

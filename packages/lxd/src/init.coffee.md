@@ -91,7 +91,7 @@ now.
 
     handler = ({config}) ->
       # log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-      cmd_init = [
+      command_init = [
         'lxc', 'init', config.image, config.container
         "--network #{config.network}" if config.network
         "--storage #{config.storage}" if config.storage
@@ -102,10 +102,10 @@ now.
       ].join ' '
       # Execution
       @execute
-        cmd: """
+        command: """
         lxc remote get-default
         lxc info #{config.container} >/dev/null && exit 42
-        echo '' | #{cmd_init}
+        echo '' | #{command_init}
         """
         code_skipped: 42
 

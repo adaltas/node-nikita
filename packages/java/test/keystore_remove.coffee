@@ -73,7 +73,7 @@ describe 'java.keystore_remove', ->
           caname: "#{caname}"
         status.should.be.false()
         await @execute
-          cmd: """
+          command: """
           keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{caname}
           """
           code: 1
@@ -112,7 +112,7 @@ describe 'java.keystore_remove', ->
           keypass: "#{keypass}"
         status.should.be.false()
         await @execute
-          cmd: """
+          command: """
           keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{name}
           """
           code: 1

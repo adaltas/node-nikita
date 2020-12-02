@@ -12,7 +12,7 @@ describe 'actions.execute.config.sudo', ->
       ssh: ssh
     , ->
       @execute.assert
-        cmd: 'whoami'
+        command: 'whoami'
         content: 'root'
         sudo: true
         trim: true

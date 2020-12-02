@@ -7,7 +7,7 @@ Execute a Kerberos command.
 
 ```js
 const {status} = await nikita.krb5.exec({
-  cmd: 'listprincs'
+  command: 'listprincs'
 })
 console.info(`Command was executed: ${status}`)
 ```
@@ -46,7 +46,7 @@ console.info(`Command was executed: ${status}`)
               description: """
               Password associated to the KAdmin principal.
               """
-        'cmd':
+        'command':
           type: 'string'
           description: """
           """
@@ -58,16 +58,16 @@ console.info(`Command was executed: ${status}`)
           description: """
           Ensure the execute output match a string or a regular expression.
           """
-      required: ['admin', 'cmd']
+      required: ['admin', 'command']
 
 ## Handler
 
     handler = ({config}) ->
       realm = if config.admin.realm then "-r #{config.admin.realm}" else ''
       {stdout} = await @execute
-        cmd: if config.admin.principal
-        then "kadmin #{realm} -p #{config.admin.principal} -s #{config.admin.server} -w #{config.admin.password} -q '#{config.cmd}'"
-        else "kadmin.local #{realm} -q '#{config.cmd}'"
+        command: if config.admin.principal
+        then "kadmin #{realm} -p #{config.admin.principal} -s #{config.admin.server} -w #{config.admin.password} -q '#{config.command}'"
+        else "kadmin.local #{realm} -q '#{config.command}'"
       if config.grep and typeof config.grep is 'string'
         return stdout: stdout, status: stdout.split('\n').some (line) -> line is config.grep
       if config.grep and utils.regexp.is config.grep

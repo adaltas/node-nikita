@@ -48,7 +48,7 @@ console.info(`Package was uninstalled: ${status}`)
       # Get installed packages
       installed = []
       {stdout} = await @execute
-        cmd: "npm list --json #{global}"
+        command: "npm list --json #{global}"
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
@@ -59,7 +59,7 @@ console.info(`Package was uninstalled: ${status}`)
       uninstall = config.name.filter (pkg) -> pkg in installed
       if uninstall.length
         await @execute
-          cmd: "npm uninstall #{global} #{uninstall.join ' '}"
+          command: "npm uninstall #{global} #{uninstall.join ' '}"
           cwd: config.cwd
           sudo: config.sudo
         log message: "NPM uninstalled packages: #{uninstall.join ', '}"

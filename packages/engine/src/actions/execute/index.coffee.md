@@ -44,7 +44,7 @@ the command is considered successfull but without any impact.
 ```js
 const {status} = await nikita.execute({
   ssh: ssh,
-  cmd: 'useradd myfriend',
+  command: 'useradd myfriend',
   code_skipped: 9
 })
 console.info(`User was created: ${status}`)
@@ -55,7 +55,7 @@ console.info(`User was created: ${status}`)
 ```js
 const {stdout} = await nikita.execute({
   bash: true,
-  cmd: 'env'
+  command: 'env'
 })
 console.info(stdout)
 ```
@@ -63,7 +63,7 @@ console.info(stdout)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.cmd = metadata.argument if metadata.argument?
+      config.command = metadata.argument if metadata.argument?
       config.code = [config.code] if config.code? and not Array.isArray config.code
       config.code_skipped = [config.code_skipped] if config.code_skipped? and not Array.isArray config.code_skipped
 
@@ -89,7 +89,7 @@ console.info(stdout)
           Path to the mount point corresponding to the root directory, required
           if the "arch_chroot" option is activated.
           """
-        'cmd':
+        'command':
           oneOf: [{type: 'string'}, typeof: 'function']
           description: """
           String, Object or array; Command to execute. A value provided as a
@@ -181,8 +181,8 @@ console.info(stdout)
         'stderr':
           instanceof: 'Object' # must be `stream.Writable`
           description: """
-          Writable EventEmitter in which the standard error output of executed command
-          will be piped.
+          Writable EventEmitter in which the standard error output of executed
+          command will be piped.
           """
         'stderr_return':
           type: 'boolean'
@@ -196,7 +196,8 @@ console.info(stdout)
           type: 'boolean'
           default: true
           description: """
-          Pass stdout output to the logs of type "stdout_stream", default is `true`.
+          Pass stdout output to the logs of type "stdout_stream", default is
+          `true`.
           """
         'stderr_trim':
           type: 'boolean'
@@ -216,7 +217,7 @@ console.info(stdout)
           Temporary path storing the script, only apply with the `bash` and
           `arch_chroot` properties, always disposed once executed. Unless
           provided, the default location is `{metadata.tmpdir}/{string.hash
-          config.cmd}`. See the `tmpdir` plugin for additionnal information.
+          config.command}`. See the `tmpdir` plugin for additionnal information.
           """
         'trap':
           type: 'boolean'
@@ -229,21 +230,21 @@ console.info(stdout)
           description: """
           Unix user id.
           """
-      required: ['cmd']
+      required: ['command']
           
 ## Handler
 
     handler = ({config, metadata, tools: {find, log, path}, ssh}) ->
       # Validate parameters
       config.mode ?= 0o500
-      config.cmd = await @call config: config, config.cmd if typeof config.cmd is 'function'
+      config.command = await @call config: config, config.command if typeof config.command is 'function'
       config.bash = 'bash' if config.bash is true
       config.arch_chroot = 'arch-chroot' if config.arch_chroot is true
-      config.cmd = "set -e\n#{config.cmd}" if config.cmd and config.trap
-      config.cmd_original = "#{config.cmd}"
+      config.command = "set -e\n#{config.command}" if config.command and config.trap
+      config.command_original = "#{config.command}"
       sudo = await find ({config: {sudo}}) -> sudo
       dry = await find ({config: {dry}}) -> dry
-      # throw Error "Required Option: the \"cmd\" option is not provided" unless config.cmd?
+      # throw Error "Required Option: the \"command\" option is not provided" unless config.command?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
       # Guess current username
@@ -265,35 +266,35 @@ console.info(stdout)
         config.bash = 'bash' unless config.bash or config.arch_chroot
       # Write script
       if config.bash
-        cmd = config.cmd
-        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.cmd}" if typeof config.target isnt 'string'
+        command = config.command
+        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
         log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
-        config.cmd = "#{config.bash} #{config.target}"
-        config.cmd = "su - #{config.uid} -c '#{config.cmd}'" if config.uid
-        config.cmd += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
+        config.command = "#{config.bash} #{config.target}"
+        config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
+        config.command += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
           target: config.target
-          content: cmd
+          content: command
           uid: config.uid
           mode: config.mode
           sudo: false
       if config.arch_chroot
-        cmd = config.cmd
-        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.cmd}" if typeof config.target isnt 'string'
+        command = config.command
+        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
         log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
-        config.cmd = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
-        config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
+        config.command = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
+        config.command += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
           target: "#{path.join config.rootdir, config.target}"
-          content: "#{cmd}"
+          content: "#{command}"
           mode: config.mode
           sudo: false
       if sudo
-        config.cmd = "sudo #{config.cmd}"
+        config.command = "sudo #{config.command}"
       # Execute
       new Promise (resolve, reject) =>
-        log message: config.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
-        result = stdout: [], stderr: [], code: null, status: false, command: config.cmd_original
+        log message: config.command_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
+        result = stdout: [], stderr: [], code: null, status: false, command: config.command_original
         return resolve result if config.dry
         child = exec config, ssh: ssh
         config.stdin.pipe child.stdin if config.stdin
@@ -349,7 +350,7 @@ console.info(stdout)
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
               return reject utils.error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
-                "command is #{JSON.stringify utils.string.max config.cmd_original, 50},"
+                "command is #{JSON.stringify utils.string.max config.command_original, 50},"
                 "got #{JSON.stringify result.code}"
                 if config.code.length is 1
                 then "instead of #{config.code}."

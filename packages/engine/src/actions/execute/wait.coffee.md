@@ -9,7 +9,7 @@ change had occured. Otherwise it will be set to "true".
 
 ```js
 const {status} = await nikita.execute.wait({
-  cmd: "test -f /tmp/sth"
+  command: "test -f /tmp/sth"
 })
 console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 ```
@@ -24,7 +24,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
           description: """
           Number of minimal successful connection, 50%+1 if "true".
           """
-        'cmd':
+        'command':
           oneOf: [
             type: 'string'
           ,
@@ -70,27 +70,27 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stdout_log'
         'stderr_log':
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stderr_log'
-      required: ['cmd']
+      required: ['command']
 
 ## Handler
 
     handler = ({config, tools: {log}}) ->
       # Validate parameters
-      config.cmd = [config.cmd] unless Array.isArray config.cmd
+      config.command = [config.command] unless Array.isArray config.command
       if config.quorum and config.quorum is true
-        config.quorum = Math.ceil config.cmd.length / 2
+        config.quorum = Math.ceil config.command.length / 2
       else unless config.quorum?
-        config.quorum = config.cmd.length
+        config.quorum = config.command.length
       quorum_current = 0
       modified = false
-      for cmd in config.cmd
+      for command in config.command
         count = 0
         break if quorum_current >= config.quorum
         run = =>
           count++
           log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/lib/wait/execute'
           {status} = await @execute
-            cmd: cmd
+            command: command
             code: config.code or 0
             code_skipped: config.code_skipped
             stdin_log: config.stdin_log
@@ -113,7 +113,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        argument: 'cmd'
+        argument: 'command'
       schema: schema
 
 ## Dependencies

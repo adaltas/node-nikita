@@ -32,7 +32,7 @@ nikita
     @lxd.exec
       header: 'Node.js'
       container: config.container
-      cmd: """
+      command: """
       command -v node && exit 42
       NPM_CONFIG_LOGLEVEL=info
       NODE_VERSION=12.13.1
@@ -46,7 +46,7 @@ nikita
     @lxd.exec
       header: 'Ruby'
       container: config.container
-      cmd: """
+      command: """
       yum install -y gcc ruby ruby-devel
       """
       trap: true
@@ -61,7 +61,7 @@ nikita
     @lxd.exec
       header: 'Root SSH dir'
       container: config.container
-      cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
+      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
       container: config.container

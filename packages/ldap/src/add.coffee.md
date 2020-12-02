@@ -109,7 +109,7 @@ console.info(`Entry modified: ${status}`)
             ldif += "#{k}: #{vv}\n"
       {stdout, stderr} = await @execute
         if: ldif isnt ''
-        cmd: [
+        command: [
           [
             'ldapmodify'
             '-c' if config.continuous

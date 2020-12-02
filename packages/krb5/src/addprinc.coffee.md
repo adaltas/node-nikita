@@ -69,13 +69,13 @@ console.info(`Principal was created or modified: ${status}`)
       # Start execution
       {status} = await @krb5.execute
         admin: config.admin
-        cmd: "getprinc #{config.principal}"
+        command: "getprinc #{config.principal}"
         grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
         shy: true
       unless status
         await @krb5.execute
           admin: config.admin
-          cmd: if config.password
+          command: if config.password
           then "addprinc -pw #{config.password} #{config.principal}"
           else "addprinc -randkey #{config.principal}"
           retry: 3
@@ -84,7 +84,7 @@ console.info(`Principal was created or modified: ${status}`)
         await @krb5.execute
           unless_execute: "if ! echo #{config.password} | kinit '#{config.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi"
           admin: config.admin
-          cmd: "cpw -pw #{config.password} #{config.principal}"
+          command: "cpw -pw #{config.password} #{config.principal}"
           retry: 3
       return unless !!config.keytab
       @krb5.ktadd config

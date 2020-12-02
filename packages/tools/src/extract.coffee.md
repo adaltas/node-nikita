@@ -112,16 +112,16 @@ console.info(`File was extracted: ${status}`)
       {stats} = await @fs.base.stat target: config.source
       throw Error "Not a File: #{config.source}" unless utils.stats.isFile stats.mode
       # Extract the source archive
-      cmd = null
+      command = null
       log message: "Format is #{format}", level: 'DEBUG', module: 'nikita/lib/tools/extract'
       switch format
-        when 'tgz' then cmd = "tar xzf #{config.source} -C #{target} #{tar_opts.join ' '}"
-        when 'tar' then cmd = "tar xf #{config.source} -C #{target} #{tar_opts.join ' '}"
-        when 'bz2' then cmd = "tar xjf #{config.source} -C #{target} #{tar_opts.join ' '}"
-        when 'xz'  then cmd = "tar xJf #{config.source} -C #{target} #{tar_opts.join ' '}"
-        when 'zip' then cmd = "unzip -u #{config.source} -d #{target}"
+        when 'tgz' then command = "tar xzf #{config.source} -C #{target} #{tar_opts.join ' '}"
+        when 'tar' then command = "tar xf #{config.source} -C #{target} #{tar_opts.join ' '}"
+        when 'bz2' then command = "tar xjf #{config.source} -C #{target} #{tar_opts.join ' '}"
+        when 'xz'  then command = "tar xJf #{config.source} -C #{target} #{tar_opts.join ' '}"
+        when 'zip' then command = "unzip -u #{config.source} -d #{target}"
       ouptut = await @execute
-        cmd: cmd
+        command: command
       # Assert the target creation
       if config.creates
         await @fs.assert

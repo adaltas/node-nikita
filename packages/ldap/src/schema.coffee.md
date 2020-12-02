@@ -67,7 +67,7 @@ console.info(`Schema created or modified: ${status}`)
       conf = "#{tmpdir}/schema.conf"
       ldif = "#{tmpdir}/ldif"
       {status} = await @execute
-        cmd: """
+        command: """
         ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" \
         | grep -E cn=\\{[0-9]+\\}#{config.name},cn=schema,cn=config
         """
@@ -86,7 +86,7 @@ console.info(`Schema created or modified: ${status}`)
         target: conf
       log message: 'Configuration generated', level: 'DEBUG'
       await @execute
-        cmd: "slaptest -f #{conf} -F #{ldif}"
+        command: "slaptest -f #{conf} -F #{ldif}"
       log message: 'Configuration validated', level: 'DEBUG'
       {status} = await @fs.move
         source: "#{ldif}/cn=config/cn=schema/cn={0}#{config.name}.ldif"
@@ -126,7 +126,7 @@ console.info(`Schema created or modified: ${status}`)
         ]
       log message: 'File ldif ready', level: 'DEBUG'
       @execute
-        cmd: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
+        command: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
       log message: "Schema added: #{config.name}", level: 'INFO'
 
 ## Exports

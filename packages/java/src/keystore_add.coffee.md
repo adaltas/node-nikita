@@ -172,7 +172,7 @@ default location of the Oracle JDK installation.
       try if !!config.cert
         await @execute
           bash: true
-          cmd: """
+          command: """
           cleanup () {
             [ -n "#{if config.cacert then '1' else ''}" ] || rm -rf #{tmpdir};
           }
@@ -214,7 +214,7 @@ default location of the Oracle JDK installation.
       try if config.cacert
         await @execute
           bash: true
-          cmd: """
+          command: """
           # cleanup () { rm -rf #{tmpdir}; }
           cleanup () { echo 'clean'; }
           # Detect keytool command

@@ -60,7 +60,7 @@ describe 'krb5.kutil.add', ->
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-1'
         await @krb5.execute
-          cmd: """
+          command: """
           change_password -pw nikita123-2 nikita@#{krb5.realm}
           """
         {status} = await @krb5.ktutil.add

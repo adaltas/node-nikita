@@ -94,7 +94,7 @@ console.info(`Container was copied: ${status}`)
         target: target_path
         if: target_mkdir
       @docker.tools.execute
-        cmd: "cp #{config.source} #{config.target}"
+        command: "cp #{config.source} #{config.target}"
 
 ## Exports
 

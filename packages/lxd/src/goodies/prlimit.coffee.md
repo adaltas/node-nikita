@@ -37,7 +37,7 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
       # log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
       try
         {stdout} = await @execute
-          cmd: """
+          command: """
           command -p prlimit || exit 3
           sudo prlimit -p $(lxc info #{config.container} | awk '$1==\"Pid:\"{print $2}')
           """

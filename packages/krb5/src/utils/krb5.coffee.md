@@ -3,13 +3,13 @@
 
     module.exports = krb5 =
       kinit: (config) ->
-        cmd = "kinit"
+        command = "kinit"
         if config.keytab is true then " -k"
-        else if config.keytab and typeof config.keytab is 'string' then cmd += " -kt #{config.keytab}"
-        else if config.password then cmd = "echo #{config.password} | #{cmd}"
+        else if config.keytab and typeof config.keytab is 'string' then command += " -kt #{config.keytab}"
+        else if config.password then command = "echo #{config.password} | #{command}"
         else throw Error "Incoherent config: expects one of keytab or password"
-        cmd += " #{config.principal}"
-        cmd = krb5.su config, cmd
-      su: (config, cmd) ->
-        cmd = "su - #{config.uid} -c '#{cmd}'" if config.uid
-        cmd
+        command += " #{config.principal}"
+        command = krb5.su config, command
+      su: (config, command) ->
+        command = "su - #{config.uid} -c '#{command}'" if config.uid
+        command

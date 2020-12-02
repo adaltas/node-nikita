@@ -93,7 +93,7 @@ Create and start containers according to a docker-compose file
         target: config.target
         content: config.content
       {status, stdout} = await @docker.tools.execute
-        cmd: "--file #{config.target} ps -q | xargs docker #{docker.opts config} inspect"
+        command: "--file #{config.target} ps -q | xargs docker #{docker.opts config} inspect"
         compose: true
         cwd: config.cwd
         uid: config.uid
@@ -109,7 +109,7 @@ Create and start containers according to a docker-compose file
       try
         await @docker.tools.execute
           if: config.force or status
-          cmd: [
+          command: [
             "--file #{config.target} up"
             '-d' if config.detached
             '--force-recreate' if config.force

@@ -58,7 +58,7 @@ console.info(`Container was started: ${status}`)
       else log message: "Starting container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/start'
       @docker.tools.execute
         unless: status
-        cmd: [
+        command: [
           'start'
           '-a' if config.attach
           "#{config.container}"

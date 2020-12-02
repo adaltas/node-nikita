@@ -22,7 +22,7 @@ Remove a user for the destination database.
 
     handler = ({config}) ->
       @db.query config,
-        cmd: "DROP USER IF EXISTS #{config.username};"
+        command: "DROP USER IF EXISTS #{config.username};"
 
 ## Exports
 
@@ -35,4 +35,4 @@ Remove a user for the destination database.
 
 ## Dependencies
 
-    {cmd} = require '../query'
+    {command} = require '../query'

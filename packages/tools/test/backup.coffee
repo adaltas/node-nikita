@@ -51,7 +51,7 @@ describe 'tools.backup', ->
           target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
 
-  describe 'cmd', ->
+  describe 'command', ->
 
     they 'pipe to a file', ({ssh}) ->
       nikita
@@ -60,7 +60,7 @@ describe 'tools.backup', ->
       , ({metadata: {tmpdir}}) ->
         {status, filename} = await @tools.backup
           name: 'my_backup'
-          cmd: "echo hello"
+          command: "echo hello"
           target: "#{tmpdir}/backup"
         status.should.be.true()
         @fs.assert

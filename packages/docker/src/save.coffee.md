@@ -69,7 +69,7 @@ console.info(`Container was saved: ${status}`)
       # Saves image to local tmp path, than copy it
       log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO', module: 'nikita/lib/docker/save'
       @docker.tools.execute
-        cmd: [
+        command: [
           "save -o #{config.output} #{config.image}"
           ":#{config.tag}" if config.tag?
         ].join ''

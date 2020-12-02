@@ -7,7 +7,7 @@ Register a job on crontab.
 
 ```js
 const {status} = await nikita.cron.add({
-  cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
+  command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *',
   user: 'service'
 })
@@ -19,7 +19,7 @@ console.info(`Cron entry created or modified: ${status}`)
     schema =
       type: 'object'
       properties:
-        'cmd':
+        'command':
           type: 'string'
           minLength: 1
           description: """
@@ -28,7 +28,7 @@ console.info(`Cron entry created or modified: ${status}`)
         'exec':
           type: 'boolean'
           description: """
-          If true, then cmd will be executed just after if added to crontab.
+          If true, then command will be executed just after if added to crontab.
           """
         'match':
           oneOf: [
@@ -50,7 +50,7 @@ console.info(`Cron entry created or modified: ${status}`)
           description: """
           Cron-styled time string. Defines the frequency of the cron job.
           """
-      required: ['cmd', 'when']
+      required: ['command', 'when']
 
 ## Handler
 
@@ -63,13 +63,13 @@ console.info(`Cron entry created or modified: ${status}`)
         crontab = "crontab"
       jobs = []
       {stdout, stderr} = await @execute
-        cmd: "#{crontab} -l"
+        command: "#{crontab} -l"
         code: [0, 1]
       # throw Error 'User crontab not found' if /^no crontab for/.test stderr
-      new_job = "#{config.when} #{config.cmd}"
+      new_job = "#{config.when} #{config.command}"
       # remove useless last element
       regex =
-        unless config.match then new RegExp ".* #{utils.regexp.escape config.cmd}"
+        unless config.match then new RegExp ".* #{utils.regexp.escape config.command}"
         else if typeof config.match is 'string' then new RegExp config.match
         else if util.isRegExp config.match then config.match
         else throw Error "Invalid option 'match'"
@@ -91,9 +91,9 @@ console.info(`Cron entry created or modified: ${status}`)
       return status: false unless jobs
       if config.exec
         await @execute
-          cmd: if config.user? then "su -l #{config.user} -c '#{config.cmd}'" else config.cmd
+          command: if config.user? then "su -l #{config.user} -c '#{config.command}'" else config.command
       @execute
-        cmd: """
+        command: """
         #{crontab} - <<EOF
         #{if jobs then jobs.join '\n', '\nEOF' else 'EOF'}
         """

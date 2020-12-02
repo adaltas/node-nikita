@@ -8,7 +8,7 @@ return unless tags.lxd
 before () ->
   await nikita
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.config.set', ->
 
@@ -32,11 +32,11 @@ describe 'lxd.config.set', ->
       await @lxd.start
         container: 'c1'
       {stdout} = await @execute
-        cmd: "lxc exec c1 -- env | grep MY_KEY_1"
+        command: "lxc exec c1 -- env | grep MY_KEY_1"
         trim: true
       stdout.should.eql 'MY_KEY_1=my value 1'
       {stdout} = await @execute
-        cmd: "lxc exec c1 -- env | grep MY_KEY_2"
+        command: "lxc exec c1 -- env | grep MY_KEY_2"
         trim: true
       stdout.should.eql 'MY_KEY_2=my value 2'
 

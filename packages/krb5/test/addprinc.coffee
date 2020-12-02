@@ -94,7 +94,7 @@ describe 'krb5.addprinc', ->
           password_sync: false # Default
         status.should.be.false()
         await @execute
-          cmd: "echo password1 | kinit nikita@#{krb5.realm}"
+          command: "echo password1 | kinit nikita@#{krb5.realm}"
 
     they 'call function with new style', ({ssh}) ->
       user =
@@ -106,7 +106,7 @@ describe 'krb5.addprinc', ->
         krb5: admin: krb5
       , ->
         await @execute
-          cmd: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
+          command: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
         await @krb5.delprinc
           principal: user.principal
         await @krb5.delprinc
@@ -118,5 +118,5 @@ describe 'krb5.addprinc', ->
         {status} = await @krb5.addprinc user
         status.should.be.true()
         {status} = await @execute
-          cmd: "echo #{user.password} | kinit #{user.principal}"
+          command: "echo #{user.password} | kinit #{user.principal}"
         status.should.be.true()

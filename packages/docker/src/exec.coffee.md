@@ -19,7 +19,7 @@ Run a command in a running container
 ```js
 const {status} = await nikita.docker.exec({
   container: 'myContainer',
-  cmd: '/bin/bash -c "echo toto"'
+  command: '/bin/bash -c "echo toto"'
 })
 console.info(`Command was executed: ${status}`)
 ```
@@ -71,7 +71,7 @@ console.info(`Command was executed: ${status}`)
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
         'machine':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
-      required: ['container', 'cmd']
+      required: ['container', 'command']
 
 ## Handler
 
@@ -79,16 +79,16 @@ console.info(`Command was executed: ${status}`)
       log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       config.service ?= false
       # Construct exec command
-      cmd = 'exec'
+      command = 'exec'
       if config.uid?
-        cmd += " -u #{config.uid}"
-        cmd += ":#{config.gid}" if config.gid?
+        command += " -u #{config.uid}"
+        command += ":#{config.gid}" if config.gid?
       else if config.gid?
         log message: 'config.gid ignored unless config.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
-      cmd += " #{config.container} #{config.cmd}"
-      delete config.cmd
+      command += " #{config.container} #{config.command}"
+      delete config.command
       @docker.tools.execute
-        cmd: cmd
+        command: command
         code_skipped: config.code_skipped
 
 ## Exports

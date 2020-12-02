@@ -34,10 +34,10 @@ Log out from a Docker registry or the one defined by the `registry` option.
       # Validate parameters
       return callback Error 'Missing container parameter' unless config.container?
       # rm is false by default only if config.service is true
-      cmd = 'logout'
-      cmd += " \"#{config.registry}\"" if config.registry?
+      command = 'logout'
+      command += " \"#{config.registry}\"" if config.registry?
       @execute
-        cmd: docker.wrap config, cmd
+        command: docker.wrap config, command
       , docker.callback
 
 ## Exports

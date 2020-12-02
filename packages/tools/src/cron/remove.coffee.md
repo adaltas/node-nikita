@@ -7,7 +7,7 @@ Remove job(s) on crontab.
 
 ```js
 const {status} = await nikita.cron.remove({
-  cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
+  command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *',
   user: 'service'
 })
@@ -19,7 +19,7 @@ console.info(`Cron entry was removed: ${status}`)
     schema =
       type: 'object'
       properties:
-        'cmd':
+        'command':
           type: 'string'
           description: """
           The shell command of the job. By default all jobs will match.
@@ -35,7 +35,7 @@ console.info(`Cron entry was removed: ${status}`)
           Cron-styled time string. Defines the frequency of the cron job. By
           default all frequency will match.
           """
-      required: ['cmd']
+      required: ['command']
 
 ## Handler
 
@@ -49,11 +49,11 @@ console.info(`Cron entry was removed: ${status}`)
       status = false
       jobs = []
       {stdout, stderr} = await @execute
-        cmd: "#{crontab} -l"
+        command: "#{crontab} -l"
         shy: true
       throw Error 'User crontab not found' if /^no crontab for/.test stderr
       myjob = if config.when then utils.regexp.escape config.when else '.*'
-      myjob += utils.regexp.escape " #{config.cmd}"
+      myjob += utils.regexp.escape " #{config.command}"
       regex = new RegExp myjob
       jobs = stdout.trim().split '\n'
       for job, i in jobs
@@ -64,7 +64,7 @@ console.info(`Cron entry was removed: ${status}`)
       log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/tools/lib/cron/remove'
       return unless status
       @execute
-        cmd: """
+        command: """
         #{crontab} - <<EOF
         #{if jobs then jobs.join '\n', '\nEOF' else 'EOF'}
         """

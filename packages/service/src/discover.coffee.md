@@ -45,7 +45,7 @@ Store properties in the nikita state object.
         try
           data = await @execute
             shy: config.shy
-            cmd: """
+            command: """
             if command -v systemctl >/dev/null; then exit 1; fi ;
             if command -v service >/dev/null; then exit 2; fi ;
             exit 3 ;

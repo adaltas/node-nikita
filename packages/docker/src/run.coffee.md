@@ -264,18 +264,18 @@ console.info(`Container was run: ${status}`)
       # Validate parameters
       log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm
       # Construct exec command
-      cmd = 'run'
+      command = 'run'
       # Classic config
       for opt, flag of { name: '--name', hostname: '-h', cpu_shares: '-c',
       cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
       cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
       log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
       memory_swap: '--memory-swap', net: '--net', pid: '--pid', cwd: '-w'}
-        cmd += " #{flag} #{config[opt]}" if config[opt]?
-      cmd += ' -d' if config.detach # else ' -t'
+        command += " #{flag} #{config[opt]}" if config[opt]?
+      command += ' -d' if config.detach # else ' -t'
       # Flag config
       for opt, flag of { rm: '--rm', publish_all: '-P', privileged: '--privileged', read_only: '--read-only' }
-        cmd += " #{flag}" if config[opt]
+        command += " #{flag}" if config[opt]
       # Arrays config
       for opt, flag of { port:'-p', volume: '-v', device: '--device', label: '-l',
       label_file: '--label-file', expose: '--expose', env: '-e', env_file: '--env-file',
@@ -283,25 +283,25 @@ console.info(`Container was run: ${status}`)
       cap_add: '--cap-add', cap_drop: '--cap-drop', ulimit: '--ulimit', add_host: '--add-host' }
         if config[opt]?
           if typeof config[opt] is 'string' or typeof config[opt] is 'number'
-            cmd += " #{flag} #{config[opt]}"
+            command += " #{flag} #{config[opt]}"
           else if Array.isArray config[opt]
             for p in config[opt]
               if typeof p in ['string', 'number']
-                cmd += " #{flag} #{p}"
+                command += " #{flag} #{p}"
               else callback Error "Invalid parameter, '#{opt}' array should only contains string or number"
           else callback Error "Invalid parameter, '#{opt}' should be string, number or array"
-      cmd += " #{config.image}"
-      cmd += " #{config.cmd}" if config.cmd
-      # need to delete the cmd config or it will be used in docker.exec
-      # delete config.cmd
+      command += " #{config.image}"
+      command += " #{config.command}" if config.command
+      # need to delete the command config or it will be used in docker.exec
+      # delete config.command
       {status} = await @docker.tools.execute
         if: config.name?
-        cmd: "ps -a | egrep ' #{config.name}$'"
+        command: "ps -a | egrep ' #{config.name}$'"
         code_skipped: 1
         shy: true
       log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
       result = await @docker.tools.execute
-        cmd: cmd
+        command: command
         if: -> not config.name? or status is false
       log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if result.status
       result

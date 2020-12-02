@@ -35,7 +35,7 @@ Execute a docker command.
           Path to the mount point corresponding to the root directory, required
           if the "arch_chroot" option is activated.
           """
-        'cmd':
+        'command':
           oneOf: [{type: 'string'}, typeof: 'function']
           description: """
           String, Object or array; Command to execute. A value provided as a
@@ -57,7 +57,7 @@ Execute a docker command.
           Expected code(s) returned by the command, int or array of int, default
           to 0.
           """
-      required: ['cmd']
+      required: ['command']
       additionalProperties: false
     (
       schema.properties["#{property}"] =
@@ -85,7 +85,7 @@ Execute a docker command.
       bin = if config.compose then 'bin_compose' else 'bin_docker'
       try
         await @execute config,
-          cmd: """
+          command: """
           export SHELL=/bin/bash
           export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
           bin_boot2docker=$(command -v boot2docker)
@@ -104,7 +104,7 @@ Execute a docker command.
           elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
             eval "$(${bin_boot2docker} shellinit)"
           fi
-          $#{bin} #{opts} #{config.cmd}
+          $#{bin} #{opts} #{config.command}
           """
       catch err
         throw Error err.stderr.trim() if utils.string.lines(err.stderr.trim()).length is 1

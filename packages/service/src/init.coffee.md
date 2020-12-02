@@ -89,14 +89,14 @@ Reload the service daemon provider depending on the os.
       return unless config.loader is 'systemctl'
       {status} = await @execute
         shy: true
-        cmd: """
+        command: """
           systemctl status #{config.name} 2>\&1 | egrep \
           '(Reason: No such file or directory)|(Unit #{config.name}.service could not be found)|(#{config.name}.service changed on disk)'
           """
         code_skipped: 1
       return unless status
       @execute
-        cmd: 'systemctl daemon-reload;systemctl reset-failed'
+        command: 'systemctl daemon-reload;systemctl reset-failed'
 
 ## Export
 

@@ -59,7 +59,7 @@ We might think about re-integrating them.
       log message: "Status for service #{config.name}", level: 'INFO', module: 'nikita/lib/service/status'
       try
         {status} = await @execute
-          cmd: """
+          command: """
             ls \
               /lib/systemd/system/*.service \
               /etc/systemd/system/*.service \

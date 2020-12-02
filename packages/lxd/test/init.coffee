@@ -9,9 +9,9 @@ before () ->
   @timeout(-1)
   await nikita
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`:"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
   .execute
-    cmd: "lxc image copy ubuntu:default `lxc remote get-default`: --vm"
+    command: "lxc image copy ubuntu:default `lxc remote get-default`: --vm"
 
 describe 'lxd.init', ->
 

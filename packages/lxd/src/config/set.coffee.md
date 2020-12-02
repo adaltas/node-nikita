@@ -42,7 +42,7 @@ console.info(`Property was set: ${status}`)
         config.config[k] = v.toString()
       keys = {}
       {stdout} = await @execute
-        cmd: """
+        command: """
         #{[
           'lxc', 'config', 'show'
           config.container
@@ -55,7 +55,7 @@ console.info(`Property was set: ${status}`)
       # if changes is empty status is false because no command were executed
       # Note, it doesnt seem possible to set multiple keys in one command
       {status} = await @execute (
-        cmd: [
+        command: [
           'lxc', 'config', 'set'
           config.container
           key, "'#{value.replace '\'', '\\\''}'"

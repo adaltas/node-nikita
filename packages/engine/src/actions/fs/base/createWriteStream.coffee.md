@@ -93,7 +93,7 @@ console.info(`Stream was created: ${status}`)
       # Replace the target file in append or sudo mode
       if config.target_tmp
         await @execute
-          cmd: """
+          command: """
           mv '#{config.target_tmp}' '#{config.target}'
           """
 

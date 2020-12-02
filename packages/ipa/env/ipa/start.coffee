@@ -73,7 +73,7 @@ nikita
     @lxd.exec
       header: 'Node.js'
       container: options.container
-      cmd: """
+      command: """
       command -v node && exit 42
       NODE_VERSION=12.13.1
       yum install -y xz
@@ -93,7 +93,7 @@ nikita
     @lxd.exec
       header: 'Root SSH dir'
       container: options.container
-      cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
+      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
       container: options.container
@@ -108,7 +108,7 @@ nikita
       # Other possibilities to check ipa status:
       # echo > /dev/tcp/localhost/443
       # echo admin_pw | kinit admin
-      cmd: """
+      command: """
       [ -f /etc/ipa/default.conf ] && exit 42
       yum install -y freeipa-server
       hostnamectl set-hostname freeipa.nikita.local --static

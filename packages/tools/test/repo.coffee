@@ -156,7 +156,7 @@ describe 'tools.repo', ->
       @service.install
         name: 'mongodb-org-shell'
       @execute
-        cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
       {status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
@@ -178,7 +178,7 @@ describe 'tools.repo', ->
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
       status.should.be.false()
       @execute
-        cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
 
   they 'Update Package', ({ssh}) ->
     nikita
@@ -201,7 +201,7 @@ describe 'tools.repo', ->
       @service.install
         name: 'mongodb-org-shell'
       @execute
-        cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
       {status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         update: true
@@ -225,4 +225,4 @@ describe 'tools.repo', ->
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
       status.should.be.false()
       @execute
-        cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
+        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
