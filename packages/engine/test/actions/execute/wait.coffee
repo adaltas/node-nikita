@@ -51,7 +51,6 @@ describe 'actions.execute.wait', ->
   describe 'log', ->
 
     they 'attemps', ({ssh}) ->
-      logs = []
       nikita
         ssh: ssh
         tmpdir: true
@@ -67,7 +66,7 @@ describe 'actions.execute.wait', ->
           log: ({log}) ->
             logs.push log if /Attempt #\d/.test log.message
         @call ->
-          logs.length.should.be.within 2, 4
+          logs.length.should.be.within 2, 8
 
     they 'honors *_log as true', ({ssh}) ->
       nikita
