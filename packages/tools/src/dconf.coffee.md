@@ -44,13 +44,17 @@ Run the command "dconf-editor" to navigate the database with a UI.
         continue if typeof v is 'string'
         config.properties[k] = v.toString()
       # Execute
-      await @execute (
-        command: """
-        dconf read #{key} | grep -x "#{value}" && exit 3
-        dconf write #{key} "#{value}"
-        """
-        code_skipped: 3
-      ) for key, value of config.properties
+      finalStatus = false
+      for key, value of config.properties
+        {status} = await @execute
+          command: """
+          dconf read #{key} | grep -x "#{value}" && exit 3
+          dconf write #{key} "#{value}"
+          """
+          code_skipped: 3
+        finalStatus = status if status
+      status: finalStatus
+        
 
 ## Exports
 

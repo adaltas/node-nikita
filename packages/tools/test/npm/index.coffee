@@ -9,15 +9,17 @@ describe 'tools.npm', ->
 
   describe 'schema', ->
 
-    it 'name is required', ->
+    it 'name or upgrade is required', ->
       nikita
       .tools.npm {}
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action `tools.npm`:'
-          '#/required config should have required property \'name\'.'
+          'multiple errors where found in the configuration of action `tools.npm`:'
+          '#/oneOf config should match exactly one schema in oneOf, passingSchemas is null;'
+          '#/oneOf/0/required config should have required property \'name\';'
+          '#/oneOf/1/required config should have required property \'upgrade\'.'
         ].join ' '
 
   describe 'action', ->
@@ -88,7 +90,7 @@ describe 'tools.npm', ->
           name: ['coffeescript', 'csv']
         status.should.be.false()
 
-    they 'upgrade a package', ({ssh}) ->
+    they 'upgrade all outdated packages', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
@@ -98,9 +100,12 @@ describe 'tools.npm', ->
           name: 'coffeescript@2.0'
         {status} = await @tools.npm
           cwd: tmpdir
-          
           upgrade: true
         status.should.be.true()
+        {status} = await @tools.npm
+          cwd: tmpdir
+          upgrade: true
+        status.should.be.false()
 
     they 'name as argument', ({ssh}) ->
       nikita

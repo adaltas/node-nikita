@@ -43,9 +43,12 @@ console.info(`Package was installed: ${status}`)
           $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
         'upgrade':
           type: 'boolean'
-          default: false
           description: 'Upgrade all packages.'
-      required: ['name']
+      oneOf: [
+        required: ['name']
+      ,
+        required: ['upgrade']
+      ]
 
 ## Handler
 
@@ -68,6 +71,7 @@ console.info(`Package was installed: ${status}`)
           cwd: config.cwd
           sudo: config.sudo
         outdated = []
+      return unless config.name
       # Upgrade outdated packages
       upgrade = config.name.filter (pkg) -> pkg in outdated
       if upgrade.length
