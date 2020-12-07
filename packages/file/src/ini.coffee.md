@@ -129,7 +129,7 @@ console.info(`Content was updated: ${status}`)
       # log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       org_props = {}
       default_props = {}
-      parse = config.parse or ini.parse
+      parse = config.parse or utils.ini.parse
       # Original properties
       try
         {data} = await @fs.base.readFile
@@ -158,7 +158,7 @@ console.info(`Content was updated: ${status}`)
         log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
         utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
-      stringify = config.stringify or ini.stringify
+      stringify = config.stringify or utils.ini.stringify
       @file
         target: config.target
         content: stringify config.content, config
@@ -177,8 +177,5 @@ console.info(`Content was updated: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
-    ini = require './utils/ini'
+    utils = require './utils'
     {merge} = require 'mixme'
-
-[ini]: https://github.com/isaacs/ini

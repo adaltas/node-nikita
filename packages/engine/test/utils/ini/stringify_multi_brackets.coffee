@@ -1,10 +1,10 @@
 
-ini = require '../../src/misc/ini'
-{tags} = require '../test'
+ini = require '../../../src/utils/ini'
+{tags} = require '../../test'
 
 return unless tags.api
 
-describe 'misc.ini stringify_multi_brackets', ->
+describe 'utils.ini.stringify_multi_brackets', ->
 
   it 'stringify test eol', ->
     res = ini.stringify_multi_brackets

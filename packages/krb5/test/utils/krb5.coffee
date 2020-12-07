@@ -4,7 +4,7 @@ tags = require '../test'
 
 return unless tags.krb5
 
-describe 'utils krb5', ->
+describe 'utils.krb5', ->
 
   describe 'kinit', ->
 

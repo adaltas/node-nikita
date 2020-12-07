@@ -1,18 +1,18 @@
 #!/bin/bash
 
-PWD=`pwd`/`dirname ${BASH_SOURCE}`
+CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $PWD/archlinux
+cd $CWD/archlinux
 docker-compose up --abort-on-container-exit
 
-cd $PWD/centos6
+cd $CWD/centos6
 docker-compose up --abort-on-container-exit
 
-cd $PWD/centos7
+cd $CWD/centos7
 docker-compose up --abort-on-container-exit
 
-cd $PWD/systemctl
+cd $CWD/systemctl
 docker-compose up --abort-on-container-exit
 
-cd $PWD/ubuntu
+cd $CWD/ubuntu
 docker-compose up --abort-on-container-exit

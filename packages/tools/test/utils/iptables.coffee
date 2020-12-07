@@ -2,6 +2,8 @@
 iptables = require '../../src/utils/iptables'
 {tags} = require '../test'
 
+return unless tags.tools_iptables
+
 describe 'utils.iptables', ->
 
   describe 'normalize', ->

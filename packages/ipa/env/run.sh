@@ -1,9 +1,6 @@
 #!/bin/bash
 
-PWD=`pwd`/`dirname ${BASH_SOURCE}`
+CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-npx coffee $PWD/ipa/start.coffee
-lxc exec freeipa bash <<EOF
-cd /nikita/packages/ipa
-npm test
-EOF
+npx coffee $CWD/ipa/start.coffee
+lxc exec freeipa --cwd /nikita/packages/ipa npx mocha 'test/**/*.coffee'

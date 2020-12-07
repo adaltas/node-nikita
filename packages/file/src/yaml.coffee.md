@@ -157,7 +157,7 @@ console.info(`Content was written: ${status}`)
       if config.clean
         log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
         # console.info JSON.stringify config.content, null, true
-        object.clean config.content
+        utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       config.content = yaml.safeDump config.content, noRefs: true, lineWidth: config.line_width
       @file config, header: null
@@ -170,7 +170,7 @@ console.info(`Content was written: ${status}`)
 
 ## Dependencies
 
-    object = require '@nikitajs/engine/lib/utils/object'
+    utils = require './utils'
     yaml = require 'js-yaml'
     {merge} = require 'mixme'
 

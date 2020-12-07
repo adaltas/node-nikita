@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PWD=`pwd`/`dirname ${BASH_SOURCE}`
+CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $PWD/openldap
+cd $CWD/openldap
 docker-compose up --abort-on-container-exit

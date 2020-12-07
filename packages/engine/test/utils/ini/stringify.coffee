@@ -1,10 +1,10 @@
 
-ini = require '../../src/misc/ini'
-{tags} = require '../test'
+ini = require '../../../src/utils/ini'
+{tags} = require '../../test'
 
 return unless tags.api
 
-describe 'misc.ini stringify', ->
+describe 'utils.ini.stringify', ->
 
   it 'honors option separator', ->
     ini.stringify
