@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PWD=`pwd`/`dirname ${BASH_SOURCE}`
+CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
-cd $PWD/docker
+cd $CWD/docker
 docker-compose up --abort-on-container-exit
