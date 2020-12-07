@@ -1,10 +1,10 @@
 
-ini = require '../../src/misc/ini'
-{tags} = require '../test'
+ini = require '../../../src/utils/ini'
+{tags} = require '../../test'
 
 return unless tags.api
 
-describe 'misc.ini parse_brackets_then_curly', ->
+describe 'utils.ini.parse_brackets_then_curly', ->
 
   it 'parse braket, no values', ->
     ini.parse_brackets_then_curly """
@@ -71,7 +71,7 @@ describe 'misc.ini parse_brackets_then_curly', ->
             key1112: {}
         key12:
           key121:
-            key1211: 
+            key1211:
               key12111: 'value 12111'
           key122: 'value 122'
       key2:

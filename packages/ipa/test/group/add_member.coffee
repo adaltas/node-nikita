@@ -10,7 +10,7 @@ describe 'ipa.group.add_member', ->
     gidnumber = null
     nikita
       ssh: ssh
-    , () ->
+    , ->
       await @ipa.group.del connection: ipa, [
         cn: 'group_add_member'
       ,

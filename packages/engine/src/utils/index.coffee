@@ -4,6 +4,7 @@ module.exports =
   buffer: require './buffer'
   diff: require './diff'
   error: require './error'
+  ini: require './ini'
   mode: require './mode'
   object: require './object'
   os: require './os'

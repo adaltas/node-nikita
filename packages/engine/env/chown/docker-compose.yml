@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_engine_chown
+    image: nikita_engine_chown_nodejs
     volumes:
       - ../../../../:/nikita
     environment:

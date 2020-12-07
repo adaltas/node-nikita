@@ -1,30 +1,30 @@
 #!/bin/bash
 
-PWD=`pwd`/`dirname ${BASH_SOURCE}`
+ENV_DIR=`pwd`/`dirname ${BASH_SOURCE}`
 
-npx coffee $PWD/apm/start.coffee
+npx coffee $ENV_DIR/apm/start.coffee
 lxc exec tools-apm --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
 
-npx coffee $PWD/iptables/start.coffee
+npx coffee $ENV_DIR/iptables/start.coffee
 lxc exec tools-iptables --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
 
-npx coffee $PWD/npm/start.coffee
+npx coffee $ENV_DIR/npm/start.coffee
 lxc exec tools-npm --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
 
-npx coffee $PWD/rubygems.lxd/start.coffee
+npx coffee $ENV_DIR/rubygems.lxd/start.coffee
 lxc exec tools-rubygems --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
 
-cd $PWD/centos6
+# cd $ENV_DIR/centos6
+# docker-compose up --abort-on-container-exit
+
+cd $ENV_DIR/centos7
 docker-compose up --abort-on-container-exit
 
-cd $PWD/centos7
+cd $ENV_DIR/cron
 docker-compose up --abort-on-container-exit
 
-cd $PWD/cron
-docker-compose up --abort-on-container-exit
+# cd $ENV_DIR/dconf
+# docker-compose up --abort-on-container-exit
 
-cd $PWD/dconf
-docker-compose up --abort-on-container-exit
-
-cd $PWD/rubygems
+cd $ENV_DIR/rubygems
 docker-compose up --abort-on-container-exit

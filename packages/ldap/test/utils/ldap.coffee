@@ -4,7 +4,7 @@ ldap = require '../../src/utils/ldap'
 
 return unless tags.api
 
-describe 'misc ldap acl', ->
+describe 'utils.ldap acl', ->
 
   it 'parse', ->
     ldap.acl
