@@ -39,7 +39,7 @@ console.info(`Container was paused: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
       @docker.tools.execute
         command: "pause #{config.container}"

@@ -15,7 +15,7 @@ describe 'plugins.global', ->
               
   it 'merge from parent', ->
     nikita ->
-      @call 
+      @call
         my_global:
           my_key: 'my value'
       , ->
@@ -35,7 +35,7 @@ describe 'plugins.global', ->
             
   it 'declared at action registration', ->
     nikita ({registry})->
-      registry.register ['my_action'], 
+      registry.register ['my_action'],
         metadata: name: 'test'
         global: 'my_global'
         handler: ({config}) ->
