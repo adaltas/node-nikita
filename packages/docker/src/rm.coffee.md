@@ -55,7 +55,7 @@ console.info(`Container was removed: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # command = for opt in ['link', 'volumes', 'force']
       #   "-#{opt.charAt 0}" if config[opt]

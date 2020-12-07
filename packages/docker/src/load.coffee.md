@@ -55,7 +55,7 @@ console.info(`Image was loaded: ${status}`);
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Validate parameters
       config.input ?= config.source
