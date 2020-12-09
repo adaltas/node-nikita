@@ -43,7 +43,7 @@ Register or log in to a Docker registry server.
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
       @docker.tools.execute
         command: [
@@ -68,5 +68,4 @@ Register or log in to a Docker registry server.
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
-    path = require 'path'
+    utils = require './utils'

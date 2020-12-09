@@ -120,5 +120,4 @@ Execute a docker command.
 
 ## Dependencies
 
-    docker = require '../utils'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '../utils'

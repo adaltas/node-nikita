@@ -58,7 +58,7 @@ console.info(`Container was copied: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       [_, source_container, source_path] = /(.*:)?(.*)/.exec config.source
       [_, target_container, target_path] = /(.*:)?(.*)/.exec config.target
@@ -107,4 +107,4 @@ console.info(`Container was copied: ${status}`)
 ## Dependencies
 
     path = require 'path'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require './utils'

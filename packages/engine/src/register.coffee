@@ -1,6 +1,6 @@
 
 registry = require './registry'
-error = require './utils/error'
+utils = require './utils'
 
 module.exports =
   '': handler: (->)
@@ -76,7 +76,7 @@ module.exports =
   #     else unless position?
   #       parent.children.some (child) -> child.output.status
   #     else
-  #       throw error 'NIKITA_STATUS_POSITION_INVALID', [
+  #       throw utils.error 'NIKITA_STATUS_POSITION_INVALID', [
   #         'argument position must be an integer if defined,'
   #         "get #{JSON.stringify position}"
   #       ]

@@ -152,4 +152,4 @@ console.info(`File was uploaded: ${status}`)
 
     fs = require 'fs'
     path = require 'path'
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require './utils'

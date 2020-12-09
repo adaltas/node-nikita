@@ -1,5 +1,5 @@
 
-error = require '../utils/error'
+utils = require '../utils'
 
 walk = (action, walker) ->
   precious = await walker action, walker
@@ -13,18 +13,18 @@ validate = (action, args) ->
     [walker] = args
   else if args.length is 2
     [action, walker] = args
-  else throw error 'OPERATION_WALK_INVALID_ARGUMENT', [
+  else throw utils.error 'OPERATION_WALK_INVALID_ARGUMENT', [
     'action signature is expected to be'
     '`walker` or `action, walker`'
     "got #{JSON.stringify args}"
   ] unless action
-  throw error 'OPERATION_WALK_ACTION_WALKER_REQUIRED', [
+  throw utils.error 'OPERATION_WALK_ACTION_WALKER_REQUIRED', [
     'argument `action` is missing and must be a valid action'
   ] unless action
-  throw error 'OPERATION_WALK_WALKER_REQUIRED', [
+  throw utils.error 'OPERATION_WALK_WALKER_REQUIRED', [
     'argument `walker` is missing and must be a function'
   ] unless walker
-  throw error 'OPERATION_WALK_WALKER_INVALID', [
+  throw utils.error 'OPERATION_WALK_WALKER_INVALID', [
     'argument `walker` is missing and must be a function'
   ] unless typeof walker is 'function'
   [action, walker]

@@ -1,6 +1,6 @@
 
 {merge} = require 'mixme'
-error = require '../utils/error'
+utils = require '../utils'
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/retry'
@@ -18,12 +18,12 @@ module.exports = ->
       for property in ['attempt', 'sleep', 'retry']
         if typeof action.metadata[property] is 'number'
           if action.metadata[property] < 0
-            throw error "METADATA_#{property.toUpperCase()}_INVALID_RANGE", [
+            throw utils.error "METADATA_#{property.toUpperCase()}_INVALID_RANGE", [
               "configuration `#{property}` expect a number above or equal to 0,"
               "got #{action.metadata[property]}."
             ]
         else unless typeof action.metadata[property] is 'boolean'
-          throw error "METADATA_#{property.toUpperCase()}_INVALID_VALUE", [
+          throw utils.error "METADATA_#{property.toUpperCase()}_INVALID_VALUE", [
             "configuration `#{property}` expect a number or a boolean value,"
             "got #{JSON.stringify action.metadata[property]}."
           ]

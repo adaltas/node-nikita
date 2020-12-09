@@ -93,7 +93,7 @@ Create and start containers according to a docker-compose file
         target: config.target
         content: config.content
       {status, stdout} = await @docker.tools.execute
-        command: "--file #{config.target} ps -q | xargs docker #{docker.opts config} inspect"
+        command: "--file #{config.target} ps -q | xargs docker #{utils.opts config} inspect"
         compose: true
         cwd: config.cwd
         uid: config.uid
@@ -131,5 +131,5 @@ Create and start containers according to a docker-compose file
 
 ## Dependencies
 
-    docker = require '../utils'
+    utils = require '../utils'
     path = require 'path'

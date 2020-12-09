@@ -59,7 +59,7 @@ console.info(`Volume was created: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
       # Normalize config
       config.label = [config.label] if typeof config.label is 'string'
@@ -87,7 +87,3 @@ console.info(`Volume was created: ${status}`)
       metadata:
         global: 'docker'
       schema: schema
-
-## Dependencies
-
-    docker = require './utils'

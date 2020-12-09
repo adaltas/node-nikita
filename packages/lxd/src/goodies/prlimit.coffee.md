@@ -63,4 +63,4 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '../utils'

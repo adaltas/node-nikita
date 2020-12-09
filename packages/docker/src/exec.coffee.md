@@ -75,7 +75,7 @@ console.info(`Command was executed: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       config.service ?= false
       # Construct exec command

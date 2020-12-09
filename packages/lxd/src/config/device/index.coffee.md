@@ -170,7 +170,7 @@ console.info(`Disk was created: ${status}`)
           ) for key, value of changes
         status: status
       catch err
-        stderr_to_error_message err, err.stderr
+        utils.stderr_to_error_message err, err.stderr
         throw err
 
 ## Export
@@ -182,4 +182,4 @@ console.info(`Disk was created: ${status}`)
 ## Dependencies
 
     diff = require 'object-diff'
-    stderr_to_error_message = require '../../misc/stderr_to_error_message'
+    utils = require '../../utils'

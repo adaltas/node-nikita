@@ -4,7 +4,7 @@
 The `args` plugin place the original argument into the action "args" property.
 
 ###
-array = require '../utils/array'
+utils = require '../utils'
 
 module.exports = ->
   module: '@nikitajs/engine/src/plugins/args'
@@ -23,7 +23,7 @@ module.exports = ->
             actions.metadata.raw_input = true
             return actions
           # Otherwise, compute args and pass them to the returned actions
-          args = array.multiply ...args
+          args = utils.array.multiply ...args
           if Array.isArray actions
             actions.map (action,i) ->
               action.args = args[i]

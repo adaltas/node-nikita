@@ -1,5 +1,7 @@
+utils = require "@nikitajs/engine/src/utils"
 
-module.exports =
+module.exports = {
+  ...utils
   options: [
     'api-cors-header', 'bridge', 'bip', 'debug', 'daemon',
     'default-gateway', 'default-gateway-v6', 'default-ulimit', 'dns',
@@ -77,3 +79,4 @@ module.exports =
       """
   # Reformat error message if any
   # TODO: rename this function as format_error
+}

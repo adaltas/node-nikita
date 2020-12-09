@@ -5,7 +5,7 @@ session = require '../session'
 
 ###
 Pass an SSH connection or SSH information to an action. Disable SSH if the value
-is `null` or `false`. 
+is `null` or `false`.
 ###
 
 module.exports = ->
