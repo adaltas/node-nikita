@@ -52,7 +52,7 @@ force options is set.
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       await @docker.tools.execute
         command: [
@@ -84,8 +84,3 @@ force options is set.
       metadata:
         global: 'docker'
       schema: schema
-
-## Dependencies
-
-    docker = require './utils'
-    util = require 'util'

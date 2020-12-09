@@ -38,7 +38,7 @@ console.info(`Volume was removed: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Validation
       throw Error "Missing required option name" unless config.name

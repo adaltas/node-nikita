@@ -55,7 +55,7 @@ console.info(`Image was loaded: ${status}`);
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Validate parameters
       config.input ?= config.source
@@ -74,8 +74,8 @@ console.info(`Image was loaded: ${status}`);
         command: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
       # skip header line, wi skip it here instead of in the grep  to have
       # an array with at least one not empty line
-      if string.lines(stdout).length > 1
-        for image in string.lines stdout
+      if utils.string.lines(stdout).length > 1
+        for image in utils.string.lines stdout
           image = image.trim()
           if image != ''
             infos = image.split(':')
@@ -91,8 +91,8 @@ console.info(`Image was loaded: ${status}`);
       new_images = {}
       status = false
       log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'
-      if string.lines(stdout).length > 1
-        for image in string.lines stdout.toString()
+      if utils.string.lines(stdout).length > 1
+        for image in utils.string.lines stdout.toString()
           if image != ''
             infos = image.split(':')
             new_images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
@@ -118,4 +118,4 @@ console.info(`Image was loaded: ${status}`);
 
 ## Dependencies
 
-    string = require '@nikitajs/engine/lib/utils/string'
+    utils = require './utils'

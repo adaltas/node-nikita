@@ -1,6 +1,6 @@
 
 {is_object, is_object_literal} = require 'mixme'
-error = require '../utils/error'
+utils = require '../utils'
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/status'
@@ -34,7 +34,7 @@ module.exports = ->
           else unless position?
             parent.children.some (child) -> child.output.status
           else
-            throw error 'NIKITA_STATUS_POSITION_INVALID', [
+            throw utils.error 'NIKITA_STATUS_POSITION_INVALID', [
               'argument position must be an integer if defined,'
               "get #{JSON.stringify position}"
             ]
@@ -80,7 +80,7 @@ module.exports = ->
             else if Array.isArray(output) or typeof output in ['string', 'number']
               output
             else
-              throw error 'HANDLER_INVALID_OUTPUT', [
+              throw utils.error 'HANDLER_INVALID_OUTPUT', [
                 'expect a boolean or an object or nothing'
                 'unless the `raw_output` configuration is activated,'
                 "got #{JSON.stringify output}"

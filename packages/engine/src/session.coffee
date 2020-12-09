@@ -5,7 +5,7 @@ schedule = require './schedulers/native'
 plugins = require './plugins'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'
-error = require './utils/error'
+utils = require './utils'
 
 session = (action={}) ->
   action.metadata ?= {}
@@ -22,7 +22,7 @@ session = (action={}) ->
       # Validate the namespace
       child = await action.registry.get namespace
       unless child
-        return Promise.reject error 'ACTION_UNREGISTERED_NAMESPACE', [
+        return Promise.reject utils.error 'ACTION_UNREGISTERED_NAMESPACE', [
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]

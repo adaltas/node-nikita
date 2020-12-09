@@ -1,5 +1,5 @@
 
-error = require '../utils/error'
+utils = require '../utils'
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/relax'
@@ -16,7 +16,7 @@ module.exports = ->
         action.metadata.relax = [action.metadata.relax]
       unless typeof action.metadata.relax is 'boolean' or
       action.metadata.relax instanceof Array
-        throw error 'METADATA_RELAX_INVALID_VALUE', [
+        throw utils.error 'METADATA_RELAX_INVALID_VALUE', [
           "configuration `relax` expects a boolean, string, array or regexp",
           "value, got #{JSON.stringify action.metadata.relax}."
         ]
@@ -26,7 +26,7 @@ module.exports = ->
         new Promise (resolve, reject) ->
           try
             prom = handler.apply action.context, args
-            # Not, might need to get inspiration from retry to 
+            # Not, might need to get inspiration from retry to
             # handle the returned promise
             prom
             .then resolve

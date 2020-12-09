@@ -60,7 +60,7 @@ info.map( (container) =>
 
 ## Handler
 
-    handler = ({args, config, tools: {find, log}}) ->
+    handler = ({args, config, tools: {log}}) ->
       isCointainerArray = Array.isArray arg?.container for arg in args
       log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Ensure target container exists

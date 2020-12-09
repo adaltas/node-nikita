@@ -4,7 +4,7 @@ string = require '../../src/utils/string'
 
 return unless tags.api
 
-describe 'misc string', ->
+describe 'utils.string', ->
 
   it 'escapeshellarg', ->
     string.escapeshellarg("try to 'parse this").should.eql "'try to '\"'\"'parse this'"

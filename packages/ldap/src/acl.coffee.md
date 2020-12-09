@@ -112,7 +112,7 @@ console.info(`ACL modified: ${status}`)
             else # Close the rule
               olcAccesses.push current
               current = null
-        olcAccesses = ldap.acl.parse olcAccesses
+        olcAccesses = utils.ldap.acl.parse olcAccesses
         # Diff
         olcAccess = null
         # Find match "to" property
@@ -158,8 +158,8 @@ console.info(`ACL modified: ${status}`)
               index = i+1 if access.to is config.after
           olcAccess = index: index, to: acl.to, by: acl.by, add: true
         # Save
-        old = ldap.acl.stringify olcAccess.old if olcAccess.old
-        olcAccess = ldap.acl.stringify olcAccess
+        old = utils.ldap.acl.stringify olcAccess.old if olcAccess.old
+        olcAccess = utils.ldap.acl.stringify olcAccess
         
         operations =
           dn: config.dn
@@ -196,8 +196,7 @@ console.info(`ACL modified: ${status}`)
 ## Dependencies
 
     {is_object_literal, merge} = require 'mixme'
-    ldap = require './utils/ldap'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require './utils'
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html
 [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl

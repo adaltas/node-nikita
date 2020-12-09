@@ -1,11 +1,11 @@
 
 {mutate, is_object_literal} = require 'mixme'
-{multiply} = require '../utils/array'
+utils = require '../utils'
 
 module.exports = (args) ->
   args_is_array = args.some (arg) -> Array.isArray arg
   # Multiply the arguments
-  actions = multiply ...args
+  actions = utils.array.multiply ...args
   # Reconstituate the action
   new_actions = for action in actions
     new_action = {}

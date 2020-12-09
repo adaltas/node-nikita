@@ -1,5 +1,5 @@
 
-error = require '../utils/error'
+utils = require '../utils'
 stream = require 'stream'
 
 ###
@@ -22,7 +22,7 @@ module.exports = ->
     'nikita:session:action': (action) ->
       debug = action.metadata.debug or false
       unless typeof debug is 'boolean' or debug is 'stdout' or debug instanceof stream.Writable
-        throw error 'METADATA_DEBUG_INVALID_VALUE', [
+        throw utils.error 'METADATA_DEBUG_INVALID_VALUE', [
           "configuration `debug` expect a boolean value,"
           "the string \"stdout\", or a Node.js Stream Writer,"
           "got #{JSON.stringify debug}."

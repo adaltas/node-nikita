@@ -73,7 +73,3 @@ native docker command.
       hooks:
         on_action: on_action
       schema: schema
-
-## Dependencies
-
-    docker = require '../utils'

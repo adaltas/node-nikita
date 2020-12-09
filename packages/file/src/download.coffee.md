@@ -356,5 +356,4 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
     fs = require 'fs'
     path = require('path').posix # need to detect ssh connection
     url = require 'url'
-    utils = require '@nikitajs/engine/src/utils'
-    curl = require './utils/curl'
+    utils = require './utils'

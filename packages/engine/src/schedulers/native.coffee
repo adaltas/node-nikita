@@ -1,5 +1,5 @@
 
-error = require '../utils/error'
+utils = require '../utils'
 
 module.exports = ->
   stack = []
@@ -35,7 +35,7 @@ module.exports = ->
               setImmediate ->
                 scheduler.pump()
           else
-            throw error 'SCHEDULER_INVALID_HANDLER', [
+            throw utils.error 'SCHEDULER_INVALID_HANDLER', [
               'scheduled handler must return a promise or an array of handlers,'
               "got #{JSON.stringify res}"
             ]

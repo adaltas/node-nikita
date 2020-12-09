@@ -50,7 +50,7 @@ console.info(`Container was started: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       {status} = await @docker.tools.status shy: true, config
       if status
@@ -71,8 +71,3 @@ console.info(`Container was started: ${status}`)
       metadata:
         global: 'docker'
       schema: schema
-
-## Dependencies
-
-    docker = require './utils'
-    util = require 'util'
