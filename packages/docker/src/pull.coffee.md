@@ -53,7 +53,7 @@ console.info(`Image was pulled: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Validate parameters
       version = config.version or config.tag.split(':')[1] or 'latest'

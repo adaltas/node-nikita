@@ -138,6 +138,6 @@ console.info(`Index created or modified: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require './utils'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html

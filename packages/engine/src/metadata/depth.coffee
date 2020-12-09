@@ -1,5 +1,5 @@
 
-error = require '../utils/error'
+utils = require '../utils'
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/depth'
@@ -13,7 +13,7 @@ module.exports = ->
     'nikita:session:action': (action) ->
       # action.metadata.depth ?= 0
       unless typeof action.metadata.depth is 'number'
-        throw error 'METADATA_DEPTH_INVALID_VALUE', [
+        throw utils.error 'METADATA_DEPTH_INVALID_VALUE', [
           "configuration `depth` expect an integer value,"
           "got #{JSON.stringify action.metadata.depth}."
         ]

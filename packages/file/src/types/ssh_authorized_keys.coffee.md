@@ -78,4 +78,4 @@ throw an Error if it does not exists.
 ## Dependencies
 
     path = require 'path'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '../utils'

@@ -1,6 +1,6 @@
 
 # {is_object, is_object_literal} = require 'mixme'
-error = require '../utils/error'
+utils = require '../utils'
 os = require 'os'
 path = require 'path'
 process = require 'process'
@@ -24,7 +24,7 @@ module.exports = ->
     'nikita:session:action':
       after: '@nikitajs/engine/src/metadata/ssh'
       handler: (action, handler) ->
-        throw error 'METADATA_TMPDIR_INVALID', [
+        throw utils.error 'METADATA_TMPDIR_INVALID', [
           'the "tmpdir" metadata value must be a boolean or a string,'
           "got #{JSON.stringify action.metadata.tmpdir}"
         ] unless typeof action.metadata.tmpdir in ['boolean', 'string', 'undefined']
@@ -76,7 +76,7 @@ module.exports = ->
         tmpdir = if ssh
         then '/tmp'
         else os.tmpdir()
-        throw error 'METADATA_TMPDIR_CORRUPTION', [
+        throw utils.error 'METADATA_TMPDIR_CORRUPTION', [
           'the "tmpdir" metadata value does not start as expected,'
           "got #{JSON.stringify action.metadata.tmpdir},"
           "expected to start with #{JSON.stringify tmpdir}"

@@ -161,7 +161,7 @@ console.info(`Container was built: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {find, log}}) ->
+    handler = ({config, tools: {log}}) ->
       log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       number_of_step = 0
       userargs = []
@@ -252,14 +252,12 @@ console.info(`Container was built: ${status}`)
 
     errors =
       NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED: ->
-        error 'NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED', [
+        utils.error 'NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED', [
           'could not build the container,'
           'one of the `content` or `file` config property must be provided'
         ]
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/src/utils'
-    error = require '@nikitajs/engine/src/utils/error'
+    utils = require './utils'
     path = require 'path'
-    util = require 'util'
