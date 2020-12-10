@@ -151,4 +151,4 @@ console.info(`Repo was updated: ${status}`)
 
 ## Dependencies
 
-    utils = require './utils'
+    utils = require "@nikitajs/file/lib/utils"

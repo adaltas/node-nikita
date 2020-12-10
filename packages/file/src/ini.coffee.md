@@ -17,7 +17,7 @@ provided in the `content` option.
 Available values for the `stringify` option are:
 
 * `stringify`
-  Default, implemented by `require('nikita/lib/misc/ini').stringify`
+  Default, implemented by `require('nikita/file/lib/utils/ini').stringify`
 
 The default stringify function accepts:
 
@@ -100,14 +100,15 @@ console.info(`Content was updated: ${status}`)
           typeof: 'function'
           description: """
           User-defined function to parse the content from ini format, default to
-          `require('ini').parse`, see 'misc.ini.parse\_multi\_brackets'.
-          """
+          `require('ini').parse`, see
+          'nikita.file.utils.ini.parse\_multi\_brackets'. """
         'stringify':
           typeof: 'function'
           description: """
           User-defined function to stringify the content to ini format, default
           to `require('ini').stringify`, see
-          'misc.ini.stringify\_brackets\_then_curly' for an example.
+          'nikita.file.utils.ini.stringify\_brackets\_then_curly' for an
+          example.
           """
         'source':
           type: 'string'
@@ -129,7 +130,7 @@ console.info(`Content was updated: ${status}`)
       # log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       org_props = {}
       default_props = {}
-      parse = config.parse or ini.parse
+      parse = config.parse or utils.ini.parse
       # Original properties
       try
         {data} = await @fs.base.readFile
@@ -158,7 +159,7 @@ console.info(`Content was updated: ${status}`)
         log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
         utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
-      stringify = config.stringify or ini.stringify
+      stringify = config.stringify or utils.ini.stringify
       @file
         target: config.target
         content: stringify config.content, config
@@ -177,8 +178,5 @@ console.info(`Content was updated: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
-    ini = require './utils/ini'
+    utils = require './utils'
     {merge} = require 'mixme'
-
-[ini]: https://github.com/isaacs/ini
