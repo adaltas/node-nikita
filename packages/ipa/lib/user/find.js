@@ -6,8 +6,7 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.user.find({
+// const {status} = await nikita.ipa.user.find({
 //   criterias: {
 //     in_group: ["user_find_group"]
 //   }
@@ -16,10 +15,8 @@
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(err, {users}){
-//   console.info(err ? err.message : status ?
-//     "User was updated" : "User was already set")
 // })
+// console.info(`User was found: ${status}`)
 // ```
 
 // ## Schema

@@ -18,13 +18,14 @@
 
 // Global config can be alternatively set with the "log_cli" property.
 
-// ## Exemple with the depth_max option
+// ## Example with the depth_max option
 
 // ```js
-// require('nikita')(
-//   log: { cli: { colors: true } }
-// )
-// .log.cli({ depth_max: 2 })
+// nikita
+// .log.cli({
+//   colors: true,
+//   depth_max: 2
+// })
 // .call({
 //   header: 'Print my header'
 // }, function(){
@@ -35,27 +36,25 @@
 //       header: 'Header not printed'
 //     }, function(){
 //       // do sth
-//     });
-//   });
-// });
+//     })
+//   })
+// })
 // ```
 
-// ## Exemple with global config
+// ## Example with global config
 
 // ```js
-// require('nikita')(
-//   log_cli: { colors: true }
-// )
-// .log.cli()
+// nikita
+// .log.cli({ colors: true })
 // .call({
 //   header: 'Print my header'
 // }, function(){
 //   // do sth
-// });
+// })
 // ```
 
 // ## Handler
-var colors, get_headers, handler, pad, stream, string;
+var colors, get_headers, handler, pad, stream, utils;
 
 handler = function({config, metadata, ssh}) {
   var base, base1, base2, format_line, ids;
@@ -203,7 +202,7 @@ handler = function({config, metadata, ssh}) {
           return null;
         }
         // delete ids[action.index]
-        time = config.time ? string.print_time(Date.now() - action.metadata.time) : '';
+        time = config.time ? utils.string.print_time(Date.now() - action.metadata.time) : '';
         headers = get_headers(action);
         line = format_line({
           host: config.host,
@@ -238,7 +237,7 @@ pad = require('pad');
 
 stream = require('./stream');
 
-string = require('../../utils/string');
+utils = require('../../utils');
 
 get_headers = function(action) {
   var headers, walk;

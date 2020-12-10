@@ -13,14 +13,11 @@
 // ## Add a network interface
 
 // ```js
-// require('nikita')
-// .lxd.config.device.exists({
+// const {status, config} = await nikita.lxd.config.device.exists({
 //   container: "my_container",
-//   device: 'eth0',
-// }, function(err, {status, config}) {
-//   console.info( err ? err.message : status ?
-//     'device exists, type is' + config.type : 'device missing')
-// });
+//   device: 'eth0'
+// })
+// console.info(status ? `device exists, type is ${config.type}` : 'device missing')
 // ```
 
 // ## Schema

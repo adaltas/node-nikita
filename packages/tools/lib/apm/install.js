@@ -3,112 +3,103 @@
 
 // Install Atom packages with APM.
 
-// ## Options
-
-// *   `name` (string|array)
-  //     Name of the package(s).
-  // *   `upgrade` (boolean)
-  //     Upgrade all packages, default to "false".
-
-// ## Schema
-var handler, schema, string,
+// ## Hooks
+var handler, on_action, schema,
   indexOf = [].indexOf;
 
+on_action = function({config, metadata}) {
+  if (typeof metadata.argument === 'string') {
+    config.name = metadata.argument;
+  }
+  if (typeof config.name === 'string') {
+    return config.name = [config.name];
+  }
+};
+
+// ## Schema
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: 'object',
-      description: `          `
+    'name': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Name of the package(s) to install.`
+    },
+    'upgrade': {
+      type: 'boolean',
+      default: false,
+      description: `Upgrade all packages.`
     }
   }
 };
 
 // ## Handler
-handler = function({config}) {
-  var installed, outdated;
-  if (config.argument != null) {
-    config.name = config.argument;
-  }
-  if (typeof config.name === 'string') {
-    config.name = [config.name];
-  }
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var install, installed, outdated, pkgs, stdout, upgrade;
   config.name = config.name.map(function(pkg) {
     return pkg.toLowerCase();
   });
   outdated = [];
   installed = [];
   // Note, cant see a difference between update and upgrade after printing help
-  this.execute({
-    cmd: "apm outdated --json",
+  ({stdout} = (await this.execute({
+    command: "apm outdated --json",
     shy: true
-  }, function(err, {stdout}) {
-    var pkgs;
-    if (err) {
-      throw err;
-    }
-    pkgs = JSON.parse(stdout);
-    return outdated = pkgs.map(function(pkg) {
-      return pkg.name.toLowerCase();
+  })));
+  pkgs = JSON.parse(stdout);
+  outdated = pkgs.map(function(pkg) {
+    return pkg.name.toLowerCase();
+  });
+  if (config.upgrade && outdated.length) {
+    await this.execute({
+      command: "apm upgrade --no-confirm"
     });
-  });
-  this.execute({
-    cmd: "apm upgrade --no-confirm",
-    if: function() {
-      return config.upgrade && outdated.length;
-    }
-  }, function(err) {
-    if (err) {
-      throw err;
-    }
-    return outdated = [];
-  });
-  this.execute({
-    cmd: "apm list --installed --json",
+    outdated = [];
+  }
+  ({stdout} = (await this.execute({
+    command: "apm list --installed --json",
     shy: true
-  }, function(err, {stdout}) {
-    var pkgs;
-    if (err) {
-      throw err;
-    }
-    pkgs = JSON.parse(stdout);
-    pkgs = pkgs.user.map(function(pkg) {
-      return pkg.name.toLowerCase();
-    });
-    return installed = pkgs;
+  })));
+  pkgs = JSON.parse(stdout);
+  installed = pkgs.user.map(function(pkg) {
+    return pkg.name.toLowerCase();
   });
-  return this.call(function() {
-    var install, upgrade;
-    upgrade = config.name.filter(function(pkg) {
-      return indexOf.call(outdated, pkg) >= 0;
-    });
-    install = config.name.filter(function(pkg) {
-      return indexOf.call(installed, pkg) < 0;
-    });
-    this.execute({
-      cmd: `apm upgrade ${upgrade.join(' ')}`,
-      if: upgrade.length
-    }, (err) => {
-      return this.log({
-        message: `APM Updated Packages: ${upgrade.join(', ')}`
-      });
-    });
-    return this.execute({
-      cmd: `apm install ${install.join(' ')}`,
-      if: install.length
-    }, (err) => {
-      return this.log({
-        message: `APM Installed Packages: ${install.join(', ')}`
-      });
-    });
+  // Upgrade
+  upgrade = config.name.filter(function(pkg) {
+    return indexOf.call(outdated, pkg) >= 0;
   });
+  if (upgrade.length) {
+    await this.execute({
+      command: `apm upgrade ${upgrade.join(' ')}`
+    });
+    log({
+      message: `APM Updated Packages: ${upgrade.join(', ')}`
+    });
+  }
+  // Install
+  install = config.name.filter(function(pkg) {
+    return indexOf.call(installed, pkg) < 0;
+  });
+  if (install.length) {
+    await this.execute({
+      command: `apm install ${install.join(' ')}`
+    });
+    return log({
+      message: `APM Installed Packages: ${install.join(', ')}`
+    });
+  }
 };
 
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');

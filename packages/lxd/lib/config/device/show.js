@@ -15,16 +15,14 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.config.device.show({
+// const {config} = await nikita.lxd.config.device.show({
 //   container: 'container1',
 //   device: 'vpn'
-// }, function(err, {config}){
-//   console.info( err ? err.message : config);
-//   # { connect: "udp:127.0.0.1:1194",
-//   #   listen: "udp:51.68.116.44:1194",
-//   #   type: proxy } }
 // })
+// console.info(config)
+// // { connect: "udp:127.0.0.1:1194",
+// // listen: "udp:51.68.116.44:1194",
+// // type: proxy } }
 // ```
 
 // ## Schema
@@ -49,7 +47,7 @@ handler = async function({config}) {
   var stdout;
   // log message: "Entering lxd config.device.show", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/show"
   ({stdout} = (await this.execute({
-    cmd: ['lxc', 'query', '/' + ['1.0', 'instances', config.container].join('/')].join(' ')
+    command: ['lxc', 'query', '/' + ['1.0', 'instances', config.container].join('/')].join(' ')
   })));
   stdout = JSON.parse(stdout);
   return {

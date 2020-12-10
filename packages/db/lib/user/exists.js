@@ -41,7 +41,7 @@ handler = async function({config}) {
   var stdout;
   ({stdout} = (await this.db.query(connection_config(config), {
     database: void 0,
-    cmd: (function() {
+    command: (function() {
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':

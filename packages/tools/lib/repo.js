@@ -6,13 +6,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .tools.repo({
+// const {status} = await nikita.tools.repo({
 //   source: '/tmp/centos.repo',
 //   clean: 'CentOs*'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Repo updated: ' + status);
-// });
+// })
+// console.info(`Repo was updated: ${status}`)
 // ```
 
 // ## Schema
@@ -21,13 +19,9 @@ var handler, schema, utils;
 schema = {
   type: 'object',
   properties: {
-    'source': {
-      type: 'string',
-      description: `The source file containing the repository`
-    },
     'content': {
-      type: 'string',
-      description: `Content to write inside the file. can not be used with source.`
+      type: ['string', 'object'],
+      description: `Content to write inside the file.`
     },
     'clean': {
       type: 'string',
@@ -39,38 +33,44 @@ schema = {
       default: '/etc/pki/rpm-gpg',
       description: `Directory storing GPG keys.`
     },
+    'source': {
+      type: 'string',
+      description: `The source file containing the repository`
+    },
     'target': {
       type: 'string',
-      description: `Path of the repository definition file, relative to '/etc/yum.repos.d'.`
+      description: `Path of the repository definition file, relative to
+'/etc/yum.repos.d'.`
     },
     'update': {
       type: 'boolean',
       default: false,
-      description: `Run yum update enabling only the ids present in repo file. Default to false.`
+      description: `Run yum update enabling only the ids present in repo file.`
     },
     'verify': {
       type: 'boolean',
-      default: 'true',
-      description: `Download the PGP keys if it's enabled in the repo file, keys are by default
-placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option and the 
-filename is derivated from the url.`
+      default: true,
+      description: `Download the PGP keys if it's enabled in the repo file, keys are by
+default placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option
+and the filename is derivated from the url.`
     }
   },
-  required: ['target']
+  oneOf: [
+    {
+      required: ['content']
+    },
+    {
+      required: ['source']
+    }
+  ]
 };
 
 // ## Handler
 handler = async function({
     config,
-    tools: {log, path, status}
+    tools: {log, path}
   }) {
-  var data, file, files, i, key, keys, len, name, remote_files, repoids, section;
-  if (config.source && config.content) {
-    throw Error("Can not specify source and content");
-  }
-  if (!(config.source || config.content)) {
-    throw Error("Missing source or content: ");
-  }
+  var data, file, files, i, key, keys, len, name, remote_files, repoids, section, status;
   if (config.source != null) {
     // TODO wdavidw 180115, target should be mandatory and not default to the source filename
     if (config.target == null) {
@@ -167,27 +167,27 @@ handler = async function({
         source: key,
         target: `${config.gpg_dir}/${path.basename(key)}`
       })));
-      await this.execute({
+      ({status} = (await this.execute({
         if: status,
-        cmd: `rpm --import ${config.gpg_dir}/${path.basename(key)}`
-      });
+        command: `rpm --import ${config.gpg_dir}/${path.basename(key)}`
+      })));
     }
   }
   // Clean Metadata
-  await this.execute({
-    if: path.relative('/etc/yum.repos.d', config.target) !== '..' && status(),
+  ({status} = (await this.execute({
+    if: path.relative('/etc/yum.repos.d', config.target) !== '..' && status,
     // wdavidw: 180114, was "yum clean metadata", ensure an appropriate
     // explanation is provided in case of revert.
     // expire-cache is much faster,  It forces yum to go redownload the small
     // repo files only, then if there's newer repo data, it will downloaded it.
-    cmd: 'yum clean expire-cache; yum repolist -y'
-  });
-  if (config.update && status()) {
-    return this.execute({
-      cmd: `yum update -y --disablerepo=* --enablerepo='${repoids.join(',')}'
+    command: 'yum clean expire-cache; yum repolist -y'
+  })));
+  if (config.update && status) {
+    return (await this.execute({
+      command: `yum update -y --disablerepo=* --enablerepo='${repoids.join(',')}'
 yum repolist`,
       trap: true
-    });
+    }));
   }
 };
 
@@ -198,4 +198,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/file/lib/utils');
+utils = require('./utils');

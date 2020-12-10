@@ -302,7 +302,7 @@ PEERDNS=no`
       });
       // Wait until container is running
       this.execute.wait({
-        cmd: `lxc info ${container} | grep 'Status: Running'`
+        command: `lxc info ${container} | grep 'Status: Running'`
       });
       this.network.tcp.wait({
         host: 'linuxfoundation.org',
@@ -313,7 +313,7 @@ PEERDNS=no`
       this.lxd.exec({
         header: 'OpenSSL',
         container: container,
-        cmd: `#yum update -y
+        command: `#yum update -y
 yum install -y openssl
 command -v openssl`,
         retry: 10,
@@ -325,7 +325,7 @@ command -v openssl`,
         this.lxd.exec({
           header: 'SSH',
           container: container,
-          cmd: `# systemctl status sshd
+          command: `# systemctl status sshd
 # yum install -y openssh-server
 # systemctl start sshd
 # systemctl enable sshd
@@ -355,7 +355,7 @@ systemctl enable sshd`,
         this.lxd.exec({
           header: 'Create',
           container: container,
-          cmd: `id ${user} && exit 42
+          command: `id ${user} && exit 42
 useradd --create-home --system ${user}
 mkdir -p /home/${user}/.ssh
 chown ${user}.${user} /home/${user}/.ssh
@@ -368,7 +368,7 @@ chmod 700 /home/${user}/.ssh`,
           this.lxd.exec({
             header: 'Sudo',
             container: container,
-            cmd: `yum install -y sudo
+            command: `yum install -y sudo
 command -v sudo
 cat /etc/sudoers | grep "${user}" && exit 42
 echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,

@@ -9,32 +9,30 @@
 
 // ## Assert a command succeed
 
-// ```javascript
-  // nikita.execute.assert({
-  //   cmd: 'exit 0'
-  // }, function(err){
-  //   console.info(err || 'ok');
-  // });
+// ```js
+  // const {status} = await nikita.execute.assert({
+  //   command: 'exit 0'
+  // })
+  // console.info(`Command was succeeded: ${status}`)
   // ```
 
 // ## Assert a command stdout
 
-// ```javascript
-  // nikita.execute.assert({
-  //   cmd: 'echo hello'
+// ```js
+  // const {status} = await nikita.execute.assert({
+  //   command: 'echo hello',
   //   assert: 'hello'
-  // }, function(err){
-  //   console.info(err || 'ok');
-  // });
+  // })
+  // console.info(`Stdout was asserted: ${status}`)
   // ```
 
 // ## Hook
-var error, handler, on_action, regexp, schema,
+var handler, on_action, schema, utils,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
   if (!config.content) {
-    // config.cmd = metadata.argument if metadata.argument?
+    // config.command = metadata.argument if metadata.argument?
     if (config.code == null) {
       config.code = [0];
     }
@@ -75,9 +73,7 @@ schema = {
       description: `The error message to throw if assert failed.`
     },
     'not': {
-      type: 'boolean',
-      default: false,
-      description: `Negates the validation.`
+      $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
     },
     'trim': {
       type: 'boolean',
@@ -104,11 +100,11 @@ handler = async function({config}) {
     })));
     if (!config.not) {
       if (indexOf.call(config.code, code) < 0) {
-        throw error('NIKITA_EXECUTE_ASSERT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`]);
       }
     } else {
       if (indexOf.call(config.code, code) >= 0) {
-        throw error('NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting anything but ${config.code}.` : `while expecting anything but one of ${JSON.stringify(config.code)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting anything but ${config.code}.` : `while expecting anything but one of ${JSON.stringify(config.code)}.`]);
       }
     }
   }
@@ -121,27 +117,27 @@ handler = async function({config}) {
     }
     if (!config.not) {
       if (stdout !== config.content) {
-        throw error('NIKITA_EXECUTE_ASSERT_CONTENT', ['the command output is not matching the content,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT', ['the command output is not matching the content,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
       }
     } else {
       if (stdout === config.content) {
-        throw error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT', ['the command output is unfortunately matching the content,', `got ${JSON.stringify(stdout)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT', ['the command output is unfortunately matching the content,', `got ${JSON.stringify(stdout)}.`]);
       }
     }
   }
   // Content is a regexp
-  if ((config.content != null) && regexp.is(config.content)) {
+  if ((config.content != null) && utils.regexp.is(config.content)) {
     ({stdout} = (await this.execute(config)));
     if (config.trim) {
       stdout = stdout.trim();
     }
     if (!config.not) {
       if (!config.content.test(stdout)) {
-        throw error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
       }
     } else {
       if (config.content.test(stdout)) {
-        throw error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${JSON.stringify(config.content)}.`]);
+        throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${JSON.stringify(config.content)}.`]);
       }
     }
   }
@@ -157,6 +153,4 @@ module.exports = {
 };
 
 // ## Dependencies
-error = require('../../utils/error');
-
-regexp = require('../../utils/regexp');
+utils = require('../../utils');

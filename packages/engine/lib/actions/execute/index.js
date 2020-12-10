@@ -41,34 +41,31 @@
 // An exit code equal to "9" defined by the "code_skipped" option indicates that
 // the command is considered successfull but without any impact.
 
-// ```javascript
-// nikita.execute({
+// ```js
+// const {status} = await nikita.execute({
 //   ssh: ssh,
-//   cmd: 'useradd myfriend',
+//   command: 'useradd myfriend',
 //   code_skipped: 9
-// }, function(err, {status}){
-//   if(err) return;
-//   console.info(status ? 'User created' : 'User already exists')
-// });
+// })
+// console.info(`User was created: ${status}`)
 // ```
 
 // ## Run a command with bash
 
-// ```javascript
-// nikita.execute({
+// ```js
+// const {stdout} = await nikita.execute({
 //   bash: true,
-//   cmd: 'env'
-// }, function(err, {stdout}){
-//   console.info(err || stdout);
-// });
+//   command: 'env'
+// })
+// console.info(stdout)
 // ```
 
 // ## Hook
-var error, exec, handler, on_action, schema, utils;
+var exec, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
-    config.cmd = metadata.argument;
+    config.command = metadata.argument;
   }
   if ((config.code != null) && !Array.isArray(config.code)) {
     config.code = [config.code];
@@ -107,10 +104,10 @@ or any provided string, require the "rootdir" option if activated.`
     },
     'rootdir': {
       type: 'string',
-      description: `Path to the mount point corresponding to the root directory, required if
-the "arch_chroot" option is activated.`
+      description: `Path to the mount point corresponding to the root directory, required
+if the "arch_chroot" option is activated.`
     },
-    'cmd': {
+    'command': {
       oneOf: [
         {
           type: 'string'
@@ -205,8 +202,8 @@ property when expecting a large stdout output.`
     },
     'stderr': {
       instanceof: 'Object', // must be `stream.Writable`
-      description: `Writable EventEmitter in which the standard error output of executed command
-will be piped.`
+      description: `Writable EventEmitter in which the standard error output of executed
+command will be piped.`
     },
     'stderr_return': {
       type: 'boolean',
@@ -218,7 +215,8 @@ property when expecting a large stderr output.`
     'stderr_log': {
       type: 'boolean',
       default: true,
-      description: `Pass stdout output to the logs of type "stdout_stream", default is \`true\`.`
+      description: `Pass stdout output to the logs of type "stdout_stream", default is
+\`true\`.`
     },
     'stderr_trim': {
       type: 'boolean',
@@ -235,7 +233,7 @@ property when expecting a large stderr output.`
       description: `Temporary path storing the script, only apply with the \`bash\` and
 \`arch_chroot\` properties, always disposed once executed. Unless
 provided, the default location is \`{metadata.tmpdir}/{string.hash
-config.cmd}\`. See the \`tmpdir\` plugin for additionnal information.`
+config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
     },
     'trap': {
       type: 'boolean',
@@ -247,26 +245,26 @@ config.cmd}\`. See the \`tmpdir\` plugin for additionnal information.`
       description: `Unix user id.`
     }
   },
-  required: ['cmd']
+  required: ['command']
 };
 
 
-// ## Source Code
+// ## Handler
 handler = async function({
     config,
     metadata,
     tools: {find, log, path},
     ssh
   }) {
-  var cmd, current_username, dry, stdout, sudo;
+  var command, current_username, dry, stdout, sudo;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
   }
-  if (typeof config.cmd === 'function') {
-    config.cmd = (await this.call({
+  if (typeof config.command === 'function') {
+    config.command = (await this.call({
       config: config
-    }, config.cmd));
+    }, config.command));
   }
   if (config.bash === true) {
     config.bash = 'bash';
@@ -274,10 +272,10 @@ handler = async function({
   if (config.arch_chroot === true) {
     config.arch_chroot = 'arch-chroot';
   }
-  if (config.cmd && config.trap) {
-    config.cmd = `set -e\n${config.cmd}`;
+  if (config.command && config.trap) {
+    config.command = `set -e\n${config.command}`;
   }
-  config.cmd_original = `${config.cmd}`;
+  config.command_original = `${config.command}`;
   sudo = (await find(function({
       config: {sudo}
     }) {
@@ -291,7 +289,7 @@ handler = async function({
   if (['bash', 'arch_chroot'].filter(function(k) {
     return config[k];
   }).length > 1) {
-    // throw Error "Required Option: the \"cmd\" option is not provided" unless config.cmd?
+    // throw Error "Required Option: the \"command\" option is not provided" unless config.command?
     throw Error("Incompatible properties: bash, arch_chroot");
   }
   if (config.arch_chroot && !config.rootdir) {
@@ -324,58 +322,58 @@ handler = async function({
   }
   // Write script
   if (config.bash) {
-    cmd = config.cmd;
+    command = config.command;
     if (typeof config.target !== 'string') {
-      config.target = `${metadata.tmpdir}/${utils.string.hash(config.cmd)}`;
+      config.target = `${metadata.tmpdir}/${utils.string.hash(config.command)}`;
     }
     log({
       message: `Writing bash script to ${JSON.stringify(config.target)}`,
       level: 'INFO'
     });
-    config.cmd = `${config.bash} ${config.target}`;
+    config.command = `${config.bash} ${config.target}`;
     if (config.uid) {
-      config.cmd = `su - ${config.uid} -c '${config.cmd}'`;
+      config.command = `su - ${config.uid} -c '${config.command}'`;
     }
     if (!config.dirty) {
-      config.cmd += `;code=\`echo $?\`; rm '${config.target}'; exit $code`;
+      config.command += `;code=\`echo $?\`; rm '${config.target}'; exit $code`;
     }
     await this.fs.base.writeFile({
       target: config.target,
-      content: cmd,
+      content: command,
       uid: config.uid,
       mode: config.mode,
       sudo: false
     });
   }
   if (config.arch_chroot) {
-    cmd = config.cmd;
+    command = config.command;
     if (typeof config.target !== 'string') {
-      config.target = `${metadata.tmpdir}/${utils.string.hash(config.cmd)}`;
+      config.target = `${metadata.tmpdir}/${utils.string.hash(config.command)}`;
     }
     log({
       message: `Writing arch-chroot script to ${JSON.stringify(config.target)}`,
       level: 'INFO'
     });
-    config.cmd = `${config.arch_chroot} ${config.rootdir} bash ${config.target}`;
+    config.command = `${config.arch_chroot} ${config.rootdir} bash ${config.target}`;
     if (!config.dirty) {
-      config.cmd += `;code=\`echo $?\`; rm '${path.join(config.rootdir, config.target)}'; exit $code`;
+      config.command += `;code=\`echo $?\`; rm '${path.join(config.rootdir, config.target)}'; exit $code`;
     }
     await this.fs.base.writeFile({
       target: `${path.join(config.rootdir, config.target)}`,
-      content: `${cmd}`,
+      content: `${command}`,
       mode: config.mode,
       sudo: false
     });
   }
   if (sudo) {
-    config.cmd = `sudo ${config.cmd}`;
+    config.command = `sudo ${config.command}`;
   }
   // Execute
   return new Promise((resolve, reject) => {
     var child, result, stderr_stream_open, stdout_stream_open;
     if (config.stdin_log) {
       log({
-        message: config.cmd_original,
+        message: config.command_original,
         type: 'stdin',
         level: 'INFO',
         module: 'nikita/lib/system/execute'
@@ -386,7 +384,7 @@ handler = async function({
       stderr: [],
       code: null,
       status: false,
-      command: config.cmd_original
+      command: config.command_original
     };
     if (config.dry) {
       return resolve(result);
@@ -503,7 +501,7 @@ handler = async function({
           child.stderr.unpipe(config.stderr);
         }
         if (config.code.indexOf(code) === -1 && config.code_skipped.indexOf(code) === -1) {
-          return reject(error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', `command is ${JSON.stringify(utils.string.max(config.cmd_original, 50))},`, `got ${JSON.stringify(result.code)}`, config.code.length === 1 ? `instead of ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`], {
+          return reject(utils.error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, config.code.length === 1 ? `instead of ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`], {
             ...result,
             exit_code: code
           }));
@@ -539,5 +537,3 @@ module.exports = {
 exec = require('ssh2-exec');
 
 utils = require('../../utils');
-
-error = require('../../utils/error');

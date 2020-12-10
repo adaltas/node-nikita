@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// {status} = await nikita.ldap.delete({
+// const {status} = await nikita.ldap.delete({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   dn: 'cn=group1,ou=groups,dc=company,dc=com'
-// });
+// })
 // console.log(`Entry deleted: ${status}`)
 // ```
 
@@ -76,11 +76,11 @@ handler = function({config}) {
   dn = config.dn.map(function(dn) {
     return `'${dn}'`;
   }).join(' ');
-  // ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba' 
+  // ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba'
   return this.execute({
     // Check that the entry exists
     if_execute: `ldapsearch ${binddn} ${passwd} ${uri} -b ${dn} -s base`,
-    cmd: `ldapdelete ${binddn} ${passwd} ${uri} ${dn}`
+    command: `ldapdelete ${binddn} ${passwd} ${uri} ${dn}`
   });
 };
 

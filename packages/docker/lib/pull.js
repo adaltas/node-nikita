@@ -16,15 +16,11 @@
 
 // ## Example
 
-// 1- builds an image from dockerfile without any resourcess
-
-// ```javascript
-// require('nikita')
-// .docker.pull({
+// ```js
+// const {status} = await nikita.docker.pull({
 //   tag: 'postgresql'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container pulled: ' + status);
 // })
+// console.info(`Image was pulled: ${status}`)
 // ```
 
 // ## Schema
@@ -43,7 +39,8 @@ schema = {
     },
     'all': {
       type: 'boolean',
-      description: `Download all tagged images in the repository.  Default to false.`
+      default: false,
+      description: `Download all tagged images in the repository.`
     },
     'boot2docker': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -60,9 +57,9 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd, status, version;
+  var command, status, version;
   log({
     message: "Entering Docker pull",
     level: 'DEBUG',
@@ -71,22 +68,19 @@ handler = async function({
   // Validate parameters
   version = config.version || config.tag.split(':')[1] || 'latest';
   delete config.version; // present in misc.docker.config, will probably disappear at some point
-  if (config.all == null) {
-    config.all = false;
-  }
   if (config.tag == null) {
     throw Error('Missing Tag Name');
   }
   // rm is false by default only if config.service is true
-  cmd = 'pull';
-  cmd += config.all ? ` -a ${config.tag}` : ` ${config.tag}:${version}`;
+  command = 'pull';
+  command += config.all ? ` -a ${config.tag}` : ` ${config.tag}:${version}`;
   ({status} = (await this.docker.tools.execute({
-    cmd: ['images', `| grep '${config.tag}'`, !config.all ? `| grep '${version}'` : void 0].join(' '),
+    command: ['images', `| grep '${config.tag}'`, !config.all ? `| grep '${version}'` : void 0].join(' '),
     code_skipped: 1
   })));
   return this.docker.tools.execute({
     unless: status,
-    cmd: cmd
+    command: command
   });
 };
 

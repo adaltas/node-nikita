@@ -4,7 +4,7 @@
 // Remove a schema from a database.
 
 // ## Schema
-var cmd, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -48,7 +48,7 @@ handler = async function({config}) {
   return this.db.query({
     config: config
   }, {
-    cmd: `DROP SCHEMA IF EXISTS ${config.schema};`
+    command: `DROP SCHEMA IF EXISTS ${config.schema};`
   });
 };
 
@@ -63,4 +63,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd} = require('../query'));
+({command} = require('../query'));

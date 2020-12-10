@@ -22,15 +22,14 @@
 // ## Example
 
 // ```js
-// require('nikita').fs.copy({
+// const {status} = await nikita.fs.copy({
 //   source: '/etc/passwd',
 //   target: '/etc/passwd.bck',
-//   uid: 'my_user'
-//   gid: 'my_group'
+//   uid: 'my_user',
+//   gid: 'my_group',
 //   mode: '0755'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'File was copied: ' + status);
-// });
+// })
+// console.info(`File was copied: ${status}`)
 // ```
 
 // ## Hook
@@ -88,9 +87,9 @@ mode is a string with a particular syntax describing \`who\`, \`op\` and
           }
         }
       ],
-      description: `Create parent directory with provided attributes if an object or default 
-system config if "true", supported attributes include 'mode', 'uid', 'gid', 
-'size', 'atime', and 'mtime'.`
+      description: `Create parent directory with provided attributes if an object or
+default system config if "true", supported attributes include 'mode',
+'uid', 'gid', 'size', 'atime', and 'mtime'.`
     },
     'preserve': {
       type: 'boolean',
@@ -103,7 +102,8 @@ system config if "true", supported attributes include 'mode', 'uid', 'gid',
     },
     'source_stats': {
       type: 'object',
-      description: `Short-circuit to prevent source stat retrieval if already at our disposal.`,
+      description: `Short-circuit to prevent source stat retrieval if already at our
+disposal.`,
       properties: require('./base/stat').schema_output.properties.stats.properties
     },
     'target': {
@@ -112,7 +112,8 @@ system config if "true", supported attributes include 'mode', 'uid', 'gid',
     },
     'target_stats': {
       type: 'object',
-      description: `Short-circuit to prevent target stat retrieval if already at our disposal.`,
+      description: `Short-circuit to prevent target stat retrieval if already at our
+disposal.`,
       properties: require('./base/stat').schema_output.properties.stats.properties
     },
     'uid': {
@@ -122,7 +123,6 @@ system config if "true", supported attributes include 'mode', 'uid', 'gid',
   },
   required: ['source', 'target']
 };
-
 
 // ## Handler
 handler = async function({
@@ -188,9 +188,9 @@ handler = async function({
   }, config.parent);
   // Stop here if source is a directory. We traverse all its children
   // Recursively, calling either `fs.mkdir` or `fs.copy`.
-  // Like with the Unix `cp` command, ending slash matters if the target directory 
+  // Like with the Unix `cp` command, ending slash matters if the target directory
   // exists. Let's consider a source directory "/tmp/a_source" and a target directory
-  // "/tmp/a_target". Without an ending slash , the directory "/tmp/a_source" is 
+  // "/tmp/a_target". Without an ending slash , the directory "/tmp/a_source" is
   // copied into "/tmp/a_target/a_source". With an ending slash, all the files
   // present inside "/tmp/a_source" are copied inside "/tmp/a_target".
   res = (await this.call({

@@ -16,12 +16,10 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.goodies.prlimit({
+// const {stdout, limits} = await nikita.lxd.goodies.prlimit({
 //   container: "my_container"
-// }, function(err, {stdout, limits}) {
-//   console.info( err ? err.message : stdout + JSON.decode(limits))
-// });
+// })
+// console.info( `${stdout} ${JSON.decode(limits)}`)
 // ```
 
 // ## Schema
@@ -43,7 +41,7 @@ handler = async function({config}) {
   try {
     // log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
     ({stdout} = (await this.execute({
-      cmd: `command -p prlimit || exit 3
+      command: `command -p prlimit || exit 3
 sudo prlimit -p $(lxc info ${config.container} | awk '$1==\"Pid:\"{print $2}')`
     })));
     limits = (function() {
@@ -88,4 +86,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('../utils');

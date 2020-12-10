@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// {status} = await require('nikita').ldap.modify({
+// const {status} = await nikita.ldap.modify({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,dc=company,dc=com',
 //   passwd: 'secret',
@@ -146,7 +146,7 @@ handler = async function({config}) {
     }
   }
   result = (await this.execute({
-    cmd: [
+    command: [
       ['ldapmodify',
       config.continuous ? '-c' : void 0,
       config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0,

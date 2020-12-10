@@ -6,18 +6,15 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.group.show({
+// const {result} = await nikita.ipa.group.show({
 //   cn: 'somegroup',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(err, {result}){
-//   console.info(err ? err.message :
-//     `Group is ${result.cn[0]}`)
 // })
+// console.info(`Group is ${result.cn[0]}`)
 // ```
 
 // ## Schema

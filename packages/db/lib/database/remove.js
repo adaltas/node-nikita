@@ -4,7 +4,7 @@
 // Create a user for the destination database.
 
 // ## Schema
-var cmd, connection_config, handler, schema;
+var command, connection_config, handler, schema;
 
 schema = {
   type: 'object',
@@ -39,13 +39,13 @@ are converted to lower cases.`
   required: ['admin_username', 'admin_password']
 };
 
-// ## Source Code
+// ## Handler
 handler = function({config}) {
   // Avoid errors when database argument is provided in the command:
   // - Postgres: "ERROR:  cannot drop the currently open database"
   // - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
   return this.db.query(config, {
-    cmd: `DROP DATABASE IF EXISTS ${config.database};`,
+    command: `DROP DATABASE IF EXISTS ${config.database};`,
     code_skipped: 2,
     database: null
   });
@@ -62,4 +62,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd, connection_config} = require('../query'));
+({command, connection_config} = require('../query'));

@@ -3,26 +3,27 @@
 
 // Retrieve service information from FreeIPA.
 
-// ## Exemple
+// ## Example
 
 // ```js
-// require("nikita")
-// .ipa.service.show({
-//   principal: "myprincipal/my.domain.com",
-//   connection: {
-//     url: "https://ipa.domain.com/ipa/session/json",
-//     principal: "admin@DOMAIN.COM",
-//     password: "mysecret"
-//   }
-// }, function(err, {result}){
-//   console.info(err ? err.message :
-//     `Service is ${result.principal[0]}`)
+// try {
+//   const {result} = await nikita.ipa.service.show({
+//     principal: "myprincipal/my.domain.com",
+//     connection: {
+//       url: "https://ipa.domain.com/ipa/session/json",
+//       principal: "admin@DOMAIN.COM",
+//       password: "mysecret"
+//     }
+//   })
+//   console.info(`Service is ${result.principal[0]}`)
 // }
-// switch(err.code){
-//   case 4001:
-//    assert("missing: service not found", err.message)
-//   break
-// })
+// catch (err){
+//   switch(err.code){
+//     case 4001:
+//      assert("myprincipal/my.domain.com@DOMAIN.COM: service not found", err.message)
+//     break
+//   }
+// }  
 // ```
 
 // ## Schema

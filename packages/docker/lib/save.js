@@ -16,16 +16,12 @@
 
 // ## Example
 
-// ```javascript
-// nikita.docker({
-//   ssh: ssh
-//   output: 'test-image.tar'
-//   image: 'test-image'
-//   compression: 'gzip'
-//   entrypoint: '/bin/true'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container saved: ' + status);
+// ```js
+// const {status} = await nikita.docker.save({
+//   image: 'nikita/load_test:latest',
+//   output: `${scratch}/nikita_saved.tar`,
 // })
+// console.info(`Container was saved: ${status}`)
 // ```
 
 // ## Hooks
@@ -41,7 +37,7 @@ schema = {
   properties: {
     'image': {
       type: 'string',
-      description: `Name/ID of base image, required.`
+      description: `Name/ID of base image.`
     },
     'tag': {
       type: 'string',
@@ -49,7 +45,7 @@ schema = {
     },
     'output': {
       type: 'string',
-      description: `TAR archive output path, required.`
+      description: `TAR archive output path.`
     },
     'target': {
       type: 'string',
@@ -71,7 +67,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   log({
     message: "Entering Docker save",
@@ -85,7 +81,7 @@ handler = function({
     module: 'nikita/lib/docker/save'
   });
   return this.docker.tools.execute({
-    cmd: [`save -o ${config.output} ${config.image}`, config.tag != null ? `:${config.tag}` : void 0].join('')
+    command: [`save -o ${config.output} ${config.image}`, config.tag != null ? `:${config.tag}` : void 0].join('')
   });
 };
 

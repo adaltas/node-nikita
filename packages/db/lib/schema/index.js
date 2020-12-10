@@ -18,11 +18,11 @@
 //   database: 'my_database'
 //   schema: 'my_schema'
 // })
-// console.info(`Schema created or modified: ${status}`);
+// console.info(`Schema created or modified: ${status}`)
 // ```
 
 // ## Schema
-var cmd, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -63,7 +63,7 @@ handler = async function({config}) {
   var status, stderr;
   ({status} = (await this.execute({
     code_skipped: 2,
-    cmd: cmd(config, '\\dt'),
+    command: command(config, '\\dt'),
     shy: true
   })));
   if (!status) {
@@ -72,14 +72,14 @@ handler = async function({config}) {
   this.db.query({
     config: config
   }, {
-    cmd: `CREATE SCHEMA ${config.schema};`,
-    unless_execute: cmd(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
+    command: `CREATE SCHEMA ${config.schema};`,
+    unless_execute: command(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
   });
   // Check if owner is the good one
   ({stderr} = (await this.execute({
     if: config.owner != null,
-    unless_execute: cmd(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
-    cmd: cmd(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
+    unless_execute: command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
+    command: command(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
     code_skipped: 1
   })));
   if (/^ERROR:\s\srole.*does\snot\sexist/.test(stderr)) {
@@ -98,4 +98,4 @@ module.exports = {
 
 
   // ## Dependencies
-({cmd} = require('../query'));
+({command} = require('../query'));

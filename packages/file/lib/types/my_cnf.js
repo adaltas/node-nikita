@@ -15,9 +15,9 @@ schema = {
     },
     'backup': {
       type: ['string', 'boolean'],
-      description: `Create a backup, append a provided string to the filename extension or a
-timestamp if value is not a string, only apply if the target file exists
-and is modified.`
+      description: `Create a backup, append a provided string to the filename extension or
+a timestamp if value is not a string, only apply if the target file
+exists and is modified.`
     },
     'clean': {
       type: 'boolean',

@@ -15,7 +15,7 @@
 // ```
 
 // ## Schema
-var cmd, connection_config, handler, schema;
+var command, connection_config, handler, schema;
 
 schema = {
   type: 'object',
@@ -57,12 +57,12 @@ schema = {
   required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
 };
 
-// ## Source Code
+// ## Handler
 handler = async function({
     config,
     tools: {log}
   }) {
-  var cmd_database_create, cmd_grant_privileges, cmd_has_privileges, exists, i, len, ref, status, user;
+  var command_database_create, command_grant_privileges, command_has_privileges, exists, i, len, ref, status, user;
   if (config.user == null) {
     config.user = [];
   }
@@ -99,12 +99,12 @@ handler = async function({
             config.collation = 'utf8_general_ci';
           }
       }
-      cmd_database_create = cmd(config, {
+      command_database_create = command(config, {
         database: null
       }, [`CREATE DATABASE ${config.database}`, `DEFAULT CHARACTER SET ${config.character_set}`, config.collation ? `DEFAULT COLLATE ${config.collation}` : void 0, ';'].join(' '));
       break;
     case 'postgresql':
-      cmd_database_create = cmd(config, {
+      command_database_create = command(config, {
         database: null
       }, `CREATE DATABASE ${config.database};`);
   }
@@ -112,7 +112,7 @@ handler = async function({
   ({exists} = (await this.db.database.exists(config)));
   if (!exists) {
     await this.execute({
-      cmd: cmd_database_create
+      command: command_database_create
     });
     log({
       message: `Database created: ${JSON.stringify(config.database)}`,
@@ -138,29 +138,29 @@ handler = async function({
     switch (config.engine) {
       case 'mariadb':
       case 'mysql':
-        // cmd_has_privileges = cmd config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
-        cmd_has_privileges = cmd(config, {
+        // command_has_privileges = command config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
+        command_has_privileges = command(config, {
           database: 'mysql'
         }, `SELECT user FROM db WHERE db='${config.database}';`) + ` | grep '${user}'`;
-        cmd_grant_privileges = cmd(config, {
+        command_grant_privileges = command(config, {
           database: null
         }, `GRANT ALL PRIVILEGES ON ${config.database}.* TO '${user}' WITH GRANT OPTION;`);
         break;
       case 'postgresql':
-        cmd_has_privileges = cmd(config, {
+        command_has_privileges = command(config, {
           database: config.database
         }, "\\l") + ` | egrep '^${user}='`;
-        cmd_grant_privileges = cmd(config, {
+        command_grant_privileges = command(config, {
           database: null
         }, `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`);
     }
     ({status} = (await this.execute({
-      cmd: `if ${cmd_has_privileges}; then
+      command: `if ${command_has_privileges}; then
   echo '[INFO] User already with privileges'
   exit 3
 fi
 echo '[WARN] User privileges granted'
-${cmd_grant_privileges}`,
+${command_grant_privileges}`,
       code_skipped: 3
     })));
     if (status) {
@@ -185,4 +185,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd, connection_config} = require('../query'));
+({command, connection_config} = require('../query'));

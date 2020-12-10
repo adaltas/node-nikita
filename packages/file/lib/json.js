@@ -5,9 +5,8 @@
 
 // Merge the destination file with user provided content.
 
-// ```javascript
-// require('nikita')
-// .file.json({
+// ```js
+// const {status} = await nikita.file.json({
 //   target: "/path/to/target.json",
 //   content: { preferences: { colors: 'blue' } },
 //   transform: function(data){
@@ -17,27 +16,15 @@
 //   merge: true,
 //   pretty: true
 // })
+// console.info(`File was merged: ${status}`)
 // ```
 
-// ## On config
+// ## Hooks
 var handler, merge, on_action, schema;
 
 on_action = function({config, metadata}) {
-  // Options
-  if (config.content == null) {
-    config.content = {};
-  }
-  if (config.pretty == null) {
-    config.pretty = false;
-  }
   if (config.pretty === true) {
-    config.pretty = 2;
-  }
-  if (config.transform == null) {
-    config.transform = null;
-  }
-  if (config.transform && typeof config.transform !== 'function') {
-    throw Error("Invalid config: \"transform\"");
+    return config.pretty = 2;
   }
 };
 
@@ -55,12 +42,13 @@ schema = {
         }
       ],
       default: false,
-      description: `Create a backup, append a provided string to the filename extension or a
-timestamp if value is not a string, only apply if the target file exists and
-is modified.`
+      description: `Create a backup, append a provided string to the filename extension or
+a timestamp if value is not a string, only apply if the target file
+exists and is modified.`
     },
     'content': {
       type: 'object',
+      default: {},
       description: `The javascript code to stringify.`
     },
     'merge': {
@@ -78,8 +66,8 @@ exists.`
         }
       ],
       default: false,
-      description: `Prettify the JSON output, accept the number of spaces as an integer, default
-to none if false or to 2 spaces indentation if true.`
+      description: `Prettify the JSON output, accept the number of spaces as an integer,
+default to none if false or to 2 spaces indentation if true.`
     },
     'source': {
       type: 'string',
@@ -90,9 +78,9 @@ to none if false or to 2 spaces indentation if true.`
       description: `Path to the destination file.`
     },
     'transform': {
-      // typeof: 'function'
-      description: `User provided function to modify the javascript before it is stringified
-into JSON.`
+      typeof: 'function',
+      description: `User provided function to modify the javascript before it is
+stringified into JSON.`
     }
   },
   required: ['target']

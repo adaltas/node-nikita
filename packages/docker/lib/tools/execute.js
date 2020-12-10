@@ -4,7 +4,7 @@
 // Execute a docker command.
 
 // ## Schema
-var docker, handler, i, len, property, ref, schema, utils;
+var handler, i, len, property, ref, schema, utils;
 
 schema = {
   type: 'object',
@@ -22,10 +22,6 @@ schema = {
       type: 'string',
       description: `Name of the docker-machine, required if using docker-machine.`
     },
-    'cmd': {
-      type: 'string',
-      description: `The docker command to be executed.`
-    },
     'bash': {
       oneOf: [
         {
@@ -39,10 +35,10 @@ schema = {
     },
     'rootdir': {
       type: 'string',
-      description: `Path to the mount point corresponding to the root directory, required if
-the "arch_chroot" option is activated.`
+      description: `Path to the mount point corresponding to the root directory, required
+if the "arch_chroot" option is activated.`
     },
-    'cmd': {
+    'command': {
       oneOf: [
         {
           type: 'string'
@@ -70,7 +66,7 @@ to execute.`
 to 0.`
     }
   },
-  required: ['cmd'],
+  required: ['command'],
   additionalProperties: false
 };
 
@@ -85,7 +81,6 @@ for (i = 0, len = ref.length; i < len; i++) {
 // ## Handler
 handler = async function({
     config,
-    log,
     tools: {find}
   }) {
   var bin, err, k, option, opts, ref1, v, value;
@@ -130,7 +125,7 @@ handler = async function({
   bin = config.compose ? 'bin_compose' : 'bin_docker';
   try {
     return (await this.execute(config, {
-      cmd: `export SHELL=/bin/bash
+      command: `export SHELL=/bin/bash
 export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
 bin_boot2docker=$(command -v boot2docker)
 bin_docker=$(command -v docker)
@@ -148,7 +143,7 @@ if [[ $machine != '' ]] && [ $bin_machine ]; then
 elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
   eval "$(\${bin_boot2docker} shellinit)"
 fi
-$${bin} ${opts} ${config.cmd}`
+$${bin} ${opts} ${config.command}`
     }));
   } catch (error) {
     err = error;
@@ -171,6 +166,4 @@ module.exports = {
 };
 
 // ## Dependencies
-docker = require('../utils');
-
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('../utils');

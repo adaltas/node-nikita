@@ -12,13 +12,11 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.pause({
+// ```js
+// const {status} = await nikita.docker.pause({
 //   container: 'toto'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container paused: ' + status);
 // })
+// console.info(`Container was paused: ${status}`)
 // ```
 
 // ## Schema
@@ -47,7 +45,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   log({
     message: "Entering Docker pause",
@@ -55,7 +53,7 @@ handler = function({
     module: 'nikita/lib/docker/pause'
   });
   return this.docker.tools.execute({
-    cmd: `pause ${config.container}`
+    command: `pause ${config.container}`
   });
 };
 

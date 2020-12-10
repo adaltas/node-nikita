@@ -5,9 +5,8 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .krb5_delrinc({
+// ```js
+// const {status} = await nikita.krb5.delrinc({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 //   admin: {
@@ -15,9 +14,8 @@
 //     password: 'pass',
 //     server: 'localhost'
 //   }
-// }, function(err, status){
-//   console.info(err ? err.message : 'Principal removed: ' + status);
-// });
+// })
+// console.info(`Principal was removed: ${status}`)
 // ```
 
 // ## Schema
@@ -60,14 +58,14 @@ handler = async function({config}) {
   // Prepare commands
   ({status} = (await this.krb5.execute({
     admin: config.admin,
-    cmd: `getprinc ${config.principal}`,
+    command: `getprinc ${config.principal}`,
     grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
     shy: true
   })));
   if (status) {
     await this.krb5.execute({
       admin: config.admin,
-      cmd: `delprinc -force ${config.principal}`
+      command: `delprinc -force ${config.principal}`
     });
   }
   if (config.keytab) {

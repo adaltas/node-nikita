@@ -12,17 +12,15 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.storage({
+// ```js
+// const {status} = await nikita.lxd.storage({
 //   name: "system",
 //   driver: "zfs",
 //   config: {
 //     source: "syspool/lxd"
 //   }
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The storage was created or config updated')
-// });
+// })
+// console.info(`Storage was created or config updated: ${status}`)
 // ```
 
 // ## Schema
@@ -70,7 +68,7 @@ handler = async function({config}) {
   }
   // Check if exists
   ({stdout, code} = (await this.execute({
-    cmd: `lxc storage show ${config.name} && exit 42
+    command: `lxc storage show ${config.name} && exit 42
 ${[
       'lxc',
       'storage',
@@ -105,7 +103,7 @@ ${[
     value = changes[key];
     // if changes is empty status is false because no command were executed
     ({status} = (await this.execute({
-      cmd: ['lxc', 'storage', 'set', config.name, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+      command: ['lxc', 'storage', 'set', config.name, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {

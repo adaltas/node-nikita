@@ -3,15 +3,6 @@
 
 // Create and synchronize a git repository.
 
-// ## Options
-
-// * `source`   
-//   Git source repository address.   
-// * `target`   
-//   Directory where to clone the repository.   
-// * `revision`   
-//   Git revision, branch or tag.   
-
 // ## Callback Parameters
 
 // * `err`   
@@ -24,36 +15,44 @@
 // The following action make sure the git repository is synchronized to the latest
 // HEAD revision.
 
-// ```javascript
-// require('nikita')
-// .tools.git({
+// ```js
+// const {status} = await nikita.tools.git({
 //   source: 'https://github.com/wdavidw/node-nikita.git'
 //   target: '/tmp/nikita'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Repo was synchronized: ' + status);
-// });
+// })
+// console.info(`Repo was synchronized: ${status}`)
 // ```
 
 // ## Schema
-var handler, path, schema;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: 'object',
-      description: `          `
+    'revision': {
+      type: 'string',
+      default: 'HEAD',
+      description: `Git revision, branch or tag.`
+    },
+    'source': {
+      type: 'string',
+      description: `Git source repository address.`
+    },
+    'target': {
+      type: 'string',
+      description: `Directory where to clone the repository.`
     }
-  }
+  },
+  required: ['source', 'target']
 };
 
 // ## Handler
-handler = async function({config}) {
+handler = async function({
+    config,
+    ssh,
+    tools: {path}
+  }) {
   var gitDir, is_git, repo_exists, repo_uptodate;
-  // Sanitize config
-  if (config.revision == null) {
-    config.revision = 'HEAD';
-  }
   // Start real work
   repo_uptodate = false;
   ({
@@ -67,7 +66,6 @@ handler = async function({config}) {
     ({
       exists: is_git
     } = (await this.fs.base.exists({
-      ssh: config.ssh,
       target: gitDir
     })));
     if (!is_git) {
@@ -75,30 +73,29 @@ handler = async function({config}) {
     }
   } else {
     this.execute({
-      cmd: `git clone ${config.source} ${config.target}`,
+      command: `git clone ${config.source} ${config.target}`,
       cwd: path.dirname(config.target)
     });
   }
-  ({
-    status: repo_uptodate
-  } = (await this.execute({
-    cmd: `current=\`git log --pretty=format:'%H' -n 1\`
+  if (repo_exists) {
+    ({
+      status: repo_uptodate
+    } = (await this.execute({
+      command: `current=\`git log --pretty=format:'%H' -n 1\`
 target=\`git rev-list --max-count=1 ${config.revision}\`
 echo "current revision: $current"
 echo "expected revision: $target"
 if [ $current != $target ]; then exit 3; fi`,
-    // stdout: process.stdout
-    cwd: config.target,
-    trap: true,
-    code_skipped: 3,
-    if: function() {
-      return repo_exists;
-    },
-    shy: true
-  })));
+      // stdout: process.stdout
+      cwd: config.target,
+      trap: true,
+      code_skipped: 3,
+      shy: true
+    })));
+  }
   if (!repo_uptodate) {
     return this.execute({
-      cmd: `git checkout ${config.revision}`,
+      command: `git checkout ${config.revision}`,
       cwd: config.target
     });
   }
@@ -109,6 +106,3 @@ module.exports = {
   handler: handler,
   schema: schema
 };
-
-// ## Dependencies
-path = require('path');

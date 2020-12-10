@@ -6,19 +6,12 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .krb5_delrinc({
+// ```js
+// const {status} = await nikita.krb5.ktadd({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
-//   admin: {
-//     principal: 'me/admin@MY_REALM',
-//     password: 'pass',
-//     server: 'localhost'
-//   }
-// }, function(err, status){
-//   console.info(err ? err.message : 'Principal removed: ' + status);
-// });
+// })
+// console.info(`keytab was created or updated: ${status}`)
 // ```
 
 // ## Schema
@@ -75,7 +68,7 @@ handler = async function({
   princ = {}; // {kvno: null, mdate: null}
   // Get keytab information
   ({status, stdout} = (await this.execute({
-    cmd: `export TZ=GMT; klist -kt ${config.keytab}`,
+    command: `export TZ=GMT; klist -kt ${config.keytab}`,
     code_skipped: 1,
     shy: true
   })));
@@ -107,7 +100,7 @@ handler = async function({
   if (keytab[config.principal] != null) {
     ({status, stdout} = (await this.krb5.execute({
       admin: config.admin,
-      cmd: `getprinc -terse ${config.principal}`,
+      command: `getprinc -terse ${config.principal}`,
       shy: true
     })));
     if (status) {
@@ -140,7 +133,7 @@ handler = async function({
   if ((keytab[config.principal] != null) && (((ref3 = keytab[config.principal]) != null ? ref3.kvno : void 0) !== princ.kvno || keytab[config.principal].mdate !== princ.mdate)) {
     await this.krb5.execute({
       admin: config.admin,
-      cmd: `ktremove -k ${config.keytab} ${config.principal}`
+      command: `ktremove -k ${config.keytab} ${config.principal}`
     });
   }
   // Create keytab and add principal
@@ -152,7 +145,7 @@ handler = async function({
   if ((keytab[config.principal] == null) || (((ref5 = keytab[config.principal]) != null ? ref5.kvno : void 0) !== princ.kvno || keytab[config.principal].mdate !== princ.mdate)) {
     await this.krb5.execute({
       admin: config.admin,
-      cmd: `ktadd -k ${config.keytab} ${config.principal}`
+      command: `ktadd -k ${config.keytab} ${config.principal}`
     });
   }
   // Keytab ownership and permissions

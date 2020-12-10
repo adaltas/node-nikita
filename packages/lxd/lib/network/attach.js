@@ -13,13 +13,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.network.attach({
+// const {status} = await nikita.lxd.network.attach({
 //   network: 'network0',
 //   container: 'container1'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Network attached: ' + status);
 // })
+// console.info(`Network was attached: ${status}`)
 // ```
 
 // ## Schema
@@ -41,14 +39,14 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  var cmd_attach;
+  var command_attach;
   // log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
   //Build command
-  cmd_attach = ['lxc', 'network', 'attach', config.network, config.container].join(' ');
+  command_attach = ['lxc', 'network', 'attach', config.network, config.container].join(' ');
   //Execute
   return this.execute({
-    cmd: `lxc config device list ${config.container} | grep ${config.network} && exit 42
-${cmd_attach}`,
+    command: `lxc config device list ${config.container} | grep ${config.network} && exit 42
+${command_attach}`,
     code_skipped: 42
   });
 };

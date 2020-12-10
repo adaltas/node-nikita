@@ -15,29 +15,17 @@
 // Cache can be used from the `file.download` action:
 
 // ```js
-  // require('nikita')
-  // .file.download({
+  // const {status} = await nikita.file.download({
   //   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   //   cache_dir: '/var/tmp'
-  // }, function(err, {status}){
-  //   console.info(err ? err.message : 'File downloaded: ' + status);
-  // });
+  // })
+  // console.info(`File downloaded: ${status}`)
   // ```
 
-// ## Hooks
-var curl, error, errors, handler, on_action, path, protocols_ftp, protocols_http, schema, url,
+// ## Schema
+var errors, handler, path, protocols_ftp, protocols_http, schema, url, utils,
   indexOf = [].indexOf;
 
-on_action = function({config, metadata}) {
-  if (!(config.cache_file || config.target || config.cache_dir)) {
-    throw Error("Missing one of 'target', 'cache_file' or 'cache_dir' option");
-  }
-};
-
-// config.http_headers ?= []
-// config.cookies ?= []
-
-// ## Schema
 schema = {
   type: 'object',
   properties: {
@@ -58,8 +46,8 @@ schema = {
     },
     'cache_local': {
       type: 'boolean',
-      description: `Apply to SSH mode, treat the cache file and directories as local from where
-the command is used instead of over SSH.`
+      description: `Apply to SSH mode, treat the cache file and directories as local from
+where the command is used instead of over SSH.`
     },
     'cookies': {
       type: 'array',
@@ -67,12 +55,13 @@ the command is used instead of over SSH.`
         type: 'string'
       },
       default: [],
-      description: `Extra cookies  to include in the request when sending HTTP to a server.`
+      description: `Extra cookies  to include in the request when sending HTTP to a
+server.`
     },
     'fail': {
       type: 'boolean',
-      description: `Send an error if the HTTP response code is invalid. Similar to the curl
-option of the same name.`
+      description: `Send an error if the HTTP response code is invalid. Similar to the
+curl option of the same name.`
     },
     'force': {
       type: 'boolean',
@@ -89,8 +78,8 @@ option of the same name.`
     'location': {
       type: 'boolean',
       description: `If the server reports that the requested page has moved to a different
-location (indicated with a Location: header and a 3XX response code), this
-option will make curl redo the request on the new place.`
+location (indicated with a Location: header and a 3XX response code),
+this option will make curl redo the request on the new place.`
     },
     'md5': {
       oneOf: [
@@ -107,8 +96,8 @@ may be the string checksum or will be deduced from source if "true".`
     },
     'proxy': {
       type: 'string',
-      description: `Use the specified HTTP proxy. If the port number is not specified, it is
-assumed at port 1080. See curl(1) man page.`
+      description: `Use the specified HTTP proxy. If the port number is not specified, it
+is assumed at port 1080. See curl(1) man page.`
     },
     'sha1': {
       default: false,
@@ -138,8 +127,8 @@ may be the string checksum or will be deduced from source if "true".`
     },
     'source': {
       type: 'string',
-      description: `File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-is provided without any.`
+      description: `File, HTTP URL, FTP, GIT repository. File is the default protocol if
+source is provided without any.`
     },
     'target': {
       oneOf: [
@@ -150,12 +139,23 @@ is provided without any.`
           typeof: 'boolean'
         }
       ],
-      description: `Cache the file on the executing machine, equivalent to cache unless an ssh
-connection is provided. If a string is provided, it will be the cache path.
-Default to the basename of source.`
+      description: `Cache the file on the executing machine, equivalent to cache unless an
+ssh connection is provided. If a string is provided, it will be the
+cache path. Default to the basename of source.`
     }
   },
-  required: ['source']
+  required: ['source'],
+  anyOf: [
+    {
+      required: ['target']
+    },
+    {
+      required: ['cache_file']
+    },
+    {
+      required: ['cache_dir']
+    }
+  ]
 };
 
 // ## Handler
@@ -292,7 +292,7 @@ handler = async function({
       target: path.dirname(config.target)
     });
     await this.execute({
-      cmd: [
+      command: [
         'curl',
         config.fail ? '--fail' : void 0,
         u.protocol === 'https:' ? '--insecure' : void 0,
@@ -362,9 +362,6 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
     argument_name: 'source'
   },
@@ -378,7 +375,7 @@ module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:'];
 // ## Errors
 errors = {
   NIKITA_FILE_INVALID_TARGET_HASH: function({config, hash, _hash}) {
-    return error('NIKITA_FILE_INVALID_TARGET_HASH', [`target ${JSON.stringify(config.target)} got ${hash} instead of ${_hash}`]);
+    return utils.error('NIKITA_FILE_INVALID_TARGET_HASH', [`target ${JSON.stringify(config.target)} got ${hash} instead of ${_hash}`]);
   }
 };
 
@@ -387,6 +384,4 @@ path = require('path');
 
 url = require('url');
 
-curl = require('./utils/curl');
-
-error = require('@nikitajs/engine/src/utils/error');
+utils = require('./utils');

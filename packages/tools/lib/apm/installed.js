@@ -3,17 +3,19 @@
 
 // Check if APM is installed and available on the system.
 
+// ## Example
+
 // ```js
-// {status} = await nikita.tools.apm.installed()
+// const {status} = await nikita.tools.apm.installed()
 // console.log(`Is APM installed: ${status}`)
 // ```
 
-// ## Source code
+// ## Handler
 var handler;
 
 handler = function() {
   return this.execute({
-    cmd: "if (apm -v | grep apm) then (exit 0) else (exit 1) fi"
+    command: "if (apm -v | grep apm) then (exit 0) else (exit 1) fi"
   });
 };
 

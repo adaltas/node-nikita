@@ -22,7 +22,7 @@ connection avaible to the action.`
   }
 };
 
-// ## Source code
+// ## Handler
 handler = function({
     config,
     parent: {state},

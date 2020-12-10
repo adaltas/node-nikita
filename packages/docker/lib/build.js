@@ -25,21 +25,17 @@
   // * `stderr`   
   //   Stderr value(s) unless `stderr` option is provided.   
 
-// ## Examples
+// ## Builds a repository from dockerfile without any resourcess
 
-// ### Builds a repository from dockerfile without any resourcess
-
-// ```javascript
-  // require('nikita')
-  // .docker.build({
+// ```js
+  // const {status} = await nikita.docker.build({
   //   image: 'ryba/targe-build',
   //   source: '/home/ryba/Dockerfile'
-  // }, function(err, {status}){
-  //   console.info( err ? err.message : 'Container built: ' + status);
-  // });
+  // })
+  // console.info(`Container was built: ${status}`)
   // ```
 
-// ### Builds an repository from dockerfile with external resources
+// ## Builds a repository from dockerfile with external resources
 
 // In this case nikita download all the external files into a resources directory in the same location
   // than the Dockerfile. The Dockerfile content:
@@ -59,32 +55,28 @@
   // │   ├── configuration.sh
   // ```
 
-// ```javascript
-  // require('nikita')
-  // .docker.build({
+// ```js
+  // const {status} = await nikita.docker.build({
   //   tag: 'ryba/target-build',
   //   source: '/home/ryba/Dockerfile',
   //   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
-  // }, function(err, {status}){
-  //   console.info( err ? err.message : 'Container built: ' + status);
-  // });
+  // })
+  // console.info(`Container was built: ${status}`)
   // ```
 
-// ### Builds an repository from stdin
+// ## Builds a repository from stdin
 
-// ```javascript
-  // require('nikita')
-  // .docker.build({
+// ```js
+  // const {status} = await nikita.docker.build({
   //   ssh: ssh,
   //   tag: 'ryba/target-build'
   //   content: "FROM ubuntu\nRUN echo 'helloworld'"
-  // }, function(err, {status}){
-  //   console.info( err ? err.message : 'Container built: ' + status);
-  // });
+  // })
+  // console.info(`Container was built: ${status}`)
   // ```
 
 // ## Hooks
-var error, errors, handler, on_action, path, schema, util, utils,
+var errors, handler, on_action, path, schema, utils,
   indexOf = [].indexOf;
 
 on_action = function({config}) {
@@ -175,9 +167,9 @@ a global scale.`
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd, dockerfile_cmds, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
+  var command, dockerfile_commands, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
   log({
     message: "Entering Docker build",
     level: 'DEBUG',
@@ -186,7 +178,7 @@ handler = async function({
   number_of_step = 0;
   userargs = [];
   // status unmodified if final tag already exists
-  dockerfile_cmds = ['CMD', 'LABEL', 'EXPOSE', 'ENV', 'ADD', 'COPY', 'ENTRYPOINT', 'VOLUME', 'USER', 'WORKDIR', 'ARG', 'ONBUILD', 'RUN', 'STOPSIGNAL', 'MAINTAINER'];
+  dockerfile_commands = ['CMD', 'LABEL', 'EXPOSE', 'ENV', 'ADD', 'COPY', 'ENTRYPOINT', 'VOLUME', 'USER', 'WORKDIR', 'ARG', 'ONBUILD', 'RUN', 'STOPSIGNAL', 'MAINTAINER'];
   source = void 0;
   if (config.file) {
     source = config.file;
@@ -198,13 +190,13 @@ handler = async function({
       config.cwd = path.dirname(config.file);
     }
   }
-  // Build cmd
-  cmd = 'build';
+  // Build command
+  command = 'build';
   ref = ['force_rm', 'quiet', 'no_cache'];
   for (i = 0, len = ref.length; i < len; i++) {
     opt = ref[i];
     if (config[opt]) {
-      cmd += ` --${opt.replace('_', '-')}`;
+      command += ` --${opt.replace('_', '-')}`;
     }
   }
   ref1 = ['build_arg'];
@@ -215,15 +207,15 @@ handler = async function({
         ref2 = config[opt];
         for (l = 0, len2 = ref2.length; l < len2; l++) {
           k = ref2[l];
-          cmd += ` --${opt.replace('_', '-')} ${k}`;
+          command += ` --${opt.replace('_', '-')} ${k}`;
         }
       } else {
-        cmd += ` --${opt.replace('_', '-')} ${config[opt]}`;
+        command += ` --${opt.replace('_', '-')} ${config[opt]}`;
       }
     }
   }
-  cmd += ` --rm=${config.rm ? 'true' : 'false'}`;
-  cmd += ` -t \"${config.image}${config.tag ? `:${config.tag}` : ''}\"`;
+  command += ` --rm=${config.rm ? 'true' : 'false'}`;
+  command += ` -t \"${config.image}${config.tag ? `:${config.tag}` : ''}\"`;
   if (config.cwd) {
     // custom command for content option0
     if (config.file == null) {
@@ -237,7 +229,7 @@ handler = async function({
       module: 'nikita/docker/build'
     });
     if (config.content != null) {
-      cmd += ` - <<DOCKERFILE\n${config.content}\nDOCKERFILE`;
+      command += ` - <<DOCKERFILE\n${config.content}\nDOCKERFILE`;
     }
   } else if (config.file != null) {
     log({
@@ -245,14 +237,14 @@ handler = async function({
       level: 'INFO',
       module: 'nikita/docker/build'
     });
-    cmd += ` -f ${config.file} ${config.cwd}`;
+    command += ` -f ${config.file} ${config.cwd}`;
   } else {
     log({
       message: "Building from CWD",
       level: 'INFO',
       module: 'nikita/docker/build'
     });
-    cmd += ' .';
+    command += ' .';
   }
   await this.file({
     if: config.content,
@@ -288,12 +280,12 @@ handler = async function({
   // Count steps
   for (m = 0, len3 = ref3.length; m < len3; m++) {
     line = ref3[m];
-    if (ref4 = (ref5 = /^(.*?)\s/.exec(line)) != null ? ref5[1] : void 0, indexOf.call(dockerfile_cmds, ref4) >= 0) {
+    if (ref4 = (ref5 = /^(.*?)\s/.exec(line)) != null ? ref5[1] : void 0, indexOf.call(dockerfile_commands, ref4) >= 0) {
       number_of_step++;
     }
   }
   ({stdout, stderr} = (await this.docker.tools.execute({
-    cmd: cmd,
+    command: command,
     cwd: config.cwd
   })));
   image_id = null;
@@ -342,15 +334,11 @@ module.exports = {
 // ## Errors
 errors = {
   NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED: function() {
-    return error('NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED', ['could not build the container,', 'one of the `content` or `file` config property must be provided']);
+    return utils.error('NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED', ['could not build the container,', 'one of the `content` or `file` config property must be provided']);
   }
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/src/utils');
-
-error = require('@nikitajs/engine/src/utils/error');
+utils = require('./utils');
 
 path = require('path');
-
-util = require('util');

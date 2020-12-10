@@ -4,7 +4,7 @@
 // Remove a user for the destination database.
 
 // ## Schema
-var cmd, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -20,7 +20,7 @@ schema = {
 // ## Handler
 handler = function({config}) {
   return this.db.query(config, {
-    cmd: `DROP USER IF EXISTS ${config.username};`
+    command: `DROP USER IF EXISTS ${config.username};`
   });
 };
 
@@ -35,4 +35,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd} = require('../query'));
+({command} = require('../query'));

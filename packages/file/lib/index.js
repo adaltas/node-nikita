@@ -39,79 +39,99 @@
 // ## Replacing part of a file using from and to markers
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
-//   content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin',
+//   content: 'Start\n# from\nlets try to replace that one\n# to\nEnd',
 //   from: '# from\n',
 //   to: '# to',
-//   replace: 'my friend\n',
-//   target: scratch+'/a_file'
-// }, function(err, {status}){
-//   // '# here we are\n# from\nmy friend\n# to\nyou coquin'
+//   replace: 'New string\n',
+//   target: `${scratch}/a_file`
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // Start\n# from\nNew string\n# to\nEnd
 // ```
 
 // ## Replacing a matched line by a string
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
 //   content: 'email=david(at)adaltas(dot)com\nusername=root',
 //   match: /(username)=(.*)/,
 //   replace: '$1=david (was $2)',
-//   target: scratch+'/a_file'
-// }, function(err, {status}){
-//   // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
+//   target: `${scratch}/a_file`
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // email=david(at)adaltas(dot)com\nusername=david (was root)
 // ```
 
 // ## Replacing part of a file using a regular expression
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
-//   content: 'here we are\nlets try to replace that one\nyou coquin',
+//   content: 'Start\nlets try to replace that one\nEnd',
 //   match: /(.*try) (.*)/,
-//   replace: ['my friend, $1'],
-//   target: scratch+'/a_file'
-// }, function(err, {status}){
-//   // '# here we are\nmy friend, lets try\nyou coquin'
+//   replace: ['New string, $1'],
+//   target: `${scratch}/a_file`
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // Start\nNew string, lets try\nEnd
 // ```
 
 // ## Replacing with the global and multiple lines options
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
-//   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+//   content: '# Start\n#property=30\nproperty=10\n# End',
 //   match: /^property=.*$/mg,
 //   replace: 'property=50',
-//   target: scratch+'/a_file'
-// }, function(err, {status}){
-//   // '# A config file\n#property=30\nproperty=50\n#End of Config'
+//   target: `${scratch}/a_file`
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // # Start\n#property=30\nproperty=50\n# End
 // ```
 
 // ## Appending a line after each line containing "property"
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
-//   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+//   content: '# Start\n#property=30\nproperty=10\n# End',
 //   match: /^.*comment.*$/mg,
 //   replace: '# comment',
-//   target: scratch+'/a_file',
+//   target: `${scratch}/a_file`,
 //   append: 'property'
-// }, function(err, {status}){
-//   // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // # Start\n#property=30\n# comment\nproperty=50\n# comment\n# End
 // ```
 
 // ## Multiple transformations
 
 // ```js
-// require('nikita')
+// const {data} = await nikita
 // .file({
 //   content: 'username: me\nemail: my@email\nfriends: you',
 //   write: [
@@ -119,14 +139,18 @@
 //     {match: /^email.*$/mg, replace: ''},
 //     {match: /^(friends).*$/mg, replace: '$1: me'}
 //   ],
-//   target: scratch+'/a_file'
-// }, function(err, {status}){
-//   // 'username: you\n\nfriends: me'
+//   target: `${scratch}/a_file`
 // })
+// .fs.base.readFile({
+//   target: `${scratch}/a_file`,
+//   encoding: 'ascii'
+// })
+// console.info(data)
+// // username: you\n\nfriends: me
 // ```
 
 // ## Hook
-var diff, handler, on_action, partial, path, schema, utils;
+var handler, on_action, path, schema, utils;
 
 on_action = function({config}) {
   if (!((config.source || (config.content != null)) || config.replace || (config.write != null))) {
@@ -210,8 +234,9 @@ in the  form of \`{mode: 0o0400}\` or \`{mode: "0400"}\`.`
     },
     'diff': {
       typeof: 'function',
-      description: `Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
-arguments if a function, default to true.`
+      description: `Print diff information, pass a readable diff and the result of
+[jsdiff.diffLines][diffLines] as arguments if a function, default to
+true.`
     },
     'eof': {
       oneOf: [
@@ -223,9 +248,9 @@ arguments if a function, default to true.`
         }
       ],
       description: `Ensure the file ends with this charactere sequence, special values are
-'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
-"\u2028"), will be auto-detected if "true", default to false or "\n" if
-"true" and not detected.`
+'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r",
+"\n", "\u2028"), will be auto-detected if "true", default to false or
+"\n" if "true" and not detected.`
     },
     'encoding': {
       type: 'string',
@@ -318,7 +343,7 @@ with content.`
           typeof: 'function'
         }
       ],
-      description: `File path where to write content to. Pass the content `
+      description: `File path where to write content to. Pass the content.`
     },
     'to': {
       oneOf: [
@@ -355,8 +380,8 @@ an object accepting the options \`from\`, \`to\`, \`match\` and \`replace\`.`,
                 instanceof: 'RegExp'
               }
             ],
-            description: `File path from where to extract the content, do not use conjointly
-with content.`
+            description: `File path from where to extract the content, do not use
+conjointly with content.`
           },
           'to': {
             oneOf: [
@@ -382,8 +407,8 @@ with content.`
           },
           'replace': {
             type: 'string',
-            description: `The content to be inserted, used conjointly with the from, to or match
-options.`
+            description: `The content to be inserted, used conjointly with the from, to or
+match options.`
           }
         }
       }
@@ -602,7 +627,7 @@ handler = async function({
     config.content = config.content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1");
   }
   if (config.write.length) {
-    partial(config, log);
+    utils.partial(config, log);
   }
   if (config.eof) {
     log({
@@ -655,7 +680,7 @@ handler = async function({
     contentChanged = (targetStats == null) || targetContentHash !== utils.string.hash(config.content);
   }
   if (contentChanged) {
-    ({raw, text} = diff(targetContent, config.content, config));
+    ({raw, text} = utils.diff(targetContent, config.content, config));
     if (typeof config.diff === 'function') {
       config.diff(text, raw);
     }
@@ -755,10 +780,6 @@ module.exports = {
 // ## Dependencies
 path = require('path');
 
-utils = require('@nikitajs/engine/src/utils');
-
-diff = require('./utils/diff');
-
-partial = require('./utils/partial');
+utils = require('./utils');
 
 // [diffLines]: https://github.com/kpdecker/jsdiff

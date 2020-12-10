@@ -6,15 +6,15 @@
 // ## Set a configuration key
 
 // ```js
-// require('nikita')
-// .lxd.config.set({
-//   name: "my_container",
-//   config:
-//     'boot.autostart.priority': 100,
-// }, function(err, {status}) {
-//   console.info( err ? err.message : status ?
-//     'Property set' : 'Property already present')
-// });
+// const {status} = await nikita.lxd.config.set({
+//   config: {
+//     name: "my_container",
+//     config: {
+//       'boot.autostart.priority': 100
+//     }
+//   }
+// })
+// console.info(`Property was set: ${status}`)
 // ```
 
 // ## Schema
@@ -54,7 +54,7 @@ handler = async function({config}) {
   }
   keys = {};
   ({stdout} = (await this.execute({
-    cmd: `${['lxc', 'config', 'show', config.container].join(' ')}`,
+    command: `${['lxc', 'config', 'show', config.container].join(' ')}`,
     shy: true,
     code_skipped: 42
   })));
@@ -65,7 +65,7 @@ handler = async function({config}) {
     // if changes is empty status is false because no command were executed
     // Note, it doesnt seem possible to set multiple keys in one command
     ({status} = (await this.execute({
-      cmd: ['lxc', 'config', 'set', config.container, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+      command: ['lxc', 'config', 'set', config.container, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {

@@ -13,16 +13,14 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.network({
+// const {status} = await nikita.lxd.network({
 //   network: 'lxbr0'
 //   config: {
 //     'ipv4.address': '172.89.0.0/24',
 //     'ipv6.address': 'none'
 //   }
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Network created: ' + status);
 // })
+// console.info(`Network was created: ${status}`)
 // ```
 
 // ## Schema
@@ -65,7 +63,7 @@ handler = async function({config}) {
   // Command if the network does not yet exist
   ({stdout, code, status} = (await this.execute({
     // return code 5 indicates a version of lxc where 'network' command is not implemented
-    cmd: `lxc network > /dev/null || exit 5
+    command: `lxc network > /dev/null || exit 5
 lxc network show ${config.network} && exit 42
 ${[
       'lxc',
@@ -105,7 +103,7 @@ ${[
   for (key in changes) {
     value = changes[key];
     ({status} = (await this.execute({
-      cmd: ['lxc', 'network', 'set', config_orig.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+      command: ['lxc', 'network', 'set', config_orig.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {

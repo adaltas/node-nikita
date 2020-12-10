@@ -16,17 +16,15 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker({
+// ```js
+// const {status} = await nikita.docker.run({
 //   ssh: ssh
 //   name: 'myContainer'
 //   image: 'test-image'
 //   env: ["FOO=bar",]
 //   entrypoint: '/bin/true'
-// }, function(err, status, stdout, stderr){
-//   console.info( err ? err.message : 'Container state changed to running: ' + status);
 // })
+// console.info(`Container was run: ${status}`)
 // ```
 
 // ## Hooks
@@ -57,11 +55,11 @@ schema = {
     },
     'image': {
       type: 'string',
-      description: `Name/ID of base image, required.`
+      description: `Name/ID of base image.`
     },
     'entrypoint': {
       type: 'string',
-      description: `Overwrite the default ENTRYPOINT of the image, equivalent to 
+      description: `Overwrite the default ENTRYPOINT of the image, equivalent to
 \`--entrypoint docker parameter\``
     },
     'hostname': {
@@ -243,10 +241,6 @@ container ID.`
       type: 'string',
       description: `CPUs in which to allow execution (ex: 0-3 0,1 ...).`
     },
-    'entrypoint': {
-      type: 'string',
-      description: `Overwrite the default ENTRYPOINT of the image.`
-    },
     'ipc': {
       type: 'string',
       description: `IPC namespace to use.`
@@ -358,9 +352,9 @@ container ID.`
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
+  var command, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
   log({
     message: "Entering Docker run",
     level: 'DEBUG',
@@ -375,7 +369,7 @@ handler = async function({
     });
   }
   // Construct exec command
-  cmd = 'run';
+  command = 'run';
   ref = {
     name: '--name',
     hostname: '-h',
@@ -398,11 +392,11 @@ handler = async function({
   for (opt in ref) {
     flag = ref[opt];
     if (config[opt] != null) {
-      cmd += ` ${flag} ${config[opt]}`;
+      command += ` ${flag} ${config[opt]}`;
     }
   }
   if (config.detach) { // else ' -t'
-    cmd += ' -d';
+    command += ' -d';
   }
   ref1 = {
     rm: '--rm',
@@ -414,7 +408,7 @@ handler = async function({
   for (opt in ref1) {
     flag = ref1[opt];
     if (config[opt]) {
-      cmd += ` ${flag}`;
+      command += ` ${flag}`;
     }
   }
   ref2 = {
@@ -439,13 +433,13 @@ handler = async function({
     flag = ref2[opt];
     if (config[opt] != null) {
       if (typeof config[opt] === 'string' || typeof config[opt] === 'number') {
-        cmd += ` ${flag} ${config[opt]}`;
+        command += ` ${flag} ${config[opt]}`;
       } else if (Array.isArray(config[opt])) {
         ref3 = config[opt];
         for (i = 0, len = ref3.length; i < len; i++) {
           p = ref3[i];
           if ((ref4 = typeof p) === 'string' || ref4 === 'number') {
-            cmd += ` ${flag} ${p}`;
+            command += ` ${flag} ${p}`;
           } else {
             callback(Error(`Invalid parameter, '${opt}' array should only contains string or number`));
           }
@@ -455,15 +449,15 @@ handler = async function({
       }
     }
   }
-  cmd += ` ${config.image}`;
-  if (config.cmd) {
-    cmd += ` ${config.cmd}`;
+  command += ` ${config.image}`;
+  if (config.command) {
+    command += ` ${config.command}`;
   }
-  // need to delete the cmd config or it will be used in docker.exec
-  // delete config.cmd
+  // need to delete the command config or it will be used in docker.exec
+  // delete config.command
   ({status} = (await this.docker.tools.execute({
     if: config.name != null,
-    cmd: `ps -a | egrep ' ${config.name}$'`,
+    command: `ps -a | egrep ' ${config.name}$'`,
     code_skipped: 1,
     shy: true
   })));
@@ -475,7 +469,7 @@ handler = async function({
     });
   }
   result = (await this.docker.tools.execute({
-    cmd: cmd,
+    command: command,
     if: function() {
       return (config.name == null) || status === false;
     }

@@ -13,13 +13,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.config.device.delete({
+// const {status} = await nikita.lxd.config.device.delete({
 //   container: 'container1',
-//   device: 'root',
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Device removed: ' + status);
+//   device: 'root'
 // })
+// console.info(`Device was removed: ${status}`)
 // ```
 
 // ## Schema
@@ -54,7 +52,7 @@ handler = async function({config}) {
     };
   }
   ({status} = (await this.execute({
-    cmd: ['lxc', 'config', 'device', 'remove', config_orig.container, config_orig.device].join(' ')
+    command: ['lxc', 'config', 'device', 'remove', config_orig.container, config_orig.device].join(' ')
   })));
   return {
     status: status

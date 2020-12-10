@@ -6,18 +6,15 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.service.exists({
+// const {status} = await nikita.ipa.service.exists({
 //   principal: 'myprincipal/my.domain.com',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(err, {status, exists}){
-//   console.info(err ? err.message : status ?
-//     'Service exists' : 'Service does not exist')
 // })
+// console.info(`Service exists: ${status}`)
 // ```
 
 // ## Schema

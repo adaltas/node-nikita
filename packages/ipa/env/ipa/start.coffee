@@ -1,9 +1,9 @@
 
 path = require 'path'
 os = require 'os'
-nikita = require '@nikitajs/core'
-require '@nikitajs/lxd/lib/register'
-require '@nikitajs/tools/lib/register'
+nikita = require '@nikitajs/engine/src'
+require '@nikitajs/lxd/src/register'
+require '@nikitajs/tools/src/register'
 
 # Note:
 # Jan 20th, 2020: upgrading ubuntu to 19.10

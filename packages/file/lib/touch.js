@@ -17,21 +17,18 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .file.touch({
+// const {status} = await nikita.file.touch({
 //   ssh: ssh,
 //   target: '/tmp/a_file'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'File touched: ' + status);
-// });
+// })
+// console.info(`File was touched: ${status}`)
 // ```
 
-// ## On config
+// ## Hooks
 var handler, on_action, schema;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
-    // Options
     return config.target = metadata.argument;
   }
 };
@@ -55,7 +52,8 @@ schema = {
           typeof: 'function'
         }
       ],
-      description: `File path where to write file or a function that returns a valid file path.`
+      description: `File path where to write file or a function that returns a valid file
+path.`
     },
     'uid': {
       $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
@@ -108,7 +106,7 @@ handler = async function({
     // todo check uid/gid/mode
     // if the file exists, overwrite it using `touch` but don't update the status
     this.execute({
-      cmd: `touch ${config.target}`,
+      command: `touch ${config.target}`,
       shy: true
     });
   }

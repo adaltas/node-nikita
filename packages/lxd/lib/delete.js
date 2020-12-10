@@ -5,13 +5,11 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.delete({
+// ```js
+// const {status} = await nikita.lxd.delete({
 //   container: "myubuntu"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The container was deleted')
-// });
+// })
+// console.info(`Container was deleted: ${status}`)
 // ```
 
 // ## Schema
@@ -36,7 +34,7 @@ schema = {
 handler = function({config}) {
   // log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
   return this.execute({
-    cmd: `lxc info ${config.container} > /dev/null || exit 42
+    command: `lxc info ${config.container} > /dev/null || exit 42
 ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' ')}`,
     code_skipped: 42
   });

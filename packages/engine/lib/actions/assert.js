@@ -114,7 +114,6 @@ schema = {
 
 // ## Exports
 module.exports = {
-  // handler: handler
   on_action: on_action,
   schema: schema
 };

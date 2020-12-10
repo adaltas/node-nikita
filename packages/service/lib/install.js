@@ -3,38 +3,6 @@
 
 // Install a service. Yum, Yay, Yaourt, Pacman and apt-get are supported.
 
-// ## Options
-
-// * `arch_chroot` (boolean|string)   
-//   Run this command inside a root directory with the arc-chroot command or any
-//   provided string, require the "rootdir" option if activated.
-// * `cache` (boolean)   
-//   Cache the list of installed and outpdated packages.
-// * `cacheonly` (boolean)   
-//   Run the yum command entirely from system cache, don't update cache.
-// * `code_skipped` (integer|array)   
-//    Error code to skip when using nikita.service.
-// * `installed`   
-//   Cache a list of installed services. If an object, the service will be
-//   installed if a key of the same name exists; if anything else (default), no
-//   caching will take place.
-// * `name` (string)   
-//   Package name, required unless provided as main argument.
-// * `outdated`   
-//   Cache a list of outdated services. If an object, the service will be updated
-//   if a key of the same name exists; If true, the option will be converted to
-//   an object with all the outdated service names as keys; if anything else
-//   (default), no caching will take place.
-// * `rootdir` (string)   
-//   Path to the mount point corresponding to the root directory, required if
-//   the "arch_chroot" option is activated.
-// * `pacman_flags` (array)
-//   Additionnal flags passed to the `pacman -S` command.
-// * `yaourt_flags` (array)
-//   Additionnal flags passed to the `yaourt -S` command.
-// * `yay_flags` (array)
-//   Additionnal flags passed to the `yay -S` command.
-
 // ## Callback parameters
 
 // * `err`   
@@ -45,104 +13,160 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .service.install({
+// const {status} = await nikita.service.install({
 //   ssh: ssh,
 //   name: 'ntp'
-// }, function(err, {status}){
-//   console.info(err || "Package installed: " + status ? 'yes' : 'no');
-// });
+// })
+// console.info(`Package installed: ${status}`)
 // ```
 
-// ## Source Code
-var string;
+// ## Hooks
+var handler, on_action, schema, utils;
 
-module.exports = function({metadata, options}) {
-  var cacheonly, flag, i, j, k, l, len, len1, len2, ref, ref1, ref2;
-  this.log({
-    message: "Entering service.install",
-    level: 'DEBUG',
-    module: 'nikita/lib/service/install'
-  });
+on_action = function({config, metadata}) {
   if (typeof metadata.argument === 'string') {
-    // Options
-    if (options.name == null) {
-      options.name = metadata.argument;
+    return config.name = metadata.argument;
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'arch_chroot': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/arch_chroot'
+    },
+    'cache': {
+      type: 'boolean',
+      description: `Cache the list of installed and outdated packages.`
+    },
+    'cacheonly': {
+      type: 'boolean',
+      description: `Run the yum command entirely from system cache, don't update cache.`
+    },
+    'code_skipped': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/code_skipped',
+      description: `Error code to skip when using nikita.service.`
+    },
+    'installed': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Cache a list of installed services. If an array, the service will be
+installed if a key of the same name exists; if anything else
+(default), no caching will take place.`
+    },
+    'name': {
+      type: 'string',
+      description: `Package name, required unless provided as main argument.`
+    },
+    'outdated': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      // oneOf: [
+      //   {type: 'boolean'}
+      //   {type: 'array', items: type: 'string'}
+      // ]
+      description: `Cache a list of outdated services. If an array, the service will be
+updated if a key of the same name exists; If true, the option will be
+converted to an array with all the outdated service names as keys; if
+anything else (default), no caching will take place.`
+    },
+    'rootdir': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/rootdir'
+    },
+    'pacman_flags': {
+      type: 'array',
+      default: [],
+      description: `Additionnal flags passed to the \`pacman -S\` command.`
+    },
+    'yaourt_flags': {
+      type: 'array',
+      default: [],
+      description: `Additionnal flags passed to the \`yaourt -S\` command.`
+    },
+    'yay_flags': {
+      type: 'array',
+      default: [],
+      description: `Additionnal flags passed to the \`yay -S\` command.`
+    }
+  },
+  required: ['name']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    parent: {state},
+    tools: {log}
+  }) {
+  var cacheonly, err, flag, i, installedIndex, j, k, l, len, len1, len2, outdatedIndex, pkg, ref, ref1, ref2, ref3, ref4, status, stdout;
+  if (config.cache) {
+    // log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
+    // Config
+    if (config.installed == null) {
+      config.installed = state['nikita:execute:installed'];
     }
   }
-  if (options.cache) {
-    if (options.installed == null) {
-      options.installed = this.store['nikita:execute:installed'];
+  if (config.cache) {
+    if (config.outdated == null) {
+      config.outdated = state['nikita:execute:outdated'];
     }
   }
-  if (options.cache) {
-    if (options.outpdated == null) {
-      options.outpdated = this.store['nikita:execute:outpdated'];
-    }
-  }
-  cacheonly = options.cacheonly ? '-C' : '';
-  if (options.pacman_flags == null) {
-    options.pacman_flags = [];
-  }
-  ref = options.pacman_flags;
+  cacheonly = config.cacheonly ? '-C' : '';
+  ref = config.pacman_flags;
   for (i = j = 0, len = ref.length; j < len; i = ++j) {
     flag = ref[i];
     if (/^-/.test(flag)) {
       continue;
     }
     if (flag.length === 1) {
-      options.pacman_flags[i] = `-${flag}`;
+      config.pacman_flags[i] = `-${flag}`;
     }
     if (flag.length > 1) {
-      options.pacman_flags[i] = `--${flag}`;
+      config.pacman_flags[i] = `--${flag}`;
     }
   }
-  if (options.yay_flags == null) {
-    options.yay_flags = [];
-  }
-  ref1 = options.yay_flags;
+  ref1 = config.yay_flags;
   for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
     flag = ref1[i];
     if (/^-/.test(flag)) {
       continue;
     }
     if (flag.length === 1) {
-      options.yay_flags[i] = `-${flag}`;
+      config.yay_flags[i] = `-${flag}`;
     }
     if (flag.length > 1) {
-      options.yay_flags[i] = `--${flag}`;
+      config.yay_flags[i] = `--${flag}`;
     }
   }
-  if (options.yaourt_flags == null) {
-    options.yaourt_flags = [];
-  }
-  ref2 = options.yaourt_flags;
+  ref2 = config.yaourt_flags;
   for (i = l = 0, len2 = ref2.length; l < len2; i = ++l) {
     flag = ref2[i];
     if (/^-/.test(flag)) {
       continue;
     }
     if (flag.length === 1) {
-      options.yaourt_flags[i] = `-${flag}`;
+      config.yaourt_flags[i] = `-${flag}`;
     }
     if (flag.length > 1) {
-      options.yaourt_flags[i] = `--${flag}`;
+      config.yaourt_flags[i] = `--${flag}`;
     }
   }
-  if (!options.name) {
-    // Validation
-    throw Error(`Invalid Name: ${JSON.stringify(options.name)}`);
-  }
   // Start real work
-  this.log({
-    message: `Install service ${options.name}`,
+  log({
+    message: `Install service ${config.name}`,
     level: 'INFO',
     module: 'nikita/lib/service/install'
   });
   // List installed packages
-  this.system.execute({
-    unless: options.installed != null,
-    cmd: `if command -v yum >/dev/null 2>&1; then
+  if (config.installed == null) {
+    try {
+      ({status, stdout} = (await this.execute({
+        command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n"
 elif command -v pacman >/dev/null 2>&1; then
   pacman -Qqe
@@ -152,47 +176,43 @@ else
   echo "Unsupported Package Manager" >&2
   exit 2
 fi`,
-    code_skipped: 1,
-    arch_chroot: options.arch_chroot,
-    rootdir: options.rootdir,
-    stdin_log: false,
-    stdout_log: false,
-    shy: true
-  }, function(err, {status, stdout}) {
-    var pkg;
-    if ((err != null ? err.code : void 0) === 2) {
-      throw Error("Unsupported Package Manager");
-    }
-    if (err) {
-      throw err;
-    }
-    if (!status) {
-      return;
-    }
-    this.log({
-      message: "Installed packages retrieved",
-      level: 'INFO',
-      module: 'nikita/lib/service/install'
-    });
-    return options.installed = (function() {
-      var len3, m, ref3, results;
-      ref3 = string.lines(stdout);
-      results = [];
-      for (m = 0, len3 = ref3.length; m < len3; m++) {
-        pkg = ref3[m];
-        results.push(pkg);
+        code_skipped: 1,
+        arch_chroot: config.arch_chroot,
+        rootdir: config.rootdir,
+        stdin_log: false,
+        stdout_log: false,
+        shy: true
+      })));
+      if (status) {
+        log({
+          message: "Installed packages retrieved",
+          level: 'INFO',
+          module: 'nikita/lib/service/install'
+        });
+        config.installed = (function() {
+          var len3, m, ref3, results;
+          ref3 = utils.string.lines(stdout);
+          results = [];
+          for (m = 0, len3 = ref3.length; m < len3; m++) {
+            pkg = ref3[m];
+            results.push(pkg);
+          }
+          return results;
+        })();
       }
-      return results;
-    })();
-  });
+    } catch (error) {
+      err = error;
+      if (err.exit_code === 2) {
+        throw Error("Unsupported Package Manager");
+      }
+    }
+  }
   // List packages waiting for update
-  this.system.execute({
-    unless: options.outpdated != null,
-    if: function() {
-      return options.installed.indexOf(options.name) === -1;
-    },
-    cmd: `if command -v yum >/dev/null 2>&1; then
-  yum ${cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
+  if (config.outdated == null) {
+    try {
+      ({status, stdout} = (await this.execute({
+        command: `if command -v yum >/dev/null 2>&1; then
+  yum ${cacheonly} check-update -q | sed 's/\\([^\\.]*\\).*/\\1/'
 elif command -v pacman >/dev/null 2>&1; then
   pacman -Qu | sed 's/\\([^ ]*\\).*/\\1/'
 elif command -v apt-get >/dev/null 2>&1; then
@@ -201,97 +221,107 @@ else
   echo "Unsupported Package Manager" >&2
   exit 2
 fi`,
-    code_skipped: 1,
-    arch_chroot: options.arch_chroot,
-    rootdir: options.rootdir,
-    stdin_log: false,
-    stdout_log: false,
-    shy: true
-  }, function(err, {status, stdout}) {
-    if ((err != null ? err.code : void 0) === 2) {
-      throw Error("Unsupported Package Manager");
+        code_skipped: 1,
+        arch_chroot: config.arch_chroot,
+        rootdir: config.rootdir,
+        stdin_log: false,
+        stdout_log: false,
+        shy: true
+      })));
+      if (status) {
+        log({
+          message: "Outdated package list retrieved",
+          level: 'INFO',
+          module: 'nikita/lib/service/install'
+        });
+        config.outdated = utils.string.lines(stdout.trim());
+      } else {
+        config.outdated = [];
+      }
+    } catch (error) {
+      err = error;
+      if (err.exit_code === 2) {
+        throw Error("Unsupported Package Manager");
+      }
     }
-    if (err) {
-      throw err;
-    }
-    if (!status) {
-      return options.outpdated = [];
-    }
-    this.log({
-      message: "Outpdated package list retrieved",
-      level: 'INFO',
-      module: 'nikita/lib/service/install'
-    });
-    return options.outpdated = string.lines(stdout.trim());
-  });
-  this.system.execute({
-    if: function() {
-      return options.installed.indexOf(options.name) === -1 || options.outpdated.indexOf(options.name) !== -1;
-    },
-    cmd: `if command -v yum >/dev/null 2>&1; then
-  yum install -y ${cacheonly} ${options.name}
+  }
+  // Install the package
+  if (((ref3 = config.installed) != null ? ref3.indexOf(config.name) : void 0) === -1 || ((ref4 = config.outdated) != null ? ref4.indexOf(config.name) : void 0) !== -1) {
+    try {
+      ({status} = (await this.execute({
+        command: `if command -v yum >/dev/null 2>&1; then
+  yum install -y ${cacheonly} ${config.name}
 elif command -v yay >/dev/null 2>&1; then
-  yay --noconfirm -S ${options.name} ${options.yay_flags.join(' ')}
+  yay --noconfirm -S ${config.name} ${config.yay_flags.join(' ')}
 elif command -v yaourt >/dev/null 2>&1; then
-  yaourt --noconfirm -S ${options.name} ${options.yaourt_flags.join(' ')}
+  yaourt --noconfirm -S ${config.name} ${config.yaourt_flags.join(' ')}
 elif command -v pacman >/dev/null 2>&1; then
-  pacman --noconfirm -S ${options.name} ${options.pacman_flags.join(' ')}
+  pacman --noconfirm -S ${config.name} ${config.pacman_flags.join(' ')}
 elif command -v apt-get >/dev/null 2>&1; then
-  env DEBIAN_FRONTEND=noninteractive apt-get install -y ${options.name}
+  env DEBIAN_FRONTEND=noninteractive apt-get install -y ${config.name}
 else
   echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
   exit 2
 fi`,
-    code_skipped: options.code_skipped,
-    arch_chroot: options.arch_chroot,
-    rootdir: options.rootdir
-  }, function(err, {status}) {
-    var installedIndex, outpdatedIndex;
-    if ((err != null ? err.code : void 0) === 2) {
-      throw Error("Unsupported Package Manager: yum, yaourt, pacman, apt-get supported");
-    }
-    if (err) {
-      throw err;
-    }
-    this.log(status ? {
-      message: `Package \"${options.name}\" is installed`,
-      level: 'WARN',
-      module: 'nikita/lib/service/install'
-    } : {
-      message: `Package \"${options.name}\" is already installed`,
-      level: 'INFO',
-      module: 'nikita/lib/service/install'
-    });
-    // Enrich installed array with package name unless already there
-    installedIndex = options.installed.indexOf(options.name);
-    if (installedIndex === -1) {
-      options.installed.push(options.name);
-    }
-    // Remove package name from outpdated if listed
-    if (options.outpdated) {
-      outpdatedIndex = options.outpdated.indexOf(options.name);
-      if (outpdatedIndex !== -1) {
-        return options.outpdated.splice(outpdatedIndex, 1);
+        code_skipped: config.code_skipped,
+        arch_chroot: config.arch_chroot,
+        rootdir: config.rootdir
+      })));
+      log(status ? {
+        message: `Package \"${config.name}\" is installed`,
+        level: 'WARN',
+        module: 'nikita/lib/service/install'
+      } : {
+        message: `Package \"${config.name}\" is already installed`,
+        level: 'INFO',
+        module: 'nikita/lib/service/install'
+      });
+      // Enrich installed array with package name unless already there
+      installedIndex = config.installed.indexOf(config.name);
+      if (installedIndex === -1) {
+        config.installed.push(config.name);
+      }
+      // Remove package name from outdated if listed
+      if (config.outdated) {
+        outdatedIndex = config.outdated.indexOf(config.name);
+        if (outdatedIndex !== -1) {
+          config.outdated.splice(outdatedIndex, 1);
+        }
+      }
+    } catch (error) {
+      err = error;
+      if (err.exit_code === 2) {
+        throw Error("Unsupported Package Manager: yum, yaourt, pacman, apt-get supported");
       }
     }
-  });
-  return this.call({
-    if: options.cache
-  }, function() {
-    this.log({
+  }
+  if (config.cache) {
+    log({
       message: "Caching installed on \"nikita:execute:installed\"",
       level: 'INFO',
       module: 'nikita/lib/service/install'
     });
-    this.store['nikita:execute:installed'] = options.installed;
-    this.log({
-      message: "Caching outpdated list on \"nikita:execute:outpdated\"",
+    state['nikita:execute:installed'] = config.installed;
+    log({
+      message: "Caching outdated list on \"nikita:execute:outdated\"",
       level: 'INFO',
       module: 'nikita/lib/service/install'
     });
-    return this.store['nikita:execute:outpdated'] = options.outpdated;
-  });
+    state['nikita:execute:outdated'] = config.outdated;
+    return {
+      status: true
+    };
+  }
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  schema: schema
 };
 
 // ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('@nikitajs/engine/src/utils');

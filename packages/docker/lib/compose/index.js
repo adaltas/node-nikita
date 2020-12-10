@@ -16,7 +16,7 @@
 //     Stderr value(s) unless `stderr` option is provided.   
 
 // ## Schema
-var docker, handler, path, schema;
+var handler, path, schema, utils;
 
 schema = {
   type: 'object',
@@ -40,20 +40,20 @@ schema = {
         }
       ],
       default: false,
-      description: `Create a backup, append a provided string to the filename extension or a
-timestamp if value is not a string, only apply if the target file exists and
-is modified.`
+      description: `Create a backup, append a provided string to the filename extension or
+a timestamp if value is not a string, only apply if the target file
+exists and is modified.`
     },
     'detached': {
       type: 'boolean',
       default: true,
-      description: `Run Containers in detached mode. Default to true.`
+      description: `Run containers in detached mode.`
     },
     'force': {
       type: 'boolean',
       default: false,
-      description: `Force to re-create the containers if the config and image have not changed
-Default to false`
+      description: `Force to re-create the containers if the config and image have not
+changed.`
     },
     'services': {
       oneOf: [
@@ -71,13 +71,13 @@ Default to false`
     },
     'target': {
       type: 'string',
-      description: `The docker-compose.yml absolute's file's path, required if no content is 
-specified.`
+      description: `The docker-compose.yml absolute's file's path, required if no content
+is specified.`
     }
   }
 };
 
-// ## Source Code
+// ## Handler
 handler = async function({
     config,
     tools: {find, log}
@@ -129,7 +129,7 @@ handler = async function({
     content: config.content
   });
   ({status, stdout} = (await this.docker.tools.execute({
-    cmd: `--file ${config.target} ps -q | xargs docker ${docker.opts(config)} inspect`,
+    command: `--file ${config.target} ps -q | xargs docker ${utils.opts(config)} inspect`,
     compose: true,
     cwd: config.cwd,
     uid: config.uid,
@@ -151,7 +151,7 @@ handler = async function({
   try {
     return (await this.docker.tools.execute({
       if: config.force || status,
-      cmd: [`--file ${config.target} up`, config.detached ? '-d' : void 0, config.force ? '--force-recreate' : void 0, ...config.services].join(' '),
+      command: [`--file ${config.target} up`, config.detached ? '-d' : void 0, config.force ? '--force-recreate' : void 0, ...config.services].join(' '),
       compose: true,
       cwd: path.dirname(config.target),
       uid: config.uid
@@ -171,6 +171,6 @@ module.exports = {
 };
 
 // ## Dependencies
-docker = require('../utils');
+utils = require('../utils');
 
 path = require('path');

@@ -11,7 +11,7 @@
 //   Return the SSH connection if any and if true, null if false.
 
 // ## Hook `on_action`
-var error, handler, on_action, schema;
+var handler, on_action, schema, utils;
 
 on_action = function({metadata, config}) {
   if (metadata.argument != null) {
@@ -32,8 +32,8 @@ connection opened and available.`
   }
 };
 
-// ## Source code
-handler = async function({config, parent}) {
+// ## Handler
+handler = async function({config}) {
   var conn;
   if (config.ssh === false) {
     // Local execution, we dont want an SSH connection, no need to pursue
@@ -46,7 +46,7 @@ handler = async function({config, parent}) {
   if (conn || (config.ssh == null)) {
     return conn;
   } else {
-    throw error('SSH_UNAVAILABLE_CONNECTION', ['action was requested to return an SSH connection', 'but none is opened and available']);
+    throw utils.error('SSH_UNAVAILABLE_CONNECTION', ['action was requested to return an SSH connection', 'but none is opened and available']);
   }
 };
 
@@ -61,4 +61,4 @@ module.exports = {
 };
 
 // ## Dependencies
-error = require('../../utils/error');
+utils = require('../../utils');

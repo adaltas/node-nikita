@@ -12,14 +12,11 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.start({
+// ```js
+// const {status} = await nikita.lxd.start({
 //   container: "my_container"
-// }, function(err, {status}) {
-//   console.info( err ? err.message :
-//     status ? 'Container now running' : 'Container already running' )
-// });
+// })
+// console.info(`Container was started: ${status}`)
 // ```
 
 // ## Schema
@@ -37,13 +34,13 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  var cmd_init;
+  var command_init;
   // log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
-  cmd_init = ['lxc', 'start', config.container].join(' ');
+  command_init = ['lxc', 'start', config.container].join(' ');
   // Execution
   return this.execute({
-    cmd: `lxc list -c ns --format csv | grep '${config.container},RUNNING' && exit 42
-${cmd_init}`,
+    command: `lxc list -c ns --format csv | grep '${config.container},RUNNING' && exit 42
+${command_init}`,
     code_skipped: 42
   });
 };

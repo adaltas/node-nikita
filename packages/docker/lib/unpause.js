@@ -3,15 +3,6 @@
 
 // Unpause all processes within a container.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `container` (string)   
-//   Name/ID of the container, required.
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-
 // ## Callback parameters
 
 // * `err`   
@@ -21,13 +12,11 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.pause({
+// ```js
+// const {status} = await nikita.docker.unpause({
 //   container: 'toto'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container was unpaused: ' + status);
 // })
+// console.info(`Container was unpaused: ${status}`)
 // ```
 
 // ## Schema
@@ -39,19 +28,24 @@ schema = {
     'boot2docker': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
     },
+    'container': {
+      type: 'string',
+      description: `Name/ID of the container`
+    },
     'compose': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
     },
     'machine': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
     }
-  }
+  },
+  required: ['container']
 };
 
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   log({
     message: "Entering Docker unpause",
@@ -63,7 +57,7 @@ handler = function({
     throw Error('Missing container parameter');
   }
   return this.docker.tools.execute({
-    cmd: `unpause ${config.container}`
+    command: `unpause ${config.container}`
   });
 };
 

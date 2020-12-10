@@ -13,24 +13,22 @@
 
 // ## Example Code
 
-// ```javascript
-// require('nikita')
-// .docker.rm({
+// ```js
+// const {status} = await nikita.docker.rm({
 //   container: 'toto'
-// }, function(err, status){
-//   console.info( err ? err.message : 'Container removed: ' + status);
 // })
+// console.info(`Container was removed: ${status}`)
 // ```
 
 // ## Schema
-var docker, handler, schema;
+var handler, schema;
 
 schema = {
   type: 'object',
   properties: {
     'container': {
       type: 'string',
-      description: `Name/ID of the container, required.`
+      description: `Name/ID of the container.`
     },
     'link': {
       type: 'boolean',
@@ -60,7 +58,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   var status;
   log({
@@ -68,22 +66,22 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/docker/rm'
   });
-  // cmd = for opt in ['link', 'volumes', 'force']
+  // command = for opt in ['link', 'volumes', 'force']
   //   "-#{opt.charAt 0}" if config[opt]
-  // cmd = "rm #{cmd.join ' '} #{config.container}"
+  // command = "rm #{command.join ' '} #{config.container}"
   ({status} = (await this.docker.tools.execute({
-    cmd: `ps | egrep ' ${config.container}$'`,
+    command: `ps | egrep ' ${config.container}$'`,
     code_skipped: 1
   })));
   if (status && !config.force) {
     throw Error('Container must be stopped to be removed without force');
   }
   ({status} = (await this.docker.tools.execute({
-    cmd: `ps -a | egrep ' ${config.container}$'`,
+    command: `ps -a | egrep ' ${config.container}$'`,
     code_skipped: 1
   })));
   return this.docker.tools.execute({
-    cmd: [
+    command: [
       'rm',
       ...(['link',
       'volumes',
@@ -108,6 +106,3 @@ module.exports = {
   },
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');

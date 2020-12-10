@@ -50,7 +50,6 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    metadata,
     tools: {path}
   }) {
   var base, exit_code, files, minimatch, s, stdout;
@@ -65,7 +64,7 @@ handler = async function({
   config.target = path.normalize(config.target);
   minimatch = new Minimatch(config.target, config.minimatch);
   ({stdout, exit_code} = (await this.execute({
-    cmd: [
+    command: [
       'find',
       ...((function() {
         var i,

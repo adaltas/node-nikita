@@ -5,13 +5,11 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.stop({
+// ```js
+// const {status} = await nikita.lxd.stop({
 //   container: "myubuntu"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The container was stopped')
-// });
+// })
+// console.info(`The container was stopped: ${status}`)
 // ```
 
 // ## Schema
@@ -31,7 +29,7 @@ schema = {
 handler = function({config}) {
   // log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
   return this.execute({
-    cmd: `lxc list -c ns --format csv | grep '${config.container},STOPPED' && exit 42
+    command: `lxc list -c ns --format csv | grep '${config.container},STOPPED' && exit 42
 lxc stop ${config.container}`,
     code_skipped: 42
   });

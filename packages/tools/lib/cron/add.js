@@ -3,155 +3,148 @@
 
 // Register a job on crontab.
 
-// ## Options
-
-// * `user` (name | uid)   
-//   the user of the crontab. the SSH user by default   
-// * `match` (null | string | regexp).   
-//   The cron entry to match, a string will be converted to a regexp and an
-//   undefined or null value will match the exact command.   
-// * `when` (string)   
-//   cron-styled time string. Defines the frequency of the cron job.   
-// * `cmd`   
-//   the shell command of the job   
-// * `exec`   
-//   if true, then cmd will be executed just after if added to crontab   
-// * `log`   
-//   Function called with a log related messages.   
-// * `ssh` (object|ssh2)   
-//   Run the action on a remote server using SSH, an ssh2 instance or an
-//   configuration object used to initialize the SSH connection.   
-// * `stdout` (stream.Writable)   
-//   Writable EventEmitter in which the standard output of executed commands will
-//   be piped.   
-// * `stderr` (stream.Writable)   
-//   Writable EventEmitter in which the standard error output of executed command
-//   will be piped.   
-
 // ## Example
 
 // ```js
-// require('nikita').cron.add({
-//   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
-//   when: '0 */9 * * *'
+// const {status} = await nikita.cron.add({
+//   command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
+//   when: '0 */9 * * *',
 //   user: 'service'
-// }, function(err, status){
-//   console.info(err ? err.message : 'Cron entry created or modified: ' + status);
-// });
+// })
+// console.info(`Cron entry created or modified: ${status}`)
 // ```
 
 // ## Schema
-var diff, handler, regexp, schema, string, util;
+var handler, schema, util, utils;
 
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: 'object',
-      description: `          `
+    'command': {
+      type: 'string',
+      minLength: 1,
+      description: `The shell command of the job.`
+    },
+    'exec': {
+      type: 'boolean',
+      description: `If true, then command will be executed just after if added to crontab.`
+    },
+    'match': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      description: `The cron entry to match, a string will be converted to a regexp and an
+undefined or null value will match the exact command.`
+    },
+    'user': {
+      type: 'string',
+      description: `The user of the crontab. The SSH user by default.`
+    },
+    'when': {
+      type: 'string',
+      description: `Cron-styled time string. Defines the frequency of the cron job.`
     }
-  }
+  },
+  required: ['command', 'when']
 };
 
 // ## Handler
-handler = function({config}, callback) {
-  var crontab, jobs;
-  if (!(config.when && typeof config.when === 'string')) {
-    return callback(Error('valid when is required'));
-  }
-  if (!config.cmd) {
-    return callback(Error('valid cmd is required'));
-  }
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var added, crontab, i, job, jobs, modified, new_job, regex, stderr, stdout;
   if (config.user != null) {
-    this.log({
+    log({
       message: `Using user ${config.user}`,
       level: 'DEBUG',
-      module: 'nikita/cron/add'
+      module: 'nikita/tools/lib/cron/add'
     });
     crontab = `crontab -u ${config.user}`;
   } else {
-    this.log({
+    log({
       message: "Using default user",
       level: 'DEBUG',
-      module: 'nikita/cron/add'
+      module: 'nikita/tools/lib/cron/add'
     });
     crontab = "crontab";
   }
-  jobs = null;
-  return this.execute({
-    cmd: `${crontab} -l`,
+  jobs = [];
+  ({stdout, stderr} = (await this.execute({
+    command: `${crontab} -l`,
     code: [0, 1]
-  }, function(err, {stdout, stderr}) {
-    var added, i, job, modified, new_job, regex;
-    if (err && !/^no crontab for/.test(stderr)) {
-      throw err;
+  })));
+  // throw Error 'User crontab not found' if /^no crontab for/.test stderr
+  new_job = `${config.when} ${config.command}`;
+  // remove useless last element
+  regex = (function() {
+    if (!config.match) {
+      return new RegExp(`.* ${utils.regexp.escape(config.command)}`);
+    } else if (typeof config.match === 'string') {
+      return new RegExp(config.match);
+    } else if (util.isRegExp(config.match)) {
+      return config.match;
+    } else {
+      throw Error("Invalid option 'match'");
     }
-    // throw Error 'User crontab not found' if /^no crontab for/.test stderr
-    new_job = `${config.when} ${config.cmd}`;
-    // remove useless last element
-    regex = (function() {
-      if (!config.match) {
-        return new RegExp(`.* ${regexp.escape(config.cmd)}`);
-      } else if (typeof config.match === 'string') {
-        return new RegExp(config.match);
-      } else if (util.isRegExp(config.match)) {
-        return config.match;
-      } else {
-        throw Error("Invalid option 'match'");
-      }
-    })();
-    added = true;
-    jobs = (function() {
-      var j, len, ref, results;
-      ref = string.lines(stdout.trim());
-      results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        job = ref[i];
-        if (regex.test(job)) {
-          added = false;
-          if (job === new_job) { // Found job, stop here
-            break;
-          }
-          this.log({
-            message: "Entry has changed",
-            level: 'WARN',
-            module: 'nikita/cron/add'
-          });
-          diff(job, new_job, config);
-          job = new_job;
-          modified = true;
+  })();
+  added = true;
+  jobs = (function() {
+    var j, len, ref, results;
+    ref = utils.string.lines(stdout.trim());
+    results = [];
+    for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      job = ref[i];
+      if (regex.test(job)) {
+        added = false;
+        if (job === new_job) { // Found job, stop here
+          break;
         }
-        results.push(job);
+        log({
+          message: "Entry has changed",
+          level: 'WARN',
+          module: 'nikita/tools/lib/cron/add'
+        });
+        utils.diff(job, new_job, config);
+        job = new_job;
+        modified = true;
       }
-      return results;
-    }).call(this);
-    if (added) {
-      jobs.push(new_job);
-      this.log({
-        message: "Job not found in crontab, adding",
-        level: 'WARN',
-        module: 'nikita/cron/add'
-      });
+      if (!job) {
+        continue;
+      }
+      results.push(job);
     }
-    if (!(added || modified)) {
-      return jobs = null;
-    }
-  }).next(function(err) {
-    if (err) {
-      return callback(err);
-    }
-    if (!jobs) {
-      return callback();
-    }
-    this.execute({
-      cmd: config.user != null ? `su -l ${config.user} -c '${config.cmd}'` : config.cmd,
-      if: config.exec
+    return results;
+  })();
+  if (added) {
+    jobs.push(new_job);
+    log({
+      message: "Job not found in crontab, adding",
+      level: 'WARN',
+      module: 'nikita/tools/lib/cron/add'
     });
-    return this.execute({
-      cmd: `${crontab} - <<EOF
-${jobs.join('\n')}
-EOF`
-    }).next(callback);
+  }
+  if (!(added || modified)) {
+    jobs = null;
+  }
+  if (!jobs) {
+    return {
+      status: false
+    };
+  }
+  if (config.exec) {
+    await this.execute({
+      command: config.user != null ? `su -l ${config.user} -c '${config.command}'` : config.command
+    });
+  }
+  return this.execute({
+    command: `${crontab} - <<EOF
+${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
   });
 };
 
@@ -164,8 +157,4 @@ module.exports = {
 // ## Dependencies
 util = require('util');
 
-({regexp} = require('@nikitajs/core/lib/misc'));
-
-diff = require('@nikitajs/core/lib/misc/diff');
-
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('../utils');

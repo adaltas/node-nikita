@@ -11,71 +11,55 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .file.yaml({
+// const {status} = await nikita.file.yaml({
 //   content: {
 //     'my_key': 'my value'
 //   },
 //   target: '/tmp/my_file'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Content was updated: ' + status);
-// });
+// })
+// console.info(`Content was updated: ${status}`)
 // ```
 
-// ## On config
-var handler, merge, on_action, schema, season;
-
-on_action = function({config, metadata}) {
-  if (config.line_width == null) {
-    config.line_width = 160;
-  }
-  if (config.clean == null) {
-    config.clean = true;
-  }
-  return config.encoding != null ? config.encoding : config.encoding = 'utf8';
-};
-
 // ## Schema
+var handler, merge, schema, season;
+
 schema = {
   type: 'object',
   properties: {
     'backup': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
-      description: `Create a backup, append a provided string to the filename extension or a
-timestamp if value is not a string, only apply if the target file exists and
-is modified.`
+      $ref: 'module://@nikitajs/file/src/index#/properties/backup'
     },
     'content': {
       type: 'object',
-      description: `Object to stringify.   `
+      description: `Object to stringify.`
     },
-    'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'function'
-        }
-      ],
-      description: `File path where to write content to or a function that returns a valid file path.   `
+    'encoding': {
+      $ref: 'module://@nikitajs/file/src/index#/properties/encoding',
+      default: 'utf8'
+    },
+    'mode': {
+      $ref: 'module://@nikitajs/file/src/index#/properties/mode'
     },
     'merge': {
       type: 'boolean',
       description: `Read the target if it exists and merge its content.`
+    },
+    'target': {
+      $ref: 'module://@nikitajs/file/src/index#/properties/target',
+      description: `File path where to write content to or a function that returns a valid
+file path.`
+    },
+    'uid': {
+      $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+    },
+    'gid': {
+      $ref: 'module://@nikitajs/file/src/index#/properties/gid'
     }
   },
   required: ['target', 'content']
 };
 
-// ## Source Code
+// ## Handler
 handler = async function({
     config,
     tools: {log}
@@ -126,7 +110,10 @@ handler = async function({
   this.file({
     content: season.stringify(config.content),
     target: config.target,
-    backup: config.backup
+    backup: config.backup,
+    gid: config.gid,
+    uid: config.uid,
+    mode: config.mode
   });
   return {};
 };
@@ -134,9 +121,6 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   schema: schema
 };
 

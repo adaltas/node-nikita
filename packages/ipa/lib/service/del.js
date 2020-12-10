@@ -6,18 +6,15 @@
 // ## Example
 
 // ```js
-// require("nikita")
-// .ipa.service.del({
+// const {status} = await nikita.ipa.service.del({
 //   principal: "myprincipal/my.domain.com",
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(){
-//   console.info(err ? err.message : status ?
-//     "Service deleted" : "Service does not exist")
 // })
+// console.info(`Service was deleted: ${status}`)
 // ```
 
 // ## Schema

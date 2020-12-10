@@ -5,15 +5,13 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.exec({
-//   container: "my-container"
-//   cmd: "whoami"
-// }, function(err, {status, stdout, stderr}) {
-//   console.info( err ? err.message : stdout)
-// });
-
+// ```js
+// const {status, stdout, stderr} = await nikita.lxd.exec({
+//   container: "my-container",
+//   command: "whoami"
+// })
+// console.info(`Command was executed: ${status}`)
+// console.info(stdout)
 // ```
 
 // ## Todo
@@ -29,7 +27,7 @@ schema = {
     'container': {
       $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
     },
-    'cmd': {
+    'command': {
       type: 'string',
       description: `The command to execute.`
     },
@@ -37,7 +35,7 @@ schema = {
       $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/trap'
     }
   },
-  required: ['container', 'cmd']
+  required: ['container', 'command']
 };
 
 // ## Handler
@@ -46,7 +44,7 @@ handler = function({config}) {
   return this.execute(config, {
     trap: false
   }, {
-    cmd: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- bash`, config.trap ? 'set -e' : void 0, config.cmd, 'NIKITALXDEXEC'].join('\n')
+    command: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- bash`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
   });
 };
 

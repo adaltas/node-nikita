@@ -14,13 +14,12 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita').tools.extract({
+// ```js
+// const {status} = await nikita.tools.extract({
 //   source: '/path/to/file.tgz'
 //   destation: '/tmp'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'File was extracted: ' + status);
-// });
+// })
+// console.info(`File was extracted: ${status}`)
 // ```
 
 // ## Hooks
@@ -47,11 +46,13 @@ schema = {
     },
     'preserve_owner': {
       type: 'boolean',
-      description: `Preserve ownership when extracting. True by default if runned as root, else false.`
+      description: `Preserve ownership when extracting. True by default if runned as root,
+else false.`
     },
     'preserve_mode': {
       type: 'boolean',
-      description: `Preserve permissions when extracting. True by default if runned as root, else false.`
+      description: `Preserve permissions when extracting. True by default if runned as
+root, else false.`
     },
     'source': {
       type: 'string',
@@ -59,7 +60,8 @@ schema = {
     },
     'strip': {
       type: 'number',
-      description: `Remove the specified number of leading path elements. Apply only to tar(s) formats.`
+      description: `Remove the specified number of leading path elements. Apply only to
+tar(s) formats.`
     },
     'target': {
       type: 'string',
@@ -74,7 +76,7 @@ handler = async function({
     config,
     tools: {log, path}
   }) {
-  var cmd, ext, format, ouptut, ref, stats, tar_opts, target;
+  var command, ext, format, ouptut, ref, stats, tar_opts, target;
   // Validate config
   target = (ref = config.target) != null ? ref : path.dirname(config.source);
   tar_opts = [];
@@ -119,7 +121,7 @@ handler = async function({
     throw Error(`Not a File: ${config.source}`);
   }
   // Extract the source archive
-  cmd = null;
+  command = null;
   log({
     message: `Format is ${format}`,
     level: 'DEBUG',
@@ -127,22 +129,22 @@ handler = async function({
   });
   switch (format) {
     case 'tgz':
-      cmd = `tar xzf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      command = `tar xzf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
       break;
     case 'tar':
-      cmd = `tar xf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      command = `tar xf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
       break;
     case 'bz2':
-      cmd = `tar xjf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      command = `tar xjf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
       break;
     case 'xz':
-      cmd = `tar xJf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
+      command = `tar xJf ${config.source} -C ${target} ${tar_opts.join(' ')}`;
       break;
     case 'zip':
-      cmd = `unzip -u ${config.source} -d ${target}`;
+      command = `unzip -u ${config.source} -d ${target}`;
   }
   ouptut = (await this.execute({
-    cmd: cmd
+    command: command
   }));
   // Assert the target creation
   if (config.creates) {
@@ -163,4 +165,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('./utils');

@@ -7,23 +7,21 @@
 
 // The following action uninstalls the coffescript package globally.
 
-// ```javascript
-  // require('nikita')
-  // .tools.npm({
+// ```js
+  // const {status} = await nikita.tools.npm.uninstall({
   //   name: 'coffeescript',
   //   global: true
-  // }, (err, {status}) => {
-  //   console.info(err ? err.message : 'Package uninstalled ' + status);
-  // });
+  // })
+  // console.info(`Package was uninstalled: ${status}`)
   // ```
 
 // ## Hooks
 var handler, on_action, schema,
   indexOf = [].indexOf;
 
-on_action = function({config}) {
-  if (config.argument != null) {
-    throw Error('Deprecated config `argument`');
+on_action = function({config, metadata}) {
+  if (typeof metadata.argument === 'string') {
+    config.name = metadata.argument;
   }
   if (typeof config.name === 'string') {
     return config.name = [config.name];
@@ -35,41 +33,40 @@ on_action = function({config}) {
 schema = {
   type: 'object',
   properties: {
+    'cwd': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
+    },
     'name': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
-      description: 'Name of the package(s) to remove.'
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Name of the package(s) to remove.`
     },
     'global': {
       type: 'boolean',
       default: false,
-      description: 'Uninstalls the current package context as a global package.'
+      description: `Uninstalls the current package context as a global package.`
     }
   },
   required: ['name']
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var global, installed, pkgs, stdout, uninstall;
   global = config.global ? '-g' : '';
   // Get installed packages
   installed = [];
   ({stdout} = (await this.execute({
-    cmd: `npm list --json ${global}`,
+    command: `npm list --json ${global}`,
     code: [0, 1],
+    cwd: config.cwd,
     stdout_log: false,
-    shy: true,
-    sudo: config.sudo
+    shy: true
   })));
   pkgs = JSON.parse(stdout);
   if (Object.keys(pkgs).length) {
@@ -81,7 +78,8 @@ handler = async function({config, log}) {
   });
   if (uninstall.length) {
     await this.execute({
-      cmd: `npm uninstall ${global} ${uninstall.join(' ')}`,
+      command: `npm uninstall ${global} ${uninstall.join(' ')}`,
+      cwd: config.cwd,
       sudo: config.sudo
     });
     return log({
