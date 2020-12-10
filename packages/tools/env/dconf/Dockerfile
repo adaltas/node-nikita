@@ -34,7 +34,7 @@ RUN mkdir -p /nikita
 WORKDIR /nikita/packages/tools
 
 # Install local dependencies
-RUN apt-get install -y dconf-cli
+RUN apt-get install -y dconf-cli gnome-terminal
 
 #CMD ["node_modules/.bin/mocha", "test/api/"]
 # CMD []
