@@ -51,6 +51,7 @@ Run the command "dconf-editor" to navigate the database with a UI.
         """
         code_skipped: 3
       ) for key, value of config.properties
+      null
 
 ## Exports
 

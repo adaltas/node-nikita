@@ -23,6 +23,7 @@ module.exports =
     npm:
       '': '@nikitajs/tools/src/npm'
       uninstall: '@nikitajs/tools/src/npm/uninstall'
+      upgrade: '@nikitajs/tools/src/npm/upgrade'
     repo: '@nikitajs/tools/src/repo'
     rubygems:
       'fetch': '@nikitajs/tools/src/rubygems/fetch'
