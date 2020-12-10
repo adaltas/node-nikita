@@ -1,7 +1,7 @@
 
 module.exports =
   tags:
-    cron: true
+    tools_cron: true
   ssh: [
     null
     { ssh: host: 'localhost', username: 'root' }

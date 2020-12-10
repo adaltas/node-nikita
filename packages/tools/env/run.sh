@@ -3,19 +3,31 @@
 CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
 npx coffee $CWD/apm/start.coffee
-lxc exec tools-apm --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
+lxc exec tools-apm bash <<EOF
+cd /nikita/packages/tools
+npx mocha 'test/**/*.coffee'
+EOF
 
 npx coffee $CWD/iptables/start.coffee
-lxc exec tools-iptables --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
+lxc exec tools-iptables bash <<EOF
+cd /nikita/packages/tools
+npx mocha 'test/**/*.coffee'
+EOF
 
 npx coffee $CWD/npm/start.coffee
-lxc exec tools-npm --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
+lxc exec tools-npm bash <<EOF
+cd /nikita/packages/tools
+npx mocha 'test/**/*.coffee'
+EOF
 
 npx coffee $CWD/rubygems.lxd/start.coffee
-lxc exec tools-rubygems --cwd /nikita/packages/tools npx mocha 'test/**/*.coffee'
+lxc exec tools-rubygems bash <<EOF
+cd /nikita/packages/tools
+npx mocha 'test/**/*.coffee'
+EOF
 
-cd $PWD/centos6
-docker-compose up --abort-on-container-exit
+# cd $CWD/centos6
+# docker-compose up --abort-on-container-exit
 
 cd $CWD/centos7
 docker-compose up --abort-on-container-exit
@@ -23,8 +35,8 @@ docker-compose up --abort-on-container-exit
 cd $CWD/cron
 docker-compose up --abort-on-container-exit
 
-cd $PWD/dconf
-docker-compose up --abort-on-container-exit
+# cd $CWD/dconf
+# docker-compose up --abort-on-container-exit
 
 cd $CWD/rubygems
 docker-compose up --abort-on-container-exit

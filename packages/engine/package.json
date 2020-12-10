@@ -115,7 +115,8 @@
     "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
-    "pretest": "npm run build",
-    "test": "npm run build && mocha 'test/**/*.coffee'"
+    "pretest": "yarn run build",
+    "test": "mocha 'test/**/*.coffee'",
+    "testall": "mocha 'test/**/*.coffee' && env/run.sh"
   }
 }
