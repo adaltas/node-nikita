@@ -55,7 +55,7 @@ stat object associated with the target if one is already available.`
 };
 
 // ## Handler
-handler = async function({config, metadata}) {
+handler = async function({config}) {
   var err, files, hash, hashs, stats, stdout;
   ({stats} = config.stats ? config.stats : (await this.fs.base.stat(config.target)));
   if (!(utils.stats.isFile(stats.mode) || utils.stats.isDirectory(stats.mode))) {
@@ -72,7 +72,7 @@ handler = async function({config, metadata}) {
         dot: true
       })));
       ({stdout} = (await this.execute({
-        cmd: [
+        command: [
           'command -v openssl >/dev/null || exit 2',
           ...files.map(function(file) {
             return `[ -f ${file} ] && openssl dgst -${config.algo} ${file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`;
@@ -88,7 +88,7 @@ handler = async function({config, metadata}) {
     // Target is a file
     } else if (utils.stats.isFile(stats.mode)) {
       ({stdout} = (await this.execute({
-        cmd: `command -v openssl >/dev/null || exit 2
+        command: `command -v openssl >/dev/null || exit 2
 openssl dgst -${config.algo} ${config.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`,
         trim: true
       })));

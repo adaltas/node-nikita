@@ -12,8 +12,7 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.user({
+// const {status} = await nikita.ipa.user({
 //   uid: "someone",
 //   attributes: {
 //     noprivate: true,
@@ -25,10 +24,8 @@
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(){
-//   console.info(err ? err.message : status ?
-//     "User was updated" : "User was already set")
 // })
+// console.info(`User was updated: ${status}`)
 // ```
 
 // ## Hooks

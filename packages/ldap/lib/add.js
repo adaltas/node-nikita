@@ -6,8 +6,7 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ldap.index({
+// const {status} = await nikita.ldap.index({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
@@ -18,9 +17,8 @@
 //     objectClass: 'posixGroup'
 //     gidNumber: 9601
 //   }
-// }, function(err, status){
-//   console.log(err ? err.message : 'Entry modified: ' + status);
-// });
+// })
+// console.info(`Entry modified: ${status}`)
 // ```
 
 // ## Hooks
@@ -132,7 +130,7 @@ handler = async function({config}) {
   }
   return ({stdout, stderr} = (await this.execute({
     if: ldif !== '',
-    cmd: [
+    command: [
       ['ldapmodify',
       config.continuous ? '-c' : void 0,
       config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0,

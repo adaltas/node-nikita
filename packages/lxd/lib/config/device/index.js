@@ -13,22 +13,22 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.config.device({
-//   container: 'container1',
-//   device: 'root',
-//   type: 'disk'
+// const {status} = await nikita.lxd.config.device({
 //   config: {
-//     'pool': 'system',
-//     'size': '10GB'
+//     container: 'container1',
+//     device: 'root',
+//     type: 'disk',
+//     config: {
+//       'pool': 'system',
+//       'size': '10GB'
+//     }
 //   }
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Network created: ' + status);
 // })
+// console.info(`Disk was created: ${status}`)
 // ```
 
 // ## Schema
-var diff, handler, schema, stderr_to_error_message;
+var diff, handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -218,7 +218,7 @@ handler = async function({config}) {
   try {
     if (!config) {
       ({status} = (await this.execute({
-        cmd: [
+        command: [
           'lxc',
           'config',
           'device',
@@ -245,7 +245,7 @@ handler = async function({config}) {
       for (key in changes) {
         value = changes[key];
         ({status} = (await this.execute({
-          cmd: ['lxc', 'config', 'device', 'set', config_orig.container, config_orig.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+          command: ['lxc', 'config', 'device', 'set', config_orig.container, config_orig.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
         })));
       }
     }
@@ -254,7 +254,7 @@ handler = async function({config}) {
     };
   } catch (error) {
     err = error;
-    stderr_to_error_message(err, err.stderr);
+    utils.stderr_to_error_message(err, err.stderr);
     throw err;
   }
 };
@@ -268,4 +268,4 @@ module.exports = {
 // ## Dependencies
 diff = require('object-diff');
 
-stderr_to_error_message = require('../../misc/stderr_to_error_message');
+utils = require('../../utils');

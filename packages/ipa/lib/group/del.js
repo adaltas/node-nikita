@@ -6,18 +6,15 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.group.del({
+// const {status} = await nikita.ipa.group.del({
 //   cn: 'somegroup',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(){
-//   console.info(err ? err.message : status ?
-//     'Group was updated' : 'Group was already set')
 // })
+// console.info(`Group was deleted: ${status}`)
 // ```
 
 // ## Schema

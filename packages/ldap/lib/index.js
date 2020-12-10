@@ -8,7 +8,7 @@
 // Using the database DN:
 
 // ```js
-// {status} = await nikita.ldap.index({
+// const {status} = await nikita.ldap.index({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
@@ -23,7 +23,7 @@
 // Using the database suffix:
 
 // ```js
-// {status} = await nikita.ldap.index({
+// const {status} = await nikita.ldap.index({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
@@ -173,6 +173,6 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('./utils');
 
 // [index]: http://www.zytrax.com/books/ldap/apa/indeces.html

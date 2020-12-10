@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.file.push({
-//   container: "my_container"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The container was deleted')
-// });
+// const {status} = await nikita.lxd.file.push({
+//   container: 'my_container',
+//   source: `#{scratch}/a_file`,
+//   target: '/root/a_file'
+// })
+// console.info(`File was pushed: ${status}`)
 // ```
 
 // ## Todo
@@ -108,7 +108,7 @@ handler = async function({
   if (status) {
     try {
       ({status} = (await this.execute({
-        cmd: `# Ensure source is a file
+        command: `# Ensure source is a file
 [ -f "${config.source}" ] || exit 2
 command -v openssl >/dev/null || exit 3
 sourceDgst=\`openssl dgst -${config.algo} ${config.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`
@@ -139,7 +139,7 @@ EOF\`
   }
   if (!status_running || status) {
     this.execute({
-      cmd: `${['lxc', 'file', 'push', config.source, config.lxd_target, config.create_dirs ? '--create-dirs' : void 0, (config.gid != null) && typeof config.gid === 'number' ? '--gid' : void 0, (config.uid != null) && typeof config.uid === 'number' ? '--uid' : void 0, config.mode ? `--mode ${config.mode}` : void 0].join(' ')}`,
+      command: `${['lxc', 'file', 'push', config.source, config.lxd_target, config.create_dirs ? '--create-dirs' : void 0, (config.gid != null) && typeof config.gid === 'number' ? '--gid' : void 0, (config.uid != null) && typeof config.uid === 'number' ? '--uid' : void 0, config.mode ? `--mode ${config.mode}` : void 0].join(' ')}`,
       trap: true,
       trim: true
     });
@@ -147,13 +147,13 @@ EOF\`
   if (typeof config.gid === 'string') {
     this.lxd.exec({
       container: config.container,
-      cmd: `chgrp ${config.gid} ${config.target}`
+      command: `chgrp ${config.gid} ${config.target}`
     });
   }
   if (typeof config.uid === 'string') {
     return this.lxd.exec({
       container: config.container,
-      cmd: `chown ${config.uid} ${config.target}`
+      command: `chown ${config.uid} ${config.target}`
     });
   }
 };

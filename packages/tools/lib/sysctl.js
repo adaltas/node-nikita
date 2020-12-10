@@ -7,23 +7,6 @@
 
 // Comments will be preserved if the `comments` and `merge` config are enabled.
 
-// ## Options
-
-// * `backup` (string|boolean)   
-  //   Create a backup, append a provided string to the filename extension or a
-  //   timestamp if value is not a string, only apply if the target file exists and
-  //   is modified.
-  // * `comment` (boolean)   
-  //   Preserve comments.
-  // * `load` (boolean)   
-  //   Load properties if target is modified, default is "true".
-  // * `merge` (boolean)    
-  //   Preserve existing variables in the target file.
-  // * `properties` (object)   
-  //   Key/value object representing sysctl properties and values.
-  // * `target` (string)
-  //   Destination to write properties and load in sysctl settings, default to "/etc/sysctl.conf" if none given.
-
 // ## Callback parameters
 
 // * `err` (Error)   
@@ -45,139 +28,147 @@
 // ## Example
 
 // ```js
-  // require('nikita').tools.sysctl({
+  // const {status} = await nikita.tools.sysctl({
   //   source: '/etc/sysctl.conf',
   //   properties: {
   //     'vm.swappiness': 1
   //   }
-  // }, function(err, {status}){
-  //   console.info(err ? err.message : 'Systcl reloaded: ' + status);
-  // });
+  // })
+  // console.info(`Systcl was reloaded: ${status}`)
   // ```
 
 // ## Schema
-var handler, schema, string,
+var handler, schema, utils,
   indexOf = [].indexOf;
 
 schema = {
   type: 'object',
   properties: {
-    '': {
+    'backup': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean'
+        }
+      ],
+      description: `Create a backup, append a provided string to the filename extension or
+a timestamp if value is not a string, only apply if the target file
+exists and is modified.`
+    },
+    'comment': {
+      type: 'boolean',
+      description: `Preserve comments.`
+    },
+    'load': {
+      type: 'boolean',
+      default: true,
+      description: `Load properties if target is modified.`
+    },
+    'merge': {
+      type: 'boolean',
+      description: `Preserve existing variables in the target file.`
+    },
+    'properties': {
       type: 'object',
-      description: `          `
+      description: `Key/value object representing sysctl properties and values.`
+    },
+    'target': {
+      type: 'string',
+      default: '/etc/sysctl.conf',
+      description: `Destination to write properties and load in sysctl settings, default
+to "/etc/sysctl.conf" if none given.`
     }
   }
 };
 
 // ## Handler
-handler = function({config}) {
-  var current, final;
-  this.log({
-    message: "Entering sysctl",
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var current, data, err, final, i, k, key, len, line, ref, ref1, status, v, value;
+  // Read current properties
+  current = {};
+  status = false;
+  log({
+    message: `Read target: ${config.target}`,
     level: 'DEBUG',
     module: 'nikita/lib/tools/sysctl'
   });
-  // Options
-  if (config.load == null) {
-    config.load = true;
-  }
-  if (config.target == null) {
-    config.target = '/etc/sysctl.conf';
-  }
-  // Read current properties
-  current = {};
-  this.call(function(_, callback) {
-    var status;
-    status = false;
-    this.log({
-      message: `Read target: ${config.target}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/tools/sysctl'
-    });
-    return this.fs.readFile({
+  try {
+    ({data} = (await this.fs.base.readFile({
       ssh: config.ssh,
       target: config.target,
       encoding: 'ascii'
-    }, (err, {data}) => {
-      var i, key, len, line, ref, value;
-      if (err && err.code === 'ENOENT') {
-        return callback();
-      }
-      if (err) {
-        return callback(err);
-      }
-      ref = string.lines(data);
-      for (i = 0, len = ref.length; i < len; i++) {
-        line = ref[i];
-        // Preserve comments
-        if (/^#/.test(line)) {
-          if (config.comment) {
-            current[line] = null;
-          }
-          continue;
-        }
-        if (/^\s*$/.test(line)) {
+    })));
+    ref = utils.string.lines(data);
+    for (i = 0, len = ref.length; i < len; i++) {
+      line = ref[i];
+      // Preserve comments
+      if (/^#/.test(line)) {
+        if (config.comment) {
           current[line] = null;
-          continue;
         }
-        [key, value] = line.split('=');
-        // Trim
-        key = key.trim();
-        value = value.trim();
-        // Skip property
-        if (indexOf.call(config.properties, key) >= 0 && (config.properties[key] == null)) {
-          this.log(`Removing Property: ${key}, was ${value}`, {
-            level: 'INFO',
-            module: 'nikita/lib/tools/sysctl'
-          });
-          status = true;
-          continue;
-        }
-        // Set property
-        current[key] = value;
+        continue;
       }
-      return callback(null, status);
-    });
-  });
+      if (/^\s*$/.test(line)) {
+        current[line] = null;
+        continue;
+      }
+      [key, value] = line.split('=');
+      // Trim
+      key = key.trim();
+      value = value.trim();
+      // Skip property
+      if (indexOf.call(config.properties, key) >= 0 && (config.properties[key] == null)) {
+        log(`Removing Property: ${key}, was ${value}`, {
+          level: 'INFO',
+          module: 'nikita/lib/tools/sysctl'
+        });
+        status = true;
+        continue;
+      }
+      // Set property
+      current[key] = value;
+    }
+  } catch (error) {
+    err = error;
+    if (err.code !== 'NIKITA_FS_CRS_TARGET_ENOENT') {
+      throw err;
+    }
+  }
   // Merge user properties
   final = {};
-  this.call(function(_, callback) {
-    var k, key, ref, status, v, value;
-    if (config.merge) {
-      for (k in current) {
-        v = current[k];
-        final[k] = v;
-      }
+  if (config.merge) {
+    for (k in current) {
+      v = current[k];
+      final[k] = v;
     }
-    status = false;
-    ref = config.properties;
-    for (key in ref) {
-      value = ref[key];
-      if (value == null) {
-        continue;
-      }
-      if (typeof value === 'number') {
-        value = `${value}`;
-      }
-      if (current[key] === value) {
-        continue;
-      }
-      this.log(`Update Property: key \"${key}\" from \"${final[key]}\" to \"${value}\"`, {
-        level: 'INFO',
-        module: 'nikita/lib/tools/sysctl'
-      });
-      final[key] = value;
-      status = true;
+  }
+  status = false;
+  ref1 = config.properties;
+  for (key in ref1) {
+    value = ref1[key];
+    if (value == null) {
+      continue;
     }
-    return callback(null, status);
-  });
-  this.call({
-    if: function() {
-      return this.status();
+    if (typeof value === 'number') {
+      value = `${value}`;
     }
-  }, function() {
-    var key, value;
-    return this.file({
+    if (current[key] === value) {
+      continue;
+    }
+    log(`Update Property: key \"${key}\" from \"${final[key]}\" to \"${value}\"`, {
+      level: 'INFO',
+      module: 'nikita/lib/tools/sysctl'
+    });
+    final[key] = value;
+    status = true;
+  }
+  if (status) {
+    this.file({
       target: config.target,
       backup: config.backup,
       content: ((function() {
@@ -194,16 +185,10 @@ handler = function({config}) {
         return results;
       })()).join('\n')
     });
-  });
-  return this.execute({
-    if: [
-      config.load,
-      function() {
-        return this.status();
-      }
-    ],
-    cmd: `sysctl -p ${config.target}`
-  });
+  }
+  if (config.load && status) {
+    return this.execute(`sysctl -p ${config.target}`);
+  }
 };
 
 // ## Exports
@@ -213,4 +198,4 @@ module.exports = {
 };
 
 // ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('./utils');

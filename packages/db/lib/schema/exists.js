@@ -11,11 +11,11 @@
 //   admin_password: 'test',
 //   database: 'my_db'
 // })
-// console.info(`Schema exists: ${exists}`);
+// console.info(`Schema exists: ${exists}`)
 // ```
 
 // ## Schema
-var cmd, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -57,7 +57,7 @@ handler = async function({config}) {
   ({status} = (await this.db.query({
     config: config
   }, {
-    cmd: `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`,
+    command: `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`,
     grep: '1'
   })));
   return {
@@ -76,4 +76,4 @@ module.exports = {
 
 
   // ## Dependencies
-({cmd} = require('../query'));
+({command} = require('../query'));

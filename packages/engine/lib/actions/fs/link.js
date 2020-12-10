@@ -16,12 +16,11 @@
 // ## Example
 
 // ```js
-// require('nikita').fs.link({
+// const {status} = await nikita.fs.link({
 //   source: __dirname,
 //   target: '/tmp/a_link'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Link created: ' + status);
-// });
+// })
+// console.info(`Link was created: ${status}`)
 // ```
 
 // ## Hook
@@ -46,11 +45,11 @@ schema = {
     },
     'target': {
       type: 'string',
-      description: `Symbolic link to be created.   `
+      description: `Symbolic link to be created.`
     },
     'exec': {
       type: 'boolean',
-      description: `Create an executable file with an \`exec\` command.   `
+      description: `Create an executable file with an \`exec\` command.`
     },
     'mode': {
       oneOf: [
@@ -73,9 +72,7 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
 // ## Handler
 handler = async function({
     config,
-    metadata,
-    tools: {log, path, status},
-    ssh
+    tools: {path}
   }) {
   var content, exists;
   // Set default
@@ -92,7 +89,7 @@ handler = async function({
     exists = (await this.call({
       raw_output: true
     }, async function() {
-      var data, exec_cmd;
+      var data, exec_command;
       ({exists} = (await this.fs.base.exists({
         target: config.target
       })));
@@ -103,8 +100,8 @@ handler = async function({
         target: config.target,
         encoding: 'utf8'
       })));
-      exec_cmd = /exec (.*) \$@/.exec(data)[1];
-      return exec_cmd && exec_cmd === config.source;
+      exec_command = /exec (.*) \$@/.exec(data)[1];
+      return exec_command && exec_command === config.source;
     }));
     if (exists) {
       return;
@@ -159,7 +156,3 @@ module.exports = {
   },
   schema: schema
 };
-
-// ## Dependencies
-
-// path = require 'path'

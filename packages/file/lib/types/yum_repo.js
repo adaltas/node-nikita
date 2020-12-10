@@ -12,7 +12,7 @@ schema = {
   required: ['target']
 };
 
-// This action honors all the options from "nikita.file.ini".
+// This action honors all the config from "nikita.file.ini".
 
 // ## Handler
 handler = function({config}) {

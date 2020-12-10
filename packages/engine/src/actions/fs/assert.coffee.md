@@ -82,10 +82,7 @@ console.info(`File exists: ${status}`)
           Validate file permissions.
           """
         'not':
-          type: 'boolean'
-          description: """
-          Negates the validation.
-          """
+          $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
         'sha1':
           type: 'string'
           description: """

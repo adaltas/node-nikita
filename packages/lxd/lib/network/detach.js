@@ -13,13 +13,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.network.detach({
-//   network: 'network0'
+// const {status} = await nikita.lxd.network.detach({
+//   network: 'network0',
 //   container: 'container1'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Network detached  : ' + status);
 // })
+// console.info(`Network was detached: ${status}`)
 // ```
 
 // ## Schema
@@ -44,7 +42,7 @@ handler = function({config}) {
   // log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
   //Execute
   return this.execute({
-    cmd: `lxc config device list ${config.container} | grep ${config.network} || exit 42
+    command: `lxc config device list ${config.container} | grep ${config.network} || exit 42
 ${['lxc', 'network', 'detach', config.network, config.container].join(' ')}`,
     code_skipped: 42
   });

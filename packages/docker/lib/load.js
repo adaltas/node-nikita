@@ -16,19 +16,17 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.load({
+// ```js
+// const {status} = await nikita.docker.load({
 //   image: 'nikita/load_test:latest',
 //   machine: machine,
 //   source: source + "/nikita_load.tar"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'Container loaded: ' + status);
 // })
+// console.info(`Image was loaded: ${status}`);
 // ```
 
 // ## Schema
-var handler, schema, string;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -43,8 +41,8 @@ schema = {
     },
     'checksum': {
       type: 'string',
-      description: `If provided, will check if attached input archive to checksum already exist,
-not native to docker but implemented to get better performance.`
+      description: `If provided, will check if attached input archive to checksum already
+exist, not native to docker but implemented to get better performance.`
     },
     'boot2docker': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -61,9 +59,9 @@ not native to docker but implemented to get better performance.`
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, status, stderr, stdout;
+  var command, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, status, stderr, stdout;
   log({
     message: "Entering Docker load",
     level: 'DEBUG',
@@ -76,12 +74,12 @@ handler = async function({
   if (config.input == null) {
     throw Error('Missing input parameter');
   }
-  cmd = `load -i ${config.input}`;
+  command = `load -i ${config.input}`;
   // need to records the list of image to see if status is modified or not after load
   // for this we print the existing images as REPOSITORY:TAG:IMAGE
   // parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
   images = {};
-  delete config.cmd;
+  delete config.command;
   log({
     message: 'Storing previous state of image',
     level: 'INFO',
@@ -105,12 +103,12 @@ handler = async function({
     config.checksum = '';
   }
   ({stdout} = (await this.docker.tools.execute({
-    cmd: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
+    command: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
   })));
   // skip header line, wi skip it here instead of in the grep  to have
   // an array with at least one not empty line
-  if (string.lines(stdout).length > 1) {
-    ref = string.lines(stdout);
+  if (utils.string.lines(stdout).length > 1) {
+    ref = utils.string.lines(stdout);
     for (i = 0, len = ref.length; i < len; i++) {
       image = ref[i];
       image = image.trim();
@@ -137,10 +135,10 @@ handler = async function({
     module: 'nikita/lib/docker/load'
   });
   this.docker.tools.execute({
-    cmd: cmd
+    command: command
   });
   ({stdout, stderr} = (await this.docker.tools.execute({
-    cmd: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+    command: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
   })));
   new_images = {};
   status = false;
@@ -149,8 +147,8 @@ handler = async function({
     level: 'INFO',
     module: 'nikita/lib/docker/load'
   });
-  if (string.lines(stdout).length > 1) {
-    ref1 = string.lines(stdout.toString());
+  if (utils.string.lines(stdout).length > 1) {
+    ref1 = utils.string.lines(stdout.toString());
     for (j = 0, len1 = ref1.length; j < len1; j++) {
       image = ref1[j];
       if (image !== '') {
@@ -197,4 +195,4 @@ module.exports = {
 };
 
 // ## Dependencies
-string = require('@nikitajs/engine/lib/utils/string');
+utils = require('./utils');

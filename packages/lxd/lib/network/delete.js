@@ -13,12 +13,10 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.network.delete({
+// const {status} = await nikita.lxd.network.delete({
 //   network: 'network0'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Network deleted: ' + status);
 // })
+// console.info(`Network was deleted: ${status}`)
 // ```
 
 // ## Schema
@@ -40,7 +38,7 @@ handler = function({config}) {
   // log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
   //Execute
   return this.execute({
-    cmd: `lxc network list --format csv | grep ${config.network} || exit 42
+    command: `lxc network list --format csv | grep ${config.network} || exit 42
 ${['lxc', 'network', 'delete', config.network].join(' ')}`,
     code_skipped: 42
   });

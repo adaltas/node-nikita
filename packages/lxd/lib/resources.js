@@ -14,13 +14,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.state({
+// const {config} = await nikita.lxd.resources({
 //   container: 'container1',
-// }, function(err, {config}){
-//   console.info( err ? err.message : config);
-//   // See below for an output example
+//   device: 'disk'
 // })
+// console.info(config)
 // ```
 
 // ## Schema
@@ -45,7 +43,7 @@ handler = async function({config}) {
   var stdout;
   // log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
   ({stdout} = (await this.execute({
-    cmd: ['lxc', 'query', '/' + ['1.0', 'resources'].join('/')].join(' ')
+    command: ['lxc', 'query', '/' + ['1.0', 'resources'].join('/')].join(' ')
   })));
   return {
     config: JSON.parse(stdout)

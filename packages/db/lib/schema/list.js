@@ -51,7 +51,7 @@ handler = async function({config}) {
   ({stdout} = (await this.db.query({
     config: config
   }, {
-    cmd: '\\dn',
+    command: '\\dn',
     trim: true
   })));
   schemas = utils.string.lines(stdout).map(function(line) {

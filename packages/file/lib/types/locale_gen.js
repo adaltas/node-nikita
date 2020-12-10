@@ -5,13 +5,13 @@
 
 // ## Example
 
-// ```javascript
-  // require('nikita')
-  // .file.types.locale_gen({
+// ```js
+  // const {status} = await nikita.file.types.locale_gen({
   //   target: '/etc/locale.gen',
   //   rootdir: '/mnt',
   //   locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
   // })
+  // console.info(`File was updated: ${status}`)
   // ```
 
 // ## Schema
@@ -87,7 +87,7 @@ handler = async function({config}) {
   this.execute({
     if: config.generate != null ? config.generate : status,
     rootdir: config.rootdir,
-    cmd: "locale-gen"
+    command: "locale-gen"
   });
   return {
     status: status || config.generate

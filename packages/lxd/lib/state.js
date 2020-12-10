@@ -14,13 +14,10 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.state({
-//   container: 'container1',
-// }, function(err, {config}){
-//   console.info( err ? err.message : config);
-//   // See below for an output example
+// const {config} = await nikita.lxd.state({
+//   container: 'container1'
 // })
+// console.info(config)
 // ```
 
 // ## Schema
@@ -41,7 +38,7 @@ handler = async function({config}) {
   var stdout;
   // log message: "Entering lxd.state", level: "DEBUG", module: "@nikitajs/lxd/lib/state"
   ({stdout} = (await this.execute({
-    cmd: ['lxc', 'query', '/' + ['1.0', 'instances', config.container, 'state'].join('/')].join(' ')
+    command: ['lxc', 'query', '/' + ['1.0', 'instances', config.container, 'state'].join('/')].join(' ')
   })));
   return {
     config: JSON.parse(stdout)

@@ -7,23 +7,21 @@
 
 // The following action installs the coffescript package globally.
 
-// ```javascript
-  // require('nikita')
-  // .tools.npm({
+// ```js
+  // const {status} = await nikita.tools.npm({
   //   name: 'coffeescript',
   //   global: true
-  // }, (err, {status}) => {
-  //   console.log(err ? err.message : 'Package installed ' + status);
-  // });
+  // })
+  // console.info(`Package was installed: ${status}`)
   // ```
 
 // ## Hooks
 var handler, on_action, schema,
   indexOf = [].indexOf;
 
-on_action = function({config}) {
-  if (config.argument != null) {
-    throw Error('Deprecated config `argument`');
+on_action = function({config, metadata}) {
+  if (typeof metadata.argument === 'string') {
+    config.name = metadata.argument;
   }
   if (typeof config.name === 'string') {
     return config.name = [config.name];
@@ -34,24 +32,20 @@ on_action = function({config}) {
 schema = {
   type: 'object',
   properties: {
-    'name': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
-      description: 'Name of the package(s) to install.'
+    'cwd': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
     },
     'global': {
       type: 'boolean',
       default: false,
-      description: 'Installs the current package context as a global package.'
+      description: `Installs the current package context as a global package.`
+    },
+    'name': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Name of the package(s) to install.`
     },
     'sudo': {
       $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
@@ -66,28 +60,30 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, log}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var global, install, installed, outdated, pkgs, stdout, upgrade;
   global = config.global ? '-g' : '';
   // Get outdated packages
   outdated = [];
   ({stdout} = (await this.execute({
-    cmd: `npm outdated --json ${global}`,
+    command: `npm outdated --json ${global}`,
     code: [0, 1],
+    cwd: config.cwd,
     stdout_log: false,
-    shy: true,
-    sudo: config.sudo
+    shy: true
   })));
-  if (stdout) {
-    pkgs = JSON.parse(stdout);
-    if (Object.keys(pkgs).length) {
-      outdated = Object.keys(pkgs);
-    }
+  pkgs = JSON.parse(stdout);
+  if (Object.keys(pkgs).length) {
+    outdated = Object.keys(pkgs);
   }
   // Upgrade outdated packages if upgrade config is set
   if (config.upgrade && outdated.length) {
     await this.execute({
-      cmd: `npm update ${global}`,
+      command: `npm update ${global}`,
+      cwd: config.cwd,
       sudo: config.sudo
     });
     outdated = [];
@@ -98,7 +94,8 @@ handler = async function({config, log}) {
   });
   if (upgrade.length) {
     await this.execute({
-      cmd: `npm update ${global} ${upgrade.join(' ')}`,
+      command: `npm update ${global} ${upgrade.join(' ')}`,
+      cwd: config.cwd,
       sudo: config.sudo
     });
     log({
@@ -108,17 +105,15 @@ handler = async function({config, log}) {
   // Get installed packages
   installed = [];
   ({stdout} = (await this.execute({
-    cmd: `npm list --json ${global}`,
+    command: `npm list --json ${global}`,
     code: [0, 1],
+    cwd: config.cwd,
     stdout_log: false,
-    shy: true,
-    sudo: config.sudo
+    shy: true
   })));
-  if (stdout) {
-    pkgs = JSON.parse(stdout);
-    if (Object.keys(pkgs).length) {
-      installed = Object.keys(pkgs.dependencies);
-    }
+  pkgs = JSON.parse(stdout);
+  if (Object.keys(pkgs).length) {
+    installed = Object.keys(pkgs.dependencies);
   }
   // Install packages
   install = config.name.filter(function(pkg) {
@@ -126,7 +121,8 @@ handler = async function({config, log}) {
   });
   if (install.length) {
     await this.execute({
-      cmd: `npm install ${global} ${install.join(' ')}`,
+      command: `npm install ${global} ${install.join(' ')}`,
+      cwd: config.cwd,
       sudo: config.sudo
     });
     return log({

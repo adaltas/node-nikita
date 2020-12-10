@@ -3,116 +3,99 @@
 
 // Remove job(s) on crontab.
 
-// ## Options
-
-// * `user` (name | uid)   
-//   the user of the crontab. the SSH user by default   
-// * `when` (string)   
-//   cron-styled time string. Defines the frequency of the cron job. By default all
-//   frequency will match.   
-// * `cmd`   
-//   the shell command of the job. By default all jobs will match.   
-// * `log`   
-//   Function called with a log related messages.   
-// * `ssh` (object|ssh2)   
-//   Run the action on a remote server using SSH, an ssh2 instance or an
-//   configuration object used to initialize the SSH connection.   
-// * `stdout` (stream.Writable)   
-//   Writable EventEmitter in which the standard output of executed commands will
-//   be piped.   
-// * `stderr` (stream.Writable)   
-//   Writable EventEmitter in which the standard error output of executed command
-//   will be piped.   
-
 // ## Example
 
 // ```js
-// require('nikita').cron.remove({
-//   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
-//   when: '0 */9 * * *'
+// const {status} = await nikita.cron.remove({
+//   command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
+//   when: '0 */9 * * *',
 //   user: 'service'
-// }, function(err, status){
-//   console.info(err ? err.message : 'Cron entry created or modified: ' + status);
-// });
+// })
+// console.info(`Cron entry was removed: ${status}`)
 // ```
 
 // ## Schema
-var handler, regexp, schema;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: 'object',
-      description: `          `
+    'command': {
+      type: 'string',
+      description: `The shell command of the job. By default all jobs will match.`
+    },
+    'user': {
+      type: 'string',
+      description: `The user of the crontab. The SSH user by default.`
+    },
+    'when': {
+      type: 'string',
+      description: `Cron-styled time string. Defines the frequency of the cron job. By
+default all frequency will match.`
     }
-  }
+  },
+  required: ['command']
 };
 
 // ## Handler
-handler = function({config}, callback) {
-  var crontab, jobs, ref, status;
-  if (!(((ref = config.cmd) != null ? ref.length : void 0) > 0)) {
-    return callback(Error('valid cmd is required'));
-  }
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var crontab, i, j, job, jobs, len, myjob, regex, status, stderr, stdout;
   if (config.user != null) {
-    this.log({
+    log({
       message: `Using user ${config.user}`,
       level: 'INFO',
-      module: 'nikita/cron/remove'
+      module: 'nikita/tools/lib/cron/remove'
     });
     crontab = `crontab -u ${config.user}`;
   } else {
-    this.log({
+    log({
       message: "Using default user",
       level: 'INFO',
-      module: 'nikita/cron/remove'
+      module: 'nikita/tools/lib/cron/remove'
     });
     crontab = "crontab";
   }
   status = false;
   jobs = [];
-  return this.execute({
-    cmd: `${crontab} -l`,
+  ({stdout, stderr} = (await this.execute({
+    command: `${crontab} -l`,
     shy: true
-  }, function(err, {stdout, stderr}) {
-    var i, j, job, len, myjob, regex;
-    if (err) {
-      throw err;
+  })));
+  if (/^no crontab for/.test(stderr)) {
+    throw Error('User crontab not found');
+  }
+  myjob = config.when ? utils.regexp.escape(config.when) : '.*';
+  myjob += utils.regexp.escape(` ${config.command}`);
+  regex = new RegExp(myjob);
+  jobs = stdout.trim().split('\n');
+  for (i = j = 0, len = jobs.length; j < len; i = ++j) {
+    job = jobs[i];
+    if (!regex.test(job)) {
+      continue;
     }
-    if (/^no crontab for/.test(stderr)) {
-      throw Error('User crontab not found');
-    }
-    myjob = config.when ? regexp.escape(config.when) : '.*';
-    myjob += regexp.escape(` ${config.cmd}`);
-    regex = new RegExp(myjob);
-    jobs = stdout.trim().split('\n');
-    for (i = j = 0, len = jobs.length; j < len; i = ++j) {
-      job = jobs[i];
-      if (!regex.test(job)) {
-        continue;
-      }
-      this.log({
-        message: `Job '${job}' matches. Removing from list`,
-        level: 'WARN',
-        module: 'nikita/cron/remove'
-      });
-      status = true;
-      jobs.splice(i, 1);
-    }
-    return this.log({
-      message: "No Job matches. Skipping",
-      level: 'INFO',
-      module: 'nikita/cron/remove'
+    log({
+      message: `Job '${job}' matches. Removing from list`,
+      level: 'WARN',
+      module: 'nikita/tools/lib/cron/remove'
     });
-  }).execute({
-    cmd: `${crontab} - <<EOF
-${jobs.join('\n')}
-EOF`,
-    if: function() {
-      return status;
-    }
-  }).next(callback);
+    status = true;
+    jobs.splice(i, 1);
+  }
+  log({
+    message: "No Job matches. Skipping",
+    level: 'INFO',
+    module: 'nikita/tools/lib/cron/remove'
+  });
+  if (!status) {
+    return;
+  }
+  return this.execute({
+    command: `${crontab} - <<EOF
+${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
+  });
 };
 
 // ## Exports
@@ -122,4 +105,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({regexp} = require('@nikitajs/core/lib/misc'));
+utils = require('../utils');

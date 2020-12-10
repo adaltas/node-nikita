@@ -50,7 +50,8 @@ inserted if not yet present and if \`data\` is not a string.`
     },
     gid: {
       $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid',
-      description: `Group name or id who owns the target file; only apply if \`target\` is provided.`
+      description: `Group name or id who owns the target file; only apply if \`target\` is
+provided.`
     },
     http_headers: {
       type: 'object',
@@ -60,13 +61,14 @@ to a server.`
     },
     insecure: {
       type: 'boolean',
-      description: `Allow insecure server connections when using SSL; disabled if \`cacert\` is provided.`
+      description: `Allow insecure server connections when using SSL; disabled if \`cacert\`
+is provided.`
     },
     location: {
       type: 'boolean',
       description: `If the server reports that the requested page has moved to a different
-location (indicated with a Location: header and a 3XX response code), this
-option will make curl redo the request on the new place.`
+location (indicated with a Location: header and a 3XX response code),
+this option will make curl redo the request on the new place.`
     },
     method: {
       type: 'string',
@@ -159,7 +161,7 @@ handler = async function({config}) {
   };
   try {
     ({code, stdout} = (await this.execute({
-      cmd: `${!config.principal ? '' : ['echo', config.password, '|', 'kinit', config.principal, '>/dev/null'].join(' ')}
+      command: `${!config.principal ? '' : ['echo', config.password, '|', 'kinit', config.principal, '>/dev/null'].join(' ')}
 command -v curl >/dev/null || exit 3
 ${[
         'curl',

@@ -3,9 +3,9 @@
 The `args` plugin place the original argument into the action "args" property.
 
 */
-var array;
+var utils;
 
-array = require('../utils/array');
+utils = require('../utils');
 
 module.exports = function() {
   return {
@@ -28,7 +28,7 @@ module.exports = function() {
               return actions;
             }
             // Otherwise, compute args and pass them to the returned actions
-            args = array.multiply(...args);
+            args = utils.array.multiply(...args);
             if (Array.isArray(actions)) {
               return actions.map(function(action, i) {
                 action.args = args[i];

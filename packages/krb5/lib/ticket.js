@@ -6,13 +6,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .krb5.ticket({
+// const {status} = await nikita.krb5.ticket({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Is ticket renewed: ' + status);
-// });
+// })
+// console.info(`ticket was renewed: ${status}`)
 // ```
 
 // ## Schema
@@ -51,17 +49,9 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config, ssh}) {
-  // SSH connection
-  // @system.uid_gid
-  //   uid: config.uid
-  //   gid: config.gid
-  //   shy: true
-  // , (err, {status, uid, gid, default_gid}) ->
-  //   config.uid = uid
-  //   config.gid = gid
+handler = async function({config}) {
   await this.execute({
-    cmd: `if ${utils.krb5.su(config, 'klist -s')}; then exit 3; fi
+    command: `if ${utils.krb5.su(config, 'klist -s')}; then exit 3; fi
 ${utils.krb5.kinit(config)}`,
     code_skipped: 3
   });

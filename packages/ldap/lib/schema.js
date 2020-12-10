@@ -6,14 +6,14 @@
 // ## Example
 
 // ```js
-// {status} = await nikita.ldap.schema({
+// const {status} = await nikita.ldap.schema({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   name: 'kerberos',
 //   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
 // })
-// console.info(`Schema created or modified: ${status}`);
+// console.info(`Schema created or modified: ${status}`)
 // ```
 
 // ## Schema
@@ -78,7 +78,7 @@ handler = async function({
   conf = `${tmpdir}/schema.conf`;
   ldif = `${tmpdir}/ldif`;
   ({status} = (await this.execute({
-    cmd: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
+    command: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
     code: 1,
     code_skipped: 0
   })));
@@ -109,7 +109,7 @@ handler = async function({
     level: 'DEBUG'
   });
   await this.execute({
-    cmd: `slaptest -f ${conf} -F ${ldif}`
+    command: `slaptest -f ${conf} -F ${ldif}`
   });
   log({
     message: 'Configuration validated',
@@ -173,7 +173,7 @@ handler = async function({
     level: 'DEBUG'
   });
   this.execute({
-    cmd: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`
+    command: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`
   });
   return log({
     message: `Schema added: ${config.name}`,

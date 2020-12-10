@@ -15,7 +15,7 @@
 //   Stderr value(s) unless `stderr` option is provided.
 
 // ## Schema
-var handler, path, schema, utils;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -47,7 +47,7 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   log({
     message: "Entering Docker login",
@@ -55,7 +55,7 @@ handler = function({
     module: 'nikita/lib/docker/login'
   });
   return this.docker.tools.execute({
-    cmd: [
+    command: [
       'login',
       ...(['email',
       'user',
@@ -79,6 +79,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
-
-path = require('path');
+utils = require('./utils');

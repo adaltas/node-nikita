@@ -6,13 +6,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.file.exists({
-//   container: "my_container"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The container was deleted')
-// });
-
+// const {status} = await nikita.lxd.file.exists({
+//   container: 'my_container',
+//   target: '/root/a_file'
+// })
+// console.info(`File exists: ${status}`)
 // ```
 
 // ## Todo
@@ -43,7 +41,7 @@ schema = {
 handler = function({config}) {
   // log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
   return this.execute({
-    cmd: `lxc exec ${config.container} -- stat ${config.target}`,
+    command: `lxc exec ${config.container} -- stat ${config.target}`,
     code_skipped: 1
   });
 };

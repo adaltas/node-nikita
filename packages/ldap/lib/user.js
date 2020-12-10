@@ -6,13 +6,13 @@
 // ## Example
 
 // ```js
-// {status} = await nikita.ldap.user({
+// const {status} = await nikita.ldap.user({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   user: {}
-// });
-// console.info(`User created or modified: ${status}`);
+// })
+// console.info(`User created or modified: ${status}`)
 // ```
 
 // ## Schema
@@ -140,7 +140,7 @@ handler = async function({
         //   -s #{user.userPassword} \
         //   '#{user.dn}'
         // """
-        cmd: ['ldappasswd', config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0, config.binddn ? `-D ${utils.string.escapeshellarg(config.binddn)}` : void 0, config.passwd ? `-w ${utils.string.escapeshellarg(config.passwd)}` : void 0, config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0, `-s ${user.userPassword}`, `${utils.string.escapeshellarg(user.dn)}`].join(' ')
+        command: ['ldappasswd', config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0, config.binddn ? `-D ${utils.string.escapeshellarg(config.binddn)}` : void 0, config.passwd ? `-w ${utils.string.escapeshellarg(config.passwd)}` : void 0, config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0, `-s ${user.userPassword}`, `${utils.string.escapeshellarg(user.dn)}`].join(' ')
       });
       log({
         message: "Password modified",

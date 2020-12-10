@@ -5,19 +5,11 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .krb5_delrinc({
-//   principal: 'myservice/my.fqdn@MY.REALM',
-//   keytab: '/etc/security/keytabs/my.service.keytab',
-//   admin: {
-//     principal: 'me/admin@MY_REALM',
-//     password: 'pass',
-//     server: 'localhost'
-//   }
-// }, function(err, status){
-//   console.info(err ? err.message : 'Principal removed: ' + status);
-// });
+// ```js
+// const {status} = await nikita.krb5.exec({
+//   command: 'listprincs'
+// })
+// console.info(`Command was executed: ${status}`)
 // ```
 
 // ## Hooks
@@ -46,7 +38,8 @@ schema = {
         },
         'server': {
           type: 'string',
-          description: `Address of the kadmin server; optional, use "kadmin.local" if missing.`
+          description: `Address of the kadmin server; optional, use "kadmin.local" if
+missing.`
         },
         'password': {
           type: 'string',
@@ -54,7 +47,7 @@ schema = {
         }
       }
     },
-    'cmd': {
+    'command': {
       type: 'string',
       description: `          `
     },
@@ -67,10 +60,10 @@ schema = {
           instanceof: 'RegExp'
         }
       ],
-      description: `Ensure the execute output match a string or a regular expression`
+      description: `Ensure the execute output match a string or a regular expression.`
     }
   },
-  required: ['admin', 'cmd']
+  required: ['admin', 'command']
 };
 
 // ## Handler
@@ -78,7 +71,7 @@ handler = async function({config}) {
   var realm, stdout;
   realm = config.admin.realm ? `-r ${config.admin.realm}` : '';
   ({stdout} = (await this.execute({
-    cmd: config.admin.principal ? `kadmin ${realm} -p ${config.admin.principal} -s ${config.admin.server} -w ${config.admin.password} -q '${config.cmd}'` : `kadmin.local ${realm} -q '${config.cmd}'`
+    command: config.admin.principal ? `kadmin ${realm} -p ${config.admin.principal} -s ${config.admin.server} -w ${config.admin.password} -q '${config.command}'` : `kadmin.local ${realm} -q '${config.command}'`
   })));
   if (config.grep && typeof config.grep === 'string') {
     return {

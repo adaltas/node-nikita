@@ -3,16 +3,6 @@
 
 // Remove a package or service.
 
-// ## Options
-
-// * `cacheonly` (boolean)   
-//   Run the yum command entirely from system cache, don't update cache.   
-// * `name` (string)   
-//   Service name.   
-// * `ssh` (object|ssh2)   
-//   Run the action on a remote server using SSH, an ssh2 instance or an
-//   configuration object used to initialize the SSH connection.   
-
 // ## Callback parameters
 
 // * `err`   
@@ -23,48 +13,69 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .service.start([{
+// const {status} = await nikita.service.remove([{
 //   ssh: ssh,
 //   name: 'gmetad'
-// }, function(err, {status}){ /* do sth */ });
+// })
+// console.info(`Package or service was removed: ${status}`)
 // ```
 
-// ## Source Code
-var string;
+// ## Hooks
+var handler, on_action, schema, utils;
 
-module.exports = function({metadata, options}) {
-  var cacheonly, installed;
-  this.log({
-    message: "Entering service.remove",
-    level: 'DEBUG',
-    module: 'nikita/lib/service/remove'
-  });
+on_action = function({config, metadata}) {
   if (typeof metadata.argument === 'string') {
-    // Options
-    if (options.name == null) {
-      options.name = metadata.argument;
+    return config.name = metadata.argument;
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'cache': {
+      type: 'boolean',
+      description: `Run entirely from system cache to list installed and outdated
+packages.`
+    },
+    'cacheonly': {
+      $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+    },
+    'name': {
+      $ref: 'module://@nikitajs/service/src/install#/properties/name'
     }
-  }
-  if (options.manager == null) {
-    options.manager = this.store['nikita:service:manager'];
-  }
-  if (!options.name) {
-    // Validation
-    throw Error(`Invalid Name: ${JSON.stringify(options.name)}`);
-  }
-  // Action
-  this.log({
-    message: `Remove service ${options.name}`,
+  },
+  // 'ssh':  # not supported
+  //   type: 'object'
+  //   description: """
+  //   Run the action on a remote server using SSH, an ssh2 instance or an
+  //   configuration object used to initialize the SSH connection.
+  //   """
+  required: ['name']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    parent: {state},
+    tools: {log}
+  }) {
+  var cacheonly, err, installed, pkg, status, stdout;
+  // log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
+  // config.manager ?= state['nikita:service:manager'] # not supported
+  log({
+    message: `Remove service ${config.name}`,
     level: 'INFO',
     module: 'nikita/lib/service/remove'
   });
-  cacheonly = options.cacheonly ? '-C' : '';
-  if (options.cache) {
-    installed = this.store['nikita:execute:installed'];
+  cacheonly = config.cacheonly ? '-C' : '';
+  if (config.cache) {
+    installed = state['nikita:execute:installed'];
   }
-  this.system.execute({
-    cmd: `if command -v yum >/dev/null 2>&1; then
+  if (installed == null) {
+    try {
+      ({status, stdout} = (await this.execute({
+        command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n"
 elif command -v pacman >/dev/null 2>&1; then
   pacman -Qqe
@@ -74,81 +85,90 @@ else
   echo "Unsupported Package Manager" >&2
   exit 2
 fi`,
-    code_skipped: 1,
-    stdout_log: false,
-    shy: true,
-    unless: installed != null
-  }, function(err, {status, stdout}) {
-    var pkg;
-    if ((err != null ? err.code : void 0) === 2) {
-      throw Error("Unsupported Package Manager");
-    }
-    if (err) {
-      throw err;
-    }
-    if (!status) {
-      return;
-    }
-    this.log({
-      message: "Installed packages retrieved",
-      level: 'INFO',
-      module: 'nikita/lib/service/remove'
-    });
-    return installed = (function() {
-      var i, len, ref, results;
-      ref = string.lines(stdout);
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        pkg = ref[i];
-        results.push(pkg);
+        code_skipped: 1,
+        stdout_log: false,
+        shy: true
+      })));
+      if (status) {
+        log({
+          message: "Installed packages retrieved",
+          level: 'INFO',
+          module: 'nikita/lib/service/remove'
+        });
+        installed = (function() {
+          var i, len, ref, results;
+          ref = utils.string.lines(stdout);
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            pkg = ref[i];
+            results.push(pkg);
+          }
+          return results;
+        })();
       }
-      return results;
-    })();
-  });
-  this.system.execute({
-    cmd: `if command -v yum >/dev/null 2>&1; then
-  yum remove -y ${cacheonly} '${options.name}'
+    } catch (error) {
+      err = error;
+      if (err.exit_code === 2) {
+        throw Error("Unsupported Package Manager");
+      }
+    }
+  }
+  if (installed.indexOf(config.name) !== -1) {
+    try {
+      ({status} = (await this.execute({
+        command: `if command -v yum >/dev/null 2>&1; then
+  yum remove -y ${cacheonly} '${config.name}'
 elif command -v pacman >/dev/null 2>&1; then
-  pacman --noconfirm -R ${options.name}
+  pacman --noconfirm -R ${config.name}
 elif command -v apt-get >/dev/null 2>&1; then
-  apt-get remove -y ${options.name}
+  apt-get remove -y ${config.name}
 else
   echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
   exit 2
 fi`,
-    code_skipped: 3,
-    if: function() {
-      return installed.indexOf(options.name) !== -1;
-    }
-  }, function(err, {status}) {
-    if (err) {
-      throw Error(`Invalid Service Name: ${options.name}`);
-    }
-    // Update list of installed packages
-    installed.splice(installed.indexOf(options.name), 1);
-    // Log information
-    return this.log(status ? {
-      message: "Service removed",
-      level: 'WARN',
-      module: 'nikita/lib/service/remove'
-    } : {
-      message: "Service already removed",
-      level: 'INFO',
-      module: 'nikita/lib/service/remove'
-    });
-  });
-  return this.call({
-    if: options.cache,
-    handler: function() {
-      this.log({
-        message: "Caching installed on \"nikita:execute:installed\"",
+        code_skipped: 3
+      })));
+      // Update list of installed packages
+      installed.splice(installed.indexOf(config.name), 1);
+      // Log information
+      log(status ? {
+        message: "Service removed",
+        level: 'WARN',
+        module: 'nikita/lib/service/remove'
+      } : {
+        message: "Service already removed",
         level: 'INFO',
         module: 'nikita/lib/service/remove'
       });
-      return this.store['nikita:execute:installed'] = installed;
+    } catch (error) {
+      err = error;
+      if (err) {
+        throw Error(`Invalid Service Name: ${config.name}`);
+      }
     }
-  });
+  }
+  if (config.cache) {
+    return this.call({
+      handler: function() {
+        log({
+          message: "Caching installed on \"nikita:execute:installed\"",
+          level: 'INFO',
+          module: 'nikita/lib/service/remove'
+        });
+        return state['nikita:execute:installed'] = installed;
+      }
+    });
+  }
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  schema: schema
 };
 
 // ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');
+utils = require('@nikitajs/engine/src/utils');

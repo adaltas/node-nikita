@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// nikita.ldap.acl({
+// const {status} = await nikita.ldap.acl({
 //   dn: '',
 //   acls: [{
 //     place_before: 'dn.subtree="dc=domain,dc=com"',
@@ -27,7 +27,7 @@
 // ```
 
 // ## Hooks
-var handler, is_object_literal, ldap, merge, on_action, schema, utils;
+var handler, is_object_literal, merge, on_action, schema, utils;
 
 on_action = function({config}) {
   if (is_object_literal(config.acls)) {
@@ -41,7 +41,8 @@ schema = {
   properties: {
     'acls': {
       type: 'array',
-      description: `In case of multiple acls, regroup "place_before", "to" and "by" as an array.`,
+      description: `In case of multiple acls, regroup "place_before", "to" and "by" as an
+array.`,
       items: {
         type: 'object',
         properties: {
@@ -139,7 +140,7 @@ handler = async function({
         }
       }
     }
-    olcAccesses = ldap.acl.parse(olcAccesses);
+    olcAccesses = utils.ldap.acl.parse(olcAccesses);
     // Diff
     olcAccess = null;
 // Find match "to" property
@@ -241,9 +242,9 @@ handler = async function({
     }
     if (olcAccess.old) {
       // Save
-      old = ldap.acl.stringify(olcAccess.old);
+      old = utils.ldap.acl.stringify(olcAccess.old);
     }
-    olcAccess = ldap.acl.stringify(olcAccess);
+    olcAccess = utils.ldap.acl.stringify(olcAccess);
     operations = {
       dn: config.dn,
       changetype: 'modify',
@@ -289,9 +290,7 @@ module.exports = {
 // ## Dependencies
 ({is_object_literal, merge} = require('mixme'));
 
-ldap = require('./utils/ldap');
-
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('./utils');
 
 // [acls]: http://www.openldap.org/doc/admin24/access-control.html
 // [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl

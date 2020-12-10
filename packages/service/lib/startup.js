@@ -3,25 +3,6 @@
 
 // Activate or desactivate a service on startup.
 
-// ## Options
-
-// * `arch_chroot` (boolean|string)   
-//   Run this command inside a root directory with the arc-chroot command or any 
-//   provided string, require the "rootdir" option if activated.   
-// * `rootdir` (string)   
-//   Path to the mount point corresponding to the root directory, required if 
-//   the "arch_chroot" option is activated.   
-// * `cache` (boolean)   
-//   Cache service information.   
-// * `name` (string)   
-//   Service name, required.   
-// * `startup` (boolean|string)
-//   Run service daemon on startup, required. A string represent a list of activated
-//   levels, for example '2345' or 'multi-user'.   
-//   An empty string to not define any run level.   
-//   Note: String argument is only used if SysVinit runlevel is installed on 
-//   the OS (automatically detected by nikita).   
-
 // ## Callback parameters
 
 // * `err`   
@@ -32,46 +13,68 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .service.startup([{
+// const {status} = await nikita.service.startup([{
 //   ssh: ssh,
 //   name: 'gmetad',
 //   startup: false
-// }, function(err, modified){ /* do sth */ });
+// })
+// console.info(`Service was desactivated on startup: ${status}`)
 // ```
 
-// ## Source Code
-module.exports = function({metadata, options}) {
-  this.log({
-    message: "Entering service.startup",
-    level: 'DEBUG',
-    module: 'nikita/lib/service/startup'
-  });
+// ## Hooks
+var handler, on_action, schema;
+
+on_action = function({config, metadata}) {
   if (typeof metadata.argument === 'string') {
-    // Options
-    if (options.name == null) {
-      options.name = metadata.argument;
+    return config.name = metadata.argument;
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'arch_chroot': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/arch_chroot'
+    },
+    'name': {
+      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+    },
+    'rootdir': {
+      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/rootdir'
+    },
+    'startup': {
+      type: ['boolean', 'string'],
+      default: true,
+      description: `Run service daemon on startup, required. A string represent a list of
+activated levels, for example '2345' or 'multi-user'. An empty
+string to not define any run level. Note: String argument is only
+used if SysVinit runlevel is installed on the OS (automatically
+detected by nikita).`
     }
-  }
-  if (options.startup == null) {
-    options.startup = true;
-  }
-  if (Array.isArray(options.startup)) {
-    options.startup = [options.startup];
-  }
-  if (options.name == null) {
-    // Validation
-    throw Error(`Invalid Name: ${JSON.stringify(options.name)}`);
+  },
+  required: ['name']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var c, command, current_startup, err, i, j, k, len, level, message, ref, ref1, startup_off, startup_on, status, stderr, stdout;
+  if (Array.isArray(config.startup)) {
+    // log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
+    config.startup = [config.startup];
   }
   // Action
-  this.log({
-    message: `Startup service ${options.name}`,
+  log({
+    message: `Startup service ${config.name}`,
     level: 'INFO',
     module: 'nikita/lib/service/startup'
   });
-  this.system.execute({
-    unless: options.cmd,
-    cmd: `if command -v systemctl >/dev/null 2>&1; then
+  if (!config.command) {
+    ({stdout} = (await this.execute({
+      command: `if command -v systemctl >/dev/null 2>&1; then
   echo 'systemctl'
 elif command -v chkconfig >/dev/null 2>&1; then
   echo 'chkconfig'
@@ -81,157 +84,127 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-    shy: true
-  }, function(err, {stdout}) {
-    var ref;
-    if (err) {
-      throw err;
-    }
-    options.cmd = stdout.trim();
-    if ((ref = options.cmd) !== 'systemctl' && ref !== 'chkconfig' && ref !== 'update-rc') {
+      shy: true
+    })));
+    config.command = stdout.trim();
+    if ((ref = config.command) !== 'systemctl' && ref !== 'chkconfig' && ref !== 'update-rc') {
       throw Error("Unsupported Loader");
     }
-  });
-  this.system.execute({
-    if: function() {
-      return options.cmd === 'systemctl';
-    },
-    cmd: `startup=${options.startup ? '1' : ''}
-if systemctl is-enabled ${options.name}; then
+  }
+  if (config.command === 'systemctl') {
+    try {
+      ({status} = (await this.execute({
+        command: `startup=${config.startup ? '1' : ''}
+if systemctl is-enabled ${config.name}; then
   [ -z "$startup" ] || exit 3
-  echo 'Disable ${options.name}'
-  systemctl disable ${options.name}
+  echo 'Disable ${config.name}'
+  systemctl disable ${config.name}
 else
   [ -z "$startup" ] && exit 3
-  echo 'Enable ${options.name}'
-  systemctl enable ${options.name}
+  echo 'Enable ${config.name}'
+  systemctl enable ${config.name}
 fi`,
-    trap: true,
-    code_skipped: 3,
-    arch_chroot: options.arch_chroot,
-    rootdir: options.rootdir
-  }, function(err, {status}) {
-    var message;
-    if (err && options.startup) {
-      err = Error(`Startup Enable Failed: ${options.name}`);
+        trap: true,
+        code_skipped: 3,
+        arch_chroot: config.arch_chroot,
+        rootdir: config.rootdir
+      })));
+      message = config.startup ? 'activated' : 'disabled';
+      log(status ? {
+        message: `Service startup updated: ${message}`,
+        level: 'WARN',
+        module: 'nikita/lib/service/remove'
+      } : {
+        message: `Service startup not modified: ${message}`,
+        level: 'INFO',
+        module: 'nikita/lib/service/remove'
+      });
+    } catch (error) {
+      err = error;
+      if (config.startup) {
+        throw Error(`Startup Enable Failed: ${config.name}`);
+      }
+      if (!config.startup) {
+        throw Error(`Startup Disable Failed: ${config.name}`);
+      }
     }
-    if (err && !options.startup) {
-      err = Error(`Startup Disable Failed: ${options.name}`);
-    }
-    if (err) {
-      throw err;
-    }
-    message = options.startup ? 'activated' : 'disabled';
-    return this.log(status ? {
-      message: `Service startup updated: ${message}`,
-      level: 'WARN',
-      module: 'nikita/lib/service/remove'
-    } : {
-      message: `Service startup not modified: ${message}`,
-      level: 'INFO',
-      module: 'nikita/lib/service/remove'
-    });
-  });
-  this.call({
-    if: function() {
-      return options.cmd === 'chkconfig';
-    }
-  }, function(_, callback) {
-    return this.system.execute({
-      if: function() {
-        return options.cmd === 'chkconfig';
-      },
-      cmd: `chkconfig --list ${options.name}`,
+  }
+  if (config.command === 'chkconfig') {
+    ({status, stdout, stderr} = (await this.execute({
+      command: `chkconfig --list ${config.name}`,
       code_skipped: 1
-    }, function(err, {status, stdout, stderr}) {
-      var c, current_startup, j, len, level, ref;
-      if (err) {
-        return callback(err);
-      }
-      // Invalid service name return code is 0 and message in stderr start by error
-      if (/^error/.test(stderr)) {
-        this.log({
-          message: `Invalid chkconfig name for \"${options.name}\"`,
-          level: 'ERROR',
-          module: 'mecano/lib/service/startup'
-        });
-        throw Error(`Invalid chkconfig name for \`${options.name}\``);
-      }
-      current_startup = '';
-      if (status) {
-        ref = stdout.split(' ').pop().trim().split('\t');
-        for (j = 0, len = ref.length; j < len; j++) {
-          c = ref[j];
-          [level, status] = c.split(':');
-          if (['on', 'marche'].indexOf(status) > -1) {
-            current_startup += level;
-          }
-        }
-      }
-      if (options.startup === true && current_startup.length) {
-        return callback();
-      }
-      if (options.startup === current_startup) {
-        return callback();
-      }
-      if (status && options.startup === false && current_startup === '') {
-        return callback();
-      }
-      this.call({
-        if: options.startup
-      }, function() {
-        var cmd, i, k, startup_off, startup_on;
-        cmd = `chkconfig --add ${options.name};`;
-        if (typeof options.startup === 'string') {
-          startup_on = startup_off = '';
-          for (i = k = 0; k < 6; i = ++k) {
-            if (options.startup.indexOf(i) !== -1) {
-              startup_on += i;
-            } else {
-              startup_off += i;
-            }
-          }
-          if (startup_on) {
-            cmd += `chkconfig --level ${startup_on} ${options.name} on;`;
-          }
-          if (startup_off) {
-            cmd += `chkconfig --level ${startup_off} ${options.name} off;`;
-          }
-        } else {
-          cmd += `chkconfig ${options.name} on;`;
-        }
-        return this.system.execute({
-          cmd: cmd
-        }, function(err) {
-          return callback(err, true);
-        });
+    })));
+    // Invalid service name return code is 0 and message in stderr start by error
+    if (/^error/.test(stderr)) {
+      log({
+        message: `Invalid chkconfig name for \"${config.name}\"`,
+        level: 'ERROR',
+        module: 'mecano/lib/service/startup'
       });
-      return this.call({
-        unless: options.startup
-      }, function() {
-        this.log({
-          message: "Desactivating startup rules",
-          level: 'DEBUG',
-          module: 'mecano/lib/service/startup'
-        });
-        if (typeof this.log === "function") {
-          this.log("Mecano `service.startup`: s");
-        }
-        // Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
-        return this.system.execute({
-          cmd: `chkconfig ${options.name} off`
-        }, function(err) {
-          return callback(err, true);
-        });
-      });
-    });
-  }, function(err, status) {
-    var message;
-    if (err) {
-      throw err;
+      throw Error(`Invalid chkconfig name for \`${config.name}\``);
     }
-    message = options.startup ? 'activated' : 'disabled';
-    return this.log(status ? {
+    current_startup = '';
+    if (status) {
+      ref1 = stdout.split(' ').pop().trim().split('\t');
+      for (j = 0, len = ref1.length; j < len; j++) {
+        c = ref1[j];
+        [level, status] = c.split(':');
+        if (['on', 'marche'].indexOf(status) > -1) {
+          current_startup += level;
+        }
+      }
+    }
+    if (config.startup === true && current_startup.length) {
+      status = false;
+    }
+    if (config.startup === current_startup) {
+      status = false;
+    }
+    if (status && config.startup === false && current_startup === '') {
+      status = false;
+    }
+    if (config.startup) {
+      command = `chkconfig --add ${config.name};`;
+      if (typeof config.startup === 'string') {
+        startup_on = startup_off = '';
+        for (i = k = 0; k < 6; i = ++k) {
+          if (config.startup.indexOf(i) !== -1) {
+            startup_on += i;
+          } else {
+            startup_off += i;
+          }
+        }
+        if (startup_on) {
+          command += `chkconfig --level ${startup_on} ${config.name} on;`;
+        }
+        if (startup_off) {
+          command += `chkconfig --level ${startup_off} ${config.name} off;`;
+        }
+      } else {
+        command += `chkconfig ${config.name} on;`;
+      }
+      await this.execute({
+        command: command
+      });
+      status = true;
+    }
+    if (!config.startup) {
+      log({
+        message: "Desactivating startup rules",
+        level: 'DEBUG',
+        module: 'mecano/lib/service/startup'
+      });
+      if (typeof log === "function") {
+        log("Mecano `service.startup`: s");
+      }
+      // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
+      await this.execute({
+        command: `chkconfig ${config.name} off`
+      });
+      status = true;
+    }
+    message = config.startup ? 'activated' : 'disabled';
+    log(status ? {
       message: `Service startup updated: ${message}`,
       level: 'WARN',
       module: 'nikita/lib/service/startup'
@@ -240,31 +213,25 @@ fi`,
       level: 'INFO',
       module: 'nikita/lib/service/startup'
     });
-  });
-  return this.system.execute({
-    if: function() {
-      return options.cmd === 'update-rc';
-    },
-    cmd: `startup=${options.startup ? '1' : ''}
-if ls /etc/rc*.d/S??${options.name}; then
+  }
+  if (config.command === 'update-rc') {
+    ({status} = (await this.execute({
+      command: `startup=${config.startup ? '1' : ''}
+if ls /etc/rc*.d/S??${config.name}; then
   [ -z "$startup" ] || exit 3
-  echo 'Disable ${options.name}'
-  update-rc.d -f ${options.name} disable
+  echo 'Disable ${config.name}'
+  update-rc.d -f ${config.name} disable
 else
   [ -z "$startup" ] && exit 3
-  echo 'Enable ${options.name}'
-  update-rc.d -f ${options.name} enable
+  echo 'Enable ${config.name}'
+  update-rc.d -f ${config.name} enable
 fi`,
-    code_skipped: 3,
-    arch_chroot: options.arch_chroot,
-    rootdir: options.rootdir
-  }, function(err, {status}) {
-    var message;
-    if (err) {
-      throw err;
-    }
-    message = options.startup ? 'activated' : 'disabled';
-    return this.log(status ? {
+      code_skipped: 3,
+      arch_chroot: config.arch_chroot,
+      rootdir: config.rootdir
+    })));
+    message = config.startup ? 'activated' : 'disabled';
+    return log(status ? {
       message: `Service startup updated: ${message}`,
       level: 'WARN',
       module: 'nikita/lib/service/remove'
@@ -273,5 +240,14 @@ fi`,
       level: 'INFO',
       module: 'nikita/lib/service/remove'
     });
-  });
+  }
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  schema: schema
 };

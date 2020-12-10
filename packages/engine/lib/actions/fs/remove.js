@@ -19,34 +19,28 @@
 // ## Simple example
 
 // ```js
-// require('nikita')
-// .system.remove('./some/dir', function(err, {status}){
-//   console.log(err ? err.message : "File removed: " + status);
-// });
+// const {status} = await nikita.fs.remove('./some/dir')
+// console.info(`Directory was removed: ${status}`)
 // ```
 
 // ## Removing a directory unless a given file exists
 
 // ```js
-// require('nikita')
-// .system.remove({
+// const {status} = await nikita.fs.remove({
 //   target: './some/dir',
 //   unless_exists: './some/file'
-// }, function(err, {status}){
-//   console.log(err ? err.message : "File removed: " + status);
-// });
+// })
+// console.info(`Directory was removed: ${status}`)
 // ```
 
 // ## Removing multiple files and directories
 
 // ```js
-// require('nikita')
-// .system.remove([
+// const {status} = await nikita.fs.remove([
 //   { target: './some/dir', unless_exists: './some/file' },
 //   './some/file'
-// ], function(err, status){
-//   console.log(err ? err.message : 'File removed: ' + status);
-// });
+// ])
+// console.info(`Directories was removed: ${status}`)
 // ```
 
 // ## Hook
@@ -82,7 +76,8 @@ schema = {
           type: 'array'
         }
       ],
-      description: `File, directory or glob (pattern matching based on wildcard characters).   `
+      description: `File, directory or glob (pattern matching based on wildcard
+characters).`
     }
   }
 };
@@ -90,7 +85,6 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    metadata,
     tools: {log}
   }) {
   var file, files, i, len, status;
@@ -104,7 +98,7 @@ handler = async function({
       module: 'nikita/lib/fs/remove'
     });
     ({status} = (await this.execute({
-      cmd: `rm -rf '${file}'`
+      command: `rm -rf '${file}'`
     })));
     if (status) {
       log({

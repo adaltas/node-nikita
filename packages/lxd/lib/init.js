@@ -12,14 +12,12 @@
 
 // ## Example
 
-// ```
-// require('nikita')
-// .lxd.init({
+// ```js
+// const {status} = await nikita.lxd.init({
 //   image: "ubuntu:18.04",
 //   container: "my_container"
-// }, function(err, {status}) {
-//   console.info( err ? err.message : 'The container was created')
-// });
+// })
+// console.info(`Container was created: ${status}`)
 // ```
 
 // ## Implementation details
@@ -59,7 +57,8 @@ schema = {
     },
     'storage': {
       type: 'string',
-      description: `Storage name where to store the container, [default_storage] by default.`
+      description: `Storage name where to store the container, [default_storage] by
+default.`
     },
     'profile': {
       type: 'string',
@@ -85,14 +84,14 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  var cmd_init;
+  var command_init;
   // log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-  cmd_init = ['lxc', 'init', config.image, config.container, config.network ? `--network ${config.network}` : void 0, config.storage ? `--storage ${config.storage}` : void 0, config.ephemeral ? "--ephemeral" : void 0, config.vm ? "--vm" : void 0, config.profile ? `--profile ${config.profile}` : void 0, config.target ? `--target ${config.target}` : void 0].join(' ');
+  command_init = ['lxc', 'init', config.image, config.container, config.network ? `--network ${config.network}` : void 0, config.storage ? `--storage ${config.storage}` : void 0, config.ephemeral ? "--ephemeral" : void 0, config.vm ? "--vm" : void 0, config.profile ? `--profile ${config.profile}` : void 0, config.target ? `--target ${config.target}` : void 0].join(' ');
   // Execution
   return this.execute({
-    cmd: `lxc remote get-default
+    command: `lxc remote get-default
 lxc info ${config.container} >/dev/null && exit 42
-echo '' | ${cmd_init}`,
+echo '' | ${command_init}`,
     code_skipped: 42
   });
 };

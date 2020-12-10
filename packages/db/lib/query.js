@@ -4,7 +4,7 @@
 // Check if a user exists in the database. 
 
 // ## Hooks
-var cmd, connection_config, escape, handler, jdbc, on_action, schema, utils;
+var command, connection_config, escape, handler, jdbc, on_action, schema, utils;
 
 on_action = function({
     config,
@@ -77,14 +77,14 @@ are converted to lower cases.`
       default: false
     }
   },
-  required: ['admin_password', 'cmd', 'engine', 'host', 'admin_username']
+  required: ['admin_password', 'command', 'engine', 'host', 'admin_username']
 };
 
 // ## Handler
 handler = async function({config}) {
   var status, stdout;
   ({status, stdout} = (await this.execute({
-    cmd: cmd(config),
+    command: command(config),
     trim: config.trim
   })));
   if (config.grep && typeof config.grep === 'string') {
@@ -120,14 +120,14 @@ escape = function(sql) {
 // ## Command
 
 // Build the CLI query command.
-cmd = function(...opts) {
+command = function(...opts) {
   var config, i, k, len, opt, v;
   config = {};
   for (i = 0, len = opts.length; i < len; i++) {
     opt = opts[i];
     if (typeof opt === 'string') {
       opt = {
-        cmd: opt
+        command: opt
       };
     }
     for (k in opt) {
@@ -156,7 +156,7 @@ cmd = function(...opts) {
         // -s, --silent              Be more silent. Print results with a tab as separator, each row on new line.
         // -r, --raw                 Write fields without conversion. Used with --batch.
         config.silent ? "-N -s -r" : void 0,
-        config.cmd ? `-e \"${escape(config.cmd)}\"` : void 0
+        config.command ? `-e \"${escape(config.command)}\"` : void 0
       ].join(' ');
     case 'postgresql':
       if (config.path == null) {
@@ -177,7 +177,7 @@ cmd = function(...opts) {
         // -A, --no-align           Unaligned table output mode
         // -q, --quiet              Run quietly (no messages, only query output)
         "-tAq",
-        config.cmd ? `-c \"${config.cmd}\"` : void 0
+        config.command ? `-c \"${config.command}\"` : void 0
       ].join(' ');
     default:
       throw Error(`Unsupported engine: ${JSON.stringify(config.engine)}`);
@@ -260,7 +260,7 @@ module.exports = {
     global: 'db'
   },
   // Utils
-  cmd: cmd,
+  command: command,
   connection_config: connection_config,
   escape: escape,
   jdbc: jdbc,

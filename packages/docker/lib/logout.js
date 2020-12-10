@@ -3,20 +3,6 @@
 
 // Log out from a Docker registry or the one defined by the `registry` option.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `registry` (string)   
-//   Address of the registry server, default to "https://index.docker.io/v1/".
-// * `machine` (string)   
-//   Name of the docker-machine, required if using docker-machine.
-// * `code` (int|array)   
-//   Expected code(s) returned by the command, int or array of int, default to 0.
-// * `code_skipped`   
-//   Expected code(s) returned by the command if it has no effect, executed will
-//   not be incremented, int or array of int.
-
 // ## Callback parameters
 
 // * `err`   
@@ -25,7 +11,7 @@
 //   True if logout.
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -38,6 +24,10 @@ schema = {
     },
     'machine': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+    },
+    'registry': {
+      type: 'string',
+      description: `Address of the registry server, default to "https://index.docker.io/v1/".`
     }
   }
 };
@@ -45,9 +35,9 @@ schema = {
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd;
+  var command;
   log({
     message: "Entering Docker logout",
     level: 'DEBUG',
@@ -58,12 +48,12 @@ handler = function({
     return callback(Error('Missing container parameter'));
   }
   // rm is false by default only if config.service is true
-  cmd = 'logout';
+  command = 'logout';
   if (config.registry != null) {
-    cmd += ` \"${config.registry}\"`;
+    command += ` \"${config.registry}\"`;
   }
   return this.execute({
-    cmd: docker.wrap(config, cmd)
+    command: utils.wrap(config, command)
   }, docker.callback);
 };
 
@@ -77,6 +67,4 @@ module.exports = {
 };
 
 // ## Dependencies
-docker = require('./utils');
-
-util = require('util');
+utils = require('./utils');

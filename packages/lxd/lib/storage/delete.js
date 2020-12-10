@@ -13,12 +13,10 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .lxd.storage.delete({
+// const {status} = await nikita.lxd.storage.delete({
 //   name: 'system'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Storage deleted: ' + status);
 // })
+// console.info(`Storage was deleted: ${status}`)
 // ```
 
 // ## Schema
@@ -37,13 +35,13 @@ schema = {
 
 // ## Handler
 handler = function({config}) {
-  var cmd_delete;
+  var command_delete;
   // log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
-  cmd_delete = ['lxc', 'storage', 'delete', config.name].join(' ');
+  command_delete = ['lxc', 'storage', 'delete', config.name].join(' ');
   //Execute
   return this.execute({
-    cmd: `lxc storage list | grep ${config.name} || exit 42
-${cmd_delete}`,
+    command: `lxc storage list | grep ${config.name} || exit 42
+${command_delete}`,
     code_skipped: 42
   });
 };

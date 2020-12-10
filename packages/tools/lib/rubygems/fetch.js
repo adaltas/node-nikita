@@ -17,14 +17,12 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .tools.rubygems.fetch({
+// const {status, filename, filepath} = await nikita.tools.rubygems.fetch({
 //   name: 'json',
 //   version: '2.1.0',
 //   cwd: '/tmp/my_gems'
-// }, function(err, {status, filename, filepath}){
-//   console.info( err ? err.messgage : 'Gem fetched: ' + status);
-// });
+// })
+// console.info(`Gem fetched: ${status}`)
 // ```
 
 // ## Implementation
@@ -77,7 +75,7 @@ handler = async function({config}) {
   // Get version
   if (!config.version) {
     ({status, stdout} = (await this.execute({
-      cmd: `${config.gem_bin} specification ${config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'`,
+      command: `${config.gem_bin} specification ${config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'`,
       cwd: config.cwd,
       shy: true,
       bash: config.bash
@@ -89,7 +87,7 @@ handler = async function({config}) {
   config.target = `${config.name}-${config.version}.gem`;
   // Fetch package
   ({status} = (await this.execute({
-    cmd: `${config.gem_bin} fetch ${config.name} -v ${config.version}`,
+    command: `${config.gem_bin} fetch ${config.name} -v ${config.version}`,
     cwd: config.cwd,
     bash: config.bash
   })));

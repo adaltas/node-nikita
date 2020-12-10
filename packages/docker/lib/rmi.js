@@ -12,7 +12,7 @@
 //   True if image was removed.
 
 // ## Hook
-var docker, handler, on_action, schema, util;
+var handler, on_action, schema;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
@@ -57,7 +57,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   log({
     message: "Entering Docker rmi",
@@ -65,11 +65,11 @@ handler = async function({
     module: 'nikita/lib/docker/rmi'
   });
   await this.docker.tools.execute({
-    cmd: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
+    command: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
     code_skipped: [1]
   });
   return (await this.docker.tools.execute({
-    cmd: [
+    command: [
       'rmi',
       ['force',
       'no_prune'].filter(function(opt) {
@@ -98,8 +98,3 @@ module.exports = {
   },
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

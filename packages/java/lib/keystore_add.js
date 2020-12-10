@@ -35,8 +35,7 @@
 // ## Uploading public and private keys into a keystore
 
 // ```js
-// require('nikita')
-// .java.keystore_add([{
+// const {status} = await nikita.java.keystore_add([{
 //   keystore: java_home + '/lib/security/cacerts',
 //   storepass: 'changeit',
 //   caname: 'my_ca_certificate',
@@ -45,19 +44,20 @@
 //   cert: "/tmp/public_cert.pem",
 //   keypass: 'mypassword',
 //   name: 'node_1'
-// }, function(err, status){ /* do sth */ });
+// })
+// console.info(`Keystore was updated: ${status}`)
 // ```
 
 // ## Uploading a certificate authority
 
 // ```js
-// require('nikita')
-// .java.keystore_add([{
+// const {status} = await nikita.java.keystore_add([{
 //   keystore: java_home + '/lib/security/cacerts',
 //   storepass: 'changeit',
 //   caname: 'my_ca_certificate',
 //   cacert: '/tmp/cacert.pem'
-// }, function(err, status){ /* do sth */ });
+// })
+// console.info(`Keystore was updated: ${status}`)
 // ```
 
 // ## Requirements
@@ -189,7 +189,7 @@ handler = async function({
     if (!!config.cert) {
       await this.execute({
         bash: true,
-        cmd: `cleanup () {
+        command: `cleanup () {
   [ -n "${config.cacert ? '1' : ''}" ] || rm -rf ${tmpdir};
 }
 if ! command -v ${config.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
@@ -232,7 +232,7 @@ ${config.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out 
     if (config.cacert) {
       await this.execute({
         bash: true,
-        cmd: `# cleanup () { rm -rf ${tmpdir}; }
+        command: `# cleanup () { rm -rf ${tmpdir}; }
 cleanup () { echo 'clean'; }
 # Detect keytool command
 keytoolbin=${config.keytool}

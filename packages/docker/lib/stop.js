@@ -3,8 +3,6 @@
 
 // Stop a started container.
 
-// ## Options
-
 // ## Callback parameters
 
 // * `err`   
@@ -14,17 +12,15 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.stop({
+// ```js
+// const {status} = await nikita.docker.stop({
 //   container: 'toto'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container state changed to stopped: ' + status);
 // })
+// console.info(`Container was stopped: ${status}`)
 // ```
 
 // ## Schema
-var docker, handler, schema, util;
+var handler, schema;
 
 schema = {
   type: 'object',
@@ -54,7 +50,7 @@ is 10).`
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   var status;
   log({
@@ -81,7 +77,7 @@ handler = async function({
   }
   return this.docker.tools.execute({
     if: status,
-    cmd: ['stop', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
+    command: ['stop', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
   });
 };
 
@@ -93,8 +89,3 @@ module.exports = {
   },
   schema: schema
 };
-
-// ## Dependencies
-docker = require('./utils');
-
-util = require('util');

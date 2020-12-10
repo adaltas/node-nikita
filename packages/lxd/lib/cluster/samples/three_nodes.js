@@ -179,7 +179,7 @@ nikita.log.cli({
     return this.lxd.exec({
       header: 'Node.js',
       container: options.container,
-      cmd: `command -v node && exit 42
+      command: `command -v node && exit 42
 curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts`,
       trap: true,

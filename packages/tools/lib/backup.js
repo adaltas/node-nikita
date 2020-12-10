@@ -14,24 +14,24 @@
 // * `filename` (string)   
 // * `target` (string)   
 
-// ## Backup a directory
+// ## Example
+
+// Backup a directory:
 
 // ```js
-// require('nikita')
-// .tools.backup({
-//   name: 'my_backup'
-//   source: '/etc'
-//   target: '/tmp/backup'
-//   algorithm: 'gzip' # Value are "gzip", "bzip2", "xz" or "none"
+// const {status} = await nikita.tools.backup({
+//   name: 'my_backup',
+//   source: '/etc',
+//   target: '/tmp/backup',
+//   algorithm: 'gzip',  # Value are "gzip", "bzip2", "xz" or "none"
 //   extension: 'tgz'
-//   # retention: {
-//   #   count: 3
-//   #   date: '2015-01-01-00:00:00'
-//   #   age: month: 2
-//   # }
-// }, function(err, {status, info}){
-//   console.info(info);
-// });
+//   // retention: {
+//   //  count: 3
+//   //  date: '2015-01-01-00:00:00'
+//   //  age: month: 2
+//   // }
+// })
+// console.info(`File was backed up: ${status}`)
 // ```
 
 // ## Schema
@@ -44,7 +44,7 @@ schema = {
       type: 'string',
       description: `Backup file name, required.`
     },
-    cmd: {
+    command: {
       type: 'string',
       description: `Command from which to pipe the ouptut or generating a file if the
 "target" option is defined.`
@@ -68,8 +68,8 @@ to  UTC.`
           type: 'boolean'
         }
       ],
-      description: `One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a
-directory otherwise no compression.`
+      description: `One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or
+a directory otherwise no compression.`
     },
     source: {
       oneOf: [
@@ -148,9 +148,9 @@ handler = function({
       target: `${target}`
     });
   }
-  if (config.cmd) {
+  if (config.command) {
     this.execute({
-      cmd: `${config.cmd} > ${target}`
+      command: `${config.command} > ${target}`
     });
   }
   return {
@@ -162,7 +162,7 @@ handler = function({
 };
 
 
-// ## Source code
+// ## Handler
 module.exports = {
   handler: handler,
   schema: schema

@@ -16,14 +16,12 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.exec({
+// ```js
+// const {status} = await nikita.docker.exec({
 //   container: 'myContainer',
-//   cmd: '/bin/bash -c "echo toto"'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Command executed: ' + status);
-// });
+//   command: '/bin/bash -c "echo toto"'
+// })
+// console.info(`Command was executed: ${status}`)
 // ```
 
 // ## Schema
@@ -53,7 +51,8 @@ schema = {
     'service': {
       type: 'boolean',
       default: false,
-      description: `If true, run container as a service, else run as a command, true by default.`
+      description: `If true, run container as a service, else run as a command, true by
+default.`
     },
     'uid': {
       oneOf: [
@@ -87,15 +86,15 @@ schema = {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
     }
   },
-  required: ['container', 'cmd']
+  required: ['container', 'command']
 };
 
 // ## Handler
 handler = function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var cmd;
+  var command;
   log({
     message: "Entering Docker exec",
     level: 'DEBUG',
@@ -105,11 +104,11 @@ handler = function({
     config.service = false;
   }
   // Construct exec command
-  cmd = 'exec';
+  command = 'exec';
   if (config.uid != null) {
-    cmd += ` -u ${config.uid}`;
+    command += ` -u ${config.uid}`;
     if (config.gid != null) {
-      cmd += `:${config.gid}`;
+      command += `:${config.gid}`;
     }
   } else if (config.gid != null) {
     log({
@@ -118,10 +117,10 @@ handler = function({
       module: 'nikita/lib/docker/exec'
     });
   }
-  cmd += ` ${config.container} ${config.cmd}`;
-  delete config.cmd;
+  command += ` ${config.container} ${config.command}`;
+  delete config.command;
   return this.docker.tools.execute({
-    cmd: cmd,
+    command: command,
     code_skipped: config.code_skipped
   });
 };

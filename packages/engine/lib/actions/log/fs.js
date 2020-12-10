@@ -14,13 +14,9 @@
 // this is direction. The paths look like "{config.basedir}/{time}/{hostname}.log"
 // and "{config.basedir}/latest".
 
-// ## Hook
-var fs, handler, on_action, path, schema, stream;
-
-on_action = function({}) {};
-
-
 // ## Schema
+var fs, handler, path, schema, stream;
+
 schema = {
   type: 'object',
   properties: {
@@ -35,7 +31,7 @@ schema = {
       description: `Directory where to store logs relative to the process working
 directory. Default to the "log" directory. Note, when the \`archive\`
 option is activated, the log files will be stored accessible from
-"./log/latest".   `
+"./log/latest".`
     },
     'filename': {
       type: 'string',

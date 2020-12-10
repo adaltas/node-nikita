@@ -5,33 +5,31 @@
 
 // Prior executing this handler, a user with appropriate sudo permissions must be 
 // created. The script will use those credentials
-// to loggin and will try to become root with the "sudo" command. Use the "cmd" 
+// to loggin and will try to become root with the "sudo" command. Use the "command" 
 // property if you must use a different command (such as "sudo su -").
 
 // Additionnally, it disables SELINUX which require a restart. The restart is 
 // handled by Masson and the installation procedure will continue as soon as an 
 // SSH connection is again available.
 
-// ## Exemple
+// ## Example
 
 // ```js
-// require('nikita')
-// .ssh.root({
+// const {status} = await nikita.ssh.root({
 //   "username": "vagrant",
 //   "private_key_path": "/Users/wdavidw/.vagrant.d/insecure_private_key"
 //   "public_key_path": "~/.ssh/id_rsa.pub"
-// }, function(err){
-//   console.info(err || "Public key updoaded for root user");
-// });
+// })
+// console.info(`Public key was updoaded for root user: ${status}`)
 // ```
 
 // ## Schema
-var connect, exec, fs, handler, schema, tilde;
+var connect, exec, fs, handler, schema, utils;
 
 schema = {
   type: 'object',
   properties: {
-    'cmd': {
+    'command': {
       oneOf: [
         {
           type: 'string'
@@ -124,7 +122,7 @@ handler = async function({
   if (config.host == null) {
     config.host = config.ip;
   }
-  // config.cmd ?= 'su -'
+  // config.command ?= 'su -'
   if (config.username == null) {
     config.username = null;
   }
@@ -144,7 +142,7 @@ handler = async function({
   rebooting = false;
   // Read public key if option is a path
   if (config.public_key_path && !config.public_key) {
-    location = (await tilde.normalize(config.public_key_path));
+    location = (await utils.tilde.normalize(config.public_key_path));
     try {
       ({
         data: config.public_key
@@ -164,7 +162,7 @@ handler = async function({
       level: 'DEBUG',
       module: 'nikita/lib/ssh/root'
     });
-    location = (await tilde.normalize(config.private_key_path));
+    location = (await utils.tilde.normalize(config.private_key_path));
     try {
       ({
         data: config.private_key
@@ -178,7 +176,7 @@ handler = async function({
     }
   }
   await this.call(async function() {
-    var child, cmd, conn;
+    var child, command, conn;
     log({
       message: "Connecting",
       level: 'DEBUG',
@@ -190,13 +188,13 @@ handler = async function({
       level: 'INFO',
       module: 'nikita/lib/ssh/root'
     });
-    cmd = [];
-    cmd.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`);
+    command = [];
+    command.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`);
     if (config.public_key) {
-      cmd.push(`mkdir -p /root/.ssh; chmod 700 /root/.ssh;
+      command.push(`mkdir -p /root/.ssh; chmod 700 /root/.ssh;
 echo '${config.public_key}' >> /root/.ssh/authorized_keys;`);
     }
-    cmd.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
+    command.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
 selinux="${config.selinux || ''}";
 if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
 then
@@ -204,23 +202,23 @@ then
   ( reboot )&
   exit 2;
 fi;`);
-    cmd = cmd.join('\n');
+    command = command.join('\n');
     if (config.username !== 'root') {
-      cmd = cmd.replace(/\n/g, ' ');
-      if (typeof config.cmd === 'function') {
-        cmd = config.cmd(cmd);
-      } else if (typeof config.cmd === 'string') {
-        cmd = `${config.cmd} ${cmd}`;
+      command = command.replace(/\n/g, ' ');
+      if (typeof config.command === 'function') {
+        command = config.command(command);
+      } else if (typeof config.command === 'string') {
+        command = `${config.command} ${command}`;
       } else {
-        config.cmd = 'sudo ';
+        config.command = 'sudo ';
         if (config.user) {
-          config.cmd += `-u ${config.user} `;
+          config.command += `-u ${config.user} `;
         }
         if (config.password) {
-          config.cmd = `echo -e \"${config.password}\\n\" | ${config.cmd} -S `;
+          config.command = `echo -e \"${config.password}\\n\" | ${config.command} -S `;
         }
-        config.cmd += `-- sh -c \"${cmd}\"`;
-        cmd = config.cmd;
+        config.command += `-- sh -c \"${command}\"`;
+        command = config.command;
       }
     }
     log({
@@ -229,14 +227,14 @@ fi;`);
       module: 'nikita/lib/ssh/root'
     });
     log({
-      message: cmd,
+      message: command,
       type: 'stdin',
       module: 'nikita/lib/ssh/root'
     });
     if (!metadata.dry) {
       child = exec({
         ssh: conn,
-        cmd: cmd
+        command: command
       }, (err) => {
         if ((err != null ? err.code : void 0) === 2) {
           log({
@@ -304,4 +302,4 @@ connect = require('ssh2-connect');
 
 exec = require('ssh2-exec');
 
-tilde = require('../../utils/tilde');
+utils = require('../../utils');

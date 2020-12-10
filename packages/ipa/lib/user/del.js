@@ -6,18 +6,15 @@
 // ## Example
 
 // ```js
-// require("nikita")
-// .ipa.user.del({
+// const {status} = await nikita.ipa.user.del({
 //   uid: "someone",
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(){
-//   console.info(err ? err.message : status ?
-//     "User was updated" : "User was already set")
 // })
+// console.info(`User was deleted: ${status}`)
 // ```
 
 // ## Hooks

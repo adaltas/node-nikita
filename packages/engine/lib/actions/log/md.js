@@ -20,8 +20,8 @@ schema = {
         divider: {
           type: 'string',
           default: ' : ',
-          description: `The characters used to join the hierarchy of headers to create
-a markdown header.`
+          description: `The characters used to join the hierarchy of headers to create a
+markdown header.`
         }
       }
     }

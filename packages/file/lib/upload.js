@@ -14,14 +14,12 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .file.upload({
+// const {status} = await nikita.file.upload({
 //   ssh: ssh
 //   source: '/tmp/local_file',
 //   target: '/tmp/remote_file'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'File uploaded: ' + status);
-// });
+// })
+// console.info(`File was uploaded: ${status}`)
 // ```
 
 // ## Schema
@@ -62,8 +60,9 @@ schema = {
         }
       ],
       default: false,
-      description: `Validate uploaded file with md5 checksum (only for binary upload for now),
-may be the string checksum or will be deduced from source if "true".`
+      description: `Validate uploaded file with md5 checksum (only for binary upload for
+now), may be the string checksum or will be deduced from source if
+"true".`
     },
     'sha1': {
       default: false,
@@ -75,8 +74,9 @@ may be the string checksum or will be deduced from source if "true".`
           typeof: 'boolean'
         }
       ],
-      description: `Validate uploaded file with sha1 checksum (only for binary upload for now),
-may be the string checksum or will be deduced from source if "true".`
+      description: `Validate uploaded file with sha1 checksum (only for binary upload for
+now), may be the string checksum or will be deduced from source if
+"true".`
     },
     'source': {
       type: 'string',
@@ -261,4 +261,4 @@ fs = require('fs');
 
 path = require('path');
 
-utils = require('@nikitajs/engine/src/utils');
+utils = require('./utils');

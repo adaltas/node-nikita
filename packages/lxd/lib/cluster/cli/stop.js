@@ -18,6 +18,6 @@ module.exports = function({params}) {
     if: params.log
   }).execute({
     cwd: `${__dirname}/../../../assets`,
-    cmd: `vagrant halt`
+    command: `vagrant halt`
   });
 };

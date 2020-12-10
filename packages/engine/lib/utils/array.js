@@ -23,15 +23,29 @@ module.exports = {
     }
     return ret;
   },
-  // intersect: (array) ->
-  //   return [] if array is null
-  //   result = []
-  //   for item, i in array
-  //     continue if result.indexOf(item) isnt -1
-  //     for argument, j in arguments
-  //       break if argument.indexOf(item) is -1
-  //     result.push item if j is arguments.length
-  //   result
+  intersect: function(array) {
+    var argument, i, item, j, k, l, len, len1, result;
+    if (array === null) {
+      return [];
+    }
+    result = [];
+    for (i = k = 0, len = array.length; k < len; i = ++k) {
+      item = array[i];
+      if (result.indexOf(item) !== -1) {
+        continue;
+      }
+      for (j = l = 0, len1 = arguments.length; l < len1; j = ++l) {
+        argument = arguments[j];
+        if (argument.indexOf(item) === -1) {
+          break;
+        }
+      }
+      if (j === arguments.length) {
+        result.push(item);
+      }
+    }
+    return result;
+  },
   flatten: function(arr, depth = -1) {
     var i, k, ref, ret;
     ret = [];
@@ -87,12 +101,18 @@ module.exports = {
     }
     return results;
   },
-  // merge: (arrays...) ->
-  //   r = []
-  //   for array in arrays
-  //     for el in array
-  //       r.push el
-  //   r
+  merge: function(...arrays) {
+    var array, el, k, l, len, len1, r;
+    r = [];
+    for (k = 0, len = arrays.length; k < len; k++) {
+      array = arrays[k];
+      for (l = 0, len1 = array.length; l < len1; l++) {
+        el = array[l];
+        r.push(el);
+      }
+    }
+    return r;
+  },
   shuffle: function(a) {
     var i, j, k, ref;
     if (a.length <= 1) {
@@ -103,10 +123,14 @@ module.exports = {
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+  },
+  unique: function(array) {
+    var el, k, len, o;
+    o = {};
+    for (k = 0, len = array.length; k < len; k++) {
+      el = array[k];
+      o[el] = true;
+    }
+    return Object.keys(o);
   }
 };
-
-// unique: (array) ->
-//   o = {}
-//   for el in array then o[el] = true
-//   Object.keys o

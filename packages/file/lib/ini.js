@@ -34,15 +34,13 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .file.ini({
+// const {status} = await nikita.file.ini({
 //   content: {
 //     'my_key': 'my value'
 //   },
 //   target: '/tmp/my_file'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Content was updated: ' + status);
-// });
+// })
+// console.info(`Content was updated: ${status}`)
 // ```
 
 // ## Schema
@@ -89,7 +87,8 @@ windows",  "\n" otherwise). The name stands for End Of Line.`
     'escape': {
       type: 'boolean',
       default: true,
-      description: `Escape the section's header title replace '.' by '\.'; "true" by default.`
+      description: `Escape the section's header title replace '.' by '\.'; "true" by
+default.`
     },
     'merge': {
       type: 'boolean',

@@ -57,11 +57,7 @@ console.info(`Stdout was asserted: ${status}`)
           The error message to throw if assert failed.
           """
         'not':
-          type: 'boolean'
-          default: false
-          description: """
-          Negates the validation.
-          """
+          $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
         'trim':
           type: 'boolean'
           default: false

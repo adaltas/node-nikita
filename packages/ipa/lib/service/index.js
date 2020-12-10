@@ -6,8 +6,7 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .ipa.service({
+// const {status} = await nikita.ipa.service({
 //   principal: "myprincipal/my.domain.com"
 //   },
 //   connection: {
@@ -15,10 +14,8 @@
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
 //   }
-// }, function(){
-//   console.info(err ? err.message : status ?
-//     "Service was updated" : " Service was already set")
 // })
+// console.info(`Service was updated: ${status}`)
 // ```
 
 // ## Schema

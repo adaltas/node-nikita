@@ -16,17 +16,11 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker({
-//   ssh: ssh
-//   target: 'test-image.tar'
-//   image: 'test-image'
-//   compression: 'gzip'
-//   entrypoint: '/bin/true'
-// }, function(err, {status}){
-//   console.info( err ? err.message : 'Container running: ' + status);
+// ```js
+// const {status} = await nikita.docker.tools.status({
+//   container: 'container1'
 // })
+// console.info(`Container is running: ${status}`)
 // ```
 
 // ## Schema
@@ -47,7 +41,7 @@ schema = {
           }
         }
       ],
-      description: `Name or Id of the container`
+      description: `Name or Id of the container.`
     },
     'boot2docker': {
       $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
@@ -81,9 +75,9 @@ handler = async function({
       config[k] = v;
     }
   }
-  // Construct exec command 
+  // Construct exec command
   return this.docker.tools.execute({
-    cmd: `ps | egrep ' ${config.container}$'`,
+    command: `ps | egrep ' ${config.container}$'`,
     code_skipped: 1
   });
 };

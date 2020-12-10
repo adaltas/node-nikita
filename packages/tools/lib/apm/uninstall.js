@@ -3,73 +3,70 @@
 
 // Remove one or more apm packages.
 
-// ## Options
-
-// * `name` (string|array, required)
-  //   Name of the package(s).
-
-// ## Schema
-var handler, schema, string,
+// ## Hooks
+var handler, on_action, schema,
   indexOf = [].indexOf;
 
+on_action = function({config, metadata}) {
+  if (typeof metadata.argument === 'string') {
+    config.name = metadata.argument;
+  }
+  if (typeof config.name === 'string') {
+    return config.name = [config.name];
+  }
+};
+
+// ## Schema
 schema = {
   type: 'object',
   properties: {
-    '': {
-      type: 'object',
-      description: `          `
+    'name': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Name of the package(s) to install.`
     }
   }
 };
 
 // ## Handler
-handler = function({config}) {
-  var installed;
-  if (config.argument != null) {
-    config.name = config.argument;
-  }
-  if (typeof config.name === 'string') {
-    config.name = [config.name];
-  }
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var installed, pkgs, stdout, uninstall;
   config.name = config.name.map(function(pkg) {
     return pkg.toLowerCase();
   });
   installed = [];
-  this.execute({
+  ({stdout} = (await this.execute({
     shy: true,
-    cmd: "apm list --installed --json"
-  }, function(err, {stdout}) {
-    var pkgs;
-    if (err) {
-      throw err;
-    }
-    pkgs = JSON.parse(stdout);
-    pkgs = pkgs.user.map(function(pkg) {
-      return pkg.name.toLowerCase();
-    });
-    return installed = pkgs;
+    command: "apm list --installed --json"
+  })));
+  pkgs = JSON.parse(stdout);
+  installed = pkgs.user.map(function(pkg) {
+    return pkg.name.toLowerCase();
   });
-  return this.call(function() {
-    var to_uninstall;
-    to_uninstall = config.name.filter(function(pkg) {
-      return indexOf.call(installed, pkg) >= 0;
-    });
-    return this.execute({
-      cmd: `apm uninstall ${config.name.join(' ')}`,
-      if: to_uninstall.length
-    }, (err) => {
-      return this.log({
-        message: `APM Uninstalled Packages: ${config.name.join(', ')}`
-      });
-    });
+  // Uninstall
+  uninstall = config.name.filter(function(pkg) {
+    return indexOf.call(installed, pkg) >= 0;
   });
+  if (uninstall.length) {
+    await this.execute({
+      command: `apm uninstall ${config.name.join(' ')}`
+    });
+    return log({
+      message: `APM Uninstalled Packages: ${config.name.join(', ')}`
+    });
+  }
 };
 
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   schema: schema
 };
-
-// ## Dependencies
-string = require('@nikitajs/core/lib/misc/string');

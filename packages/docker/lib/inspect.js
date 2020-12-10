@@ -13,12 +13,12 @@
 // * `status`   
 //   True if container was killed.
 
-// ## Examples
+// ## Example
 
 // Inspect a single container.
 
 // ```js
-// {info} = await require('nikita').docker.inspect({
+// const {info} = await nikita.docker.inspect({
 //   name: 'my_container'
 // })
 // console.info(`Container id is ${info.Id}`)
@@ -27,7 +27,7 @@
 // Inspect multiple containers.
 
 // ```js
-// {info} = await require('nikita').docker.inspect({
+// const {info} = await nikita.docker.inspect({
 //   name: 'my_container'
 // })
 // info.map( (container) =>
@@ -72,7 +72,7 @@ schema = {
 handler = async function({
     args,
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   var arg, exists, i, info, isCointainerArray, len;
   for (i = 0, len = args.length; i < len; i++) {
@@ -88,7 +88,7 @@ handler = async function({
     // Ensure target container exists
     status: exists
   } = (await this.docker.tools.execute({
-    cmd: `ps -a | egrep ' ${config.container}$'`,
+    command: `ps -a | egrep ' ${config.container}$'`,
     code_skipped: 1
   })));
   if (!exists) {
@@ -98,7 +98,7 @@ handler = async function({
     // Get information
     stdout: info
   } = (await this.docker.tools.execute({
-    cmd: ['inspect', `${config.container}`].join(' ')
+    command: ['inspect', `${config.container}`].join(' ')
   })));
   info = JSON.parse(info);
   return {

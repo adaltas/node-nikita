@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// require('nikita').krb5.addprinc({
+// const {status} = await nikita.krb5.addprinc({
 //   admin: {
 //     password: 'pass',
 //     principal: 'me/admin@MY_REALM',
@@ -17,9 +17,8 @@
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   randkey: true,
 //   uid: 'myservice'
-// }, function(err, {status}){
-//   console.info(err ? err.message : 'Principal created or modified: ' + status);
-// });
+// })
+// console.info(`Principal was created or modified: ${status}`)
 // ```
 
 // ## Schema
@@ -79,14 +78,14 @@ handler = async function({config}) {
   // Start execution
   ({status} = (await this.krb5.execute({
     admin: config.admin,
-    cmd: `getprinc ${config.principal}`,
+    command: `getprinc ${config.principal}`,
     grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
     shy: true
   })));
   if (!status) {
     await this.krb5.execute({
       admin: config.admin,
-      cmd: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`,
+      command: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`,
       retry: 3
     });
   }
@@ -95,7 +94,7 @@ handler = async function({config}) {
     await this.krb5.execute({
       unless_execute: `if ! echo ${config.password} | kinit '${config.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
       admin: config.admin,
-      cmd: `cpw -pw ${config.password} ${config.principal}`,
+      command: `cpw -pw ${config.password} ${config.principal}`,
       retry: 3
     });
   }

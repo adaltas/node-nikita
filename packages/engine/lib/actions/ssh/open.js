@@ -3,14 +3,14 @@
 
 // Initialize an SSH connection.
 
-// ## Exemples
+// ## Examples
 
 // Once an SSH connection is establish, it is possible to retrieve the connection
 // by calling the `ssh` action. If no ssh connection is available, it will
 // simply return null.
 
-// ```
-// require('nikita')
+// ```js
+// nikita
 // .ssh.open({
 //   host: 'localhost',
 //   user: 'my_account',
@@ -21,7 +21,7 @@
 // })
 // .execute({
 //   header: 'Print remote hostname',
-//   cmd: 'hostname'
+//   command: 'hostname'
 // })
 // .ssh.close()
 // ```
@@ -30,7 +30,7 @@
 // locally:
 
 // ```js
-// require('nikita')
+// nikita
 // .ssh.open({
 //   host: 'localhost',
 //   user: 'my_account',
@@ -42,7 +42,7 @@
 // .execute({
 //   ssh: false
 //   header: 'Print local hostname',
-//   cmd: 'hostname'
+//   command: 'hostname'
 // })
 // .ssh.close()
 // ```
@@ -67,7 +67,7 @@
 // ```
 
 // ## Hooks
-var connect, error, fs, handler, object, on_action, schema, ssh, tilde;
+var connect, fs, handler, on_action, schema, utils;
 
 on_action = function({config}) {
   var base, base1;
@@ -175,37 +175,37 @@ handler = async function({
     module: 'nikita/lib/ssh/open'
   });
   // No need to connect if ssh is a connection
-  if (ssh.is(config.ssh)) {
+  if (utils.ssh.is(config.ssh)) {
     if (!state['nikita:ssh:connection']) {
       state['nikita:ssh:connection'] = config.ssh;
       return {
         status: true,
         ssh: state['nikita:ssh:connection']
       };
-    } else if (ssh.compare(state['nikita:ssh:connection'], config.ssh)) {
+    } else if (utils.ssh.compare(state['nikita:ssh:connection'], config.ssh)) {
       return {
         status: false,
         ssh: state['nikita:ssh:connection']
       };
     } else {
-      throw error('NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ['attempting to set an SSH connection', 'while an instance is already registered with a different configuration', `got ${JSON.stringify(object.copy(config.ssh.config, ['host', 'port', 'username']))}`]);
+      throw utils.error('NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ['attempting to set an SSH connection', 'while an instance is already registered with a different configuration', `got ${JSON.stringify(utils.object.copy(config.ssh.config, ['host', 'port', 'username']))}`]);
     }
   }
   // Get from cache
   if (state['nikita:ssh:connection']) {
     // The new connection refer to the same target and the current one
-    if (ssh.compare(state['nikita:ssh:connection'], config)) {
+    if (utils.ssh.compare(state['nikita:ssh:connection'], config)) {
       return {
         status: false,
         ssh: state['nikita:ssh:connection']
       };
     } else {
-      throw error('NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ['attempting to retrieve an SSH connection', 'with user SSH configuration not matching', 'the current SSH connection stored in state,', 'one possible solution is to close the current connection', 'with `nikita.ssh.close` before attempting to open a new one', `got ${JSON.stringify(object.copy(config, ['host', 'port', 'username']))}`]);
+      throw utils.error('NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ['attempting to retrieve an SSH connection', 'with user SSH configuration not matching', 'the current SSH connection stored in state,', 'one possible solution is to close the current connection', 'with `nikita.ssh.close` before attempting to open a new one', `got ${JSON.stringify(utils.object.copy(config, ['host', 'port', 'username']))}`]);
     }
   }
   if (!(config.private_key || config.password || config.private_key_path)) {
     // Validate authentication
-    throw error('NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', ['unable to authenticate the SSH connection,', 'one of the "private_key", "password", "private_key_path"', 'configuration properties must be provided']);
+    throw utils.error('NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', ['unable to authenticate the SSH connection,', 'one of the "private_key", "password", "private_key_path"', 'configuration properties must be provided']);
   }
   // Read private key if option is a path
   if (!(config.private_key || config.password)) {
@@ -214,13 +214,13 @@ handler = async function({
       level: 'DEBUG',
       module: 'nikita/lib/ssh/open'
     });
-    location = (await tilde.normalize(config.private_key_path));
+    location = (await utils.tilde.normalize(config.private_key_path));
     try {
       ({
         data: config.private_key
       } = (await fs.readFile(location, 'ascii')));
-    } catch (error1) {
-      err = error1;
+    } catch (error) {
+      err = error;
       if (err.code === 'ENOENT') {
         throw Error(`Private key doesnt exists: ${JSON.stringify(location)}`);
       }
@@ -245,8 +245,8 @@ handler = async function({
       status: true,
       ssh: conn
     };
-  } catch (error1) {
-    err = error1;
+  } catch (error) {
+    err = error;
     log({
       message: "Connection failed",
       level: 'WARN',
@@ -290,14 +290,8 @@ module.exports = {
 
 
 // ## Dependencies
+connect = require('ssh2-connect');
+
 fs = require('fs').promises;
 
-error = require('../../utils/error');
-
-object = require('../../utils/object');
-
-tilde = require('../../utils/tilde');
-
-ssh = require('../../utils/ssh');
-
-connect = require('ssh2-connect');
+utils = require('../../utils');

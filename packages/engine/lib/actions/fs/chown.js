@@ -13,13 +13,12 @@
 // ## Example
 
 // ```js
-// require('nikita').fs.chown({
+// const {status} = await nikita.fs.chown({
 //   target: '~/my/project',
-//   uid: 'my_user'
+//   uid: 'my_user',
 //   gid: 'my_group'
-// }, function(err, modified){
-//   console.log(err ? err.message : 'File was modified: ' + modified);
-// });
+// })
+// console.info(`Ownership was modified: ${status}`)
 // ```
 
 // ## Note

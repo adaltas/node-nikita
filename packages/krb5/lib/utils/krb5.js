@@ -4,24 +4,24 @@ var krb5;
 
 module.exports = krb5 = {
   kinit: function(config) {
-    var cmd;
-    cmd = "kinit";
+    var command;
+    command = "kinit";
     if (config.keytab === true) {
       " -k";
     } else if (config.keytab && typeof config.keytab === 'string') {
-      cmd += ` -kt ${config.keytab}`;
+      command += ` -kt ${config.keytab}`;
     } else if (config.password) {
-      cmd = `echo ${config.password} | ${cmd}`;
+      command = `echo ${config.password} | ${command}`;
     } else {
       throw Error("Incoherent config: expects one of keytab or password");
     }
-    cmd += ` ${config.principal}`;
-    return cmd = krb5.su(config, cmd);
+    command += ` ${config.principal}`;
+    return command = krb5.su(config, command);
   },
-  su: function(config, cmd) {
+  su: function(config, command) {
     if (config.uid) {
-      cmd = `su - ${config.uid} -c '${cmd}'`;
+      command = `su - ${config.uid} -c '${command}'`;
     }
-    return cmd;
+    return command;
   }
 };

@@ -38,33 +38,29 @@
 // ## File example
 
 // ```js
-  // require('nikita')
-  // .download({
+  // const {status} = await nikita.file.download({
   //   source: 'file://path/to/something',
   //   target: 'node-sigar.tgz'
-  // }, function(err, {status}){
-  //   console.info(err ? err.message : 'File downloaded ' + status)
   // })
+  // console.info(`File downloaded: ${status}`)
   // ```
 
 // ## HTTP example
 
-// ```javascript
-  // require('nikita')
-  // .file.download({
+// ```js
+  // const {status} = await nikita.file.download({
   //   source: 'https://github.com/adaltas/node-nikita/tarball/v0.0.1',
   //   target: 'node-sigar.tgz'
-  // }, (err, {status}) => {
-  //   console.info(err ? err.message : 'File downloaded ' + status)
   // })
+  // console.info(`File downloaded: ${status}`)
   // ```
 
 // ## TODO
 
 // It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
-// ## On config
-var curl, fs, handler, on_action, path, schema, url, utils,
+// ## Hooks
+var fs, handler, on_action, path, schema, url, utils,
   indexOf = [].indexOf;
 
 on_action = async function({
@@ -97,8 +93,8 @@ schema = {
   properties: {
     'cache': {
       type: 'boolean',
-      description: `Activate the cache, default to true if either "cache_dir" or "cache_file" is
-activated.`
+      description: `Activate the cache, default to true if either "cache_dir" or
+"cache_file" is activated.`
     },
     'cache_dir': {
       type: 'string',
@@ -113,16 +109,17 @@ activated.`
           typeof: 'boolean'
         }
       ],
-      description: `Cache the file on the executing machine, equivalent to cache unless an ssh
-connection is provided. If a string is provided, it will be the cache path.
-By default: basename of source`
+      description: `Cache the file on the executing machine, equivalent to cache unless an
+ssh connection is provided. If a string is provided, it will be the
+cache path. By default: basename of source`
     },
     'cookies': {
       type: 'array',
       items: {
         type: 'string'
       },
-      description: `Extra cookies  to include in the request when sending HTTP to a server.`
+      description: `Extra cookies  to include in the request when sending HTTP to a
+server.`
     },
     'force': {
       type: 'boolean',
@@ -145,8 +142,8 @@ By default: basename of source`
     'location': {
       type: 'boolean',
       description: `If the server reports that the requested page has moved to a different
-location (indicated with a Location: header and a 3XX response code), this
-option will make curl redo the request on the new place.`
+location (indicated with a Location: header and a 3XX response code),
+this option will make curl redo the request on the new place.`
     },
     'md5': {
       oneOf: [
@@ -158,16 +155,17 @@ option will make curl redo the request on the new place.`
         }
       ],
       default: false,
-      description: `Validate uploaded file with md5 checksum (only for binary upload for now),
-may be the string checksum or will be deduced from source if "true".`
+      description: `Validate uploaded file with md5 checksum (only for binary upload for
+now), may be the string checksum or will be deduced from source if
+"true".`
     },
     'mode': {
       $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
     },
     'proxy': {
       type: 'string',
-      description: `Use the specified HTTP proxy. If the port number is not specified, it is
-assumed at port 1080. See curl(1) man page.`
+      description: `Use the specified HTTP proxy. If the port number is not specified, it
+is assumed at port 1080. See curl(1) man page.`
     },
     'sha1': {
       default: false,
@@ -179,8 +177,9 @@ assumed at port 1080. See curl(1) man page.`
           typeof: 'boolean'
         }
       ],
-      description: `Validate uploaded file with sha1 checksum (only for binary upload for now),
-may be the string checksum or will be deduced from source if "true".`
+      description: `Validate uploaded file with sha1 checksum (only for binary upload for
+now), may be the string checksum or will be deduced from source if
+"true".`
     },
     'sha256': {
       default: false,
@@ -192,8 +191,9 @@ may be the string checksum or will be deduced from source if "true".`
           typeof: 'boolean'
         }
       ],
-      description: `Validate uploaded file with sha1 checksum (only for binary upload for now),
-may be the string checksum or will be deduced from source if "true".`
+      description: `Validate uploaded file with sha1 checksum (only for binary upload for
+now), may be the string checksum or will be deduced from source if
+"true".`
     },
     'source': {
       type: 'string',
@@ -341,7 +341,7 @@ handler = async function({
   try {
     // TODO
     // The current implementation seems inefficient. By modifying stageDestination,
-    // we download the file, check the hash, and again treat it the HTTP URL 
+    // we download the file, check the hash, and again treat it the HTTP URL
     // as a local file and check hash again.
     ({stats} = (await this.fs.base.stat({
       target: config.target
@@ -379,7 +379,7 @@ handler = async function({
     });
     // Download the file
     this.execute({
-      cmd: [
+      command: [
         'curl',
         config.fail ? '--fail' : void 0,
         source_url.protocol === 'https:' ? '--insecure' : void 0,
@@ -602,6 +602,4 @@ path = require('path').posix; // need to detect ssh connection
 
 url = require('url');
 
-utils = require('@nikitajs/engine/src/utils');
-
-curl = require('./utils/curl');
+utils = require('./utils');

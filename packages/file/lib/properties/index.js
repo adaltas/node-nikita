@@ -3,32 +3,23 @@
 
 // Write a file in the Java properties format.
 
-// ## Exemple
+// ## Example
 
 // Use a custom delimiter with spaces around the equal sign.
 
-// ```javascript
-// require('nikita')
-// .file.properties({
+// ```js
+// const {status} = await nikita.file.properties({
 //   target: "/path/to/target.json",
 //   content: { key: "value" },
 //   separator: ' = '
 //   merge: true
 // })
+// console.info(`File was written: ${status}`)
 // ```
 
-// ## On config
-var handler, on_action, schema;
-
-on_action = function({config}) {
-  // Options
-  if (config.separator == null) {
-    config.separator = '=';
-  }
-  return config.content != null ? config.content : config.content = {};
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -40,6 +31,7 @@ schema = {
     },
     'content': {
       type: 'object',
+      default: {},
       description: `List of properties to write.`
     },
     'merge': {
@@ -51,6 +43,7 @@ schema = {
       $ref: 'module://@nikitajs/file/src/index#/properties/local'
     },
     'separator': {
+      default: '=',
       $ref: 'module://@nikitajs/file/src/properties/read#/properties/separator'
     },
     'sort': {
@@ -193,8 +186,5 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   schema: schema
 };

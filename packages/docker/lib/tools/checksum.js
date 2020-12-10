@@ -14,7 +14,7 @@
 //   Image cheksum if it exist, undefined otherwise.
 
 // ## Hooks
-var docker, handler, on_action, schema;
+var handler, on_action, schema;
 
 on_action = function({config}) {
   if (config.repository) {
@@ -85,7 +85,7 @@ handler = async function({
   // - `--quiet`: discard headers
   ({status, stdout} = (await this.docker.tools.execute({
     boot2docker: config.boot2docker,
-    cmd: `images --no-trunc --quiet ${config.image}:${config.tag}`,
+    command: `images --no-trunc --quiet ${config.image}:${config.tag}`,
     compose: config.compose,
     machine: config.machine
   })));
@@ -111,6 +111,3 @@ module.exports = {
   },
   schema: schema
 };
-
-// ## Dependencies
-docker = require('../utils');

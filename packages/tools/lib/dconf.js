@@ -7,13 +7,13 @@
 
 // ## Example
 
-// ```javascript
+// ```js
 // const {status} = await nikita.tools.dconf({
 //   properties: {
 //     '/org/gnome/desktop/datetime/automatic-timezone': 'true'
 //   }
 // });
-// console.info(`Property modified: ${status}`)
+// console.info(`Property was modified: ${status}`)
 // ```
 
 // ## Note
@@ -28,28 +28,40 @@ schema = {
   properties: {
     'properties': {
       type: 'object',
-      description: `Name of the module.`
+      patternProperties: {
+        '^/.*$': {
+          type: ['string', 'boolean', 'number'],
+          description: `A value of a key.`
+        }
+      },
+      additionalProperties: false
     }
-  }
+  },
+  required: ['properties']
 };
 
-// ## Source Code
-handler = function({metadata, config}) {
-  var key, ref, results, value;
-  if (metadata.argument != null) {
-    config.properties = metadata.argument;
-  }
-  if (config.properties == null) {
-    config.properties = {};
-  }
+// ## Handler
+handler = async function({config}) {
+  var k, key, ref, ref1, results, v, value;
   ref = config.properties;
+  // Normalize properties
+  for (k in ref) {
+    v = ref[k];
+    if (typeof v === 'string') {
+      continue;
+    }
+    config.properties[k] = v.toString();
+  }
+  ref1 = config.properties;
   results = [];
-  for (key in ref) {
-    value = ref[key];
-    results.push(this.execute(`dconf read ${key} | grep -x "${value}" && exit 3
-dconf write ${key} "${value}"`, {
+  for (key in ref1) {
+    value = ref1[key];
+    // Execute
+    results.push((await this.execute({
+      command: `dconf read ${key} | grep -x "${value}" && exit 3
+dconf write ${key} "${value}"`,
       code_skipped: 3
-    }));
+    })));
   }
   return results;
 };

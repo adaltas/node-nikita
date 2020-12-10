@@ -4,7 +4,7 @@
 // Check if a database exists.
 
 // ## Schema
-var cmd, connection_config, handler, schema;
+var command, connection_config, handler, schema;
 
 schema = {
   type: 'object',
@@ -33,14 +33,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    metadata,
-    tools: {find}
-  }) {
+handler = async function({config}) {
   var status;
   ({status} = (await this.db.query(connection_config(config), {
-    cmd: (function() {
+    command: (function() {
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':
@@ -70,4 +66,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd, connection_config} = require('../query'));
+({command, connection_config} = require('../query'));

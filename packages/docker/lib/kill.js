@@ -15,14 +15,12 @@
 
 // ## Example
 
-// ```javascript
-// require('nikita')
-// .docker.kill({
+// ```js
+// const {status} = await nikita.docker.kill({
 //   container: 'toto',
 //   signal: 9
-// }, function(err, status){  
-//   console.info( err ? err.message : 'Container killed: ' + status);
 // })
+// console.info(`Container was killed: ${status}`)
 // ```
 
 // ## Schema
@@ -62,7 +60,7 @@ schema = {
 // ## Handler
 handler = async function({
     config,
-    tools: {find, log}
+    tools: {log}
   }) {
   var status;
   log({
@@ -71,14 +69,14 @@ handler = async function({
     module: 'nikita/lib/docker/kill'
   });
   ({status} = (await this.docker.tools.execute({
-    cmd: `ps | egrep ' ${config.container}$' | grep 'Up'`,
+    command: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1
   })));
   return this.docker.tools.execute({
     if: function() {
       return status;
     },
-    cmd: ['kill', config.signal != null ? `-s ${config.signal}` : void 0, `${config.container}`].join(' ')
+    command: ['kill', config.signal != null ? `-s ${config.signal}` : void 0, `${config.container}`].join(' ')
   });
 };
 

@@ -11,11 +11,11 @@
 //   admin_password: 'test',
 //   database: 'my_db'
 // })
-// console.info(`Did database existed initially: ${!status}`);
+// console.info(`Did database existed initially: ${!status}`)
 // ```
 
 // ## Schema
-var cmd, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -44,22 +44,18 @@ schema = {
 };
 
 // ## Handler
-handler = function({
-    config,
-    metadata,
-    tools: {find}
-  }) {
+handler = function({config}) {
   // Command
   return this.execute.wait({
-    cmd: (function() {
+    command: (function() {
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':
-          return cmd(config, {
+          return command(config, {
             database: null
           }, "show databases") + ` | grep '${config.database}'`;
         case 'postgresql':
-          return cmd(config, {
+          return command(config, {
             database: null
           }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${config.database}'`;
       }
@@ -78,4 +74,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({cmd} = require('../query'));
+({command} = require('../query'));

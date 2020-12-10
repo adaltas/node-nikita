@@ -13,13 +13,11 @@
 // ## Example
 
 // ```js
-// require('nikita')
-// .fs.chmod({
+// const {status} = await nikita.fs.chmod({
 //   target: '~/my/project',
 //   mode: 0o755
-// }, function(err, status){
-//   console.log(err ? err.message : 'File was modified: ' + status);
-// });
+// })
+// console.info(`Permissions was modified: ${status}`)
 // ```
 
 // ## Hook
