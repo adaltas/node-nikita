@@ -1,10 +1,10 @@
 
-ini = require '../../src/misc/ini'
-{tags} = require '../test'
+{ini} = require '../../../src/utils'
+{tags} = require '../../test'
 
 return unless tags.api
 
-describe 'misc.ini parse_multi_brackets_multi_lines', ->
+describe 'utils.ini.parse_multi_brackets_multi_lines', ->
 
   it 'parse', ->
     ini.parse_multi_brackets_multi_lines """
