@@ -4,6 +4,12 @@ nikita = require '@nikitajs/engine/src'
 require '@nikitajs/lxd/src/register'
 require '@nikitajs/tools/src/register'
 
+# Note:
+# Dec 4th, 2020: upgrading Atom to 1.52.0 or 1.53.0 on centos7 20201203_07:08
+# lead to an error while running `apm`
+# "Error: /lib64/libstdc++.so.6: version `CXXABI_1.3.9' not found"
+# issue is open on the moment - https://github.com/atom/atom/issues/21497
+
 nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_tools_apm_lxd_install'
@@ -64,8 +70,9 @@ nikita
       header: 'Install Atom'
       container: config.container
       command: """
+      apm -v | grep apm && exit 42
       yum install -y wget
-      wget https://github.com/atom/atom/releases/download/v1.53.0/atom.x86_64.rpm
+      wget https://github.com/atom/atom/releases/download/v1.51.0/atom.x86_64.rpm
       yum install -y atom.x86_64.rpm
       """
       trap: true

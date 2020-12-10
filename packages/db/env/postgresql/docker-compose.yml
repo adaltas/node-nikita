@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_postgresql_nodejs
+    image: nikita_db_postgresql_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:

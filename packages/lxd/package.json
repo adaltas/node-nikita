@@ -82,8 +82,8 @@
   },
   "scripts": {
     "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
-    "pretest": "npm run build",
+    "pretest": "yarn run build",
     "test": "mocha 'test/**/*.coffee'",
-    "testal": "npm test"
+    "testall": "mocha 'test/**/*.coffee'"
   }
 }

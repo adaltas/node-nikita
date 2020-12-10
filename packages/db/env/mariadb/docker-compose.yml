@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_mariadb_nodejs
+    image: nikita_db_mariadb_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:

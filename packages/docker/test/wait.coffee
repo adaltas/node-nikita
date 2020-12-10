@@ -15,7 +15,7 @@ describe 'docker.wait', ->
       @docker.rm
         container: 'nikita_test_wait'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_wait'
       setTimeout =>
@@ -23,7 +23,5 @@ describe 'docker.wait', ->
           container: 'nikita_test_wait'
       , 50
       {status} = await nikita.docker.wait
-        ssh: ssh
-        docker: docker
         container: 'nikita_test_wait'
       status.should.be.true()

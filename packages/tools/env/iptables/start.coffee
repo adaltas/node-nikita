@@ -6,14 +6,14 @@ require '@nikitajs/tools/src/register'
 
 nikita
 .log.cli pad: host: 20, header: 60
-.log.md filename: '/tmp/nikita_tools_npm_lxd_install'
+.log.md filename: '/tmp/nikita_tools_iptables_lxd_install'
 .lxd.cluster
   header: 'Container'
   containers:
     'tools-iptables':
       image: 'images:centos/7'
       config:
-        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
+        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/iptables/test.coffee'
       disk:
         nikitadir:
           path: '/nikita'

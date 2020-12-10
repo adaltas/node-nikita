@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: ./nodejs
-    image: nikita_centos7_nodejs
+    image: nikita_krb5_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:
