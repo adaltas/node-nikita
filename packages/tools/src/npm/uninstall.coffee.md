@@ -40,6 +40,8 @@ console.info(`Package was uninstalled: ${status}`)
           Uninstalls the current package context as a global package.
           """
       required: ['name']
+      if: properties: 'global': const: false
+      then: required: ['cwd']
 
 ## Handler
 
@@ -57,12 +59,12 @@ console.info(`Package was uninstalled: ${status}`)
       installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
       # Uninstall
       uninstall = config.name.filter (pkg) -> pkg in installed
-      if uninstall.length
-        await @execute
-          command: "npm uninstall #{global} #{uninstall.join ' '}"
-          cwd: config.cwd
-          sudo: config.sudo
-        log message: "NPM uninstalled packages: #{uninstall.join ', '}"
+      return unless uninstall.length
+      await @execute
+        command: "npm uninstall #{global} #{uninstall.join ' '}"
+        cwd: config.cwd
+        sudo: config.sudo
+      log message: "NPM uninstalled packages: #{uninstall.join ', '}"
 
 ## Export
 

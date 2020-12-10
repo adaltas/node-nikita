@@ -11,18 +11,40 @@ describe 'tools.npm.uninstall', ->
 
     it 'name is required', ->
       nikita
-      .tools.npm.uninstall {}
-      .should.be.rejectedWith
-        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: [
-          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action `tools.npm.uninstall`:'
-          '#/required config should have required property \'name\'.'
-        ].join ' '
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @tools.npm.uninstall
+          cwd: tmpdir
+        .should.be.rejectedWith
+          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+          message: [
+            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+            'one error was found in the configuration of action `tools.npm.uninstall`:'
+            '#/required config should have required property \'name\'.'
+          ].join ' '
+
+    it 'cwd or global is true are required', ->
+      nikita {}
+      , ->
+        @tools.npm.uninstall
+          name: 'coffeescript'
+        .should.be.rejectedWith
+          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+          message: [
+            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+            'multiple errors where found in the configuration of action `tools.npm.uninstall`:'
+            '#/if config should match "then" schema, failingKeyword is "then";'
+            '#/then/required config should have required property \'cwd\'.'
+          ].join ' '
+        @tools.npm.uninstall
+          config:
+            name: 'coffeescript'
+            global: true
+        .should.eventually.not.be.rejected
 
   describe 'action', ->
 
-    they 'uninstall localy', ({ssh}) ->
+    they 'uninstall locally', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
@@ -39,7 +61,7 @@ describe 'tools.npm.uninstall', ->
           name: 'coffeescript'
         status.should.be.false()
 
-    they 'uninstall localy in a current working directory', ({ssh}) ->
+    they 'uninstall locally in a current working directory', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
@@ -61,7 +83,7 @@ describe 'tools.npm.uninstall', ->
           name: 'coffeescript'
         status.should.be.true()
 
-    they 'uninstall globaly', ({ssh}) ->
+    they 'uninstall globally', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
