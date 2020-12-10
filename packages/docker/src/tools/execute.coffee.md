@@ -75,7 +75,7 @@ Execute a docker command.
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
-      opts = for option in docker[ unless config.compose then 'options' else 'compose_options' ]
+      opts = for option in utils[ unless config.compose then 'options' else 'compose_options' ]
         value = config[option]
         continue unless value?
         value = 'true' if value is true
