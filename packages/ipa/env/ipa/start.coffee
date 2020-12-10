@@ -1,6 +1,5 @@
 
 path = require 'path'
-os = require 'os'
 nikita = require '@nikitajs/engine/src'
 require '@nikitajs/lxd/src/register'
 require '@nikitajs/tools/src/register'
@@ -10,6 +9,8 @@ require '@nikitajs/tools/src/register'
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
 # solution involve `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
+# Dec 4th, 2020: same for centos/7 20201203_07:08
+# solution involve `chmod -R 777 /tmp`
 
 # console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
 # parameters({
@@ -36,7 +37,7 @@ nikita
 .lxd.cluster
   header: 'Container'
   networks:
-    lxdbr0public:
+    lxdbr0freeipa:
       'ipv4.address': '172.16.0.1/24'
       'ipv4.nat': true
       'ipv6.address': 'none'
@@ -47,32 +48,30 @@ nikita
       config:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
       disk:
-        # nikitadir: source: path.join(__dirname, '../../../../'), path: '/nikita'
-        # Vagrant for MacOS and Windows users
         nikitadir:
           path: '/nikita'
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+          config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0freeipa'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
         ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'
         ipa_ui_https: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
       user:
-        nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
-  prevision: ({options}) ->
+        nikita: sudo: true, authorized_keys: "./assets/id_rsa.pub"
+  prevision: ({config}) ->
     @tools.ssh.keygen
       header: 'SSH key'
-      target: './assets/id_rsa'
+      target: "./assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
-  provision_container: ({options}) ->
+  provision_container: ({config}) ->
     @lxd.exec
       header: 'Node.js'
-      container: options.container
+      container: config.container
       command: """
       command -v node && exit 42
       NODE_VERSION=12.13.1
@@ -85,25 +84,25 @@ nikita
       code_skipped: 42
     @lxd.file.push
       header: 'User Private Key'
-      container: options.container
+      container: config.container
       gid: 'nikita'
       uid: 'nikita'
-      source: './assets/id_rsa'
+      source: "./assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
       header: 'Root SSH dir'
-      container: options.container
+      container: config.container
       command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
-      container: options.container
+      container: config.container
       gid: 'root'
       uid: 'root'
-      source: './assets/id_rsa'
+      source: "./assets/id_rsa"
       target: '/root/.ssh/id_rsa'
     @lxd.exec
       header: 'Install FreeIPA'
-      container: options.container
+      container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:
       # echo > /dev/tcp/localhost/443
@@ -112,6 +111,7 @@ nikita
       [ -f /etc/ipa/default.conf ] && exit 42
       yum install -y freeipa-server
       hostnamectl set-hostname freeipa.nikita.local --static
+      chmod -R 777 /tmp
       #{[
         'ipa-server-install', '-U'
         #  Basic options
@@ -123,5 +123,3 @@ nikita
         "-r NIKITA.LOCAL"
       ].join ' '}
       """
-.next (err) ->
-  throw err if err

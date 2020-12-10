@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_mysql_nodejs
+    image: nikita_db_mysql_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:
@@ -18,7 +18,9 @@ services:
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/db/env/mysql/test.coffee
   mysql:
-    image: mysql:8
+    image: mysql:latest
+    # To avoid an error in the latest versions: ERROR 2059 (HY000): Authentication plugin 'caching_sha2_password' cannot be loaded
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: rootme
     expose:
