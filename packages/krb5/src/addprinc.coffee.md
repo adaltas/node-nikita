@@ -78,14 +78,14 @@ console.info(`Principal was created or modified: ${status}`)
           command: if config.password
           then "addprinc -pw #{config.password} #{config.principal}"
           else "addprinc -randkey #{config.principal}"
-          retry: 3
+          metadata: retry: 3
       if config.password and config.password_sync
         cache_name = "/tmp/nikita_#{Math.random()}" # Ticket cache location
         await @krb5.execute
           unless_execute: "if ! echo #{config.password} | kinit '#{config.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi"
           admin: config.admin
           command: "cpw -pw #{config.password} #{config.principal}"
-          retry: 3
+          metadata: retry: 3
       return unless !!config.keytab
       @krb5.ktadd config
 

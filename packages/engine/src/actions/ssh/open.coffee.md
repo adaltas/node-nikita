@@ -213,7 +213,7 @@ pass all the properties through the `ssh` property.
         log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
         @ssh.root config.root
       log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
-      @call retry: 3, ->
+      @call metadata: retry: 3, ->
         conn = await connect config
         state['nikita:ssh:connection'] = conn
         status: true, ssh: conn

@@ -128,8 +128,8 @@ describe 'actions.log.cli', ->
         stream: new MyWritable data
         time: false
       .call header: 'a', -> true
-      .call header: 'b', disabled: false, -> true
-      .call header: 'c', disabled: true, -> true
+      .call header: 'b', metadata: disabled: false, -> true
+      .call header: 'c', metadata: disabled: true, -> true
       .call header: 'd', -> true
       .call ->
         data.should.eql [

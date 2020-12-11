@@ -10,9 +10,9 @@ describe 'plugins.metadata.sleep (plugin.retry)', ->
     
     it 'ensure sleep equals or is greater than 0', ->
       nikita
-      .call sleep: 0, (->)
-      .call sleep: 1, (->)
-      .call sleep: -1, (->)
+      .call metadata: sleep: 0, (->)
+      .call metadata: sleep: 1, (->)
+      .call metadata: sleep: -1, (->)
       .should.be.rejectedWith [
         'METADATA_SLEEP_INVALID_RANGE:'
         'configuration `sleep` expect a number above or equal to 0,'
@@ -22,7 +22,7 @@ describe 'plugins.metadata.sleep (plugin.retry)', ->
   describe 'handler', ->
 
     it 'is a metadata', ->
-      nikita.call sleep: 1000, ({metadata}) ->
+      nikita.call metadata: sleep: 1000, ({metadata}) ->
         metadata.sleep.should.eql 1000
     
     it.skip 'enforce default to 3s', ->

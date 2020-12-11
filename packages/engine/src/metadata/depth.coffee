@@ -5,10 +5,6 @@ module.exports = ->
   module: '@nikitajs/engine/src/metadata/depth'
   hooks:
     'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      if action.hasOwnProperty 'depth'
-        action.metadata.depth = action.depth
-        delete action.depth
       action.metadata.depth = if action.parent then action.parent.metadata.depth + 1 else 0
     'nikita:session:action': (action) ->
       # action.metadata.depth ?= 0

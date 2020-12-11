@@ -5,12 +5,6 @@ utils = require '../utils'
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/retry'
   hooks:
-    'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      for property in ['attempt', 'sleep', 'retry']
-        if action.hasOwnProperty property
-          action.metadata[property] = action[property]
-          delete action[property]
     'nikita:session:action': (action, handler) ->
       action.metadata.attempt ?= 0
       action.metadata.retry ?= 1

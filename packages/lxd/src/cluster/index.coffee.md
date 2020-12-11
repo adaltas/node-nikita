@@ -243,8 +243,9 @@ containers:
           yum install -y openssl
           command -v openssl
           """
-          retry: 10
-          sleep: 5000
+          metadata:
+            retry: 10
+            sleep: 5000
           trap: true
         # Enable SSH
         if config.ssh.enabled
