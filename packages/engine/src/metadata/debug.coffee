@@ -14,11 +14,6 @@ module.exports = ->
   module: '@nikitajs/engine/src/metadata/debug'
   require: '@nikitajs/engine/src/plugins/log'
   hooks:
-    'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      if action.hasOwnProperty 'debug'
-        action.metadata.debug = action.debug
-        delete action.debug
     'nikita:session:action': (action) ->
       debug = action.metadata.debug or false
       unless typeof debug is 'boolean' or debug is 'stdout' or debug instanceof stream.Writable

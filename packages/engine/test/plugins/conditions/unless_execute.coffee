@@ -10,7 +10,7 @@ describe 'plugin.condition unless_execute', ->
   they 'skip if string command is successfull', ({ssh}) ->
     {status, value} = await nikita
       unless_execute: 'exit 0'
-      disabled: true
+      metadata: disabled: true
       handler: -> throw Error 'forbidden'
       ssh: ssh
     status.should.be.false()
