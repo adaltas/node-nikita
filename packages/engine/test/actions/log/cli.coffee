@@ -89,8 +89,8 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'a', shy: false, -> true
-      .call header: 'b', shy: true, -> true
+      .call header: 'a', metadata: shy: false, -> true
+      .call header: 'b', metadata: shy: true, -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"

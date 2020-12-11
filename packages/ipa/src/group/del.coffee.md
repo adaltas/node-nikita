@@ -38,7 +38,7 @@ console.info(`Group was deleted: ${status}`)
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
       {status} = await @ipa.group.exists
         connection: config.connection
-        shy: false
+        metadata: shy: false
         cn: config.cn
       return unless status
       @network.http config.connection,

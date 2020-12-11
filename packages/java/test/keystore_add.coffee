@@ -61,7 +61,7 @@ describe 'java.keystore_add', ->
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-          shy: true
+          metadata: shy: true
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
@@ -79,7 +79,7 @@ describe 'java.keystore_add', ->
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-          shy: true
+          metadata: shy: true
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"

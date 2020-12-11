@@ -43,7 +43,7 @@ console.info(`Packages were upgraded: ${status}`)
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
-        shy: true
+        metadata: shy: true
       pkgs = JSON.parse stdout
       outdated = Object.keys pkgs if Object.keys(pkgs).length
       # Upgrade outdated packages

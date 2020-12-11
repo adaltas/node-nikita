@@ -144,26 +144,26 @@ default location of the Oracle JDK installation.
         @fs.mkdir
           target: tmpdir
           mode: 0o0700
-          shy: true
+          metadata: shy: true
       # Upload certificates
       if ssh and config.local and config.cacert
         await @file.download
           source: config.cacert
           target: files.cacert
           mode: 0o0600
-          shy: true
+          metadata: shy: true
       if ssh and config.local and config.cert
         await @file.download
           source: config.cert
           target: files.cert
           mode: 0o0600
-          shy: true
+          metadata: shy: true
       if ssh and config.local and config.key
         await @file.download
           source: config.key
           target: files.key
           mode: 0o0600
-          shy: true
+          metadata: shy: true
       # Prepare parent directory
       await @fs.mkdir
         parent: config.parent

@@ -51,4 +51,5 @@ console.info(`Group exists: ${status}`)
     module.exports =
       handler: handler
       schema: schema
-      shy: true
+      metadata:
+        shy: true

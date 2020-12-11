@@ -95,16 +95,20 @@ describe 'actions.assert', ->
   it 'children must return true', ->
     nikita.assert ->
       @call [
-        raw_output: true, handler: -> true
+        metadata: raw_output: true
+        handler: -> true
       ,
-        raw_output: true, handler: -> new Promise (resolve) -> resolve true
+        metadata: raw_output: true
+        handler: -> new Promise (resolve) -> resolve true
       ]
     .should.be.fulfilled()
     nikita.assert ->
       @call [
-        raw_output: true, handler: -> true
+        metadata: raw_output: true
+        handler: -> true
       ,
-        raw_output: true, handler: -> new Promise (resolve) -> resolve false
+        metadata: raw_output: true
+        handler: -> new Promise (resolve) -> resolve false
       ]
     .should.be.rejectedWith
       code: 'NIKITA_ASSERT_UNTRUE'

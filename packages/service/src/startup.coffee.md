@@ -70,7 +70,7 @@ console.info(`Service was desactivated on startup: ${status}`)
             exit 2
           fi
           """
-          shy: true
+          metadata: shy: true
         config.command = stdout.trim()
         throw Error "Unsupported Loader" unless config.command in ['systemctl', 'chkconfig', 'update-rc']
       if config.command is 'systemctl'

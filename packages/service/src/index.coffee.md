@@ -132,7 +132,7 @@ console.info(`Service status: ${status}`)
       if config.state
         {status} = await @service.status
           name: srvname
-          shy: true
+          metadata: shy: true
         if not status and 'started' in config.state
           await @service.start
             name: srvname

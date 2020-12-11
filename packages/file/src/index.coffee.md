@@ -381,7 +381,7 @@ console.info(data)
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           config.content = ''
       # Stat the target
-      targetStats = await @call raw_output: true, ->
+      targetStats = await @call metadata: raw_output: true, ->
         return null unless typeof config.target is 'string'
         log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
         try
