@@ -6,7 +6,7 @@ key = path.relative process.cwd(), "#{__dirname}/../../../assets/.vagrant/machin
 
 module.exports = ({params}) ->
   nikita
-    debug: params.debug
+    metadata: debug: params.debug
   .log.cli pad: host: 20, header: 60
   .log.md basename: 'start', basedir: params.log, archive: false, if: params.log
   .execute
@@ -39,10 +39,10 @@ module.exports = ({params}) ->
     }
     '''
   .call ->
-    disabled: true
     command: """
     ssh -i #{key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n
     """
+    metadata: disabled: true
     stdin: process.stdin
     stderr: process.stderr
     stdout: process.stdout

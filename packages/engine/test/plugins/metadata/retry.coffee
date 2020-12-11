@@ -10,9 +10,9 @@ describe 'plugins.metadata.retry', ->
 
     it 'ensure retry equals or is greater than 0', ->
       nikita
-      .call retry: 0, (->)
-      .call retry: 1, (->)
-      .call retry: -1, (->)
+      .call metadata: retry: 0, (->)
+      .call metadata: retry: 1, (->)
+      .call metadata: retry: -1, (->)
       .should.be.rejectedWith [
         'METADATA_RETRY_INVALID_RANGE:'
         'configuration `retry` expect a number above or equal to 0,'
@@ -22,14 +22,14 @@ describe 'plugins.metadata.retry', ->
   describe 'handler', ->
 
     it 'handler thrown exception', ->
-      nikita.call retry: 5, sleep: 100, ({metadata}) ->
+      nikita.call metadata: retry: 5, sleep: 100, ({metadata}) ->
         if metadata.attempt < 2
         then throw Error 'Catchme'
         else "success #{metadata.attempt}"
       .should.be.resolvedWith 'success 2'
 
     it 'handler rejected promises', ->
-      nikita.call retry: 5, sleep: 100, ({metadata}) ->
+      nikita.call metadata: retry: 5, sleep: 100, ({metadata}) ->
         new Promise (resolve, reject) ->
           if metadata.attempt < 2
           then throw Error 'Catchme'
@@ -39,7 +39,7 @@ describe 'plugins.metadata.retry', ->
     it 'validate the number of retry', ->
       count = 0
       await nikita
-      .call retry: 3, sleep: 100, ({metadata}) ->
+      .call metadata: retry: 3, sleep: 100, ({metadata}) ->
         metadata.attempt.should.eql count++
         throw Error 'Catchme'
       .should.be.rejectedWith 'Catchme'
@@ -55,7 +55,7 @@ describe 'plugins.metadata.retry', ->
         logs.should.eql ['Retry on error, attempt 1']
 
     it 'retry true is unlimited', ->
-      nikita.call retry: true, sleep: 100, ({metadata}) ->
+      nikita.call metadata: retry: true, sleep: 100, ({metadata}) ->
         if metadata.attempt < 10
         then throw Error "Catchme"
         else "success #{metadata.attempt}"
@@ -63,7 +63,7 @@ describe 'plugins.metadata.retry', ->
 
     it 'ensure config are immutable between retry', ->
       nikita
-      .call retry: 3, test: 1, sleep: 100, ({metadata, config}) ->
+      .call test: 1, metadata: retry: 3, sleep: 100, ({metadata, config}) ->
         config.test.should.eql 1
         config.test = 2
         throw Error 'Retry' if metadata.attempt < 2
