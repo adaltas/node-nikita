@@ -24,7 +24,6 @@ describe 'actions.wait', ->
       ssh: ssh
     .wait
       time: 'an': 'object'
-      relax: true
     .should.be.rejectedWith [
       'NIKITA_SCHEMA_VALIDATION_CONFIG:'
       'one error was found in the configuration of action `wait`:'

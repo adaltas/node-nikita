@@ -55,7 +55,6 @@ describe 'actions.fs.assert', ->
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           content: "are u here"
-          relax: true
         .should.be.rejectedWith
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
   

@@ -162,7 +162,7 @@ With an action object:
 
 ```js
 nikita.register('third_action', {
-  relax: true,
+  metadata: relax: true,
   handler: function(options){ console.info(options.relax) }
 })
 nikita.third_action(options);
@@ -172,7 +172,7 @@ With a namespace and an action object:
 
 ```js
 nikita.register(['fourth', 'action'], {
-  relax: true,
+  metadata: relax: true,
   handler: function(options){ console.info(options.relax) }
 })
 nikita.fourth.action(options);
