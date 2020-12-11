@@ -19,7 +19,6 @@ for engine, _ of db
           engine: engine
           admin_username: db[engine].admin_username
           admin_password: db[engine].admin_password
-          relax: true
         .should.be.rejectedWith
           message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors where found in the configuration of action `db.user`: #/required config should have required property \'host\'; #/required config should have required property \'password\'; #/required config should have required property \'username\'.'
         @db.user
@@ -27,7 +26,6 @@ for engine, _ of db
           port: 5432
           engine: engine
           admin_password: db[engine].admin_password
-          relax: true
         .should.be.rejectedWith
           message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors where found in the configuration of action `db.user`: #/required config should have required property \'admin_username\'; #/required config should have required property \'password\'; #/required config should have required property \'username\'.'
 

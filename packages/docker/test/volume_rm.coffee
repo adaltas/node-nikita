@@ -14,7 +14,6 @@ describe 'docker.volume_rm', ->
     , ->
       @docker.volume_rm
         name: 'my_volume'
-        relax: true
       @docker.volume_create
         name: 'my_volume'
       {status} = await @docker.volume_rm

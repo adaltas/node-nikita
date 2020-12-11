@@ -234,7 +234,7 @@ describe 'actions.log.cli', ->
         time: false
       .call header: 'a', -> false
       .call header: 'b', -> true
-      .call header: 'c', relax: true, -> throw Error 'ok'
+      .call header: 'c', metadata: relax: true, -> throw Error 'ok'
       .call ->
         data.should.eql [
           "\u001b[36m\u001b[2m#{host}   a   -\u001b[22m\u001b[39m\n"

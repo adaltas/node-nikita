@@ -68,7 +68,7 @@ console.info(`Link was created: ${status}`)
       # have the same parent directory
       await @fs.base.mkdir
         target: path.dirname config.target
-        relax: 'EEXIST'
+        metadata: relax: 'EEXIST'
       if config.exec
         exists = await @call raw_output: true, ->
           {exists} = await @fs.base.exists target: config.target

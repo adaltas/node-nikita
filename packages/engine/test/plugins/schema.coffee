@@ -187,7 +187,6 @@ describe 'plugins.schema', ->
 
     it 'instanceof invalid', ->
       nikita.call
-        relax: true
         schema:
           type: 'object'
           properties:

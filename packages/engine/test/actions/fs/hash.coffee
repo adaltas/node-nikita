@@ -74,10 +74,15 @@ describe 'actions.fs.hash', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.hash
-        target: "#{__dirname}/does/not/exist"
-        relax: true
-      , (err, {status}) ->
-        err.message.should.eql "Missing File: no file exists for target \"#{__dirname}/does/not/exist\""
+        target: "#{tmpdir}/does/not/exist"
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_STAT_TARGET_ENOENT'
+        path: "#{tmpdir}/does/not/exist"
+        message: [
+          "NIKITA_FS_STAT_TARGET_ENOENT:"
+          "failed to stat the target, no file exists for target,"
+          "got \"#{tmpdir}/does/not/exist\""
+        ].join ' '
 
   they 'returns the directory md5 when empty', ({ssh}) ->
     nikita
@@ -96,12 +101,10 @@ describe 'actions.fs.hash', ->
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
-        @fs.hash
+        {status} = await @fs.hash
           target: "#{tmpdir}/a_file"
           hash: '9893532233caff98cd083a116b013c0b'
-          relax: true
-        , (err, {status}) ->
-          status.should.be.true() unless err
+        status.should.be.true()
 
     they 'invalid', ({ssh}) ->
       nikita

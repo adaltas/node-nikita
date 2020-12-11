@@ -34,7 +34,6 @@ describe 'docker.tools.service', ->
       @docker.tools.service
         image: 'httpd'
         port: '499:80'
-        relax: true
       .should.be.rejectedWith
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
@@ -44,7 +43,6 @@ describe 'docker.tools.service', ->
       @docker.tools.service
         name: 'toto'
         port: '499:80'
-        relax: true
       .should.be.rejectedWith
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'

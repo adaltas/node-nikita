@@ -4,11 +4,6 @@ utils = require '../utils'
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/relax'
   hooks:
-    'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      if action.hasOwnProperty 'relax'
-        action.metadata.relax = action.relax
-        delete action.relax
     'nikita:session:action': (action, handler) ->
       action.metadata.relax ?= false
       if typeof action.metadata.relax is 'string' or

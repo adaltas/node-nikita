@@ -12,7 +12,6 @@ describe 'ipa.user', ->
     it 'schema root properties', ->
       nikita
       .ipa.user
-        relax: true
         uid: [1,2,3]
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -27,7 +26,6 @@ describe 'ipa.user', ->
     it 'schema connection properties', ->
       nikita
       .ipa.user
-        relax: true
         uid: 'username'
         attributes: {}
         connection: principal: [1,2,3]
@@ -44,7 +42,6 @@ describe 'ipa.user', ->
     it 'coercion of `mail` attribute', ->
       nikita
       .ipa.user
-        relax: true
         uid: 'username'
         attributes:
           givenname: 'Firstname'
