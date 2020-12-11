@@ -202,7 +202,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # If we know the source signature and if the target file exists
       # we compare it with the target file signature and stop if they match
       if typeof source_hash is 'string'
-        {shortcircuit} = await @call shy: true, ->
+        {shortcircuit} = await @call metadata: shy: true, ->
           log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
           try
             {hash} = await @fs.hash config.target, algo: algo
@@ -247,7 +247,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
         # Ensure target directory exists
         @fs.mkdir
-          shy: true
+          metadata: shy: true
           target: path.dirname stageDestination
         # Download the file
         @execute
@@ -262,7 +262,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             "-o #{stageDestination}"
             "-x #{config.proxy}" if config.proxy
           ].join ' '
-          shy: true
+          metadata: shy: true
         hash_source = hash_target = null
         {hash} = await @fs.hash stageDestination, algo: algo
         # Hash validation
@@ -279,7 +279,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         if match
           @fs.remove
-            shy: true
+            metadata: shy: true
             target: stageDestination
       else if source_url.protocol not in protocols_http and not ssh
         log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
@@ -296,7 +296,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           @fs.mkdir
-            shy: true
+            metadata: shy: true
             target: path.dirname stageDestination
           @fs.copy
             source: config.source
@@ -316,7 +316,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           @fs.mkdir
-            shy: true
+            metadata: shy: true
             target: path.dirname stageDestination
           try
             await @fs.base.createWriteStream

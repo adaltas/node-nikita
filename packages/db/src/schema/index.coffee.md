@@ -59,7 +59,7 @@ console.info(`Schema created or modified: ${status}`)
       {status} = await @execute
         code_skipped: 2
         command: command config, '\\dt'
-        shy: true
+        metadata: shy: true
       throw Error "Database does not exist #{config.database}" if !status
       @db.query config: config,
         command: "CREATE SCHEMA #{config.schema};"

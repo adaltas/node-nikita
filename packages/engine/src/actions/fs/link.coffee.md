@@ -70,7 +70,7 @@ console.info(`Link was created: ${status}`)
         target: path.dirname config.target
         metadata: relax: 'EEXIST'
       if config.exec
-        exists = await @call raw_output: true, ->
+        exists = await @call metadata: raw_output: true, ->
           {exists} = await @fs.base.exists target: config.target
           return false unless exists
           {data} = await @fs.base.readFile
@@ -90,7 +90,7 @@ console.info(`Link was created: ${status}`)
           target: config.target
           mode: config.mode
       else
-        exists = await @call raw_output: true, ->
+        exists = await @call metadata: raw_output: true, ->
           try
             {target} = await @fs.base.readlink target: config.target
             return true if target is config.source

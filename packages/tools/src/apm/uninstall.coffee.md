@@ -26,7 +26,7 @@ Remove one or more apm packages.
       config.name = config.name.map (pkg) -> pkg.toLowerCase()
       installed = []
       {stdout} = await @execute
-        shy: true
+        metadata: shy: true
         command: "apm list --installed --json"
       pkgs = JSON.parse stdout
       installed = pkgs.user.map (pkg) -> pkg.name.toLowerCase()

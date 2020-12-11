@@ -48,7 +48,7 @@ console.info(`Container was stopped: ${status}`)
     handler = ({config, tools: {log}}) ->
       log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
       # rm is false by default only if config.service is true
-      {status} = await @docker.tools.status shy: true, config
+      {status} = await @docker.tools.status config, metadata: shy: true
       if status
       then log message: "Stopping container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
       else log message: "Container already stopped #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'

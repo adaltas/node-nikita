@@ -71,7 +71,7 @@ to "['start', 'restart']" to ensure the service will be always started.
             rootdir: config.rootdir
             stdin_log: true
             stdout_log: false
-            shy: true
+            metadata: shy: true
         catch err
           throw Error "Unsupported Package Manager" if err.exit_code is 2
           throw Error "Uninstalled Package: #{config.name}"

@@ -106,7 +106,7 @@ console.info(`File was written: ${status}`)
         content: data.join '\n'
         backup: config.backup
         eof: true
-        shy: true
+        metadata: shy: true
       if config.uid or config.gid
         @system.chown
           target: config.target

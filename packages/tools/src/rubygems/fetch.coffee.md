@@ -72,7 +72,7 @@ couldn't find any suitable parser on NPM.
           #{config.gem_bin} specification #{config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
           """
           cwd: config.cwd
-          shy: true
+          metadata: shy: true
           bash: config.bash
         config.version = stdout.trim() if status
       config.target = "#{config.name}-#{config.version}.gem"

@@ -36,7 +36,7 @@ describe 'plugins.metadata.raw', ->
     describe 'arguments', ->
       
       it 'pass `true` as is', ->
-        nikita true, raw_input: true, (action) ->
+        nikita true, metadata: raw_input: true, (action) ->
           config: action.config
           argument: action.metadata.argument
         .should.be.finally.containEql
@@ -47,15 +47,15 @@ describe 'plugins.metadata.raw', ->
   describe 'output', ->
 
     it 'leave `true` as is', ->
-      nikita.call raw_output: true, -> true
+      nikita.call metadata: raw_output: true, -> true
       .should.be.resolvedWith true
         
     it 'leave `false` as is', ->
-      nikita.call raw_output: true, -> true
+      nikita.call metadata: raw_output: true, -> true
       .should.be.resolvedWith true
 
     it 'leave `{}` as is', ->
-      nikita.call raw_output: true,-> {}
+      nikita.call metadata: raw_output: true,-> {}
       .should.be.resolvedWith {}
     
     

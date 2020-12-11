@@ -71,7 +71,7 @@ console.info(`File was touched: ${status}`)
         # todo check uid/gid/mode
         @execute
           command: "touch #{config.target}"
-          shy: true
+          metadata: shy: true
       {}
 
 ## Exports

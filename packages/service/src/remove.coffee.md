@@ -74,7 +74,7 @@ console.info(`Package or service was removed: ${status}`)
             """
             code_skipped: 1
             stdout_log: false
-            shy: true
+            metadata: shy: true
           if status
             log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/remove'
             installed = for pkg in utils.string.lines(stdout) then pkg

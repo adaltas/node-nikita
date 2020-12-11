@@ -88,7 +88,7 @@ Reload the service daemon provider depending on the os.
         engine: config.engine
       return unless config.loader is 'systemctl'
       {status} = await @execute
-        shy: true
+        metadata: shy: true
         command: """
           systemctl status #{config.name} 2>\&1 | egrep \
           '(Reason: No such file or directory)|(Unit #{config.name}.service could not be found)|(#{config.name}.service changed on disk)'
