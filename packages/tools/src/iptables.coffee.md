@@ -166,7 +166,7 @@ console.info(`Iptables was updated: ${status}`)
       throw Error "Service iptables not started" unless status
       {stdout} = await @execute
         command: 'iptables -S'
-        shy: true
+        metadata: shy: true
         sudo: config.sudo
       oldrules = utils.iptables.parse stdout
       newrules = utils.iptables.normalize config.rules

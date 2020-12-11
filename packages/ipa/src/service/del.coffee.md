@@ -38,7 +38,7 @@ console.info(`Service was deleted: ${status}`)
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
       {status} = await @ipa.service.exists
         connection: config.connection
-        shy: false
+        metadata: shy: false
         principal: config.principal
       return unless status
       @network.http config.connection,

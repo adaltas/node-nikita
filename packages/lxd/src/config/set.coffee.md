@@ -48,7 +48,7 @@ console.info(`Property was set: ${status}`)
           config.container
         ].join ' '}
         """
-        shy: true
+        metadata: shy: true
         code_skipped: 42
       stdout = yaml.safeLoad stdout
       changes = diff stdout.config, merge stdout.config, config.config

@@ -73,7 +73,7 @@ console.info(`Keytab was created or modified: ${status}`)
       {status, stdout, code} = await @execute
         command: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
         code_skipped: 1
-        shy: true
+        metadata: shy: true
       if status
         log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
         for line in utils.string.lines stdout
@@ -91,7 +91,7 @@ console.info(`Keytab was created or modified: ${status}`)
       {status, stdout} = await @krb5.execute
         admin: config.admin
         command: "getprinc -terse #{config.principal}"
-        shy: true
+        metadata: shy: true
       if status
         values = utils.string.lines(stdout)[1]
         # Check if a ticket exists for this

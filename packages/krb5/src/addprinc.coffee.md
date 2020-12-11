@@ -71,7 +71,7 @@ console.info(`Principal was created or modified: ${status}`)
         admin: config.admin
         command: "getprinc #{config.principal}"
         grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
-        shy: true
+        metadata: shy: true
       unless status
         await @krb5.execute
           admin: config.admin

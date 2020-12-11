@@ -298,7 +298,7 @@ console.info(`Container was run: ${status}`)
         if: config.name?
         command: "ps -a | egrep ' #{config.name}$'"
         code_skipped: 1
-        shy: true
+        metadata: shy: true
       log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
       result = await @docker.tools.execute
         command: command

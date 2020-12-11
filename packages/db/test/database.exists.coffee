@@ -25,11 +25,11 @@ for engine, _ of db
         ssh: ssh
         db: db[engine]
       , ({tools: {status}}) ->
-        @db.database.remove 'test_database_exists_1_db', shy: true
-        @db.database 'test_database_exists_1_db', shy: true
+        @db.database.remove 'test_database_exists_1_db', metadata: shy: true
+        @db.database 'test_database_exists_1_db', metadata: shy: true
         {exists} = await @db.database.exists database: 'test_database_exists_1_db'
         exists.should.be.true()
         {exists} = await @db.database.exists 'test_database_exists_1_db'
         exists.should.be.true()
-        @db.database.remove 'test_database_exists_1_db', shy: true
+        @db.database.remove 'test_database_exists_1_db', metadata: shy: true
         status().should.be.false()

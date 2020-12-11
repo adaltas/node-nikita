@@ -11,17 +11,8 @@ module.exports = ->
   hooks:
     # 'nikita:registry:normalize': (action) ->
     #   action.metadata ?= {}
-    #   if action.hasOwnProperty 'shy'
-    #     action.metadata.shy = action.shy
-    #     delete action.shy
     #   action.metadata.shy ?= false
     'nikita:session:normalize': (action, handler) ->
-      # Metadata `shy`
-      # Move property from action to metadata
-      if action.hasOwnProperty 'shy'
-        action.metadata.shy = action.shy
-        delete action.shy
-      # action.metadata.shy ?= false
       # Do not default shy to false or metadata from the registry will be overwritten
       # Todo: create a test to illutrate it
       # action.metadata.shy ?= false

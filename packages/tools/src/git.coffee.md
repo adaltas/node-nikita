@@ -74,7 +74,7 @@ console.info(`Repo was synchronized: ${status}`)
           cwd: config.target
           trap: true
           code_skipped: 3
-          shy: true
+          metadata: shy: true
       unless repo_uptodate
         @execute
           command: "git checkout #{config.revision}"

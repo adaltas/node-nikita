@@ -79,7 +79,7 @@ console.info(`File was uploaded: ${status}`)
       log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       # Stat the target and redefine its path if a directory
-      stats = await @call raw_output: true, ->
+      stats = await @call metadata: raw_output: true, ->
         try
           {stats} = await @fs.base.stat ssh: false, sudo: false, target: config.target
           # Target is a file

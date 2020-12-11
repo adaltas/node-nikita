@@ -65,7 +65,7 @@ console.info(`Package was installed: ${status}`)
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
-        shy: true
+        metadata: shy: true
       pkgs = JSON.parse stdout
       outdated = Object.keys pkgs if Object.keys(pkgs).length
       # Upgrade outdated packages
@@ -83,7 +83,7 @@ console.info(`Package was installed: ${status}`)
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
-        shy: true
+        metadata: shy: true
       pkgs = JSON.parse stdout
       installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
       # Install packages

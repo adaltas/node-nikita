@@ -137,7 +137,7 @@ console.info(`File was copied: ${status}`)
         if: !!config.parent
         unless: target_stats
         target: path.dirname config.target
-        shy: true
+        metadata: shy: true
       , config.parent
       # Stop here if source is a directory. We traverse all its children
       # Recursively, calling either `fs.mkdir` or `fs.copy`.
@@ -146,7 +146,7 @@ console.info(`File was copied: ${status}`)
       # "/tmp/a_target". Without an ending slash , the directory "/tmp/a_source" is
       # copied into "/tmp/a_target/a_source". With an ending slash, all the files
       # present inside "/tmp/a_source" are copied inside "/tmp/a_target".
-      res = await @call shy: true, ->
+      res = await @call metadata: shy: true, ->
         return unless utils.stats.isDirectory source_stats.mode
         sourceEndWithSlash = config.source.lastIndexOf('/') is config.source.length - 1
         if target_stats and not sourceEndWithSlash
@@ -179,7 +179,7 @@ console.info(`File was copied: ${status}`)
         end: true
       return res.status if res.end
       # If source is a file and target is a directory, then transform target into a file.
-      @call shy: true, ->
+      @call metadata: shy: true, ->
         return unless target_stats and utils.stats.isDirectory target_stats.mode
         config.target = path.resolve config.target, path.basename config.source
       # Compute the source and target hash

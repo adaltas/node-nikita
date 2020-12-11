@@ -50,7 +50,7 @@ console.info(`Cron entry was removed: ${status}`)
       jobs = []
       {stdout, stderr} = await @execute
         command: "#{crontab} -l"
-        shy: true
+        metadata: shy: true
       throw Error 'User crontab not found' if /^no crontab for/.test stderr
       myjob = if config.when then utils.regexp.escape config.when else '.*'
       myjob += utils.regexp.escape " #{config.command}"

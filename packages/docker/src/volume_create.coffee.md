@@ -69,7 +69,7 @@ console.info(`Volume was created: ${status}`)
         command: "volume inspect #{config.name}"
         code: 1
         code_skipped: 0
-        shy: true
+        metadata: shy: true
       @docker.tools.execute
         if: -> not config.name or status
         command: [

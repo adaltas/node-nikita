@@ -58,7 +58,7 @@ console.info(`keytab was created or updated: ${status}`)
       {status, stdout} = await @execute
         command: "export TZ=GMT; klist -kt #{config.keytab}"
         code_skipped: 1
-        shy: true
+        metadata: shy: true
       if status
         log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktadd'
         for line in utils.string.lines stdout
@@ -74,7 +74,7 @@ console.info(`keytab was created or updated: ${status}`)
         {status, stdout} = await @krb5.execute
           admin: config.admin
           command: "getprinc -terse #{config.principal}"
-          shy: true
+          metadata: shy: true
         if status
           # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
           values = utils.string.lines(stdout)[1]

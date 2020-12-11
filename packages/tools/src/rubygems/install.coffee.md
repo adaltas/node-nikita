@@ -100,7 +100,7 @@ console.info(`Gem installed: ${status}`)
         command: """
         #{config.gem_bin} list --versions
         """
-        shy: true
+        metadata: shy: true
         bash: config.bash
       for line in utils.string.lines stdout
         continue if line.trim() is ''

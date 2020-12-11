@@ -136,7 +136,7 @@ console.info(`Package installed: ${status}`)
             rootdir: config.rootdir
             stdin_log: false
             stdout_log: false
-            shy: true
+            metadata: shy: true
           if status
             log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
             config.installed = for pkg in utils.string.lines(stdout) then pkg
@@ -163,7 +163,7 @@ console.info(`Package installed: ${status}`)
             rootdir: config.rootdir
             stdin_log: false
             stdout_log: false
-            shy: true
+            metadata: shy: true
           if status
             log message: "Outdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
             config.outdated = utils.string.lines stdout.trim()

@@ -99,7 +99,7 @@ Create and start containers according to a docker-compose file
         uid: config.uid
         code_skipped: 123
         stdout_log: false
-        shy: true
+        metadata: shy: true
       unless status
         status = true
       else

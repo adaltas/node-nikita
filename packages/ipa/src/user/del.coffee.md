@@ -49,7 +49,7 @@ console.info(`User was deleted: ${status}`)
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
       {status} = await @ipa.user.exists
         connection: config.connection
-        shy: false
+        metadata: shy: false
         uid: config.uid
       return unless status
       @network.http config.connection,
