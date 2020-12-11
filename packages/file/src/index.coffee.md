@@ -391,7 +391,7 @@ console.info(data)
             config.target = "#{config.target}/#{path.basename config.source}"
             log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
             # Destination is the parent directory, let's see if the file exist inside
-            {stats} = await @fs.base.stat target: config.target, relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+            {stats} = await @fs.base.stat target: config.target, metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
             throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
             log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
           else if utils.stats.isSymbolicLink stats.mode
@@ -458,7 +458,7 @@ console.info(data)
           source: config.target
           target: "#{config.target}#{backup}"
           mode: config.backup_mode
-          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+          metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
       # Call the target with the content when a function
       if typeof config.target is 'function'
         log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'

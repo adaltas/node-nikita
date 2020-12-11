@@ -26,5 +26,4 @@ describe 'service.stop', ->
     , ->
       {status} = await @service.stop
         name: 'thisdoenstexit'
-        relax: true
       status.should.be.false()

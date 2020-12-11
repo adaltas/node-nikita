@@ -196,7 +196,6 @@ describe 'lxd.config.device', ->
             config:
               listen: 'udp:127.0.0.1:1195'
               connect: 'udp:127.0.0.999:1194'
-            relax: true
         .should.be.rejectedWith
           message: [
             'Error: Invalid devices:'
