@@ -15,7 +15,7 @@ module.exports = ->
   ]
   hooks:
     'nikita:session:action':
-      after: '@nikitajs/engine/src/metadata/ssh'
+      after: '@nikitajs/engine/src/plugins/ssh'
       handler: (action, handler) ->
         throw utils.error 'METADATA_TMPDIR_INVALID', [
           'the "tmpdir" metadata value must be a boolean or a string,'
@@ -53,7 +53,7 @@ module.exports = ->
           throw err unless err.code is 'EEXIST'
         handler
     'nikita:session:result':
-      before: '@nikitajs/engine/src/metadata/ssh'
+      before: '@nikitajs/engine/src/plugins/ssh'
       handler: ({action}) ->
         # Value of tmpdir could still be true if there was an error in
         # one of the on_action hook, such as a invalid schema validation

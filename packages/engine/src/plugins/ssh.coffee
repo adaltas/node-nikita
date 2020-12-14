@@ -9,7 +9,7 @@ is `null` or `false`.
 ###
 
 module.exports = ->
-  module: '@nikitajs/engine/src/metadata/ssh'
+  module: '@nikitajs/engine/src/plugins/ssh'
   require: [
     '@nikitajs/engine/src/plugins/operation_find'
   ]
