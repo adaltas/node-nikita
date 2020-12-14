@@ -39,20 +39,22 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var config_orig, status;
+  var properties, status;
   // log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
-  config_orig = config;
-  ({config} = (await this.lxd.config.device.show({
+  ({properties} = (await this.lxd.config.device.show({
+    metadata: {
+      debug: true
+    },
     container: config.container,
     device: config.device
   })));
-  if (!config) {
+  if (!properties) {
     return {
       status: false
     };
   }
   ({status} = (await this.execute({
-    command: ['lxc', 'config', 'device', 'remove', config_orig.container, config_orig.device].join(' ')
+    command: ['lxc', 'config', 'device', 'remove', config.container, config.device].join(' ')
   })));
   return {
     status: status

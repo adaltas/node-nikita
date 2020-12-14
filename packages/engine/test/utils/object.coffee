@@ -1,5 +1,5 @@
 
-{copy, diff, equals} = require '../../src/utils/object'
+{copy, diff, equals, filter} = require '../../src/utils/object'
 
 describe 'utils.object', ->
   
@@ -33,3 +33,17 @@ describe 'utils.object', ->
     it 'two objects without keys', ->
       diff({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}).should.eql {}
       diff({a: '11', b: '2', c: '3'}, {a: '12', b: '2', c: '3'}).should.eql {'a': ['11', '12']}
+
+  describe 'filter', ->
+        
+    it 'black list', ->
+      filter a: 1, b: 2, c: 3, ['b']
+      .should.eql a: 1, c: 3
+    
+    it 'white list', ->
+      filter a: 1, b: 2, c: 3, null, ['b']
+      .should.eql b: 2
+        
+    it 'black and white list', ->
+      filter a: 1, b: 2, c: 3, ['b'], ['a', 'b']
+      .should.eql a: 1

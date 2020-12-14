@@ -16,7 +16,7 @@ Create a storage or update a storage configuration.
 const {status} = await nikita.lxd.storage({
   name: "system",
   driver: "zfs",
-  config: {
+  properties: {
     source: "syspool/lxd"
   }
 })
@@ -39,7 +39,7 @@ console.info(`Storage was created or config updated: ${status}`)
           description: """
           The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs.
           """
-        'config':
+        'properties':
           type: 'object',
           patternProperties: '': type: ['string', 'boolean', 'number']
           description: """
@@ -54,9 +54,9 @@ console.info(`Storage was created or config updated: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
       # Normalize config
-      for k, v of config.config
+      for k, v of config.properties
         continue if typeof v is 'string'
-        config.config[k] = v.toString()
+        config.properties[k] = v.toString()
       # Check if exists
       {stdout, code} = await @execute
         command: """
@@ -64,15 +64,17 @@ console.info(`Storage was created or config updated: ${status}`)
         #{['lxc', 'storage', 'create'
           config.name
           config.driver
-          (("#{key}='#{value.replace '\'', '\\\''}'") for key, value of config.config).join ' '
+          ...(
+            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config.properties
+          )
         ].join ' '}
         """
         code_skipped: 42
       return unless code is 42
       # Storage already exists, find the changes
-      return unless config?.config
-      stdout = yaml.safeLoad stdout
-      changes = diff stdout.config, config.config
+      return unless config?.properties
+      {config: currentProperties} = yaml.safeLoad stdout
+      changes = diff currentProperties, config.properties
       # if changes is empty status is false because no command were executed
       {status} = await @execute (
         command: [

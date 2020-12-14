@@ -1,5 +1,6 @@
 
-nikita = require 'nikita'
+nikita = require '@nikitajs/engine/src'
+require '@nikitajs/lxd/src/register'
 
 module.exports = ({params}) ->
   nikita

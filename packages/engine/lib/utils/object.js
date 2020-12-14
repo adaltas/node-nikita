@@ -93,6 +93,24 @@ module.exports = {
     }
     return true;
   },
+  filter: function(source, black, white) {
+    var i, key, len, obj, ref;
+    if (black == null) {
+      black = [];
+    }
+    obj = {};
+    ref = (white != null ? white : Object.keys(source));
+    // If white list, only use the selected list
+    // Otherwise clone it all
+    for (i = 0, len = ref.length; i < len; i++) {
+      key = ref[i];
+      if (source.hasOwnProperty(key) && !black.includes(key)) {
+        // unless part of black list
+        obj[key] = source[key];
+      }
+    }
+    return obj;
+  },
   snake_case: function(source) {
     var key, obj, value;
     obj = {};

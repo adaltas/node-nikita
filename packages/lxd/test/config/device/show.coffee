@@ -16,6 +16,7 @@ describe 'lxd.config.device.show', ->
   they 'config output', ({ssh}) ->
     nikita
       ssh: ssh
+      # debug: true
     , ->
       @lxd.delete
         container: 'c1'
@@ -24,18 +25,17 @@ describe 'lxd.config.device.show', ->
         image: 'ubuntu:'
         container: 'c1'
       @lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'unix-char'
-          config:
-            source: '/dev/urandom'
-            path: '/testrandom'
-      {status, config} = await @lxd.config.device.show
+        container: 'c1'
+        device: 'test'
+        type: 'unix-char'
+        properties:
+          source: '/dev/urandom'
+          path: '/testrandom'
+      {status, properties} = await @lxd.config.device.show
         container: 'c1'
         device: 'test'
       status.should.be.true()
-      config.should.eql
+      properties.should.eql
         path: '/testrandom'
         source: '/dev/urandom'
         type: 'unix-char'

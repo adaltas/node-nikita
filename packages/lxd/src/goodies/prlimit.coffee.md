@@ -3,6 +3,10 @@
 
 Print the process limit associated with a running container.
 
+Note, the command must be executed on the host container of the machine. When
+using a remote LXD server or cluster, you must know on which node the machine is running
+and run the action in this node.
+
 ## Output
 
 * `error` (object)
@@ -51,7 +55,16 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
           units: units
         stdout: stdout, limits: limits
       catch err
-        throw Error 'Invalid Requirement: this action requires prlimit installed on the host' if err.exit_code is 3
+        err = errors.NIKITA_LXC_PRLIMIT_MISSING() if err.exit_code is 3
+        throw err
+
+## Errors
+
+    errors =
+    NIKITA_LXC_PRLIMIT_MISSING: ->
+      utils.error 'NIKITA_LXC_PRLIMIT_MISSING', [
+        'this action requires prlimit installed on the host'
+      ]
 
 ## Export
 

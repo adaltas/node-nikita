@@ -85,4 +85,4 @@ Replace partial elements in a text.
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require '@nikitajs/engine/lib/utils'

@@ -24,7 +24,7 @@
 // ```
 
 // ## Schema
-var diff, handler, schema, yaml;
+var diff, handler, merge, schema, yaml;
 
 schema = {
   type: 'object',
@@ -33,7 +33,7 @@ schema = {
       type: 'string',
       description: `The network name to create.`
     },
-    'config': {
+    'properties': {
       type: 'object',
       patternProperties: {
         '': {
@@ -49,16 +49,15 @@ fields](https://lxd.readthedocs.io/en/latest/networks/).`
 
 // ## Handler
 handler = async function({config}) {
-  var changes, code, config_orig, k, key, ref, status, stdout, v, value;
-  ref = config.config;
-  // log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
+  var changes, code, current, k, key, ref, status, stdout, v, value;
+  ref = config.properties;
   // Normalize config
   for (k in ref) {
     v = ref[k];
     if (typeof v === 'string') {
       continue;
     }
-    config.config[k] = v.toString();
+    config.properties[k] = v.toString();
   }
   // Command if the network does not yet exist
   ({stdout, code, status} = (await this.execute({
@@ -73,7 +72,7 @@ ${[
       ...((function() {
         var ref1,
       results;
-        ref1 = config.config;
+        ref1 = config.properties;
         results = [];
         for (key in ref1) {
           value = ref1[key];
@@ -94,16 +93,15 @@ ${[
     };
   }
   // Network already exists, find the changes
-  if (!(config != null ? config.config : void 0)) {
+  if (!(config != null ? config.properties : void 0)) {
     return;
   }
-  config_orig = config;
-  ({config} = yaml.safeLoad(stdout));
-  changes = diff(config, config_orig.config);
+  current = yaml.safeLoad(stdout);
+  changes = diff(current.config, merge(current.config, config.properties));
   for (key in changes) {
     value = changes[key];
     ({status} = (await this.execute({
-      command: ['lxc', 'network', 'set', config_orig.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+      command: ['lxc', 'network', 'set', config.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {
@@ -121,3 +119,5 @@ module.exports = {
 yaml = require('js-yaml');
 
 diff = require('object-diff');
+
+({merge} = require('mixme'));

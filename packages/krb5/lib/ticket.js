@@ -75,6 +75,6 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/krb5/src/utils');
+utils = require('@nikitajs/krb5/lib/utils');
 
 ({mutate} = require('mixme'));

@@ -19,7 +19,7 @@ networks:
 containers:
   nikita
     image: images:centos/7
-    config:
+    properties:
       environment:
         MY_VAR: 'my value'
     disk:
@@ -28,21 +28,19 @@ containers:
         path: /nikita
     nic:
       eth0:
-        config:
-          container: eth0
-          nictype: bridged
-          parent: lxdbr0public
+        container: eth0
+        nictype: bridged
+        parent: lxdbr0public
       eth1:
-        config:
-          container: eth1
-          nictype: bridged
-          parent: lxdbr1private
-          ip: '10.10.10.10'
-          netmask: '255.255.255.192'
+        container: eth1
+        nictype: bridged
+        parent: lxdbr1private
+        ip: '10.10.10.10'
+        netmask: '255.255.255.192'
     proxy:
       ssh:
-        listen: tcp:0.0.0.0:2200
-        connect: tcp:127.0.0.1:22
+        listen: 'tcp:0.0.0.0:2200'
+        connect: 'tcp:127.0.0.1:22'
     ssh:
       enabled: true
       #id_rsa: assets/id_rsa
@@ -69,35 +67,35 @@ containers:
           patternProperties: '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)':
             type: 'object'
             properties:
-              'config':
-                $ref: 'module://@nikitajs/lxd/src/config/set#/properties/config'
+              'properties':
+                $ref: 'module://@nikitajs/lxd/src/config/set#/properties/properties'
               'disk':
                 type: 'object'
                 default: {}
-                patternProperties: '':
-                  $ref: 'module://@nikitajs/lxd/src/config/device#/properties/config'
+                patternProperties: '': # Device name of disk
+                  $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/disk/properties/properties'
               'image':
                 $ref: 'module://@nikitajs/lxd/src/init#/properties/image'
               'nic':
                 type: 'object'
                 default: {}
-                patternProperties: '':
-                  type: 'object'
-                  properties:
-                    'config':
-                      $ref: 'module://@nikitajs/lxd/src/config/device#/properties/config'
-                    'ip':
-                      type: 'string'
-                      format: 'ipv4'
-                    'netmask':
-                      type: 'string'
-                      default: '255.255.255.0'
-                      format: 'ipv4'
+                additionalProperties:
+                  # Device name of nic
+                  '': 
+                    properties:
+                      'ip':
+                        type: 'string'
+                        format: 'ipv4'
+                      'netmask':
+                        type: 'string'
+                        default: '255.255.255.0'
+                        format: 'ipv4'
+                    $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/nic/properties/properties'
               'proxy':
                 type: 'object'
                 default: {}
                 patternProperties: '':
-                  $ref: 'module://@nikitajs/lxd/src/config/device#/properties/config'
+                  $ref: 'module://@nikitajs/lxd/src/config/device#/properties/properties'
               'user':
                 type: 'object'
                 default: {}
@@ -131,113 +129,116 @@ containers:
           type: 'object'
           default: {}
           patternProperties: '':
-            $ref: 'module://@nikitajs/lxd/src/network#/properties/config'
+            $ref: 'module://@nikitajs/lxd/src/network#/properties/properties'
         'prevision':
           typeof: 'function'
         'provision':
           typeof: 'function'
         'provision_container':
           typeof: 'function'
-      required: ['containers']
+      # required: ['containers']
 
 ## Handler
 
     handler = ({config}) ->
-      config_orig = config
       # Prevision
-      if !!config_orig.prevision
-        @call config_orig, config_orig.prevision
+      if !!config.prevision
+        await @call config, config.prevision
       # Create a network
-      for network, config of config_orig.networks then @call
-        config:
-          header: "Network #{network}"
-          network: network
-          config: config
-      , ({config : {network, config}}) ->
-        @lxd.network
-          header: 'Create'
-          network: network
-          config: config
+      for networkName, networkProperties of config.networks
+        await @lxd.network
+          metadata:
+            header: "Network #{networkName}"
+          config:
+            network: networkName
+            properties: networkProperties
       # Init containers
-      for container, config of config_orig.containers then @call
-        config:
-          header: "Container #{container}"
-          container: container
-          config: config
-      , ({config : {container, config}}) ->
+      for containerName, containerConfig of config.containers then await @call
+        metadata:
+          header: "Container #{containerName}"
+      , ->
         # Set configuration
-        @lxd.init
-          header: 'Init'
-          container: container
-          image: config.image
+        await @lxd.init
+          metadata:
+            header: 'Init'
+          config:
+            container: containerName
+            image: containerConfig.image
         # Set config
-        if config?.config
-          @lxd.config.set
-            config:
+        if containerConfig?.properties
+          await @lxd.config.set
+            metadata:
               header: 'Config'
-              container: container
-              config: config.config
-        # Create disk device
-        for device, configdisk of config.disk
-          @lxd.config.device
             config:
-              header: "Device #{device} disk"
-              container: container
-              device: device
+              container: containerName
+              properties: containerConfig.properties
+        # Create disk device
+        for deviceName, configDisk of containerConfig.disk
+          await @lxd.config.device
+            metadata:
+              header: "Device #{deviceName} disk"
+            config:
+              container: containerName
+              device: deviceName
               type: 'disk'
-              config: configdisk
+              properties: configDisk
         # Create nic device
-        for device, confignic of config.nic
-          confignic.name ?= device
+        for deviceName, configNic of containerConfig.nic
           # note: `confignic.config.parent` is not required for each type
           # throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
-          @lxd.config.device
+          await @lxd.config.device
+            metadata:
+              header: "Device #{deviceName} nic"
             config:
-              header: "Device #{device} nic"
-              container: container
-              device: device
+              container: containerName
+              device: deviceName
               type: 'nic'
-              config: confignic.config
-          if !!confignic.ip
-            @lxd.file.push
-              header: "ifcfg #{confignic.name}"
-              container: container
-              target: "/etc/sysconfig/network-scripts/ifcfg-#{confignic.name}"
-              content: """
-              NM_CONTROLLED=yes
-              BOOTPROTO=none
-              ONBOOT=yes
-              IPADDR=#{confignic.ip}
-              NETMASK=#{confignic.netmask}
-              DEVICE=#{confignic.name}
-              PEERDNS=no
-              """
+              properties: utils.object.filter configNic, ['ip', 'netmask']
+          if configNic.ip
+            await @lxd.file.push
+              metadata:
+                header: "ifcfg #{deviceName}"
+              config:
+                container: containerName
+                target: "/etc/sysconfig/network-scripts/ifcfg-#{deviceName}"
+                content: """
+                NM_CONTROLLED=yes
+                BOOTPROTO=none
+                ONBOOT=yes
+                IPADDR=#{configNic.ip}
+                NETMASK=#{configNic.netmask}
+                DEVICE=#{deviceName}
+                PEERDNS=no
+                """
         # Create proxy device
-        for device, configproxy of config.proxy
+        for deviceName, configProxy of containerConfig.proxy
           # todo: add host detection and port forwarding to VirtualBox
           # VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
-          @lxd.config.device
+          await @lxd.config.device
+            metadata:
+              header: "Device #{deviceName} proxy"
             config:
-              header: "Device #{device} proxy"
-              container: container
-              device: device
+              container: containerName
+              device: deviceName
               type: 'proxy'
-              config: configproxy
+              properties: configProxy
         # Start container
-        @lxd.start
-          header: 'Start'
-          container: container
+        await @lxd.start
+          metadata:
+            header: 'Start'
+          container: containerName
         # Wait until container is running
-        @execute.wait
-          command: "lxc info #{container} | grep 'Status: Running'"
-        @network.tcp.wait
+        await @execute.wait
+          command: "lxc info #{containerName} | grep 'Status: Running'"
+        await @network.tcp.wait
           host: 'linuxfoundation.org'
           port: 80
           # timeout: 5000
         # Not sure why openssl is required
-        @lxd.exec
-          header: 'OpenSSL'
-          container: container
+        await @lxd.exec
+          metadata:
+            header: 'OpenSSL'
+          container: containerName
           command: """
           #yum update -y
           yum install -y openssl
@@ -248,10 +249,11 @@ containers:
             sleep: 5000
           trap: true
         # Enable SSH
-        if config.ssh.enabled
-          @lxd.exec
-            header: 'SSH'
-            container: container
+        if config.ssh?.enabled
+          await @lxd.exec
+            metadata:
+              header: 'SSH'
+            container: containerName
             command: """
             # systemctl status sshd
             # yum install -y openssh-server
@@ -272,54 +274,66 @@ containers:
             trap: true
             code_skipped: 42
         # Create users
-        for user, configuser of config.user
-          header: "User #{user}"
-          @lxd.exec
-            header: 'Create'
-            container: container
+        for userName, configUser of containerConfig.user then await @call
+          metadata:
+            header: "User #{userName}"
+        , ->
+          await @lxd.exec
+            metadata:
+              header: 'Create'
+            container: containerName
             command: """
-            id #{user} && exit 42
-            useradd --create-home --system #{user}
-            mkdir -p /home/#{user}/.ssh
-            chown #{user}.#{user} /home/#{user}/.ssh
-            chmod 700 /home/#{user}/.ssh
+            id #{userName} && exit 42
+            useradd --create-home --system #{userName}
+            mkdir -p /home/#{userName}/.ssh
+            chown #{userName}.#{userName} /home/#{userName}/.ssh
+            chmod 700 /home/#{userName}/.ssh
             """
             trap: true
             code_skipped: 42
           # Enable sudo access
-          if configuser.sudo
-            @lxd.exec
+          await @lxd.exec
+            if: configUser.sudo
+            metadata:
               header: 'Sudo'
-              container: container
-              command: """
-              yum install -y sudo
-              command -v sudo
-              cat /etc/sudoers | grep "#{user}" && exit 42
-              echo "#{user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-              """
-              trap: true
-              code_skipped: 42
+            container: containerName
+            command: """
+            yum install -y sudo
+            command -v sudo
+            cat /etc/sudoers | grep "#{userName}" && exit 42
+            echo "#{userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+            """
+            trap: true
+            code_skipped: 42
           # Add SSH public key to authorized_keys file
-          if configuser.authorized_keys
-            @lxd.file.push
+          await @lxd.file.push
+            if: configUser.authorized_keys
+            metadata:
               header: 'Authorize'
-              container: container
-              gid: "#{user}"
-              uid: "#{user}"
-              mode: 600
-              source: "#{configuser.authorized_keys}"
-              target: "/home/#{user}/.ssh/authorized_keys"
+            container: containerName
+            gid: "#{userName}"
+            uid: "#{userName}"
+            mode: 600
+            source: "#{configUser.authorized_keys}"
+            target: "/home/#{userName}/.ssh/authorized_keys"
       # Provision
-      if !!config_orig.provision
-        @call config_orig, config_orig.provision
+      if !!config.provision
+        await @call config, config.provision
       # Provision containers
-      if !!config_orig.provision_container
-        for container, config of config_orig.containers
-          @call container: container, config: config
-          , config_orig.provision_container
+      if !!config.provision_container
+        for containerName, containerConfig of config.containers
+          await @call
+            container: containerName
+          ,
+            containerConfig
+          , config.provision_container
 
 ## Export
 
     module.exports =
       handler: handler
       schema: schema
+
+## Dependencies
+
+    utils = require '../utils'

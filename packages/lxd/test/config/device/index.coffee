@@ -6,10 +6,9 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita
-  .execute
+before () ->
+  @timeout -1
+  await nikita.execute
     command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.config.device', ->
@@ -25,38 +24,13 @@ describe 'lxd.config.device', ->
         container: 'c1'
         image: 'ubuntu:'
       .lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'invalid'
-          config:
-            prop: '/tmp'
+        container: 'c1'
+        device: 'test'
+        type: 'invalid'
+        properties:
+          prop: '/tmp'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: [
-          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `lxd.config.device`:'
-          '#/oneOf config should match exactly one schema in oneOf, passingSchemas is null;'
-          '#/oneOf/0/properties/config/const config.config should be equal to constant, allowedValue is {};'
-          '#/oneOf/0/properties/type/const config.type should be equal to constant, allowedValue is "none";'
-          '#/oneOf/1/properties/type/const config.type should be equal to constant, allowedValue is "nic";'
-          '#/oneOf/10/properties/config/required config.config should have required property \'nictype\';'
-          '#/oneOf/10/properties/config/required config.config should have required property \'parent\';'
-          '#/oneOf/10/properties/type/const config.type should be equal to constant, allowedValue is "infiniband";'
-          '#/oneOf/2/properties/config/required config.config should have required property \'path\';'
-          '#/oneOf/2/properties/config/required config.config should have required property \'source\';'
-          '#/oneOf/2/properties/type/const config.type should be equal to constant, allowedValue is "disk";'
-          '#/oneOf/3/properties/type/const config.type should be equal to constant, allowedValue is "unix-char";'
-          '#/oneOf/4/properties/type/const config.type should be equal to constant, allowedValue is "unix-block";'
-          '#/oneOf/5/properties/type/const config.type should be equal to constant, allowedValue is "usb";'
-          '#/oneOf/6/properties/type/const config.type should be equal to constant, allowedValue is "gpu";'
-          '#/oneOf/7/properties/config/required config.config should have required property \'connect\';'
-          '#/oneOf/7/properties/config/required config.config should have required property \'listen\';'
-          '#/oneOf/7/properties/type/const config.type should be equal to constant, allowedValue is "proxy";'
-          '#/oneOf/8/properties/config/required config.config should have required property \'path\';'
-          '#/oneOf/8/properties/type/const config.type should be equal to constant, allowedValue is "unix-hotplug";'
-          '#/oneOf/9/properties/type/const config.type should be equal to constant, allowedValue is "tpm".'
-        ].join ' '
 
     it 'Fail for absence of required config properties', ->
       nikita
@@ -67,12 +41,11 @@ describe 'lxd.config.device', ->
         container: 'c1'
         image: 'ubuntu:'
       .lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'disk'
-          config:
-            prop: '/tmp'
+        container: 'c1'
+        device: 'test'
+        type: 'disk'
+        properties:
+          prop: '/tmp'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
 
@@ -85,13 +58,12 @@ describe 'lxd.config.device', ->
         container: 'c1'
         image: 'ubuntu:'
       .lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'disk'
-          config:
-            source: 1
-            path: 1
+        container: 'c1'
+        device: 'test'
+        type: 'disk'
+        properties:
+          source: 1
+          path: 1
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
 
@@ -108,13 +80,12 @@ describe 'lxd.config.device', ->
           image: 'ubuntu:'
           container: 'c1'
         {status} = await @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'test'
-            type: 'unix-char'
-            config:
-              source: '/dev/urandom'
-              path: '/testrandom'
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          properties:
+            source: '/dev/urandom'
+            path: '/testrandom'
         status.should.be.true()
         {status} = await @execute
           command: "lxc config device list c1 | grep test"
@@ -131,21 +102,19 @@ describe 'lxd.config.device', ->
           image: 'ubuntu:'
           container: 'c1'
         @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'test'
-            type: 'unix-char'
-            config:
-              source: '/dev/urandom'
-              path: '/testrandom'
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          properties:
+            source: '/dev/urandom'
+            path: '/testrandom'
         {status} = await @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'test'
-            type: 'unix-char'
-            config:
-              source: '/dev/urandom'
-              path: '/testrandom'
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          properties:
+            source: '/dev/urandom'
+            path: '/testrandom'
         status.should.be.false()
 
     they 'Update device configuration', ({ssh}) ->
@@ -159,20 +128,18 @@ describe 'lxd.config.device', ->
           image: 'ubuntu:'
           container: 'c1'
         @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'test'
-            type: 'unix-char'
-            config:
-              source: '/dev/urandom1'
-              path: '/testrandom1'
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          properties:
+            source: '/dev/urandom1'
+            path: '/testrandom1'
         {status} = await @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'test'
-            type: 'unix-char'
-            config:
-              source: '/dev/null'
+          container: 'c1'
+          device: 'test'
+          type: 'unix-char'
+          properties:
+            source: '/dev/null'
         status.should.be.true()
         {status} = await @execute
           command: "lxc config device show c1 | grep 'source: /dev/null'"
@@ -189,13 +156,12 @@ describe 'lxd.config.device', ->
           image: 'ubuntu:'
           container: 'c1'
         @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'vpn'
-            type: 'proxy'
-            config:
-              listen: 'udp:127.0.0.1:1195'
-              connect: 'udp:127.0.0.999:1194'
+          container: 'c1'
+          device: 'vpn'
+          type: 'proxy'
+          properties:
+            listen: 'udp:127.0.0.1:1195'
+            connect: 'udp:127.0.0.999:1194'
         .should.be.rejectedWith
           message: [
             'Error: Invalid devices:'
@@ -215,21 +181,19 @@ describe 'lxd.config.device', ->
           image: 'ubuntu:'
           container: 'c1'
         @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'vpn'
-            type: 'proxy'
-            config:
-              listen: 'udp:127.0.0.1:1195'
-              connect: 'udp:127.0.0.1:1194'
+          container: 'c1'
+          device: 'vpn'
+          type: 'proxy'
+          properties:
+            listen: 'udp:127.0.0.1:1195'
+            connect: 'udp:127.0.0.1:1194'
         @lxd.config.device
-          config:
-            container: 'c1'
-            device: 'vpn'
-            type: 'proxy'
-            config:
-              listen: 'udp:127.0.0.1:1195'
-              connect: 'udp:127.0.0.999:1194'
+          container: 'c1'
+          device: 'vpn'
+          type: 'proxy'
+          properties:
+            listen: 'udp:127.0.0.1:1195'
+            connect: 'udp:127.0.0.999:1194'
         .should.be.rejectedWith
           message: [
             'Error: Invalid devices:'

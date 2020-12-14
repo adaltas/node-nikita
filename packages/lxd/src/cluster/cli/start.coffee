@@ -1,5 +1,6 @@
 
-nikita = require 'nikita'
+nikita = require '@nikitajs/engine/src'
+require '@nikitajs/lxd/src/register'
 path = require 'path'
 
 key = path.relative process.cwd(), "#{__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key"

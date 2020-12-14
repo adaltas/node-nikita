@@ -41,7 +41,7 @@
   "dependencies": {
     "js-yaml": "^3.14.0",
     "object-diff": "^0.0.4",
-    "parameters": "^0.7.3"
+    "shell": "^0.8.4"
   },
   "peerDependencies": {
     "@nikitajs/engine": "^0.9.7"

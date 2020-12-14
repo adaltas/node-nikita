@@ -3,6 +3,10 @@
 
 // Print the process limit associated with a running container.
 
+// Note, the command must be executed on the host container of the machine. When
+// using a remote LXD server or cluster, you must know on which node the machine is running
+// and run the action in this node.
+
 // ## Output
 
 // * `error` (object)
@@ -23,7 +27,7 @@
 // ```
 
 // ## Schema
-var handler, schema, utils;
+var errors, handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -71,8 +75,16 @@ sudo prlimit -p $(lxc info ${config.container} | awk '$1==\"Pid:\"{print $2}')`
   } catch (error) {
     err = error;
     if (err.exit_code === 3) {
-      throw Error('Invalid Requirement: this action requires prlimit installed on the host');
+      err = errors.NIKITA_LXC_PRLIMIT_MISSING();
     }
+    throw err;
+  }
+};
+
+// ## Errors
+errors = {
+  NIKITA_LXC_PRLIMIT_MISSING: function() {
+    return utils.error('NIKITA_LXC_PRLIMIT_MISSING', ['this action requires prlimit installed on the host']);
   }
 };
 

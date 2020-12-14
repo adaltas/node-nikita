@@ -49,18 +49,15 @@ nikita.log.cli({
       },
       nic: {
         eth0: {
-          config: {
-            name: 'eth0',
-            nictype: 'bridged',
-            parent: 'lxdbr0public'
-          }
+          name: 'eth0',
+          nictype: 'bridged',
+          parent: 'lxdbr0public'
         },
         eth1: {
-          config: {
-            name: 'eth1',
-            nictype: 'bridged',
-            parent: 'lxdbr1private'
-          },
+          name: 'eth1',
+          nictype: 'bridged',
+          parent: 'lxdbr1private',
+          // Custom properties from nikita
           ip: '10.10.10.11',
           netmask: '255.255.255.0'
         }
@@ -91,18 +88,15 @@ nikita.log.cli({
       },
       nic: {
         eth0: {
-          config: {
-            name: 'eth0',
-            nictype: 'bridged',
-            parent: 'lxdbr0public'
-          }
+          name: 'eth0',
+          nictype: 'bridged',
+          parent: 'lxdbr0public'
         },
         eth1: {
-          config: {
-            name: 'eth1',
-            nictype: 'bridged',
-            parent: 'lxdbr1private'
-          },
+          name: 'eth1',
+          nictype: 'bridged',
+          parent: 'lxdbr1private',
+          // Custom properties from nikita
           ip: '10.10.10.12',
           netmask: '255.255.255.0'
         }
@@ -133,18 +127,15 @@ nikita.log.cli({
       },
       nic: {
         eth0: {
-          config: {
-            name: 'eth0',
-            nictype: 'bridged',
-            parent: 'lxdbr0public'
-          }
+          name: 'eth0',
+          nictype: 'bridged',
+          parent: 'lxdbr0public'
         },
         eth1: {
-          config: {
-            name: 'eth1',
-            nictype: 'bridged',
-            parent: 'lxdbr1private'
-          },
+          name: 'eth1',
+          nictype: 'bridged',
+          parent: 'lxdbr1private',
+          // Custom properties from nikita
           ip: '10.10.10.13',
           netmask: '255.255.255.0'
         }

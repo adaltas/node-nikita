@@ -25,12 +25,11 @@ describe 'lxd.storage', ->
       await @lxd.storage.delete
         name: "teststorage0"
       {status} = await @lxd.storage
-        config:
-          name: "teststorage0"
-          driver: "zfs"
-          config:
-            size: '10GB'
-            'zfs.clone_copy': false
+        name: "teststorage0"
+        driver: "zfs"
+        properties:
+          size: '10GB'
+          'zfs.clone_copy': false
       status.should.be.true()
 
   they 'Storage already created', ({ssh}) ->
@@ -55,16 +54,14 @@ describe 'lxd.storage', ->
       await @lxd.storage.delete
         name: "teststorage0"
       await @lxd.storage
-        config:
-          name: "teststorage0"
-          driver: "zfs"
-          config:
-            size: "20GB"
+        name: "teststorage0"
+        driver: "zfs"
+        properties:
+          size: "20GB"
       {status} = await @lxd.storage
-        config:
-          name: "teststorage0"
-          driver: "zfs"
-          config:
-            size: "10GB"
-            'zfs.clone_copy': false
+        name: "teststorage0"
+        driver: "zfs"
+        properties:
+          size: "10GB"
+          'zfs.clone_copy': false
       status.should.be.true()

@@ -250,6 +250,6 @@ module.exports = {
 // data-type[1]
 
 // ## Dependencies
-utils = require('@nikitajs/engine/src/utils');
+utils = require('@nikitajs/engine/lib/utils');
 
 ({mutate} = require('mixme'));

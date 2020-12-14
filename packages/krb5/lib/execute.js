@@ -110,4 +110,4 @@ module.exports = {
 // ## Dependencies
 ({mutate} = require('mixme'));
 
-utils = require('@nikitajs/engine/src/utils');
+utils = require('@nikitajs/engine/lib/utils');

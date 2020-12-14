@@ -7,9 +7,7 @@ return unless tags.lxd
 
 before ->
   @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
+  await nikita.execute "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.config.device.delete', ->
 
@@ -39,13 +37,13 @@ describe 'lxd.config.device.delete', ->
         image: 'ubuntu:'
         container: 'c1'
       @lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'unix-char'
-          config:
-            source: '/dev/urandom'
-            path: '/testrandom'
+        metadata: debug: true
+        container: 'c1'
+        device: 'test'
+        type: 'unix-char'
+        properties:
+          source: '/dev/urandom'
+          path: '/testrandom'
       {status} = await @lxd.config.device.delete
         device: 'test'
         container: 'c1'

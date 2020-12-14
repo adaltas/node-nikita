@@ -9,17 +9,17 @@ Show full device configuration for containers or profiles.
   Error object if any.
 * `result.status` (boolean)
   True if the device was created or the configuraion updated.
-* `result.config` (object)   
+* `result.properties` (object)   
   Device configuration.
 
 ## Example
 
 ```js
-const {config} = await nikita.lxd.config.device.show({
+const {properties} = await nikita.lxd.config.device.show({
   container: 'container1',
   device: 'vpn'
 })
-console.info(config)
+console.info(properties)
 // { connect: "udp:127.0.0.1:1194",
 // listen: "udp:51.68.116.44:1194",
 // type: proxy } }
@@ -42,16 +42,12 @@ console.info(config)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd config.device.show", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/show"
-      {stdout} = await @execute
-        command: [
-          'lxc', 'query'
-          '/' + [
-            '1.0', 'instances', config.container
-          ].join '/'
-        ].join ' '
-      stdout = JSON.parse stdout
-      status: true, config: stdout.devices[config.device]
+      {data} = await @lxd.query
+        path: '/' + [
+          '1.0', 'instances', config.container
+        ].join '/'
+      status: true
+      properties: data.devices[config.device]
 
 ## Exports
 

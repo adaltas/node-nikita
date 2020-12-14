@@ -24,12 +24,11 @@ describe 'lxd.network.create', ->
       @lxd.network.delete
         network: "testnet0"
       {status} = await @lxd.network
-        config:
-          network: "testnet0"
-          config:
-            'ipv4.address': "178.16.0.1/24"
-            'ipv4.dhcp': false
-            'bridge.mtu': 2000
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
+          'ipv4.dhcp': false
+          'bridge.mtu': 2000
       status.should.be.true()
 
   they 'Network already created', ({ssh}) ->
@@ -44,7 +43,7 @@ describe 'lxd.network.create', ->
         network: "testnet0"
       status.should.be.false()
 
-  they 'Update a network', ({ssh}) ->
+  they 'Add new properties', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
@@ -53,11 +52,35 @@ describe 'lxd.network.create', ->
       @lxd.network
         network: "testnet0"
       {status} = await @lxd.network
-        config:
-          network: "testnet0"
-          config:
-            'ipv4.address': "178.16.0.1/24"
-            'ipv4.dhcp': false
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
+          'ipv4.dhcp': false
+      status.should.be.true()
+
+  they 'Change a property', ({ssh}) ->
+    nikita
+      ssh: ssh
+    , ->
+      @lxd.network.delete
+        network: "testnet0"
+      {status} = await @lxd.network
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
+          'ipv4.dhcp': true
+      status.should.be.true()
+      {status} = await @lxd.network
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
+          'ipv4.dhcp': true
+      status.should.be.false()
+      {status} = await @lxd.network
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
+          'ipv4.dhcp': false
       status.should.be.true()
 
   they 'Configuration unchanged', ({ssh}) ->
@@ -65,13 +88,11 @@ describe 'lxd.network.create', ->
       ssh: ssh
     , ->
       @lxd.network
-        config:
-          network: "testnet0"
-          config:
-            'ipv4.address': "178.16.0.1/24"
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
       {status} = await @lxd.network
-        config:
-          network: "testnet0"
-          config:
-            'ipv4.address': "178.16.0.1/24"
+        network: "testnet0"
+        properties:
+          'ipv4.address': "178.16.0.1/24"
       status.should.be.false()
