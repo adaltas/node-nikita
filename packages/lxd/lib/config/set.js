@@ -9,7 +9,7 @@
 // const {status} = await nikita.lxd.config.set({
 //   config: {
 //     name: "my_container",
-//     config: {
+//     properties: {
 //       'boot.autostart.priority': 100
 //     }
 //   }
@@ -26,7 +26,7 @@ schema = {
     'container': {
       $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
     },
-    'config': {
+    'properties': {
       type: 'object',
       patternProperties: {
         '': {
@@ -36,13 +36,13 @@ schema = {
       description: `One or multiple keys to set.`
     }
   },
-  required: ['container', 'config']
+  required: ['container', 'properties']
 };
 
 // ## Handler
 handler = async function({config}) {
-  var changes, k, key, keys, ref, status, stdout, v, value;
-  ref = config.config;
+  var changes, k, key, keys, properties, ref, status, stdout, v, value;
+  ref = config.properties;
   // log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
   // Normalize config
   for (k in ref) {
@@ -50,7 +50,7 @@ handler = async function({config}) {
     if (typeof v === 'string') {
       continue;
     }
-    config.config[k] = v.toString();
+    config.properties[k] = v.toString();
   }
   keys = {};
   ({stdout} = (await this.execute({
@@ -58,8 +58,10 @@ handler = async function({config}) {
     shy: true,
     code_skipped: 42
   })));
-  stdout = yaml.safeLoad(stdout);
-  changes = diff(stdout.config, merge(stdout.config, config.config));
+  ({
+    config: properties
+  } = yaml.safeLoad(stdout));
+  changes = diff(properties, merge(properties, config.properties));
   for (key in changes) {
     value = changes[key];
     // if changes is empty status is false because no command were executed

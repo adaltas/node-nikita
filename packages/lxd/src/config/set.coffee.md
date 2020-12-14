@@ -9,7 +9,7 @@ Set container or server configuration keys.
 const {status} = await nikita.lxd.config.set({
   config: {
     name: "my_container",
-    config: {
+    properties: {
       'boot.autostart.priority': 100
     }
   }
@@ -24,22 +24,23 @@ console.info(`Property was set: ${status}`)
       properties:
         'container':
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'config':
+        'properties':
           type: 'object'
-          patternProperties: '': type: ['string', 'boolean', 'number']
+          patternProperties:
+            '': type: ['string', 'boolean', 'number']
           description: """
           One or multiple keys to set.
           """
-      required: ['container', 'config']
+      required: ['container', 'properties']
 
 ## Handler
 
     handler = ({config}) ->
       # log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
       # Normalize config
-      for k, v of config.config
+      for k, v of config.properties
         continue if typeof v is 'string'
-        config.config[k] = v.toString()
+        config.properties[k] = v.toString()
       keys = {}
       {stdout} = await @execute
         command: """
@@ -50,8 +51,8 @@ console.info(`Property was set: ${status}`)
         """
         metadata: shy: true
         code_skipped: 42
-      stdout = yaml.safeLoad stdout
-      changes = diff stdout.config, merge stdout.config, config.config
+      {config: properties} = yaml.safeLoad stdout
+      changes = diff properties, merge properties, config.properties
       # if changes is empty status is false because no command were executed
       # Note, it doesnt seem possible to set multiple keys in one command
       {status} = await @execute (

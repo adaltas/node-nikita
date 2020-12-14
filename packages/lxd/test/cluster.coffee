@@ -1,26 +1,70 @@
 
 nikita = require '@nikitajs/engine/src'
-{tags} = require './test'
+{tags, ssh} = require './test'
+they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
 
 before ->
-  @timeout(-1)
+  @timeout -1
   await nikita.execute
     command: "lxc image copy images:centos/7 `lxc remote get-default`:"
 
 describe 'lxd.cluster', ->
+  
+  describe 'validation', ->
+    
+    it 'validate container.image', ->
+      nikita.lxd.cluster
+        handler: (->)
+        config: 
+          containers:
+            c1: {}
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+      nikita.lxd.cluster
+        handler: (->)
+        config: 
+          containers:
+            c1: 
+              image: 'images:centos/7'
+      .should.be.fulfilled()
+  
+    it 'validate disk', ->
+      # Source is invalid
+      nikita.lxd.cluster
+        handler: (->)
+        config: 
+          containers:
+            c1:
+              image: 'images:centos/7'
+              disk:
+                nikitadir: true, path: '/nikita'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+      nikita.lxd.cluster
+        handler: (->)
+        config: 
+          containers:
+            c1:
+              image: 'images:centos/7'
+              disk:
+                nikitadir: source: '/nikita', path: '/nikita'
+      .should.be.fulfilled()
 
-  it 'Create container with devices', ->
-    nikita ->
-      @lxd.delete
+  they 'Create container with devices', ({ssh}) ->
+    @timeout -1 # yum install take a lot of time
+    clean = ->
+      await @lxd.delete
         container: 'c1'
         force: true
-      @lxd.network.delete
+      await @lxd.network.delete
         network: 'lxdbr0public'
-      @lxd.network.delete
+      await @lxd.network.delete
         network: 'lxdbr1private'
-      @lxd.cluster
+    nikita ->
+      @call clean
+      await @lxd.cluster
         networks:
           lxdbr0public:
             'ipv4.address': '172.16.0.1/24'
@@ -39,33 +83,34 @@ describe 'lxd.cluster', ->
               nikitadir: source: '/nikita', path: '/nikita'
             nic:
               eth0:
-                config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+                name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
               eth1:
-                config: name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
+                name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
                 ip: '10.10.10.11', netmask: '255.255.255.0'
-      {status} = await @lxd.config.device.exists
+      await @wait time: 200
+      {exists} = await @lxd.config.device.exists
         container: 'c1'
         device: 'nikitadir'
-      status.should.be.true()
-      {status} = await @lxd.config.device.exists
+      exists.should.be.true()
+      {exists} = await @lxd.config.device.exists
         container: 'c1'
         device: 'eth0'
-      status.should.be.true()
-      {status} = await @lxd.config.device.exists
+      exists.should.be.true()
+      {exists} = await @lxd.config.device.exists
         container: 'c1'
         device: 'eth1'
-      status.should.be.true()
+      exists.should.be.true()
+      @call clean
 
-  it.skip 'prepare ssh', ->
-    @timeout(-1)
+  they 'prepare ssh', ({ssh}) ->
+    @timeout -1
     handler = ({config}) ->
-      @
-      .lxd.delete
+      @lxd.delete
         container: 'c1'
         force: true
-      .lxd.network.delete
+      @lxd.network.delete
         network: 'lxdbr1private'
-      .lxd.cluster
+      @lxd.cluster
         networks:
           lxdbr1private:
             'ipv4.address': '10.10.10.1/24'
@@ -77,11 +122,11 @@ describe 'lxd.cluster', ->
             image: 'images:centos/7'
             nic:
               eth1:
-                config: name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
+                name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
                 ip: '10.10.10.11', netmask: '255.255.255.0'
             ssh:
               enabled: config.enabled
-      .network.tcp.assert
+      @network.tcp.assert
         host: '10.10.10.11'
         port: 22
         not: not config.enabled

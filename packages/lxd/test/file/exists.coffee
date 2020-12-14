@@ -27,10 +27,10 @@ describe 'lxd.file.exists', ->
         container: 'c1'
       @execute
         command: "lxc exec c1 -- touch /root/a_file"
-      {status} = await @lxd.file.exists
+      {exists} = await @lxd.file.exists
         container: 'c1'
         target: '/root/a_file'
-      status.should.be.true()
+      exists.should.be.true()
   
 
   they 'when missing', ({ssh}) ->
@@ -45,8 +45,8 @@ describe 'lxd.file.exists', ->
         container: 'c1'
       @lxd.start
         container: 'c1'
-      {status} = await @lxd.file.exists
+      {exists} = await @lxd.file.exists
         container: 'c1'
         target: '/root/a_file'
-      status.should.be.false()
+      exists.should.be.false()
   

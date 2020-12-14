@@ -6,10 +6,8 @@ they = require('ssh2-they').configure ssh
 return unless tags.lxd_prlimit
 
 before ->
-  @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
+  @timeout -1
+  await nikita.execute "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.goodie.prlimit', ->
 
@@ -25,5 +23,8 @@ describe 'lxd.goodie.prlimit', ->
         container: 'c1'
       @lxd.start
         container: 'c1'
-      await @lxd.goodies.prlimit
-        container: 'c1'
+      try
+        await @lxd.goodies.prlimit
+          container: 'c1'
+      catch err
+        throw err unless err.code is 'NIKITA_LXC_PRLIMIT_MISSING'

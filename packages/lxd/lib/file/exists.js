@@ -38,12 +38,15 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
-  // log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
-  return this.execute({
+handler = async function({config}) {
+  var status;
+  ({status} = (await this.execute({
     command: `lxc exec ${config.container} -- stat ${config.target}`,
     code_skipped: 1
-  });
+  })));
+  return {
+    exists: status
+  };
 };
 
 // ## Export

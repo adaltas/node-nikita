@@ -16,7 +16,7 @@
 // const {status} = await nikita.lxd.storage({
 //   name: "system",
 //   driver: "zfs",
-//   config: {
+//   properties: {
 //     source: "syspool/lxd"
 //   }
 // })
@@ -38,7 +38,7 @@ schema = {
       enum: ["btrfs", "ceph", "cephfs", "dir", "lvm", "zfs"],
       description: `The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs.`
     },
-    'config': {
+    'properties': {
       type: 'object',
       patternProperties: {
         '': {
@@ -55,8 +55,8 @@ fields](https://lxd.readthedocs.io/en/latest/storage/).`
 
 // ## Handler
 handler = async function({config}) {
-  var changes, code, k, key, ref, status, stdout, v, value;
-  ref = config.config;
+  var changes, code, currentProperties, k, key, ref, status, stdout, v, value;
+  ref = config.properties;
   // log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
   // Normalize config
   for (k in ref) {
@@ -64,7 +64,7 @@ handler = async function({config}) {
     if (typeof v === 'string') {
       continue;
     }
-    config.config[k] = v.toString();
+    config.properties[k] = v.toString();
   }
   // Check if exists
   ({stdout, code} = (await this.execute({
@@ -75,10 +75,10 @@ ${[
       'create',
       config.name,
       config.driver,
-      ((function() {
+      ...((function() {
         var ref1,
       results;
-        ref1 = config.config;
+        ref1 = config.properties;
         results = [];
         for (key in ref1) {
           value = ref1[key];
@@ -86,7 +86,7 @@ ${[
       '\\\'')}'`);
         }
         return results;
-      })()).join(' ')
+      })())
     ].join(' ')}`,
     code_skipped: 42
   })));
@@ -94,11 +94,13 @@ ${[
     return;
   }
   // Storage already exists, find the changes
-  if (!(config != null ? config.config : void 0)) {
+  if (!(config != null ? config.properties : void 0)) {
     return;
   }
-  stdout = yaml.safeLoad(stdout);
-  changes = diff(stdout.config, config.config);
+  ({
+    config: currentProperties
+  } = yaml.safeLoad(stdout));
+  changes = diff(currentProperties, config.properties);
   for (key in changes) {
     value = changes[key];
     // if changes is empty status is false because no command were executed

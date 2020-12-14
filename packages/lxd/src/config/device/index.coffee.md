@@ -14,14 +14,12 @@ Create a device or update its configuration.
 
 ```js
 const {status} = await nikita.lxd.config.device({
-  config: {
-    container: 'container1',
-    device: 'root',
-    type: 'disk',
-    config: {
-      'pool': 'system',
-      'size': '10GB'
-    }
+  container: 'container1',
+  device: 'root',
+  type: 'disk',
+  properties: {
+    'pool': 'system',
+    'size': '10GB'
   }
 })
 console.info(`Disk was created: ${status}`)
@@ -39,7 +37,7 @@ console.info(`Disk was created: ${status}`)
           description: """
           Name of the device in LXD configuration, for example "eth0".
           """
-        'config':
+        'properties':
           type: 'object'
           patternProperties: '': type: ['string', 'boolean', 'number']
           description: """
@@ -52,14 +50,24 @@ console.info(`Disk was created: ${status}`)
           types](https://lxd.readthedocs.io/en/latest/instances/#device-types).
           """
       oneOf: [
+        { $ref: '#/definitions/disk' }
+        { $ref: '#/definitions/infiniband' }
+        { $ref: '#/definitions/gpu' }
+        { $ref: '#/definitions/nic' }
+        { $ref: '#/definitions/none' }
+        { $ref: '#/definitions/proxy' }
+        { $ref: '#/definitions/tpm' }
+        { $ref: '#/definitions/unix-block' }
+        { $ref: '#/definitions/unix-char' }
+        { $ref: '#/definitions/unix-hotplug' }
+        { $ref: '#/definitions/usb' }
+      ]
+      required: ['container', 'device', 'properties', 'type']
+      definitions:
+        'disk':
           properties:
-            'config': const: {}
-            'type': const: 'none'
-        ,
-          properties: 'type': const: 'nic'
-        ,
-          properties:
-            'config':
+            'properties':
+              type: 'object'
               properties:
                 'path':
                   type: 'string'
@@ -74,18 +82,80 @@ console.info(`Disk was created: ${status}`)
                   device.
                   """
               required: ['path', 'source']
-            'type': const: 'disk'
-        ,
-          properties: 'type': const: 'unix-char'
-        ,
-          properties: 'type': const: 'unix-block'
-        ,
-          properties: 'type': const: 'usb'
-        ,
-          properties: 'type': const: 'gpu'
-        ,
+            'type':
+              const: 'disk'
+        'infiniband':
           properties:
-            'config':
+            'properties':
+              properties:
+                'nictype':
+                  type: 'string'
+                  enum: ['physical', 'sriov']
+                  description: """
+                  The device type, one of "physical", or "sriov".
+                  """
+                'parent':
+                  type: 'string'
+                  description: """
+                  The name of the host device or bridge.
+                  """
+              required: ['nictype', 'parent']
+            'type':
+              const: 'infiniband'
+        'gpu':
+          properties:
+            'type':
+              const: 'gpu'
+        'nic':
+          properties:
+            'properties':
+              type: 'object'
+              properties:
+                'nictype':
+                  type: 'string'
+                  enum: ['physical', 'bridged', 'macvlan', 'p2p', 'sriov']
+                  description: """
+                  LXD supports different kind of [network
+                  devices](https://lxd.readthedocs.io/en/stable-3.0/containers/#type-nic)
+                  and each type of network interface types have different
+                  additional properties.
+                  """
+              oneOf: [
+                { $ref: '#/definitions/nic_physical' }
+                { $ref: '#/definitions/nic_bridged' }
+                { $ref: '#/definitions/nic_macvlan' }
+                { $ref: '#/definitions/nic_p2p' }
+                { $ref: '#/definitions/nic_sriov' }
+              ]
+            'type':
+              const: 'nic'
+        'nic_physical':
+          properties:
+            'nictype':
+              const: 'physical'
+        'nic_bridged':
+          properties:
+            'nictype':
+              const: 'bridged'
+        'nic_macvlan':
+          properties:
+            'nictype':
+              const: 'macvlan'
+        'nic_p2p':
+          properties:
+            'nictype':
+              const: 'p2p'
+        'nic_sriov':
+          properties:
+            'nictype':
+              const: 'sriov'
+        'none':
+          properties:
+            'type':
+              const: 'none'
+        'proxy':
+          properties:
+            'properties':
               properties:
                 'connect':
                   type: 'string'
@@ -100,10 +170,23 @@ console.info(`Disk was created: ${status}`)
                   (<type>:<addr>:<port>[-<port>][,<port>])
                   """
               required: ['connect', 'listen']
-            'type': const: 'proxy'
-        ,
+            'type':
+              const: 'proxy'
+        'tpm':
           properties:
-            'config':
+            'type':
+              const: 'tpm'
+        'unix-block':
+          properties:
+            'type':
+              const: 'unix-block'
+        'unix-char':
+          properties:
+            'type':
+              const: 'unix-char'
+        'unix-hotplug':
+          properties:
+            'properties':
               properties:
                 'path':
                   type: 'string'
@@ -112,59 +195,43 @@ console.info(`Disk was created: ${status}`)
                   """
               required: ['path']
             'type': const: 'unix-hotplug'
-        ,
-          properties: 'type': const: 'tpm'
-        ,
+        'usb':
           properties:
-            'config':
-              properties:
-                'nictype':
-                  type: 'string'
-                  enum: ['physical', 'sriov']
-                  description: """
-                  The device type, one of "physical", or "sriov".
-                  """
-                'parent':
-                  type: 'string'
-                  description: """
-                  The name of the host device or bridge.
-                  """
-              required: ['nictype', 'parent']
-            'type': const: 'infiniband'
-      ]
-      required: ['container', 'config', 'device', 'type']
+            'type':
+              const: 'usb'
 
 ## Handler
 
     handler = ({config}) ->
       # log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
       # Normalize config
-      for k, v of config.config
+      for k, v of config.properties
         continue if typeof v is 'string'
-        config.config[k] = v.toString()
-      config_orig = config
-      {config} = await @lxd.config.device.show
+        config.properties[k] = v.toString()
+      {properties} = await @lxd.config.device.show
         container: config.container
         device: config.device
       try
-        unless config
+        unless properties
+          # Device not registed, we need to use `add`
           {status} = await @execute
             command: [
               'lxc', 'config', 'device', 'add',
-              config_orig.container
-              config_orig.device
-              config_orig.type
+              config.container
+              config.device
+              config.type
               ...(
-                "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config_orig.config
+                "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config.properties
               )
             ].join ' '
         else
-          changes = diff config, config_orig.config
+          # Device not registed, we need to use `set`
+          changes = diff properties, config.properties
           {status} = await @execute (
             command: [
               'lxc', 'config', 'device', 'set'
-              config_orig.container
-              config_orig.device
+              config.container
+              config.device
               key, "'#{value.replace '\'', '\\\''}'"
             ].join ' '
           ) for key, value of changes

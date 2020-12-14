@@ -33,9 +33,10 @@ console.info(`Network was created: ${status}`)
           description: """
           The network name to create.
           """
-        'config':
+        'properties':
           type: 'object'
-          patternProperties: '': type: ['string', 'boolean', 'number']
+          patternProperties:
+            '': type: ['string', 'boolean', 'number']
           description: """
           The network configuration, see [available
           fields](https://lxd.readthedocs.io/en/latest/networks/).
@@ -45,11 +46,10 @@ console.info(`Network was created: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
       # Normalize config
-      for k, v of config.config
+      for k, v of config.properties
         continue if typeof v is 'string'
-        config.config[k] = v.toString()
+        config.properties[k] = v.toString()
       # Command if the network does not yet exist
       {stdout, code, status} = await @execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented
@@ -62,7 +62,7 @@ console.info(`Network was created: ${status}`)
           'create'
           config.network
           ...(
-            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config.config
+            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of config.properties
           )
         ].join ' '}
         """
@@ -70,14 +70,13 @@ console.info(`Network was created: ${status}`)
       throw Error "This version of lxc does not support the network command." if code is 5
       return status: status unless code is 42 # was created
       # Network already exists, find the changes
-      return unless config?.config
-      config_orig = config
-      {config} = yaml.safeLoad stdout
-      changes = diff config, config_orig.config
+      return unless config?.properties
+      current = yaml.safeLoad stdout
+      changes = diff current.config, merge current.config, config.properties
       {status} = await @execute (
         command: [
           'lxc', 'network', 'set'
-          config_orig.network
+          config.network
           key, "'#{value.replace '\'', '\\\''}'"
         ].join ' '
       ) for key, value of changes
@@ -93,3 +92,4 @@ console.info(`Network was created: ${status}`)
 
     yaml = require 'js-yaml'
     diff = require 'object-diff'
+    {merge} = require 'mixme'

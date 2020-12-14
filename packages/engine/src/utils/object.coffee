@@ -44,6 +44,15 @@ module.exports =
     for k in keys
       return false if obj1[k] isnt obj2[k]
     return true
+  filter: (source, black, white) ->
+    black ?= []
+    obj = {}
+    # If white list, only use the selected list
+    # Otherwise clone it all
+    for key in (if white? then white else Object.keys(source))
+      # unless part of black list
+      obj[key] = source[key] if source.hasOwnProperty(key) and not black.includes(key)
+    obj
   snake_case: (source) ->
     obj = {}
     for key, value of source

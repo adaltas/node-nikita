@@ -24,11 +24,10 @@ describe 'lxd.config.set', ->
         image: 'ubuntu:'
         container: 'c1'
       {status} = await @lxd.config.set
-        config:
-          container: 'c1'
-          config:
-            'environment.MY_KEY_1': 'my value 1'
-            'environment.MY_KEY_2': 'my value 2'
+        container: 'c1'
+        properties:
+          'environment.MY_KEY_1': 'my value 1'
+          'environment.MY_KEY_2': 'my value 2'
       status.should.be.true()
       await @lxd.start
         container: 'c1'
@@ -52,14 +51,12 @@ describe 'lxd.config.set', ->
         image: 'ubuntu:'
         container: 'c1'
       {status} = await @lxd.config.set
-        config:
-          container: 'c1'
-          config:
-            'environment.MY_KEY_1': 'my value 1'
+        container: 'c1'
+        properties:
+          'environment.MY_KEY_1': 'my value 1'
       status.should.be.true()
       {status} = await @lxd.config.set
-        config:
-          container: 'c1'
-          config:
-            'environment.MY_KEY_1': 'my value 1'
+        container: 'c1'
+        properties:
+          'environment.MY_KEY_1': 'my value 1'
       status.should.be.false()

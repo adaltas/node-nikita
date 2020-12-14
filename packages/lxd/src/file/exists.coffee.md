@@ -37,12 +37,12 @@ console.info(`File exists: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
-      @execute
+      {status} = await @execute
         command: """
         lxc exec #{config.container} -- stat #{config.target}
         """
         code_skipped: 1
+      exists: status
 
 ## Export
 

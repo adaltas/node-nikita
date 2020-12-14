@@ -38,16 +38,16 @@ console.info(`Device was removed: ${status}`)
 
     handler = ({config}) ->
       # log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
-      config_orig = config
-      {config} = await @lxd.config.device.show
+      {properties} = await @lxd.config.device.show
+        metadata: debug: true
         container: config.container
         device: config.device
-      return status: false if not config
+      return status: false unless properties
       {status} = await @execute
         command: [
           'lxc', 'config', 'device', 'remove'
-          config_orig.container
-          config_orig.device
+          config.container
+          config.device
         ].join ' '
       status: status
 

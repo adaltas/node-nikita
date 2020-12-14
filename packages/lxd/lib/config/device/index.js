@@ -14,14 +14,12 @@
 
 // ```js
 // const {status} = await nikita.lxd.config.device({
-//   config: {
-//     container: 'container1',
-//     device: 'root',
-//     type: 'disk',
-//     config: {
-//       'pool': 'system',
-//       'size': '10GB'
-//     }
+//   container: 'container1',
+//   device: 'root',
+//   type: 'disk',
+//   properties: {
+//     'pool': 'system',
+//     'size': '10GB'
 //   }
 // })
 // console.info(`Disk was created: ${status}`)
@@ -40,7 +38,7 @@ schema = {
       type: 'string',
       description: `Name of the device in LXD configuration, for example "eth0".`
     },
-    'config': {
+    'properties': {
       type: 'object',
       patternProperties: {
         '': {
@@ -57,25 +55,45 @@ types](https://lxd.readthedocs.io/en/latest/instances/#device-types).`
   },
   oneOf: [
     {
-      properties: {
-        'config': {
-          const: {}
-        },
-        'type': {
-          const: 'none'
-        }
-      }
+      $ref: '#/definitions/disk'
     },
     {
-      properties: {
-        'type': {
-          const: 'nic'
-        }
-      }
+      $ref: '#/definitions/infiniband'
     },
     {
+      $ref: '#/definitions/gpu'
+    },
+    {
+      $ref: '#/definitions/nic'
+    },
+    {
+      $ref: '#/definitions/none'
+    },
+    {
+      $ref: '#/definitions/proxy'
+    },
+    {
+      $ref: '#/definitions/tpm'
+    },
+    {
+      $ref: '#/definitions/unix-block'
+    },
+    {
+      $ref: '#/definitions/unix-char'
+    },
+    {
+      $ref: '#/definitions/unix-hotplug'
+    },
+    {
+      $ref: '#/definitions/usb'
+    }
+  ],
+  required: ['container', 'device', 'properties', 'type'],
+  definitions: {
+    'disk': {
       properties: {
-        'config': {
+        'properties': {
+          type: 'object',
           properties: {
             'path': {
               type: 'string',
@@ -88,45 +106,123 @@ for containers).`
 device.`
             }
           },
-          required: ['path',
-    'source']
+          required: ['path', 'source']
         },
         'type': {
           const: 'disk'
         }
       }
     },
-    {
+    'infiniband': {
       properties: {
+        'properties': {
+          properties: {
+            'nictype': {
+              type: 'string',
+              enum: ['physical', 'sriov'],
+              description: `The device type, one of "physical", or "sriov".`
+            },
+            'parent': {
+              type: 'string',
+              description: `The name of the host device or bridge.`
+            }
+          },
+          required: ['nictype', 'parent']
+        },
         'type': {
-          const: 'unix-char'
+          const: 'infiniband'
         }
       }
     },
-    {
-      properties: {
-        'type': {
-          const: 'unix-block'
-        }
-      }
-    },
-    {
-      properties: {
-        'type': {
-          const: 'usb'
-        }
-      }
-    },
-    {
+    'gpu': {
       properties: {
         'type': {
           const: 'gpu'
         }
       }
     },
-    {
+    'nic': {
       properties: {
-        'config': {
+        'properties': {
+          type: 'object',
+          properties: {
+            'nictype': {
+              type: 'string',
+              enum: ['physical', 'bridged', 'macvlan', 'p2p', 'sriov'],
+              description: `LXD supports different kind of [network
+devices](https://lxd.readthedocs.io/en/stable-3.0/containers/#type-nic)
+and each type of network interface types have different
+additional properties.`
+            }
+          },
+          oneOf: [
+            {
+              $ref: '#/definitions/nic_physical'
+            },
+            {
+              $ref: '#/definitions/nic_bridged'
+            },
+            {
+              $ref: '#/definitions/nic_macvlan'
+            },
+            {
+              $ref: '#/definitions/nic_p2p'
+            },
+            {
+              $ref: '#/definitions/nic_sriov'
+            }
+          ]
+        },
+        'type': {
+          const: 'nic'
+        }
+      }
+    },
+    'nic_physical': {
+      properties: {
+        'nictype': {
+          const: 'physical'
+        }
+      }
+    },
+    'nic_bridged': {
+      properties: {
+        'nictype': {
+          const: 'bridged'
+        }
+      }
+    },
+    'nic_macvlan': {
+      properties: {
+        'nictype': {
+          const: 'macvlan'
+        }
+      }
+    },
+    'nic_p2p': {
+      properties: {
+        'nictype': {
+          const: 'p2p'
+        }
+      }
+    },
+    'nic_sriov': {
+      properties: {
+        'nictype': {
+          const: 'sriov'
+        }
+      }
+    },
+    'none': {
+      properties: {
+        'type': {
+          const: 'none'
+        }
+      }
+    },
+    'proxy': {
+      properties: {
+        'properties': {
           properties: {
             'connect': {
               type: 'string',
@@ -139,17 +235,37 @@ device.`
 (<type>:<addr>:<port>[-<port>][,<port>])`
             }
           },
-          required: ['connect',
-    'listen']
+          required: ['connect', 'listen']
         },
         'type': {
           const: 'proxy'
         }
       }
     },
-    {
+    'tpm': {
       properties: {
-        'config': {
+        'type': {
+          const: 'tpm'
+        }
+      }
+    },
+    'unix-block': {
+      properties: {
+        'type': {
+          const: 'unix-block'
+        }
+      }
+    },
+    'unix-char': {
+      properties: {
+        'type': {
+          const: 'unix-char'
+        }
+      }
+    },
+    'unix-hotplug': {
+      properties: {
+        'properties': {
           properties: {
             'path': {
               type: 'string',
@@ -163,44 +279,20 @@ device.`
         }
       }
     },
-    {
+    'usb': {
       properties: {
         'type': {
-          const: 'tpm'
-        }
-      }
-    },
-    {
-      properties: {
-        'config': {
-          properties: {
-            'nictype': {
-              type: 'string',
-              enum: ['physical',
-    'sriov'],
-              description: `The device type, one of "physical", or "sriov".`
-            },
-            'parent': {
-              type: 'string',
-              description: `The name of the host device or bridge.`
-            }
-          },
-          required: ['nictype',
-    'parent']
-        },
-        'type': {
-          const: 'infiniband'
+          const: 'usb'
         }
       }
     }
-  ],
-  required: ['container', 'config', 'device', 'type']
+  }
 };
 
 // ## Handler
 handler = async function({config}) {
-  var changes, config_orig, err, k, key, ref, status, v, value;
-  ref = config.config;
+  var changes, err, k, key, properties, ref, status, v, value;
+  ref = config.properties;
   // log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
   // Normalize config
   for (k in ref) {
@@ -208,28 +300,28 @@ handler = async function({config}) {
     if (typeof v === 'string') {
       continue;
     }
-    config.config[k] = v.toString();
+    config.properties[k] = v.toString();
   }
-  config_orig = config;
-  ({config} = (await this.lxd.config.device.show({
+  ({properties} = (await this.lxd.config.device.show({
     container: config.container,
     device: config.device
   })));
   try {
-    if (!config) {
+    if (!properties) {
+      // Device not registed, we need to use `add`
       ({status} = (await this.execute({
         command: [
           'lxc',
           'config',
           'device',
           'add',
-          config_orig.container,
-          config_orig.device,
-          config_orig.type,
+          config.container,
+          config.device,
+          config.type,
           ...((function() {
             var ref1,
           results;
-            ref1 = config_orig.config;
+            ref1 = config.properties;
             results = [];
             for (key in ref1) {
               value = ref1[key];
@@ -241,11 +333,12 @@ handler = async function({config}) {
         ].join(' ')
       })));
     } else {
-      changes = diff(config, config_orig.config);
+      // Device not registed, we need to use `set`
+      changes = diff(properties, config.properties);
       for (key in changes) {
         value = changes[key];
         ({status} = (await this.execute({
-          command: ['lxc', 'config', 'device', 'set', config_orig.container, config_orig.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+          command: ['lxc', 'config', 'device', 'set', config.container, config.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
         })));
       }
     }

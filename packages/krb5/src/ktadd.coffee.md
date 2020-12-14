@@ -144,5 +144,5 @@ data-type[1]
 ## Dependencies
 
     path = require 'path'
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require '@nikitajs/engine/lib/utils'
     {mutate} = require 'mixme'

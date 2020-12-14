@@ -23,10 +23,10 @@ describe 'lxd.config.device.exists', ->
       @lxd.init
         image: 'ubuntu:'
         container: 'c1'
-      {status} = await @lxd.config.device.exists
+      {exists} = await @lxd.config.device.exists
         container: 'c1'
         device: 'test'
-      status.should.be.false()
+      exists.should.be.false()
 
   they 'Device exists', ({ssh}) ->
     nikita
@@ -39,14 +39,13 @@ describe 'lxd.config.device.exists', ->
         image: 'ubuntu:'
         container: 'c1'
       @lxd.config.device
-        config:
-          container: 'c1'
-          device: 'test'
-          type: 'unix-char'
-          config:
-            source: '/dev/urandom'
-            path: '/testrandom'
-      {status} = await @lxd.config.device.exists
         container: 'c1'
         device: 'test'
-      status.should.be.true()
+        type: 'unix-char'
+        properties:
+          source: '/dev/urandom'
+          path: '/testrandom'
+      {exists} = await @lxd.config.device.exists
+        container: 'c1'
+        device: 'test'
+      exists.should.be.true()

@@ -1,7 +1,7 @@
 
-parameters = require 'parameters'
+shell = require 'shell'
 
-parameters
+shell
   name: 'lxdvmhost'
   description: "LXD VM host based on Virtual Box"
   commands:
@@ -15,7 +15,7 @@ parameters
         log:
           type: 'string'
           description: 'Path to the directory storing logs.'
-      route: require './start'
+      handler: require './start'
     'stop':
       description: 'Stop the cluster'
       options:
@@ -26,5 +26,5 @@ parameters
         log:
           type: 'string'
           description: 'Path to the directory storing logs.'
-      route: require './stop'
+      handler: require './stop'
 .route()
