@@ -12,7 +12,7 @@ describe 'tools.repo', ->
   they 'Write with source option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/repo"
       @file
@@ -38,7 +38,7 @@ describe 'tools.repo', ->
   they 'Write with content option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/repo"
       {status} = await @tools.repo
@@ -64,7 +64,7 @@ describe 'tools.repo', ->
   they 'delete files with replace option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/CentOS.repo"
@@ -93,7 +93,7 @@ describe 'tools.repo', ->
   they 'Download GPG Keys option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/hdp-test.repo"
@@ -115,7 +115,7 @@ describe 'tools.repo', ->
   they 'Download repo from remote location', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove '/etc/yum.repos.d/hdp.repo'
       {status} = await @tools.repo
@@ -129,7 +129,7 @@ describe 'tools.repo', ->
   they 'Do Not update Package', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @service.remove 'mongodb-org-shell'
@@ -183,7 +183,7 @@ describe 'tools.repo', ->
   they 'Update Package', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'

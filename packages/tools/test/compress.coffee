@@ -10,7 +10,7 @@ describe 'tools.compress', ->
   they 'should see extension .tgz', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -25,7 +25,7 @@ describe 'tools.compress', ->
   they 'should see extension .zip', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -40,7 +40,7 @@ describe 'tools.compress', ->
   they 'should see extension .tar.bz2', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -55,7 +55,7 @@ describe 'tools.compress', ->
   they 'should see extension .tar.xz', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -70,7 +70,7 @@ describe 'tools.compress', ->
   they 'remove source file with clean option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -87,7 +87,7 @@ describe 'tools.compress', ->
   they 'remove source directory with clean option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
@@ -104,7 +104,7 @@ describe 'tools.compress', ->
   they 'should pass error for invalid extension', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.compress
         source: __filename

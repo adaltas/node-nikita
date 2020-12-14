@@ -15,7 +15,7 @@ describe 'docker.load', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"
@@ -41,7 +41,7 @@ describe 'docker.load', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"
@@ -63,7 +63,7 @@ describe 'docker.load', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"

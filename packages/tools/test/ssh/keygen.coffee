@@ -10,7 +10,7 @@ describe 'tools.ssh.keygen', ->
   they 'a new key', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.ssh.keygen
         target: "#{tmpdir}/folder/id_rsa"

@@ -11,7 +11,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'remove', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -24,7 +24,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'NIKITA_FS_RMDIR_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.rmdir
         target: "{{parent.metadata.tmpdir}}/missing"

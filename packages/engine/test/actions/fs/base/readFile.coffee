@@ -11,7 +11,7 @@ describe 'actions.fs.base.readFile', ->
   they 'config `encoding`', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -24,7 +24,7 @@ describe 'actions.fs.base.readFile', ->
   they 'argument `target`', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -38,7 +38,7 @@ describe 'actions.fs.base.readFile', ->
     they 'forward errors from createReadStream', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.readFile "#{tmpdir}/whereareu"
         .should.be.rejectedWith

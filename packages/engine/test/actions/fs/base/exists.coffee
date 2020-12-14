@@ -10,7 +10,7 @@ describe 'actions.fs.base.exists', ->
   they 'does not exists', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/not_here"
@@ -19,7 +19,7 @@ describe 'actions.fs.base.exists', ->
   they 'exists', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -31,7 +31,7 @@ describe 'actions.fs.base.exists', ->
   they 'option argument default to target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"

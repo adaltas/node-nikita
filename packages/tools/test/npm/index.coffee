@@ -11,7 +11,7 @@ describe 'tools.npm', ->
 
     it 'name is required', ->
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @tools.npm
           cwd: tmpdir
@@ -47,7 +47,7 @@ describe 'tools.npm', ->
     they 'install locally', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm
           cwd: tmpdir
@@ -61,7 +61,7 @@ describe 'tools.npm', ->
     they 'install locally in a current working directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
@@ -99,7 +99,7 @@ describe 'tools.npm', ->
     they 'install many packages', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm
           cwd: tmpdir
@@ -113,7 +113,7 @@ describe 'tools.npm', ->
     they 'upgrade a package', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
@@ -132,7 +132,7 @@ describe 'tools.npm', ->
     they 'name as argument', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm 'coffeescript',
           cwd: tmpdir

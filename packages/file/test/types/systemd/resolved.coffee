@@ -10,7 +10,7 @@ describe 'file.types.systemd.resolved', ->
   they 'servers as a string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
@@ -28,7 +28,7 @@ describe 'file.types.systemd.resolved', ->
   they 'servers as an array', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
@@ -46,7 +46,7 @@ describe 'file.types.systemd.resolved', ->
   they 'merge values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"

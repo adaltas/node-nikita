@@ -11,7 +11,7 @@ describe 'file config diff', ->
     diffcalled = false
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file"
@@ -33,7 +33,7 @@ describe 'file config diff', ->
     logs = []
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) -> logs.push log.message
       @file
@@ -54,7 +54,7 @@ describe 'file config diff', ->
     # make sure this is fixed for ever
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       diffs = []
       events.on 'diff', (log) ->
@@ -70,7 +70,7 @@ describe 'file config diff', ->
     logs = []
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) ->
         logs.push log.message
@@ -86,7 +86,7 @@ describe 'file config diff', ->
     diff = null
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @file
         target: "#{tmpdir}/file"

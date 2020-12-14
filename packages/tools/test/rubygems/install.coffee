@@ -64,7 +64,7 @@ describe 'tools.rubygems.install', ->
     nikita
       ssh: ssh
       ruby: ruby
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @tools.rubygems.remove
         name: 'execjs'
@@ -87,7 +87,7 @@ describe 'tools.rubygems.install', ->
     nikita
       ssh: ssh
       ruby: ruby
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @tools.rubygems.remove
         name: 'execjs'

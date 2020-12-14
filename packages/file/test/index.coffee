@@ -12,7 +12,7 @@ describe 'file', ->
     they 'is a string', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -25,7 +25,7 @@ describe 'file', ->
     they 'is a function', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -37,7 +37,7 @@ describe 'file', ->
     they 'status is false if content is the same', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -55,7 +55,7 @@ describe 'file', ->
     they 'with source is a file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_source"
@@ -78,7 +78,7 @@ describe 'file', ->
     they 'empty file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -91,7 +91,7 @@ describe 'file', ->
     they 'override empty file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/empty_file"
@@ -111,7 +111,7 @@ describe 'file', ->
     they 'handle integer type', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -124,7 +124,7 @@ describe 'file', ->
     they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a/missing/dir/a_file"
@@ -137,7 +137,7 @@ describe 'file', ->
     they 'skip empty lines', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a/missing/dir/a_file"
@@ -153,7 +153,7 @@ describe 'file', ->
     they 'follow link by default', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'ko'
@@ -174,7 +174,7 @@ describe 'file', ->
     they 'throw error if link is a directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/target"
@@ -189,7 +189,7 @@ describe 'file', ->
     they 'dont follow link if option "unlink"', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'ko'
@@ -211,7 +211,7 @@ describe 'file', ->
     they 'dont follow link if option "unlink" and link is directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/target"
@@ -235,7 +235,7 @@ describe 'file', ->
     they 'set permission', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -248,7 +248,7 @@ describe 'file', ->
     they 'does not modify parent', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.mkdir
           target: "#{tmpdir}/a_dir"
@@ -264,7 +264,7 @@ describe 'file', ->
     they 'ensure mode is preserved on content update', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -280,7 +280,7 @@ describe 'file', ->
     they 'change permission', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -300,7 +300,7 @@ describe 'file', ->
     they 'change permission after modification', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -319,7 +319,7 @@ describe 'file', ->
     they 'with from and with to', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           ssh: ssh
@@ -336,7 +336,7 @@ describe 'file', ->
     they 'with from and with to append', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -366,7 +366,7 @@ describe 'file', ->
     they 'with from and without to', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -381,7 +381,7 @@ describe 'file', ->
     they 'without from and with to', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -397,7 +397,7 @@ describe 'file', ->
     they 'without match and place_before a string', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -411,7 +411,7 @@ describe 'file', ->
     they 'without match and place_before a regexp', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -427,7 +427,7 @@ describe 'file', ->
     they 'with match a line as a string', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -447,7 +447,7 @@ describe 'file', ->
     they 'with match a word as a string', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -463,7 +463,7 @@ describe 'file', ->
       # With a match
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/replace"
@@ -483,7 +483,7 @@ describe 'file', ->
     they 'with match as a regular expression and multiple content', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           match: /(.*try) (.*)/
@@ -498,7 +498,7 @@ describe 'file', ->
     they 'with match with global and multilines', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/replace"
@@ -518,7 +518,7 @@ describe 'file', ->
     they 'will replace target if source or content does not exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -543,7 +543,7 @@ describe 'file', ->
       # File does not exist, it create it with the content
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -557,7 +557,7 @@ describe 'file', ->
       # File doesnt exists, creates one
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -577,7 +577,7 @@ describe 'file', ->
       # File does not exist, it create it with the content
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -591,7 +591,7 @@ describe 'file', ->
       # File does not exists, it create one
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -613,7 +613,7 @@ describe 'file', ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -641,7 +641,7 @@ describe 'file', ->
       they 'place_before true, replace a string, match a string', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -670,7 +670,7 @@ describe 'file', ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -699,7 +699,7 @@ describe 'file', ->
       # Prepare by creating a file with content
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -720,7 +720,7 @@ describe 'file', ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -739,7 +739,7 @@ describe 'file', ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -759,7 +759,7 @@ describe 'file', ->
       they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -778,7 +778,7 @@ describe 'file', ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -796,7 +796,7 @@ describe 'file', ->
     they 'will append place_after a match if append is a string', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -816,7 +816,7 @@ describe 'file', ->
       they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -834,7 +834,7 @@ describe 'file', ->
       they 'place_after', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -854,7 +854,7 @@ describe 'file', ->
       they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -869,7 +869,7 @@ describe 'file', ->
       they 'place_after', ({ssh}) ->
         nikita
           ssh: ssh
-          tmpdir: true
+          metadata: tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -884,7 +884,7 @@ describe 'file', ->
     they 'match is optional', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -915,7 +915,7 @@ describe 'file', ->
     they 'create a file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -940,7 +940,7 @@ describe 'file', ->
     they 'a non-existing file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -954,7 +954,7 @@ describe 'file', ->
     they 'with specific permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/new_file_perm"
@@ -986,7 +986,7 @@ describe 'file', ->
     they 'do multiple replace', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1011,7 +1011,7 @@ describe 'file', ->
     they 'use append', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1037,7 +1037,7 @@ describe 'file', ->
     they 'handle partial match', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1065,7 +1065,7 @@ describe 'file', ->
     they 'can not define source and content', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: 'abc'
@@ -1076,7 +1076,7 @@ describe 'file', ->
     they 'if source doesn\'t exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1086,7 +1086,7 @@ describe 'file', ->
     they 'if local source doesn\'t exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1099,7 +1099,7 @@ describe 'file', ->
     they 'auto-detected', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1113,7 +1113,7 @@ describe 'file', ->
     they 'not detected', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           ssh: ssh
@@ -1130,7 +1130,7 @@ describe 'file', ->
     they 'transform content status', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1142,7 +1142,7 @@ describe 'file', ->
     they 'transform content value', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1156,7 +1156,7 @@ describe 'file', ->
     they 'transform resolve promise status', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1169,7 +1169,7 @@ describe 'file', ->
     they 'transform resolve promise value', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1184,7 +1184,7 @@ describe 'file', ->
     they 'transform reject promise status', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1197,7 +1197,7 @@ describe 'file', ->
     they 'transform reject promise value', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1212,7 +1212,7 @@ describe 'file', ->
     they 'transform returns null status', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1224,7 +1224,7 @@ describe 'file', ->
     they 'transform returns null file doesnt exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1238,7 +1238,7 @@ describe 'file', ->
     they 'transform returns undefined status', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1250,7 +1250,7 @@ describe 'file', ->
     they 'transform returns undefined file doesnt exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1264,7 +1264,7 @@ describe 'file', ->
     they 'transform throws error', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1278,7 +1278,7 @@ describe 'file', ->
     they 'catch error', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'hello'
@@ -1289,7 +1289,7 @@ describe 'file', ->
     they 'function called on content change', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'hello'

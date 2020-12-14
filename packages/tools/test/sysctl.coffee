@@ -10,7 +10,7 @@ describe 'tools.sysctl', ->
   they 'Write properties', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
@@ -35,7 +35,7 @@ describe 'tools.sysctl', ->
   they 'Overwrite properties by default', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/sysctl.conf"
@@ -58,7 +58,7 @@ describe 'tools.sysctl', ->
   they 'Merge properties', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/sysctl.conf"
@@ -89,7 +89,7 @@ describe 'tools.sysctl', ->
   they 'Merge properties with file containing empty lines', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/sysctl.conf"
@@ -113,7 +113,7 @@ describe 'tools.sysctl', ->
   they 'honors backup option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
@@ -139,7 +139,7 @@ describe 'tools.sysctl', ->
     they 'Not preserved by default', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/sysctl.conf"
@@ -166,7 +166,7 @@ describe 'tools.sysctl', ->
     they 'preserved when enabled', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/sysctl.conf"
@@ -196,7 +196,7 @@ describe 'tools.sysctl', ->
     they 'handle equal sign in comment', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/sysctl.conf"

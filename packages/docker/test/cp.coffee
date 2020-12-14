@@ -14,7 +14,7 @@ describe 'docker.cp', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_extract'
@@ -36,7 +36,7 @@ describe 'docker.cp', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run
@@ -56,7 +56,7 @@ describe 'docker.cp', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run
@@ -80,7 +80,7 @@ describe 'docker.cp', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run

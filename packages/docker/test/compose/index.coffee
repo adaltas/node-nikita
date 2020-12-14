@@ -49,7 +49,7 @@ describe 'docker.compose', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_docker_compose_up_content_to_file'
@@ -81,7 +81,7 @@ describe 'docker.compose', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_up_file'
@@ -114,7 +114,7 @@ describe 'docker.compose', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_up_service'
@@ -148,7 +148,7 @@ describe 'docker.compose', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_idem'

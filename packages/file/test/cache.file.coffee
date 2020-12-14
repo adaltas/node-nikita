@@ -12,7 +12,7 @@ describe 'file.cache file', ->
   they 'current cache file match provided hash', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.fs
         basedir: tmpdir
@@ -36,7 +36,7 @@ describe 'file.cache file', ->
   they 'current cache file dont match provided hash', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/my_file"
@@ -53,7 +53,7 @@ describe 'file.cache file', ->
   they 'target file must match the hash', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/my_file"
@@ -67,7 +67,7 @@ describe 'file.cache file', ->
   they 'into local cache_dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.cache
         source: "#{__filename}"
@@ -85,7 +85,7 @@ describe 'file.cache file', ->
     they 'bypass cache if string match', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir

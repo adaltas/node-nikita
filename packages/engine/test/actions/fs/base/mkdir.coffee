@@ -11,7 +11,7 @@ describe 'actions.fs.base.mkdir', ->
   they 'a new directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"
@@ -23,7 +23,7 @@ describe 'actions.fs.base.mkdir', ->
   they 'over an existing directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"

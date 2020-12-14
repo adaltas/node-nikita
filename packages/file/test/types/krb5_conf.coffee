@@ -10,7 +10,7 @@ describe 'file.types.krb5_conf', ->
   they 'write content (default MIT Kerberos file)', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
@@ -79,7 +79,7 @@ describe 'file.types.krb5_conf', ->
   they 'merge content (default FreeIPA file)', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
@@ -131,7 +131,7 @@ describe 'file.types.krb5_conf', ->
   they 'test depth 2 curly braket', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/krb5.conf"

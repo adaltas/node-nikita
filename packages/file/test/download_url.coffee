@@ -25,7 +25,7 @@ describe 'file.download url', ->
     # Download a non existing file
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.download
         source: 'http://localhost:12345'
@@ -43,7 +43,7 @@ describe 'file.download url', ->
     @timeout 10000
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.download
         source: 'http://localhost:12345'
@@ -61,7 +61,7 @@ describe 'file.download url', ->
       # Download a non existing file
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
@@ -81,7 +81,7 @@ describe 'file.download url', ->
       # Download a non existing file
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
         cache_file: "{{metadata.tmpdir}}/cache_file"
       , ({metadata: {tmpdir}}) ->
         @file.download
@@ -98,7 +98,7 @@ describe 'file.download url', ->
       @timeout 100000
       # Download a non existing file
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           ssh: ssh
@@ -116,7 +116,7 @@ describe 'file.download url', ->
     they 'use shortcircuit if target match md5', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir
@@ -137,7 +137,7 @@ describe 'file.download url', ->
     they 'bypass shortcircuit if target dont match md5', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: "not okay"
@@ -155,7 +155,7 @@ describe 'file.download url', ->
       # Download with invalid checksum
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
@@ -166,7 +166,7 @@ describe 'file.download url', ->
     they 'count 1 if new file has correct checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           ssh: ssh
@@ -179,7 +179,7 @@ describe 'file.download url', ->
       # Download with invalid checksum
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
@@ -197,7 +197,7 @@ describe 'file.download url', ->
       return unless ssh
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "http://localhost/sth"

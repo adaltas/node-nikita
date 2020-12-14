@@ -31,7 +31,7 @@ describe 'tools.npm.upgrade', ->
     they 'upgrade packages locally', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir

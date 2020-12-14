@@ -29,7 +29,7 @@ describe 'file.cache http', ->
   they 'handles string argument', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.cache 'http://localhost:12345/my_file',
         cache_dir: "#{tmpdir}/my_cache_dir"
@@ -40,7 +40,7 @@ describe 'file.cache http', ->
   they 'into local cache_dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.cache
         source: 'http://localhost:12345/my_file'
@@ -56,7 +56,7 @@ describe 'file.cache http', ->
   they 'option fail with invalid exit code', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.cache
         source: 'http://localhost:12345/missing'
@@ -73,7 +73,7 @@ describe 'file.cache http', ->
     they 'current cache file matches provided hash', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir
@@ -94,7 +94,7 @@ describe 'file.cache http', ->
     they 'current cache file doesnt match provided hash', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/my_cache_file"
@@ -108,7 +108,7 @@ describe 'file.cache http', ->
     they 'target file must match the hash', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.cache
           source: 'http://localhost:12345/missing'
@@ -119,7 +119,7 @@ describe 'file.cache http', ->
     they 'md5', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir

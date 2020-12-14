@@ -10,7 +10,7 @@ describe 'file.types.pacman_conf', ->
   they 'empty values dont print values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.pacman_conf
         target: "#{tmpdir}/pacman.conf"
@@ -25,7 +25,7 @@ describe 'file.types.pacman_conf', ->
   they 'boolean values dont print values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.pacman_conf
         target: "#{tmpdir}/pacman.conf"
@@ -40,7 +40,7 @@ describe 'file.types.pacman_conf', ->
   they 'rootdir with default target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.pacman_conf
         rootdir: "#{tmpdir}"

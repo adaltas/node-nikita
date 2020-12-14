@@ -12,7 +12,7 @@ describe 'java.keystore_remove', ->
     they 'keystore doesnt need to exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_remove
           keystore: "#{tmpdir}/does/not/exist"
@@ -52,7 +52,7 @@ describe 'java.keystore_remove', ->
     they 'remove cacerts', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         keystore =  "#{tmpdir}/cacerts"
         caname = 'my_alias'
@@ -83,7 +83,7 @@ describe 'java.keystore_remove', ->
     they 'remove cacerts file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         keystore =  "#{tmpdir}/cacerts"
         caname = 'my_alias'

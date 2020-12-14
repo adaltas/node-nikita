@@ -11,7 +11,7 @@ describe 'actions.fs.base.createReadStream', ->
     buffers = []
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -27,7 +27,7 @@ describe 'actions.fs.base.createReadStream', ->
     buffers = []
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -59,7 +59,7 @@ describe 'actions.fs.base.createReadStream', ->
     they 'NIKITA_FS_CRS_TARGET_ENOENT if file does not exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.createReadStream
           target: "#{tmpdir}/a_file"
@@ -77,7 +77,7 @@ describe 'actions.fs.base.createReadStream', ->
     they 'NIKITA_FS_CRS_TARGET_EISDIR if file is a directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.createReadStream
           target: "#{tmpdir}"

@@ -11,7 +11,7 @@ describe 'actions.log.csv', ->
   they 'write message', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
       @call ({tools: {log}}) -> log 'ok'
@@ -21,7 +21,7 @@ describe 'actions.log.csv', ->
   they 'write header', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
       @call header: 'h1', ({tools: {log}}) -> true

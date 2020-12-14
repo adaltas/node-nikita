@@ -10,7 +10,7 @@ describe 'file.types.yum_repo', ->
   they 'generate from content object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.yum_repo
         target: "#{tmpdir}/test.repo"
@@ -38,7 +38,7 @@ describe 'file.types.yum_repo', ->
   they 'merge with content object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.yum_repo
         target: "#{tmpdir}/test.repo"
@@ -64,7 +64,7 @@ describe 'file.types.yum_repo', ->
   they 'write to default repository dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.yum_repo
         target: "#{tmpdir}/test.repo"
@@ -87,7 +87,7 @@ describe 'file.types.yum_repo', ->
   they 'default from source with content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.yum_repo
         target: "#{tmpdir}/CentOS-nikita.repo"

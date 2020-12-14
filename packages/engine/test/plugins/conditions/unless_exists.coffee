@@ -12,7 +12,7 @@ describe 'plugin.condition unless_exists', ->
     they 'skip if all conditions are `true`', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call
           unless_exists: [
@@ -24,7 +24,7 @@ describe 'plugin.condition unless_exists', ->
     they 'skip if one conditions are `true`', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call
           unless_exists: [
@@ -37,7 +37,7 @@ describe 'plugin.condition unless_exists', ->
     they 'called if all conditions are `false`', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call
           unless_exists: [
@@ -53,7 +53,7 @@ describe 'plugin.condition unless_exists', ->
     they 'skip if file exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {called} = await @call
           unless_exists: "#{tmpdir}"
@@ -63,7 +63,7 @@ describe 'plugin.condition unless_exists', ->
     they 'run if file doesnt exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call
           unless_exists: "#{tmpdir}/ohno"

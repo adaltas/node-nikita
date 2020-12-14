@@ -12,7 +12,7 @@ describe 'tools.backup', ->
     they 'backup to a directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status, filename} = await @tools.backup
           name: 'my_backup'
@@ -35,7 +35,7 @@ describe 'tools.backup', ->
     they 'compress', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status, base_dir, name, filename, target} = await @tools.backup
           name: 'my_backup'
@@ -56,7 +56,7 @@ describe 'tools.backup', ->
     they 'pipe to a file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status, filename} = await @tools.backup
           name: 'my_backup'

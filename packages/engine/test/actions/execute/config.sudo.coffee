@@ -21,7 +21,7 @@ describe 'actions.execute.config.sudo', ->
     nikita
       ssh: ssh
       sudo: false
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -54,7 +54,7 @@ describe 'actions.execute.config.sudo', ->
     nikita
       ssh: ssh
       sudo: false
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -80,7 +80,7 @@ describe 'actions.execute.config.sudo', ->
   they 'writeFile', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}})->
       await @fs.base.mkdir
         target: "#{tmpdir}/a_dir"

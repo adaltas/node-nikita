@@ -60,7 +60,7 @@ describe 'docker.build', ->
       nikita
         ssh: ssh
         docker: docker
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_2'
         @file
@@ -79,7 +79,7 @@ describe 'docker.build', ->
       nikita
         ssh: ssh
         docker: docker
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_3'
         @file
@@ -98,7 +98,7 @@ describe 'docker.build', ->
       nikita
         ssh: ssh
         docker: docker
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @docker.build
           image: 'nikita/should_not_exists_4'
@@ -112,7 +112,7 @@ describe 'docker.build', ->
       nikita
         ssh: ssh
         docker: docker
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_5'
         @file

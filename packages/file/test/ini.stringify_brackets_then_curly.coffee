@@ -13,7 +13,7 @@ describe 'file.ini option stringify_brackets_then_curly', ->
   they 'call stringify udf', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         stringify: utils.ini.stringify_brackets_then_curly
@@ -27,7 +27,7 @@ describe 'file.ini option stringify_brackets_then_curly', ->
   they 'convert array to multiple keys', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       # Create a new file
       {status} = await @file.ini

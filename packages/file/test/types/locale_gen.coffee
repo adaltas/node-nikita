@@ -10,7 +10,7 @@ describe 'file.types.locale_gen', ->
   they 'activate locales', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
@@ -41,7 +41,7 @@ describe 'file.types.locale_gen', ->
   they 'desactivate locales', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
@@ -72,7 +72,7 @@ describe 'file.types.locale_gen', ->
   they 'rootdir with default target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
