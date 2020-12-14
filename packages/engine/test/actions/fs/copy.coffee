@@ -12,7 +12,7 @@ describe 'actions.fs.copy', ->
     they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.copy
@@ -25,7 +25,7 @@ describe 'actions.fs.copy', ->
     they 'throw error if false', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.copy
@@ -39,7 +39,7 @@ describe 'actions.fs.copy', ->
     they 'pass mode attribute', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.copy
@@ -59,7 +59,7 @@ describe 'actions.fs.copy', ->
     they 'with a filename inside a existing directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.copy
@@ -79,7 +79,7 @@ describe 'actions.fs.copy', ->
     they 'into a directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.mkdir
@@ -95,7 +95,7 @@ describe 'actions.fs.copy', ->
     they 'over an existing file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/source_file", content: 'hello'
         @fs.base.writeFile "#{tmpdir}/target_file", content: 'to overwrite'
@@ -116,7 +116,7 @@ describe 'actions.fs.copy', ->
     they 'change permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/source_file"
@@ -146,7 +146,7 @@ describe 'actions.fs.copy', ->
     they 'handle hidden files', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/.a_empty_file"
@@ -161,7 +161,7 @@ describe 'actions.fs.copy', ->
     they 'set permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_source_file"
@@ -178,7 +178,7 @@ describe 'actions.fs.copy', ->
     they 'preserve permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_source_file"
@@ -197,7 +197,7 @@ describe 'actions.fs.copy', ->
     they 'file into file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/org_file"
@@ -215,7 +215,7 @@ describe 'actions.fs.copy', ->
     they 'file parent dir', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.mkdir "#{tmpdir}/source"
         @fs.base.writeFile
@@ -236,7 +236,7 @@ describe 'actions.fs.copy', ->
     they 'should copy without slash at the end', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/source/a_dir"
         @fs.base.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
@@ -263,7 +263,7 @@ describe 'actions.fs.copy', ->
     they 'should copy the files when dir end with slash', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/source/a_dir"
         @fs.base.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
@@ -290,7 +290,7 @@ describe 'actions.fs.copy', ->
     they 'should copy hidden files', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_dir"
@@ -313,7 +313,7 @@ describe 'actions.fs.copy', ->
     they 'set permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_source"
@@ -346,8 +346,9 @@ describe 'actions.fs.copy', ->
     they 'preserve permissions', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
-        dirty: true
+        metadata:
+          tmpdir: true
+          dirty: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_source"

@@ -10,7 +10,7 @@ describe 'tools.git', ->
   they 'clones repo into new dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
@@ -27,7 +27,7 @@ describe 'tools.git', ->
   they 'honores revision', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
@@ -49,7 +49,7 @@ describe 'tools.git', ->
   they 'preserves existing directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"

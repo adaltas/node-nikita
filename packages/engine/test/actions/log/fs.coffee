@@ -11,7 +11,7 @@ describe 'actions.log.fs', ->
   they 'requires option "serializer"', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.fs basedir: tmpdir
       .should.be.rejectedWith
@@ -25,7 +25,7 @@ describe 'actions.log.fs', ->
   they 'serializer can be empty', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.fs
         basedir: tmpdir
@@ -44,7 +44,7 @@ describe 'actions.log.fs', ->
     # Note, the fs stream is at the moment never closed
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.fs
         basedir: tmpdir
@@ -60,7 +60,7 @@ describe 'actions.log.fs', ->
     they 'archive default directory name', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.fs
           basedir: tmpdir
@@ -77,7 +77,7 @@ describe 'actions.log.fs', ->
     they 'latest', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.fs
           basedir: tmpdir

@@ -10,7 +10,7 @@ describe 'actions.log.md', ->
   they 'write message', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.md basedir: tmpdir
       @call ({tools: {log}}) ->
@@ -26,7 +26,7 @@ describe 'actions.log.md', ->
   they 'write message and module', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.md basedir: tmpdir
       @call ({tools: {log}}) ->
@@ -40,14 +40,14 @@ describe 'actions.log.md', ->
     they 'honors header', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @call header: 'h1', ({tools: {log}}) ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
-              setTimeout -> 
+              setTimeout ->
                 resolve()
               , 500
           @call header: 'h2', ({tools: {log}}) ->
@@ -71,7 +71,7 @@ describe 'actions.log.md', ->
       # instead of only one
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @call header: 'h1', ->
@@ -94,7 +94,7 @@ describe 'actions.log.md', ->
     they 'honors stdout_stream', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """
@@ -113,7 +113,7 @@ describe 'actions.log.md', ->
     they 'stdin one line', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """
@@ -129,7 +129,7 @@ describe 'actions.log.md', ->
     they 'stdin multi line', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """

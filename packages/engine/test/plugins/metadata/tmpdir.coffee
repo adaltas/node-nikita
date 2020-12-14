@@ -13,7 +13,7 @@ describe 'plugins.metadata.tmpdir', ->
   describe 'validation', ->
 
     they 'invalid value', ({ssh}) ->
-      nikita.call ssh: ssh, tmpdir: {}, (->)
+      nikita.call ssh: ssh, metadata: tmpdir: {}, (->)
       .should.be.rejectedWith
         code: 'METADATA_TMPDIR_INVALID'
         message: [
@@ -25,7 +25,7 @@ describe 'plugins.metadata.tmpdir', ->
   describe 'cascade', ->
 
     they 'current action', ({ssh}) ->
-      tmpdir = await nikita.call ssh: ssh, tmpdir: true, ({metadata, ssh})->
+      tmpdir = await nikita.call ssh: ssh, metadata: tmpdir: true, ({metadata, ssh})->
         await fs.exists ssh, metadata.tmpdir
         .should.be.resolvedWith true
         metadata.tmpdir
@@ -33,7 +33,7 @@ describe 'plugins.metadata.tmpdir', ->
       .should.be.resolvedWith false
 
     they 'in children', ({ssh}) ->
-      nikita.call ssh: ssh, tmpdir: true, ({metadata, ssh})->
+      nikita.call ssh: ssh, metadata: tmpdir: true, ({metadata, ssh})->
         parent = metadata.tmpdir
         @call -> @call ({tools}) ->
           child = await tools.find (action) ->
@@ -45,7 +45,7 @@ describe 'plugins.metadata.tmpdir', ->
     they 'is a boolean', ({ssh}) ->
       nikita
         ssh: ssh
-      .call tmpdir: true, ({metadata}) ->
+      .call metadata: tmpdir: true, ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
         path.parse(tmpdir).name.should.match /^nikita_\d{6}_\d+_[\w\d]+$/
@@ -53,7 +53,7 @@ describe 'plugins.metadata.tmpdir', ->
     they 'is a string', ({ssh}) ->
       nikita
         ssh: ssh
-      .call tmpdir: './a_dir', ({metadata}) ->
+      .call metadata: tmpdir: './a_dir', ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
         tmpdir.should.eql unless !!ssh
@@ -66,7 +66,7 @@ describe 'plugins.metadata.tmpdir', ->
       nikita
         ssh: ssh
       , ->
-        @call tmpdir: true, dirty: true, (->)
+        @call metadata: tmpdir: true, dirty: true, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
         .should.resolvedWith exists: true
         @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
@@ -75,6 +75,6 @@ describe 'plugins.metadata.tmpdir', ->
       nikita
         ssh: ssh
       , ->
-        @call tmpdir: true, dirty: false, (->)
+        @call metadata: tmpdir: true, dirty: false, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
         .should.resolvedWith exists: false

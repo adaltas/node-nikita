@@ -10,7 +10,7 @@ describe 'file.touch', ->
   they 'as a target option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
@@ -25,7 +25,7 @@ describe 'file.touch', ->
   they 'as a string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch "#{tmpdir}/a_file"
       .should.be.finally.containEql status: true
@@ -38,7 +38,7 @@ describe 'file.touch', ->
   they 'an existing file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
@@ -50,7 +50,7 @@ describe 'file.touch', ->
   they 'valid default permissions', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
@@ -62,7 +62,7 @@ describe 'file.touch', ->
   they 'change permissions', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
@@ -75,7 +75,7 @@ describe 'file.touch', ->
   they 'do not change permissions on existing file if not specified', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
@@ -91,7 +91,7 @@ describe 'file.touch', ->
   they 'create valid parent dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/subdir/a_file"
@@ -104,7 +104,7 @@ describe 'file.touch', ->
   they 'modify time but not status', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch "#{tmpdir}/a_file"
       {stats: stat_org} = await @fs.base.stat target: "#{tmpdir}/a_file"
@@ -118,7 +118,7 @@ describe 'file.touch', ->
   they 'missing target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch
         mode: 0o0644

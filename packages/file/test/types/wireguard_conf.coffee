@@ -10,7 +10,7 @@ describe 'file.types.wireguard_conf', ->
   they 'simple values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.wireguard_conf
         target: "#{tmpdir}/wireguard.conf"
@@ -39,7 +39,7 @@ describe 'file.types.wireguard_conf', ->
   they 'multiple values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.wireguard_conf
         target: "#{tmpdir}/wireguard.conf"

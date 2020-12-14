@@ -11,7 +11,7 @@ describe 'tools.extract', ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"
@@ -21,7 +21,7 @@ describe 'tools.extract', ->
   they 'should see extension .zip', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.zip"
@@ -31,7 +31,7 @@ describe 'tools.extract', ->
   they 'should see extension .tar.bz2', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tar.bz2"
@@ -41,7 +41,7 @@ describe 'tools.extract', ->
   they 'should see extension .tar.xz', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tar.xz"
@@ -51,7 +51,7 @@ describe 'tools.extract', ->
   they 'should validate a created file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       # Test with invalid creates option
       @tools.extract
@@ -71,7 +71,7 @@ describe 'tools.extract', ->
     # Test with invalid creates option
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"
@@ -101,7 +101,7 @@ describe 'tools.extract', ->
     # Test a non existing status dir
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"
@@ -115,7 +115,7 @@ describe 'tools.extract', ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"

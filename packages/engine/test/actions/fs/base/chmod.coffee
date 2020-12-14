@@ -11,7 +11,7 @@ describe 'actions.fs.base.chmod', ->
   they 'create', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"

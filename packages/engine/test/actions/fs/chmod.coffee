@@ -10,7 +10,7 @@ describe 'actions.fs.chmod', ->
   they 'change a permission of a file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         content: ''
@@ -25,7 +25,7 @@ describe 'actions.fs.chmod', ->
   they 'mode as string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         content: ''
@@ -41,7 +41,7 @@ describe 'actions.fs.chmod', ->
   they 'change status', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         content: ''

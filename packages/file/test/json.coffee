@@ -10,7 +10,7 @@ describe 'file.json', ->
   they 'stringify content to target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -26,7 +26,7 @@ describe 'file.json', ->
   they 'merge target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -43,7 +43,7 @@ describe 'file.json', ->
   they 'merge source', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/source.json"
@@ -60,7 +60,7 @@ describe 'file.json', ->
   they 'merge source and traget', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/source.json"
@@ -81,7 +81,7 @@ describe 'file.json', ->
   they 'merge with target not yet created', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/target.json"
@@ -95,7 +95,7 @@ describe 'file.json', ->
   they 'transform', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -117,7 +117,7 @@ describe 'file.json', ->
   they 'pretty', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/pretty.json"
@@ -130,7 +130,7 @@ describe 'file.json', ->
   they 'pretty with user indentation', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/pretty_0.json"

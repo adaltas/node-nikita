@@ -12,7 +12,7 @@ describe 'file.render', ->
     they 'when option "source" doesnt exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           source: "#{tmpdir}/oups.hbs"
@@ -27,7 +27,7 @@ describe 'file.render', ->
     they 'when option "context" is missing', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           content: 'Hello {{ who }}'
@@ -41,20 +41,21 @@ describe 'file.render', ->
     they 'unsupported source extension', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           source: 'gohome.et'
           target: "#{tmpdir}/output"
           context: {}
-        .should.be.rejectedWith message: "Invalid Option: extension '.et' is not supported" 
+        .should.be.rejectedWith
+          message: "Invalid Option: extension '.et' is not supported"
 
   describe 'handlebars', ->
 
     they 'detect `source`', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"
@@ -73,7 +74,7 @@ describe 'file.render', ->
     they 'check autoescaping (disabled)', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"

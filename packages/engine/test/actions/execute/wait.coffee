@@ -10,7 +10,7 @@ describe 'actions.execute.wait', ->
   they 'take a single command', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @execute.wait
         command: "test -d #{tmpdir}"
@@ -27,7 +27,7 @@ describe 'actions.execute.wait', ->
   they 'take a multiple commands', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @execute.wait
         command: [
@@ -53,7 +53,7 @@ describe 'actions.execute.wait', ->
     they 'attemps', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         logs = []
         @call ->
@@ -103,7 +103,7 @@ describe 'actions.execute.wait', ->
     they 'is not defined', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
@@ -131,7 +131,7 @@ describe 'actions.execute.wait', ->
     they 'is a number', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
@@ -159,7 +159,7 @@ describe 'actions.execute.wait', ->
     they 'is "true"', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->

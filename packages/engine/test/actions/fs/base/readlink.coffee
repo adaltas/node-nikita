@@ -8,9 +8,9 @@ return unless tags.posix
 describe 'actions.fs.base.readlink', ->
 
   they 'get value', ({ssh}) ->
-    res = await nikita
+    await nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"

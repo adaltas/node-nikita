@@ -10,7 +10,7 @@ describe 'actions.fs.base.copy', ->
   they 'a file to a directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -28,7 +28,7 @@ describe 'actions.fs.base.copy', ->
   they 'a file to a file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
@@ -47,7 +47,7 @@ describe 'actions.fs.base.copy', ->
   they 'option argument default to target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
@@ -62,7 +62,7 @@ describe 'actions.fs.base.copy', ->
   they 'NIKITA_FS_COPY_TARGET_ENOENT target does not exits', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"

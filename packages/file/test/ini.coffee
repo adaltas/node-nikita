@@ -10,7 +10,7 @@ describe 'file.ini', ->
   they 'stringify an object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         content: user: preference: color: 'rouge'
@@ -27,7 +27,7 @@ describe 'file.ini', ->
   they 'merge an object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -44,7 +44,7 @@ describe 'file.ini', ->
   they 'discard undefined and null', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         content: user: preference: color: 'violet', age: undefined, gender: null
@@ -58,7 +58,7 @@ describe 'file.ini', ->
   they 'remove null within merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -75,7 +75,7 @@ describe 'file.ini', ->
   they 'disregard undefined within merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -89,7 +89,7 @@ describe 'file.ini', ->
   they 'use default source file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -111,7 +111,7 @@ describe 'file.ini', ->
   they 'options source file + content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -129,7 +129,7 @@ describe 'file.ini', ->
   they 'options missing source file + content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         source: "#{tmpdir}/does_not_exist.ini"
@@ -144,7 +144,7 @@ describe 'file.ini', ->
   they 'options source file + merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -169,7 +169,7 @@ describe 'file.ini', ->
   they 'use default source file with merge and content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"
@@ -196,7 +196,7 @@ describe 'file.ini', ->
   they 'generate from content object with escape', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         target: "#{tmpdir}/test.ini"
@@ -224,7 +224,7 @@ describe 'file.ini', ->
   they 'content encode string true correctly', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.ini
         target: "#{tmpdir}/test.ini"

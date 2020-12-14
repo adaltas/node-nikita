@@ -11,7 +11,7 @@ describe 'file.upload', ->
   they 'source is missing', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         target: "#{tmpdir}/#{path.basename __filename}"
@@ -24,7 +24,7 @@ describe 'file.upload', ->
   they 'target is missing', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
@@ -37,7 +37,7 @@ describe 'file.upload', ->
   they 'file into a file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
@@ -53,7 +53,7 @@ describe 'file.upload', ->
   they 'file into a directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"

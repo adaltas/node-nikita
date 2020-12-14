@@ -10,7 +10,7 @@ describe 'file.types.my_cnf', ->
   they 'generate from content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.my_cnf
         target: "#{tmpdir}/my.cnf"

@@ -66,7 +66,7 @@ console.info(`File was updated: ${status}`)
             status = true
       if status
         data = locales.join '\n'
-        res = await @fs.base.writeFile
+        await @fs.base.writeFile
           target: config.target
           content: data
       # Reload configuration

@@ -11,7 +11,7 @@ describe 'actions.fs.link', ->
     # Create a non existing link
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.link # Link does not exist
         source: __filename
@@ -28,7 +28,7 @@ describe 'actions.fs.link', ->
   they 'should link file with exec', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.link
         source: __filename
@@ -45,7 +45,7 @@ describe 'actions.fs.link', ->
     # Create a non existing link
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.link # Link does not exist
         source: __dirname
@@ -64,7 +64,7 @@ describe 'actions.fs.link', ->
     # Create a non existing link
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.link
         source: __dirname
@@ -87,7 +87,7 @@ describe 'actions.fs.link', ->
   they 'should override invalid link', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/invalid_file"
@@ -112,11 +112,10 @@ describe 'actions.fs.link', ->
       # Test missing source
       nikita
         ssh: ssh
-      tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.link
-        target: __filename
-      .should.be.rejectedWith message: 'Missing source, got undefined'
-      @fs.link # Test missing target
-        source: __filename
-      .should.be.rejectedWith message: 'Missing source, got undefined'
+      , ->
+        @fs.link
+          target: __filename
+        .should.be.rejectedWith message: 'Missing source, got undefined'
+        @fs.link # Test missing target
+          source: __filename
+        .should.be.rejectedWith message: 'Missing target, got undefined'

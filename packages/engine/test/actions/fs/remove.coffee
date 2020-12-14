@@ -10,7 +10,7 @@ describe 'actions.fs.remove', ->
   they 'accept an option', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -22,7 +22,7 @@ describe 'actions.fs.remove', ->
   they 'accept a string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -33,7 +33,7 @@ describe 'actions.fs.remove', ->
   they 'accept an array of strings', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/file_1"
@@ -51,7 +51,7 @@ describe 'actions.fs.remove', ->
   they 'a file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -66,7 +66,7 @@ describe 'actions.fs.remove', ->
   they 'a link', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
@@ -82,7 +82,7 @@ describe 'actions.fs.remove', ->
   they 'use a pattern', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir
         target: "#{tmpdir}/a_dir"
@@ -109,7 +109,7 @@ describe 'actions.fs.remove', ->
   they 'a dir', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"

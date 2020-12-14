@@ -11,7 +11,7 @@ describe 'tools.rubygems.fetch', ->
     nikita
       ssh: ssh
       ruby: ruby
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status, filename, filepath} = await @tools.rubygems.fetch
         name: 'execjs'
@@ -27,7 +27,7 @@ describe 'tools.rubygems.fetch', ->
     nikita
       ssh: ssh
       ruby: ruby
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status, filename, filepath} = await @tools.rubygems.fetch
         name: 'execjs'

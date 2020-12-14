@@ -10,7 +10,7 @@ describe 'file.yaml', ->
   they 'stringify an object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.yaml
         content: user: preference: color: 'rouge'
@@ -23,7 +23,7 @@ describe 'file.yaml', ->
   they 'merge an object', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.yml"
@@ -40,7 +40,7 @@ describe 'file.yaml', ->
   they 'discard undefined and null', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.yaml
         content: user: preference: color: 'violet', age: undefined, gender: null
@@ -54,7 +54,7 @@ describe 'file.yaml', ->
   they 'remove null within merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.yml"
@@ -73,7 +73,7 @@ describe 'file.yaml', ->
   they 'disregard undefined within merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.yml"
@@ -92,7 +92,7 @@ describe 'file.yaml', ->
   they 'disregard undefined within merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.yml"
