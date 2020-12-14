@@ -90,7 +90,9 @@ if [ $current != $target ]; then exit 3; fi`,
       cwd: config.target,
       trap: true,
       code_skipped: 3,
-      shy: true
+      metadata: {
+        shy: true
+      }
     })));
   }
   if (!repo_uptodate) {

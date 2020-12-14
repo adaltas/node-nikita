@@ -8,11 +8,6 @@ module.exports = function() {
     module: '@nikitajs/engine/src/metadata/depth',
     hooks: {
       'nikita:session:normalize': function(action) {
-        // Move property from action to metadata
-        if (action.hasOwnProperty('depth')) {
-          action.metadata.depth = action.depth;
-          delete action.depth;
-        }
         return action.metadata.depth = action.parent ? action.parent.metadata.depth + 1 : 0;
       },
       'nikita:session:action': function(action) {

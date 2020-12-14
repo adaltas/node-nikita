@@ -55,7 +55,9 @@ handler = async function({config}) {
   }
   ({status} = (await this.ipa.user.exists({
     connection: config.connection,
-    shy: false,
+    metadata: {
+      shy: false
+    },
     uid: config.uid
   })));
   if (!status) {

@@ -43,7 +43,9 @@ handler = async function({config}) {
   }
   ({status} = (await this.ipa.service.exists({
     connection: config.connection,
-    shy: false,
+    metadata: {
+      shy: false
+    },
     principal: config.principal
   })));
   if (!status) {

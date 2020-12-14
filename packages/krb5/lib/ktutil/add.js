@@ -86,7 +86,9 @@ handler = async function({
   ({status, stdout, code} = (await this.execute({
     command: `echo -e 'rkt ${config.keytab}\nlist -e -t \n' | ktutil`,
     code_skipped: 1,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (status) {
     log({
@@ -118,7 +120,9 @@ handler = async function({
   ({status, stdout} = (await this.krb5.execute({
     admin: config.admin,
     command: `getprinc -terse ${config.principal}`,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (status) {
     values = utils.string.lines(stdout)[1];

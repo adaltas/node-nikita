@@ -285,7 +285,9 @@ handler = async function({
   // we compare it with the target file signature and stop if they match
   if (typeof source_hash === 'string') {
     ({shortcircuit} = (await this.call({
-      shy: true
+      metadata: {
+        shy: true
+      }
     }, async function() {
       var err, hash;
       log({
@@ -374,7 +376,9 @@ handler = async function({
     });
     // Ensure target directory exists
     this.fs.mkdir({
-      shy: true,
+      metadata: {
+        shy: true
+      },
       target: path.dirname(stageDestination)
     });
     // Download the file
@@ -416,7 +420,9 @@ handler = async function({
         `-o ${stageDestination}`,
         config.proxy ? `-x ${config.proxy}` : void 0
       ].join(' '),
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
     hash_source = hash_target = null;
     ({hash} = (await this.fs.hash(stageDestination, {
@@ -450,7 +456,9 @@ handler = async function({
     });
     if (match) {
       this.fs.remove({
-        shy: true,
+        metadata: {
+          shy: true
+        },
         target: stageDestination
       });
     }
@@ -488,7 +496,9 @@ handler = async function({
     });
     if (!match) {
       this.fs.mkdir({
-        shy: true,
+        metadata: {
+          shy: true
+        },
         target: path.dirname(stageDestination)
       });
       this.fs.copy({
@@ -532,7 +542,9 @@ handler = async function({
     });
     if (!match) {
       this.fs.mkdir({
-        shy: true,
+        metadata: {
+          shy: true
+        },
         target: path.dirname(stageDestination)
       });
       try {

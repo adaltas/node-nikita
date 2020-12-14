@@ -75,7 +75,9 @@ fi`,
         rootdir: config.rootdir,
         stdin_log: true,
         stdout_log: false,
-        shy: true
+        metadata: {
+          shy: true
+        }
       });
     } catch (error) {
       err = error;

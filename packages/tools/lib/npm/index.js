@@ -3,6 +3,8 @@
 
 // Install Node.js packages with NPM.
 
+// It upgrades outdated packages if config "upgrade" is "true".
+
 // ## Example
 
 // The following action installs the coffescript package globally.
@@ -45,18 +47,29 @@ schema = {
       items: {
         type: 'string'
       },
-      description: `Name of the package(s) to install.`
+      description: `Name of the package(s) to install or upgrade if config "upgrade" is
+"true".`
     },
     'sudo': {
       $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
     },
     'upgrade': {
-      type: 'boolean',
       default: false,
-      description: 'Upgrade all packages.'
+      type: 'boolean',
+      description: `Upgrade outdated packages.`
     }
   },
-  required: ['name']
+  required: ['name'],
+  if: {
+    properties: {
+      'global': {
+        const: false
+      }
+    }
+  },
+  then: {
+    required: ['cwd']
+  }
 };
 
 // ## Handler
@@ -73,26 +86,19 @@ handler = async function({
     code: [0, 1],
     cwd: config.cwd,
     stdout_log: false,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   pkgs = JSON.parse(stdout);
   if (Object.keys(pkgs).length) {
     outdated = Object.keys(pkgs);
   }
-  // Upgrade outdated packages if upgrade config is set
-  if (config.upgrade && outdated.length) {
-    await this.execute({
-      command: `npm update ${global}`,
-      cwd: config.cwd,
-      sudo: config.sudo
-    });
-    outdated = [];
-  }
   // Upgrade outdated packages
   upgrade = config.name.filter(function(pkg) {
     return indexOf.call(outdated, pkg) >= 0;
   });
-  if (upgrade.length) {
+  if (config.upgrade && upgrade.length) {
     await this.execute({
       command: `npm update ${global} ${upgrade.join(' ')}`,
       cwd: config.cwd,
@@ -109,7 +115,9 @@ handler = async function({
     code: [0, 1],
     cwd: config.cwd,
     stdout_log: false,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   pkgs = JSON.parse(stdout);
   if (Object.keys(pkgs).length) {
@@ -119,16 +127,17 @@ handler = async function({
   install = config.name.filter(function(pkg) {
     return indexOf.call(installed, pkg) < 0;
   });
-  if (install.length) {
-    await this.execute({
-      command: `npm install ${global} ${install.join(' ')}`,
-      cwd: config.cwd,
-      sudo: config.sudo
-    });
-    return log({
-      message: `NPM Installed Packages: ${install.join(', ')}`
-    });
+  if (!install.length) {
+    return;
   }
+  await this.execute({
+    command: `npm install ${global} ${install.join(' ')}`,
+    cwd: config.cwd,
+    sudo: config.sudo
+  });
+  return log({
+    message: `NPM Installed Packages: ${install.join(', ')}`
+  });
 };
 
 // ## Export

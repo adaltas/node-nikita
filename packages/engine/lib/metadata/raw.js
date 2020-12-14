@@ -16,22 +16,6 @@ module.exports = function() {
         }
         return (base2 = action.metadata).raw_output != null ? base2.raw_output : base2.raw_output = action.metadata.raw;
       },
-      'nikita:session:normalize': function(action) {
-        var i, len, property, ref, results;
-        ref = ['raw', 'raw_input', 'raw_output'];
-        // Move property from action to metadata
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          property = ref[i];
-          if (action.hasOwnProperty(property)) {
-            action.metadata[property] = action[property];
-            results.push(delete action[property]);
-          } else {
-            results.push(void 0);
-          }
-        }
-        return results;
-      },
       'nikita:session:action': function(action) {
         var base, base1, base2;
         if ((base = action.metadata).raw == null) {

@@ -43,7 +43,9 @@ handler = async function({config}) {
   }
   ({status} = (await this.ipa.group.exists({
     connection: config.connection,
-    shy: false,
+    metadata: {
+      shy: false
+    },
     cn: config.cn
   })));
   if (!status) {

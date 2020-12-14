@@ -70,7 +70,9 @@ handler = async function({
   ({status, stdout} = (await this.execute({
     command: `export TZ=GMT; klist -kt ${config.keytab}`,
     code_skipped: 1,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (status) {
     log({
@@ -101,7 +103,9 @@ handler = async function({
     ({status, stdout} = (await this.krb5.execute({
       admin: config.admin,
       command: `getprinc -terse ${config.principal}`,
-      shy: true
+      metadata: {
+        shy: true
+      }
     })));
     if (status) {
       // return do_ktadd() unless -1 is stdout.indexOf 'does not exist'

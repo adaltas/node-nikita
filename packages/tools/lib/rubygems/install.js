@@ -110,7 +110,9 @@ handler = async function({
   current_gems = {};
   ({stdout} = (await this.execute({
     command: `${config.gem_bin} list --versions`,
-    shy: true,
+    metadata: {
+      shy: true
+    },
     bash: config.bash
   })));
   ref1 = utils.string.lines(stdout);

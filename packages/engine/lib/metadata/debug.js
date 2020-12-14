@@ -17,13 +17,6 @@ module.exports = function() {
     module: '@nikitajs/engine/src/metadata/debug',
     require: '@nikitajs/engine/src/plugins/log',
     hooks: {
-      'nikita:session:normalize': function(action) {
-        // Move property from action to metadata
-        if (action.hasOwnProperty('debug')) {
-          action.metadata.debug = action.debug;
-          return delete action.debug;
-        }
-      },
       'nikita:session:action': function(action) {
         var debug;
         debug = action.metadata.debug || false;

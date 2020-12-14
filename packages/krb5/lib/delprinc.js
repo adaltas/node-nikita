@@ -60,7 +60,9 @@ handler = async function({config}) {
     admin: config.admin,
     command: `getprinc ${config.principal}`,
     grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (status) {
     await this.krb5.execute({

@@ -42,7 +42,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var k, key, ref, ref1, results, v, value;
+  var k, key, ref, ref1, v, value;
   ref = config.properties;
   // Normalize properties
   for (k in ref) {
@@ -53,17 +53,16 @@ handler = async function({config}) {
     config.properties[k] = v.toString();
   }
   ref1 = config.properties;
-  results = [];
   for (key in ref1) {
     value = ref1[key];
     // Execute
-    results.push((await this.execute({
+    await this.execute({
       command: `dconf read ${key} | grep -x "${value}" && exit 3
 dconf write ${key} "${value}"`,
       code_skipped: 3
-    })));
+    });
   }
-  return results;
+  return null;
 };
 
 // ## Exports

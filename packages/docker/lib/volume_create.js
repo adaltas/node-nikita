@@ -96,7 +96,9 @@ handler = async function({
     command: `volume inspect ${config.name}`,
     code: 1,
     code_skipped: 0,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   return this.docker.tools.execute({
     if: function() {

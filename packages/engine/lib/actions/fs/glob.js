@@ -82,7 +82,9 @@ handler = async function({
       // trailing slash
       '-type d -exec sh -c \'printf "%s/\\n" "$0"\' {} \\; -or -print'
     ].join(' '),
-    relax: true,
+    metadata: {
+      relax: true
+    },
     trim: true
   })));
   // Find returns exit code 1 when no match is found, treat it as an empty output

@@ -19,18 +19,8 @@ module.exports = function() {
     module: '@nikitajs/engine/src/metadata/status',
     require: ['@nikitajs/engine/src/plugins/operation_find', '@nikitajs/engine/src/plugins/operation_path'],
     hooks: {
-      'nikita:session:normalize': function(action) {
-        if (action.hasOwnProperty('tmpdir')) {
-          action.metadata.tmpdir = action.tmpdir;
-          delete action.tmpdir;
-        }
-        if (action.hasOwnProperty('dirty')) {
-          action.metadata.dirty = action.dirty;
-          return delete action.dirty;
-        }
-      },
       'nikita:session:action': {
-        after: '@nikitajs/engine/src/metadata/ssh',
+        after: '@nikitajs/engine/src/plugins/ssh',
         handler: async function(action, handler) {
           var err, now, ref, rootdir, ssh, tmpdir;
           if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
@@ -69,7 +59,7 @@ module.exports = function() {
         }
       },
       'nikita:session:result': {
-        before: '@nikitajs/engine/src/metadata/ssh',
+        before: '@nikitajs/engine/src/plugins/ssh',
         handler: async function({action}) {
           var ssh, tmpdir;
           // Value of tmpdir could still be true if there was an error in

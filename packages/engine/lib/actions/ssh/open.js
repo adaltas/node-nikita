@@ -268,7 +268,9 @@ handler = async function({
     module: 'nikita/lib/ssh/open'
   });
   return this.call({
-    retry: 3
+    metadata: {
+      retry: 3
+    }
   }, async function() {
     conn = (await connect(config));
     state['nikita:ssh:connection'] = conn;

@@ -49,7 +49,17 @@ schema = {
       description: `Uninstalls the current package context as a global package.`
     }
   },
-  required: ['name']
+  required: ['name'],
+  if: {
+    properties: {
+      'global': {
+        const: false
+      }
+    }
+  },
+  then: {
+    required: ['cwd']
+  }
 };
 
 // ## Handler
@@ -66,7 +76,9 @@ handler = async function({
     code: [0, 1],
     cwd: config.cwd,
     stdout_log: false,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   pkgs = JSON.parse(stdout);
   if (Object.keys(pkgs).length) {
@@ -76,16 +88,17 @@ handler = async function({
   uninstall = config.name.filter(function(pkg) {
     return indexOf.call(installed, pkg) >= 0;
   });
-  if (uninstall.length) {
-    await this.execute({
-      command: `npm uninstall ${global} ${uninstall.join(' ')}`,
-      cwd: config.cwd,
-      sudo: config.sudo
-    });
-    return log({
-      message: `NPM uninstalled packages: ${uninstall.join(', ')}`
-    });
+  if (!uninstall.length) {
+    return;
   }
+  await this.execute({
+    command: `npm uninstall ${global} ${uninstall.join(' ')}`,
+    cwd: config.cwd,
+    sudo: config.sudo
+  });
+  return log({
+    message: `NPM uninstalled packages: ${uninstall.join(', ')}`
+  });
 };
 
 // ## Export

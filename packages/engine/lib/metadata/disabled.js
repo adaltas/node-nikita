@@ -3,13 +3,6 @@ module.exports = function() {
   return {
     module: '@nikitajs/engine/src/metadata/disabled',
     hooks: {
-      'nikita:session:normalize': function(action) {
-        // Move property from action to metadata
-        if (action.hasOwnProperty('disabled')) {
-          action.metadata.disabled = action.disabled;
-          return delete action.disabled;
-        }
-      },
       'nikita:session:action': function(action, handler) {
         var base;
         if ((base = action.metadata).disabled == null) {

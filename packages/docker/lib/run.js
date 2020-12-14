@@ -459,7 +459,9 @@ handler = async function({
     if: config.name != null,
     command: `ps -a | egrep ' ${config.name}$'`,
     code_skipped: 1,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (status) {
     log({

@@ -99,7 +99,7 @@ handler = async function({
   }
   opts = (function() {
     var j, len1, ref2, results;
-    ref2 = docker[!config.compose ? 'options' : 'compose_options'];
+    ref2 = utils[!config.compose ? 'options' : 'compose_options'];
     results = [];
     for (j = 0, len1 = ref2.length; j < len1; j++) {
       option = ref2[j];

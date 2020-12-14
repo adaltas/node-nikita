@@ -128,7 +128,9 @@ handler = async function({
   });
   // Stat the target and redefine its path if a directory
   stats = (await this.call({
-    raw_output: true
+    metadata: {
+      raw_output: true
+    }
   }, async function() {
     var err;
     try {

@@ -165,7 +165,9 @@ handler = async function({
     content: data.join('\n'),
     backup: config.backup,
     eof: true,
-    shy: true
+    metadata: {
+      shy: true
+    }
   });
   if (config.uid || config.gid) {
     this.system.chown({

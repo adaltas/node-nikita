@@ -67,5 +67,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   schema: schema,
-  shy: true
+  metadata: {
+    shy: true
+  }
 };

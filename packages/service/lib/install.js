@@ -181,7 +181,9 @@ fi`,
         rootdir: config.rootdir,
         stdin_log: false,
         stdout_log: false,
-        shy: true
+        metadata: {
+          shy: true
+        }
       })));
       if (status) {
         log({
@@ -226,7 +228,9 @@ fi`,
         rootdir: config.rootdir,
         stdin_log: false,
         stdout_log: false,
-        shy: true
+        metadata: {
+          shy: true
+        }
       })));
       if (status) {
         log({

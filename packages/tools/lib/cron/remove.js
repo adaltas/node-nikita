@@ -62,7 +62,9 @@ handler = async function({
   jobs = [];
   ({stdout, stderr} = (await this.execute({
     command: `${crontab} -l`,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (/^no crontab for/.test(stderr)) {
     throw Error('User crontab not found');

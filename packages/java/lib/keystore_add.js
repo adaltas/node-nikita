@@ -152,7 +152,9 @@ handler = async function({
     this.fs.mkdir({
       target: tmpdir,
       mode: 0o0700,
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
   }
   // Upload certificates
@@ -161,7 +163,9 @@ handler = async function({
       source: config.cacert,
       target: files.cacert,
       mode: 0o0600,
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
   }
   if (ssh && config.local && config.cert) {
@@ -169,7 +173,9 @@ handler = async function({
       source: config.cert,
       target: files.cert,
       mode: 0o0600,
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
   }
   if (ssh && config.local && config.key) {
@@ -177,7 +183,9 @@ handler = async function({
       source: config.key,
       target: files.key,
       mode: 0o0600,
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
   }
   // Prepare parent directory
