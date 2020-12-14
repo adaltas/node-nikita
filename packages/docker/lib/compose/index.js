@@ -135,7 +135,9 @@ handler = async function({
     uid: config.uid,
     code_skipped: 123,
     stdout_log: false,
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (!status) {
     status = true;

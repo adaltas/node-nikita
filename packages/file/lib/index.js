@@ -535,7 +535,9 @@ handler = async function({
   }
   // Stat the target
   targetStats = (await this.call({
-    raw_output: true
+    metadata: {
+      raw_output: true
+    }
   }, async function() {
     var stats;
     if (typeof config.target !== 'string') {
@@ -561,7 +563,9 @@ handler = async function({
         // Destination is the parent directory, let's see if the file exist inside
         ({stats} = (await this.fs.base.stat({
           target: config.target,
-          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+          metadata: {
+            relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+          }
         })));
         if (!utils.stats.isFile(stats.mode)) {
           throw Error(`Destination is not a file: ${config.target}`);
@@ -705,7 +709,9 @@ handler = async function({
       source: config.target,
       target: `${config.target}${backup}`,
       mode: config.backup_mode,
-      relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+      metadata: {
+        relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+      }
     });
   }
   // Call the target with the content when a function

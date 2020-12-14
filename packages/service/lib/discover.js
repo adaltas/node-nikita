@@ -49,7 +49,9 @@ handler = async function({
   if (state['nikita:service:loader'] == null) {
     try {
       data = (await this.execute({
-        shy: config.shy,
+        metadata: {
+          shy: config.shy
+        },
         command: `if command -v systemctl >/dev/null; then exit 1; fi ;
 if command -v service >/dev/null; then exit 2; fi ;
 exit 3 ;`,

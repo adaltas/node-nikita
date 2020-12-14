@@ -184,7 +184,9 @@ handler = async function({
     if: !!config.parent,
     unless: target_stats,
     target: path.dirname(config.target),
-    shy: true
+    metadata: {
+      shy: true
+    }
   }, config.parent);
   // Stop here if source is a directory. We traverse all its children
   // Recursively, calling either `fs.mkdir` or `fs.copy`.
@@ -194,7 +196,9 @@ handler = async function({
   // copied into "/tmp/a_target/a_source". With an ending slash, all the files
   // present inside "/tmp/a_source" are copied inside "/tmp/a_target".
   res = (await this.call({
-    shy: true
+    metadata: {
+      shy: true
+    }
   }, async function() {
     var files, i, len, source, sourceEndWithSlash;
     if (!utils.stats.isDirectory(source_stats.mode)) {
@@ -266,7 +270,9 @@ handler = async function({
   }
   // If source is a file and target is a directory, then transform target into a file.
   this.call({
-    shy: true
+    metadata: {
+      shy: true
+    }
   }, function() {
     if (!(target_stats && utils.stats.isDirectory(target_stats.mode))) {
       return;

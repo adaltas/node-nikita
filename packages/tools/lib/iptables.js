@@ -187,7 +187,9 @@ handler = async function({
   }
   ({stdout} = (await this.execute({
     command: 'iptables -S',
-    shy: true,
+    metadata: {
+      shy: true
+    },
     sudo: config.sudo
   })));
   oldrules = utils.iptables.parse(stdout);

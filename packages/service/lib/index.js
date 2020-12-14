@@ -159,7 +159,9 @@ handler = async function({config, parent, state}) {
   if (config.state) {
     ({status} = (await this.service.status({
       name: srvname,
-      shy: true
+      metadata: {
+        shy: true
+      }
     })));
     if (!status && indexOf.call(config.state, 'started') >= 0) {
       await this.service.start({

@@ -59,9 +59,11 @@ handler = async function({
     module: 'nikita/lib/docker/stop'
   });
   // rm is false by default only if config.service is true
-  ({status} = (await this.docker.tools.status({
-    shy: true
-  }, config)));
+  ({status} = (await this.docker.tools.status(config, {
+    metadata: {
+      shy: true
+    }
+  })));
   if (status) {
     log({
       message: `Stopping container ${config.container}`,

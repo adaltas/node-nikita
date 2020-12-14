@@ -64,7 +64,9 @@ handler = async function({config}) {
   ({status} = (await this.execute({
     code_skipped: 2,
     command: command(config, '\\dt'),
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (!status) {
     throw Error(`Database does not exist ${config.database}`);

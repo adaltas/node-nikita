@@ -198,4 +198,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('./utils');
+utils = require("@nikitajs/file/lib/utils");

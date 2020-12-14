@@ -8,13 +8,6 @@ module.exports = function() {
   return {
     module: '@nikitajs/engine/src/metadata/relax',
     hooks: {
-      'nikita:session:normalize': function(action) {
-        // Move property from action to metadata
-        if (action.hasOwnProperty('relax')) {
-          action.metadata.relax = action.relax;
-          return delete action.relax;
-        }
-      },
       'nikita:session:action': function(action, handler) {
         var base;
         if ((base = action.metadata).relax == null) {

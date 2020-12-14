@@ -279,9 +279,11 @@ fi;`);
     }
   });
   return this.call({
-    retry: true,
-    sleep: 3000,
-    if: rebooting
+    if: rebooting,
+    metadata: {
+      retry: true,
+      sleep: 3000
+    }
   }, async function() {
     var conn;
     conn = (await connect(config));

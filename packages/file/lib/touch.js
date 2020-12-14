@@ -107,7 +107,9 @@ handler = async function({
     // if the file exists, overwrite it using `touch` but don't update the status
     this.execute({
       command: `touch ${config.target}`,
-      shy: true
+      metadata: {
+        shy: true
+      }
     });
   }
   return {};

@@ -27,7 +27,8 @@ module.exports = {
     git: '@nikitajs/tools/lib/git',
     npm: {
       '': '@nikitajs/tools/lib/npm',
-      uninstall: '@nikitajs/tools/lib/npm/uninstall'
+      uninstall: '@nikitajs/tools/lib/npm/uninstall',
+      upgrade: '@nikitajs/tools/lib/npm/upgrade'
     },
     repo: '@nikitajs/tools/lib/repo',
     rubygems: {

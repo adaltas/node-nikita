@@ -17,7 +17,7 @@
 // Available values for the `stringify` option are:
 
 // * `stringify`
-//   Default, implemented by `require('nikita/lib/misc/ini').stringify`
+//   Default, implemented by `require('nikita/file/lib/utils/ini').stringify`
 
 // The default stringify function accepts:
 
@@ -44,7 +44,7 @@
 // ```
 
 // ## Schema
-var handler, ini, merge, schema, utils;
+var handler, merge, schema, utils;
 
 schema = {
   type: 'object',
@@ -97,13 +97,15 @@ default.`
     'parse': {
       typeof: 'function',
       description: `User-defined function to parse the content from ini format, default to
-\`require('ini').parse\`, see 'misc.ini.parse\_multi\_brackets'.`
+\`require('ini').parse\`, see
+'nikita.file.utils.ini.parse\_multi\_brackets'. `
     },
     'stringify': {
       typeof: 'function',
       description: `User-defined function to stringify the content to ini format, default
 to \`require('ini').stringify\`, see
-'misc.ini.stringify\_brackets\_then_curly' for an example.`
+'nikita.file.utils.ini.stringify\_brackets\_then_curly' for an
+example.`
     },
     'source': {
       type: 'string',
@@ -128,7 +130,7 @@ handler = async function({
   // log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
   org_props = {};
   default_props = {};
-  parse = config.parse || ini.parse;
+  parse = config.parse || utils.ini.parse;
   try {
     // Original properties
     ({data} = (await this.fs.base.readFile({
@@ -183,7 +185,7 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/file/ini'
   });
-  stringify = config.stringify || ini.stringify;
+  stringify = config.stringify || utils.ini.stringify;
   return this.file({
     target: config.target,
     content: stringify(config.content, config),
@@ -203,10 +205,6 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
-
-ini = require('./utils/ini');
+utils = require('./utils');
 
 ({merge} = require('mixme'));
-
-// [ini]: https://github.com/isaacs/ini

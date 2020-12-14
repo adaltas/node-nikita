@@ -9,22 +9,6 @@ module.exports = function() {
   return {
     module: '@nikitajs/engine/src/metadata/retry',
     hooks: {
-      'nikita:session:normalize': function(action) {
-        var i, len, property, ref, results;
-        ref = ['attempt', 'sleep', 'retry'];
-        // Move property from action to metadata
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          property = ref[i];
-          if (action.hasOwnProperty(property)) {
-            action.metadata[property] = action[property];
-            results.push(delete action[property]);
-          } else {
-            results.push(void 0);
-          }
-        }
-        return results;
-      },
       'nikita:session:action': function(action, handler) {
         var base, base1, base2, i, len, property, ref;
         if ((base = action.metadata).attempt == null) {

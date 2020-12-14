@@ -109,7 +109,9 @@ handler = async function({
     return;
   }
   ({status} = (await this.execute({
-    shy: true,
+    metadata: {
+      shy: true
+    },
     command: `systemctl status ${config.name} 2>\&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
     code_skipped: 1
   })));

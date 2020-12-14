@@ -96,7 +96,9 @@ handler = async function({config}) {
   // Command exit code
   if (config.code != null) {
     ({code} = (await this.execute(config, {
-      relax: true
+      metadata: {
+        relax: true
+      }
     })));
     if (!config.not) {
       if (indexOf.call(config.code, code) < 0) {

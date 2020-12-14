@@ -77,7 +77,9 @@ handler = async function({config}) {
     ({status, stdout} = (await this.execute({
       command: `${config.gem_bin} specification ${config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'`,
       cwd: config.cwd,
-      shy: true,
+      metadata: {
+        shy: true
+      },
       bash: config.bash
     })));
     if (status) {

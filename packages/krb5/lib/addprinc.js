@@ -80,13 +80,17 @@ handler = async function({config}) {
     admin: config.admin,
     command: `getprinc ${config.principal}`,
     grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
-    shy: true
+    metadata: {
+      shy: true
+    }
   })));
   if (!status) {
     await this.krb5.execute({
       admin: config.admin,
       command: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`,
-      retry: 3
+      metadata: {
+        retry: 3
+      }
     });
   }
   if (config.password && config.password_sync) {
@@ -95,7 +99,9 @@ handler = async function({config}) {
       unless_execute: `if ! echo ${config.password} | kinit '${config.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
       admin: config.admin,
       command: `cpw -pw ${config.password} ${config.principal}`,
-      retry: 3
+      metadata: {
+        retry: 3
+      }
     });
   }
   if (!config.keytab) {

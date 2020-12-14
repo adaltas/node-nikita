@@ -87,7 +87,9 @@ else
 fi`,
         code_skipped: 1,
         stdout_log: false,
-        shy: true
+        metadata: {
+          shy: true
+        }
       })));
       if (status) {
         log({

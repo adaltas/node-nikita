@@ -41,7 +41,9 @@ handler = async function({
   });
   installed = [];
   ({stdout} = (await this.execute({
-    shy: true,
+    metadata: {
+      shy: true
+    },
     command: "apm list --installed --json"
   })));
   pkgs = JSON.parse(stdout);

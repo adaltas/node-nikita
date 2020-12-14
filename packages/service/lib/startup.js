@@ -84,7 +84,9 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-      shy: true
+      metadata: {
+        shy: true
+      }
     })));
     config.command = stdout.trim();
     if ((ref = config.command) !== 'systemctl' && ref !== 'chkconfig' && ref !== 'update-rc') {

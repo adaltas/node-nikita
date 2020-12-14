@@ -55,7 +55,9 @@ handler = async function({config}) {
   keys = {};
   ({stdout} = (await this.execute({
     command: `${['lxc', 'config', 'show', config.container].join(' ')}`,
-    shy: true,
+    metadata: {
+      shy: true
+    },
     code_skipped: 42
   })));
   ({

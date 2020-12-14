@@ -63,9 +63,11 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/docker/start'
   });
-  ({status} = (await this.docker.tools.status({
-    shy: true
-  }, config)));
+  ({status} = (await this.docker.tools.status(config, {
+    metadata: {
+      shy: true
+    }
+  })));
   if (status) {
     log({
       message: `Container already started ${config.container} (Skipping)`,

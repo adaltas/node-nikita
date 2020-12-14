@@ -80,6 +80,8 @@ module.exports = {
   hooks: {
     on_action: on_action
   },
-  schema: schema,
-  shy: true
+  metadata: {
+    shy: true
+  },
+  schema: schema
 };
