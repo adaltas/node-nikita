@@ -10,7 +10,7 @@ describe 'file.types.hfile', ->
   they 'without properties', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
@@ -30,7 +30,7 @@ describe 'file.types.hfile', ->
   they 'with properties', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
@@ -55,7 +55,7 @@ describe 'file.types.hfile', ->
   they 'with source', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/empty.xml"
@@ -87,7 +87,7 @@ describe 'file.types.hfile', ->
   they 'transform', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/empty.xml"

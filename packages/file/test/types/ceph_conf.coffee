@@ -10,7 +10,7 @@ describe 'file.types.ceph_conf', ->
   they 'generate from content', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.ceph_conf
         target: "#{tmpdir}/ceph_conf_test.repo"
@@ -27,7 +27,7 @@ describe 'file.types.ceph_conf', ->
   they 'status not modified', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.types.ceph_conf
         target: "#{tmpdir}/ceph_conf_test.repo"

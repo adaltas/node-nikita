@@ -12,7 +12,7 @@ describe 'java.keystore_add', ->
     they 'caname, cacert, cert, name, key, keypass are provided', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -30,7 +30,7 @@ describe 'java.keystore_add', ->
     they 'create new cacerts file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -42,7 +42,7 @@ describe 'java.keystore_add', ->
     they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/a/dir/cacerts"
@@ -54,7 +54,7 @@ describe 'java.keystore_add', ->
     they 'detect existing cacert signature', ({ssh}) ->
       nikita
         ssh: null
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -72,7 +72,7 @@ describe 'java.keystore_add', ->
     they 'update a new cacert with same alias', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -93,7 +93,7 @@ describe 'java.keystore_add', ->
     they 'fail if CA file does not exist', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -106,7 +106,7 @@ describe 'java.keystore_add', ->
     they 'import certificate chain', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @execute
           command: """
@@ -143,7 +143,7 @@ describe 'java.keystore_add', ->
     they 'honors status with certificate chain', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute
           command: """
@@ -176,7 +176,7 @@ describe 'java.keystore_add', ->
     they 'create new cacerts file', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -192,7 +192,7 @@ describe 'java.keystore_add', ->
     they 'detect existing cacert signature', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -218,7 +218,7 @@ describe 'java.keystore_add', ->
     they 'update a new cacert with same alias', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -264,7 +264,7 @@ describe 'java.keystore_add', ->
     they 'throw error if not detected', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @java.keystore_add
           keystore: "#{tmpdir}/keystore"

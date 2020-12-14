@@ -10,7 +10,7 @@ describe 'file.cson', ->
   they 'stringify content to target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.cson"
@@ -26,7 +26,7 @@ describe 'file.cson', ->
   they 'merge target', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.cson"
@@ -43,7 +43,7 @@ describe 'file.cson', ->
   they 'merge target which does not exists', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.cson
         target: "#{tmpdir}/target.cson"

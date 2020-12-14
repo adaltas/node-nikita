@@ -11,7 +11,7 @@ describe 'tools.npm.uninstall', ->
 
     it 'name is required', ->
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @tools.npm.uninstall
           cwd: tmpdir
@@ -47,7 +47,7 @@ describe 'tools.npm.uninstall', ->
     they 'uninstall locally', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
@@ -64,7 +64,7 @@ describe 'tools.npm.uninstall', ->
     they 'uninstall locally in a current working directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
@@ -108,7 +108,7 @@ describe 'tools.npm.uninstall', ->
     they 'uninstall multiple packages', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
@@ -121,7 +121,7 @@ describe 'tools.npm.uninstall', ->
     they 'name as argument', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir

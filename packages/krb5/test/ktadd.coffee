@@ -11,7 +11,7 @@ describe 'krb5.ktadd', ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @krb5.addprinc
         principal: "nikita@#{krb5.realm}"
@@ -29,7 +29,7 @@ describe 'krb5.ktadd', ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @krb5.addprinc
         principal: "nikita@#{krb5.realm}"
@@ -53,7 +53,7 @@ describe 'krb5.ktadd', ->
     nikita
       ssh: ssh
       krb5: admin: krb5
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @krb5.addprinc
         principal: "nikita@#{krb5.realm}"

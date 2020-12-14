@@ -13,7 +13,7 @@ describe 'file.download file', ->
     they 'with file protocol', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "file://#{__filename}"
@@ -28,11 +28,10 @@ describe 'file.download file', ->
         .should.be.finally.containEql status: false
 
     they 'without protocol', ({ssh}) ->
-      source = 
       # Download a non existing file
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__filename}"
@@ -49,7 +48,7 @@ describe 'file.download file', ->
     they 'doesnt exists', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__dirname}/doesnotexists"
@@ -59,7 +58,7 @@ describe 'file.download file', ->
     they 'into an existing directory', ({ssh}) ->
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/download_test"
@@ -74,7 +73,7 @@ describe 'file.download file', ->
     they 'validate md5', ({ssh}) ->
       source = "#{__dirname}/download.zip"
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           ssh: ssh
@@ -89,7 +88,7 @@ describe 'file.download file', ->
     they 'cache dir', ({ssh}) ->
       # Download a non existing file
       nikita
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           ssh: ssh
@@ -104,7 +103,7 @@ describe 'file.download file', ->
       ssh = null
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__filename}"
@@ -133,7 +132,7 @@ describe 'file.download file', ->
       # Download a non existing file
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -156,7 +155,7 @@ describe 'file.download file', ->
       # Download with invalid checksum
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir
@@ -186,7 +185,7 @@ describe 'file.download file', ->
       return unless ssh
       nikita
         ssh: ssh
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.touch
           target: "#{tmpdir}/a_file"

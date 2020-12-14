@@ -10,7 +10,7 @@ describe 'actions.fs.chown', ->
   they 'throw error if target does not exists', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 1234
       .should.be.rejectedWith
@@ -19,7 +19,7 @@ describe 'actions.fs.chown', ->
   they 'use stat shortcircuit', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
@@ -38,7 +38,7 @@ describe 'actions.fs.chown', ->
   they 'change both uid and gid', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
@@ -56,7 +56,7 @@ describe 'actions.fs.chown', ->
   they 'change only uid', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
@@ -73,7 +73,7 @@ describe 'actions.fs.chown', ->
   they 'change only gid', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}, log, tools: {events}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'
@@ -90,7 +90,7 @@ describe 'actions.fs.chown', ->
   they 'detect status with uid', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @execute """
       echo '' > '#{tmpdir}/a_file'

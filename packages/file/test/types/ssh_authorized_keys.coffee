@@ -10,7 +10,7 @@ describe 'file.types.ssh_authorized_keys', ->
   they 'overwrite file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/authorized_keys"
@@ -28,7 +28,7 @@ describe 'file.types.ssh_authorized_keys', ->
   they 'merge file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/authorized_keys"

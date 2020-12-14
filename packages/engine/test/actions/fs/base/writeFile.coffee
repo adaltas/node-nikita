@@ -10,7 +10,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'content is a string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -21,7 +21,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'content is empty', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"

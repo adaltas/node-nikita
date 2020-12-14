@@ -13,7 +13,7 @@ describe 'docker.save', ->
     nikita
       ssh: ssh
       docker: docker
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.build
         image: 'nikita/load_test'

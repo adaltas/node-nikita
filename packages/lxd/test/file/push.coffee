@@ -16,7 +16,7 @@ describe 'lxd.file.push', ->
   they 'a new file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @lxd.delete
         container: 'c1'
@@ -43,7 +43,7 @@ describe 'lxd.file.push', ->
   they 'the same file', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @lxd.delete
         container: 'c1'

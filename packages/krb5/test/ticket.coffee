@@ -52,7 +52,7 @@ describe 'krb5.ticket', ->
       nikita
         ssh: ssh
         krb5: admin: krb5
-        tmpdir: true
+        metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @krb5.delprinc
           principal: "nikita@#{krb5.realm}"

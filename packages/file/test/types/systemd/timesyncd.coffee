@@ -10,7 +10,7 @@ describe 'file.types.systemd.timesyncd', ->
   they 'servers as a string', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
@@ -30,7 +30,7 @@ describe 'file.types.systemd.timesyncd', ->
   they 'servers as an array', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
@@ -50,7 +50,7 @@ describe 'file.types.systemd.timesyncd', ->
   they 'merge values', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"

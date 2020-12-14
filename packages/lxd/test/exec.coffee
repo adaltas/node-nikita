@@ -68,7 +68,7 @@ describe 'lxd.exec', ->
           container: 'c1'
         await @lxd.start
           container: 'c1'
-        res = {status, code} = await @lxd.exec
+        {status, code} = await @lxd.exec
           container: 'c1'
           trap: false
           command: """

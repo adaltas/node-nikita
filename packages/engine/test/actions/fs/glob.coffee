@@ -11,7 +11,7 @@ describe 'actions.fs.glob', ->
   they 'should traverse a directory', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
@@ -26,7 +26,7 @@ describe 'actions.fs.glob', ->
   they 'should traverse a directory recursively', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
@@ -47,7 +47,7 @@ describe 'actions.fs.glob', ->
   they 'should match an extension patern', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
@@ -61,8 +61,9 @@ describe 'actions.fs.glob', ->
   they 'should match an extension patern in recursion', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
-      dirty: true
+      metadata:
+        tmpdir: true
+        dirty: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
@@ -77,7 +78,7 @@ describe 'actions.fs.glob', ->
   they 'return an empty array on no match', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {files} = await @fs.glob "#{tmpdir}/invalid/*.coffee"
       files.sort().should.eql []
@@ -85,7 +86,7 @@ describe 'actions.fs.glob', ->
   they 'config `dot`', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/.git", content: ''
@@ -102,7 +103,7 @@ describe 'actions.fs.glob', ->
   they 'config `trailing`', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''

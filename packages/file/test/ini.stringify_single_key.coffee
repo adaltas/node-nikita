@@ -13,7 +13,7 @@ describe 'file.ini option stringify_single_key', ->
   they 'stringify write only key on props', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {status} = await @file.ini
         content:
@@ -31,7 +31,7 @@ describe 'file.ini option stringify_single_key', ->
   they 'merge ini containing single key lines', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/user.ini"

@@ -10,7 +10,7 @@ describe 'file.properties', ->
   they 'overwrite by default', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -31,7 +31,7 @@ describe 'file.properties', ->
   they 'option merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -54,7 +54,7 @@ describe 'file.properties', ->
   they 'honor separator', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -72,7 +72,7 @@ describe 'file.properties', ->
   they 'honor sort', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -96,7 +96,7 @@ describe 'file.properties', ->
   they 'option comments', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
@@ -119,7 +119,7 @@ describe 'file.properties', ->
   they 'option trim + merge', ({ssh}) ->
     nikita
       ssh: ssh
-      tmpdir: true
+      metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
