@@ -50,4 +50,4 @@ console.info(`Did we really had to wait: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

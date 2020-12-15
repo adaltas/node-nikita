@@ -48,7 +48,7 @@ Remove a non-directory type file.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

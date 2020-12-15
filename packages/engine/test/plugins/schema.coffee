@@ -53,7 +53,7 @@ describe 'plugins.schema', ->
       nikita.call
         a_string: 1
         an_integer: 0
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer', 'minimum': 1
@@ -69,7 +69,7 @@ describe 'plugins.schema', ->
       nikita.call
         a_string: 'ok'
         lonely_duck: true
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -84,7 +84,7 @@ describe 'plugins.schema', ->
 
     it 'ensure schema is an object', ->
       nikita.call
-        schema: true
+        metadata: schema: true
         handler: (->)
       .should.be.rejectedWith [
         'METADATA_SCHEMA_INVALID_VALUE:'
@@ -92,7 +92,7 @@ describe 'plugins.schema', ->
         'got true in action `call`.'
       ].join ' '
       nikita
-        schema: true
+        metadata: schema: true
         handler: (->)
       .should.be.rejectedWith [
         'METADATA_SCHEMA_INVALID_VALUE:'
@@ -105,7 +105,7 @@ describe 'plugins.schema', ->
     it 'valid', ->
       nikita
       .registry.register ['test', 'schema'],
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer'
@@ -113,7 +113,7 @@ describe 'plugins.schema', ->
       # Valid schema
       .call
         an_object: an_integer: 1234
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
@@ -122,14 +122,14 @@ describe 'plugins.schema', ->
     it 'invalid', ->
       nikita
       .registry.register ['test', 'schema'],
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer'
         handler: (->)
       .call
         an_object: an_integer: 'abc'
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
@@ -145,7 +145,7 @@ describe 'plugins.schema', ->
 
     it 'useDefaults', ->
       nikita.call
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'a_string':
@@ -176,7 +176,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof valid', ->
       nikita.call
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
@@ -187,7 +187,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof invalid', ->
       nikita.call
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'

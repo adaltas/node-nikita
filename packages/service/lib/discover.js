@@ -87,5 +87,7 @@ exit 3 ;`,
 // ## Export
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

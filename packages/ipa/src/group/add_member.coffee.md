@@ -65,4 +65,5 @@ console.info(`Member was added to the group: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

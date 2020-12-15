@@ -225,9 +225,9 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'krb5'
-  },
-  schema: schema
+    global: 'krb5',
+    schema: schema
+  }
 };
 
 // ## Fields in 'getprinc -terse' output

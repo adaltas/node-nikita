@@ -65,7 +65,7 @@ Create a directory. Missing parent directories are created as required.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

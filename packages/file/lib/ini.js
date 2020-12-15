@@ -200,8 +200,10 @@ handler = async function({
 
 // ## Exports
 module.exports = {
-  schema: schema,
-  handler: handler
+  handler: handler,
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Dependencies

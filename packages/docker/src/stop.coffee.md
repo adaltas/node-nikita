@@ -66,4 +66,4 @@ console.info(`Container was stopped: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

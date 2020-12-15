@@ -79,4 +79,4 @@ console.info(`Image was pulled: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

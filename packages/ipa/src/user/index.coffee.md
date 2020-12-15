@@ -98,4 +98,5 @@ console.info(`User was updated: ${status}`)
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

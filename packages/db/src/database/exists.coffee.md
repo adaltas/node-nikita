@@ -47,7 +47,7 @@ Check if a database exists.
         argument_name: 'database'
         global: 'db'
         shy: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

@@ -92,7 +92,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    global: 'docker'
-  },
-  schema: schema
+    global: 'docker',
+    schema: schema
+  }
 };

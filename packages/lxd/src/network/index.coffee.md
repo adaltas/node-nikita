@@ -86,7 +86,8 @@ console.info(`Network was created: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

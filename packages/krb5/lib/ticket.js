@@ -69,9 +69,9 @@ ${utils.krb5.kinit(config)}`,
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'krb5'
-  },
-  schema: schema
+    global: 'krb5',
+    schema: schema
+  }
 };
 
 // ## Dependencies

@@ -132,7 +132,8 @@ value properties.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## `parse(xml, [property])`
 

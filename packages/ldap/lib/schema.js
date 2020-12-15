@@ -186,7 +186,7 @@ module.exports = {
   handler: handler,
   metadata: {
     tmpdir: true,
-    global: 'ldap'
-  },
-  schema: schema
+    global: 'ldap',
+    schema: schema
+  }
 };

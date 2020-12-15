@@ -64,4 +64,4 @@ console.info(`User exists: ${status}`)
         on_action: on_action
       metadata:
         shy: true
-      schema: schema
+        schema: schema

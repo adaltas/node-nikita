@@ -47,4 +47,5 @@ console.info(status ? `device exists, type is ${config.type}` : 'device missing'
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

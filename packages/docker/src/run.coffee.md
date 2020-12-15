@@ -314,4 +314,4 @@ console.info(`Container was run: ${status}`)
         on_action: on_action
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

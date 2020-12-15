@@ -173,9 +173,9 @@ module.exports = {
   metadata: {
     log: false,
     raw_output: true,
-    tmpdir: true
-  },
-  schema: schema
+    tmpdir: true,
+    schema: schema
+  }
 };
 
 // ## Errors

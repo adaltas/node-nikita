@@ -122,4 +122,5 @@ console.info(`File was written: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

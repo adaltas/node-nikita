@@ -96,7 +96,8 @@ under a "Time" key so that the user doesn't have to do it manually.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

@@ -282,9 +282,9 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    global: 'ldap'
-  },
-  schema: schema
+    global: 'ldap',
+    schema: schema
+  }
 };
 
 // ## Dependencies

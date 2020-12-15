@@ -50,4 +50,4 @@ console.info(`Container was paused: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

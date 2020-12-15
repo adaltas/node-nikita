@@ -63,7 +63,7 @@ console.info(`ticket was renewed: ${status}`)
       handler: handler
       metadata:
         global: 'krb5'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

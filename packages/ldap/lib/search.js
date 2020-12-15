@@ -106,9 +106,9 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ldap',
-    shy: true
-  },
-  schema: schema
+    shy: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

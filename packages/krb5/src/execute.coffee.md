@@ -82,7 +82,7 @@ console.info(`Command was executed: ${status}`)
         on_action: on_action
       metadata:
         global: 'krb5'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

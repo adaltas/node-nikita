@@ -36,4 +36,4 @@ Read a link to retrieve its destination path.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema

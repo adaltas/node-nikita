@@ -40,4 +40,5 @@ console.log(`Property was modified: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

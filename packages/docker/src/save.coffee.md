@@ -82,4 +82,4 @@ console.info(`Container was saved: ${status}`)
         on_action: on_action
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

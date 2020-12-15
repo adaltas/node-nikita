@@ -77,7 +77,7 @@ Assert a TCP or HTTP server is listening.
         on_action: require('./wait').hooks.on_action
       metadata:
         shy: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

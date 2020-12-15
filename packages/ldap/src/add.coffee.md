@@ -136,7 +136,7 @@ console.info(`Entry modified: ${status}`)
         on_action: on_action
       metadata:
         global: 'ldap'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

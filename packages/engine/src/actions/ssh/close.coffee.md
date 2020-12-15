@@ -44,4 +44,5 @@ Close the existing connection if any.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

@@ -111,7 +111,9 @@ ext_to_type = function(name, path) {
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema,
+  metadata: {
+    schema: schema
+  },
   tools: {
     ext_to_type: ext_to_type
   }

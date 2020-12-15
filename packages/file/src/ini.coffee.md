@@ -173,8 +173,9 @@ console.info(`Content was updated: ${status}`)
 ## Exports
 
     module.exports =
-      schema: schema
       handler: handler
+      metadata:
+        schema: schema
 
 ## Dependencies
 

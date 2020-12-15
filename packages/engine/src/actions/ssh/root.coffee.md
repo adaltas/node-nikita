@@ -185,7 +185,8 @@ console.info(`Public key was updoaded for root user: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

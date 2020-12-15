@@ -70,8 +70,8 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
 
     module.exports =
       handler: handler
-      schema: schema
       metadata:
+        schema: schema
         shy: true
 
 ## Dependencies

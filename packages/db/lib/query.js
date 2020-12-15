@@ -257,14 +257,14 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    global: 'db'
+    global: 'db',
+    schema: schema
   },
   // Utils
   command: command,
   connection_config: connection_config,
   escape: escape,
-  jdbc: jdbc,
-  schema: schema
+  jdbc: jdbc
 };
 
 // ## Dependencies

@@ -97,4 +97,5 @@ console.info(`Directory was moved: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

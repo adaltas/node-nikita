@@ -29,7 +29,7 @@ module.exports = (action) ->
         switch protocol
           when 'module:'
             action = require.main.require pathname
-            accept action.schema
+            accept action.metadata.schema
           when 'registry:'
             module = pathname.split '/'
             action = await action.registry.get module
@@ -67,15 +67,6 @@ module.exports = (action) ->
       fragments: ajv._fragments
   module: '@nikitajs/engine/src/plugins/schema'
   hooks:
-    'nikita:registry:normalize': (action) ->
-      action.metadata ?= {}
-      if action.hasOwnProperty 'schema'
-        action.metadata.schema = action.schema
-        delete action.schema
-    'nikita:session:normalize': (action) ->
-      if action.hasOwnProperty 'schema'
-        action.metadata.schema = action.schema
-        delete action.schema
     'nikita:session:action':
       after: [
         '@nikitajs/engine/src/metadata/disabled'

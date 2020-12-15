@@ -116,4 +116,5 @@ to "['start', 'restart']" to ensure the service will be always started.
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

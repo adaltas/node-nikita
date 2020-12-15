@@ -113,7 +113,7 @@ console.info(Buffer.concat(buffers).toString())
         log: false
         raw_output: true
         tmpdir: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

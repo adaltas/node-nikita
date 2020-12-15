@@ -95,11 +95,11 @@ handler = async function({config}) {
 
 // ## Exports
 module.exports = {
-  metadata: {
-    ssh: false
-  },
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema,
+    ssh: false
+  }
 };
 
 // ## Dependencies

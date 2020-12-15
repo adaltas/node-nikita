@@ -42,4 +42,4 @@ Delete a name and possibly the file it refers to.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema

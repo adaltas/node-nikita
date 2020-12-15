@@ -72,4 +72,5 @@ console.info(`Package was uninstalled: ${status}`)
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

@@ -104,4 +104,5 @@ console.info(`Certificate authority was removed: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

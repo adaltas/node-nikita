@@ -50,7 +50,7 @@ module.exports = {
   },
   metadata: {
     log: false,
-    raw_output: true
-  },
-  schema: schema
+    raw_output: true,
+    schema: schema
+  }
 };

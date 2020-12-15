@@ -27,7 +27,8 @@ This action honors all the config from "nikita.file.ini".
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

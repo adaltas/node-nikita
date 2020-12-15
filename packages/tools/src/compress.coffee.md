@@ -94,6 +94,7 @@ type.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
       tools:
         ext_to_type: ext_to_type

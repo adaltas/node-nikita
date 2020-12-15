@@ -47,7 +47,7 @@ Change permissions of a file.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

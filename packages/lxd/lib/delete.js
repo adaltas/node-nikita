@@ -43,5 +43,7 @@ ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' 
 // ## Export
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

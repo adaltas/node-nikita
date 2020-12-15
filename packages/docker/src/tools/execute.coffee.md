@@ -116,7 +116,8 @@ Execute a docker command.
       handler: handler
       hooks:
         on_action: require('@nikitajs/engine/lib/actions/execute').hooks.on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

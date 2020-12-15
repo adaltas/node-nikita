@@ -86,4 +86,5 @@ console.info(`Key was generated: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

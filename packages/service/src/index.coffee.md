@@ -149,7 +149,8 @@ console.info(`Service status: ${status}`)
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

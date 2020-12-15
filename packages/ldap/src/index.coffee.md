@@ -134,7 +134,7 @@ console.info(`Index created or modified: ${status}`)
       handler: handler
       metadata:
         global: 'ldap'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

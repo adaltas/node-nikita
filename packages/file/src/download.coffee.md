@@ -349,7 +349,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Module Dependencies
 
