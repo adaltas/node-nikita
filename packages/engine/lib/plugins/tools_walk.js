@@ -5,7 +5,7 @@ utils = require('../utils');
 
 walk = async function(action, walker) {
   var precious, results;
-  precious = (await walker(action, walker));
+  precious = (await walker(action));
   results = [];
   if (precious !== void 0) {
     results.push(precious);
