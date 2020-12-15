@@ -23,24 +23,24 @@ validate = function(action, args) {
     [action, finder] = args;
   } else {
     if (!action) {
-      throw utils.error('OPERATION_FIND_INVALID_ARGUMENT', ['action signature is expected to be', '`finder` or `action, finder`', `got ${JSON.stringify(args)}`]);
+      throw utils.error('TOOLS_FIND_INVALID_ARGUMENT', ['action signature is expected to be', '`finder` or `action, finder`', `got ${JSON.stringify(args)}`]);
     }
   }
   if (!action) {
-    throw utils.error('OPERATION_FIND_ACTION_FINDER_REQUIRED', ['argument `action` is missing and must be a valid action']);
+    throw utils.error('TOOLS_FIND_ACTION_FINDER_REQUIRED', ['argument `action` is missing and must be a valid action']);
   }
   if (!finder) {
-    throw utils.error('OPERATION_FIND_FINDER_REQUIRED', ['argument `finder` is missing and must be a function']);
+    throw utils.error('TOOLS_FIND_FINDER_REQUIRED', ['argument `finder` is missing and must be a function']);
   }
   if (typeof finder !== 'function') {
-    throw utils.error('OPERATION_FIND_FINDER_INVALID', ['argument `finder` is missing and must be a function']);
+    throw utils.error('TOOLS_FIND_FINDER_INVALID', ['argument `finder` is missing and must be a function']);
   }
   return [action, finder];
 };
 
 module.exports = function(action) {
   return {
-    module: '@nikitajs/engine/src/plugins/operation_find',
+    module: '@nikitajs/engine/src/plugins/tools_find',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         return async function() {

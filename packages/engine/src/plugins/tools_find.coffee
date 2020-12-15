@@ -12,24 +12,24 @@ validate = (action, args) ->
     [finder] = args
   else if args.length is 2
     [action, finder] = args
-  else throw utils.error 'OPERATION_FIND_INVALID_ARGUMENT', [
+  else throw utils.error 'TOOLS_FIND_INVALID_ARGUMENT', [
     'action signature is expected to be'
     '`finder` or `action, finder`'
     "got #{JSON.stringify args}"
   ] unless action
-  throw utils.error 'OPERATION_FIND_ACTION_FINDER_REQUIRED', [
+  throw utils.error 'TOOLS_FIND_ACTION_FINDER_REQUIRED', [
     'argument `action` is missing and must be a valid action'
   ] unless action
-  throw utils.error 'OPERATION_FIND_FINDER_REQUIRED', [
+  throw utils.error 'TOOLS_FIND_FINDER_REQUIRED', [
     'argument `finder` is missing and must be a function'
   ] unless finder
-  throw utils.error 'OPERATION_FIND_FINDER_INVALID', [
+  throw utils.error 'TOOLS_FIND_FINDER_INVALID', [
     'argument `finder` is missing and must be a function'
   ] unless typeof finder is 'function'
   [action, finder]
 
 module.exports = (action) ->
-  module: '@nikitajs/engine/src/plugins/operation_find'
+  module: '@nikitajs/engine/src/plugins/tools_find'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->
