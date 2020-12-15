@@ -138,10 +138,16 @@ console.info(stdout)
           Run the action without executing any real command.
           """
         'env':
+          type: 'object'
           description: """
-          Environment variables, default to `process.env`.
+          Environment variables as key-value pairs. With local execution, it
+          default to `process.env`. With remote execution over SSH, the accepted
+          environment variables is determined by the AcceptEnv server setting
+          and default to "LANG,LC_*"
           """
+          patternProperties: '': type: "string"
         'gid':
+          type: 'integer'
           description: """
           Unix group id.
           """

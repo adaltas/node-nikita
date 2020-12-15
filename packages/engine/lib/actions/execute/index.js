@@ -167,9 +167,19 @@ will not be incremented, int or array of int.`
       description: `Run the action without executing any real command.`
     },
     'env': {
-      description: `Environment variables, default to \`process.env\`.`
+      type: 'object',
+      description: `Environment variables as key-value pairs. With local execution, it
+default to \`process.env\`. With remote execution over SSH, the accepted
+environment variables is determined by the AcceptEnv server setting
+and default to "LANG,LC_*"`,
+      patternProperties: {
+        '': {
+          type: "string"
+        }
+      }
     },
     'gid': {
+      type: 'integer',
       description: `Unix group id.`
     },
     'stdin_log': {
