@@ -151,7 +151,9 @@ ${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Dependencies

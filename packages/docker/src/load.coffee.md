@@ -114,7 +114,7 @@ console.info(`Image was loaded: ${status}`);
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

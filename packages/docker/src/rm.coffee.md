@@ -84,4 +84,4 @@ console.info(`Container was removed: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

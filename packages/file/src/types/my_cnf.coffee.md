@@ -54,7 +54,8 @@ Write file in the mysql ini format by default located in "/etc/my.cnf".
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

@@ -150,7 +150,7 @@ console.info(`File was pushed: ${status}`)
       handler: handler
       metadata:
         tmpdir: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

@@ -54,4 +54,5 @@ console.info(`Group is ${result.cn[0]}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

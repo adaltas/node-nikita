@@ -192,12 +192,12 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
         on_action: on_action
       metadata:
         global: 'db'
+        schema: schema
       # Utils
       command: command
       connection_config: connection_config
       escape: escape
       jdbc: jdbc
-      schema: schema
 
 ## Dependencies
 

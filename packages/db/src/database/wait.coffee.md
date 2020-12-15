@@ -54,7 +54,7 @@ console.info(`Did database existed initially: ${!status}`)
       metadata:
         argument_name: 'database'
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

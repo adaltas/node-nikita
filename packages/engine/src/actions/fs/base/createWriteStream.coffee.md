@@ -104,10 +104,10 @@ console.info(`Stream was created: ${status}`)
       metadata:
         log: false
         raw_output: true
+        schema: schema
         tmpdir: true
       hooks:
         on_action: on_action
-      schema: schema
 
 ## Errors
 

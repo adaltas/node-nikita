@@ -371,7 +371,7 @@ console.info(stdout)
         on_action: on_action
       metadata:
         tmpdir: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

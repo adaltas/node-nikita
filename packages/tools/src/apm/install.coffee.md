@@ -66,4 +66,5 @@ Install Atom packages with APM.
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

@@ -83,7 +83,7 @@ paths locally using the Minimatch package.
         on_action: on_action
       metadata:
         shy: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

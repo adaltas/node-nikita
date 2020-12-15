@@ -95,7 +95,7 @@ console.info(`Principal was created or modified: ${status}`)
       handler: handler
       metadata:
         global: 'krb5'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

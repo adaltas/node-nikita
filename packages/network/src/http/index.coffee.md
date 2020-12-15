@@ -228,7 +228,8 @@ Perform an HTTP request. It uses internaly the curl command.
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

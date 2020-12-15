@@ -136,4 +136,4 @@ console.info(`Schema created or modified: ${status}`)
       metadata:
         tmpdir: true
         global: 'ldap'
-      schema: schema
+        schema: schema

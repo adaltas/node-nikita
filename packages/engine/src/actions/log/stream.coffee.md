@@ -95,7 +95,8 @@ Write log to custom destinations in a user provided format.
     module.exports =
       ssh: false
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

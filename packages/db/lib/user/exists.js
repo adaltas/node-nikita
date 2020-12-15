@@ -63,9 +63,9 @@ module.exports = {
   metadata: {
     argument_name: 'username',
     global: 'db',
-    shy: true
-  },
-  schema: schema
+    shy: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

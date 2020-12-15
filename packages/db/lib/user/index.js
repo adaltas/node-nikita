@@ -90,9 +90,9 @@ exit $signal`,
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'db'
-  },
-  schema: schema
+    global: 'db',
+    schema: schema
+  }
 };
 
 // ## Dependencies

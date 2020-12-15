@@ -37,4 +37,4 @@ stated, not the file that it refers to.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema

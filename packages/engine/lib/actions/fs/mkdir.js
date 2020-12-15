@@ -237,7 +237,9 @@ module.exports = {
   hooks: {
     on_action: on_action
   },
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Errors

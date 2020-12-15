@@ -147,7 +147,8 @@ console.info(`Repo was updated: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

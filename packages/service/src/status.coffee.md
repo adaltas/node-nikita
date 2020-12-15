@@ -90,4 +90,5 @@ We might think about re-integrating them.
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

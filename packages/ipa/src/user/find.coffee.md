@@ -104,4 +104,5 @@ console.info(`User was found: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

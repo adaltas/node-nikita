@@ -175,5 +175,7 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

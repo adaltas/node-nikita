@@ -45,7 +45,7 @@ Remove a schema from a database.
       metadata:
         argument_name: 'schema'
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

@@ -314,9 +314,9 @@ exit $code`,
 module.exports = {
   handler: handler,
   metadata: {
-    tmpdir: true
-  },
-  schema: schema
+    tmpdir: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

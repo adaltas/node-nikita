@@ -70,4 +70,4 @@ console.info(`Container was started: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

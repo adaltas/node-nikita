@@ -43,7 +43,7 @@ Delete a directory.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

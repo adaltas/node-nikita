@@ -105,7 +105,7 @@ console.info(`File was written: ${status}`)
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

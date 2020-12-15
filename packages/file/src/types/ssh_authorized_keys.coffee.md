@@ -73,7 +73,8 @@ throw an Error if it does not exists.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

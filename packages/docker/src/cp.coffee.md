@@ -102,7 +102,7 @@ console.info(`Container was copied: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

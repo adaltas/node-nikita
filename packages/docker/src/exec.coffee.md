@@ -97,4 +97,4 @@ console.info(`Command was executed: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

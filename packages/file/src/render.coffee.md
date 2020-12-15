@@ -96,7 +96,8 @@ console.info(`File was rendered: ${status}`)
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

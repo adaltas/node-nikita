@@ -70,4 +70,4 @@ console.info(`Container was killed: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

@@ -69,9 +69,9 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'db'
-  },
-  schema: schema
+    global: 'db',
+    schema: schema
+  }
 };
 
 

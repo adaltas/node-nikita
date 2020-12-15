@@ -52,7 +52,7 @@ databases.map( database => {
       handler: handler
       metadata:
         global: 'ldap'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

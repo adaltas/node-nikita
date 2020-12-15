@@ -59,4 +59,4 @@ console.info(`Container was started or restarted: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

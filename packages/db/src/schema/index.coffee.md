@@ -78,7 +78,7 @@ console.info(`Schema created or modified: ${status}`)
       handler: handler
       metadata:
         global: 'db'
-      schema: schema
+        schema: schema
       
 ## Dependencies
 

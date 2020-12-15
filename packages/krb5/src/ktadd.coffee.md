@@ -116,7 +116,7 @@ console.info(`keytab was created or updated: ${status}`)
       handler: handler
       metadata:
         global: 'krb5'
-      schema: schema
+        schema: schema
 
 ## Fields in 'getprinc -terse' output
 

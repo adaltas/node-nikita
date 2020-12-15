@@ -60,9 +60,9 @@ module.exports = {
   metadata: {
     argument_name: 'database',
     global: 'db',
-    shy: true
-  },
-  schema: schema
+    shy: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

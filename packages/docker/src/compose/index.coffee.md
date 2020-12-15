@@ -127,7 +127,8 @@ Create and start containers according to a docker-compose file
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

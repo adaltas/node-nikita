@@ -71,5 +71,7 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

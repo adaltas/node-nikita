@@ -31,7 +31,7 @@ Remove a user for the destination database.
       metadata:
         argument_name: 'username'
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

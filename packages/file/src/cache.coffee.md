@@ -222,7 +222,7 @@ console.info(`File downloaded: ${status}`)
       handler: handler
       metadata:
         argument_name: 'source'
-      schema: schema
+        schema: schema
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']
 
