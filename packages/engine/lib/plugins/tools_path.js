@@ -7,7 +7,7 @@ path = require('path');
 
 module.exports = function(action) {
   return {
-    module: '@nikitajs/engine/src/plugins/operation_path',
+    module: '@nikitajs/engine/src/plugins/tools_path',
     // require: '@nikitajs/engine/src/metadata/ssh'
     hooks: {
       'nikita:session:action': {
