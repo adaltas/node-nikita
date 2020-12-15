@@ -14,7 +14,7 @@ is `null` or `false`.
 module.exports = function() {
   return {
     module: '@nikitajs/engine/src/plugins/ssh',
-    require: ['@nikitajs/engine/src/plugins/operation_find'],
+    require: ['@nikitajs/engine/src/plugins/tools_find'],
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         var ssh;

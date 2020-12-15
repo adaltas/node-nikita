@@ -10,7 +10,7 @@ exec = require 'ssh2-exec'
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/status'
   require: [
-    '@nikitajs/engine/src/plugins/operation_find'
+    '@nikitajs/engine/src/plugins/tools_find'
     '@nikitajs/engine/src/plugins/operation_path'
   ]
   hooks:

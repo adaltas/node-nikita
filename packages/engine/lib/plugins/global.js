@@ -13,7 +13,7 @@ daemon if it is not run locally.
 module.exports = function() {
   return {
     module: '@nikitajs/engine/src/plugins/global',
-    require: ['@nikitajs/engine/src/plugins/operation_find'],
+    require: ['@nikitajs/engine/src/plugins/tools_find'],
     hooks: {
       'nikita:session:action': {
         handler: async function(action) {
