@@ -151,7 +151,9 @@ handler = function({
 module.exports = {
   ssh: false,
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Dependencies

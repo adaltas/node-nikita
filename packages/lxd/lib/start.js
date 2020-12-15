@@ -48,5 +48,7 @@ ${command_init}`,
 // ## Export
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

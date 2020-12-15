@@ -80,7 +80,7 @@ Create a user for the destination database.
       handler: handler
       metadata:
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

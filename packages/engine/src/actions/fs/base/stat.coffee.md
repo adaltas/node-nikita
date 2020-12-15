@@ -149,7 +149,7 @@ returned values.
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
       schema_output: schema_output
 
 ## Errors

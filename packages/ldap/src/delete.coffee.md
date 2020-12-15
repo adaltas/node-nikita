@@ -81,4 +81,4 @@ console.log(`Entry deleted: ${status}`)
       handler: handler
       metadata:
         global: 'ldap'
-      schema: schema
+        schema: schema

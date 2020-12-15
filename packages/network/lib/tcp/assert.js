@@ -121,9 +121,9 @@ module.exports = {
     on_action: require('./wait').hooks.on_action
   },
   metadata: {
-    shy: true
-  },
-  schema: schema
+    shy: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

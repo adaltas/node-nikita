@@ -106,5 +106,7 @@ if [ $current != $target ]; then exit 3; fi`,
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

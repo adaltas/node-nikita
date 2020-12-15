@@ -162,7 +162,9 @@ module.exports = {
   hooks: {
     on_action: require('@nikitajs/engine/lib/actions/execute').hooks.on_action
   },
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Dependencies

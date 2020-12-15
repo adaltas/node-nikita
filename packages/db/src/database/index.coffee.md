@@ -109,7 +109,7 @@ console.info(`Database created or modified: ${status}`)
       metadata:
         argument_name: 'database'
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

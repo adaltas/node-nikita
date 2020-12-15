@@ -60,7 +60,7 @@ console.info(`Schema exists: ${exists}`)
       handler: handler
       metadata:
         global: 'db'
-      schema: schema
+        schema: schema
       
 ## Dependencies
 

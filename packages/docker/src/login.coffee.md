@@ -64,7 +64,7 @@ Register or log in to a Docker registry server.
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

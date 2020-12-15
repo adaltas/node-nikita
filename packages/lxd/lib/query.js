@@ -39,7 +39,6 @@ schema = {
   }
 };
 
-
 // ## Handler
 handler = async function({config}) {
   var stdout;
@@ -55,8 +54,8 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema,
   metadata: {
+    schema: schema,
     shy: true
   }
 };

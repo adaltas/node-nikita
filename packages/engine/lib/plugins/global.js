@@ -15,22 +15,6 @@ module.exports = function() {
     module: '@nikitajs/engine/src/plugins/global',
     require: ['@nikitajs/engine/src/plugins/operation_find'],
     hooks: {
-      'nikita:registry:normalize': {
-        handler: function(action) {
-          if (action.hasOwnProperty('global')) {
-            action.metadata.global = action.global;
-            return delete action.global;
-          }
-        }
-      },
-      'nikita:session:normalize': {
-        handler: function(action) {
-          if (action.hasOwnProperty('global')) {
-            action.metadata.global = action.global;
-            return delete action.global;
-          }
-        }
-      },
       'nikita:session:action': {
         handler: async function(action) {
           var base, global, k, ref, v;

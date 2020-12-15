@@ -179,9 +179,9 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_name: 'database',
-    global: 'db'
-  },
-  schema: schema
+    global: 'db',
+    schema: schema
+  }
 };
 
 // ## Dependencies

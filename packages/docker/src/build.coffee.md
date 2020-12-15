@@ -244,9 +244,9 @@ console.info(`Container was built: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
+        schema: schema
       hooks:
         on_action: on_action
-      schema: schema
 
 ## Errors
 

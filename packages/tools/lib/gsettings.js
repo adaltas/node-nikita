@@ -59,5 +59,7 @@ gsettings set ${path} ${key} "${value}"`, {
 // ## Exports
 module.exports = {
   handler: handler,
-  schema: schema
+  metadata: {
+    schema: schema
+  }
 };

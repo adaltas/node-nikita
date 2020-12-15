@@ -68,7 +68,8 @@ console.info(`Property was set: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

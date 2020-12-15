@@ -114,7 +114,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
       handler: handler
       metadata:
         argument: 'command'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

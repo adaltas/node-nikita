@@ -111,7 +111,7 @@ console.info(stdout)
       metadata:
         global: 'ldap'
         shy: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

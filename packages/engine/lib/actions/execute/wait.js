@@ -157,9 +157,9 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    argument: 'command'
-  },
-  schema: schema
+    argument: 'command',
+    schema: schema
+  }
 };
 
 // ## Dependencies

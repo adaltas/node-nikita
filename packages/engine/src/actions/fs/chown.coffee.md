@@ -110,4 +110,5 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema

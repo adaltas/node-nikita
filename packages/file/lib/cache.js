@@ -363,9 +363,9 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    argument_name: 'source'
-  },
-  schema: schema
+    argument_name: 'source',
+    schema: schema
+  }
 };
 
 module.exports.protocols_http = protocols_http = ['http:', 'https:'];

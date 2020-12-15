@@ -121,7 +121,7 @@ assert(files[0].isFile(), true)
       metadata:
         log: false
         raw_output: true
-      schema: schema
+        schema: schema
 
 ## Errors
 

@@ -46,9 +46,9 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'ldap'
-  },
-  schema: schema
+    global: 'ldap',
+    schema: schema
+  }
 };
 
 // ## Dependencies

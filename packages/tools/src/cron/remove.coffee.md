@@ -73,7 +73,8 @@ console.info(`Cron entry was removed: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

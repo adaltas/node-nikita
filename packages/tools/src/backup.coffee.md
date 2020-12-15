@@ -141,7 +141,8 @@ console.info(`File was backed up: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

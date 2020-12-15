@@ -528,9 +528,9 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    tmpdir: true
-  },
-  schema: schema
+    tmpdir: true,
+    schema: schema
+  }
 };
 
 // ## Dependencies

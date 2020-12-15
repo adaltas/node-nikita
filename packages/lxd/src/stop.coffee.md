@@ -36,4 +36,5 @@ console.info(`The container was stopped: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

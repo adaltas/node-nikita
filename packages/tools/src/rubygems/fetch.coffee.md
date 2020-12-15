@@ -93,7 +93,7 @@ couldn't find any suitable parser on NPM.
       handler: handler
       metadata:
         global: 'ruby'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

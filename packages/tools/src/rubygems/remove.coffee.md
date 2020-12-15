@@ -73,4 +73,4 @@ uninstall -i /usr/share/gems json"
       handler: handler
       metadata:
         global: 'ruby'
-      schema: schema
+        schema: schema

@@ -52,4 +52,4 @@ console.info(`Container was unpaused: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

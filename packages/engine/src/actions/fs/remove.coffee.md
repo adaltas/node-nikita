@@ -86,6 +86,7 @@ console.info(`Directories was removed: ${status}`)
       handler: handler
       hooks:
         on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
 
 [rimraf]: https://github.com/isaacs/rimraf

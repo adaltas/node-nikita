@@ -83,4 +83,4 @@ info.map( (container) =>
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

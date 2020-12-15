@@ -59,4 +59,5 @@ console.info(`Container is running: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

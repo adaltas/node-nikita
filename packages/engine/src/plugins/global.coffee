@@ -18,16 +18,6 @@ module.exports = ->
     '@nikitajs/engine/src/plugins/operation_find'
   ]
   hooks:
-    'nikita:registry:normalize':
-      handler: (action) ->
-        if action.hasOwnProperty 'global'
-          action.metadata.global = action.global
-          delete action.global
-    'nikita:session:normalize':
-      handler: (action) ->
-        if action.hasOwnProperty 'global'
-          action.metadata.global = action.global
-          delete action.global
     'nikita:session:action':
       handler: (action) ->
         global = action.metadata.global

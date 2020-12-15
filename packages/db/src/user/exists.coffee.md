@@ -58,7 +58,7 @@ Check if a user exists in the database.
         argument_name: 'username'
         global: 'db'
         shy: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

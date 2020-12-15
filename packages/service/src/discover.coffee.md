@@ -64,4 +64,5 @@ Store properties in the nikita state object.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

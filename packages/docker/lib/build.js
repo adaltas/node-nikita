@@ -323,12 +323,12 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'docker'
+    global: 'docker',
+    schema: schema
   },
   hooks: {
     on_action: on_action
-  },
-  schema: schema
+  }
 };
 
 // ## Errors

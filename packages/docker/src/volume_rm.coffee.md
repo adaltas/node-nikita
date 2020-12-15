@@ -53,4 +53,4 @@ console.info(`Volume was removed: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

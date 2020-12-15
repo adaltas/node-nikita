@@ -146,7 +146,8 @@ console.info(`File was uploaded: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

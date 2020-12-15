@@ -35,7 +35,7 @@ Flags:
           description: """
           The API path in the form of `[<remote>:]<API path>`, for example
           `/1.0/instances/c1`
-          """  
+          """
 
 ## Handler
 
@@ -51,6 +51,6 @@ Flags:
 
     module.exports =
       handler: handler
-      schema: schema
       metadata:
+        schema: schema
         shy: true

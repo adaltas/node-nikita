@@ -58,4 +58,5 @@ console.info(`Network was attached: ${status}`)
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

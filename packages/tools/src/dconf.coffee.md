@@ -57,4 +57,5 @@ Run the command "dconf-editor" to navigate the database with a UI.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema

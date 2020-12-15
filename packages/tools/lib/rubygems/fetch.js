@@ -104,9 +104,9 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'ruby'
-  },
-  schema: schema
+    global: 'ruby',
+    schema: schema
+  }
 };
 
 // ## Dependencies

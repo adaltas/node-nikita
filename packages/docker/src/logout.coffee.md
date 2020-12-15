@@ -46,7 +46,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

@@ -47,9 +47,9 @@ was created and available.
     module.exports =
       metadata:
         raw_output: true
+        schema: schema
       handler: handler
       on_action: on_action
-      schema: schema
 
 ## Dependencies
 

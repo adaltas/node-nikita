@@ -60,7 +60,7 @@ Create a user for the destination database.
       metadata:
         argument_name: 'database'
         global: 'db'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

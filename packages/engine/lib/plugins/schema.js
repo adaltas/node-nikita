@@ -38,7 +38,7 @@ module.exports = function(action) {
         switch (protocol) {
           case 'module:':
             action = require.main.require(pathname);
-            return accept(action.schema);
+            return accept(action.metadata.schema);
           case 'registry:':
             module = pathname.split('/');
             action = (await action.registry.get(module));
@@ -101,21 +101,6 @@ module.exports = function(action) {
   return {
     module: '@nikitajs/engine/src/plugins/schema',
     hooks: {
-      'nikita:registry:normalize': function(action) {
-        if (action.metadata == null) {
-          action.metadata = {};
-        }
-        if (action.hasOwnProperty('schema')) {
-          action.metadata.schema = action.schema;
-          return delete action.schema;
-        }
-      },
-      'nikita:session:normalize': function(action) {
-        if (action.hasOwnProperty('schema')) {
-          action.metadata.schema = action.schema;
-          return delete action.schema;
-        }
-      },
       'nikita:session:action': {
         after: ['@nikitajs/engine/src/metadata/disabled', '@nikitajs/engine/src/plugins/conditions', '@nikitajs/engine/src/plugins/global'],
         handler: async function(action, handler) {

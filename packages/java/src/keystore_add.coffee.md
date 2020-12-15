@@ -284,7 +284,7 @@ default location of the Oracle JDK installation.
       handler: handler
       metadata:
         tmpdir: true
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

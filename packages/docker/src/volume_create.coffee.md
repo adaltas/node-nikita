@@ -86,4 +86,4 @@ console.info(`Volume was created: ${status}`)
       handler: handler
       metadata:
         global: 'docker'
-      schema: schema
+        schema: schema

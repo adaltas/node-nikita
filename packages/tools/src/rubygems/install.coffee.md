@@ -165,7 +165,7 @@ console.info(`Gem installed: ${status}`)
       handler: handler
       metadata:
         global: 'ruby'
-      schema: schema
+        schema: schema
 
 ## Dependencies
 

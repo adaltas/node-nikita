@@ -63,7 +63,8 @@ file][ceph-conf] as Ceph daemons expect it.
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

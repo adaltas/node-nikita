@@ -61,7 +61,7 @@ handler = function({
 module.exports = {
   handler: handler,
   metadata: {
-    global: 'docker'
-  },
-  schema: schema
+    global: 'docker',
+    schema: schema
+  }
 };

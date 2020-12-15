@@ -102,9 +102,9 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    global: 'krb5'
-  },
-  schema: schema
+    global: 'krb5',
+    schema: schema
+  }
 };
 
 // ## Dependencies

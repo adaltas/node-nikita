@@ -55,7 +55,8 @@ in "/etc/pacman.conf".
 
     module.exports =
       handler: handler
-      schema: schema
+      metadata:
+        schema: schema
 
 ## Dependencies
 

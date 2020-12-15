@@ -53,11 +53,11 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   metadata: {
-    raw_output: true
+    raw_output: true,
+    schema: schema
   },
   handler: handler,
-  on_action: on_action,
-  schema: schema
+  on_action: on_action
 };
 
 // ## Dependencies

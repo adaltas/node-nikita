@@ -106,7 +106,8 @@ Write log to the host filesystem in Markdown.
     module.exports =
       handler: handler
       on_action: on_action
-      schema: schema
+      metadata:
+        schema: schema
       ssh: false
 
 ## Dependencies
