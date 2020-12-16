@@ -3,7 +3,7 @@ MAINTAINER David Worms
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 12.13.1
+ENV NODE_VERSION 14.15.2
 RUN yum install -y xz \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
