@@ -6,6 +6,31 @@ they = require('ssh2-they').configure ssh
 return unless tags.docker
 
 describe 'docker.tools.service', ->
+  
+  describe 'schema', ->
+    
+    they 'honors docker.run', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      .docker.tools.service
+        image: 'httpd'
+        name: false
+        port: '499:80'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+          
+    they 'overwrite default', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      .docker.tools.service
+        image: 'httpd'
+        name: 'nikita_test_unique'
+        port: '499:80'
+        handler: ({config}) ->
+          config.detach.should.be.true()
+          config.rm.should.be.false()
 
   they 'simple service', ({ssh}) ->
     nikita

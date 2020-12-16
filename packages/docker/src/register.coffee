@@ -36,5 +36,9 @@ module.exports =
     volume_rm: '@nikitajs/docker/src/volume_rm'
     wait: '@nikitajs/docker/src/wait'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.message
+    process.exit(1)
 )()

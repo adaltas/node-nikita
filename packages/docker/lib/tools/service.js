@@ -16,13 +16,19 @@ on_action = function({config}) {
 };
 
 // ## Schema
-({schema} = require('mixme').merge(require('../run')));
-
-schema.properties.detach.default = true;
-
-schema.properties.rm.default = false;
-
-schema.required.push('container');
+schema = {
+  type: 'object',
+  properties: {
+    'detach': {
+      default: true
+    },
+    'rm': {
+      default: false
+    }
+  },
+  required: ['container', 'image'],
+  $ref: 'module://@nikitajs/docker/src/run#/properties'
+};
 
 // ## Handler
 handler = async function({
