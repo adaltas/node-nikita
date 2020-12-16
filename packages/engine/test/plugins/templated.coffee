@@ -27,13 +27,13 @@ describe 'plugins.templated', ->
 
   it 'when `false`', ->
     nikita.call
-      templated: false
+      metadata: templated: false
     , ({metadata: {templated}}) ->
       templated.should.be.false()
 
   it 'disable plugin', ->
     nikita
-      templated: false
+      metadata: templated: false
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
       handler: ({config}) ->
@@ -44,7 +44,7 @@ describe 'plugins.templated', ->
 
   it 'disable plugin in parent', ->
     nikita
-      templated: false
+      metadata: templated: false
       key: 'value'
     , ->
       @call key: "ignore {{parent.config.key}} from parent", ({config}) -> config

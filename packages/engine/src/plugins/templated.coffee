@@ -2,13 +2,9 @@
 templated = require 'self-templated'
 
 module.exports = ->
-  module: '@nikitajs/engine/src/plugins/template'
+  module: '@nikitajs/engine/src/plugins/templated'
   hooks:
     'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      if action.hasOwnProperty 'templated'
-        action.metadata.templated = action.templated
-        delete action.templated
       action.metadata.templated ?= true
     'nikita:session:action': (action, handler) ->
       ->

@@ -124,12 +124,12 @@ describe 'docker.build', ->
         {status, stdout} = await @docker.build
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
-          log: ({log}) -> status_true.push log
+          metadata: log: ({log}) -> status_true.push log
         status.should.be.true()
         {status} = await @docker.build
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
-          log: ({log}) -> status_false.push log
+          metadata: log: ({log}) -> status_false.push log
         status.should.be.false()
         @docker.rmi 'nikita/should_exists_5'
         @call ->

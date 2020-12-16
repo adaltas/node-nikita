@@ -60,12 +60,12 @@ describe 'file.render', ->
         @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello {{ who }}'
-          templated: false
+          metadata: templated: false
         @file.render
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context: who: 'you'
-          templated: false
+          metadata: templated: false
         .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
@@ -79,14 +79,14 @@ describe 'file.render', ->
         @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello "{{ who }}" \'{{ anInt }}\''
-          templated: false
+          metadata: templated: false
         @file.render
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context:
             who: 'you'
             anInt: 42
-          templated: false
+          metadata: templated: false
         .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
