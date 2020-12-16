@@ -5,15 +5,10 @@ templated = require('self-templated');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/template',
+    module: '@nikitajs/engine/src/plugins/templated',
     hooks: {
       'nikita:session:normalize': function(action) {
         var base;
-        // Move property from action to metadata
-        if (action.hasOwnProperty('templated')) {
-          action.metadata.templated = action.templated;
-          delete action.templated;
-        }
         return (base = action.metadata).templated != null ? base.templated : base.templated = true;
       },
       'nikita:session:action': function(action, handler) {

@@ -24,11 +24,6 @@ module.exports = function() {
     hooks: {
       'nikita:session:normalize': function(action) {
         var ref, ref1;
-        // Move property from action to metadata
-        if (action.hasOwnProperty('log')) {
-          action.metadata.log = action.log;
-          delete action.log;
-        }
         if ((action.metadata.log == null) && (((ref = action.parent) != null ? (ref1 = ref.metadata) != null ? ref1.log : void 0 : void 0) != null)) {
           return action.metadata.log = action.parent.metadata.log;
         }
