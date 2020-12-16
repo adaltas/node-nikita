@@ -53,7 +53,7 @@ describe 'plugins.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call log: true, ({tools: {log}}) ->
+      .call metadata: log: true, ({tools: {log}}) ->
         log message: 'enabled parent'
         @call ({tools: {log}}) ->
           log message: 'enabled child'
@@ -64,7 +64,7 @@ describe 'plugins.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call log: false, ({tools: {log}}) ->
+      .call metadata: log: false, ({tools: {log}}) ->
         log message: 'disabled'
         @call ({tools: {log}}) ->
           log message: 'enabled child'
@@ -76,7 +76,7 @@ describe 'plugins.log', ->
       data = []
       await nikita
       .call
-        log: ({log}) ->
+        metadata: log: ({log}) ->
           data.push log.message
       , ({tools: {log}}) ->
         log message: 'enabled parent'
@@ -88,7 +88,7 @@ describe 'plugins.log', ->
       data = null
       await nikita
       .call
-        log: (args) ->
+        metadata: log: (args) ->
           data = Object.keys(args).sort()
       , ({tools: {log}}) ->
         log message: 'enabled parent'

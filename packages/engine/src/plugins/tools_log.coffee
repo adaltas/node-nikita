@@ -18,10 +18,6 @@ module.exports = ->
   require: '@nikitajs/engine/src/plugins/tools_events'
   hooks:
     'nikita:session:normalize': (action) ->
-      # Move property from action to metadata
-      if action.hasOwnProperty 'log'
-        action.metadata.log = action.log
-        delete action.log
       if not action.metadata.log? and action.parent?.metadata?.log?
         action.metadata.log = action.parent.metadata.log
     'nikita:session:action':

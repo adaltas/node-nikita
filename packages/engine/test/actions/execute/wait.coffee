@@ -63,7 +63,7 @@ describe 'actions.execute.wait', ->
         @execute.wait
           command: "test -d #{tmpdir}/a_file"
           interval: 100
-          log: ({log}) ->
+          metadata: log: ({log}) ->
             logs.push log if /Attempt #\d/.test log.message
         @call ->
           logs.length.should.be.within 2, 8
@@ -78,7 +78,7 @@ describe 'actions.execute.wait', ->
           stdin_log: true
           stdout_log: true
           stderr_log: true
-          log: ({log}) ->
+          metadata: log: ({log}) ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         @call ->
           logs.should.eql 3
@@ -93,7 +93,7 @@ describe 'actions.execute.wait', ->
           stdin_log: false
           stdout_log: false
           stderr_log: false
-          log: ({log}) ->
+          metadata: log: ({log}) ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         @call ->
           logs.should.eql 0
