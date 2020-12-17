@@ -21,7 +21,7 @@ module.exports = ->
         ssh = action.ssh
         delete action.ssh
       ->
-        action = handler.call null, ...arguments
+        action = await handler.call null, ...arguments
         action.ssh = ssh
         action
     'nikita:session:action': (action, handler) ->

@@ -17,9 +17,9 @@ module.exports = function() {
           if (child.metadata.raw_input) {
             arguments[0].args = [];
           }
-          return function() {
+          return async function() {
             var actions;
-            actions = handler.apply(null, arguments);
+            actions = (await handler.apply(null, arguments));
             // If raw_input is activated, just pass arguments as is
             // Always one action since arguments are erased
             if (child.metadata.raw_input) {
@@ -42,12 +42,12 @@ module.exports = function() {
         }
       },
       'nikita:session:normalize': function(action, handler) {
-        return function() {
+        return async function() {
           var args;
           // Prevent arguments to move into config by normalize
           args = action.args;
           delete action.args;
-          action = handler.apply(null, arguments);
+          action = (await handler.apply(null, arguments));
           action.args = args;
           return action;
         };

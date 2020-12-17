@@ -26,8 +26,8 @@ module.exports = function() {
           ssh = action.ssh;
           delete action.ssh;
         }
-        return function() {
-          action = handler.call(null, ...arguments);
+        return async function() {
+          action = (await handler.call(null, ...arguments));
           action.ssh = ssh;
           return action;
         };

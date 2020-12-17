@@ -5,7 +5,7 @@ module.exports = ->
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->
-        action = handler.call null, ...arguments
+        action = await handler.call null, ...arguments
         action.children = []
         action.siblings = action.parent.children if action.parent
         action.sibling = action.siblings.slice(-1)[0] if action.parent

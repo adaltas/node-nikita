@@ -8,9 +8,9 @@ module.exports = function() {
     module: '@nikitajs/engine/src/plugins/tools_events',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
-        return function() {
+        return async function() {
           // Handler execution
-          action = handler.apply(null, arguments);
+          action = (await handler.apply(null, arguments));
           // Register function
           if (action.tools == null) {
             action.tools = {};

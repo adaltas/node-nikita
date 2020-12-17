@@ -7,7 +7,7 @@ module.exports = ->
     'nikita:session:normalize': (action, handler) ->
       ->
         # Handler execution
-        action = handler.apply null, arguments
+        action = await handler.apply null, arguments
         # Register function
         action.tools ?= {}
         action.tools.events = if action.parent

@@ -4,8 +4,8 @@ module.exports = function() {
     module: '@nikitajs/engine/src/plugins/history',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
-        return function() {
-          action = handler.call(null, ...arguments);
+        return async function() {
+          action = (await handler.call(null, ...arguments));
           action.children = [];
           if (action.parent) {
             action.siblings = action.parent.children;

@@ -25,8 +25,8 @@ module.exports = function() {
             delete action[property];
           }
         }
-        return function() {
-          action = handler.call(null, ...arguments);
+        return async function() {
+          action = (await handler.call(null, ...arguments));
           action.conditions = conditions;
           return action;
         };

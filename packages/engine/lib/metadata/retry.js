@@ -47,19 +47,10 @@ module.exports = function() {
             // Reschedule
             return run();
           };
-          run = function() {
-            var err, output;
+          run = async function() {
+            var err;
             try {
-              output = handler.call(this, ...args);
-              if (output && output.catch) {
-                if (output.catch) {
-                  // Note, should.js return a PromisedAssertion with a `then` but
-                  // no `catch` function
-                  return output.catch(failure);
-                }
-              } else {
-                return output;
-              }
+              return (await handler.call(this, ...args));
             } catch (error) {
               err = error;
               return failure(err);

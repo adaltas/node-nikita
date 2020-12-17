@@ -31,7 +31,7 @@ module.exports = ->
             ]
       ->
         # Handler execution
-        action = handler.apply null, arguments
+        action = await handler.apply null, arguments
         # Register `status` operation
         action.tools ?= {}
         action.tools.status = (index) ->
