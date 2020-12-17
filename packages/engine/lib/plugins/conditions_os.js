@@ -15,9 +15,9 @@ module.exports = function() {
       'nikita:session:normalize': {
         after: '@nikitajs/engine/src/plugins/conditions',
         handler: function(action, handler) {
-          return function() {
+          return async function() {
             var condition, config, i, j, len, len1, ref;
-            action = handler.call(null, action);
+            action = (await handler.call(null, action));
             if (!action.conditions) {
               return;
             }

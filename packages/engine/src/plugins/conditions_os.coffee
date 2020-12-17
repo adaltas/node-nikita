@@ -13,7 +13,7 @@ module.exports = ->
       after: '@nikitajs/engine/src/plugins/conditions'
       handler: (action, handler) ->
         ->
-          action = handler.call null, action
+          action = await handler.call null, action
           return unless action.conditions
           # Normalize conditions
           for config in [action.conditions.if_os, action.conditions.unless_os]

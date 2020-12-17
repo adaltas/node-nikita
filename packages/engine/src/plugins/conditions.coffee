@@ -21,7 +21,7 @@ module.exports = ->
           conditions[property] = value
           delete action[property]
       ->
-        action = handler.call null, ...arguments
+        action = await handler.call null, ...arguments
         action.conditions = conditions
         action
     'nikita:session:action':

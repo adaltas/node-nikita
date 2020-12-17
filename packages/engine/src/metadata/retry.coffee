@@ -35,12 +35,6 @@ module.exports = ->
           run()
         run = ->
           try
-            output = handler.call @, ...args
-            if output and output.catch
-              # Note, should.js return a PromisedAssertion with a `then` but
-              # no `catch` function
-              output.catch failure if output.catch
-            else
-              output
+            await handler.call @, ...args
           catch err then failure err
         run()

@@ -37,9 +37,9 @@ module.exports = function() {
             }
           }
         });
-        return function() {
+        return async function() {
           // Handler execution
-          action = handler.apply(null, arguments);
+          action = (await handler.apply(null, arguments));
           // Register `status` operation
           if (action.tools == null) {
             action.tools = {};

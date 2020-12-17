@@ -16,12 +16,12 @@ module.exports = ->
   hooks:
     'nikita:session:action':
       after: '@nikitajs/engine/src/plugins/ssh'
-      handler: (action, handler) ->
+      handler: (action) ->
         throw utils.error 'METADATA_TMPDIR_INVALID', [
           'the "tmpdir" metadata value must be a boolean or a string,'
           "got #{JSON.stringify action.metadata.tmpdir}"
         ] unless typeof action.metadata.tmpdir in ['boolean', 'string', 'undefined']
-        return handler unless action.metadata.tmpdir
+        return unless action.metadata.tmpdir
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
@@ -51,7 +51,6 @@ module.exports = ->
           await fs.mkdir ssh, action.metadata.tmpdir
         catch err
           throw err unless err.code is 'EEXIST'
-        handler
     'nikita:session:result':
       before: '@nikitajs/engine/src/plugins/ssh'
       handler: ({action}) ->
