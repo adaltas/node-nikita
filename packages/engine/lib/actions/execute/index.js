@@ -60,8 +60,14 @@
 // console.info(stdout)
 // ```
 
-// ## Hook
-var exec, handler, on_action, schema, utils;
+// ## Hooks
+var exec, handler, merge, on_action, on_normalize, schema, utils;
+
+on_normalize = function({config, metadata}) {
+  if (config.bash) {
+    return metadata.tmpdir = true;
+  }
+};
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
@@ -535,10 +541,11 @@ handler = async function({
 module.exports = {
   handler: handler,
   hooks: {
+    on_normalize: on_normalize,
     on_action: on_action
   },
   metadata: {
-    tmpdir: true,
+    // tmpdir: true
     schema: schema
   }
 };
