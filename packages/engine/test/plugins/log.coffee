@@ -20,21 +20,6 @@ describe 'plugins.log', ->
           namespace: []
           type: 'text'
           depth: 0
-          metadata:
-            raw: false
-            raw_input: false
-            raw_output: false
-            namespace: []
-            debug: false
-            depth: 0
-            disabled: false
-            relax: false
-            attempt: 0
-            retry: 1
-            # shy: false
-            sleep: 3000
-            templated: true
-          config: {}
           file: 'log.coffee'
           filename: __filename
           line: 18
