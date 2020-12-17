@@ -60,7 +60,11 @@ const {stdout} = await nikita.execute({
 console.info(stdout)
 ```
 
-## Hook
+## Hooks
+
+    on_normalize = ({config, metadata}) ->
+      if config.bash
+        metadata.tmpdir = true
 
     on_action = ({config, metadata}) ->
       config.command = metadata.argument if metadata.argument?
@@ -374,9 +378,10 @@ console.info(stdout)
     module.exports =
       handler: handler
       hooks:
+        on_normalize: on_normalize
         on_action: on_action
       metadata:
-        tmpdir: true
+        # tmpdir: true
         schema: schema
 
 ## Dependencies

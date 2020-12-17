@@ -20,9 +20,9 @@ module.exports = function() {
     require: ['@nikitajs/engine/src/plugins/tools_find', '@nikitajs/engine/src/plugins/tools_path'],
     hooks: {
       'nikita:session:action': {
-        after: '@nikitajs/engine/src/plugins/ssh',
+        after: ['@nikitajs/engine/src/plugins/ssh', '@nikitajs/engine/src/metadata/uuid'],
         handler: async function(action) {
-          var err, now, ref, rootdir, ssh, tmpdir;
+          var err, ref, rootdir, ssh, tmpdir;
           if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
             throw utils.error('METADATA_TMPDIR_INVALID', ['the "tmpdir" metadata value must be a boolean or a string,', `got ${JSON.stringify(action.metadata.tmpdir)}`]);
           }
@@ -33,22 +33,22 @@ module.exports = function() {
           ssh = action.config.ssh === false ? void 0 : (await action.tools.find(function(action) {
             return action.ssh;
           }));
-          tmpdir = ssh ? '/tmp' : os.tmpdir();
+          // tmpdir = if ssh then '/tmp' else os.tmpdir()
           // Generate temporary location
           rootdir = ssh ? '/tmp' : os.tmpdir();
-          now = new Date();
           tmpdir = (function() {
             switch (typeof action.metadata.tmpdir) {
               case 'string':
                 return action.metadata.tmpdir;
               case 'boolean':
-                return ['nikita_', `${now.getFullYear()}`.substr(2), `${now.getMonth()}`.padStart(2, '0'), `${now.getDate()}`.padStart(2, '0'), '_', process.pid, '_', (Math.random() * 0x100000000 + 1).toString(36)].join('');
+                return 'nikita-' + action.metadata.uuid;
             }
           })();
           action.metadata.tmpdir = path.resolve(rootdir, tmpdir);
           try {
             // Temporary directory creation
-            return (await fs.mkdir(ssh, action.metadata.tmpdir));
+            await fs.mkdir(ssh, action.metadata.tmpdir);
+            return action.metadata.tmpdir_dispose = true;
           } catch (error) {
             err = error;
             if (err.code !== 'EEXIST') {
@@ -64,6 +64,9 @@ module.exports = function() {
           // Value of tmpdir could still be true if there was an error in
           // one of the on_action hook, such as a invalid schema validation
           if (typeof action.metadata.tmpdir !== 'string') {
+            return;
+          }
+          if (!action.metadata.tmpdir_dispose) {
             return;
           }
           if (action.metadata.dirty) {

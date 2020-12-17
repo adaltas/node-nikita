@@ -48,7 +48,7 @@ describe 'plugins.metadata.tmpdir', ->
       .call metadata: tmpdir: true, ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
-        path.parse(tmpdir).name.should.match /^nikita_\d{6}_\d+_[\w\d]+$/
+        path.parse(tmpdir).name.should.match /^nikita-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/
 
     they 'is a string', ({ssh}) ->
       nikita

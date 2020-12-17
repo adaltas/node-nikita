@@ -15,7 +15,10 @@ module.exports = ->
   ]
   hooks:
     'nikita:session:action':
-      after: '@nikitajs/engine/src/plugins/ssh'
+      after: [
+        '@nikitajs/engine/src/plugins/ssh'
+        '@nikitajs/engine/src/metadata/uuid'
+      ]
       handler: (action) ->
         throw utils.error 'METADATA_TMPDIR_INVALID', [
           'the "tmpdir" metadata value must be a boolean or a string,'
@@ -27,28 +30,19 @@ module.exports = ->
         then undefined
         else await action.tools.find (action) ->
           action.ssh
-        tmpdir = if ssh then '/tmp' else os.tmpdir()
+        # tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
         rootdir = if ssh then '/tmp' else os.tmpdir()
-        now = new Date()
         tmpdir = switch typeof action.metadata.tmpdir
           when 'string'
             action.metadata.tmpdir
           when 'boolean'
-            [
-              'nikita_'
-              "#{now.getFullYear()}".substr 2
-              "#{now.getMonth()}".padStart 2, '0'
-              "#{now.getDate()}".padStart 2, '0'
-              '_'
-              process.pid
-              '_'
-              (Math.random() * 0x100000000 + 1).toString(36)
-            ].join ''
+            'nikita-'+action.metadata.uuid
         action.metadata.tmpdir = path.resolve rootdir, tmpdir
         # Temporary directory creation
         try
           await fs.mkdir ssh, action.metadata.tmpdir
+          action.metadata.tmpdir_dispose = true
         catch err
           throw err unless err.code is 'EEXIST'
     'nikita:session:result':
@@ -57,6 +51,7 @@ module.exports = ->
         # Value of tmpdir could still be true if there was an error in
         # one of the on_action hook, such as a invalid schema validation
         return unless typeof action.metadata.tmpdir is 'string'
+        return unless action.metadata.tmpdir_dispose
         return if action.metadata.dirty
         # SSH connection extraction
         ssh = if action.config.ssh is false
