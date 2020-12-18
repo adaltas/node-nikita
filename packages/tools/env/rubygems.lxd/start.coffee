@@ -8,7 +8,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_tools_rubygems_lxd_install'
 .lxd.cluster
-  header: 'Container'
+  metadata: header: 'Container'
   containers:
     'tools-rubygems':
       image: 'images:centos/7'
@@ -23,14 +23,14 @@ nikita
         nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
   prevision: ->
     @tools.ssh.keygen
-      header: 'SSH key'
+      metadata: header: 'SSH key'
       target: "#{__dirname}/../../assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({config}) ->
     @lxd.exec
-      header: 'Node.js'
+      metadata: header: 'Node.js'
       container: config.container
       command: """
       command -v node && exit 42
@@ -44,7 +44,7 @@ nikita
       trap: true
       code_skipped: 42
     @lxd.exec
-      header: 'Ruby'
+      metadata: header: 'Ruby'
       container: config.container
       command: """
       yum install -y gcc ruby ruby-devel
@@ -52,18 +52,18 @@ nikita
       trap: true
       code_skipped: 42
     @lxd.file.push
-      header: 'User Private Key'
+      metadata: header: 'User Private Key'
       container: config.container
       gid: 'nikita'
       uid: 'nikita'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
-      header: 'Root SSH dir'
+      metadata: header: 'Root SSH dir'
       container: config.container
       command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
-      header: 'Root SSH Private Key'
+      metadata: header: 'Root SSH Private Key'
       container: config.container
       gid: 'root'
       uid: 'root'

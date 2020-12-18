@@ -27,13 +27,19 @@
 //   depth_max: 2
 // })
 // .call({
-//   header: 'Print my header'
+//   metadata: { 
+//     header: 'Print my header'
+//   }
 // }, function(){
 //   @call({
-//     header: 'Print sub header'
+//     metadata: {
+//       header: 'Print sub header'
+//     }
 //   }, function(){
 //     @call({
-//       header: 'Header not printed'
+//       metadata: {
+//         header: 'Header not printed'
+//       }
 //     }, function(){
 //       // do sth
 //     })
@@ -47,7 +53,9 @@
 // nikita
 // .log.cli({ colors: true })
 // .call({
-//   header: 'Print my header'
+//   metadata: {
+//     header: 'Print my header'
+//   }
 // }, function(){
 //   // do sth
 // })
@@ -131,16 +139,16 @@ handler = function({config, metadata, ssh}) {
   return this.call(stream, {
     config: config,
     serializer: {
-      'nikita:action:start': function(act) {
+      'nikita:action:start': function(action) {
         var headers;
         if (!config.enabled) {
           return;
         }
-        headers = get_headers(act);
+        headers = get_headers(action);
         if (config.depth_max && config.depth_max < headers.length) {
           return;
         }
-        ids[act.metadata.index] = act;
+        ids[action.metadata.index] = action;
         return null;
       },
       // 'diff': null
@@ -183,7 +191,7 @@ handler = function({config, metadata, ssh}) {
       //   null
       'nikita:action:end': function(action, error, output) {
         var color, headers, line, status, time;
-        if (!action.config.header) {
+        if (!action.metadata.header) {
           return;
         }
         if (config.depth_max && config.depth_max < action.metadata.depth) {
@@ -243,7 +251,7 @@ get_headers = function(action) {
   var headers, walk;
   walk = function(parent) {
     var precious, results;
-    precious = parent.config.header;
+    precious = parent.metadata.header;
     results = [];
     if (precious !== void 0) {
       results.push(precious);

@@ -88,9 +88,9 @@ and "{config.basedir}/latest".
 
     module.exports =
       handler: handler
+      ssh: false
       metadata:
         schema: schema
-        ssh: false
 
 ## Dependencies
 

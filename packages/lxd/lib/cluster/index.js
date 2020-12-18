@@ -313,16 +313,14 @@ PEERDNS=no`
       // Not sure why openssl is required
       await this.lxd.exec({
         metadata: {
-          header: 'OpenSSL'
+          header: 'OpenSSL',
+          retry: 10,
+          sleep: 5000
         },
         container: containerName,
         command: `#yum update -y
 yum install -y openssl
 command -v openssl`,
-        metadata: {
-          retry: 10,
-          sleep: 5000
-        },
         trap: true
       });
       // Enable SSH

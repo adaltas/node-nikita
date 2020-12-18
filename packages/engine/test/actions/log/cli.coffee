@@ -28,10 +28,10 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'h1', ->
-        @call header: 'h2a', ->
-        @call header: 'h2b', ->
-          @call header: 'h3', -> true
+      .call metadata: header: 'h1', ->
+        @call metadata: header: 'h2a', ->
+        @call metadata: header: 'h2b', ->
+          @call metadata: header: 'h3', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -50,11 +50,11 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'h1', ->
-        @call header: 'h2a', ->
+      .call metadata: header: 'h1', ->
+        @call metadata: header: 'h2a', ->
         @call  ->
           @call  ->
-            @call header: 'h2b', -> true
+            @call metadata: header: 'h2b', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -72,8 +72,8 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'a', -> false
-      .call header: 'b', -> true
+      .call metadata: header: 'a', -> false
+      .call metadata: header: 'b', -> true
       .call ->
         data.should.eql [
           "#{host}   a   -\n"
@@ -89,8 +89,8 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'a', metadata: shy: false, -> true
-      .call header: 'b', metadata: shy: true, -> true
+      .call metadata: header: 'a', shy: false, -> true
+      .call metadata: header: 'b', shy: true, -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -127,10 +127,10 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'a', -> true
-      .call header: 'b', metadata: disabled: false, -> true
-      .call header: 'c', metadata: disabled: true, -> true
-      .call header: 'd', -> true
+      .call metadata: header: 'a', -> true
+      .call metadata: header: 'b', disabled: false, -> true
+      .call metadata: header: 'c', disabled: true, -> true
+      .call metadata: header: 'd', -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -147,10 +147,10 @@ describe 'actions.log.cli', ->
         colors: false
         stream: new MyWritable data
         time: false
-      .call header: 'a', -> true
-      .call header: 'b', if: true, -> true
-      .call header: 'c', if: false, -> true
-      .call header: 'd', -> true
+      .call metadata: header: 'a', -> true
+      .call if: true, metadata: header: 'b', -> true
+      .call if: false, metadata: header: 'c',  -> true
+      .call metadata: header: 'd', -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -168,10 +168,10 @@ describe 'actions.log.cli', ->
         depth_max: 2
         stream: new MyWritable data
         time: false
-      .call header: 'h1', ->
-        @call header: 'h2a', -> false
-        @call header: 'h2b', ->
-          @call header: 'h3', -> false
+      .call metadata: header: 'h1', ->
+        @call metadata: header: 'h2a', -> false
+        @call metadata: header: 'h2b', ->
+          @call metadata: header: 'h3', -> false
       .call ->
         data.should.eql [
           "#{host}   h1 : h2a   -\n"
@@ -189,10 +189,10 @@ describe 'actions.log.cli', ->
         divider: ' # '
         stream: new MyWritable data
         time: false
-      .call header: 'h1', ->
-        @call header: 'h2a', ->
-        @call header: 'h2b', ->
-          @call header: 'h3', ->
+      .call metadata: header: 'h1', ->
+        @call metadata: header: 'h2a', ->
+        @call metadata: header: 'h2b', ->
+          @call metadata: header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}   h1 # h2a   -\n"
@@ -211,10 +211,10 @@ describe 'actions.log.cli', ->
         pad: {host: 14, header: 18}
         stream: new MyWritable data
         time: false
-      .call header: 'h1', ->
-        @call header: 'h2a', ->
-        @call header: 'h2b', ->
-          @call header: 'h3', ->
+      .call metadata: header: 'h1', ->
+        @call metadata: header: 'h2a', ->
+        @call metadata: header: 'h2b', ->
+          @call metadata: header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}      h1 : h2a           -\n"
@@ -232,9 +232,9 @@ describe 'actions.log.cli', ->
         colors: true
         stream: new MyWritable data
         time: false
-      .call header: 'a', -> false
-      .call header: 'b', -> true
-      .call header: 'c', metadata: relax: true, -> throw Error 'ok'
+      .call metadata: header: 'a', -> false
+      .call metadata: header: 'b', -> true
+      .call metadata: header: 'c', relax: true, -> throw Error 'ok'
       .call ->
         data.should.eql [
           "\u001b[36m\u001b[2m#{host}   a   -\u001b[22m\u001b[39m\n"
@@ -251,7 +251,7 @@ describe 'actions.log.cli', ->
       .log.cli
         stream: new MyWritable data
         colors: false
-      .call header: 'h1', (->)
+      .call metadata: header: 'h1', (->)
       # .wait 200
       .call ->
         data[0].should.match /#{host}   h1   -  \dms\n/
@@ -268,7 +268,7 @@ describe 'actions.log.cli', ->
           colors: false
           stream: new MyWritable data
           time: false
-        @call header: 'h1', -> true
+        @call metadata: header: 'h1', -> true
       data.should.eql [
         "#{host}   h1   ✔\n"
         "#{host}      ♥\n"
@@ -285,7 +285,7 @@ describe 'actions.log.cli', ->
             colors: false
             stream: new MyWritable data
             time: false
-          @call header: 'h1', -> throw Error 'OK'
+          @call metadata: header: 'h1', -> throw Error 'OK'
       catch err
       data.should.eql [
         "#{host}   h1   ✘\n"

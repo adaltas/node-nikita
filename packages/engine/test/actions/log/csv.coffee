@@ -24,7 +24,7 @@ describe 'actions.log.csv', ->
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
-      @call header: 'h1', ({tools: {log}}) -> true
+      @call metadata: header: 'h1', ({tools: {log}}) -> true
       {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
       data.should.eql 'header,,"h1"\n'
     

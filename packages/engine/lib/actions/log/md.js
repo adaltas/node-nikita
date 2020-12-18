@@ -29,24 +29,24 @@ markdown header.`
 };
 
 // ## Handler
-handler = function(action) {
+handler = function({config}) {
   var state;
   state = {
     last_event_type: void 0
   };
   return this.call(log_fs, {
-    config: action.config,
+    config: config,
     serializer: {
-      'nikita:action:start': function(act) {
+      'nikita:action:start': function(action) {
         var header, headers, last_event_type, walk;
-        if (!act.config.header) {
+        if (!action.metadata.header) {
           return;
         }
         ({last_event_type} = state);
         state.last_event_type = 'nikita:action:start';
         walk = function(parent) {
           var precious, results;
-          precious = parent.config.header;
+          precious = parent.metadata.header;
           results = [];
           if (precious !== void 0) {
             results.push(precious);
@@ -56,12 +56,12 @@ handler = function(action) {
           }
           return results;
         };
-        headers = walk(act);
+        headers = walk(action);
         // Async operation break the event order, causing header to be writen
         // after other sync event such as text
         // headers = await act.tools.walk ({config}) ->
         //   config.header
-        header = headers.reverse().join(action.config.divider);
+        header = headers.reverse().join(config.divider);
         return [last_event_type !== 'nikita:action:start' ? '\n' : void 0, '#'.repeat(headers.length), ' ', header, '\n\n'].join('');
       },
       // 'diff': (log) ->
@@ -137,7 +137,9 @@ handler = function(action) {
 // ## Exports
 module.exports = {
   handler: handler,
-  on_action: on_action,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     schema: schema
   },

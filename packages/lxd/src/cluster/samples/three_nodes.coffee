@@ -16,7 +16,7 @@ the current working directory.
 nikita
 .log.cli pad: host: 20, header: 60
 .lxd.cluster
-  header: 'Container'
+  metadata: header: 'Container'
   networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
@@ -85,14 +85,14 @@ nikita
         nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
   prevision: ({options}) ->
     @tools.ssh.keygen
-      header: 'SSH key'
+      metadata: header: 'SSH key'
       target: './assets/id_rsa'
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({options}) ->
     @lxd.exec
-      header: 'Node.js'
+      metadata: header: 'Node.js'
       container: options.container
       command: """
       command -v node && exit 42

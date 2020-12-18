@@ -27,13 +27,19 @@ nikita
   depth_max: 2
 })
 .call({
-  header: 'Print my header'
+  metadata: { 
+    header: 'Print my header'
+  }
 }, function(){
   @call({
-    header: 'Print sub header'
+    metadata: {
+      header: 'Print sub header'
+    }
   }, function(){
     @call({
-      header: 'Header not printed'
+      metadata: {
+        header: 'Header not printed'
+      }
     }, function(){
       // do sth
     })
@@ -47,7 +53,9 @@ nikita
 nikita
 .log.cli({ colors: true })
 .call({
-  header: 'Print my header'
+  metadata: {
+    header: 'Print my header'
+  }
 }, function(){
   // do sth
 })
@@ -90,11 +98,11 @@ nikita
           time
         ].join ''
       @call stream, config: config, serializer:
-        'nikita:action:start': (act) ->
+        'nikita:action:start': (action) ->
           return unless config.enabled
-          headers = get_headers act
+          headers = get_headers action
           return if config.depth_max and config.depth_max < headers.length
-          ids[act.metadata.index] = act
+          ids[action.metadata.index] = action
           null
         # 'diff': null
         'nikita:session:resolved': ->
@@ -129,7 +137,7 @@ nikita
         #   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
         #   null
         'nikita:action:end': (action, error, output) ->
-          return unless action.config.header
+          return unless action.metadata.header
           return if config.depth_max and config.depth_max < action.metadata.depth
           # TODO: I don't like this, the `end` event should receive raw output
           # with error not placed inside output by the history plugin
@@ -172,7 +180,7 @@ nikita
 
     get_headers = (action) ->
       walk = (parent) ->
-        precious = parent.config.header
+        precious = parent.metadata.header
         results = []
         results.push precious unless precious is undefined
         results.push ...(walk parent.parent) if parent.parent
