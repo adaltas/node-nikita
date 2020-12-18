@@ -37,7 +37,6 @@ describe 'lxd.config.device.delete', ->
         image: 'ubuntu:'
         container: 'c1'
       @lxd.config.device
-        metadata: debug: true
         container: 'c1'
         device: 'test'
         type: 'unix-char'
