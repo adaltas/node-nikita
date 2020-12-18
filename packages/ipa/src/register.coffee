@@ -24,5 +24,9 @@ module.exports =
       exists: '@nikitajs/ipa/src/service/exists'
       show: '@nikitajs/ipa/src/service/show'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

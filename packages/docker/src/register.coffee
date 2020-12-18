@@ -39,6 +39,6 @@ module.exports =
   try
     await registry.register module.exports
   catch err
-    console.error err.message
+    console.error err.stack
     process.exit(1)
 )()

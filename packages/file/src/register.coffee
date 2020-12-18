@@ -32,5 +32,9 @@ module.exports =
     upload: '@nikitajs/file/src/upload'
     yaml: '@nikitajs/file/src/yaml'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

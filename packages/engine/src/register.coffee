@@ -82,5 +82,9 @@ module.exports =
   #       ]
   'wait': '@nikitajs/engine/src/actions/wait'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()
