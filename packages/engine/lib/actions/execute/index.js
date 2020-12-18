@@ -61,25 +61,36 @@
 // ```
 
 // ## Hooks
-var exec, handler, merge, on_action, on_normalize, schema, utils;
+var exec, handler, on_action, schema, utils;
 
-on_normalize = function({config, metadata}) {
-  if (config.bash) {
-    return metadata.tmpdir = true;
+on_action = {
+  before: '@nikitajs/engine/src/metadata/tmpdir',
+  handler: async function({
+      config,
+      metadata,
+      tools: {find}
+    }) {
+    var sudo;
+    sudo = (await find(function({
+        config: {sudo}
+      }) {
+      return sudo;
+    }));
+    if (sudo || config.bash || config.arch_chroot) {
+      metadata.tmpdir = true;
+    }
+    if (metadata.argument != null) {
+      config.command = metadata.argument;
+    }
+    if ((config.code != null) && !Array.isArray(config.code)) {
+      config.code = [config.code];
+    }
+    if ((config.code_skipped != null) && !Array.isArray(config.code_skipped)) {
+      return config.code_skipped = [config.code_skipped];
+    }
   }
 };
 
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    config.command = metadata.argument;
-  }
-  if ((config.code != null) && !Array.isArray(config.code)) {
-    config.code = [config.code];
-  }
-  if ((config.code_skipped != null) && !Array.isArray(config.code_skipped)) {
-    return config.code_skipped = [config.code_skipped];
-  }
-};
 
 // ## Schema
 schema = {
@@ -541,7 +552,6 @@ handler = async function({
 module.exports = {
   handler: handler,
   hooks: {
-    on_normalize: on_normalize,
     on_action: on_action
   },
   metadata: {

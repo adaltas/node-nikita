@@ -14,10 +14,17 @@ const {status} = await nikita.fs.base.createWriteStream({
 console.info(`Stream was created: ${status}`)
 ```
 
-## Hook
+## Hooks
 
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
+    on_action =
+      # after: '@nikitajs/engine/src/plugins/tools_find'
+      before: '@nikitajs/engine/src/metadata/tmpdir'
+      handler: ({config, metadata, tools: {find}}) ->
+        sudo = await find ({config: {sudo}}) -> sudo
+        config.target = metadata.argument if metadata.argument?
+        if sudo or config.flags?[0] is 'a'
+          metadata.tmpdir = true
+        metadata.tmpdir = true
 
 ## Schema
 
@@ -64,7 +71,8 @@ console.info(`Stream was created: ${status}`)
     handler = ({config, metadata, tools: {find, log}, ssh}) ->
       sudo = await find ({config: {sudo}}) -> sudo
       # Normalize config
-      config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}" if sudo or config.flags[0] is 'a'
+      if sudo or config.flags[0] is 'a'
+        config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}"
       # config.mode ?= 0o644 # Node.js default to 0o666
       # In append mode, we write to a copy of the target file located in a temporary location
       try if config.flags[0] is 'a'
@@ -79,7 +87,9 @@ console.info(`Stream was created: ${status}`)
       # Start writing the content
       log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
       await new Promise (resolve, reject) ->
-        ws = await fs.createWriteStream ssh, config.target_tmp or config.target, flags: config.flags, mode: config.mode
+        ws = await fs.createWriteStream ssh, config.target_tmp or config.target,
+          flags: config.flags,
+          mode: config.mode
         config.stream ws
         err = false # Quick fix ws sending both the error and close events on error
         ws.on 'error', (err) ->
@@ -105,7 +115,6 @@ console.info(`Stream was created: ${status}`)
         log: false
         raw_output: true
         schema: schema
-        tmpdir: true
       hooks:
         on_action: on_action
 
