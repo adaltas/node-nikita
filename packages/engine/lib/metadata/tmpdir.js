@@ -16,7 +16,7 @@ exec = require('ssh2-exec');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/status',
+    module: '@nikitajs/engine/src/metadata/tmpdir',
     require: ['@nikitajs/engine/src/plugins/tools_find', '@nikitajs/engine/src/plugins/tools_path'],
     hooks: {
       'nikita:session:action': {
