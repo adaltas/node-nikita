@@ -71,10 +71,10 @@ describe 'plugins.metadata.tmpdir', ->
         .should.resolvedWith exists: true
         @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
 
-    they 'is true', ({ssh}) ->
+    they 'is false', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         @call metadata: tmpdir: true, dirty: false, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
-        .should.resolvedWith exists: false
+        .should.finally.match exists: false
