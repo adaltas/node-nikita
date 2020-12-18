@@ -13,5 +13,9 @@ module.exports =
     ktutil:
       add: '@nikitajs/krb5/src/ktutil/add'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

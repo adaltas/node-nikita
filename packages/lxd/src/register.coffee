@@ -39,5 +39,9 @@ module.exports =
       '': '@nikitajs/lxd/src/storage'
       delete: '@nikitajs/lxd/src/storage/delete'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

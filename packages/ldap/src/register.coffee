@@ -17,5 +17,9 @@ module.exports =
       databases: '@nikitajs/ldap/src/tools/databases'
     user: '@nikitajs/ldap/src/user'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

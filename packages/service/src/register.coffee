@@ -18,5 +18,9 @@ module.exports =
     status: '@nikitajs/service/src/status'
     stop: '@nikitajs/service/src/stop'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

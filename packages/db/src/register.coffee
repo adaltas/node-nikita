@@ -21,5 +21,9 @@ module.exports =
       exists: '@nikitajs/db/src/user/exists'
       remove: '@nikitajs/db/src/user/remove'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()
