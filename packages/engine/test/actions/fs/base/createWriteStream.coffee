@@ -13,7 +13,7 @@ describe 'actions.fs.base.createWriteStream', ->
       ssh: ssh
       metadata: tmpdir: true
     , ->
-      @fs.base.createWriteStream
+      await @fs.base.createWriteStream
         target: "{{parent.metadata.tmpdir}}/a_file"
         stream: (ws) ->
           ws.write 'hello'
@@ -27,7 +27,7 @@ describe 'actions.fs.base.createWriteStream', ->
       ssh: ssh
       metadata: tmpdir: true
     , ->
-      @fs.base.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
+      await @fs.base.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
         stream: (ws) ->
           ws.write 'hello'
           ws.end()

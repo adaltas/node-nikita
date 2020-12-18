@@ -23,18 +23,18 @@ describe 'actions.execute.config.sudo', ->
       sudo: false
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
         sudo: true
-      @fs.base.chown
+      await @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
         sudo: true
-      @fs.base.chmod
+      await @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
         sudo: true

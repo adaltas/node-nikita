@@ -14,12 +14,30 @@
 // console.info(`Stream was created: ${status}`)
 // ```
 
-// ## Hook
+// ## Hooks
 var errors, fs, handler, on_action, schema, utils;
 
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
+on_action = {
+  // after: '@nikitajs/engine/src/plugins/tools_find'
+  before: '@nikitajs/engine/src/metadata/tmpdir',
+  handler: async function({
+      config,
+      metadata,
+      tools: {find}
+    }) {
+    var ref, sudo;
+    sudo = (await find(function({
+        config: {sudo}
+      }) {
+      return sudo;
+    }));
+    if (metadata.argument != null) {
+      config.target = metadata.argument;
+    }
+    if (sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
+      metadata.tmpdir = true;
+    }
+    return metadata.tmpdir = true;
   }
 };
 
@@ -86,8 +104,8 @@ handler = async function({
     }) {
     return sudo;
   }));
+  // Normalize config
   if (sudo || config.flags[0] === 'a') {
-    // Normalize config
     if (config.target_tmp == null) {
       config.target_tmp = `${metadata.tmpdir}/${utils.string.hash(config.target)}`;
     }
@@ -158,8 +176,7 @@ module.exports = {
   metadata: {
     log: false,
     raw_output: true,
-    schema: schema,
-    tmpdir: true
+    schema: schema
   },
   hooks: {
     on_action: on_action
