@@ -40,11 +40,16 @@ Create a user for the destination database.
     handler = ({config}) ->
       # Commands
       switch config.engine
-        when 'mariadb', 'mysql'
+        when 'mariadb'
           command_user_exists = command(config, "SELECT User FROM mysql.user WHERE User='#{config.username}'") + " | grep #{config.username}"
           command_user_create = command config, "CREATE USER #{config.username} IDENTIFIED BY '#{config.password}';"
           command_password_is_invalid = command(config, admin_username: config.username, admin_password: config.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
           command_password_change = command config, "SET PASSWORD FOR #{config.username} = PASSWORD ('#{config.password}');"
+        when 'mysql'
+          command_user_exists = command(config, "SELECT User FROM mysql.user WHERE User='#{config.username}'") + " | grep #{config.username}"
+          command_user_create = command config, "CREATE USER #{config.username} IDENTIFIED BY '#{config.password}';"
+          command_password_is_invalid = command(config, admin_username: config.username, admin_password: config.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
+          command_password_change = command config, "ALTER USER #{config.username} IDENTIFIED BY '#{config.password}';"
         when 'postgresql'
           command_user_exists = command(config, "SELECT 1 FROM pg_roles WHERE rolname='#{config.username}'") + " | grep 1"
           command_user_create = command config, "CREATE USER #{config.username} WITH PASSWORD '#{config.password}';"
