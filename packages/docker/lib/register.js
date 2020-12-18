@@ -48,7 +48,7 @@ module.exports = {
     return (await registry.register(module.exports));
   } catch (error) {
     err = error;
-    console.error(err.message);
+    console.error(err.stack);
     return process.exit(1);
   }
 })();

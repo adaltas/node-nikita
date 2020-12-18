@@ -9,5 +9,9 @@ module.exports =
     keystore_add: '@nikitajs/java/src/keystore_add'
     keystore_remove: '@nikitajs/java/src/keystore_remove'
 (->
-  await registry.register module.exports
+  try
+    await registry.register module.exports
+  catch err
+    console.error err.stack
+    process.exit(1)
 )()

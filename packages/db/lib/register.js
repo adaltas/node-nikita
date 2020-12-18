@@ -28,5 +28,12 @@ module.exports = {
 };
 
 (async function() {
-  return (await registry.register(module.exports));
+  var err;
+  try {
+    return (await registry.register(module.exports));
+  } catch (error) {
+    err = error;
+    console.error(err.stack);
+    return process.exit(1);
+  }
 })();
