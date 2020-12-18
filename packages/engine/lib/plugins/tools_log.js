@@ -61,8 +61,6 @@ module.exports = function() {
               log.type = 'text';
             }
             log.depth = action.metadata.depth;
-            log.metadata = action.metadata;
-            log.config = action.config;
             frame = stackTrace.get()[1];
             log.filename = frame.getFileName();
             log.file = path.basename(frame.getFileName());
