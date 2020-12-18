@@ -96,9 +96,9 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
+  ssh: false,
   metadata: {
-    schema: schema,
-    ssh: false
+    schema: schema
   }
 };
 

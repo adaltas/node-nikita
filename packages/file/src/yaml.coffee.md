@@ -160,7 +160,7 @@ console.info(`Content was written: ${status}`)
         utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       config.content = yaml.safeDump config.content, noRefs: true, lineWidth: config.line_width
-      @file config, header: null
+      @file config
 
 ## Exports
 

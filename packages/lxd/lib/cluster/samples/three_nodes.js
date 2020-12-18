@@ -23,7 +23,9 @@ nikita.log.cli({
     header: 60
   }
 }).lxd.cluster({
-  header: 'Container',
+  metadata: {
+    header: 'Container'
+  },
   networks: {
     lxdbr0public: {
       'ipv4.address': '172.16.0.1/24',
@@ -159,7 +161,9 @@ nikita.log.cli({
   },
   prevision: function({options}) {
     return this.tools.ssh.keygen({
-      header: 'SSH key',
+      metadata: {
+        header: 'SSH key'
+      },
       target: './assets/id_rsa',
       bits: 2048,
       key_format: 'PEM',
@@ -168,7 +172,9 @@ nikita.log.cli({
   },
   provision_container: function({options}) {
     return this.lxd.exec({
-      header: 'Node.js',
+      metadata: {
+        header: 'Node.js'
+      },
       container: options.container,
       command: `command -v node && exit 42
 curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n

@@ -28,14 +28,14 @@ handler = function({config}) {
   return this.call(log_fs, {
     config: config,
     serializer: {
-      'nikita:action:start': function(act) {
+      'nikita:action:start': function(action) {
         var header, headers, walk;
-        if (!act.config.header) {
+        if (!action.metadata.header) {
           return;
         }
         walk = function(parent) {
           var precious, results;
-          precious = parent.config.header;
+          precious = parent.metadata.header;
           results = [];
           if (precious !== void 0) {
             results.push(precious);
@@ -45,7 +45,7 @@ handler = function({config}) {
           }
           return results;
         };
-        headers = walk(act);
+        headers = walk(action);
         header = headers.reverse().join(' : '); //action.config.divider
         return `header,,${JSON.stringify(header)}\n`;
       },

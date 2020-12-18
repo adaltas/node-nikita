@@ -20,7 +20,9 @@ nikita
   assert(!!@ssh(), true)
 })
 .execute({
-  header: 'Print remote hostname',
+  metadata: {
+    header: 'Print remote hostname'
+  },
   command: 'hostname'
 })
 .ssh.close()
@@ -40,8 +42,10 @@ nikita
   assert(@ssh(config.ssh), null)
 })
 .execute({
-  ssh: false
-  header: 'Print local hostname',
+  ssh: false,
+  metadata: {
+    header: 'Print local hostname'
+  },
   command: 'hostname'
 })
 .ssh.close()

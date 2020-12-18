@@ -210,9 +210,7 @@ handler = async function({
     noRefs: true,
     lineWidth: config.line_width
   });
-  return this.file(config, {
-    header: null
-  });
+  return this.file(config);
 };
 
 // ## Exports
