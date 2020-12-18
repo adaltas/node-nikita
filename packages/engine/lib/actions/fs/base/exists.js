@@ -4,6 +4,17 @@
 // Retrieve file information. If path is a symbolic link, then the link itself is
 // stat-ed, not the file that it refers to.
 
+// ## Output
+
+// The returned object contains the properties:
+
+// * `exists` (boolean)
+//   Indicates if the target file exists.
+// * `target` (string)   
+//   Location of the target file.
+
+// ## Example
+
 // ```js
 // const {exists} = await nikita.fs.base.exists({
 //   target: '/path/to/file'
@@ -41,13 +52,15 @@ handler = async function({config}) {
       dereference: true
     });
     return {
-      exists: true
+      exists: true,
+      target: config.target
     };
   } catch (error) {
     err = error;
     if (err.code === 'NIKITA_FS_STAT_TARGET_ENOENT') {
       return {
-        exists: false
+        exists: false,
+        target: config.target
       };
     } else {
       throw err;
