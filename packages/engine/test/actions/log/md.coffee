@@ -43,14 +43,14 @@ describe 'actions.log.md', ->
         metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
-        @call header: 'h1', ({tools: {log}}) ->
+        @call metadata: header: 'h1', ({tools: {log}}) ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
               setTimeout ->
                 resolve()
               , 500
-          @call header: 'h2', ({tools: {log}}) ->
+          @call metadata: header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           target: "#{tmpdir}/localhost.log"
@@ -74,8 +74,8 @@ describe 'actions.log.md', ->
         metadata: tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
-        @call header: 'h1', ->
-          @call header: 'h2', ({tools: {log}}) ->
+        @call metadata: header: 'h1', ->
+          @call metadata: header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           target: "#{tmpdir}/localhost.log"

@@ -196,7 +196,6 @@ handler = async function({
     content: stringify(fnl_props),
     target: config.target,
     source: void 0,
-    header: void 0,
     backup: config.backup,
     backup_mode: config.backup_mode,
     eof: config.eof,

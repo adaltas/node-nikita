@@ -26,25 +26,25 @@ Write log to the host filesystem in Markdown.
 
 ## Handler
 
-    handler = (action) ->
+    handler = ({config}) ->
       state = last_event_type: undefined
-      @call log_fs, config: action.config, serializer:
-        'nikita:action:start': (act) ->
-          return unless act.config.header
+      @call log_fs, config: config, serializer:
+        'nikita:action:start': (action) ->
+          return unless action.metadata.header
           {last_event_type} = state
           state.last_event_type = 'nikita:action:start'
           walk = (parent) ->
-            precious = parent.config.header
+            precious = parent.metadata.header
             results = []
             results.push precious unless precious is undefined
             results.push ...(walk parent.parent) if parent.parent
             results
-          headers = walk act
+          headers = walk action
           # Async operation break the event order, causing header to be writen
           # after other sync event such as text
           # headers = await act.tools.walk ({config}) ->
           #   config.header
-          header = headers.reverse().join action.config.divider
+          header = headers.reverse().join config.divider
           [
             '\n' unless last_event_type is 'nikita:action:start'
             '#'.repeat headers.length
@@ -105,7 +105,8 @@ Write log to the host filesystem in Markdown.
 
     module.exports =
       handler: handler
-      on_action: on_action
+      hooks:
+        on_action: on_action
       metadata:
         schema: schema
       ssh: false

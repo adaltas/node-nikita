@@ -35,7 +35,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
-  header: 'Container'
+  metadata: header: 'Container'
   networks:
     lxdbr0freeipa:
       'ipv4.address': '172.16.0.1/24'
@@ -63,14 +63,14 @@ nikita
         nikita: sudo: true, authorized_keys: "./assets/id_rsa.pub"
   prevision: ({config}) ->
     @tools.ssh.keygen
-      header: 'SSH key'
+      metadata: header: 'SSH key'
       target: "./assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({config}) ->
     @lxd.exec
-      header: 'Node.js'
+      metadata: header: 'Node.js'
       container: config.container
       command: """
       command -v node && exit 42
@@ -83,25 +83,25 @@ nikita
       trap: true
       code_skipped: 42
     @lxd.file.push
-      header: 'User Private Key'
+      metadata: header: 'User Private Key'
       container: config.container
       gid: 'nikita'
       uid: 'nikita'
       source: "./assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
-      header: 'Root SSH dir'
+      metadata: header: 'Root SSH dir'
       container: config.container
       command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
-      header: 'Root SSH Private Key'
+      metadata: header: 'Root SSH Private Key'
       container: config.container
       gid: 'root'
       uid: 'root'
       source: "./assets/id_rsa"
       target: '/root/.ssh/id_rsa'
     @lxd.exec
-      header: 'Install FreeIPA'
+      metadata: header: 'Install FreeIPA'
       container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:

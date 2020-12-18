@@ -117,7 +117,6 @@ value properties.
         content: stringify fnl_props
         target: config.target
         source: undefined
-        header: undefined
         backup: config.backup
         backup_mode: config.backup_mode
         eof: config.eof

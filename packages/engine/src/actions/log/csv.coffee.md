@@ -25,15 +25,15 @@ Global config can be alternatively set with the "log_csv" property.
       # Obtains config from "log_csv" namespace
       # stdouting = 0
       @call log_fs, config: config, serializer:
-        'nikita:action:start': (act) ->
-          return unless act.config.header
+        'nikita:action:start': (action) ->
+          return unless action.metadata.header
           walk = (parent) ->
-            precious = parent.config.header
+            precious = parent.metadata.header
             results = []
             results.push precious unless precious is undefined
             results.push ...(walk parent.parent) if parent.parent
             results
-          headers = walk act
+          headers = walk action
           header = headers.reverse().join ' : ' #action.config.divider
           "header,,#{JSON.stringify header}\n"
         # 'diff': (log) ->

@@ -81,7 +81,7 @@ containers:
                 default: {}
                 additionalProperties:
                   # Device name of nic
-                  '': 
+                  '':
                     properties:
                       'ip':
                         type: 'string'
@@ -238,15 +238,14 @@ containers:
         await @lxd.exec
           metadata:
             header: 'OpenSSL'
+            retry: 10
+            sleep: 5000
           container: containerName
           command: """
           #yum update -y
           yum install -y openssl
           command -v openssl
           """
-          metadata:
-            retry: 10
-            sleep: 5000
           trap: true
         # Enable SSH
         if config.ssh?.enabled
