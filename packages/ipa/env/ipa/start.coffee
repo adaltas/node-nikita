@@ -45,7 +45,7 @@ nikita
   containers:
     freeipa:
       image: 'images:centos/7'
-      config:
+      properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
       disk:
         nikitadir:
@@ -53,18 +53,18 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0freeipa'
+          name: 'eth0', nictype: 'bridged', parent: 'lxdbr0freeipa'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
         ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'
         ipa_ui_https: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
       user:
-        nikita: sudo: true, authorized_keys: "./assets/id_rsa.pub"
+        nikita: sudo: true, authorized_keys: "#{__dirname}/assets/id_rsa.pub"
   prevision: ({config}) ->
     @tools.ssh.keygen
       metadata: header: 'SSH key'
-      target: "./assets/id_rsa"
+      target: "#{__dirname}/assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
@@ -87,7 +87,7 @@ nikita
       container: config.container
       gid: 'nikita'
       uid: 'nikita'
-      source: "./assets/id_rsa"
+      source: "#{__dirname}/assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
       metadata: header: 'Root SSH dir'
@@ -98,7 +98,7 @@ nikita
       container: config.container
       gid: 'root'
       uid: 'root'
-      source: "./assets/id_rsa"
+      source: "#{__dirname}/assets/id_rsa"
       target: '/root/.ssh/id_rsa'
     @lxd.exec
       metadata: header: 'Install FreeIPA'

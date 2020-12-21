@@ -12,7 +12,7 @@ nikita
   containers:
     'tools-rubygems':
       image: 'images:centos/7'
-      config:
+      properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/rubygems.lxd/test.coffee'
       disk:
         nikitadir:
