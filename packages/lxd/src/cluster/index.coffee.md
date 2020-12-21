@@ -118,7 +118,7 @@ containers:
                 type: 'object'
                 default: {}
                 properties:
-                  'enable':
+                  'enabled':
                     type: 'boolean'
                     default: false
                     description: """
@@ -168,7 +168,7 @@ containers:
         if containerConfig?.properties
           await @lxd.config.set
             metadata:
-              header: 'Config'
+              header: 'Properties'
             config:
               container: containerName
               properties: containerConfig.properties
@@ -248,7 +248,7 @@ containers:
           """
           trap: true
         # Enable SSH
-        if config.ssh?.enabled
+        if containerConfig.ssh?.enabled
           await @lxd.exec
             metadata:
               header: 'SSH'
@@ -323,8 +323,7 @@ containers:
         for containerName, containerConfig of config.containers
           await @call
             container: containerName
-          ,
-            containerConfig
+            config: containerConfig
           , config.provision_container
 
 ## Export

@@ -3,11 +3,11 @@ var nikita, path;
 
 path = require('path');
 
-nikita = require('@nikitajs/core');
+nikita = require('@nikitajs/engine/src');
 
-require('@nikitajs/tools/lib/register');
+require('@nikitajs/lxd/src/register');
 
-require('../../register');
+require('@nikitajs/tools/src/register');
 
 /*
 
@@ -159,7 +159,7 @@ nikita.log.cli({
       }
     }
   },
-  prevision: function({options}) {
+  prevision: function({config}) {
     return this.tools.ssh.keygen({
       metadata: {
         header: 'SSH key'
@@ -170,12 +170,12 @@ nikita.log.cli({
       comment: 'nikita'
     });
   },
-  provision_container: function({options}) {
+  provision_container: function({config}) {
     return this.lxd.exec({
       metadata: {
         header: 'Node.js'
       },
-      container: options.container,
+      container: config.container,
       command: `command -v node && exit 42
 curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts`,
@@ -183,6 +183,8 @@ bash n lts`,
       code_skipped: 42
     });
   }
+});
+
 // @lxd.file.push
 //   debug: true
 //   header: 'Test configuration'
@@ -191,8 +193,3 @@ bash n lts`,
 //   uid: 'nikita'
 //   source: './test.coffee'
 //   target: '/nikita/packages/core/test.coffee'
-}).next(function(err) {
-  if (err) {
-    throw err;
-  }
-});
