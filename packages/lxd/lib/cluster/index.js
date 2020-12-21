@@ -137,7 +137,7 @@ authorized_keys file.`
               type: 'object',
               default: {},
               properties: {
-                'enable': {
+                'enabled': {
                   type: 'boolean',
                   default: false,
                   description: `Enable SSH connection.`
@@ -216,7 +216,7 @@ handler = async function({config}) {
       if (containerConfig != null ? containerConfig.properties : void 0) {
         await this.lxd.config.set({
           metadata: {
-            header: 'Config'
+            header: 'Properties'
           },
           config: {
             container: containerName,
@@ -324,7 +324,7 @@ command -v openssl`,
         trap: true
       });
       // Enable SSH
-      if ((ref5 = config.ssh) != null ? ref5.enabled : void 0) {
+      if ((ref5 = containerConfig.ssh) != null ? ref5.enabled : void 0) {
         await this.lxd.exec({
           metadata: {
             header: 'SSH'
@@ -413,8 +413,9 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
     for (containerName in ref2) {
       containerConfig = ref2[containerName];
       results.push((await this.call({
-        container: containerName
-      }, containerConfig, config.provision_container)));
+        container: containerName,
+        config: containerConfig
+      }, config.provision_container)));
     }
     return results;
   }

@@ -1,8 +1,8 @@
 
 path = require 'path'
-nikita = require '@nikitajs/core'
-require '@nikitajs/tools/lib/register'
-require '../../register'
+nikita = require '@nikitajs/engine/src'
+require '@nikitajs/lxd/src/register'
+require '@nikitajs/tools/src/register'
 
 ###
 
@@ -83,17 +83,17 @@ nikita
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
-  prevision: ({options}) ->
+  prevision: ({config}) ->
     @tools.ssh.keygen
       metadata: header: 'SSH key'
       target: './assets/id_rsa'
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
-  provision_container: ({options}) ->
+  provision_container: ({config}) ->
     @lxd.exec
       metadata: header: 'Node.js'
-      container: options.container
+      container: config.container
       command: """
       command -v node && exit 42
       curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
@@ -109,5 +109,3 @@ nikita
     #   uid: 'nikita'
     #   source: './test.coffee'
     #   target: '/nikita/packages/core/test.coffee'
-.next (err) ->
-  throw err if err
