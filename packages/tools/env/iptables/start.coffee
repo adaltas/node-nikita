@@ -12,7 +12,7 @@ nikita
   containers:
     'tools-iptables':
       image: 'images:centos/7'
-      config:
+      properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/iptables/test.coffee'
       disk:
         nikitadir:
