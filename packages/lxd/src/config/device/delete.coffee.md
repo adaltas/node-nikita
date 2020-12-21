@@ -39,7 +39,6 @@ console.info(`Device was removed: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
       {properties} = await @lxd.config.device.show
-        metadata: debug: true
         container: config.container
         device: config.device
       return status: false unless properties

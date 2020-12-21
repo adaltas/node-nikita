@@ -42,9 +42,6 @@ handler = async function({config}) {
   var properties, status;
   // log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
   ({properties} = (await this.lxd.config.device.show({
-    metadata: {
-      debug: true
-    },
     container: config.container,
     device: config.device
   })));
