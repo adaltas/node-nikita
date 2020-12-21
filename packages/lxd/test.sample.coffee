@@ -1,8 +1,8 @@
 
 module.exports =
   tags:
-    lxd: false
-    lxd_prlimit: false
+    lxd: true
+    lxd_prlimit: true
   ssh: [
     null
     { host: '127.0.0.1', username: process.env.USER }

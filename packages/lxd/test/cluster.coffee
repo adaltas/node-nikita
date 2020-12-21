@@ -17,16 +17,16 @@ describe 'lxd.cluster', ->
     it 'validate container.image', ->
       nikita.lxd.cluster
         handler: (->)
-        config: 
+        config:
           containers:
             c1: {}
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       nikita.lxd.cluster
         handler: (->)
-        config: 
+        config:
           containers:
-            c1: 
+            c1:
               image: 'images:centos/7'
       .should.be.fulfilled()
   
@@ -34,7 +34,7 @@ describe 'lxd.cluster', ->
       # Source is invalid
       nikita.lxd.cluster
         handler: (->)
-        config: 
+        config:
           containers:
             c1:
               image: 'images:centos/7'
@@ -44,7 +44,7 @@ describe 'lxd.cluster', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       nikita.lxd.cluster
         handler: (->)
-        config: 
+        config:
           containers:
             c1:
               image: 'images:centos/7'
