@@ -18,7 +18,7 @@ nikita
   containers:
     'tools-apm':
       image: 'images:centos/7'
-      config:
+      properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/apm/test.coffee'
       disk:
         nikitadir:
