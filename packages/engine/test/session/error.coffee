@@ -5,9 +5,24 @@ session = require '../../src/session'
 # Test the construction of the session namespace stored in state
 
 describe 'session.error', ->
-  
+
   describe 'cascade', ->
-  
+
+    it 'throw error in sibling', ->
+      nikita ->
+        @call ->
+          throw Error 'OK'
+        @call (->)
+      .should.be.rejectedWith 'OK'
+
+    it 'throw error in sibling child', ->
+      nikita ->
+        @call ->
+          @call ->
+            throw Error 'OK'
+        @call (->)
+      .should.be.rejectedWith 'OK'
+
     it 'thrown error sync in last action', ->
       session ->
         @call (->)

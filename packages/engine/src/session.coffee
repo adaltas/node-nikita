@@ -7,6 +7,8 @@ contextualize = require './session/contextualize'
 normalize = require './session/normalize'
 utils = require './utils'
 
+error = null
+
 session = (action={}) ->
   action.metadata ?= {}
   action.metadata.namespace ?= []
@@ -98,6 +100,13 @@ session = (action={}) ->
       args: action
       hooks: action.hooks.on_action
       handler: (action) ->
+        # Stop executing when sibling or one of its child failed
+        throw action.sibling.error if action.sibling?.error
+        on_children = (children) ->
+          for child in children
+            on_children child.children if child.children?
+            throw child.error if child.error
+        on_children action.sibling.children if action.sibling?.children
         # Execution of an action handler
         action.handler.call action.context, action
     # Ensure child actions are executed
