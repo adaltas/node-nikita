@@ -12,6 +12,15 @@ before ->
     command: "lxc image copy ubuntu:default `lxc remote get-default`:"
   .execute
     command: "lxc image copy ubuntu:default `lxc remote get-default`: --vm"
+  # It takes time to retrieve files from an Ubuntu VM image archive the first
+  # time after downloading. It is way faster for an Ubuntu container image, so
+  # we don't need it.
+  .execute
+    command: """
+    lxc info vm1 >/dev/null && exit 42
+    echo "" | lxc init ubuntu: vm1 --vm
+    """
+    code_skipped: 42
 
 describe 'lxd.init', ->
 
