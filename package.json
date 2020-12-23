@@ -1,6 +1,11 @@
 {
   "private": true,
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-lerna-scopes": "^11.0.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^5.0.6",
     "lerna": "^3.13.0"
   },
   "scripts": {
@@ -10,9 +15,15 @@
     "test": "lerna run test",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "check-packages": "yarn clean && yarn compile && yarn test && yarn lint",
-    "publish-packages": "./scripts/publish"
+    "publish-packages": "./scripts/publish",
+    "postinstall": "husky install"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
