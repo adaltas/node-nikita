@@ -70,7 +70,7 @@ console.info(`Volume was created: ${status}`)
         code: 1
         code_skipped: 0
         metadata: shy: true
-      @docker.tools.execute
+      await @docker.tools.execute
         if: -> not config.name or status
         command: [
           "volume create"

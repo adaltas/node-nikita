@@ -100,12 +100,12 @@ handler = async function({
       shy: true
     }
   })));
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     if: function() {
       return !config.name || status;
     },
     command: ["volume create", config.driver ? `--driver ${config.driver}` : void 0, config.label ? `--label ${config.label.join(',')}` : void 0, config.name ? `--name ${config.name}` : void 0, config.opt ? `--opt ${config.opt.join(',')}` : void 0].join(' ')
-  });
+  }));
 };
 
 // ## Exports

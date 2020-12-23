@@ -157,9 +157,9 @@ handler = async function({
         value: `${k} ${v[0]}`
       });
     }
-    return this.ldap.modify(config, {
+    return (await this.ldap.modify(config, {
       operations: operations
-    });
+    }));
   }
 };
 

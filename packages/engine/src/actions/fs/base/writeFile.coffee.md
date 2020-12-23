@@ -73,7 +73,7 @@ console.info(`File was written: ${status}`)
       config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
       throw NIKITA_FS_STAT_TARGET_ENOENT config: config, err: err if ssh and not path.isAbsolute config.target
       # Real work
-      @fs.base.createWriteStream
+      await @fs.base.createWriteStream
         target: config.target
         flags: config.flags
         mode: config.mode

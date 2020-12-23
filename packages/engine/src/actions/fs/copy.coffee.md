@@ -133,7 +133,7 @@ console.info(`File was copied: ${status}`)
           throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
       # Create target parent directory if target does not exists and if the "parent"
       # config is set to "true" (default) or as an object.
-      @fs.mkdir
+      await @fs.mkdir
         if: !!config.parent
         unless: target_stats
         target: path.dirname config.target
@@ -163,13 +163,13 @@ console.info(`File was copied: ${status}`)
           mode = config.mode
           mode ?= stats.mode if config.preserve
           if utils.stats.isDirectory stats.mode
-            @fs.mkdir
+            await @fs.mkdir
               target: target
               uid: uid
               gid: gid
               mode: mode
           else
-            @fs.copy
+            await @fs.copy
               target: target
               source: source
               source_stat: stats
@@ -179,7 +179,7 @@ console.info(`File was copied: ${status}`)
         end: true
       return res.status if res.end
       # If source is a file and target is a directory, then transform target into a file.
-      @call metadata: shy: true, ->
+      await @call metadata: shy: true, ->
         return unless target_stats and utils.stats.isDirectory target_stats.mode
         config.target = path.resolve config.target, path.basename config.source
       # Compute the source and target hash
@@ -203,13 +203,13 @@ console.info(`File was copied: ${status}`)
       config.uid ?= source_stats.uid if config.preserve
       config.gid ?= source_stats.gid if config.preserve
       config.mode ?= source_stats.mode if config.preserve
-      @fs.chown
+      await @fs.chown
         target: config.target
         stats: target_stats
         uid: config.uid
         gid: config.gid
         if: config.uid? or config.gid?
-      @fs.chmod
+      await @fs.chmod
         target: config.target
         stats: target_stats
         mode: config.mode

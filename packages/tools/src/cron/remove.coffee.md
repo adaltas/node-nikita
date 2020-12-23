@@ -63,7 +63,7 @@ console.info(`Cron entry was removed: ${status}`)
         jobs.splice i, 1
       log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/tools/lib/cron/remove'
       return unless status
-      @execute
+      await @execute
         command: """
         #{crontab} - <<EOF
         #{if jobs then jobs.join '\n', '\nEOF' else 'EOF'}

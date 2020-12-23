@@ -39,7 +39,7 @@ console.info(`Network was detached: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
       #Execute
-      @execute
+      await @execute
         command: """
         lxc config device list #{config.container} | grep #{config.network} || exit 42
         #{[

@@ -142,10 +142,10 @@ handler = async function({
       command: config.user != null ? `su -l ${config.user} -c '${config.command}'` : config.command
     });
   }
-  return this.execute({
+  return (await this.execute({
     command: `${crontab} - <<EOF
 ${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
-  });
+  }));
 };
 
 // ## Exports

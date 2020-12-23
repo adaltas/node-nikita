@@ -208,10 +208,10 @@ Perform an HTTP request. It uses internaly the curl command.
       catch err
         throw Error "Required Dependencies: curl is required to perform HTTP requests" if err.exit_code is 3
         throw err
-      @fs.chmod
+      await @fs.chmod
         if: config.target and config.mode
         mode: config.mode
-      @fs.chown
+      await @fs.chown
         if: config.target and config.uid? or config.gid?
         target: config.target
         uid: config.uid

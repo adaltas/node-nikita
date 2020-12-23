@@ -43,10 +43,10 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
-  return this.execute({
+handler = async function({config}) {
+  return (await this.execute({
     command: `ln -sf ${config.source} ${config.target}`
-  });
+  }));
 };
 
 // ## Exports

@@ -168,7 +168,7 @@ handler = async function({
     status = true;
   }
   if (status) {
-    this.file({
+    await this.file({
       target: config.target,
       backup: config.backup,
       content: ((function() {
@@ -187,7 +187,7 @@ handler = async function({
     });
   }
   if (config.load && status) {
-    return this.execute(`sysctl -p ${config.target}`);
+    return (await this.execute(`sysctl -p ${config.target}`));
   }
 };
 

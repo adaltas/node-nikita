@@ -80,7 +80,7 @@ handler = async function({
     return false;
   }
   // Apply changes
-  this.fs.base.chmod({
+  await this.fs.base.chmod({
     target: config.target,
     mode: config.mode
   });

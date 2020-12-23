@@ -56,7 +56,7 @@ console.info(`Container was killed: ${status}`)
       {status} = await @docker.tools.execute
         command: "ps | egrep ' #{config.container}$' | grep 'Up'"
         code_skipped: 1
-      @docker.tools.execute
+      await @docker.tools.execute
         if: -> status
         command: [
           'kill'

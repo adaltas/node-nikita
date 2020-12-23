@@ -79,7 +79,7 @@ and "{config.basedir}/latest".
       config.stream ?= fs.createWriteStream path.resolve logdir, config.filename
       await @call config, stream
       # Handle link to latest directory
-      @fs.base.symlink
+      await @fs.base.symlink
         if: latestdir
         source: logdir
         target: latestdir

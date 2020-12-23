@@ -92,7 +92,7 @@ console.info(`Cron entry created or modified: ${status}`)
       if config.exec
         await @execute
           command: if config.user? then "su -l #{config.user} -c '#{config.command}'" else config.command
-      @execute
+      await @execute
         command: """
         #{crontab} - <<EOF
         #{if jobs then jobs.join '\n', '\nEOF' else 'EOF'}

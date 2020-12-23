@@ -127,7 +127,7 @@ console.info(`Systcl was reloaded: ${status}`)
         final[key] = value
         status = true
       if status
-        @file
+        await @file
           target: config.target
           backup: config.backup
           content: (
@@ -138,7 +138,7 @@ console.info(`Systcl was reloaded: ${status}`)
                 "#{key}"
           ).join '\n'
       if config.load and status
-        @execute "sysctl -p #{config.target}"
+        await @execute "sysctl -p #{config.target}"
 
 ## Exports
 

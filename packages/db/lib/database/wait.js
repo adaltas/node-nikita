@@ -44,9 +44,9 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   // Command
-  return this.execute.wait({
+  return (await this.execute.wait({
     command: (function() {
       switch (config.engine) {
         case 'mariadb':
@@ -60,7 +60,7 @@ handler = function({config}) {
           }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${config.database}'`;
       }
     })()
-  });
+  }));
 };
 
 // ## Exports

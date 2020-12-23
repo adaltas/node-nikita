@@ -82,7 +82,7 @@ schema = {
 
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var aliases;
   if (!Array.isArray(config.caname)) {
     config.caname = [config.caname];
@@ -94,7 +94,7 @@ handler = function({config}) {
   if (config.keytool == null) {
     config.keytool = 'keytool';
   }
-  return this.execute({
+  return (await this.execute({
     bash: true,
     command: `# Detect keytool command
 keytoolbin=${config.keytool}
@@ -114,7 +114,7 @@ done
 [ $count -eq 0 ] && exit 3
 exit 0`,
     code_skipped: 3
-  });
+  }));
 };
 
 // ## Export

@@ -13,7 +13,7 @@ console.log(`Is APM installed: ${status}`)
 ## Handler
 
     handler = ->
-      @execute
+      await @execute
         command: "if (apm -v | grep apm) then (exit 0) else (exit 1) fi"
 
 ## Exports

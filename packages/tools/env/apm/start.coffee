@@ -28,14 +28,14 @@ nikita
       user:
         nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
   prevision: ({config}) ->
-    @tools.ssh.keygen
+    await @tools.ssh.keygen
       metadata: header: 'SSH key'
       target: "#{__dirname}/../../assets/id_rsa"
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({config}) ->
-    @lxd.exec
+    await @lxd.exec
       metadata: header: 'Node.js'
       container: config.container
       command: """
@@ -48,25 +48,25 @@ nikita
       """
       trap: true
       code_skipped: 42
-    @lxd.file.push
+    await @lxd.file.push
       metadata: header: 'User Private Key'
       container: config.container
       gid: 'nikita'
       uid: 'nikita'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/home/nikita/.ssh/id_rsa'
-    @lxd.exec
+    await @lxd.exec
       metadata: header: 'Root SSH dir'
       container: config.container
       command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
-    @lxd.file.push
+    await @lxd.file.push
       metadata: header: 'Root SSH Private Key'
       container: config.container
       gid: 'root'
       uid: 'root'
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/root/.ssh/id_rsa'
-    @lxd.exec
+    await @lxd.exec
       metadata: header: 'Install Atom'
       container: config.container
       command: """

@@ -39,13 +39,13 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   // log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
-  return this.execute(config, {
+  return (await this.execute(config, {
     trap: false
   }, {
     command: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- bash`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
-  });
+  }));
 };
 
 // ## Export

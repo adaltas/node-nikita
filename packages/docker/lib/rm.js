@@ -80,7 +80,7 @@ handler = async function({
     command: `ps -a | egrep ' ${config.container}$'`,
     code_skipped: 1
   })));
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: [
       'rm',
       ...(['link',
@@ -95,7 +95,7 @@ handler = async function({
     if: function() {
       return status;
     }
-  });
+  }));
 };
 
 // ## Exports

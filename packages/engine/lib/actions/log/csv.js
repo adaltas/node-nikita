@@ -22,10 +22,10 @@
 // ## Handler
 var handler, log_fs;
 
-handler = function({config}) {
+handler = async function({config}) {
   // Obtains config from "log_csv" namespace
   // stdouting = 0
-  return this.call(log_fs, {
+  return (await this.call(log_fs, {
     config: config,
     serializer: {
       'nikita:action:start': function(action) {
@@ -74,7 +74,7 @@ handler = function({config}) {
         return `${log.type},${log.level},${JSON.stringify(log.message)}\n`;
       }
     }
-  });
+  }));
 };
 
 // ## Exports

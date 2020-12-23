@@ -36,7 +36,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
       # rm is false by default only if config.service is true
       command = 'logout'
       command += " \"#{config.registry}\"" if config.registry?
-      @execute
+      await @execute
         command: utils.wrap config, command
       , docker.callback
 

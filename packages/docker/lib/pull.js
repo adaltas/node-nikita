@@ -78,10 +78,10 @@ handler = async function({
     command: ['images', `| grep '${config.tag}'`, !config.all ? `| grep '${version}'` : void 0].join(' '),
     code_skipped: 1
   })));
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     unless: status,
     command: command
-  });
+  }));
 };
 
 // ## Exports

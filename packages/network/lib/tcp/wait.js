@@ -222,7 +222,7 @@ to have failed.`
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -250,7 +250,7 @@ handler = function({
     config.timeout = 0;
   }
   config.timeout = Math.round(config.timeout / 1000);
-  return this.execute({
+  return (await this.execute({
     bash: true,
     command: `function compute_md5 {
   echo $1 | openssl md5 | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
@@ -337,7 +337,7 @@ echo "[INFO] Exit code is $signal"
 exit $signal`,
     code_skipped: 3,
     stdin_log: false
-  });
+  }));
 };
 
 // ## Exports

@@ -46,10 +46,10 @@ throw an Error if it does not exists.
 ## Handler
 
     handler = ({config}) ->
-      @fs.assert
+      await @fs.assert
         target: path.dirname config.target
       if config.merge
-        @file
+        await @file
           target: config.target
           write: for key in config.keys
             match: new RegExp ".*#{utils.regexp.escape key}.*", 'mg'
@@ -60,7 +60,7 @@ throw an Error if it does not exists.
           mode: config.mode
           eof: true
       else
-        @file
+        await @file
           target: config.target
           content: config.keys.join '\n'
           uid: config.uid

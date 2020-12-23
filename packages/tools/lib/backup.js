@@ -100,7 +100,7 @@ database](https://www.iana.org/time-zones), such as "Asia/Shanghai",
 };
 
 // # Handler
-handler = function({
+handler = async function({
     config,
     tools: {log, path}
   }) {
@@ -134,22 +134,22 @@ handler = function({
     level: 'INFO',
     module: 'nikita/lib/tools/backup'
   });
-  this.fs.mkdir(`${path.dirname(target)}`);
+  await this.fs.mkdir(`${path.dirname(target)}`);
   if (config.source && !config.compress) {
-    this.fs.copy({
+    await this.fs.copy({
       source: `${config.source}`,
       target: `${target}`
     });
   }
   if (config.source && config.compress) {
-    this.tools.compress({
+    await this.tools.compress({
       format: `${compress}`,
       source: `${config.source}`,
       target: `${target}`
     });
   }
   if (config.command) {
-    this.execute({
+    await this.execute({
       command: `${config.command} > ${target}`
     });
   }

@@ -94,7 +94,7 @@ handler = async function({
     config.loader = loader;
   }
   // discover loader to put in cache
-  this.file.render({
+  await this.file.render({
     target: config.target,
     source: config.source,
     mode: config.mode,
@@ -118,9 +118,9 @@ handler = async function({
   if (!status) {
     return;
   }
-  return this.execute({
+  return (await this.execute({
     command: 'systemctl daemon-reload;systemctl reset-failed'
-  });
+  }));
 };
 
 // ## Export

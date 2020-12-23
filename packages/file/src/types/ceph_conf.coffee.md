@@ -53,7 +53,7 @@ file][ceph-conf] as Ceph daemons expect it.
     handler = ({config}) ->
       # log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
-      @file.ini
+      await @file.ini
         stringify: utils.ini.stringify
         parse: utils.ini.parse_multi_brackets
         escape: false

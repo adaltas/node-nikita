@@ -397,7 +397,7 @@ console.info(data)
           else if utils.stats.isSymbolicLink stats.mode
             log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
             if config.unlink
-              @fs.base.unlink target: config.target
+              await @fs.base.unlink target: config.target
               stats = null
           else if utils.stats.isFile stats.mode
             log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
@@ -454,7 +454,7 @@ console.info(data)
         log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
         config.backup_mode ?= 0o0400
         backup = if typeof config.backup is 'string' then config.backup else ".#{Date.now()}"
-        @fs.copy
+        await @fs.copy
           source: config.target
           target: "#{config.target}#{backup}"
           mode: config.backup_mode
@@ -471,26 +471,26 @@ console.info(data)
         # https://github.com/nodejs/node/issues/1104
         # `mode` specifies the permissions to use in case a new file is created.
         if contentChanged
-          @call ->
+          await @call ->
             config.flags ?= 'a' if config.append
-            @fs.base.writeFile
+            await @fs.base.writeFile
               target: config.target
               flags: config.flags
               content: config.content
               mode: targetStats?.mode
             status: true
         if config.mode
-          @fs.chmod
+          await @fs.chmod
             target: config.target
             stats: targetStats
             mode: config.mode
         else if targetStats
-          @fs.chmod
+          await @fs.chmod
             target: config.target
             stats: targetStats
             mode: targetStats.mode
         # Option gid is set at runtime if target is a new file
-        @fs.chown
+        await @fs.chown
           target: config.target
           stats: targetStats
           uid: config.uid

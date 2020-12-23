@@ -119,18 +119,18 @@ console.info(`File was backed up: ${status}`)
       target = "#{config.target}/#{config.name}/#{filename}"
       log message: "Source is #{JSON.stringify config.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
       log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
-      @fs.mkdir "#{path.dirname target}"
+      await @fs.mkdir "#{path.dirname target}"
       if config.source and not config.compress
-        @fs.copy
+        await @fs.copy
           source: "#{config.source}"
           target: "#{target}"
       if config.source and config.compress
-        @tools.compress
+        await @tools.compress
           format: "#{compress}"
           source: "#{config.source}"
           target: "#{target}"
       if config.command
-        @execute
+        await @execute
           command: "#{config.command} > #{target}"
       base_dir: config.target
       name: config.name

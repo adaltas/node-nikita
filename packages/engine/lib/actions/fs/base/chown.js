@@ -40,7 +40,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   if (config.uid === false) {
     // Normalization
     config.uid = null;
@@ -52,7 +52,7 @@ handler = function({config}) {
     // Validation
     throw Error("Missing one of uid or gid option");
   }
-  return this.execute([config.uid != null ? `chown ${config.uid} ${config.target}` : void 0, config.gid != null ? `chgrp ${config.gid} ${config.target}` : void 0].join('\n'));
+  return (await this.execute([config.uid != null ? `chown ${config.uid} ${config.target}` : void 0, config.gid != null ? `chgrp ${config.gid} ${config.target}` : void 0].join('\n')));
 };
 
 // ## Exports

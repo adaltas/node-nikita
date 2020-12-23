@@ -52,7 +52,7 @@ console.info(`ticket was renewed: ${status}`)
         """
         code_skipped: 3
       return unless (config.uid? or config.gid?) and config.keytab?
-      @fs.chown
+      await @fs.chown
         uid: config.uid
         gid: config.gid
         target: config.keytab

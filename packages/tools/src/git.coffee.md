@@ -58,7 +58,7 @@ console.info(`Repo was synchronized: ${status}`)
         {exists: is_git} = await @fs.base.exists target: gitDir
         throw Error "Not a git repository" unless is_git
       else
-        @execute
+        await @execute
           command: "git clone #{config.source} #{config.target}"
           cwd: path.dirname config.target
       if repo_exists
@@ -76,7 +76,7 @@ console.info(`Repo was synchronized: ${status}`)
           code_skipped: 3
           metadata: shy: true
       unless repo_uptodate
-        @execute
+        await @execute
           command: "git checkout #{config.revision}"
           cwd: config.target
 

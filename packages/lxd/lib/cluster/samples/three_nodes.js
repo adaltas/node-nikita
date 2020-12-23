@@ -159,8 +159,8 @@ nikita.log.cli({
       }
     }
   },
-  prevision: function({config}) {
-    return this.tools.ssh.keygen({
+  prevision: async function({config}) {
+    return (await this.tools.ssh.keygen({
       metadata: {
         header: 'SSH key'
       },
@@ -168,10 +168,10 @@ nikita.log.cli({
       bits: 2048,
       key_format: 'PEM',
       comment: 'nikita'
-    });
+    }));
   },
-  provision_container: function({config}) {
-    return this.lxd.exec({
+  provision_container: async function({config}) {
+    return (await this.lxd.exec({
       metadata: {
         header: 'Node.js'
       },
@@ -181,7 +181,7 @@ curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts`,
       trap: true,
       code_skipped: 42
-    });
+    }));
   }
 });
 

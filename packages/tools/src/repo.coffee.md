@@ -85,9 +85,9 @@ console.info(`Repo was updated: ${status}`)
         remote_files = for file in files
           continue if file is config.target
           file
-      @fs.remove remote_files
+      await @fs.remove remote_files
       # Download source
-      @file.download
+      await @file.download
         if: config.source?
         source: config.source
         target: config.target
@@ -97,7 +97,7 @@ console.info(`Repo was updated: ${status}`)
         location: config.location
         cache: false
       # Write
-      @file.types.yum_repo
+      await @file.types.yum_repo
         if: config.content?
         content: config.content
         mode: config.mode

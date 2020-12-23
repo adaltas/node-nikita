@@ -105,7 +105,7 @@ console.info(`Package or service was removed: ${status}`)
         catch err
           throw Error "Invalid Service Name: #{config.name}" if err
       if config.cache
-        @call
+        await @call
           handler: ->
             log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/remove'
             state['nikita:execute:installed'] = installed

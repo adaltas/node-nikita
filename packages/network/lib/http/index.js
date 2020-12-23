@@ -239,11 +239,11 @@ ${[
     }
     throw err;
   }
-  this.fs.chmod({
+  await this.fs.chmod({
     if: config.target && config.mode,
     mode: config.mode
   });
-  this.fs.chown({
+  await this.fs.chown({
     if: config.target && (config.uid != null) || (config.gid != null),
     target: config.target,
     uid: config.uid,

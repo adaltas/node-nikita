@@ -215,9 +215,9 @@ pass all the properties through the `ssh` property.
       # Enable root access
       if config.root.username
         log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
-        @ssh.root config.root
+        await @ssh.root config.root
       log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
-      @call metadata: retry: 3, ->
+      await @call metadata: retry: 3, ->
         conn = await connect config
         state['nikita:ssh:connection'] = conn
         status: true, ssh: conn

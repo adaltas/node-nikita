@@ -67,7 +67,8 @@ systemd-timesyncd\` after having wrote the configuration file.`
 // The timesyncd configuration file requires all its fields to be under a single
 // section called "Time". Thus, everything in `content` will be automatically put
 // under a "Time" key so that the user doesn't have to do it manually.
-handler = function({config}) {
+handler = async function({config}) {
+  var status;
   if (config.rootdir) {
     // log message: "Entering file.types.timesyncd", level: "DEBUG", module: "nikita/file/lib/types/systemd"
     // Configs
@@ -80,27 +81,27 @@ handler = function({config}) {
     config.content.FallbackNTP = config.content.FallbackNTP.join(" ");
   }
   // Write configuration
-  this.file.ini({
+  ({status} = (await this.file.ini({
     separator: "=",
     target: config.target,
     content: {
       'Time': config.content
     },
     merge: config.merge
-  });
-  return this.execute({
+  })));
+  return (await this.execute({
     if: function() {
       if (config.reload != null) {
         return config.reload;
       } else {
-        return this.status(-1);
+        return status;
       }
     },
     sudo: true,
     command: `systemctl daemon-reload
 systemctl restart systemd-timesyncd`,
     trap: true
-  });
+  }));
 };
 
 // ## Exports

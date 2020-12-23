@@ -177,7 +177,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
             log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) =>
             log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
-      @call if: rebooting, metadata: retry: true, sleep: 3000, ->
+      await @call if: rebooting, metadata: retry: true, sleep: 3000, ->
         conn = await connect config
         conn.end()
 

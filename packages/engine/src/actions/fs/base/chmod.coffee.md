@@ -32,7 +32,7 @@ Change permissions of a file.
 
     handler = ({config}) ->
       config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
-      @execute
+      await @execute
         command: "chmod #{config.mode} #{config.target}"
 
 ## Exports

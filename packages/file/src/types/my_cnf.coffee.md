@@ -46,7 +46,7 @@ Write file in the mysql ini format by default located in "/etc/my.cnf".
 
     handler = ({config}) ->
       # log message: "Entering file.types.my_cnf", level: 'DEBUG', module: 'nikita/file/lib/types/my_cnf'
-      @file.ini
+      await @file.ini
         stringify: utils.ini.stringify_single_key
       , config
 

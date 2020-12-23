@@ -41,7 +41,7 @@ console.info(`Service was deleted: ${status}`)
         metadata: shy: false
         principal: config.principal
       return unless status
-      @network.http config.connection,
+      await @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:

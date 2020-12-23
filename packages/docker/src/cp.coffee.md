@@ -77,7 +77,7 @@ console.info(`Container was copied: ${status}`)
           throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
           target_mkdir = true
-      @fs.mkdir
+      await @fs.mkdir
         target: source_path
         if: source_mkdir
       # Destination is on the host
@@ -90,10 +90,10 @@ console.info(`Container was copied: ${status}`)
         catch err
           throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           target_mkdir = true
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: target_path
         if: target_mkdir
-      @docker.tools.execute
+      await @docker.tools.execute
         command: "cp #{config.source} #{config.target}"
 
 ## Exports

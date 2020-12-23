@@ -42,7 +42,7 @@ console.info(`Storage was deleted: ${status}`)
          config.name
       ].join ' '
       #Execute
-      @execute
+      await @execute
         command: """
         lxc storage list | grep #{config.name} || exit 42
         #{command_delete}

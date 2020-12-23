@@ -36,7 +36,7 @@ after execution.
       config.detach ?= true
       config.rm ?= false
       # Validation
-      @docker.run config
+      await @docker.run config
 
 ## Exports
 

@@ -162,7 +162,7 @@ handler = async function({
   }
   // Install from sources
   if (sources.length) {
-    this.execute({
+    await this.execute({
       command: ((function() {
         var l, len2, results;
         results = [];
@@ -178,7 +178,7 @@ handler = async function({
   }
   // Install from gems
   if (Object.keys(gems).length) {
-    return this.execute({
+    return (await this.execute({
       command: ((function() {
         var results;
         results = [];
@@ -190,7 +190,7 @@ handler = async function({
       })()).join('\n'),
       code: [0, 2],
       bash: config.bash
-    });
+    }));
   }
 };
 

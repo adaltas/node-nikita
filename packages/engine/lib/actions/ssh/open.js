@@ -264,14 +264,14 @@ handler = async function({
       level: 'INFO',
       module: 'nikita/lib/ssh/open'
     });
-    this.ssh.root(config.root);
+    await this.ssh.root(config.root);
   }
   log({
     message: "Establish Connection: attempt after enabling root access",
     level: 'DEBUG',
     module: 'nikita/lib/ssh/open'
   });
-  return this.call({
+  return (await this.call({
     metadata: {
       retry: 3
     }
@@ -282,7 +282,7 @@ handler = async function({
       status: true,
       ssh: conn
     };
-  });
+  }));
 };
 
 // ## Export

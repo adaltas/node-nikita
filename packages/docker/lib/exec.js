@@ -90,7 +90,7 @@ default.`
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -119,10 +119,10 @@ handler = function({
   }
   command += ` ${config.container} ${config.command}`;
   delete config.command;
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: command,
     code_skipped: config.code_skipped
-  });
+  }));
 };
 
 // ## Exports

@@ -43,7 +43,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -53,7 +53,7 @@ handler = function({
     module: 'nikita/lib/docker/wait'
   });
   // Old implementation was `wait {container} | read r; return $r`
-  return this.docker.tools.execute(`wait ${config.container}`);
+  return (await this.docker.tools.execute(`wait ${config.container}`));
 };
 
 // ## Exports

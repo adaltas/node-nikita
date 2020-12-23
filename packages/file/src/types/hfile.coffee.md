@@ -113,7 +113,7 @@ value properties.
       for k in keys
         continue unless org_props[k] isnt fnl_props[k]
         log message: "Property '#{k}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: '@nikita/file/lib/types/hfile'
-      @file
+      await @file
         content: stringify fnl_props
         target: config.target
         source: undefined

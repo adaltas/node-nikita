@@ -72,7 +72,7 @@ handler = async function({
       throw Error("Not a git repository");
     }
   } else {
-    this.execute({
+    await this.execute({
       command: `git clone ${config.source} ${config.target}`,
       cwd: path.dirname(config.target)
     });
@@ -96,10 +96,10 @@ if [ $current != $target ]; then exit 3; fi`,
     })));
   }
   if (!repo_uptodate) {
-    return this.execute({
+    return (await this.execute({
       command: `git checkout ${config.revision}`,
       cwd: config.target
-    });
+    }));
   }
 };
 

@@ -112,11 +112,11 @@ handler = async function({
     }
     content = `#!/bin/bash
 exec ${config.source} $@`;
-    this.fs.base.writeFile({
+    await this.fs.base.writeFile({
       target: config.target,
       content: content
     });
-    this.fs.base.chmod({
+    await this.fs.base.chmod({
       target: config.target,
       mode: config.mode
     });
@@ -134,7 +134,7 @@ exec ${config.source} $@`;
         if (target === config.source) {
           return true;
         }
-        this.fs.base.unlink({
+        await this.fs.base.unlink({
           target: config.target
         });
         return false;
@@ -146,7 +146,7 @@ exec ${config.source} $@`;
     if (exists) {
       return;
     }
-    this.fs.base.symlink({
+    await this.fs.base.symlink({
       source: config.source,
       target: config.target
     });

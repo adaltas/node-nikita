@@ -31,7 +31,7 @@ in "/etc/pacman.conf".
       #log message: "Entering file.types.wireguard_conf", level: 'DEBUG', module: 'nikita/file/lib/types/wireguard_conf'
       config.target ?= "/etc/wireguard/#{config.interface}.conf"
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
-      @file.ini
+      await @file.ini
         parse: utils.ini.parse_multi_brackets
         stringify: utils.ini.stringify_multi_brackets
         indent: ''

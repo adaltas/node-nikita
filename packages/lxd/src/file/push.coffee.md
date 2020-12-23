@@ -86,7 +86,7 @@ console.info(`File was pushed: ${status}`)
       # Make source file with content
       if config.content?
         tmpfile = path.join tmpdir, "nikita.#{Date.now()}#{Math.round(Math.random()*1000)}"
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: tmpfile
           content: config.content
         config.source = tmpfile
@@ -121,7 +121,7 @@ console.info(`File was pushed: ${status}`)
           throw Error "Invalid Requirement: openssl not installed on host" if err.exit_code is 3
           throw Error "Invalid Requirement: openssl not installed on container" if err.exit_code is 4
       if not status_running or status
-        @execute
+        await @execute
           command: """
           #{[
             'lxc', 'file', 'push'
@@ -136,11 +136,11 @@ console.info(`File was pushed: ${status}`)
           trap: true
           trim: true
       if typeof config.gid is 'string'
-        @lxd.exec
+        await @lxd.exec
           container: config.container
           command: "chgrp #{config.gid} #{config.target}"
       if typeof config.uid is 'string'
-        @lxd.exec
+        await @lxd.exec
           container: config.container
           command: "chown #{config.uid} #{config.target}"
 

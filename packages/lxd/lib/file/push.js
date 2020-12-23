@@ -90,7 +90,7 @@ handler = async function({
   // Make source file with content
   if (config.content != null) {
     tmpfile = path.join(tmpdir, `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`);
-    this.fs.base.writeFile({
+    await this.fs.base.writeFile({
       target: tmpfile,
       content: config.content
     });
@@ -138,23 +138,23 @@ EOF\`
     }
   }
   if (!status_running || status) {
-    this.execute({
+    await this.execute({
       command: `${['lxc', 'file', 'push', config.source, config.lxd_target, config.create_dirs ? '--create-dirs' : void 0, (config.gid != null) && typeof config.gid === 'number' ? '--gid' : void 0, (config.uid != null) && typeof config.uid === 'number' ? '--uid' : void 0, config.mode ? `--mode ${config.mode}` : void 0].join(' ')}`,
       trap: true,
       trim: true
     });
   }
   if (typeof config.gid === 'string') {
-    this.lxd.exec({
+    await this.lxd.exec({
       container: config.container,
       command: `chgrp ${config.gid} ${config.target}`
     });
   }
   if (typeof config.uid === 'string') {
-    return this.lxd.exec({
+    return (await this.lxd.exec({
       container: config.container,
       command: `chown ${config.uid} ${config.target}`
-    });
+    }));
   }
 };
 

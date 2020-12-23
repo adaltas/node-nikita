@@ -107,7 +107,7 @@ handler = async function({config}) {
   if (!config.keytab) {
     return;
   }
-  return this.krb5.ktadd(config);
+  return (await this.krb5.ktadd(config));
 };
 
 // ## Export

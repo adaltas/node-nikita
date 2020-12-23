@@ -94,7 +94,7 @@ console.info(`File was merged: ${status}`)
           encoding: 'utf8'
         config.content = merge JSON.parse(data), config.content
       config.content = config.transform config.content if config.transform
-      @file
+      await @file
         target: config.target
         content: -> JSON.stringify config.content, null, config.pretty
         backup: config.backup

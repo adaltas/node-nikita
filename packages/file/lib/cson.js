@@ -107,7 +107,7 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/file/cson'
   });
-  this.file({
+  await this.file({
     content: season.stringify(config.content),
     target: config.target,
     backup: config.backup,

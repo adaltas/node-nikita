@@ -21,7 +21,7 @@ Remove a user for the destination database.
 ## Handler
 
     handler = ({config}) ->
-      @db.query config,
+      await @db.query config,
         command: "DROP USER IF EXISTS #{config.username};"
 
 ## Exports

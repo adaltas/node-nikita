@@ -125,7 +125,7 @@ console.info(`Index created or modified: ${status}`)
             type: 'add'
             name: 'olcDbIndex'
             value: "#{k} #{v[0]}"
-        @ldap.modify config,
+        await @ldap.modify config,
           operations: operations
 
 ## Exports

@@ -25,7 +25,7 @@ console.info(`The container was stopped: ${status}`)
 
     handler = ({config}) ->
       # log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
-      @execute
+      await @execute
         command: """
         lxc list -c ns --format csv | grep '#{config.container},STOPPED' && exit 42
         lxc stop #{config.container}

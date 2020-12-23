@@ -84,14 +84,14 @@ nikita
       user:
         nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
   prevision: ({config}) ->
-    @tools.ssh.keygen
+    await @tools.ssh.keygen
       metadata: header: 'SSH key'
       target: './assets/id_rsa'
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({config}) ->
-    @lxd.exec
+    await @lxd.exec
       metadata: header: 'Node.js'
       container: config.container
       command: """

@@ -15,14 +15,14 @@ schema = {
 // This action honors all the config from "nikita.file.ini".
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   //log message: "Entering file.types.yum_repo", level: 'DEBUG', module: 'nikita/lib/file/types/yum_repo'
   // Set the target directory to yum's default path if target is a file name
   config.target = path.resolve('/etc/yum.repos.d', config.target);
-  return this.file.ini({
+  return (await this.file.ini({
     parse: utils.ini.parse_multi_brackets,
     escape: false
-  }, config);
+  }, config));
 };
 
 // ## Exports

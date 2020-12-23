@@ -278,7 +278,7 @@ fi;`);
       });
     }
   });
-  return this.call({
+  return (await this.call({
     if: rebooting,
     metadata: {
       retry: true,
@@ -288,7 +288,7 @@ fi;`);
     var conn;
     conn = (await connect(config));
     return conn.end();
-  });
+  }));
 };
 
 // ## Exports

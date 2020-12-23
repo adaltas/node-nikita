@@ -41,11 +41,11 @@ exists and is modified.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   // log message: "Entering file.types.my_cnf", level: 'DEBUG', module: 'nikita/file/lib/types/my_cnf'
-  return this.file.ini({
+  return (await this.file.ini({
     stringify: utils.ini.stringify_single_key
-  }, config);
+  }, config));
 };
 
 // ## Exports

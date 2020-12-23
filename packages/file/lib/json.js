@@ -123,7 +123,7 @@ handler = async function({
   if (config.transform) {
     config.content = config.transform(config.content);
   }
-  this.file({
+  await this.file({
     target: config.target,
     content: function() {
       return JSON.stringify(config.content, null, config.pretty);

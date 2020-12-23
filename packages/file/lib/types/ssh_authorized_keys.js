@@ -41,13 +41,13 @@ form of \`{mode: 0o0744}\` or \`{mode: "0744"}\`.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var key;
-  this.fs.assert({
+  await this.fs.assert({
     target: path.dirname(config.target)
   });
   if (config.merge) {
-    return this.file({
+    return (await this.file({
       target: config.target,
       write: (function() {
         var i, len, ref, results;
@@ -67,16 +67,16 @@ handler = function({config}) {
       gid: config.gid,
       mode: config.mode,
       eof: true
-    });
+    }));
   } else {
-    return this.file({
+    return (await this.file({
       target: config.target,
       content: config.keys.join('\n'),
       uid: config.uid,
       gid: config.gid,
       mode: config.mode,
       eof: true
-    });
+    }));
   }
 };
 

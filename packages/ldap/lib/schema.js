@@ -127,7 +127,7 @@ handler = async function({
     message: 'Configuration renamed',
     level: 'DEBUG'
   });
-  this.file({
+  await this.file({
     target: `${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`,
     write: [
       {
@@ -172,7 +172,7 @@ handler = async function({
     message: 'File ldif ready',
     level: 'DEBUG'
   });
-  this.execute({
+  await this.execute({
     command: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`
   });
   return log({

@@ -180,7 +180,7 @@ handler = async function({
   }
   // Create target parent directory if target does not exists and if the "parent"
   // config is set to "true" (default) or as an object.
-  this.fs.mkdir({
+  await this.fs.mkdir({
     if: !!config.parent,
     unless: target_stats,
     target: path.dirname(config.target),
@@ -243,21 +243,21 @@ handler = async function({
           }
         }
         if (utils.stats.isDirectory(stats.mode)) {
-          return this.fs.mkdir({
+          return (await this.fs.mkdir({
             target: target,
             uid: uid,
             gid: gid,
             mode: mode
-          });
+          }));
         } else {
-          return this.fs.copy({
+          return (await this.fs.copy({
             target: target,
             source: source,
             source_stat: stats,
             uid: uid,
             gid: gid,
             mode: mode
-          });
+          }));
         }
       })(source);
     }
@@ -269,7 +269,7 @@ handler = async function({
     return res.status;
   }
   // If source is a file and target is a directory, then transform target into a file.
-  this.call({
+  await this.call({
     metadata: {
       shy: true
     }
@@ -332,14 +332,14 @@ handler = async function({
       config.mode = source_stats.mode;
     }
   }
-  this.fs.chown({
+  await this.fs.chown({
     target: config.target,
     stats: target_stats,
     uid: config.uid,
     gid: config.gid,
     if: (config.uid != null) || (config.gid != null)
   });
-  this.fs.chmod({
+  await this.fs.chmod({
     target: config.target,
     stats: target_stats,
     mode: config.mode,

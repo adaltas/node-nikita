@@ -58,11 +58,11 @@ ${utils.krb5.kinit(config)}`,
   if (!(((config.uid != null) || (config.gid != null)) && (config.keytab != null))) {
     return;
   }
-  return this.fs.chown({
+  return (await this.fs.chown({
     uid: config.uid,
     gid: config.gid,
     target: config.keytab
-  });
+  }));
 };
 
 // ## Export

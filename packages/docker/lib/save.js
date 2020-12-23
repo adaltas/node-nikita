@@ -65,7 +65,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -80,9 +80,9 @@ handler = function({
     level: 'INFO',
     module: 'nikita/lib/docker/save'
   });
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: [`save -o ${config.output} ${config.image}`, config.tag != null ? `:${config.tag}` : void 0].join('')
-  });
+  }));
 };
 
 // ## Exports

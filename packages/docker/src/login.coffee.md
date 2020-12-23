@@ -45,7 +45,7 @@ Register or log in to a Docker registry server.
 
     handler = ({config, tools: {log}}) ->
       log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
-      @docker.tools.execute
+      await @docker.tools.execute
         command: [
           'login'
           ...(

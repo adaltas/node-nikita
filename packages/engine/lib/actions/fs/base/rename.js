@@ -29,11 +29,11 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
-  return this.execute({
+handler = async function({config}) {
+  return (await this.execute({
     command: `mv ${config.source} ${config.target}`,
     trim: true
-  });
+  }));
 };
 
 // ## Exports

@@ -87,7 +87,7 @@ console.info(`Principal was created or modified: ${status}`)
           command: "cpw -pw #{config.password} #{config.principal}"
           metadata: retry: 3
       return unless !!config.keytab
-      @krb5.ktadd config
+      await @krb5.ktadd config
 
 ## Export
 

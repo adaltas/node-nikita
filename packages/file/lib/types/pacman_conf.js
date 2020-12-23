@@ -42,14 +42,14 @@ exists and is modified.`
 
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   if (config.rootdir) {
     //log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
     config.target = `${path.join(config.rootdir, config.target)}`;
   }
-  return this.file.ini({
+  return (await this.file.ini({
     stringify: utils.ini.stringify_single_key
-  }, config);
+  }, config));
 };
 
 // ## Exports

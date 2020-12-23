@@ -141,7 +141,7 @@ default location of the Oracle JDK installation.
       # Temporary directory
       # Used to upload certificates and to isolate certificates from their file
       if tmpdir
-        @fs.mkdir
+        await @fs.mkdir
           target: tmpdir
           mode: 0o0700
           metadata: shy: true
@@ -269,12 +269,12 @@ default location of the Oracle JDK installation.
         throw Error "CA file does not exist: #{files.cacert}" if err.exit_code is 3
       # Ensure ownerships and permissions
       if config.uid? or config.gid?
-        @fs.chown
+        await @fs.chown
           target: config.keystore
           uid: config.uid
           gid: config.gid
       if config.mode?
-        @fs.chmod
+        await @fs.chmod
           target: config.keystore
           mode: config.mode
 

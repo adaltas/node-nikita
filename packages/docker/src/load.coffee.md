@@ -84,7 +84,7 @@ console.info(`Image was loaded: ${status}`);
             return false if infos[2] == config.checksum
             images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
       log message: "Start Loading #{config.input} ", level: 'INFO', module: 'nikita/lib/docker/load'
-      @docker.tools.execute
+      await @docker.tools.execute
         command: command
       {stdout, stderr} = await @docker.tools.execute
         command: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''

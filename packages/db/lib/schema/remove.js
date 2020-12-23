@@ -45,11 +45,11 @@ handler = async function({config}) {
   if (!exists) {
     return false;
   }
-  return this.db.query({
+  return (await this.db.query({
     config: config
   }, {
     command: `DROP SCHEMA IF EXISTS ${config.schema};`
-  });
+  }));
 };
 
 // ## Exports

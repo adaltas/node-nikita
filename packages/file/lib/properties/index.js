@@ -160,7 +160,7 @@ handler = async function({
     }
     return results;
   })();
-  this.file({
+  await this.file({
     target: `${config.target}`,
     content: data.join('\n'),
     backup: config.backup,
@@ -170,14 +170,14 @@ handler = async function({
     }
   });
   if (config.uid || config.gid) {
-    this.system.chown({
+    await this.system.chown({
       target: config.target,
       uid: config.uid,
       gid: config.gid
     });
   }
   if (config.mode) {
-    this.system.chmod({
+    await this.system.chmod({
       target: config.target,
       mode: config.mode
     });

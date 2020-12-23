@@ -87,7 +87,7 @@ copied into its final destination, default to
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {path},
     ssh
@@ -101,7 +101,7 @@ handler = function({
     });
   }
   // Real work
-  return this.fs.base.createWriteStream({
+  return (await this.fs.base.createWriteStream({
     target: config.target,
     flags: config.flags,
     mode: config.mode,
@@ -109,7 +109,7 @@ handler = function({
       ws.write(config.content);
       return ws.end();
     }
-  });
+  }));
 };
 
 // ## Errors

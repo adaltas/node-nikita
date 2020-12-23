@@ -95,7 +95,7 @@ handler = async function({
   })));
   // if the file doesn't exist, create a new one
   if (status) {
-    this.file({
+    await this.file({
       content: '',
       target: config.target,
       mode: config.mode,
@@ -105,7 +105,7 @@ handler = async function({
   } else {
     // todo check uid/gid/mode
     // if the file exists, overwrite it using `touch` but don't update the status
-    this.execute({
+    await this.execute({
       command: `touch ${config.target}`,
       metadata: {
         shy: true

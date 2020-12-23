@@ -45,16 +45,16 @@ exists and is modified.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   if (config.rootdir) {
     // log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
     config.target = `${path.join(config.rootdir, config.target)}`;
   }
-  return this.file.ini({
+  return (await this.file.ini({
     stringify: utils.ini.stringify,
     parse: utils.ini.parse_multi_brackets,
     escape: false
-  }, config);
+  }, config));
 };
 
 // ## Exports

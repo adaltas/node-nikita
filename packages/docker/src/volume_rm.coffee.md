@@ -42,7 +42,7 @@ console.info(`Volume was removed: ${status}`)
       log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Validation
       throw Error "Missing required option name" unless config.name
-      @docker.tools.execute
+      await @docker.tools.execute
         command: "volume rm #{config.name}"
         code: 0
         code_skipped: 1

@@ -36,7 +36,7 @@ console.info(`Network was deleted: ${status}`)
     handler = ({config}) ->
       # log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
       #Execute
-      @execute
+      await @execute
         command: """
         lxc network list --format csv | grep #{config.network} || exit 42
         #{[

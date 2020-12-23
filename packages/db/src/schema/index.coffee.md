@@ -61,7 +61,7 @@ console.info(`Schema created or modified: ${status}`)
         command: command config, '\\dt'
         metadata: shy: true
       throw Error "Database does not exist #{config.database}" if !status
-      @db.query config: config,
+      await @db.query config: config,
         command: "CREATE SCHEMA #{config.schema};"
         unless_execute: command(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
       # Check if owner is the good one

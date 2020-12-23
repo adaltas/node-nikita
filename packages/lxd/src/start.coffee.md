@@ -36,7 +36,7 @@ console.info(`Container was started: ${status}`)
         'lxc', 'start', config.container
       ].join ' '
       # Execution
-      @execute
+      await @execute
         command: """
         lxc list -c ns --format csv | grep '#{config.container},RUNNING' && exit 42
         #{command_init}

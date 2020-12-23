@@ -160,7 +160,7 @@ console.info(`Content was updated: ${status}`)
         utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
       stringify = config.stringify or utils.ini.stringify
-      @file
+      await @file
         target: config.target
         content: stringify config.content, config
         backup: config.backup

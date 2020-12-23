@@ -192,7 +192,7 @@ handler = async function({
       module: '@nikita/file/lib/types/hfile'
     });
   }
-  return this.file({
+  return (await this.file({
     content: stringify(fnl_props),
     target: config.target,
     source: void 0,
@@ -205,7 +205,7 @@ handler = async function({
     mode: config.mode,
     local: config.local,
     unlink: config.unlink
-  });
+  }));
 };
 
 

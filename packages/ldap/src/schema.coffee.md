@@ -94,7 +94,7 @@ console.info(`Schema created or modified: ${status}`)
         force: true
       throw Error 'No generated schema' unless status
       log message: 'Configuration renamed', level: 'DEBUG'
-      @file
+      await @file
         target: "#{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
         write: [
           match: /^dn: cn.*$/mg
@@ -125,7 +125,7 @@ console.info(`Schema created or modified: ${status}`)
           replace: ''
         ]
       log message: 'File ldif ready', level: 'DEBUG'
-      @execute
+      await @execute
         command: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
       log message: "Schema added: #{config.name}", level: 'INFO'
 

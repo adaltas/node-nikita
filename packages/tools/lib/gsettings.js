@@ -28,7 +28,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var key, path, properties, ref, results, value;
   if (config.argument != null) {
     config.properties = config.argument;
@@ -40,18 +40,18 @@ handler = function({config}) {
   results = [];
   for (path in ref) {
     properties = ref[path];
-    results.push((function() {
+    results.push((await (async function() {
       var results1;
       results1 = [];
       for (key in properties) {
         value = properties[key];
-        results1.push(this.execute(`gsettings get ${path} ${key} | grep -x "${value}" && exit 3
+        results1.push((await this.execute(`gsettings get ${path} ${key} | grep -x "${value}" && exit 3
 gsettings set ${path} ${key} "${value}"`, {
           code_skipped: 3
-        }));
+        })));
       }
       return results1;
-    }).call(this));
+    }).call(this)));
   }
   return results;
 };

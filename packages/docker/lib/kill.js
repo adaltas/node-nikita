@@ -72,12 +72,12 @@ handler = async function({
     command: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1
   })));
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     if: function() {
       return status;
     },
     command: ['kill', config.signal != null ? `-s ${config.signal}` : void 0, `${config.container}`].join(' ')
-  });
+  }));
 };
 
 // ## Exports
