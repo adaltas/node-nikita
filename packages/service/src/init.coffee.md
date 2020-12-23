@@ -76,7 +76,7 @@ Reload the service daemon provider depending on the os.
       {loader} = await @service.discover {}
       config.loader ?= loader
       # discover loader to put in cache
-      @file.render
+      await @file.render
         target: config.target
         source: config.source
         mode: config.mode
@@ -95,7 +95,7 @@ Reload the service daemon provider depending on the os.
           """
         code_skipped: 1
       return unless status
-      @execute
+      await @execute
         command: 'systemctl daemon-reload;systemctl reset-failed'
 
 ## Export

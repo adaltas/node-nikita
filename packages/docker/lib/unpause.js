@@ -43,7 +43,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -56,9 +56,9 @@ handler = function({
     // Validation
     throw Error('Missing container parameter');
   }
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: `unpause ${config.container}`
-  });
+  }));
 };
 
 // ## Exports

@@ -33,7 +33,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -52,9 +52,9 @@ handler = function({
   if (config.registry != null) {
     command += ` \"${config.registry}\"`;
   }
-  return this.execute({
+  return (await this.execute({
     command: utils.wrap(config, command)
-  }, docker.callback);
+  }, docker.callback));
 };
 
 // ## Exports

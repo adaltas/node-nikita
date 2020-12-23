@@ -214,14 +214,14 @@ handler = async function({
       level: 'DEBUG',
       module: 'nikita/lib/system/mkdir'
     });
-    this.fs.chown({
+    await this.fs.chown({
       target: config.target,
       stats: stats,
       uid: config.uid,
       gid: config.gid,
       if: (config.uid != null) || (config.gid != null)
     });
-    this.fs.chmod({
+    await this.fs.chmod({
       target: config.target,
       stats: stats,
       mode: config.mode,

@@ -60,7 +60,7 @@ configuration.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var binddn, dn, passwd, uri;
   // Auth related config
   binddn = config.binddn ? `-D ${config.binddn}` : '';
@@ -77,11 +77,11 @@ handler = function({config}) {
     return `'${dn}'`;
   }).join(' ');
   // ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba'
-  return this.execute({
+  return (await this.execute({
     // Check that the entry exists
     if_execute: `ldapsearch ${binddn} ${passwd} ${uri} -b ${dn} -s base`,
     command: `ldapdelete ${binddn} ${passwd} ${uri} ${dn}`
-  });
+  }));
 };
 
 // code_skipped: 68

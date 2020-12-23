@@ -39,13 +39,13 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   if (typeof config.mode === 'number') {
     config.mode = config.mode.toString(8).substr(-4);
   }
-  return this.execute({
+  return (await this.execute({
     command: `chmod ${config.mode} ${config.target}`
-  });
+  }));
 };
 
 // ## Exports

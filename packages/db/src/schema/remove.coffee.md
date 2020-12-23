@@ -35,7 +35,7 @@ Remove a schema from a database.
     handler = ({config}) ->
       {exists} = await @db.schema.exists config: config
       return false unless exists
-      @db.query config: config,
+      await @db.query config: config,
         command: "DROP SCHEMA IF EXISTS #{config.schema};"
 
 ## Exports

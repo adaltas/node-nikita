@@ -24,7 +24,7 @@ stated, not the file that it refers to.
 ## Handler
 
     handler = ({config}) ->
-      @fs.base.stat
+      await @fs.base.stat
         target: config.target
         dereference: false
 

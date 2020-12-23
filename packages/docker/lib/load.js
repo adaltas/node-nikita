@@ -134,7 +134,7 @@ handler = async function({
     level: 'INFO',
     module: 'nikita/lib/docker/load'
   });
-  this.docker.tools.execute({
+  await this.docker.tools.execute({
     command: command
   });
   ({stdout, stderr} = (await this.docker.tools.execute({

@@ -40,7 +40,7 @@ console.info(`Did database existed initially: ${!status}`)
 
     handler = ({config}) ->
       # Command
-      @execute.wait
+      await @execute.wait
         command: switch config.engine
           when 'mariadb', 'mysql'
             command(config, database: null, "show databases") + " | grep '#{config.database}'"

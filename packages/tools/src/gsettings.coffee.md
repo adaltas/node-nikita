@@ -31,7 +31,7 @@ console.log(`Property was modified: ${status}`)
       config.properties ?= {}
       for path, properties of config.properties
         for key, value of properties
-          @execute """
+          await @execute """
           gsettings get #{path} #{key} | grep -x "#{value}" && exit 3
           gsettings set #{path} #{key} "#{value}"
           """, code_skipped: 3

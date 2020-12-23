@@ -75,7 +75,7 @@ configuration.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   // Auth related config
   if (config.uri === true) {
     if (config.mesh == null) {
@@ -84,7 +84,7 @@ handler = function({config}) {
     config.uri = 'ldapi:///';
   }
   // Add related config
-  return this.execute(config, [
+  return (await this.execute(config, [
     'ldapsearch',
     '-o ldif-wrap=no',
     '-LLL', // Remove comments
@@ -98,7 +98,7 @@ handler = function({config}) {
     config.filter ? `${utils.string.escapeshellarg(config.filter)}` : void 0,
     ...(config.attributes.map(utils.string.escapeshellarg)),
     '2>/dev/null'
-  ].join(' '));
+  ].join(' ')));
 };
 
 // ## Exports

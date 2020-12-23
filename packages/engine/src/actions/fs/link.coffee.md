@@ -83,10 +83,10 @@ console.info(`Link was created: ${status}`)
         #!/bin/bash
         exec #{config.source} $@
         """
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: config.target
           content: content
-        @fs.base.chmod
+        await @fs.base.chmod
           target: config.target
           mode: config.mode
       else
@@ -94,12 +94,12 @@ console.info(`Link was created: ${status}`)
           try
             {target} = await @fs.base.readlink target: config.target
             return true if target is config.source
-            @fs.base.unlink target: config.target
+            await @fs.base.unlink target: config.target
             false
           catch err
             false
         return if exists
-        @fs.base.symlink
+        await @fs.base.symlink
           source: config.source
           target: config.target
       true

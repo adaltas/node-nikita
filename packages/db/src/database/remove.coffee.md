@@ -48,7 +48,7 @@ Create a user for the destination database.
       # Avoid errors when database argument is provided in the command:
       # - Postgres: "ERROR:  cannot drop the currently open database"
       # - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
-      @db.query config,
+      await @db.query config,
         command: "DROP DATABASE IF EXISTS #{config.database};"
         code_skipped: 2
         database: null

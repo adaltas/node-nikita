@@ -26,11 +26,11 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
-  return this.fs.base.stat({
+handler = async function({config}) {
+  return (await this.fs.base.stat({
     target: config.target,
     dereference: false
-  });
+  }));
 };
 
 // ## Exports

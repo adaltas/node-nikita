@@ -112,7 +112,7 @@ console.info(`File was uploaded: ${status}`)
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         not match
       return unless status
-      @fs.mkdir
+      await @fs.mkdir
         ssh: false
         sudo: false
         target: path.dirname stage_target
@@ -121,20 +121,20 @@ console.info(`File was uploaded: ${status}`)
         stream: (rs) ->
           ws = fs.createWriteStream stage_target
           rs.pipe ws
-      @fs.move
+      await @fs.move
         ssh: false
         sudo: false
         source: stage_target
         target: config.target
       log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload'
       if config.mode?
-        @fs.chmod
+        await @fs.chmod
           ssh: false
           sudo: false
           target: config.target
           mode: config.mode
       if config.uid? or config.gid?
-        @fs.chown
+        await @fs.chown
           ssh: false
           sudo: false
           target: config.target

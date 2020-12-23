@@ -69,7 +69,7 @@ console.info(`Image was pulled: ${status}`)
           "| grep '#{version}'" unless config.all
         ].join ' '
         code_skipped: 1
-      @docker.tools.execute
+      await @docker.tools.execute
         unless: status
         command: command
 

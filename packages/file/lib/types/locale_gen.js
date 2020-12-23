@@ -84,7 +84,7 @@ handler = async function({config}) {
     });
   }
   // Reload configuration
-  this.execute({
+  await this.execute({
     if: config.generate != null ? config.generate : status,
     rootdir: config.rootdir,
     command: "locale-gen"

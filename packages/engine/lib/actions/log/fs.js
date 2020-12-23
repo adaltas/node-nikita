@@ -86,11 +86,11 @@ handler = async function({config}) {
   }
   await this.call(config, stream);
   // Handle link to latest directory
-  return this.fs.base.symlink({
+  return (await this.fs.base.symlink({
     if: latestdir,
     source: logdir,
     target: latestdir
-  });
+  }));
 };
 
 // ## Exports

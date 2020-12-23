@@ -62,7 +62,7 @@ console.info(`Permissions was modified: ${status}`)
         log message: "Identical permissions \"#{config.mode.toString 8}\" on \"#{config.target}\"", level: 'INFO'
         return false
       # Apply changes
-      @fs.base.chmod target: config.target, mode: config.mode
+      await @fs.base.chmod target: config.target, mode: config.mode
       log message: "Permissions changed from \"#{stats.mode.toString 8}\" to \"#{config.mode.toString 8}\" on \"#{config.target}\"", level: 'WARN', module: 'nikita/lib/fs/chmod'
       true
 

@@ -83,17 +83,17 @@ default.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var command_init;
   // log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
   command_init = ['lxc', 'init', config.image, config.container, config.network ? `--network ${config.network}` : void 0, config.storage ? `--storage ${config.storage}` : void 0, config.ephemeral ? "--ephemeral" : void 0, config.vm ? "--vm" : void 0, config.profile ? `--profile ${config.profile}` : void 0, config.target ? `--target ${config.target}` : void 0].join(' ');
   // Execution
-  return this.execute({
+  return (await this.execute({
     command: `lxc remote get-default
 lxc info ${config.container} >/dev/null && exit 42
 echo '' | ${command_init}`,
     code_skipped: 42
-  });
+  }));
 };
 
 // ## Export

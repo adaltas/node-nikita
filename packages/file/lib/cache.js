@@ -261,7 +261,7 @@ handler = async function({
           level: 'WARN',
           module: 'nikita/lib/file/cache'
         });
-        this.fs.base.unlink({
+        await this.fs.base.unlink({
           target: config.target
         });
         return true;
@@ -287,7 +287,7 @@ handler = async function({
   }
   // Place into cache
   if (ref = u.protocol, indexOf.call(protocols_http, ref) >= 0) {
-    this.fs.mkdir({
+    await this.fs.mkdir({
       ssh: config.cache_local ? false : config.ssh,
       target: path.dirname(config.target)
     });
@@ -333,10 +333,10 @@ handler = async function({
       unless_exists: config.target
     });
   } else {
-    this.fs.mkdir({ // todo: copy shall handle this
+    await this.fs.mkdir({ // todo: copy shall handle this
       target: `${path.dirname(config.target)}`
     });
-    this.fs.copy({
+    await this.fs.copy({
       source: `${config.source}`,
       target: `${config.target}`
     });

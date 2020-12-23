@@ -71,7 +71,7 @@ console.info(`File was compressed: ${status}`)
         when 'bz2' then "tar cjf #{config.target} -C #{dir} #{name}"
         when 'xz'  then "tar cJf #{config.target} -C #{dir} #{name}"
         when 'zip' then "(cd #{dir} && zip -r #{config.target} #{name} && cd -)"
-      @fs.remove
+      await @fs.remove
         if: config.clean
         source: config.source
       output

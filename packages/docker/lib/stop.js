@@ -77,10 +77,10 @@ handler = async function({
       module: 'nikita/lib/docker/stop'
     });
   }
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     if: status,
     command: ['stop', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
-  });
+  }));
 };
 
 // ## Exports

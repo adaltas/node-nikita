@@ -29,12 +29,12 @@ markdown header.`
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var state;
   state = {
     last_event_type: void 0
   };
-  return this.call(log_fs, {
+  return (await this.call(log_fs, {
     config: config,
     serializer: {
       'nikita:action:start': function(action) {
@@ -131,7 +131,7 @@ handler = function({config}) {
         return content.join('');
       }
     }
-  });
+  }));
 };
 
 // ## Exports

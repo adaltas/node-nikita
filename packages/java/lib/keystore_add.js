@@ -149,7 +149,7 @@ handler = async function({
   // Temporary directory
   // Used to upload certificates and to isolate certificates from their file
   if (tmpdir) {
-    this.fs.mkdir({
+    await this.fs.mkdir({
       target: tmpdir,
       mode: 0o0700,
       metadata: {
@@ -296,17 +296,17 @@ exit $code`,
   }
   // Ensure ownerships and permissions
   if ((config.uid != null) || (config.gid != null)) {
-    this.fs.chown({
+    await this.fs.chown({
       target: config.keystore,
       uid: config.uid,
       gid: config.gid
     });
   }
   if (config.mode != null) {
-    return this.fs.chmod({
+    return (await this.fs.chmod({
       target: config.keystore,
       mode: config.mode
-    });
+    }));
   }
 };
 

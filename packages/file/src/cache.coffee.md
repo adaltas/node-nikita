@@ -174,7 +174,7 @@ console.info(`File downloaded: ${status}`)
               log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
               return false
             log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
-            @fs.base.unlink target: config.target
+            await @fs.base.unlink target: config.target
             true
           else
             log message: "Target file exists, check disabled, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
@@ -185,7 +185,7 @@ console.info(`File downloaded: ${status}`)
       return status unless status
       # Place into cache
       if u.protocol in protocols_http
-        @fs.mkdir
+        await @fs.mkdir
           ssh: if config.cache_local then false else config.ssh
           target: path.dirname config.target
         await @execute
@@ -203,9 +203,9 @@ console.info(`File downloaded: ${status}`)
           ssh: if config.cache_local then false else config.ssh
           unless_exists: config.target
       else
-        @fs.mkdir # todo: copy shall handle this
+        await @fs.mkdir # todo: copy shall handle this
           target: "#{path.dirname config.target}"
-        @fs.copy
+        await @fs.copy
           source: "#{config.source}"
           target: "#{config.target}"
       # Validate the cache

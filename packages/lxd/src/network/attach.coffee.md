@@ -47,7 +47,7 @@ console.info(`Network was attached: ${status}`)
         config.container
       ].join ' '
       #Execute
-      @execute
+      await @execute
         command: """
         lxc config device list #{config.container} | grep #{config.network} && exit 42
         #{command_attach}

@@ -76,16 +76,16 @@ under a "Time" key so that the user doesn't have to do it manually.
       if Array.isArray config.content.Domains
         config.content.Domains = config.content.Domains.join " "
       # Write configuration
-      @file.ini
+      {status} = await @file.ini
         separator: "="
         target: config.target
         content: 'Resolve': config.content
         merge: config.merge
-      @execute
+      await @execute
         if: ->
           if config.reload?
           then config.reload
-          else @status -1
+          else status
         sudo: true
         command: """
         systemctl daemon-reload

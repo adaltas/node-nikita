@@ -32,7 +32,7 @@ handlers =
               depth: action.metadata.depth
             parent: action
           , ->
-            @fs.base.stat target: condition
+            await @fs.base.stat target: condition
       catch err
         if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           final_run = false
@@ -51,7 +51,7 @@ handlers =
               depth: action.metadata.depth
             parent: action
           , ->
-            @fs.base.stat target: condition
+            await @fs.base.stat target: condition
         final_run = false
       catch err
         unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'

@@ -76,7 +76,7 @@ handler = async function({
   await this.fs.mkdir({
     target: `${path.dirname(config.target)}`
   });
-  return this.execute({
+  return (await this.execute({
     unless_exists: `${config.target}`,
     command: [
       'ssh-keygen',
@@ -90,7 +90,7 @@ handler = async function({
       '\\\'')}'`,
       `-f ${config.target}`
     ].join(' ')
-  });
+  }));
 };
 
 // ## Exports

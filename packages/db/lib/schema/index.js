@@ -71,7 +71,7 @@ handler = async function({config}) {
   if (!status) {
     throw Error(`Database does not exist ${config.database}`);
   }
-  this.db.query({
+  await this.db.query({
     config: config
   }, {
     command: `CREATE SCHEMA ${config.schema};`,

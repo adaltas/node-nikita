@@ -18,10 +18,10 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
-  return this.db.query(config, {
+handler = async function({config}) {
+  return (await this.db.query(config, {
     command: `DROP USER IF EXISTS ${config.username};`
-  });
+  }));
 };
 
 // ## Exports

@@ -133,13 +133,13 @@ console.info(`Directory was created: ${status}`)
       # Target directory update
       if creates.length is 0
         log message: "Directory already exists", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-        @fs.chown
+        await @fs.chown
           target: config.target
           stats: stats
           uid: config.uid
           gid: config.gid
           if: config.uid? or config.gid?
-        @fs.chmod
+        await @fs.chmod
           target: config.target
           stats: stats
           mode: config.mode

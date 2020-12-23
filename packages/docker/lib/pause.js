@@ -43,7 +43,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -52,9 +52,9 @@ handler = function({
     level: 'DEBUG',
     module: 'nikita/lib/docker/pause'
   });
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: `pause ${config.container}`
-  });
+  }));
 };
 
 // ## Exports

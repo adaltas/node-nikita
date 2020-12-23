@@ -151,7 +151,7 @@ handler = async function({config, parent, state}) {
     parent.state = merge(parent.state, state);
   }
   if (config.startup != null) {
-    this.service.startup({
+    await this.service.startup({
       name: chkname,
       startup: config.startup
     });

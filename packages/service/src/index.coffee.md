@@ -126,7 +126,7 @@ console.info(`Service status: ${status}`)
           yaourt_flags: config.yaourt_flags
         parent.state = merge parent.state, state
       if config.startup?
-        @service.startup
+        await @service.startup
           name: chkname
           startup: config.startup
       if config.state

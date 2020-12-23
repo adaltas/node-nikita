@@ -56,7 +56,7 @@ console.info(`Container was started: ${status}`)
       if status
       then log message: "Container already started #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
       else log message: "Starting container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/start'
-      @docker.tools.execute
+      await @docker.tools.execute
         unless: status
         command: [
           'start'

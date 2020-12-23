@@ -73,7 +73,7 @@ console.info(`Content was updated: ${status}`)
           # File does not exists, this is ok, there is simply nothing to merge
           log message: "No Target To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
       log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
-      @file
+      await @file
         content: season.stringify config.content
         target: config.target
         backup: config.backup

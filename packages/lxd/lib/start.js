@@ -33,16 +33,16 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var command_init;
   // log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
   command_init = ['lxc', 'start', config.container].join(' ');
   // Execution
-  return this.execute({
+  return (await this.execute({
     command: `lxc list -c ns --format csv | grep '${config.container},RUNNING' && exit 42
 ${command_init}`,
     code_skipped: 42
-  });
+  }));
 };
 
 // ## Export

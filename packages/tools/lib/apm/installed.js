@@ -13,10 +13,10 @@
 // ## Handler
 var handler;
 
-handler = function() {
-  return this.execute({
+handler = async function() {
+  return (await this.execute({
     command: "if (apm -v | grep apm) then (exit 0) else (exit 1) fi"
-  });
+  }));
 };
 
 // ## Exports

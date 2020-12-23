@@ -38,17 +38,17 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var command_attach;
   // log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
   //Build command
   command_attach = ['lxc', 'network', 'attach', config.network, config.container].join(' ');
   //Execute
-  return this.execute({
+  return (await this.execute({
     command: `lxc config device list ${config.container} | grep ${config.network} && exit 42
 ${command_attach}`,
     code_skipped: 42
-  });
+  }));
 };
 
 // ## Export

@@ -52,7 +52,7 @@ console.info(`Container was stopped: ${status}`)
       if status
       then log message: "Stopping container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
       else log message: "Container already stopped #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
-      @docker.tools.execute
+      await @docker.tools.execute
         if: status
         command: [
           'stop'

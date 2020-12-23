@@ -34,16 +34,16 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var command_delete;
   // log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
   command_delete = ['lxc', 'storage', 'delete', config.name].join(' ');
   //Execute
-  return this.execute({
+  return (await this.execute({
     command: `lxc storage list | grep ${config.name} || exit 42
 ${command_delete}`,
     code_skipped: 42
-  });
+  }));
 };
 
 // ## Export

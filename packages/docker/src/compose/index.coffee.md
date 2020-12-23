@@ -86,7 +86,7 @@ Create and start containers according to a docker-compose file
       config.services ?= []
       config.services = [config.services] if not Array.isArray config.services
       # services = config.services.join ' '
-      @file.yaml
+      await @file.yaml
         if: config.content?
         eof: config.eof
         backup: config.backup
@@ -119,7 +119,7 @@ Create and start containers according to a docker-compose file
           cwd: path.dirname config.target
           uid: config.uid
       finally
-        @fs.remove
+        await @fs.remove
           if: clean_target
           target: config.target
 

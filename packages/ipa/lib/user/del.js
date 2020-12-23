@@ -63,7 +63,7 @@ handler = async function({config}) {
   if (!status) {
     return;
   }
-  return this.network.http(config.connection, {
+  return (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
     data: {
@@ -71,7 +71,7 @@ handler = async function({config}) {
       params: [[config.uid], {}],
       id: 0
     }
-  });
+  }));
 };
 
 // ## Export

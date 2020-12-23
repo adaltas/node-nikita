@@ -127,7 +127,7 @@ console.info(`Gem installed: ${status}`)
         delete gems[name]
       # Install from sources
       if sources.length
-        @execute
+        await @execute
           command: (
             for source in sources
               [
@@ -143,7 +143,7 @@ console.info(`Gem installed: ${status}`)
           bash: config.bash
       # Install from gems
       if Object.keys(gems).length
-        @execute
+        await @execute
           command: (
             for name, version of gems
               [

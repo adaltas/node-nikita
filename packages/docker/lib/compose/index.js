@@ -121,7 +121,7 @@ handler = async function({
     config.services = [config.services];
   }
   // services = config.services.join ' '
-  this.file.yaml({
+  await this.file.yaml({
     if: config.content != null,
     eof: config.eof,
     backup: config.backup,
@@ -159,7 +159,7 @@ handler = async function({
       uid: config.uid
     }));
   } finally {
-    this.fs.remove({
+    await this.fs.remove({
       if: clean_target,
       target: config.target
     });

@@ -86,7 +86,7 @@ console.info(stdout)
         config.mesh ?= 'EXTERNAL'
         config.uri = 'ldapi:///'
       # Add related config
-      @execute config, [
+      await @execute config, [
         'ldapsearch'
         '-o ldif-wrap=no'
         '-LLL' # Remove comments

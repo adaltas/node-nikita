@@ -26,7 +26,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   //log message: "Entering file.types.wireguard_conf", level: 'DEBUG', module: 'nikita/file/lib/types/wireguard_conf'
   if (config.target == null) {
     config.target = `/etc/wireguard/${config.interface}.conf`;
@@ -34,11 +34,11 @@ handler = function({config}) {
   if (config.rootdir) {
     config.target = `${path.join(config.rootdir, config.target)}`;
   }
-  return this.file.ini({
+  return (await this.file.ini({
     parse: utils.ini.parse_multi_brackets,
     stringify: utils.ini.stringify_multi_brackets,
     indent: ''
-  }, config);
+  }, config));
 };
 
 // ## Exports

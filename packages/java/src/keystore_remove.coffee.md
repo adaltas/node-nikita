@@ -77,7 +77,7 @@ console.info(`Certificate authority was removed: ${status}`)
       config.name = [config.name] unless Array.isArray config.name
       aliases = [config.caname..., config.name...].join(' ').trim()
       config.keytool ?= 'keytool'
-      @execute
+      await @execute
         bash: true
         command: """
         # Detect keytool command

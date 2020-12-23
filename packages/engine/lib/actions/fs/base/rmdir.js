@@ -32,14 +32,17 @@ schema = {
 };
 
 // ## Handler
-handler = async function({config}) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var err;
   try {
     await this.execute({
       command: `[ ! -d '${config.target}' ] && exit 2
 rmdir '${config.target}'`
     });
-    return this.log({
+    return log({
       message: "Directory successfully removed",
       level: 'INFO',
       module: 'nikita/lib/fs/write'

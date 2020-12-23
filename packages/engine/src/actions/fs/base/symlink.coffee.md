@@ -28,7 +28,7 @@ Delete a name and possibly the file it refers to.
 ## Handler
 
     handler = ({config}) ->
-      @execute
+      await @execute
         command: """
         ln -sf #{config.source} #{config.target}
         """

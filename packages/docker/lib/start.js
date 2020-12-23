@@ -81,10 +81,10 @@ handler = async function({
       module: 'nikita/lib/docker/start'
     });
   }
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     unless: status,
     command: ['start', config.attach ? '-a' : void 0, `${config.container}`].join(' ')
-  });
+  }));
 };
 
 // ## Exports

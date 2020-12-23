@@ -67,7 +67,7 @@ console.info(`Container was removed: ${status}`)
       {status} = await @docker.tools.execute
         command: "ps -a | egrep ' #{config.container}$'"
         code_skipped: 1
-      @docker.tools.execute
+      await @docker.tools.execute
         command: [
           'rm'
           ...( ['link', 'volumes', 'force']

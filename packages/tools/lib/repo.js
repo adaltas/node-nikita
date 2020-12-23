@@ -104,9 +104,9 @@ handler = async function({
       return results;
     })();
   }
-  this.fs.remove(remote_files);
+  await this.fs.remove(remote_files);
   // Download source
-  this.file.download({
+  await this.file.download({
     if: config.source != null,
     source: config.source,
     target: config.target,
@@ -117,7 +117,7 @@ handler = async function({
     cache: false
   });
   // Write
-  this.file.types.yum_repo({
+  await this.file.types.yum_repo({
     if: config.content != null,
     content: config.content,
     mode: config.mode,

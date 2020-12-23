@@ -81,7 +81,7 @@ handler = async function({
         return `(cd ${dir} && zip -r ${config.target} ${name} && cd -)`;
     }
   })()));
-  this.fs.remove({
+  await this.fs.remove({
     if: config.clean,
     source: config.source
   });

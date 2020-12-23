@@ -582,7 +582,7 @@ handler = async function({
           module: 'nikita/lib/file'
         });
         if (config.unlink) {
-          this.fs.base.unlink({
+          await this.fs.base.unlink({
             target: config.target
           });
           stats = null;
@@ -705,7 +705,7 @@ handler = async function({
       config.backup_mode = 0o0400;
     }
     backup = typeof config.backup === 'string' ? config.backup : `.${Date.now()}`;
-    this.fs.copy({
+    await this.fs.copy({
       source: config.target,
       target: `${config.target}${backup}`,
       mode: config.backup_mode,
@@ -732,13 +732,13 @@ handler = async function({
     // https://github.com/nodejs/node/issues/1104
     // `mode` specifies the permissions to use in case a new file is created.
     if (contentChanged) {
-      this.call(function() {
+      await this.call(async function() {
         if (config.append) {
           if (config.flags == null) {
             config.flags = 'a';
           }
         }
-        this.fs.base.writeFile({
+        await this.fs.base.writeFile({
           target: config.target,
           flags: config.flags,
           content: config.content,
@@ -750,20 +750,20 @@ handler = async function({
       });
     }
     if (config.mode) {
-      this.fs.chmod({
+      await this.fs.chmod({
         target: config.target,
         stats: targetStats,
         mode: config.mode
       });
     } else if (targetStats) {
-      this.fs.chmod({
+      await this.fs.chmod({
         target: config.target,
         stats: targetStats,
         mode: targetStats.mode
       });
     }
     // Option gid is set at runtime if target is a new file
-    this.fs.chown({
+    await this.fs.chown({
       target: config.target,
       stats: targetStats,
       uid: config.uid,

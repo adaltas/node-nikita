@@ -94,10 +94,10 @@ handler = async function({
   if (!status) {
     return;
   }
-  return this.execute({
+  return (await this.execute({
     command: `${crontab} - <<EOF
 ${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
-  });
+  }));
 };
 
 // ## Exports

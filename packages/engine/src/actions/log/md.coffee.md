@@ -28,7 +28,7 @@ Write log to the host filesystem in Markdown.
 
     handler = ({config}) ->
       state = last_event_type: undefined
-      @call log_fs, config: config, serializer:
+      await @call log_fs, config: config, serializer:
         'nikita:action:start': (action) ->
           return unless action.metadata.header
           {last_event_type} = state

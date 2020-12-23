@@ -66,7 +66,7 @@ console.log(`Entry deleted: ${status}`)
       config.dn = [config.dn] unless Array.isArray config.dn
       dn = config.dn.map( (dn) -> "'#{dn}'").join(' ')
       # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba'
-      @execute
+      await @execute
         # Check that the entry exists
         if_execute: "ldapsearch #{binddn} #{passwd} #{uri} -b #{dn} -s base"
         command: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"

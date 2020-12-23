@@ -41,7 +41,7 @@ console.info(`Group was deleted: ${status}`)
         metadata: shy: false
         cn: config.cn
       return unless status
-      @network.http config.connection,
+      await @network.http config.connection,
         negotiate: true
         method: 'POST'
         data:

@@ -101,7 +101,7 @@ now.
         "--target #{config.target}" if config.target
       ].join ' '
       # Execution
-      @execute
+      await @execute
         command: """
         lxc remote get-default
         lxc info #{config.container} >/dev/null && exit 42

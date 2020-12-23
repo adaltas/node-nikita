@@ -70,7 +70,7 @@ console.info(`File was updated: ${status}`)
           target: config.target
           content: data
       # Reload configuration
-      @execute
+      await @execute
         if:
           if config.generate?
           then config.generate

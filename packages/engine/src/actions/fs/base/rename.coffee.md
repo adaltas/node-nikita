@@ -28,7 +28,7 @@ Change the name or location of a file.
 ## Handler
 
     handler = ({config}) ->
-      @execute
+      await @execute
         command: "mv #{config.source} #{config.target}"
         trim: true
 

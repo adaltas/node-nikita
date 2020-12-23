@@ -47,7 +47,7 @@ in "/etc/pacman.conf".
     handler = ({config}) ->
       #log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
-      @file.ini
+      await @file.ini
         stringify: utils.ini.stringify_single_key
       , config
 

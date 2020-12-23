@@ -186,7 +186,7 @@ handler = async function({
     module: 'nikita/lib/file/ini'
   });
   stringify = config.stringify || utils.ini.stringify;
-  return this.file({
+  return (await this.file({
     target: config.target,
     content: stringify(config.content, config),
     backup: config.backup,
@@ -195,7 +195,7 @@ handler = async function({
     gid: config.gid,
     uid: config.uid,
     mode: config.mode
-  });
+  }));
 };
 
 // ## Exports

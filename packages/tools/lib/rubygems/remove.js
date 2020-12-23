@@ -50,7 +50,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   var gems, k, ref, v, version;
   // log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
   // Global config
@@ -69,12 +69,12 @@ handler = function({config}) {
   }
   version = config.version ? `-v ${config.version}` : '-a';
   gems = null;
-  return this.execute({
+  return (await this.execute({
     command: `${config.gem_bin} list -i ${config.name} || exit 3
 ${config.gem_bin} uninstall ${config.name} ${version}`,
     code_skipped: 3,
     bash: config.bash
-  });
+  }));
 };
 
 // ## Export

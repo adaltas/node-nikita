@@ -74,7 +74,7 @@ handler = async function({
     module: 'nikita/lib/system/move'
   });
   // SSH connection
-  ssh = this.ssh(config.ssh);
+  ssh = (await this.ssh(config.ssh));
   log({
     message: "Stat target",
     level: 'DEBUG',
@@ -87,7 +87,7 @@ handler = async function({
       level: 'WARN',
       module: 'nikita/lib/system/move'
     });
-    this.fs.base.rename({
+    await this.fs.base.rename({
       source: config.source,
       target: config.target
     });
@@ -99,7 +99,7 @@ handler = async function({
       level: 'WARN',
       module: 'nikita/lib/system/move'
     });
-    this.fs.remove({
+    await this.fs.remove({
       target: config.target
     });
     log({
@@ -107,7 +107,7 @@ handler = async function({
       level: 'WARN',
       module: 'nikita/lib/system/move'
     });
-    this.fs.base.rename({
+    await this.fs.base.rename({
       source: config.source,
       target: config.target
     });
@@ -147,7 +147,7 @@ handler = async function({
       level: 'WARN',
       module: 'nikita/lib/system/move'
     });
-    this.fs.remove({
+    await this.fs.remove({
       target: config.source
     });
     return false;
@@ -157,7 +157,7 @@ handler = async function({
     level: 'WARN',
     module: 'nikita/lib/system/move'
   });
-  this.fs.remove({
+  await this.fs.remove({
     target: config.target
   });
   log({
@@ -165,7 +165,7 @@ handler = async function({
     level: 'WARN',
     module: 'nikita/lib/system/move'
   });
-  this.fs.base.rename({
+  await this.fs.base.rename({
     source: config.source,
     target: config.target
   });

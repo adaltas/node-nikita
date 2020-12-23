@@ -45,7 +45,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -54,7 +54,7 @@ handler = function({
     level: 'DEBUG',
     module: 'nikita/lib/docker/login'
   });
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: [
       'login',
       ...(['email',
@@ -66,7 +66,7 @@ handler = function({
       })),
       config.registry != null ? `${utils.string.escapeshellarg(config.registry)}` : void 0
     ].join(' ')
-  });
+  }));
 };
 
 // ## Exports

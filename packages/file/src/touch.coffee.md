@@ -60,7 +60,7 @@ console.info(`File was touched: ${status}`)
         !exists
       # if the file doesn't exist, create a new one
       if status
-        @file
+        await @file
           content: ''
           target: config.target
           mode: config.mode
@@ -69,7 +69,7 @@ console.info(`File was touched: ${status}`)
       # if the file exists, overwrite it using `touch` but don't update the status
       else
         # todo check uid/gid/mode
-        @execute
+        await @execute
           command: "touch #{config.target}"
           metadata: shy: true
       {}

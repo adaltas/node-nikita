@@ -101,19 +101,19 @@ console.info(`File was written: ${status}`)
         if fnl_props[key]?
         then "#{key}#{config.separator}#{fnl_props[key]}"
         else "#{key}" # This is a comment
-      @file
+      await @file
         target: "#{config.target}"
         content: data.join '\n'
         backup: config.backup
         eof: true
         metadata: shy: true
       if config.uid or config.gid
-        @system.chown
+        await @system.chown
           target: config.target
           uid: config.uid
           gid: config.gid
       if config.mode
-        @system.chmod
+        await @system.chmod
           target: config.target
           mode: config.mode
       {}

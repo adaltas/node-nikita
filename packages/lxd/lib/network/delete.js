@@ -34,14 +34,14 @@ schema = {
 };
 
 // ## Handler
-handler = function({config}) {
+handler = async function({config}) {
   // log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
   //Execute
-  return this.execute({
+  return (await this.execute({
     command: `lxc network list --format csv | grep ${config.network} || exit 42
 ${['lxc', 'network', 'delete', config.network].join(' ')}`,
     code_skipped: 42
-  });
+  }));
 };
 
 // ## Export

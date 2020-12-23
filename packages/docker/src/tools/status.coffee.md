@@ -51,7 +51,7 @@ console.info(`Container is running: ${status}`)
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
       # Construct exec command
-      @docker.tools.execute
+      await @docker.tools.execute
         command: "ps | egrep ' #{config.container}$'"
         code_skipped: 1
 

@@ -62,7 +62,7 @@ handler = async function({
     config.rm = false;
   }
   // Validation
-  return this.docker.run(config);
+  return (await this.docker.run(config));
 };
 
 // ## Exports

@@ -208,7 +208,7 @@ handler = async function({
   if (!status) {
     return;
   }
-  this.fs.mkdir({
+  await this.fs.mkdir({
     ssh: false,
     sudo: false,
     target: path.dirname(stage_target)
@@ -221,7 +221,7 @@ handler = async function({
       return rs.pipe(ws);
     }
   });
-  this.fs.move({
+  await this.fs.move({
     ssh: false,
     sudo: false,
     source: stage_target,
@@ -233,7 +233,7 @@ handler = async function({
     module: 'nikita/lib/file/upload'
   });
   if (config.mode != null) {
-    this.fs.chmod({
+    await this.fs.chmod({
       ssh: false,
       sudo: false,
       target: config.target,
@@ -241,7 +241,7 @@ handler = async function({
     });
   }
   if ((config.uid != null) || (config.gid != null)) {
-    this.fs.chown({
+    await this.fs.chown({
       ssh: false,
       sudo: false,
       target: config.target,

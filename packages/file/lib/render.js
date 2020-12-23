@@ -125,7 +125,7 @@ handler = async function({
     template = handlebars.compile(config.content.toString());
     return template(config.context);
   };
-  this.file(config);
+  await this.file(config);
   return {};
 };
 

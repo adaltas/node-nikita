@@ -60,18 +60,18 @@ console.info(`Directory was moved: ${status}`)
     handler = ({config, metadata, tools: {log, path}, ssh}) ->
       log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
-      ssh = @ssh config.ssh
+      ssh = await @ssh config.ssh
       log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
       {exists} = await @fs.base.exists config.target
       if not exists
         log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.base.rename source: config.source, target: config.target
+        await @fs.base.rename source: config.source, target: config.target
         return true
       if config.force
         log message: "Remove #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.remove target: config.target
+        await @fs.remove target: config.target
         log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.base.rename source: config.source, target: config.target
+        await @fs.base.rename source: config.source, target: config.target
         return true
       if not config.target_md5
         log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
@@ -85,12 +85,12 @@ console.info(`Directory was moved: ${status}`)
         config.source_md5 = hash
       if config.source_md5 is config.target_md5
         log message: "Remove #{config.source}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.remove target: config.source
+        await @fs.remove target: config.source
         return false
       log message: "Remove #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
-      @fs.remove target: config.target
+      await @fs.remove target: config.target
       log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
-      @fs.base.rename source: config.source, target: config.target
+      await @fs.base.rename source: config.source, target: config.target
       {}
 
 ## Exports

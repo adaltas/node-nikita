@@ -39,7 +39,7 @@ admin_password is provided.`
 };
 
 // ## Hander
-handler = function({config}) {
+handler = async function({config}) {
   var command_password_change, command_password_is_invalid, command_user_create, command_user_exists;
   // Commands
   switch (config.engine) {
@@ -70,7 +70,7 @@ handler = function({config}) {
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
       command_password_change = command(config, `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`);
   }
-  return this.execute({
+  return (await execute({
     command: `signal=3
 if ${command_user_exists}; then
   echo '[INFO] User already exists'
@@ -91,7 +91,7 @@ fi
 exit $signal`,
     code_skipped: 3,
     trap: true
-  });
+  }));
 };
 
 // ## Exports

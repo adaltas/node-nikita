@@ -216,7 +216,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # Overwrite the config.source and source_url properties to make them
       # look like a local file instead of an HTTP URL
       if config.cache
-        @file.cache
+        await @file.cache
           # Local file must be readable by the current process
           ssh: false
           sudo: false
@@ -246,11 +246,11 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
         log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
         # Ensure target directory exists
-        @fs.mkdir
+        await @fs.mkdir
           metadata: shy: true
           target: path.dirname stageDestination
         # Download the file
-        @execute
+        await @execute
           command: [
             'curl'
             '--fail' if config.fail
@@ -278,7 +278,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         if match
-          @fs.remove
+          await @fs.remove
             metadata: shy: true
             target: stageDestination
       else if source_url.protocol not in protocols_http and not ssh
@@ -295,10 +295,10 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
-          @fs.mkdir
+          await @fs.mkdir
             metadata: shy: true
             target: path.dirname stageDestination
-          @fs.copy
+          await @fs.copy
             source: config.source
             target: stageDestination
       else if source_url.protocol not in protocols_http and ssh
@@ -315,7 +315,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
-          @fs.mkdir
+          await @fs.mkdir
             metadata: shy: true
             target: path.dirname stageDestination
           try
@@ -329,15 +329,15 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR', module: 'nikita/lib/file/download'
       log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
       unless match
-        @fs.move
+        await @fs.move
           source: stageDestination
           target: config.target
       if config.mode
-        @fs.chmod
+        await @fs.chmod
           target: config.target
           mode: config.mode
       if config.uid or config.gid
-        @fs.chown
+        await @fs.chown
           target: config.target
           uid: config.uid
           gid: config.gid

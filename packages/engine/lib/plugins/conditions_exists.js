@@ -54,10 +54,10 @@ handlers = {
               depth: action.metadata.depth
             },
             parent: action
-          }, function() {
-            return this.fs.base.stat({
+          }, async function() {
+            return (await this.fs.base.stat({
               target: condition
-            });
+            }));
           });
         });
       } catch (error) {
@@ -90,10 +90,10 @@ handlers = {
               depth: action.metadata.depth
             },
             parent: action
-          }, function() {
-            return this.fs.base.stat({
+          }, async function() {
+            return (await this.fs.base.stat({
               target: condition
-            });
+            }));
           });
         });
         final_run = false;

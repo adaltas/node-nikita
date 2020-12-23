@@ -87,7 +87,7 @@ console.info(`File was rendered: ${status}`)
       config.transform = ({config}) ->
         template = handlebars.compile config.content.toString()
         template config.context
-      @file config
+      await @file config
       {}
 
 ## Exports

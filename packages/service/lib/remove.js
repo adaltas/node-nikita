@@ -150,7 +150,7 @@ fi`,
     }
   }
   if (config.cache) {
-    return this.call({
+    return (await this.call({
       handler: function() {
         log({
           message: "Caching installed on \"nikita:execute:installed\"",
@@ -159,7 +159,7 @@ fi`,
         });
         return state['nikita:execute:installed'] = installed;
       }
-    });
+    }));
   }
 };
 

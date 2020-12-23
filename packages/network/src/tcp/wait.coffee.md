@@ -176,7 +176,7 @@ console.info(`Servers listening: ${status}`)
       # Note, the option is not tested and doesnt seem to work from a manual test
       config.timeout = 0 unless config.timeout > 0
       config.timeout = Math.round config.timeout / 1000
-      @execute
+      await @execute
         bash: true
         command: """
         function compute_md5 {

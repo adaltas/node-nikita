@@ -41,7 +41,7 @@ Change ownership of a file.
       config.gid = null if config.gid is false
       # Validation
       throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
-      @execute [
+      await @execute [
         "chown #{config.uid} #{config.target}" if config.uid?
         "chgrp #{config.gid} #{config.target}" if config.gid?
       ].join '\n'

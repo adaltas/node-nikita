@@ -42,7 +42,7 @@ schema = {
 };
 
 // ## Handler
-handler = function({
+handler = async function({
     config,
     tools: {log}
   }) {
@@ -55,11 +55,11 @@ handler = function({
     // Validation
     throw Error("Missing required option name");
   }
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: `volume rm ${config.name}`,
     code: 0,
     code_skipped: 1
-  });
+  }));
 };
 
 // ## Exports

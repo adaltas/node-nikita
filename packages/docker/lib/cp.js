@@ -103,7 +103,7 @@ handler = async function({
       target_mkdir = true;
     }
   }
-  this.fs.mkdir({
+  await this.fs.mkdir({
     target: source_path,
     if: source_mkdir
   });
@@ -127,13 +127,13 @@ handler = async function({
       target_mkdir = true;
     }
   }
-  this.fs.base.mkdir({
+  await this.fs.base.mkdir({
     target: target_path,
     if: target_mkdir
   });
-  return this.docker.tools.execute({
+  return (await this.docker.tools.execute({
     command: `cp ${config.source} ${config.target}`
-  });
+  }));
 };
 
 // ## Exports

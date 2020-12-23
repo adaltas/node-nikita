@@ -24,7 +24,7 @@ Global config can be alternatively set with the "log_csv" property.
     handler = ({config}) ->
       # Obtains config from "log_csv" namespace
       # stdouting = 0
-      @call log_fs, config: config, serializer:
+      await @call log_fs, config: config, serializer:
         'nikita:action:start': (action) ->
           return unless action.metadata.header
           walk = (parent) ->

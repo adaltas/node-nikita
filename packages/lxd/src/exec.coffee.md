@@ -38,7 +38,7 @@ console.info(stdout)
 
     handler =  ({config}) ->
       # log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
-      @execute config, trap: false,
+      await @execute config, trap: false,
         command: [
           "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- bash"
           'set -e' if config.trap

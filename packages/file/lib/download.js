@@ -325,7 +325,7 @@ handler = async function({
   // Overwrite the config.source and source_url properties to make them
   // look like a local file instead of an HTTP URL
   if (config.cache) {
-    this.file.cache({
+    await this.file.cache({
       // Local file must be readable by the current process
       ssh: false,
       sudo: false,
@@ -375,14 +375,14 @@ handler = async function({
       module: 'nikita/lib/file/download'
     });
     // Ensure target directory exists
-    this.fs.mkdir({
+    await this.fs.mkdir({
       metadata: {
         shy: true
       },
       target: path.dirname(stageDestination)
     });
     // Download the file
-    this.execute({
+    await this.execute({
       command: [
         'curl',
         config.fail ? '--fail' : void 0,
@@ -455,7 +455,7 @@ handler = async function({
       module: 'nikita/lib/file/download'
     });
     if (match) {
-      this.fs.remove({
+      await this.fs.remove({
         metadata: {
           shy: true
         },
@@ -495,13 +495,13 @@ handler = async function({
       module: 'nikita/lib/file/download'
     });
     if (!match) {
-      this.fs.mkdir({
+      await this.fs.mkdir({
         metadata: {
           shy: true
         },
         target: path.dirname(stageDestination)
       });
-      this.fs.copy({
+      await this.fs.copy({
         source: config.source,
         target: stageDestination
       });
@@ -541,7 +541,7 @@ handler = async function({
       module: 'nikita/lib/file/download'
     });
     if (!match) {
-      this.fs.mkdir({
+      await this.fs.mkdir({
         metadata: {
           shy: true
         },
@@ -577,19 +577,19 @@ handler = async function({
     module: 'nikita/lib/file/download'
   });
   if (!match) {
-    this.fs.move({
+    await this.fs.move({
       source: stageDestination,
       target: config.target
     });
   }
   if (config.mode) {
-    this.fs.chmod({
+    await this.fs.chmod({
       target: config.target,
       mode: config.mode
     });
   }
   if (config.uid || config.gid) {
-    this.fs.chown({
+    await this.fs.chown({
       target: config.target,
       uid: config.uid,
       gid: config.gid

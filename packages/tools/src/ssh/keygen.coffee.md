@@ -69,7 +69,7 @@ console.info(`Key was generated: ${status}`)
       throw Error "Invalid Option: key_format must be one of RFC4716, PKCS8 or PEM, got #{JSON.stringify config.key_format}" if config.key_format and config.key_format not in ['RFC4716', 'PKCS8', 'PEM']
       await @fs.mkdir
         target: "#{path.dirname config.target}"
-      @execute
+      await @execute
         unless_exists: "#{config.target}"
         command: [
           'ssh-keygen'
