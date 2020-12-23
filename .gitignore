@@ -7,6 +7,7 @@
 !.gitignore
 !.gitattributes
 !.npmignore
+!.husky
 yarn.lock
 yarn-error.log
 package-lock.json
