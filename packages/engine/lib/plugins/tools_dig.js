@@ -83,7 +83,7 @@ validate = function(action, args) {
 
 module.exports = function(action) {
   return {
-    module: '@nikitajs/engine/src/plugins/TOOLS_DIG',
+    module: '@nikitajs/engine/src/plugins/tools_dig',
     hooks: {
       'nikita:session:action': function(action) {
         // Register function
