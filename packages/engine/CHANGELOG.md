@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* feat(engine): new `env_export` option to execute
 * tmpdir: create and dispose a temporary directory `action.metadata.tmpdir`
 
 Breaking changes:

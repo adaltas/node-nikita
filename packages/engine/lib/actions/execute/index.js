@@ -13,10 +13,8 @@
 // define one or more exit codes that are considered successfull but without
 // creating any modifications.
 
-// ## Callback parameters
+// ## Output
 
-// * `err`   
-//   Error object if any.
 // * `info.status`   
 //   Value is "true" if command exit equals option "code", "0" by default, "false" if
 //   command exit equals option "code_skipped", none by default.
@@ -24,6 +22,16 @@
 //   Stdout value(s) unless `stdout` option is provided.
 // * `info.stderr`   
 //   Stderr value(s) unless `stderr` option is provided.
+
+// ## Temporary directory
+
+// A temporary directory is required under certain conditions. The action leverages
+// the `tmpdir` plugins which is only activated when necessary. The conditions
+// involves the usage of `sudo`, `chroot`, `arch_chroot` or `env_export`.
+
+// For performance reason, consider declare the `metadata.tmpdir` property in your
+// parent action to avoid the creation and removal of a tempory directory everytime
+// the `execute` action is called.
 
 // ## Events
 
@@ -61,22 +69,32 @@
 // ```
 
 // ## Hooks
-var exec, handler, on_action, schema, utils;
+var exec, handler, merge, on_action, schema, utils;
 
 on_action = {
-  before: '@nikitajs/engine/src/metadata/tmpdir',
+  after: ['@nikitajs/engine/src/plugins/ssh'],
+  // '@nikitajs/engine/src/plugins/tools_find'
+  // '@nikitajs/engine/src/plugins/tools_walk'
+  before: ['@nikitajs/engine/src/plugins/schema', '@nikitajs/engine/src/metadata/tmpdir'],
   handler: async function({
       config,
       metadata,
-      tools: {find}
+      ssh,
+      tools: {find, walk}
     }) {
-    var sudo;
+    var env, env_export, sudo;
     sudo = (await find(function({
         config: {sudo}
       }) {
       return sudo;
     }));
-    if (sudo || config.bash || config.arch_chroot) {
+    env = merge({}, ...(await walk(function({
+        config: {env}
+      }) {
+      return env;
+    })));
+    env_export = config.env_export != null ? config.env_export : !!ssh;
+    if (sudo || config.bash || config.arch_chroot || (Object.keys(env).length && env_export)) {
       metadata.tmpdir = true;
     }
     if (metadata.argument != null) {
@@ -188,12 +206,19 @@ will not be incremented, int or array of int.`
       description: `Environment variables as key-value pairs. With local execution, it
 default to \`process.env\`. With remote execution over SSH, the accepted
 environment variables is determined by the AcceptEnv server setting
-and default to "LANG,LC_*"`,
+and default to "LANG,LC_*". See the \`env_export\` property to get
+around this limitation.`,
       patternProperties: {
         '': {
           type: "string"
         }
       }
+    },
+    'env_export': {
+      type: 'boolean',
+      description: `Write a temporary file which exports the the environment variables
+defined in the \`env\` property. The value is always \`true\` when
+environment variables must be used with SSH.`
     },
     'gid': {
       type: 'integer',
@@ -280,10 +305,11 @@ config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
 handler = async function({
     config,
     metadata,
-    tools: {find, log, path},
+    parent,
+    tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, stdout, sudo;
+  var command, current_username, dry, env, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, sudo, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -316,11 +342,31 @@ handler = async function({
   if (['bash', 'arch_chroot'].filter(function(k) {
     return config[k];
   }).length > 1) {
-    // throw Error "Required Option: the \"command\" option is not provided" unless config.command?
+    // TODO move next 2 lines this to schema or on_action ?
     throw Error("Incompatible properties: bash, arch_chroot");
   }
   if (config.arch_chroot && !config.rootdir) {
     throw Error("Required Option: \"rootdir\" with \"arch_chroot\"");
+  }
+  // Environment variables are merged with parent
+  env = merge({}, ...(await walk(function({
+      config: {env}
+    }) {
+    return env;
+  })));
+  // Serialize env in a sourced file
+  env_export = config.env_export != null ? config.env_export : !!ssh;
+  if (env_export && Object.keys(env).length) {
+    env_export_content = ((function() {
+      var results;
+      results = [];
+      for (k in env) {
+        v = env[k];
+        results.push(`export ${k}=${utils.string.escapeshellarg(v)}\n`);
+      }
+      return results;
+    })()).join('\n');
+    env_export_hash = utils.string.hash(env_export_content);
   }
   // Guess current username
   current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
@@ -347,11 +393,27 @@ handler = async function({
       config.bash = 'bash';
     }
   }
+  if (env_export && Object.keys(env).length) {
+    env_export_hash = utils.string.hash(env_export_content);
+    env_export_target = path.join(metadata.tmpdir, env_export_hash);
+    config.command = `source ${env_export_target}\n${config.command}`;
+    log({
+      message: `Writing env export to ${JSON.stringify(env_export_target)}`,
+      level: 'INFO'
+    });
+    await this.fs.base.writeFile({
+      content: env_export_content,
+      mode: 0o500,
+      sudo: false,
+      target: env_export_target,
+      uid: config.uid
+    });
+  }
   // Write script
   if (config.bash) {
     command = config.command;
     if (typeof config.target !== 'string') {
-      config.target = `${metadata.tmpdir}/${utils.string.hash(config.command)}`;
+      config.target = path.join(metadata.tmpdir, utils.string.hash(config.command));
     }
     log({
       message: `Writing bash script to ${JSON.stringify(config.target)}`,
@@ -365,11 +427,11 @@ handler = async function({
       config.command += `;code=\`echo $?\`; rm '${config.target}'; exit $code`;
     }
     await this.fs.base.writeFile({
-      target: config.target,
       content: command,
-      uid: config.uid,
       mode: config.mode,
-      sudo: false
+      sudo: false,
+      target: config.target,
+      uid: config.uid
     });
   }
   if (config.arch_chroot) {
@@ -396,7 +458,7 @@ handler = async function({
     config.command = `sudo ${config.command}`;
   }
   // Execute
-  return new Promise((resolve, reject) => {
+  return new Promise(function(resolve, reject) {
     var child, result, stderr_stream_open, stdout_stream_open;
     if (config.stdin_log) {
       log({
@@ -414,6 +476,7 @@ handler = async function({
       command: config.command_original
     };
     if (config.dry) {
+      // env_export_hash: env_export_hash
       return resolve(result);
     }
     child = exec(config, {
@@ -434,7 +497,7 @@ handler = async function({
     }
     stdout_stream_open = stderr_stream_open = false;
     if (config.stdout_return || config.stdout_log) {
-      child.stdout.on('data', (data) => {
+      child.stdout.on('data', function(data) {
         if (config.stdout_log) {
           stdout_stream_open = true;
         }
@@ -455,7 +518,7 @@ handler = async function({
       });
     }
     if (config.stderr_return || config.stderr_log) {
-      child.stderr.on('data', (data) => {
+      child.stderr.on('data', function(data) {
         if (config.stderr_log) {
           stderr_stream_open = true;
         }
@@ -475,12 +538,12 @@ handler = async function({
         }
       });
     }
-    return child.on("exit", (code) => {
+    return child.on("exit", function(code) {
       result.code = code;
       // Give it some time because the "exit" event is sometimes
       // called before the "stdout" "data" event when running
       // `npm test`
-      return setTimeout(() => {
+      return setTimeout(function() {
         if (stdout_stream_open && config.stdout_log) {
           log({
             message: null,
@@ -564,3 +627,5 @@ module.exports = {
 exec = require('ssh2-exec');
 
 utils = require('../../utils');
+
+({merge} = require('mixme'));

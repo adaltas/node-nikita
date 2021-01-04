@@ -13,10 +13,8 @@ error is passed to the user callback. The "code_skipped" option is used to
 define one or more exit codes that are considered successfull but without
 creating any modifications.
 
-## Callback parameters
+## Output
 
-* `err`   
-  Error object if any.
 * `info.status`   
   Value is "true" if command exit equals option "code", "0" by default, "false" if
   command exit equals option "code_skipped", none by default.
@@ -24,6 +22,16 @@ creating any modifications.
   Stdout value(s) unless `stdout` option is provided.
 * `info.stderr`   
   Stderr value(s) unless `stderr` option is provided.
+
+## Temporary directory
+
+A temporary directory is required under certain conditions. The action leverages
+the `tmpdir` plugins which is only activated when necessary. The conditions
+involves the usage of `sudo`, `chroot`, `arch_chroot` or `env_export`.
+
+For performance reason, consider declare the `metadata.tmpdir` property in your
+parent action to avoid the creation and removal of a tempory directory everytime
+the `execute` action is called.
 
 ## Events
 
@@ -63,10 +71,20 @@ console.info(stdout)
 ## Hooks
 
     on_action =
-      before: '@nikitajs/engine/src/metadata/tmpdir'
-      handler: ({config, metadata, tools: {find}}) ->
+      after: [
+        '@nikitajs/engine/src/plugins/ssh'
+        # '@nikitajs/engine/src/plugins/tools_find'
+        # '@nikitajs/engine/src/plugins/tools_walk'
+      ]
+      before: [
+        '@nikitajs/engine/src/plugins/schema'
+        '@nikitajs/engine/src/metadata/tmpdir'
+      ]
+      handler: ({config, metadata, ssh, tools: {find, walk}}) ->
         sudo = await find ({config: {sudo}}) -> sudo
-        if sudo or config.bash or config.arch_chroot
+        env = merge {}, ...await walk ({config: {env}}) -> env
+        env_export = if config.env_export? then config.env_export else !!ssh
+        if sudo or config.bash or config.arch_chroot or (Object.keys(env).length and env_export)
           metadata.tmpdir = true
         config.command = metadata.argument if metadata.argument?
         config.code = [config.code] if config.code? and not Array.isArray config.code
@@ -148,9 +166,17 @@ console.info(stdout)
           Environment variables as key-value pairs. With local execution, it
           default to `process.env`. With remote execution over SSH, the accepted
           environment variables is determined by the AcceptEnv server setting
-          and default to "LANG,LC_*"
+          and default to "LANG,LC_*". See the `env_export` property to get
+          around this limitation.
           """
           patternProperties: '': type: "string"
+        'env_export':
+          type: 'boolean'
+          description: """
+          Write a temporary file which exports the the environment variables
+          defined in the `env` property. The value is always `true` when
+          environment variables must be used with SSH.
+          """
         'gid':
           type: 'integer'
           description: """
@@ -245,7 +271,7 @@ console.info(stdout)
           
 ## Handler
 
-    handler = ({config, metadata, tools: {find, log, path}, ssh}) ->
+    handler = ({config, metadata, parent, tools: {dig, find, log, path, walk}, ssh}) ->
       # Validate parameters
       config.mode ?= 0o500
       config.command = await @call config: config, config.command if typeof config.command is 'function'
@@ -255,9 +281,18 @@ console.info(stdout)
       config.command_original = "#{config.command}"
       sudo = await find ({config: {sudo}}) -> sudo
       dry = await find ({config: {dry}}) -> dry
-      # throw Error "Required Option: the \"command\" option is not provided" unless config.command?
+      # TODO move next 2 lines this to schema or on_action ?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
+      # Environment variables are merged with parent
+      env = merge {}, ...await walk ({config: {env}}) -> env
+      # Serialize env in a sourced file
+      env_export = if config.env_export? then config.env_export else !!ssh
+      if env_export and Object.keys(env).length
+        env_export_content = (
+          "export #{k}=#{utils.string.escapeshellarg v}\n" for k, v of env
+        ).join '\n'
+        env_export_hash = utils.string.hash env_export_content
       # Guess current username
       current_username =
         if ssh then ssh.config.username
@@ -275,20 +310,31 @@ console.info(stdout)
         {stdout} = await @execute "awk -v val=#{config.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, {stdout}) ->
         config.uid = stdout.trim()
         config.bash = 'bash' unless config.bash or config.arch_chroot
+      if env_export and Object.keys(env).length
+        env_export_hash = utils.string.hash env_export_content
+        env_export_target = path.join metadata.tmpdir, env_export_hash
+        config.command = "source #{env_export_target}\n#{config.command}"
+        log message: "Writing env export to #{JSON.stringify env_export_target}", level: 'INFO'
+        await @fs.base.writeFile
+          content: env_export_content
+          mode: 0o500
+          sudo: false
+          target: env_export_target
+          uid: config.uid
       # Write script
       if config.bash
         command = config.command
-        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
+        config.target = path.join metadata.tmpdir, utils.string.hash config.command if typeof config.target isnt 'string'
         log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
         config.command = "#{config.bash} #{config.target}"
         config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
         config.command += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
-          target: config.target
           content: command
-          uid: config.uid
           mode: config.mode
           sudo: false
+          target: config.target
+          uid: config.uid
       if config.arch_chroot
         command = config.command
         config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
@@ -303,9 +349,15 @@ console.info(stdout)
       if sudo
         config.command = "sudo #{config.command}"
       # Execute
-      new Promise (resolve, reject) =>
+      new Promise (resolve, reject) ->
         log message: config.command_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
-        result = stdout: [], stderr: [], code: null, status: false, command: config.command_original
+        result =
+          stdout: []
+          stderr: []
+          code: null
+          status: false
+          command: config.command_original
+          # env_export_hash: env_export_hash
         return resolve result if config.dry
         child = exec config, ssh: ssh
         config.stdin.pipe child.stdin if config.stdin
@@ -313,7 +365,7 @@ console.info(stdout)
         child.stderr.pipe config.stderr, end: false if config.stderr
         stdout_stream_open = stderr_stream_open = false
         if config.stdout_return or config.stdout_log
-          child.stdout.on 'data', (data) =>
+          child.stdout.on 'data', (data) ->
             stdout_stream_open = true if config.stdout_log
             log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if config.stdout_log
             if config.stdout_return
@@ -327,7 +379,7 @@ console.info(stdout)
                 'we would really enjoy some help to replicate or fix this one.'
               ].join ' '
         if config.stderr_return or config.stderr_log
-          child.stderr.on 'data', (data) =>
+          child.stderr.on 'data', (data) ->
             stderr_stream_open = true if config.stderr_log
             log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if config.stderr_log
             if config.stderr_return
@@ -340,12 +392,12 @@ console.info(stdout)
                 'this is embarassing and we never found how to catch this bug,'
                 'we would really enjoy some help to replicate or fix this one.'
               ].join ' '
-        child.on "exit", (code) =>
+        child.on "exit", (code) ->
           result.code = code
           # Give it some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when running
           # `npm test`
-          setTimeout =>
+          setTimeout ->
             log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and config.stdout_log
             log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and config.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
@@ -388,3 +440,4 @@ console.info(stdout)
 
     exec = require 'ssh2-exec'
     utils = require '../../utils'
+    {merge} = require 'mixme'
