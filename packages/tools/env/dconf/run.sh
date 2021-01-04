@@ -1,6 +1,8 @@
 #!/bin/bash
 
 service ssh start
+dbus-launch
+
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Some command(s) has been passed to container? Execute them and exit.

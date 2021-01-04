@@ -6,12 +6,21 @@ they = require('ssh2-they').configure ssh
 return unless tags.tools_dconf
 
 describe 'tools.dconf', ->
-    
-  they 'set single config', ({ssh}) ->
+  
+  # Note, dconf inside docker fail to work and print
+  # "error: Cannot autolaunch D-Bus without X11 $DISPLAY"
+  # To make it work, we config `dbus-launch` with a docket file path with
+  # `unix:path`, place the configuration file in
+  # "/etc/dbus-1/session.d/dbus.conf"
+  # and launch `dbus-launch` in `run.sh`
+  
+  they 'set single config', ({env, ssh}) ->
     nikita
       ssh: ssh
+      env: env
     , ->
-      @tools.dconf
+      await @tools.dconf
+        debug: true
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
       {status} = await @tools.dconf
@@ -22,15 +31,16 @@ describe 'tools.dconf', ->
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': true
       status.should.be.false()
-      @execute.assert
+      await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
         assert: 'true'
   
-  they 'set multiple configs', ({ssh}) ->
+  they 'set multiple configs', ({env, ssh}) ->
     nikita
       ssh: ssh
+      env: env
     , ->
-      @tools.dconf
+      await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
           '/org/gnome/desktop/peripherals/touchpad/click-method': 1
@@ -48,11 +58,11 @@ describe 'tools.dconf', ->
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
           '/org/gnome/desktop/peripherals/touchpad/click-method': 2
-      status.should.be.true()
-      @execute.assert
+      status.should.be.false()
+      await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
-        assert: 'true'
-      @execute.assert
+        assert: 'false'
+      await @execute.assert
         command: 'dconf read /org/gnome/desktop/peripherals/touchpad/click-method'
         assert: 2
   

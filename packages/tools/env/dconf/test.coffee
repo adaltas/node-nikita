@@ -2,7 +2,9 @@
 module.exports =
   tags:
     tools_dconf: true
-  ssh: [
-    null
-    { ssh: host: 'localhost', username: 'sshuser' }
-  ]
+  ssh: [{
+    env: DBUS_SESSION_BUS_ADDRESS:'unix:path=/tmp/dbus.sock'
+  },{
+    ssh: host: 'localhost', username: 'root'
+    env: DBUS_SESSION_BUS_ADDRESS:'unix:path=/tmp/dbus.sock'
+  }]
