@@ -11,7 +11,7 @@
     "system",
     "task"
   ],
-  "version": "0.9.7-alpha.3",
+  "version": "0.9.7",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
@@ -32,17 +32,17 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^0.9.7-alpha.2",
-    "@nikitajs/db": "^0.9.7-alpha.0",
-    "@nikitajs/docker": "^0.9.7-alpha.0",
-    "@nikitajs/filetypes": "^0.9.7-alpha.2",
-    "@nikitajs/ipa": "^0.9.7-alpha.0",
-    "@nikitajs/java": "^0.9.7-alpha.0",
-    "@nikitajs/krb5": "^0.9.7-alpha.0",
-    "@nikitajs/ldap": "^0.9.7-alpha.0",
-    "@nikitajs/lxd": "^0.9.7-alpha.0",
-    "@nikitajs/service": "^0.9.7-alpha.0",
-    "@nikitajs/tools": "^0.9.7-alpha.0"
+    "@nikitajs/core": "^0.9.7",
+    "@nikitajs/db": "^0.9.7",
+    "@nikitajs/docker": "^0.9.7",
+    "@nikitajs/filetypes": "^0.9.7",
+    "@nikitajs/ipa": "^0.9.7",
+    "@nikitajs/java": "^0.9.7",
+    "@nikitajs/krb5": "^0.9.7",
+    "@nikitajs/ldap": "^0.9.7",
+    "@nikitajs/lxd": "^0.9.7",
+    "@nikitajs/service": "^0.9.7",
+    "@nikitajs/tools": "^0.9.7"
   },
   "devDependencies": {
     "mocha": "7.1.1",

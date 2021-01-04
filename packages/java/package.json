@@ -10,7 +10,7 @@
     "java",
     "keystore"
   ],
-  "version": "0.9.7-alpha.0",
+  "version": "0.9.7",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
