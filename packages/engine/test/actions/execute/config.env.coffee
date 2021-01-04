@@ -21,12 +21,23 @@ describe 'actions.execute.config.env', ->
           'type is "object".'
         ].join ' '
 
-  they 'pass variables', ({ssh}) ->
-    # accepted environment variables 
+  they 'from action', ({ssh}) ->
+    # accepted environment variables
     # is determined by the AcceptEnv server setting
     # default values are "LANG,LC_*"
-    nikita ssh: ssh, ->
+    nikita
+      ssh: ssh
+    , ->
       {stdout} = await @execute
         command: 'env'
         env: 'LANG': 'tv'
+      stdout.split('\n').includes('LANG=tv').should.be.true()
+
+  they 'from parent', ({ssh}) ->
+    nikita
+      ssh: ssh
+      env: 'LANG': 'tv'
+    , ->
+      {stdout} = await @execute
+        command: 'env'
       stdout.split('\n').includes('LANG=tv').should.be.true()

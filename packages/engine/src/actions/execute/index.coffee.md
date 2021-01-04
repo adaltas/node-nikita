@@ -359,7 +359,7 @@ console.info(stdout)
           command: config.command_original
           # env_export_hash: env_export_hash
         return resolve result if config.dry
-        child = exec config, ssh: ssh
+        child = exec config, ssh: ssh, env: env
         config.stdin.pipe child.stdin if config.stdin
         child.stdout.pipe config.stdout, end: false if config.stdout
         child.stderr.pipe config.stderr, end: false if config.stderr

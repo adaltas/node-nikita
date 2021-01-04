@@ -480,7 +480,8 @@ handler = async function({
       return resolve(result);
     }
     child = exec(config, {
-      ssh: ssh
+      ssh: ssh,
+      env: env
     });
     if (config.stdin) {
       config.stdin.pipe(child.stdin);
