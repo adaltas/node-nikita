@@ -543,7 +543,7 @@ handler = async function({
       // Give it some time because the "exit" event is sometimes
       // called before the "stdout" "data" event when running
       // `npm test`
-      return setTimeout(function() {
+      return setImmediate(function() {
         if (stdout_stream_open && config.stdout_log) {
           log({
             message: null,
@@ -606,7 +606,7 @@ handler = async function({
           });
         }
         return resolve(result);
-      }, 1);
+      });
     });
   });
 };

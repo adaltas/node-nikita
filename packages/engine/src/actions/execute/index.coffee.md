@@ -397,7 +397,7 @@ console.info(stdout)
           # Give it some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when running
           # `npm test`
-          setTimeout ->
+          setImmediate ->
             log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and config.stdout_log
             log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and config.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
@@ -424,7 +424,6 @@ console.info(stdout)
             else
               log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             resolve result
-          , 1
 
 ## Exports
 
