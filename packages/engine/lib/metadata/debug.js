@@ -14,8 +14,8 @@ TODO: detect/force isTTY
 */
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/debug',
-    require: '@nikitajs/engine/src/plugins/log',
+    module: '@nikitajs/engine/lib/metadata/debug',
+    require: '@nikitajs/engine/lib/plugins/log',
     hooks: {
       'nikita:session:action': function(action) {
         var debug;
@@ -56,7 +56,7 @@ module.exports = function() {
         return action.tools.events.addListener('stderr_stream', debug.listener);
       },
       'nikita:session:result': {
-        // after: '@nikitajs/engine/src/plugins/log'
+        // after: '@nikitajs/engine/lib/plugins/log'
         handler: function({action}) {
           var debug;
           debug = action.metadata.debug;

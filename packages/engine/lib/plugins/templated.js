@@ -5,7 +5,7 @@ templated = require('self-templated');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/templated',
+    module: '@nikitajs/engine/lib/plugins/templated',
     hooks: {
       'nikita:session:normalize': function(action) {
         var base;

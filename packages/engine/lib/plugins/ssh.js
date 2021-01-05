@@ -13,8 +13,8 @@ is `null` or `false`.
 */
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/ssh',
-    require: ['@nikitajs/engine/src/plugins/tools_find'],
+    module: '@nikitajs/engine/lib/plugins/ssh',
+    require: ['@nikitajs/engine/lib/plugins/tools_find'],
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         var ssh;

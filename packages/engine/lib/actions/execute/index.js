@@ -72,10 +72,10 @@
 var exec, handler, merge, on_action, schema, utils;
 
 on_action = {
-  after: ['@nikitajs/engine/src/plugins/ssh'],
-  // '@nikitajs/engine/src/plugins/tools_find'
-  // '@nikitajs/engine/src/plugins/tools_walk'
-  before: ['@nikitajs/engine/src/plugins/schema', '@nikitajs/engine/src/metadata/tmpdir'],
+  after: ['@nikitajs/engine/lib/plugins/ssh'],
+  // '@nikitajs/engine/lib/plugins/tools_find'
+  // '@nikitajs/engine/lib/plugins/tools_walk'
+  before: ['@nikitajs/engine/lib/plugins/schema', '@nikitajs/engine/lib/metadata/tmpdir'],
   handler: async function({
       config,
       metadata,

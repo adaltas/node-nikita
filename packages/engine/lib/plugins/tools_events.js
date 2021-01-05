@@ -5,7 +5,7 @@ var EventEmitter;
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/tools_events',
+    module: '@nikitajs/engine/lib/plugins/tools_events',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         return async function() {
@@ -23,7 +23,7 @@ module.exports = function() {
         return action.tools.events.emit('nikita:action:start', action);
       },
       'nikita:session:result': {
-        after: '@nikitajs/engine/src/metadata/status',
+        after: '@nikitajs/engine/lib/metadata/status',
         handler: function({action, error, output}, handler) {
           return async function({action}) {
             var err;

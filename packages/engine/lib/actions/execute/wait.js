@@ -76,13 +76,13 @@ default to "0".`
 scheduled for later execution, default to "1".`
     },
     'stdin_log': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stdin_log'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/stdin_log'
     },
     'stdout_log': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stdout_log'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/stdout_log'
     },
     'stderr_log': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/stderr_log'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/stderr_log'
     }
   },
   required: ['command']

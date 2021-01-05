@@ -16,11 +16,11 @@ exec = require('ssh2-exec');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/tmpdir',
-    require: ['@nikitajs/engine/src/plugins/tools_find', '@nikitajs/engine/src/plugins/tools_path'],
+    module: '@nikitajs/engine/lib/metadata/tmpdir',
+    require: ['@nikitajs/engine/lib/plugins/tools_find', '@nikitajs/engine/lib/plugins/tools_path'],
     hooks: {
       'nikita:session:action': {
-        after: ['@nikitajs/engine/src/plugins/ssh', '@nikitajs/engine/src/metadata/uuid'],
+        after: ['@nikitajs/engine/lib/plugins/ssh', '@nikitajs/engine/lib/metadata/uuid'],
         handler: async function(action) {
           var err, ref, rootdir, ssh, tmpdir;
           if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
@@ -58,7 +58,7 @@ module.exports = function() {
         }
       },
       'nikita:session:result': {
-        before: '@nikitajs/engine/src/plugins/ssh',
+        before: '@nikitajs/engine/lib/plugins/ssh',
         handler: async function({action}) {
           var ssh, tmpdir;
           // Value of tmpdir could still be true if there was an error in

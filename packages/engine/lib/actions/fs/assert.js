@@ -118,7 +118,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
       description: `Validate file permissions.`
     },
     'not': {
-      $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
+      $ref: 'module://@nikitajs/engine/lib/actions/assert#/properties/not'
     },
     'sha1': {
       type: 'string',

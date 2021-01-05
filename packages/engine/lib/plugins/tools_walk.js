@@ -41,7 +41,7 @@ validate = function(action, args) {
 
 module.exports = function(action) {
   return {
-    module: '@nikitajs/engine/src/plugins/TOOLS_WALK',
+    module: '@nikitajs/engine/lib/plugins/TOOLS_WALK',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         return async function() {

@@ -99,10 +99,10 @@ module.exports = function(action) {
     }
   };
   return {
-    module: '@nikitajs/engine/src/plugins/schema',
+    module: '@nikitajs/engine/lib/plugins/schema',
     hooks: {
       'nikita:session:action': {
-        after: ['@nikitajs/engine/src/metadata/disabled', '@nikitajs/engine/src/plugins/conditions', '@nikitajs/engine/src/plugins/global'],
+        after: ['@nikitajs/engine/lib/metadata/disabled', '@nikitajs/engine/lib/plugins/conditions', '@nikitajs/engine/lib/plugins/global'],
         handler: async function(action, handler) {
           var err;
           if (action.metadata.disabled) {

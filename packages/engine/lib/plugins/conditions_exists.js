@@ -5,12 +5,12 @@ session = require('../session');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/conditions_exists',
-    require: ['@nikitajs/engine/src/plugins/conditions'],
+    module: '@nikitajs/engine/lib/plugins/conditions_exists',
+    require: ['@nikitajs/engine/lib/plugins/conditions'],
     hooks: {
       'nikita:session:action': {
-        after: '@nikitajs/engine/src/plugins/conditions',
-        before: '@nikitajs/engine/src/metadata/disabled',
+        after: '@nikitajs/engine/lib/plugins/conditions',
+        before: '@nikitajs/engine/lib/metadata/disabled',
         handler: async function(action) {
           var final_run, k, local_run, ref, v;
           final_run = true;

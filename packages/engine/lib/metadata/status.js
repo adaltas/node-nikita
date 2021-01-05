@@ -7,8 +7,8 @@ utils = require('../utils');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/status',
-    require: ['@nikitajs/engine/src/plugins/history', '@nikitajs/engine/src/metadata/raw'],
+    module: '@nikitajs/engine/lib/metadata/status',
+    require: ['@nikitajs/engine/lib/plugins/history', '@nikitajs/engine/lib/metadata/raw'],
     hooks: {
       // 'nikita:registry:normalize': (action) ->
       //   action.metadata ?= {}
@@ -65,7 +65,7 @@ module.exports = function() {
         };
       },
       'nikita:session:result': {
-        before: '@nikitajs/engine/src/plugins/history',
+        before: '@nikitajs/engine/lib/plugins/history',
         handler: function({action, error, output}) {
           var inherit;
           inherit = function(output) {

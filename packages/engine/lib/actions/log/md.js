@@ -15,7 +15,7 @@ schema = {
   type: 'object',
   allOf: [
     {
-      $ref: 'module://@nikitajs/engine/src/actions/log/fs',
+      $ref: 'module://@nikitajs/engine/lib/actions/log/fs',
       properties: {
         divider: {
           type: 'string',

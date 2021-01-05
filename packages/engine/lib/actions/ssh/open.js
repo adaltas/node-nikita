@@ -148,7 +148,7 @@ and create the SSH connection. It is only used if \`password\` and
 \`private_key\` are not provided.`
     },
     'root': {
-      $ref: 'module://@nikitajs/engine/src/actions/ssh/root',
+      $ref: 'module://@nikitajs/engine/lib/actions/ssh/root',
       description: `Configuration passed to \`nikita.ssh.root\` to enable password-less root
 login.`
     },

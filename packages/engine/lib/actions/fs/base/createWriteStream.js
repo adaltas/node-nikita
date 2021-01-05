@@ -18,8 +18,8 @@
 var errors, fs, handler, on_action, schema, utils;
 
 on_action = {
-  // after: '@nikitajs/engine/src/plugins/tools_find'
-  before: '@nikitajs/engine/src/metadata/tmpdir',
+  // after: '@nikitajs/engine/lib/plugins/tools_find'
+  before: '@nikitajs/engine/lib/metadata/tmpdir',
   handler: async function({
       config,
       metadata,

@@ -40,7 +40,7 @@ validate = function(action, args) {
 
 module.exports = function(action) {
   return {
-    module: '@nikitajs/engine/src/plugins/tools_find',
+    module: '@nikitajs/engine/lib/plugins/tools_find',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         return async function() {

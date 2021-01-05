@@ -5,7 +5,7 @@ utils = require('../utils');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/depth',
+    module: '@nikitajs/engine/lib/metadata/depth',
     hooks: {
       'nikita:session:normalize': function(action) {
         return action.metadata.depth = action.parent ? action.parent.metadata.depth + 1 : 0;

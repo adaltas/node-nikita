@@ -9,11 +9,11 @@ exec = require('ssh2-exec');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/conditions_os',
-    require: ['@nikitajs/engine/src/plugins/conditions'],
+    module: '@nikitajs/engine/lib/plugins/conditions_os',
+    require: ['@nikitajs/engine/lib/plugins/conditions'],
     hooks: {
       'nikita:session:normalize': {
-        after: '@nikitajs/engine/src/plugins/conditions',
+        after: '@nikitajs/engine/lib/plugins/conditions',
         handler: function(action, handler) {
           return async function() {
             var condition, config, i, j, len, len1, ref;
@@ -56,8 +56,8 @@ module.exports = function() {
         }
       },
       'nikita:session:action': {
-        after: '@nikitajs/engine/src/plugins/conditions',
-        before: '@nikitajs/engine/src/metadata/disabled',
+        after: '@nikitajs/engine/lib/plugins/conditions',
+        before: '@nikitajs/engine/lib/metadata/disabled',
         handler: async function(action) {
           var final_run, k, local_run, ref, v;
           final_run = true;

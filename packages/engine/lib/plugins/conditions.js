@@ -5,8 +5,8 @@ session = require('../session');
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/plugins/conditions',
-    require: ['@nikitajs/engine/src/metadata/raw', '@nikitajs/engine/src/metadata/disabled'],
+    module: '@nikitajs/engine/lib/plugins/conditions',
+    require: ['@nikitajs/engine/lib/metadata/raw', '@nikitajs/engine/lib/metadata/disabled'],
     hooks: {
       'nikita:session:normalize': function(action, handler) {
         var conditions, property, value;
@@ -32,7 +32,7 @@ module.exports = function() {
         };
       },
       'nikita:session:action': {
-        before: '@nikitajs/engine/src/metadata/disabled',
+        before: '@nikitajs/engine/lib/metadata/disabled',
         handler: async function(action) {
           var final_run, k, local_run, ref, v;
           final_run = true;

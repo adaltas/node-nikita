@@ -7,7 +7,7 @@ var uuid;
 
 module.exports = function() {
   return {
-    module: '@nikitajs/engine/src/metadata/uuid',
+    module: '@nikitajs/engine/lib/metadata/uuid',
     hooks: {
       'nikita:session:action': {
         handler: function(action) {

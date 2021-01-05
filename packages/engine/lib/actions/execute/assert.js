@@ -73,7 +73,7 @@ schema = {
       description: `The error message to throw if assert failed.`
     },
     'not': {
-      $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
+      $ref: 'module://@nikitajs/engine/lib/actions/assert#/properties/not'
     },
     'trim': {
       type: 'boolean',
