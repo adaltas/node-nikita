@@ -12,5 +12,3 @@ services:
       - ../../../../:/nikita
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/service/env/ubuntu/test.coffee
-      DEBUG: 1
-      # DEBUG: 0

@@ -3,25 +3,25 @@
 CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
 npx coffee $CWD/apm/start.coffee
-lxc exec tools-apm bash <<EOF
+lxc exec nikita-tools-apm bash <<EOF
 cd /nikita/packages/tools
 npx mocha 'test/**/*.coffee'
 EOF
 
 npx coffee $CWD/iptables/start.coffee
-lxc exec tools-iptables bash <<EOF
+lxc exec nikita-tools-iptables bash <<EOF
 cd /nikita/packages/tools
 npx mocha 'test/**/*.coffee'
 EOF
 
 npx coffee $CWD/npm/start.coffee
-lxc exec tools-npm bash <<EOF
+lxc exec nikita-tools-npm bash <<EOF
 cd /nikita/packages/tools
 npx mocha 'test/**/*.coffee'
 EOF
 
 npx coffee $CWD/rubygems.lxd/start.coffee
-lxc exec tools-rubygems bash <<EOF
+lxc exec nikita-tools-rubygems bash <<EOF
 cd /nikita/packages/tools
 npx mocha 'test/**/*.coffee'
 EOF

@@ -16,7 +16,7 @@ nikita
 .lxd.cluster
   metadata: header: 'Container'
   containers:
-    'tools-apm':
+    'nikita-tools-apm':
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/apm/test.coffee'

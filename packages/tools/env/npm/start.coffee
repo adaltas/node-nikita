@@ -10,7 +10,7 @@ nikita
 .lxd.cluster
   metadata: header: 'Container'
   containers:
-    'tools-npm':
+    'nikita-tools-npm':
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
