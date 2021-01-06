@@ -14,6 +14,7 @@ describe 'docker.pull', ->
     , ->
       @docker.rmi
         image: 'alpine'
+        force: true
       {status} = await @docker.pull
         tag: 'alpine'
       status.should.be.true()
