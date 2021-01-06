@@ -66,7 +66,8 @@ describe 'service config startup', ->
       nikita
         ssh: ssh
       , ->
-        {status} = await @execute 'command -v chkconfig', code_skipped: 1
+        # Note, `-v` flag differ between bash (exit code 1) and sh (exit code 127)
+        {status} = await @execute 'command -v chkconfig', code_skipped: 127, metadata: relax: true
         return unless status
         @service.remove
           name: service.name
