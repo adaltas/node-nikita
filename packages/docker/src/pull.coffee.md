@@ -59,9 +59,6 @@ console.info(`Image was pulled: ${status}`)
       version = config.version or config.tag.split(':')[1] or 'latest'
       delete config.version # present in misc.docker.config, will probably disappear at some point
       throw Error 'Missing Tag Name' unless config.tag?
-      # rm is false by default only if config.service is true
-      command = 'pull'
-      command += if config.all then  " -a #{config.tag}" else " #{config.tag}:#{version}"
       {status} = await @docker.tools.execute
         command: [
           'images'
@@ -71,7 +68,12 @@ console.info(`Image was pulled: ${status}`)
         code_skipped: 1
       await @docker.tools.execute
         unless: status
-        command: command
+        command: [
+          'pull'
+          if config.all
+          then "-a #{config.tag}"
+          else "#{config.tag}:#{version}"
+        ].join ' '
 
 ## Exports
 

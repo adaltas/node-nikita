@@ -59,7 +59,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, status, version;
+  var status, version;
   log({
     message: "Entering Docker pull",
     level: 'DEBUG',
@@ -71,16 +71,13 @@ handler = async function({
   if (config.tag == null) {
     throw Error('Missing Tag Name');
   }
-  // rm is false by default only if config.service is true
-  command = 'pull';
-  command += config.all ? ` -a ${config.tag}` : ` ${config.tag}:${version}`;
   ({status} = (await this.docker.tools.execute({
     command: ['images', `| grep '${config.tag}'`, !config.all ? `| grep '${version}'` : void 0].join(' '),
     code_skipped: 1
   })));
   return (await this.docker.tools.execute({
     unless: status,
-    command: command
+    command: ['pull', config.all ? `-a ${config.tag}` : `${config.tag}:${version}`].join(' ')
   }));
 };
 
