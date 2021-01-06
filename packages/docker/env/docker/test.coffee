@@ -6,6 +6,7 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
-  ssh:
-    host: 'localhost'
-    username: 'root'
+  ssh: [
+    null
+    { ssh: host: 'localhost', username: 'root' }
+  ]
