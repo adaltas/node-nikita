@@ -8,10 +8,6 @@ return unless tags.docker
 describe 'docker.compose', ->
 
   @timeout 90000
-  
-  it 'cache image to avoid timeout later', ({ssh})->
-    @timeout 0
-    nikita(ssh: ssh).docker.pull tag: 'httpd'
 
   they 'up from content', ({ssh}) ->
     # Note, this fail the first time because the container take some time
