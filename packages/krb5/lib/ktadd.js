@@ -21,7 +21,7 @@ schema = {
   type: 'object',
   properties: {
     'admin': {
-      $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
+      $ref: 'module://@nikitajs/krb5/lib/execute#/properties/admin'
     },
     'gid': {
       $ref: 'module://@nikitajs/file/src/index#/properties/gid'

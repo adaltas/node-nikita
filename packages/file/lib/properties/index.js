@@ -24,10 +24,10 @@ schema = {
   type: 'object',
   properties: {
     'backup': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/backup'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
     },
     'comment': {
-      $ref: 'module://@nikitajs/file/src/properties/read#/properties/comment'
+      $ref: 'module://@nikitajs/file/lib/properties/read#/properties/comment'
     },
     'content': {
       type: 'object',
@@ -40,11 +40,11 @@ schema = {
       description: `Merges content properties with target file.`
     },
     'local': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/local'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'separator': {
       default: '=',
-      $ref: 'module://@nikitajs/file/src/properties/read#/properties/separator'
+      $ref: 'module://@nikitajs/file/lib/properties/read#/properties/separator'
     },
     'sort': {
       type: 'boolean',
@@ -52,10 +52,10 @@ schema = {
       description: `Sort the properties before writting them.`
     },
     'target': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/target'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/target'
     },
     'trim': {
-      $ref: 'module://@nikitajs/file/src/properties/read#/properties/trim'
+      $ref: 'module://@nikitajs/file/lib/properties/read#/properties/trim'
     }
   },
   required: ['target']

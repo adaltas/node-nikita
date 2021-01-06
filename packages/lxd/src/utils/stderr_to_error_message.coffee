@@ -1,5 +1,5 @@
 
-utils = require '@nikitajs/engine/src/utils'
+utils = require '@nikitajs/engine/lib/utils'
 
 module.exports = (err, stderr) ->
   stderr = stderr.trim()

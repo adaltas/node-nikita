@@ -29,7 +29,7 @@ console.info(`Service was updated: ${status}`)
           Name of the service to add.
           """
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['connection', 'principal']
 

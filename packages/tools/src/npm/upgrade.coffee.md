@@ -20,7 +20,7 @@ console.info(`Packages were upgraded: ${status}`)
       type: 'object'
       properties:
         'cwd':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/cwd'
         'global':
           type: 'boolean'
           default: false
@@ -28,7 +28,7 @@ console.info(`Packages were upgraded: ${status}`)
           Upgrades global packages.
           """
         'sudo':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
       if: properties: 'global': const: false
       then: required: ['cwd']
 

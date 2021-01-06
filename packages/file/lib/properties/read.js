@@ -27,7 +27,7 @@ schema = {
       description: `Preserve comments, key is the comment while value is "null".`
     },
     'encoding': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/encoding',
+      $ref: 'module://@nikitajs/file/lib/index#/properties/encoding',
       default: 'utf8'
     },
     'separator': {

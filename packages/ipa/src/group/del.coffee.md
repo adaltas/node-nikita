@@ -28,7 +28,7 @@ console.info(`Group was deleted: ${status}`)
           Name of the group to delete.
           """
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['cn', 'connection']
 

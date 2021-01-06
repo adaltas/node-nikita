@@ -1,7 +1,7 @@
 
-# registration of `nikita.krb5` actions
+# Registration of `nikita.krb5` actions
 
-registry = require '@nikitajs/engine/src/registry'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   krb5:

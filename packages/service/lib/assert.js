@@ -21,17 +21,17 @@ schema = {
   type: 'object',
   properties: {
     'arch_chroot': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/arch_chroot'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/arch_chroot'
     },
     'installed': {
       type: 'boolean',
       description: `Assert the package is installed.`
     },
     'name': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
     },
     'rootdir': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/rootdir'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/rootdir'
     },
     'srv_name': {
       type: 'string',

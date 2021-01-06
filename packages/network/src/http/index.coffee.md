@@ -50,7 +50,7 @@ Perform an HTTP request. It uses internaly the curl command.
           Fail silently (no output at all) on HTTP errors.
           """
         gid:
-          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
           description: """
           Group name or id who owns the target file; only apply if `target` is
           provided.
@@ -82,7 +82,7 @@ Perform an HTTP request. It uses internaly the curl command.
           Specify request command (HTTP method) to use.
           """
         mode:
-          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
           description: """
           Permissions of the target. If specified, nikita will chmod after
           download.
@@ -126,7 +126,7 @@ Perform an HTTP request. It uses internaly the curl command.
           Write to file instead of stdout; mapped to the curl `output` argument.
           """
         uid:
-          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
           description: """
           User name or id who owns the target file; only apply if `target` is
           provided.

@@ -22,7 +22,7 @@ schema = {
   type: 'object',
   properties: {
     'admin': {
-      $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
+      $ref: 'module://@nikitajs/krb5/lib/execute#/properties/admin'
     },
     'enctypes': {
       type: 'array',
@@ -33,14 +33,14 @@ schema = {
       description: `The enctypes used by krb5_server.`
     },
     'gid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'keytab': {
       type: 'string',
       description: `Path to the file storing key entries.`
     },
     'mode': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/mode'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
     },
     'password': {
       type: 'string',
@@ -56,7 +56,7 @@ provided.`
       description: `The realm the principal belongs to.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   required: ['keytab', 'password', 'principal']

@@ -1,8 +1,8 @@
 
-# registration of `nikita.ipa` actions
+# Registration of `nikita.ipa` actions
 
-require '@nikitajs/network/src/register'
-registry = require '@nikitajs/engine/src/registry'
+require '@nikitajs/network/lib/register'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   ipa:

@@ -31,7 +31,7 @@ console.info(stdout)
           The command to execute.
           """
         'trap':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/trap'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
       required: ['container', 'command']
 
 ## Handler

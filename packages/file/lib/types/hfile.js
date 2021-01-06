@@ -41,32 +41,32 @@ configuration file to get initial value from, optional.`
     },
     // File configuration properties
     'backup': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/backup'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
     },
     'backup_mode': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/backup_mode'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/backup_mode'
     },
     'eof': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/eof'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/eof'
     },
     'encoding': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/encoding',
+      $ref: 'module://@nikitajs/file/lib/index#/properties/encoding',
       default: 'utf8'
     },
     'uid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     },
     'gid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'mode': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/mode'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
     },
     'local': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/local'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'unlink': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/unlink'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/unlink'
     }
   }
 };

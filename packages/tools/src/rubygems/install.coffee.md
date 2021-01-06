@@ -56,7 +56,7 @@ console.info(`Gem installed: ${status}`)
           Pass flags to the compiler.
           """
         'bash':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/bash'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/bash'
         'gem_bin':
           type: 'string'
           default: 'gem'

@@ -27,7 +27,7 @@ schema = {
     }
   },
   required: ['container', 'image'],
-  $ref: 'module://@nikitajs/docker/src/run#/properties'
+  $ref: 'module://@nikitajs/docker/lib/run#/properties'
 };
 
 // ## Handler

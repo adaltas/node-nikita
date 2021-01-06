@@ -49,7 +49,7 @@ inserted if not yet present and if \`data\` is not a string.`
       description: `Fail silently (no output at all) on HTTP errors.`
     },
     gid: {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid',
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid',
       description: `Group name or id who owns the target file; only apply if \`target\` is
 provided.`
     },
@@ -76,7 +76,7 @@ this option will make curl redo the request on the new place.`
       description: `Specify request command (HTTP method) to use.`
     },
     mode: {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode',
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode',
       description: `Permissions of the target. If specified, nikita will chmod after
 download.`
     },
@@ -112,7 +112,7 @@ is assumed at port 1080. See curl(1) man page.`
       description: `Write to file instead of stdout; mapped to the curl \`output\` argument.`
     },
     uid: {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid',
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid',
       description: `User name or id who owns the target file; only apply if \`target\` is
 provided.`
     },

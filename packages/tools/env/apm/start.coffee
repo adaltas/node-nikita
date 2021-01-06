@@ -1,8 +1,8 @@
 
 path = require 'path'
-nikita = require '@nikitajs/engine/src'
-require '@nikitajs/lxd/src/register'
-require '@nikitajs/tools/src/register'
+nikita = require '@nikitajs/engine/lib'
+require '@nikitajs/lxd/lib/register'
+require '@nikitajs/tools/lib/register'
 
 # Note:
 # Dec 4th, 2020: upgrading Atom to 1.52.0 or 1.53.0 on centos7 20201203_07:08

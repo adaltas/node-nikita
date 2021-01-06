@@ -1,8 +1,8 @@
 
-# registration of `nikita.service` actions
+# Registration of `nikita.service` actions
 
-require '@nikitajs/file/src/register'
-registry = require '@nikitajs/engine/src/registry'
+require '@nikitajs/file/lib/register'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   service:

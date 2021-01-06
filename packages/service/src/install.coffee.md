@@ -31,7 +31,7 @@ console.info(`Package installed: ${status}`)
       type: 'object'
       properties:
         'arch_chroot':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/arch_chroot'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/arch_chroot'
         'cache':
           type: 'boolean'
           description: """
@@ -43,7 +43,7 @@ console.info(`Package installed: ${status}`)
           Run the yum command entirely from system cache, don't update cache.
           """
         'code_skipped':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/code_skipped'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/code_skipped'
           description: """
           Error code to skip when using nikita.service.
           """
@@ -72,7 +72,7 @@ console.info(`Package installed: ${status}`)
           anything else (default), no caching will take place.
           """
         'rootdir':
-          $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/rootdir'
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/rootdir'
         'pacman_flags':
           type: 'array'
           default: []
@@ -224,4 +224,4 @@ console.info(`Package installed: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require '@nikitajs/engine/lib/utils'

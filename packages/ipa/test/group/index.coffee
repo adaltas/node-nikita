@@ -1,6 +1,6 @@
 
 {merge} = require 'mixme'
-nikita = require '@nikitajs/engine/src'
+nikita = require '@nikitajs/engine/lib'
 {tags, ssh, ipa} = require '../test'
 they = require('ssh2-they').configure ssh
 

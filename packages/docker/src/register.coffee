@@ -1,9 +1,9 @@
 
-# registration of `nikita.docker` actions
+# Registration of `nikita.docker` actions
 
-require '@nikitajs/file/src/register'
-# require '@nikitajs/network/src/register'
-registry = require '@nikitajs/engine/src/registry'
+require '@nikitajs/file/lib/register'
+# require '@nikitajs/network/lib/register'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   docker:

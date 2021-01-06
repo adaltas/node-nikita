@@ -68,7 +68,7 @@ schema = {
       description: `One or more objects containing iptables rule definitions.`
     },
     'sudo': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
     }
   },
   definitions: {

@@ -69,18 +69,18 @@ schema = {
   type: 'object',
   properties: {
     'host': {
-      $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/host',
+      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/host',
       description: `Host of the targeted server, could be a FQDN, a hostname or an IP.`
     },
     'port': {
-      $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/port',
+      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/port',
       description: `Port of the targeted server.`
     },
     'server': {
-      $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/server'
+      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/server'
     },
     'not': {
-      $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
+      $ref: 'module://@nikitajs/engine/lib/actions/assert#/properties/not'
     }
   }
 };

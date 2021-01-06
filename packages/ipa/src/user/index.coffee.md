@@ -63,7 +63,7 @@ console.info(`User was updated: ${status}`)
           """
         'force_userpassword': type: 'boolean'
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['attributes', 'connection', 'uid']
 

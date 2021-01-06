@@ -20,19 +20,19 @@ admin_username is provided.`
 admin_password is provided.`
     },
     'admin_username': {
-      $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
+      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_username'
     },
     'admin_password': {
-      $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
+      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_password'
     },
     'engine': {
-      $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
     },
     'host': {
-      $ref: 'module://@nikitajs/db/src/query#/properties/host'
+      $ref: 'module://@nikitajs/db/lib/query#/properties/host'
     },
     'port': {
-      $ref: 'module://@nikitajs/db/src/query#/properties/port'
+      $ref: 'module://@nikitajs/db/lib/query#/properties/port'
     }
   },
   required: ['username', 'password', 'admin_username', 'admin_password', 'engine', 'host']

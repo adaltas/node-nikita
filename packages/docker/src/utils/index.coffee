@@ -1,4 +1,4 @@
-utils = require "@nikitajs/engine/lib/utils"
+utils = require '@nikitajs/engine/lib/utils'
 
 module.exports = {
   ...utils

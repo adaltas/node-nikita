@@ -25,7 +25,7 @@ schema = {
   type: 'object',
   properties: {
     'admin': {
-      $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
+      $ref: 'module://@nikitajs/krb5/lib/execute#/properties/admin'
     },
     'keytab': {
       type: 'string',

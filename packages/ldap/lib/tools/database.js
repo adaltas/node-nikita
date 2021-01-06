@@ -24,7 +24,7 @@ schema = {
   type: 'object',
   allOf: [
     {
-      $ref: 'module://@nikitajs/ldap/src/search#/properties'
+      $ref: 'module://@nikitajs/ldap/lib/search#/properties'
     },
     {
       properties: {

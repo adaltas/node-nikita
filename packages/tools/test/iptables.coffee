@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/src'
+nikita = require '@nikitajs/engine/lib'
 require '@nikitajs/service/src'
 {tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh

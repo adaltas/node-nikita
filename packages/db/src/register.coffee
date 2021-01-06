@@ -1,7 +1,7 @@
 
-# registration of `nikita.db` actions
+# Registration of `nikita.db` actions
 
-registry = require '@nikitajs/engine/src/registry'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   db:

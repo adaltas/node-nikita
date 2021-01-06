@@ -101,4 +101,4 @@ under a "Time" key so that the user doesn't have to do it manually.
 
 ## Dependencies
 
-    path = require "path"
+    path = require 'path'

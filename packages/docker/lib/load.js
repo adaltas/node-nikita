@@ -45,13 +45,13 @@ schema = {
 exist, not native to docker but implemented to get better performance.`
     },
     'boot2docker': {
-      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
     },
     'compose': {
-      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
     },
     'machine': {
-      $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   }
 };

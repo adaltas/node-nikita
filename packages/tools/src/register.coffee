@@ -1,9 +1,9 @@
 
-# registration of `nikita.tools` actions
+# Registration of `nikita.tools` actions
 
-require '@nikitajs/file/src/register'
-require '@nikitajs/service/src/register'
-registry = require '@nikitajs/engine/src/registry'
+require '@nikitajs/file/lib/register'
+require '@nikitajs/service/lib/register'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   tools:

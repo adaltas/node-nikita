@@ -1,8 +1,8 @@
 
 path = require 'path'
-nikita = require '@nikitajs/engine/src'
-require '@nikitajs/lxd/src/register'
-require '@nikitajs/tools/src/register'
+nikita = require '@nikitajs/engine/lib'
+require '@nikitajs/lxd/lib/register'
+require '@nikitajs/tools/lib/register'
 
 nikita
 .log.cli pad: host: 20, header: 60

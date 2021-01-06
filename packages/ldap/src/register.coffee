@@ -1,7 +1,7 @@
 
-# registration of `nikita.ldap` actions
+# Registration of `nikita.ldap` actions
 
-registry = require '@nikitajs/engine/src/registry'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   ldap:

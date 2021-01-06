@@ -1,7 +1,7 @@
 
-# registration of `nikita.network` actions
+# Registration of `nikita.network` actions
 
-registry = require '@nikitajs/engine/src/registry'
+registry = require '@nikitajs/engine/lib/registry'
 
 module.exports =
   network:

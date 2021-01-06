@@ -34,7 +34,7 @@ schema = {
   type: 'object',
   properties: {
     'name': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
     }
   },
   required: ['name']

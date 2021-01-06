@@ -80,8 +80,8 @@
     "directory": "packages/docker"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
-    "pretest": "yarn run build",
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/docker\\\/src/@nikitajs\\\/docker\\\/lib/g'",
+    "pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'",
     "testall": "mocha 'test/**/*.coffee' && env/run.sh"
   }

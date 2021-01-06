@@ -28,7 +28,7 @@ console.info(`Group is ${result.cn[0]}`)
           Name of the group to show.
           """
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['cn', 'connection']
 

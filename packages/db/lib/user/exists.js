@@ -27,7 +27,7 @@ var connection_config, handler, schema;
 schema = {
   type: 'object',
   properties: {
-    // $ref: 'module://@nikitajs/db/src/query'
+    // $ref: 'module://@nikitajs/db/lib/query'
     'username': {
       type: 'string',
       description: `Name of the user to check for existance.`

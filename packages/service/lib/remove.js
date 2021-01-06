@@ -39,10 +39,10 @@ schema = {
 packages.`
     },
     'cacheonly': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/cacheonly'
     },
     'name': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
     }
   },
   // 'ssh':  # not supported
@@ -175,4 +175,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/src/utils');
+utils = require('@nikitajs/engine/lib/utils');

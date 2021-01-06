@@ -34,7 +34,7 @@ console.info(`Group was updated: ${status}`)
           Attributes associated with the group to add or modify.
           """
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['cn', 'connection']
 

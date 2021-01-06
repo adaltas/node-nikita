@@ -201,4 +201,4 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/src/utils'
+    utils = require '@nikitajs/engine/lib/utils'

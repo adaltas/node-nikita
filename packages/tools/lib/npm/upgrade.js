@@ -21,7 +21,7 @@ schema = {
   type: 'object',
   properties: {
     'cwd': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/cwd'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/cwd'
     },
     'global': {
       type: 'boolean',
@@ -29,7 +29,7 @@ schema = {
       description: `Upgrades global packages.`
     },
     'sudo': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/sudo'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
     }
   },
   if: {

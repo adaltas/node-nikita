@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/src'
+nikita = require '@nikitajs/engine/lib'
 require '@nikitajs/lxd/src/register'
 path = require 'path'
 

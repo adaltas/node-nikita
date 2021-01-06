@@ -29,14 +29,14 @@ console.info(`Keytab was created or modified: ${status}`)
           The enctypes used by krb5_server.
           """
         'gid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+          $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
         'keytab':
           type: 'string'
           description: """
           Path to the file storing key entries.
           """
         'mode':
-          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
+          $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
         'password':
           type: 'string'
           description: """
@@ -54,7 +54,7 @@ console.info(`Keytab was created or modified: ${status}`)
           The realm the principal belongs to.
           """
         'uid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+          $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
       required: ['keytab', 'password', 'principal']
 
 ## Handler

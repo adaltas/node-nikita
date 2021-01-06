@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/src'
+nikita = require '@nikitajs/engine/lib'
 {tags, ssh, docker} = require './test'
 they = require('ssh2-they').configure ssh
 
@@ -7,8 +7,8 @@ return unless tags.docker
 
 describe 'docker.load', ->
 
-# timestamp ensures that hash of the built image will be unique and
-# image checksum is also unique
+  # timestamp ensures that hash of the built image will be unique and
+  # image checksum is also unique
 
   they 'loads simple image', ({ssh}) ->
     @timeout 30000

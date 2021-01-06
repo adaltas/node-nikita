@@ -62,7 +62,7 @@ to  UTC.`
     compress: {
       oneOf: [
         {
-          $ref: 'module://@nikitajs/tools/src/compress#/properties/format'
+          $ref: 'module://@nikitajs/tools/lib/compress#/properties/format'
         },
         {
           type: 'boolean'

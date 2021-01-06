@@ -58,34 +58,34 @@ schema = {
   type: 'object',
   properties: {
     'content': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/content'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/content'
     },
     'context': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/context'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/context'
     },
     'engine': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/engine'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
     },
     'mode': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
     },
     'local': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/local'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'remove_empty_lines': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/remove_empty_lines'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/remove_empty_lines'
     },
     'source': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/source'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/source'
     },
     'target': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/target'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/target'
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
     }
   },
   required: ['target', 'context']

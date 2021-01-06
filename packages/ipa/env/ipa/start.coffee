@@ -1,8 +1,8 @@
 
 path = require 'path'
-nikita = require '@nikitajs/engine/src'
-require '@nikitajs/lxd/src/register'
-require '@nikitajs/tools/src/register'
+nikita = require '@nikitajs/engine/lib'
+require '@nikitajs/lxd/lib/register'
+require '@nikitajs/tools/lib/register'
 
 # Note:
 # Jan 20th, 2020: upgrading ubuntu to 19.10

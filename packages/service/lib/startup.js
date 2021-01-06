@@ -35,13 +35,13 @@ schema = {
   type: 'object',
   properties: {
     'arch_chroot': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/arch_chroot'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/arch_chroot'
     },
     'name': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
     },
     'rootdir': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/rootdir'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/rootdir'
     },
     'startup': {
       type: ['boolean', 'string'],

@@ -54,26 +54,26 @@ schema = {
   type: 'object',
   properties: {
     'cache': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/cacheonly'
     },
     'cacheonly': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/cacheonly'
     },
     'chk_name': {
       type: 'string',
       description: `Name used by the chkconfig utility, default to "srv_name" and "name".`
     },
     'installed': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/installed'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/installed'
     },
     'name': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/name'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
     },
     'outdated': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/outdated'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/outdated'
     },
     'pacman_flags': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/pacman_flags'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/pacman_flags'
     },
     'srv_name': {
       type: 'string',
@@ -93,7 +93,7 @@ use an empty string to not define any run level.`
       description: `Ensure the service in the requested state.`
     },
     'yaourt_flags': {
-      $ref: 'module://@nikitajs/service/src/install#/properties/yaourt_flags'
+      $ref: 'module://@nikitajs/service/lib/install#/properties/yaourt_flags'
     },
     'yum_name': {
       type: 'string',

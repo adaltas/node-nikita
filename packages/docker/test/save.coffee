@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/src'
+nikita = require '@nikitajs/engine/lib'
 test = require './test'
 they = require 'ssh2-they'
 {tags, ssh, docker} = require './test'

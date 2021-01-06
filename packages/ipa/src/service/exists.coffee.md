@@ -28,7 +28,7 @@ console.info(`Service exists: ${status}`)
           Name of the service to check for existence.
           """
         'connection':
-          $ref: 'module://@nikitajs/network/src/http'
+          $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['connection', 'principal']
 

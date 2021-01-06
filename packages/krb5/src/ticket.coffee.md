@@ -19,7 +19,7 @@ console.info(`ticket was renewed: ${status}`)
       type: 'object'
       properties:
         'gid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+          $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
         'principal':
           type: 'string'
           description: """
@@ -36,7 +36,7 @@ console.info(`ticket was renewed: ${status}`)
           Path to the file storing key entries.
           """
         'uid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+          $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
       oneOf: [
         {required: ['keytab']}
         {required: ['password']}

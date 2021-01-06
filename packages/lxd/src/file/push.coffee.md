@@ -28,7 +28,7 @@ console.info(`File was pushed: ${status}`)
       properties:
         'algo':
           default: 'md5'
-          $ref: 'module://@nikitajs/engine/src/actions/fs/hash#/properties/algo'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/hash#/properties/algo'
         'container':
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'content':

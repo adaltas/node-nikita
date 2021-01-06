@@ -48,7 +48,7 @@ Assert a TCP or HTTP server is listening.
         'server':
           $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/server'
         'not':
-          $ref: 'module://@nikitajs/engine/src/actions/assert#/properties/not'
+          $ref: 'module://@nikitajs/engine/lib/actions/assert#/properties/not'
 
 
 ## Handler

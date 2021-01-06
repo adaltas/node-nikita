@@ -18,16 +18,16 @@ schema = {
   type: 'object',
   properties: {
     'backup': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/backup'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
     },
     'context': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/context',
+      $ref: 'module://@nikitajs/file/lib/index#/properties/context',
       default: {},
       description: `The context object used to render the scripts file; templating is
 disabled if no context is provided.`
     },
     'engine': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/engine',
+      $ref: 'module://@nikitajs/file/lib/index#/properties/engine',
       default: 'nunjunks'
     },
     'filters': {
@@ -35,7 +35,7 @@ disabled if no context is provided.`
       description: `Filter function to extend the nunjucks engine.`
     },
     'local': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/local'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'name': {
       type: 'string',
@@ -48,24 +48,24 @@ missing.`
     //   Remove empty lines.
     //   """
     'source': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/source'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/source'
     },
     'target': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/target',
+      $ref: 'module://@nikitajs/file/lib/index#/properties/target',
       description: `The destination file. \`/etc/init.d/crond\` or
 \`/etc/systemd/system/crond.service\` for example. If no provided,
 nikita put it on the default folder based on the service daemon
 provider,the OS and use the source filename as the name.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
     },
     'mode': {
       default: '0o755',
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
     }
   },
   required: ['source']

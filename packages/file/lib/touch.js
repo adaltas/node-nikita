@@ -38,10 +38,10 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
     },
     'mode': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
     },
     'target': {
       oneOf: [
@@ -56,7 +56,7 @@ schema = {
 path.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
     }
   },
   required: ['target']

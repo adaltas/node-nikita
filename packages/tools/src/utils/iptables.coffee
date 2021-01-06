@@ -1,5 +1,5 @@
 
-utils = require '@nikitajs/engine/src/utils'
+utils = require '@nikitajs/engine/lib/utils'
 jsesc = require 'jsesc'
 {merge} = require 'mixme'
 

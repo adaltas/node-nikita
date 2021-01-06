@@ -20,7 +20,7 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/gid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'principal': {
       type: 'string',
@@ -35,7 +35,7 @@ schema = {
       description: `Path to the file storing key entries.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/uid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   oneOf: [
