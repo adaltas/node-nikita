@@ -66,7 +66,7 @@ describe 'service config startup', ->
       nikita
         ssh: ssh
       , ->
-        {status} = await @execute 'which chkconfig', code_skipped: 1
+        {status} = await @execute 'command -v chkconfig', code_skipped: 1
         return unless status
         @service.remove
           name: service.name
