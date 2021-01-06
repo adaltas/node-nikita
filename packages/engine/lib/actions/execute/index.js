@@ -93,6 +93,11 @@ on_action = {
       }) {
       return env;
     })));
+    if (!(ssh || Object.keys(env).length)) {
+      if (config.env == null) {
+        config.env = process.env;
+      }
+    }
     env_export = config.env_export != null ? config.env_export : !!ssh;
     if (sudo || config.bash || config.arch_chroot || (Object.keys(env).length && env_export)) {
       metadata.tmpdir = true;

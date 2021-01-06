@@ -83,6 +83,7 @@ console.info(stdout)
       handler: ({config, metadata, ssh, tools: {find, walk}}) ->
         sudo = await find ({config: {sudo}}) -> sudo
         env = merge {}, ...await walk ({config: {env}}) -> env
+        config.env ?= process.env unless ssh or Object.keys(env).length
         env_export = if config.env_export? then config.env_export else !!ssh
         if sudo or config.bash or config.arch_chroot or (Object.keys(env).length and env_export)
           metadata.tmpdir = true
@@ -359,7 +360,9 @@ console.info(stdout)
           command: config.command_original
           # env_export_hash: env_export_hash
         return resolve result if config.dry
-        child = exec config, ssh: ssh, env: env
+        child = exec config,
+          ssh: ssh
+          env: env
         config.stdin.pipe child.stdin if config.stdin
         child.stdout.pipe config.stdout, end: false if config.stdout
         child.stderr.pipe config.stderr, end: false if config.stderr

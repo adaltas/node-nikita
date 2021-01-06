@@ -41,3 +41,17 @@ describe 'actions.execute.config.env', ->
       {stdout} = await @execute
         command: 'env'
       stdout.split('\n').includes('LANG=tv').should.be.true()
+  
+  they 'default value', ({ssh}) ->
+    nikita
+      ssh: ssh
+    , ->
+      process.env['NIKITA_EXECUTE_ENV'] = '1'
+      {stdout} = await @execute
+        command: 'env'
+      unless ssh # In local mode, default to process.env
+        stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.true()
+      else # But not in remote mode
+        stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
+          
+    
