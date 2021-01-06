@@ -70,7 +70,7 @@ handler = async function({config}) {
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
       command_password_change = command(config, `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`);
   }
-  return (await execute({
+  return (await this.execute({
     command: `signal=3
 if ${command_user_exists}; then
   echo '[INFO] User already exists'

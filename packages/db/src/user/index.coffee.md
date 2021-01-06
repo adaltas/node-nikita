@@ -55,7 +55,7 @@ Create a user for the destination database.
           command_user_create = command config, "CREATE USER #{config.username} WITH PASSWORD '#{config.password}';"
           command_password_is_invalid = command(config, admin_username: config.username, admin_password: config.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
           command_password_change = command config, "ALTER USER #{config.username} WITH PASSWORD '#{config.password}';"
-      await execute
+      await @execute
         command: """
         signal=3
         if #{command_user_exists}; then
