@@ -12,3 +12,15 @@ if not process.env['NIKITA_TEST_MODULE'] and (
 config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
 # Export configuration
 module.exports = config
+
+nikita = require '@nikitajs/engine/lib'
+they = require('ssh2-they').configure config.ssh
+
+they 'cache to avoid timeout later', ({ssh}) ->
+  @timeout 0
+  nikita(ssh: ssh).execute '''
+  if command -v yum; then
+    yum update -y
+    yum check-update -q
+  fi
+  '''
