@@ -115,4 +115,4 @@ module.exports = {
 };
 
 // ## Dependencies
-path = require("path");
+path = require('path');

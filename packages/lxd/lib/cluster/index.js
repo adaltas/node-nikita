@@ -68,19 +68,19 @@ config.`,
           type: 'object',
           properties: {
             'properties': {
-              $ref: 'module://@nikitajs/lxd/src/config/set#/properties/properties'
+              $ref: 'module://@nikitajs/lxd/lib/config/set#/properties/properties'
             },
             'disk': {
               type: 'object',
               default: {},
               patternProperties: {
                 '': { // Device name of disk
-                  $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/disk/properties/properties'
+                  $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties'
                 }
               }
             },
             'image': {
-              $ref: 'module://@nikitajs/lxd/src/init#/properties/image'
+              $ref: 'module://@nikitajs/lxd/lib/init#/properties/image'
             },
             'nic': {
               type: 'object',
@@ -99,7 +99,7 @@ config.`,
                       format: 'ipv4'
                     }
                   },
-                  $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/nic/properties/properties'
+                  $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties'
                 }
               }
             },
@@ -108,7 +108,7 @@ config.`,
               default: {},
               patternProperties: {
                 '': {
-                  $ref: 'module://@nikitajs/lxd/src/config/device#/properties/properties'
+                  $ref: 'module://@nikitajs/lxd/lib/config/device#/properties/properties'
                 }
               }
             },
@@ -154,7 +154,7 @@ authorized_keys file.`
       default: {},
       patternProperties: {
         '': {
-          $ref: 'module://@nikitajs/lxd/src/network#/properties/properties'
+          $ref: 'module://@nikitajs/lxd/lib/network#/properties/properties'
         }
       }
     },

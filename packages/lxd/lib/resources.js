@@ -28,7 +28,7 @@ schema = {
   type: 'object',
   properties: {
     'container': {
-      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
     },
     'device': {
       enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy'],

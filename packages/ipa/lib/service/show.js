@@ -37,7 +37,7 @@ schema = {
       description: `Name of the service to show.`
     },
     'connection': {
-      $ref: 'module://@nikitajs/network/src/http',
+      $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }
   },

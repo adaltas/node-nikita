@@ -26,7 +26,7 @@ schema = {
   type: 'object',
   properties: {
     'connection': {
-      $ref: 'module://@nikitajs/network/src/http',
+      $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }
   },

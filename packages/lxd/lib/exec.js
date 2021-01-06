@@ -25,14 +25,14 @@ schema = {
   type: 'object',
   properties: {
     'container': {
-      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
     },
     'command': {
       type: 'string',
       description: `The command to execute.`
     },
     'trap': {
-      $ref: 'module://@nikitajs/engine/src/actions/execute#/properties/trap'
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
     }
   },
   required: ['container', 'command']

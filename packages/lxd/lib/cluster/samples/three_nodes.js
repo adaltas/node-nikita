@@ -3,11 +3,11 @@ var nikita, path;
 
 path = require('path');
 
-nikita = require('@nikitajs/engine/src');
+nikita = require('@nikitajs/engine/lib');
 
-require('@nikitajs/lxd/src/register');
+require('@nikitajs/lxd/lib/register');
 
-require('@nikitajs/tools/src/register');
+require('@nikitajs/tools/lib/register');
 
 /*
 

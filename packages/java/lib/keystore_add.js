@@ -105,7 +105,7 @@ the host, only apply with remote actions over SSH.`
       description: `Path to OpenSSl command line tool.`
     },
     'parent': {
-      $ref: 'module://@nikitajs/engine/src/actions/fs/mkdir#/properties/parent'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/mkdir#/properties/parent'
     },
     'keystore': {
       type: 'string',

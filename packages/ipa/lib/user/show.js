@@ -57,7 +57,7 @@ schema = {
       description: `Name of the user to show, alias of \`uid\`.`
     },
     'connection': {
-      $ref: 'module://@nikitajs/network/src/http',
+      $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }
   },

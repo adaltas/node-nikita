@@ -40,7 +40,7 @@ schema = {
       description: `Name of the user to check for existence, alias of \`uid\`.`
     },
     'connection': {
-      $ref: 'module://@nikitajs/network/src/http',
+      $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }
   },

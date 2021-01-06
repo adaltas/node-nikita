@@ -32,7 +32,7 @@ schema = {
   type: 'object',
   properties: {
     'container': {
-      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
     },
     'device': {
       type: 'string',

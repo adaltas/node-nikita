@@ -31,7 +31,7 @@ schema = {
       description: `The network name to detach.`
     },
     'container': {
-      $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
+      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
     }
   },
   required: ['network', 'container']
