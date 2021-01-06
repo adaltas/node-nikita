@@ -9,8 +9,8 @@ RUN yum install -y xz \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
-# Install epel (requirement for service nginx)
-RUN yum install -y epel-release
+# Update yum and install epel (requirement for service nginx)
+RUN yum update -y && yum install -y epel-release
 
 # Install supervisor
 RUN \
