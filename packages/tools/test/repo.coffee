@@ -115,8 +115,7 @@ describe 'tools.repo', ->
   they 'Download repo from remote location', ({ssh}) ->
     nikita
       ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
+    , ->
       @fs.remove '/etc/yum.repos.d/hdp.repo'
       {status} = await @tools.repo
         source: "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/hdp.repo"
@@ -129,8 +128,7 @@ describe 'tools.repo', ->
   they 'Do Not update Package', ({ssh}) ->
     nikita
       ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
+    , ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @service.remove 'mongodb-org-shell'
       {status} = await @tools.repo
@@ -183,8 +181,7 @@ describe 'tools.repo', ->
   they 'Update Package', ({ssh}) ->
     nikita
       ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
+    , ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
       @fs.remove '/etc/pki/rpm-gpg/server-3.4.asc'

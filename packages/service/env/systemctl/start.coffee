@@ -4,12 +4,6 @@ nikita = require '@nikitajs/engine/lib'
 require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
 
-# Note:
-# Dec 4th, 2020: upgrading Atom to 1.52.0 or 1.53.0 on centos7 20201203_07:08
-# lead to an error while running `apm`
-# "Error: /lib64/libstdc++.so.6: version `CXXABI_1.3.9' not found"
-# issue is open on the moment - https://github.com/atom/atom/issues/21497
-
 nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_service_systemctl'
@@ -40,7 +34,7 @@ nikita
       trap: true
       code_skipped: 42
     await @lxd.exec
-      metadata: header: 'SSH', debug: true
+      metadata: header: 'SSH'
       container: config.container
       command: """
       mkdir -p /root/.ssh && chmod 700 /root/.ssh

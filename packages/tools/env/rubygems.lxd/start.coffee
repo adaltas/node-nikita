@@ -10,7 +10,7 @@ nikita
 .lxd.cluster
   metadata: header: 'Container'
   containers:
-    'tools-rubygems':
+    'nikita-tools-rubygems':
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/rubygems.lxd/test.coffee'
