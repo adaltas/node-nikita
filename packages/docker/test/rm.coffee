@@ -7,7 +7,7 @@ return unless tags.docker
 
 describe 'docker.rm', ->
 
-  they 'remove stopped container', ({ssh}) ->
+  they 'status', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -24,6 +24,9 @@ describe 'docker.rm', ->
       {status} = await @docker.rm
         container: 'nikita_rm'
       status.should.be.true()
+      {status} = await @docker.rm
+        container: 'nikita_rm'
+      status.should.be.false()
 
   they 'remove live container (no force)', ({ssh}) ->
     @timeout 30000

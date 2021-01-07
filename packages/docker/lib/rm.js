@@ -60,26 +60,29 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var status;
+  var exists, running;
   log({
     message: "Entering Docker rm",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rm'
   });
-  // command = for opt in ['link', 'volumes', 'force']
-  //   "-#{opt.charAt 0}" if config[opt]
-  // command = "rm #{command.join ' '} #{config.container}"
-  ({status} = (await this.docker.tools.execute({
-    command: `ps | egrep ' ${config.container}$'`,
-    code_skipped: 1
+  ({
+    status: exists,
+    data: running
+  } = (await this.docker.tools.execute({
+    metadata: {
+      templated: false
+    },
+    command: `inspect ${config.container} --format '{{ json .State.Running }}'`,
+    code_skipped: 1,
+    format: 'json'
   })));
-  if (status && !config.force) {
+  if (!exists) {
+    return false;
+  }
+  if (running && !config.force) {
     throw Error('Container must be stopped to be removed without force');
   }
-  ({status} = (await this.docker.tools.execute({
-    command: `ps -a | egrep ' ${config.container}$'`,
-    code_skipped: 1
-  })));
   return (await this.docker.tools.execute({
     command: [
       'rm',
@@ -91,10 +94,7 @@ handler = async function({
         return `-${opt.charAt(0)}`;
       })),
       config.container
-    ].join(' '),
-    if: function() {
-      return status;
-    }
+    ].join(' ')
   }));
 };
 

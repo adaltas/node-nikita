@@ -57,16 +57,15 @@ console.info(`Container was removed: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
-      # command = for opt in ['link', 'volumes', 'force']
-      #   "-#{opt.charAt 0}" if config[opt]
-      # command = "rm #{command.join ' '} #{config.container}"
-      {status} = await @docker.tools.execute
-        command: "ps | egrep ' #{config.container}$'"
+      {status: exists, data: running} = await @docker.tools.execute
+        metadata: templated: false
+        command: """
+        inspect #{config.container} --format '{{ json .State.Running }}'
+        """
         code_skipped: 1
-      throw Error 'Container must be stopped to be removed without force' if status and not config.force
-      {status} = await @docker.tools.execute
-        command: "ps -a | egrep ' #{config.container}$'"
-        code_skipped: 1
+        format: 'json'
+      return false unless exists
+      throw Error 'Container must be stopped to be removed without force' if running and not config.force
       await @docker.tools.execute
         command: [
           'rm'
@@ -76,7 +75,6 @@ console.info(`Container was removed: ${status}`)
           )
           config.container
         ].join ' '
-        if: -> status
 
 ## Exports
 
