@@ -104,7 +104,7 @@ describe 'docker.build', ->
           image: 'nikita/should_not_exists_4'
           file: "#{tmpdir}/file/does/not/exist"
         .should.be.rejectedWith
-          code: 'NIKITA_FS_CRS_TARGET_ENOENT'
+          code: 'NIKITA_FS_ASSERT_FILE_MISSING'
 
     they 'status not modified', ({ssh}) ->
       status_true = []

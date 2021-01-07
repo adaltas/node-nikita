@@ -63,7 +63,7 @@ Execute a docker command.
       schema.properties["#{property}"] =
         $ref: "module://@nikitajs/engine/lib/actions/execute#/properties/#{property}"
     ) for property in [
-      'code_skipped', 'dry', 'env', 'gid', 'stdin_log',
+      'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
       'stdout', 'stdout_return', 'stdout_log',
       'stderr', 'stderr_return', 'stderr_log',
       'sudo', 'target', 'trap', 'uid'

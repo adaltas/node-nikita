@@ -70,7 +70,7 @@ to 0.`
   additionalProperties: false
 };
 
-ref = ['code_skipped', 'dry', 'env', 'gid', 'stdin_log', 'stdout', 'stdout_return', 'stdout_log', 'stderr', 'stderr_return', 'stderr_log', 'sudo', 'target', 'trap', 'uid'];
+ref = ['code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log', 'stdout', 'stdout_return', 'stdout_log', 'stderr', 'stderr_return', 'stderr_log', 'sudo', 'target', 'trap', 'uid'];
 for (i = 0, len = ref.length; i < len; i++) {
   property = ref[i];
   (schema.properties[`${property}`] = {
