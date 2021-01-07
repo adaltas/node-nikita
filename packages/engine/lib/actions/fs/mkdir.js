@@ -59,7 +59,7 @@ apply without an SSH connection and default to \`process.cwd()\`.`
     },
     'exclude': {
       instanceof: 'RegExp',
-      description: `Exclude directories matching a regular expression. For exemple, the
+      description: `Exclude directories matching a regular expression. For example, the
 expression \`/\${/\` on './var/cache/\${user}' exclude the directories
 containing a variables and only apply to \`./var/cache/\`.`
     },

@@ -207,7 +207,7 @@ describe 'metadata "schema"', ->
 
     it.skip 'coerceTypes', ->
       # Option is currently disactivated because it is unclear wether we shall
-      # accept its rule or create ours. For exemple, `true` is cast to string `"true"`
+      # accept its rule or create ours. For example, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
       nikita()
       .call

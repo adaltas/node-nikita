@@ -5,7 +5,7 @@
 
 // ## Example
 
-// Force the generation of a key compatible with SSH2. For exemple in OSX Mojave,
+// Force the generation of a key compatible with SSH2. For example in OSX Mojave,
 // the default export format is RFC4716.
 
 // ```js

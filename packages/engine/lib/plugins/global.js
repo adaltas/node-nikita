@@ -4,7 +4,7 @@ The `global` plugin look it the parent tree for a "global" configuration. If
 found, it will merge its value with the current configuration.
 
 The functionnality is used to provide global default settings to a group of
-actions. Consider for exemple the Docker actions. Each action has specific
+actions. Consider for example the Docker actions. Each action has specific
 configuration properties but there are also some properties which benefits
 from being shared by all the Docker actions such as the adress of the Docker
 daemon if it is not run locally.

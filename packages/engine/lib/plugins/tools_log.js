@@ -10,7 +10,7 @@ path = require('path');
 ({merge} = require('mixme'));
 
 /*
-The `log` plugin inject a log fonction into the action.handler argument.
+The `log` plugin inject a log function into the action.handler argument.
 
 It is possible to pass the `metadata.log` property. When `false`, logging is
 disabled. When a function, the function is called with normalized logs every
