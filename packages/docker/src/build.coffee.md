@@ -173,56 +173,69 @@ console.info(`Container was built: ${status}`)
       else if config.cwd
         source = "#{config.cwd}/Dockerfile"
       config.cwd ?= path.dirname config.file if config.file
-      # Build command
-      command = 'build'
-      for opt in ['force_rm', 'quiet', 'no_cache']
-        command += " --#{opt.replace '_', '-'}" if config[opt]
-      for opt in ['build_arg'] then if config[opt]?
-        if Array.isArray config[opt]
-          command += " --#{opt.replace '_', '-'} #{k}" for k in config[opt]
-        else
-          command += " --#{opt.replace '_', '-'} #{config[opt]}"
-      command += " --rm=#{if config.rm then 'true' else 'false'}"
-      command += " -t \"#{config.image}#{if config.tag then ":#{config.tag}" else ''}\""
-      # custom command for content option0
       config.file ?= path.resolve config.cwd, 'Dockerfile' if config.cwd
-      if config.content?
-        log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
-        command += " - <<DOCKERFILE\n#{config.content}\nDOCKERFILE" if config.content?
-      else if config.file?
-        log message: "Building from Dockerfile: \"#{config.file}\"", level: 'INFO', module: 'nikita/docker/build'
-        command += " -f #{config.file} #{config.cwd}"
-      else
-        log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
-        command += ' .'
-      await @file
-        if: config.content
-        content: config.content
-        source: source
-        target: ({content}) ->
-          config.content = content
-        from: config.from
-        to: config.to
-        match: config.match
-        replace: config.replace
-        append: config.append
-        before: config.before
-        write: config.write
-      # Read Dockerfile if necessary to count steps
+      # Make sure the Dockerfile exists
       unless config.content
+        await @fs.assert config.file
+      # Build the image
+      {stdout, stderr} = await @docker.tools.execute
+        command: [
+          'build'
+          ...( ['force_rm', 'quiet', 'no_cache']
+            .filter (opt) -> config[opt]
+            .map (opt) -> "--#{opt.replace '_', '-'}"
+          )
+          ...( utils.array.flatten ['build_arg']
+            .filter (opt) -> config[opt]
+            .map (opt) ->
+              if Array.isArray config[opt]
+                "--#{opt.replace '_', '-'} #{k}" for k in config[opt]
+              else
+                "--#{opt.replace '_', '-'} #{config[opt]}"
+          )
+          '--rm=' + if config.rm then 'true' else 'false'
+          '-t ' + utils.string.escapeshellarg config.image+if config.tag then ":#{config.tag}" else ''
+          (
+            if config.content?
+              log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
+              "- <<DOCKERFILE\n#{config.content}\nDOCKERFILE" if config.content?
+            else if config.file?
+              log message: "Building from Dockerfile: \"#{config.file}\"", level: 'INFO', module: 'nikita/docker/build'
+              "-f #{config.file} #{config.cwd}"
+            else
+              log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
+              '.'
+          )
+        ].join ' '
+        cwd: config.cwd
+      # Get the content of the Dockerfile
+      if config.content
+        await @file
+          content: config.content
+          source: source
+          target: ({content}) ->
+            config.content = content
+          from: config.from
+          to: config.to
+          match: config.match
+          replace: config.replace
+          append: config.append
+          before: config.before
+          write: config.write
+      # Read Dockerfile if necessary to count steps
+      else
         log message: "Reading Dockerfile from : #{config.file}", level: 'INFO', module: 'nikita/lib/build'
-        {data: config.content} = await @fs.base.readFile ssh: config.ssh, target: config.file, encoding: 'utf8'
+        {data: config.content} = await @fs.base.readFile
+          target: config.file
+          encoding: 'utf8'
       # Count steps
       for line in utils.string.lines config.content
         number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_commands
-      {stdout, stderr} = await @docker.tools.execute
-        command: command
-        cwd: config.cwd
       image_id = null
       # Count cache
       lines = utils.string.lines stdout
       number_of_cache = 0
-      for k,  line of lines
+      for k, line of lines
         if (line.indexOf('Using cache') isnt  -1 )
           number_of_cache = number_of_cache + 1
         if (line.indexOf('Successfully built') isnt  -1 )

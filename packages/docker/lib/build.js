@@ -185,79 +185,88 @@ handler = async function({
       config.cwd = path.dirname(config.file);
     }
   }
-  // Build command
-  command = 'build';
-  ref = ['force_rm', 'quiet', 'no_cache'];
-  for (i = 0, len = ref.length; i < len; i++) {
-    opt = ref[i];
-    if (config[opt]) {
-      command += ` --${opt.replace('_', '-')}`;
-    }
-  }
-  ref1 = ['build_arg'];
-  for (j = 0, len1 = ref1.length; j < len1; j++) {
-    opt = ref1[j];
-    if (config[opt] != null) {
-      if (Array.isArray(config[opt])) {
-        ref2 = config[opt];
-        for (l = 0, len2 = ref2.length; l < len2; l++) {
-          k = ref2[l];
-          command += ` --${opt.replace('_', '-')} ${k}`;
-        }
-      } else {
-        command += ` --${opt.replace('_', '-')} ${config[opt]}`;
-      }
-    }
-  }
-  command += ` --rm=${config.rm ? 'true' : 'false'}`;
-  command += ` -t \"${config.image}${config.tag ? `:${config.tag}` : ''}\"`;
   if (config.cwd) {
-    // custom command for content option0
     if (config.file == null) {
       config.file = path.resolve(config.cwd, 'Dockerfile');
     }
   }
-  if (config.content != null) {
-    log({
-      message: "Building from text: Docker won't have a context. ADD/COPY not working",
-      level: 'WARN',
-      module: 'nikita/docker/build'
-    });
-    if (config.content != null) {
-      command += ` - <<DOCKERFILE\n${config.content}\nDOCKERFILE`;
-    }
-  } else if (config.file != null) {
-    log({
-      message: `Building from Dockerfile: \"${config.file}\"`,
-      level: 'INFO',
-      module: 'nikita/docker/build'
-    });
-    command += ` -f ${config.file} ${config.cwd}`;
-  } else {
-    log({
-      message: "Building from CWD",
-      level: 'INFO',
-      module: 'nikita/docker/build'
-    });
-    command += ' .';
-  }
-  await this.file({
-    if: config.content,
-    content: config.content,
-    source: source,
-    target: function({content}) {
-      return config.content = content;
-    },
-    from: config.from,
-    to: config.to,
-    match: config.match,
-    replace: config.replace,
-    append: config.append,
-    before: config.before,
-    write: config.write
-  });
-  // Read Dockerfile if necessary to count steps
+  // Make sure the Dockerfile exists
   if (!config.content) {
+    await this.fs.assert(config.file);
+  }
+  // Build the image
+  ({stdout, stderr} = (await this.docker.tools.execute({
+    command: [
+      'build',
+      ...(['force_rm',
+      'quiet',
+      'no_cache'].filter(function(opt) {
+        return config[opt];
+      }).map(function(opt) {
+        return `--${opt.replace('_',
+      '-')}`;
+      })),
+      ...(utils.array.flatten(['build_arg']).filter(function(opt) {
+        return config[opt];
+      }).map(function(opt) {
+        var i,
+      k,
+      len,
+      ref,
+      results;
+        if (Array.isArray(config[opt])) {
+          ref = config[opt];
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            k = ref[i];
+            results.push(`--${opt.replace('_',
+      '-')} ${k}`);
+          }
+          return results;
+        } else {
+          return `--${opt.replace('_',
+      '-')} ${config[opt]}`;
+        }
+      })),
+      '--rm=' + (config.rm ? 'true' : 'false'),
+      '-t ' + utils.string.escapeshellarg(config.image + (config.tag ? `:${config.tag}` : '')),
+      (config.content != null ? (log({
+        message: "Building from text: Docker won't have a context. ADD/COPY not working",
+        level: 'WARN',
+        module: 'nikita/docker/build'
+      }),
+      config.content != null ? `- <<DOCKERFILE\n${config.content}\nDOCKERFILE` : void 0) : config.file != null ? (log({
+        message: `Building from Dockerfile: \"${config.file}\"`,
+        level: 'INFO',
+        module: 'nikita/docker/build'
+      }),
+      `-f ${config.file} ${config.cwd}`) : (log({
+        message: "Building from CWD",
+        level: 'INFO',
+        module: 'nikita/docker/build'
+      }),
+      '.'))
+    ].join(' '),
+    cwd: config.cwd
+  })));
+  // Get the content of the Dockerfile
+  if (config.content) {
+    await this.file({
+      content: config.content,
+      source: source,
+      target: function({content}) {
+        return config.content = content;
+      },
+      from: config.from,
+      to: config.to,
+      match: config.match,
+      replace: config.replace,
+      append: config.append,
+      before: config.before,
+      write: config.write
+    });
+  } else {
+    // Read Dockerfile if necessary to count steps
     log({
       message: `Reading Dockerfile from : ${config.file}`,
       level: 'INFO',
@@ -266,23 +275,18 @@ handler = async function({
     ({
       data: config.content
     } = (await this.fs.base.readFile({
-      ssh: config.ssh,
       target: config.file,
       encoding: 'utf8'
     })));
   }
-  ref3 = utils.string.lines(config.content);
+  ref = utils.string.lines(config.content);
   // Count steps
-  for (m = 0, len3 = ref3.length; m < len3; m++) {
-    line = ref3[m];
-    if (ref4 = (ref5 = /^(.*?)\s/.exec(line)) != null ? ref5[1] : void 0, indexOf.call(dockerfile_commands, ref4) >= 0) {
+  for (i = 0, len = ref.length; i < len; i++) {
+    line = ref[i];
+    if (ref1 = (ref2 = /^(.*?)\s/.exec(line)) != null ? ref2[1] : void 0, indexOf.call(dockerfile_commands, ref1) >= 0) {
       number_of_step++;
     }
   }
-  ({stdout, stderr} = (await this.docker.tools.execute({
-    command: command,
-    cwd: config.cwd
-  })));
   image_id = null;
   // Count cache
   lines = utils.string.lines(stdout);
