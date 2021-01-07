@@ -69,7 +69,7 @@
 // ```
 
 // ## Hooks
-var exec, handler, merge, on_action, schema, utils;
+var exec, handler, merge, on_action, schema, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/engine/lib/plugins/ssh'],
@@ -224,6 +224,11 @@ around this limitation.`,
       description: `Write a temporary file which exports the the environment variables
 defined in the \`env\` property. The value is always \`true\` when
 environment variables must be used with SSH.`
+    },
+    'format': {
+      type: 'string',
+      enum: ['json', 'yaml'],
+      description: `Convert the stdout to a Javascript value or object.`
     },
     'gid': {
       type: 'integer',
@@ -576,6 +581,16 @@ handler = async function({
         if (config.trim || config.stderr_trim) {
           result.stderr = result.stderr.trim();
         }
+        result.data = (function() {
+          if (config.format) {
+            switch (config.format) {
+              case 'json':
+                return JSON.parse(result.stdout);
+              case 'yaml':
+                return yaml.safeLoad(result.stdout);
+            }
+          }
+        })();
         if (result.stdout && result.stdout !== '' && config.stdout_log) {
           log({
             message: result.stdout,
@@ -631,6 +646,8 @@ module.exports = {
 
 // ## Dependencies
 exec = require('ssh2-exec');
+
+yaml = require('js-yaml');
 
 utils = require('../../utils');
 
