@@ -10,15 +10,15 @@ stackTrace = require 'stack-trace'
 path = require 'path'
 
 module.exports = ->
-  module: '@nikitajs/engine/src/plugins/output_events'
+  module: '@nikitajs/engine/src/plugins/output_logs'
   require: [
-    '@nikitajs/engine/src/plugins/log'
+    '@nikitajs/engine/src/plugins/tools_log'
     '@nikitajs/engine/src/metadata/status'
     '@nikitajs/engine/src/metadata/raw'
   ]
   hooks:
     'nikita:session:action':
-      after: '@nikitajs/engine/src/plugins/log'
+      after: '@nikitajs/engine/src/plugins/tools_log'
       handler: (action) ->
         action.state.logs = []
         action.tools.log = ( (fn) ->

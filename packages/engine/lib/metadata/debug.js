@@ -15,7 +15,7 @@ TODO: detect/force isTTY
 module.exports = function() {
   return {
     module: '@nikitajs/engine/lib/metadata/debug',
-    require: '@nikitajs/engine/lib/plugins/log',
+    require: '@nikitajs/engine/lib/plugins/tools_log',
     hooks: {
       'nikita:session:action': function(action) {
         var debug;
