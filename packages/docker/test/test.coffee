@@ -19,4 +19,4 @@ nikita = require '@nikitajs/engine/lib'
 they = require('ssh2-they').configure config.ssh
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
-  nikita(ssh: ssh, docker: config.docker).docker.pull tag: 'httpd'
+  nikita(ssh: ssh, docker: config.docker).docker.pull image: 'httpd'

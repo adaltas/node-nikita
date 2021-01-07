@@ -1,7 +1,7 @@
 
 # `nikita.docker.pull`
 
-Pull a container.
+Pull an image or a repository from a registry.
 
 ## Callback parameters
 
@@ -18,7 +18,7 @@ Pull a container.
 
 ```js
 const {status} = await nikita.docker.pull({
-  tag: 'postgresql'
+  image: 'postgresql'
 })
 console.info(`Image was pulled: ${status}`)
 ```
@@ -28,51 +28,53 @@ console.info(`Image was pulled: ${status}`)
     schema =
       type: 'object'
       properties:
+        'image':
+          type: 'string'
+          description: """
+          Name of an image or a repository to pull. It can contain `tag`.
+          """
         'tag':
           type: 'string'
           description: """
-          Name of the tag to pull.
-          """
-        'version':
-          type: 'string'
-          description: """
-          Version of the tag to control. Default to `latest`.
+          Specific image tag within a repository to pull. Default to `latest`.
           """
         'all':
           type: 'boolean'
           default: false
           description: """
-          Download all tagged images in the repository.
+          Pull all tagged images in the repository.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['image']
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
-      # Validate parameters
-      version = config.version or config.tag.split(':')[1] or 'latest'
-      delete config.version # present in misc.docker.config, will probably disappear at some point
-      throw Error 'Missing Tag Name' unless config.tag?
+    handler = ({config}) ->
+      # log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
+      # Validate
+      [name, tag] = config.image.split(':')
+      config.image = name
+      # it can be later changed to give a preference instead of error
+      throw Error 'Tag must be specified either in the image or in the tag config' if tag and config.tag
+      config.tag ?= tag or 'latest'
+      # Check if exist
       {status} = await @docker.tools.execute
+        # avoid checking when all config is true,
+        # because there is no native way to list all existing tags on the registry
+        unless: config.all
         command: [
           'images'
+          "| grep '#{config.image}'"
           "| grep '#{config.tag}'"
-          "| grep '#{version}'" unless config.all
         ].join ' '
         code_skipped: 1
+      # Pull image
       await @docker.tools.execute
         unless: status
         command: [
           'pull'
           if config.all
-          then "-a #{config.tag}"
-          else "#{config.tag}:#{version}"
+          then "-a #{config.image}"
+          else "#{config.image}:#{config.tag}"
         ].join ' '
 
 ## Exports
