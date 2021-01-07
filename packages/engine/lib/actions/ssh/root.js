@@ -43,7 +43,7 @@ schema = {
       type: 'string',
       // oneOf: [{format: 'ipv4'}, {format: 'hostname'}]
       default: 'root',
-      description: `Command used to become the root user on the remote server, for exemple
+      description: `Command used to become the root user on the remote server, for example
 \`su -\`.`
     },
     'password': {

@@ -35,7 +35,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
           # oneOf: [{format: 'ipv4'}, {format: 'hostname'}]
           default: 'root'
           description: """
-          Command used to become the root user on the remote server, for exemple
+          Command used to become the root user on the remote server, for example
           `su -`.
           """
         'password':

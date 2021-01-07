@@ -144,7 +144,7 @@ Build the CLI query command.
 
 Enrich the result of `url.parse` with the "engine" and "db" properties.
 
-Exemple:
+Example:
 
 ```
 parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
