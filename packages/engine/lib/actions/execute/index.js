@@ -581,16 +581,19 @@ handler = async function({
         if (config.trim || config.stderr_trim) {
           result.stderr = result.stderr.trim();
         }
-        result.data = (function() {
-          if (config.format) {
+        // if config.format
+        //   console.log '>>>', config.command_original
+        //   console.log '!!!', result.stdout
+        if (config.format && config.code.indexOf(code) !== -1) {
+          result.data = (function() {
             switch (config.format) {
               case 'json':
                 return JSON.parse(result.stdout);
               case 'yaml':
                 return yaml.safeLoad(result.stdout);
             }
-          }
-        })();
+          })();
+        }
         if (result.stdout && result.stdout !== '' && config.stdout_log) {
           log({
             message: result.stdout,

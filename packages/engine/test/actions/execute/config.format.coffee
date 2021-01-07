@@ -3,7 +3,7 @@ nikita = require '../../../src'
 {tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh
 
-describe 'actions.execute.config.sudo', ->
+describe 'actions.execute.config.format', ->
 
   they 'json', ({ssh}) ->
     nikita
@@ -28,3 +28,14 @@ describe 'actions.execute.config.sudo', ->
         format: 'yaml'
       stdout.should.eql 'key: value\n'
       data.should.eql key: "value"
+
+  they 'with error', ({ssh}) ->
+    nikita
+      ssh: ssh
+    , ->
+      {stdout, data} = await @execute
+        command: 'exit 1'
+        format: 'json'
+        code_skipped: 1
+      stdout.should.eql ''
+      should.not.exist(data)

@@ -413,9 +413,13 @@ console.info(stdout)
             result.stdout = result.stdout.trim() if config.trim or config.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
             result.stderr = result.stderr.trim() if config.trim or config.stderr_trim
-            result.data = if config.format then switch config.format
-              when 'json' then JSON.parse result.stdout
-              when 'yaml' then yaml.safeLoad result.stdout
+            # if config.format
+            #   console.log '>>>', config.command_original
+            #   console.log '!!!', result.stdout
+            if config.format and config.code.indexOf(code) isnt -1
+              result.data = switch config.format
+                when 'json' then JSON.parse result.stdout
+                when 'yaml' then yaml.safeLoad result.stdout
             log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and config.stdout_log
             log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and config.stderr_log
             if config.stdout
