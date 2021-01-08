@@ -30,6 +30,8 @@ console.info(`Container was removed: ${status}`)
           description: """
           Name/ID of the container.
           """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'link':
           type: 'boolean'
           description: """
@@ -45,12 +47,6 @@ console.info(`Container was removed: ${status}`)
           description: """
           Force the removal of a running container (uses SIGKILL).
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['container']
 
 ## Handler

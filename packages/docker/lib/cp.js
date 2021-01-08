@@ -39,6 +39,9 @@ var handler, path, schema, utils;
 schema = {
   type: 'object',
   properties: {
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'source': {
       type: 'string',
       description: `The path to upload or the container followed by the path to download.`
@@ -46,15 +49,6 @@ schema = {
     'target': {
       type: 'string',
       description: `The path to download or the container followed by the path to upload.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   },
   required: ['source', 'target']

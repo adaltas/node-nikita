@@ -25,6 +25,9 @@ var handler, schema;
 schema = {
   type: 'object',
   properties: {
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'driver': {
       type: 'string',
       description: `Specify volume driver name.`
@@ -60,15 +63,6 @@ schema = {
         }
       ],
       description: `Set driver specific options.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   }
 };

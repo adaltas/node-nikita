@@ -114,10 +114,7 @@ schema = {
       description: `Change the build working directory.`
     },
     'docker': {
-      type: 'object',
-      description: `Isolate all the parent configuration properties into a docker
-property, used when providing and cascading a docker configuration at
-a global scale.`
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
     },
     'file': {
       type: 'string',
@@ -150,15 +147,6 @@ a global scale.`
     'tag': {
       type: 'string',
       description: `Tag of the Docker image, default to latest.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   },
   required: ['image']

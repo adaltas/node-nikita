@@ -55,14 +55,8 @@ schema = {
       ],
       description: `Name/ID of the container (array of containers not yet implemented).`
     },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
     }
   },
   required: ['container']

@@ -38,6 +38,8 @@ console.info(`Container was copied: ${status}`)
     schema =
       type: 'object'
       properties:
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'source':
           type: 'string'
           description: """
@@ -48,12 +50,6 @@ console.info(`Container was copied: ${status}`)
           description: """
           The path to download or the container followed by the path to upload.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['source', 'target']
 
 ## Handler

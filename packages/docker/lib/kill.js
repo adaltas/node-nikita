@@ -33,6 +33,9 @@ schema = {
       type: 'string',
       description: `Name/ID of the container.`
     },
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'signal': {
       oneOf: [
         {
@@ -43,15 +46,6 @@ schema = {
         }
       ],
       description: `Use a specified signal. SIGKILL by default.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   },
   required: ['container']

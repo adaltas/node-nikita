@@ -30,6 +30,14 @@ console.info(`Image was loaded: ${status}`);
     schema =
       type: 'object'
       properties:
+        'checksum':
+          type: 'string'
+          description: """
+          If provided, will check if attached input archive to checksum already
+          exist, not native to docker but implemented to get better performance.
+          """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'input':
           type: 'string'
           description: """
@@ -40,18 +48,6 @@ console.info(`Image was loaded: ${status}`);
           description: """
           Alias for the "input" option.
           """
-        'checksum':
-          type: 'string'
-          description: """
-          If provided, will check if attached input archive to checksum already
-          exist, not native to docker but implemented to get better performance.
-          """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
 
 ## Handler
 
@@ -79,7 +75,7 @@ console.info(`Image was loaded: ${status}`);
           if image != ''
             infos = image.split(':')
             # if image is here we skip
-            log message: "Image already exist checksum :#{config.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'nikita/lib/docker/load' if infos[2] == config.checksum
+            log message: "Image already exist checksum :#{config.checksum}, repo:tag \"#{infos[0]}:#{infos[1]}\"", level: 'INFO', module: 'nikita/lib/docker/load' if infos[2] == config.checksum
             return false if infos[2] == config.checksum
             images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
       log message: "Start Loading #{config.input} ", level: 'INFO', module: 'nikita/lib/docker/load'

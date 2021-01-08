@@ -10,17 +10,13 @@ schema = {
   type: 'object',
   properties: {
     'boot2docker': {
-      type: 'boolean',
-      default: false,
-      description: `Whether to use boot2docker or not.`
+      $ref: '#/properties/docker/properties/boot2docker'
     },
     'compose': {
-      type: 'boolean',
-      description: `Use the \`docker-compose\` command instead of \`docker\`.`
+      $ref: '#/properties/docker/properties/compose'
     },
     'machine': {
-      type: 'string',
-      description: `Name of the docker-machine, required if using docker-machine.`
+      $ref: '#/properties/docker/properties/machine'
     },
     'bash': {
       oneOf: [
@@ -64,6 +60,27 @@ to execute.`
       },
       description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
+    },
+    'docker': {
+      type: 'object',
+      properties: {
+        'boot2docker': {
+          type: 'boolean',
+          default: false,
+          description: `Whether to use boot2docker or not.`
+        },
+        'compose': {
+          type: 'boolean',
+          description: `Use the \`docker-compose\` command instead of \`docker\`.`
+        },
+        'machine': {
+          type: 'string',
+          description: `Name of the docker-machine, required if using docker-machine.`
+        }
+      },
+      description: `Isolate all the parent configuration properties into a docker
+property, used when providing and cascading a docker configuration at
+a global scale.`
     }
   },
   required: ['command'],

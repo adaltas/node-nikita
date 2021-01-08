@@ -33,6 +33,8 @@ console.info(`Container was killed: ${status}`)
           description: """
           Name/ID of the container.
           """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'signal':
           oneOf: [
             {type: 'integer'}
@@ -41,12 +43,6 @@ console.info(`Container was killed: ${status}`)
           description: """
           Use a specified signal. SIGKILL by default.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['container']
 
 ## Handler

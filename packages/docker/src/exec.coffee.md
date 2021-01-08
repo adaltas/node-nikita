@@ -42,6 +42,8 @@ console.info(`Command was executed: ${status}`)
           description: """
           The exit code(s) to skip.
           """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'service':
           type: 'boolean'
           default: false
@@ -65,12 +67,6 @@ console.info(`Command was executed: ${status}`)
           description: """
           Groupname or gid.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['container', 'command']
 
 ## Handler

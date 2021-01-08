@@ -29,6 +29,9 @@ schema = {
       type: 'string',
       description: `Change the build working directory.`
     },
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'image': {
       type: 'string',
       description: `Name of the Docker image present in the registry.`
@@ -40,15 +43,6 @@ schema = {
     'tag': {
       type: 'string',
       description: `Tag of the Docker image, default to latest.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   },
   required: ['image']

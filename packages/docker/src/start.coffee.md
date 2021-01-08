@@ -40,12 +40,8 @@ console.info(`Container was started: ${status}`)
           description: """
           Name/ID of the container, required.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
       required: ['container']
 
 ## Handler

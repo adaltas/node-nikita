@@ -31,10 +31,8 @@ console.info(`Container was unpaused: ${status}`)
           description: """
           Name/ID of the container
           """
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
       required: ['container']
 
 ## Handler

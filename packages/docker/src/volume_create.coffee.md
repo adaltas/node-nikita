@@ -24,6 +24,8 @@ console.info(`Volume was created: ${status}`)
     schema =
       type: 'object'
       properties:
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'driver':
           type: 'string'
           description: """
@@ -50,12 +52,6 @@ console.info(`Volume was created: ${status}`)
           description: """
           Set driver specific options.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
 
 ## Handler
 

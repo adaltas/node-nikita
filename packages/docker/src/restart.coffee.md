@@ -29,17 +29,13 @@ console.info(`Container was started or restarted: ${status}`)
           description: """
           Name/ID of the container.
           """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'timeout':
           type: 'integer'
           description: """
           Seconds to wait for stop before killing it.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['container']
 
 ## Handler

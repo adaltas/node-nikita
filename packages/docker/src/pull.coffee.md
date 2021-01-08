@@ -28,6 +28,14 @@ console.info(`Image was pulled: ${status}`)
     schema =
       type: 'object'
       properties:
+        'all':
+          type: 'boolean'
+          default: false
+          description: """
+          Pull all tagged images in the repository.
+          """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'image':
           type: 'string'
           description: """
@@ -38,13 +46,6 @@ console.info(`Image was pulled: ${status}`)
           description: """
           Specific image tag within a repository to pull. Default to `latest`.
           """
-        'all':
-          type: 'boolean'
-          default: false
-          description: """
-          Pull all tagged images in the repository.
-          """
-      required: ['image']
 
 ## Handler
 

@@ -24,17 +24,13 @@ console.info(`Volume was removed: ${status}`)
     schema =
       type: 'object'
       properties:
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'name':
           type: 'string'
           description: """
           Specify volume name.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
 
 ## Handler
 

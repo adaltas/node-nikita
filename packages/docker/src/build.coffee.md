@@ -106,12 +106,7 @@ console.info(`Container was built: ${status}`)
           Change the build working directory.
           """
         'docker':
-          type: 'object'
-          description: """
-          Isolate all the parent configuration properties into a docker
-          property, used when providing and cascading a docker configuration at
-          a global scale.
-          """
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'file':
           type: 'string'
           description: """
@@ -151,12 +146,6 @@ console.info(`Container was built: ${status}`)
           description: """
           Tag of the Docker image, default to latest.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['image']
 
 ## Handler

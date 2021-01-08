@@ -27,6 +27,8 @@ force options is set.
           description: """
           Change the build working directory.
           """
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'image':
           type: 'string'
           description: """
@@ -42,12 +44,6 @@ force options is set.
           description: """
           Tag of the Docker image, default to latest.
           """
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
       required: ['image']
 
 ## Handler

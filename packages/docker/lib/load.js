@@ -31,6 +31,14 @@ var handler, schema, utils;
 schema = {
   type: 'object',
   properties: {
+    'checksum': {
+      type: 'string',
+      description: `If provided, will check if attached input archive to checksum already
+exist, not native to docker but implemented to get better performance.`
+    },
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'input': {
       type: 'string',
       description: `TAR archive file to read from.`
@@ -38,20 +46,6 @@ schema = {
     'source': {
       type: 'string',
       description: `Alias for the "input" option.`
-    },
-    'checksum': {
-      type: 'string',
-      description: `If provided, will check if attached input archive to checksum already
-exist, not native to docker but implemented to get better performance.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   }
 };
@@ -112,7 +106,7 @@ handler = async function({
         if (infos[2] === config.checksum) {
           // if image is here we skip
           log({
-            message: `Image already exist checksum :${config.checksum}, repo:tag ${`${infos[0]}:${infos[1]}`}`,
+            message: `Image already exist checksum :${config.checksum}, repo:tag \"${infos[0]}:${infos[1]}\"`,
             level: 'INFO',
             module: 'nikita/lib/docker/load'
           });

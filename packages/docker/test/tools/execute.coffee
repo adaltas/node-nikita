@@ -32,7 +32,7 @@ describe 'docker.tools.execute', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `docker.tools.execute`:'
-        '#/properties/machine/type config.machine should be string, type is "string".'
+        '#/properties/docker/properties/machine/type config.machine should be string, type is "string".'
       ].join ' '
 
     it 'no additionnal properties', ->

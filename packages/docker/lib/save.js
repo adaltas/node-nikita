@@ -35,6 +35,9 @@ on_action = function({config}) {
 schema = {
   type: 'object',
   properties: {
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'image': {
       type: 'string',
       description: `Name/ID of base image.`
@@ -50,15 +53,6 @@ schema = {
     'target': {
       type: 'string',
       description: `Shortcut for "output" option, required.`
-    },
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
-    'compose': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
-    },
-    'machine': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
     }
   },
   required: ['image', 'output']
