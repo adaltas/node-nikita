@@ -7,7 +7,7 @@
 
 // Comments will be preserved if the `comments` and `merge` config are enabled.
 
-// ## Callback parameters
+// ## Output
 
 // * `err` (Error)   
   //   Error object if any.   

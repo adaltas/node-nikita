@@ -3,7 +3,7 @@
 
 // Run Docker Containers
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

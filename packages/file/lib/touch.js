@@ -7,7 +7,7 @@
 
 // Status will only be true if the file was created.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

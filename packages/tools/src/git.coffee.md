@@ -3,7 +3,7 @@
 
 Create and synchronize a git repository.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

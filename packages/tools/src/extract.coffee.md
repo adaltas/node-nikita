@@ -5,7 +5,7 @@ Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
 moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   

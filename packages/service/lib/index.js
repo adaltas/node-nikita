@@ -8,7 +8,7 @@
   // Set the value to "['started', 'restarted']" to ensure the service will be always
   // started.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
   //   Error object if any.

@@ -3,7 +3,7 @@
 
 // Assert a file exists or a provided text match the content of a text file.
 
-// ## Callback parameters
+// ## Output
 
 // * `err` (Error)   
   //   Error if assertion failed.   

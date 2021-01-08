@@ -3,7 +3,7 @@
 
 Change the ownership of a file or a directory.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

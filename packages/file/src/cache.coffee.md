@@ -3,7 +3,7 @@
 
 Download a file and place it on a local or remote folder for later usage.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

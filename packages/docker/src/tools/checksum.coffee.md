@@ -4,7 +4,7 @@
 Return the checksum of image:tag, if it exists. Note, there is no corresponding
 native docker command.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

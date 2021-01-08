@@ -3,7 +3,7 @@
 
 // Activate or desactivate a service on startup.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

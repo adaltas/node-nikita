@@ -4,7 +4,7 @@
 Render startup script.
 Reload the service daemon provider depending on the os.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

@@ -3,7 +3,7 @@
 
 Attach an existing network to a container.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

@@ -3,7 +3,7 @@
 
 Detach a network from a container.
 
-## Callback parameters
+## Output
 
 * `err`
   Error object if any

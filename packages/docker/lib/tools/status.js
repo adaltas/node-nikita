@@ -3,7 +3,7 @@
 
 // Return true if container is running. This function is not native to docker. 
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

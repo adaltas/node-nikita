@@ -3,7 +3,7 @@
 
 // Create a volume.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

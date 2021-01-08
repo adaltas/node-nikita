@@ -5,7 +5,7 @@ Compress an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
 moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zip'.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

@@ -4,7 +4,7 @@
 // Recursively remove files, directories and links. This is a much more aggressive
 // version of `unlink` based on the `rm` command.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

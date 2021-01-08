@@ -3,7 +3,7 @@
 
 // Install a service. Yum, Yay, Yaourt, Pacman and apt-get are supported.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

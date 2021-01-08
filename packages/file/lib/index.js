@@ -3,7 +3,7 @@
 
 // Write a file or a portion of an existing file.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

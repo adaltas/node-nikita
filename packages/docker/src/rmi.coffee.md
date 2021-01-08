@@ -4,7 +4,7 @@
 Remove images. All container using image should be stopped to delete it unless
 force options is set.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

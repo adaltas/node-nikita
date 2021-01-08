@@ -3,7 +3,7 @@
 
 // Start stopped containers or restart (stop + starts) a started container.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

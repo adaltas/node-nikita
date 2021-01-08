@@ -12,7 +12,7 @@ configuration. It introduces the `merge` option which instruct to read the
 target file if it exists and merge its parsed object with the one
 provided in the `content` option.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

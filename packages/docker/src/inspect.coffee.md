@@ -6,7 +6,7 @@ Note if container is not running , SIGKILL is not executed and
 return status is UNMODIFIED. If container does not exist nor is running
 SIGNAL is not sent.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

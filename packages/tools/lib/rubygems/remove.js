@@ -10,7 +10,7 @@
 // - Documentation
 // - gemspec   
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

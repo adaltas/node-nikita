@@ -4,7 +4,7 @@
 // Create and start containers according to a docker-compose file
 // `nikita.docker.compose` is an alias to `nikita.docker.compose.up`
 
-// ## Callback parameters
+// ## Output
 
 // *   `err`   
 //     Error object if any.   

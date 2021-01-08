@@ -3,7 +3,7 @@
 
 Initialize a Linux Container with given image name, container name and config.
 
-## Callback Parameters
+## Output
 
 * `err`
   Error object if any

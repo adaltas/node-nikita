@@ -6,7 +6,7 @@ filter rules in the Linux kernel.
 
 Iptables rules are only inserted if the service is started on the target system.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

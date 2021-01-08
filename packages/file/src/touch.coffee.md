@@ -7,7 +7,7 @@ Create a empty file if it does not yet exists.
 
 Status will only be true if the file was created.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

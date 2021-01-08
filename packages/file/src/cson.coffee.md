@@ -1,7 +1,7 @@
 
 # `nikita.file.cson`
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   

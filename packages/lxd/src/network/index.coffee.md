@@ -3,7 +3,7 @@
 
 Create a network or update a network configuration
 
-## Callback parameters
+## Output
 
 * `err`
   Error object if any

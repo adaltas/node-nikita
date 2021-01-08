@@ -4,7 +4,7 @@
 Move files and directories. It is ok to overwrite the target file if it
 exists, in which case the source file will no longer exists.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

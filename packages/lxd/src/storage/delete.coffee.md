@@ -3,7 +3,7 @@
 
 Delete an existing lxd storage.
 
-## Callback parameters
+## Output
 
 * `err`
   Error object if any

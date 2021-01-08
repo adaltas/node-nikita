@@ -12,7 +12,7 @@ from STDIN does not support a context.
 By default docker always run the build and overwrite existing repositories.
 Status unmodified if the repository is identical to a previous one
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   

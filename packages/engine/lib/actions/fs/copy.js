@@ -5,7 +5,7 @@
 // Unix utility. Copying a file over an existing file will
 // overwrite it.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

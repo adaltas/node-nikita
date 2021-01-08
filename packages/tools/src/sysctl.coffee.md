@@ -7,7 +7,7 @@ Target file will be overwritten by default, use the `merge` option to preserve e
 
 Comments will be preserved if the `comments` and `merge` config are enabled.
 
-## Callback parameters
+## Output
 
 * `err` (Error)   
   Error object if any.   

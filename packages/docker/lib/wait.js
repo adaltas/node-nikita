@@ -3,7 +3,7 @@
 
 // Block until a container stops.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

@@ -3,7 +3,7 @@
 
 Create a device or update its configuration.
 
-## Callback parameters
+## Output
 
 * `err`
   Error object if any.

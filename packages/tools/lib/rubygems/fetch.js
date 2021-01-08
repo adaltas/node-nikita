@@ -3,7 +3,7 @@
 
 // Fetch a Ruby gem.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

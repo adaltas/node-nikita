@@ -5,7 +5,7 @@ Copy a file. The behavior is similar to the one of the `cp`
 Unix utility. Copying a file over an existing file will
 overwrite it.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

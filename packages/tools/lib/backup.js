@@ -3,7 +3,7 @@
 
 // Backup a file, a directory or the output of a command.
 
-// ## Callback parameters
+// ## Output
 
 // * `err` (Error)   
 //   Error object if any.   

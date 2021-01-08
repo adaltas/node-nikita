@@ -9,7 +9,7 @@
 // If target is a callback, it will be called with the generated content as
 // its first argument.   
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

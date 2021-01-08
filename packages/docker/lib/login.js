@@ -3,7 +3,7 @@
 
 // Register or log in to a Docker registry server.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

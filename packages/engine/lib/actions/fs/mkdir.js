@@ -5,7 +5,7 @@
 // `mkdir -p`. It supports an alternative syntax where config is simply the path
 // of the directory to create.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

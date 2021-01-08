@@ -3,7 +3,7 @@
 
 Remove a package or service.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   

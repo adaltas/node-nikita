@@ -3,7 +3,7 @@
 
 // Change the permissions of a file or directory.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

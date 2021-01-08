@@ -3,7 +3,7 @@
 
 Pull an image or a repository from a registry.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

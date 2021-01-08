@@ -3,7 +3,7 @@
 
 Check if the device exists in a container.
 
-## Callback parameters
+## Output
 
 * `err`
   Error object if any.

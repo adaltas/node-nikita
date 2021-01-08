@@ -3,7 +3,7 @@
 
 Log out from a Docker registry or the one defined by the `registry` option.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   

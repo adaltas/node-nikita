@@ -3,7 +3,7 @@
 
 // Load Docker images.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

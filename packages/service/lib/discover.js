@@ -5,7 +5,7 @@
 // For now it only supports Centos/Redhat OS in version 6 or 7, Ubuntu.
 // Store properties in the nikita state object.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

@@ -3,7 +3,7 @@
 
 // Delete a device from a container
 
-// ## Callback parameters
+// ## Output
 
 // * `err`
 //   Error object if any.

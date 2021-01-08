@@ -4,7 +4,7 @@
 // Stop a service.
 // Note, does not throw an error if service is not installed.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

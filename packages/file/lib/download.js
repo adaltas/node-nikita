@@ -28,7 +28,7 @@
 // If cache is used, signature validation is always active, and md5sum is automatically
   // calculated if neither sha256, sh1 nor md5 is provided.
 
-// ## Callback parameters
+// ## Output
 
 // * `err` (Error)   
   //   Error object if any.

@@ -3,7 +3,7 @@
 
 // Start a container.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

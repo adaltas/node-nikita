@@ -3,7 +3,7 @@
 
 // Run a command in a running container
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   
@@ -113,7 +113,7 @@ handler = async function({
     });
   }
   command += ` ${config.container} ${config.command}`;
-  delete config.command;
+  // delete config.command
   return (await this.docker.tools.execute({
     command: command,
     code_skipped: config.code_skipped

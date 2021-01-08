@@ -8,7 +8,7 @@
 // * `container` (string, required)
 //   The name of the container.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`
 //   Error object if any.

@@ -3,7 +3,7 @@
 
 // Create a storage or update a storage configuration.
 
-// ## Callback Parameters
+// ## Output
 
 // * `err`
 //   Error object if any

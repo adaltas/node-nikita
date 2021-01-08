@@ -24,7 +24,7 @@
 // * `separator` (string)   
 //   Characteres used to separate keys from values; default to " : ".
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.   

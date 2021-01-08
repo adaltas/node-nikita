@@ -6,7 +6,7 @@ exist.
 
 Note, it is valid for the "source" file to not exist.
 
-## Callback Parameters
+## Output
 
 * `err`   
   Error object if any.   

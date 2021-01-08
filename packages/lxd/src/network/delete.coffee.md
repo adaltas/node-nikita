@@ -3,7 +3,7 @@
 
 Delete an existing lxd network.
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.

@@ -3,7 +3,7 @@
 
 // Pause all processes within a container.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

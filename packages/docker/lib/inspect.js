@@ -6,7 +6,7 @@
 // return status is UNMODIFIED. If container does not exist nor is running
 // SIGNAL is not sent.
 
-// ## Callback parameters
+// ## Output
 
 // * `err`   
 //   Error object if any.

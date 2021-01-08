@@ -3,7 +3,7 @@
 
 Run a command in a running container
 
-## Callback parameters
+## Output
 
 * `err`   
   Error object if any.   
