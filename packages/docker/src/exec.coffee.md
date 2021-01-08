@@ -85,7 +85,7 @@ console.info(`Command was executed: ${status}`)
       else if config.gid?
         log message: 'config.gid ignored unless config.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
       command += " #{config.container} #{config.command}"
-      delete config.command
+      # delete config.command
       await @docker.tools.execute
         command: command
         code_skipped: config.code_skipped

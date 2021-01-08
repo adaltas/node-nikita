@@ -60,20 +60,16 @@ info.map( (container) =>
 
 ## Handler
 
-    handler = ({args, config}) ->
-      isCointainerArray = Array.isArray arg?.container for arg in args
-      # Ensure target container exists
-      {status: exists} = await @docker.tools.execute
-        command: "ps -a | egrep ' #{config.container}$'"
-        code_skipped: 1
-      throw Error "Container #{JSON.stringify config.container} does not exists" unless exists
-      # Get information
-      {stdout: info} = await @docker.tools.execute
+    handler = ({config}) ->
+      isCointainerArray = Array.isArray config.container
+      {data: info} = await @docker.tools.execute
         command: [
           'inspect'
-          "#{config.container}"
+          ...(
+            if isCointainerArray then config.container else [config.container]
+          )
         ].join ' '
-      info = JSON.parse info
+        format: 'json'
       info: if isCointainerArray then info else info[0]
 
 ## Exports

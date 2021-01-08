@@ -76,22 +76,11 @@ handler = async function({args, config}) {
     isCointainerArray = Array.isArray(arg != null ? arg.container : void 0);
   }
   ({
-    // Ensure target container exists
-    status: exists
+    data: info
   } = (await this.docker.tools.execute({
-    command: `ps -a | egrep ' ${config.container}$'`,
-    code_skipped: 1
+    command: ['inspect', ...(isCointainerArray ? config.container : [config.container])].join(' '),
+    format: 'json'
   })));
-  if (!exists) {
-    throw Error(`Container ${JSON.stringify(config.container)} does not exists`);
-  }
-  ({
-    // Get information
-    stdout: info
-  } = (await this.docker.tools.execute({
-    command: ['inspect', `${config.container}`].join(' ')
-  })));
-  info = JSON.parse(info);
   return {
     info: isCointainerArray ? info : info[0]
   };

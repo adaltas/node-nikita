@@ -25,9 +25,7 @@ describe 'docker.inspect', ->
         container: 'nikita_test_inspect'
         force: true
 
-  they.skip 'two running containers', ({ssh}) ->
-    # TODO: array of containers not yet implemented
-    # the inspect command shall be ready but not the exists command
+  they 'two running containers', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -37,9 +35,11 @@ describe 'docker.inspect', ->
       ,
         container: 'nikita_test_inspect_2'
       ], force: true
-      @docker.tools.service
-        image: 'httpd'
-        container: 'nikita_test_inspect'
+      @docker.tools.service [
+        container: 'nikita_test_inspect_1'
+      ,
+        container: 'nikita_test_inspect_2'
+      ], image: 'httpd'
       {info} = await @docker.inspect
         container: [
           'nikita_test_inspect_1'
