@@ -30,7 +30,6 @@ session = (action={}) ->
         event: 'nikita:session:arguments'
         args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
-          contextualize [...args, parent: parent, metadata: namespace: namespace]
           actions = contextualize [...args, metadata: namespace: namespace]
           (if Array.isArray actions then actions else [actions]).map (action) ->
             actions.config ?= {}

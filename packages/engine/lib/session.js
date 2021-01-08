@@ -52,15 +52,6 @@ session = function(action = {}) {
           namespace: namespace
         },
         handler: function({args, parent, namespace}) {
-          contextualize([
-            ...args,
-            {
-              parent: parent,
-              metadata: {
-                namespace: namespace
-              }
-            }
-          ]);
           actions = contextualize([
             ...args,
             {
