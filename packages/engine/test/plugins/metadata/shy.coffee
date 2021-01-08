@@ -21,7 +21,6 @@ describe 'plugins.metadata.shy', ->
     status.should.eql false
 
   it 'output from array', ->
-    count = 0
     nikita ->
       {status} = await @call ->
         [act1, act2] = await @call [
@@ -35,6 +34,9 @@ describe 'plugins.metadata.shy', ->
         act2.status.should.be.false()
         null
       status.should.be.false()
+  
+  it 'false disreregard a status true', ->
+    nikita ->
       {status} = await @call ->
         [act1, act2] = await @call [
           metadata: shy: false

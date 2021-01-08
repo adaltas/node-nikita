@@ -4,61 +4,59 @@ utils = require '../utils'
 module.exports = ->
   stack = []
   running = false
-  events =
-    end: []
-  scheduler =
-    on_end: (resolve, reject) ->
-      events.end.push resolve: resolve, reject: reject
-      @
-    pump: ->
-      return if running
-      if stack.length
+  scheduler = null
+  promise = new Promise (fresolve, freject) ->
+    scheduler =
+      pump: ->
+        return if running
+        return fresolve() unless stack.length
         running = true
-        [handler, resolve, reject] = @next()
+        [handler, resolve, reject] = stack.shift()
         setImmediate ->
           res = handler.call()
-          if Array.isArray res
-            running = false
-            handlers = res
-            scheduler.add(handlers).then resolve, reject
-            setImmediate ->
-              scheduler.pump()
-          else if res.then
+          if res?.then
             res.then ->
               running = false
-              resolve.apply handler, arguments
-              setImmediate ->
-                scheduler.pump()
-            , (err) ->
+              resolve.apply null, arguments
+              setImmediate -> scheduler.pump()
+            , ->
               running = false
-              reject err
-              setImmediate ->
-                scheduler.pump()
+              reject.apply null, arguments
+              setImmediate -> scheduler.pump()
+          else if Array.isArray res
+            running = false
+            scheduler.unshift(res).then resolve, reject
+          else if res
+            throw Error "Invalid state #{JSON.stringify res}"
+      unshift: (handlers, {pump=true}={}) ->
+        isArray = Array.isArray handlers
+        throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
+        new Promise (resolve, reject) ->
+          unless isArray
+            stack.unshift [handlers, resolve, reject]
+            scheduler.pump() if pump
           else
-            throw utils.error 'SCHEDULER_INVALID_HANDLER', [
-              'scheduled handler must return a promise or an array of handlers,'
-              "got #{JSON.stringify res}"
-            ]
+            # Unshift from the last to the first element to preservce order
+            Promise.all((
+              scheduler.unshift handler, pump: false for handler in handlers.reverse()
+            ).reverse()).then resolve, reject
+            scheduler.pump() if pump
+      push: (handlers) ->
+        isArray = Array.isArray handlers
+        throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
+        new Promise (resolve, reject) ->
+          unless isArray
+            stack.push [handlers, resolve, reject]
+            scheduler.pump()
+          else
+            Promise.all(
+              scheduler.push handler for handler in handlers
+            ).then resolve, reject
+  new Proxy promise, get: (target, name) ->
+    if target[name]?
+      if typeof target[name] is 'function'
+        return target[name].bind target
       else
-        for prom in events.end
-          {resolve} = prom
-          resolve.call()
-    next: ->
-      stack.shift()
-    clear: ->
-      stack = []
-    add: (handlers, options={}) ->
-      prom = new Promise (resolve, reject) ->
-        dir = if options.first then 'unshift' else 'push'
-        unless Array.isArray handlers
-          stack[dir] [handlers, resolve, reject]
-        else
-          promises = for handler in handlers
-            new Promise (resolve, reject) ->
-              stack[dir] [handler, resolve, reject]
-          Promise.all(promises).then resolve, reject
-        # Pump execution
-        setImmediate ->
-          running = false if options.force
-          scheduler.pump()
-      prom
+        return target[name]
+    else
+      scheduler[name]

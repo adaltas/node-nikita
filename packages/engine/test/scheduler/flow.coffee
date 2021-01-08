@@ -1,5 +1,4 @@
 
-nikita = require '../../src'
 schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.flow', ->
@@ -13,53 +12,29 @@ describe 'scheduler.flow', ->
     # to halt the flow execution.
     stack = []
     scheduler = schedule()
-    await scheduler.add -> new Promise (resolve) ->
+    await scheduler.push -> new Promise (resolve) ->
       stack.push 1
       resolve 1
     try
-      await scheduler.add -> new Promise (resolve, reject) ->
+      await scheduler.push -> new Promise (resolve, reject) ->
         stack.push 2
         reject Error 'OK'
     catch err
-    await scheduler.add -> new Promise (resolve) ->
+    await scheduler.push -> new Promise (resolve) ->
       stack.push 3
       resolve 3
-    new Promise (accept, reject) ->
-      scheduler.on_end ->
-        stack.should.eql [1, 2, 3]
-        accept()
-      , reject
-    .should.be.resolved()
+    scheduler.should.be.resolved()
+    scheduler.then ->
+      stack.should.eql [1, 2, 3]
 
-  it 'throw error and keep going', ->
+  it 'run asynchornously', ->
     stack = []
-    nikita ->
-      # The following used to hang the scheduler
-      @call (->)
-      await new Promise (resolve, reject) ->
-        setTimeout resolve, 10
-      @call (->)
-
-  it 'status with relax false', ->
-    # Note, there was a bug where the last action was executed but the error
-    # was swallowed
-    nikita ->
-      try await @call -> throw Error 'ok'
-      catch err
-      @call ->
-        throw Error 'Catch me'
-    .should.be.rejectedWith 'Catch me'
-
-  it.skip 'should validate a created file', ({ssh}) ->
-    try
-      output = await nikita  ->
-        ouptut = await @call ->
-          true
-        @call ->
-          throw Error 'catchme'
-        ouptut
-      console.log 'should not get here'
-      throw Error 'Oh no!'
-    catch err
-      err.message.should.eql 'catchme'
-      console.log 'should get here', err.message
+    scheduler = schedule()
+    scheduler.push ->
+      stack.push 2
+      new Promise (accept, reject) ->
+        stack.push 3
+        accept()
+    stack.push 1
+    scheduler.then ->
+      stack.should.eql [1, 2, 3]

@@ -4,103 +4,117 @@ var utils;
 utils = require('../utils');
 
 module.exports = function() {
-  var events, running, scheduler, stack;
+  var promise, running, scheduler, stack;
   stack = [];
   running = false;
-  events = {
-    end: []
-  };
-  return scheduler = {
-    on_end: function(resolve, reject) {
-      events.end.push({
-        resolve: resolve,
-        reject: reject
-      });
-      return this;
-    },
-    pump: function() {
-      var handler, i, len, prom, ref, reject, resolve, results;
-      if (running) {
-        return;
-      }
-      if (stack.length) {
+  scheduler = null;
+  promise = new Promise(function(fresolve, freject) {
+    return scheduler = {
+      pump: function() {
+        var handler, reject, resolve;
+        if (running) {
+          return;
+        }
+        if (!stack.length) {
+          return fresolve();
+        }
         running = true;
-        [handler, resolve, reject] = this.next();
+        [handler, resolve, reject] = stack.shift();
         return setImmediate(function() {
-          var handlers, res;
+          var res;
           res = handler.call();
-          if (Array.isArray(res)) {
-            running = false;
-            handlers = res;
-            scheduler.add(handlers).then(resolve, reject);
-            return setImmediate(function() {
-              return scheduler.pump();
-            });
-          } else if (res.then) {
+          if (res != null ? res.then : void 0) {
             return res.then(function() {
               running = false;
-              resolve.apply(handler, arguments);
+              resolve.apply(null, arguments);
               return setImmediate(function() {
                 return scheduler.pump();
               });
-            }, function(err) {
+            }, function() {
               running = false;
-              reject(err);
+              reject.apply(null, arguments);
               return setImmediate(function() {
                 return scheduler.pump();
               });
             });
-          } else {
-            throw utils.error('SCHEDULER_INVALID_HANDLER', ['scheduled handler must return a promise or an array of handlers,', `got ${JSON.stringify(res)}`]);
-          }
-        });
-      } else {
-        ref = events.end;
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          prom = ref[i];
-          ({resolve} = prom);
-          results.push(resolve.call());
-        }
-        return results;
-      }
-    },
-    next: function() {
-      return stack.shift();
-    },
-    clear: function() {
-      return stack = [];
-    },
-    add: function(handlers, options = {}) {
-      var prom;
-      prom = new Promise(function(resolve, reject) {
-        var dir, handler, promises;
-        dir = options.first ? 'unshift' : 'push';
-        if (!Array.isArray(handlers)) {
-          stack[dir]([handlers, resolve, reject]);
-        } else {
-          promises = (function() {
-            var i, len, results;
-            results = [];
-            for (i = 0, len = handlers.length; i < len; i++) {
-              handler = handlers[i];
-              results.push(new Promise(function(resolve, reject) {
-                return stack[dir]([handler, resolve, reject]);
-              }));
-            }
-            return results;
-          })();
-          Promise.all(promises).then(resolve, reject);
-        }
-        // Pump execution
-        return setImmediate(function() {
-          if (options.force) {
+          } else if (Array.isArray(res)) {
             running = false;
+            return scheduler.unshift(res).then(resolve, reject);
+          } else if (res) {
+            throw Error(`Invalid state ${JSON.stringify(res)}`);
           }
-          return scheduler.pump();
         });
-      });
-      return prom;
+      },
+      unshift: function(handlers, {pump = true} = {}) {
+        var isArray;
+        isArray = Array.isArray(handlers);
+        if (!(isArray || typeof handlers === 'function')) {
+          throw Error('Invalid Argument');
+        }
+        return new Promise(function(resolve, reject) {
+          var handler;
+          if (!isArray) {
+            stack.unshift([handlers, resolve, reject]);
+            if (pump) {
+              return scheduler.pump();
+            }
+          } else {
+            // Unshift from the last to the first element to preservce order
+            Promise.all(((function() {
+              var i, len, ref, results;
+              ref = handlers.reverse();
+              results = [];
+              for (i = 0, len = ref.length; i < len; i++) {
+                handler = ref[i];
+                results.push(scheduler.unshift(handler, {
+                  pump: false
+                }));
+              }
+              return results;
+            })()).reverse()).then(resolve, reject);
+            if (pump) {
+              return scheduler.pump();
+            }
+          }
+        });
+      },
+      push: function(handlers) {
+        var isArray;
+        isArray = Array.isArray(handlers);
+        if (!(isArray || typeof handlers === 'function')) {
+          throw Error('Invalid Argument');
+        }
+        return new Promise(function(resolve, reject) {
+          var handler;
+          if (!isArray) {
+            stack.push([handlers, resolve, reject]);
+            return scheduler.pump();
+          } else {
+            return Promise.all((function() {
+              var i, len, results;
+              results = [];
+              for (i = 0, len = handlers.length; i < len; i++) {
+                handler = handlers[i];
+                results.push(scheduler.push(handler));
+              }
+              return results;
+            })()).then(resolve, reject);
+          }
+        });
+      }
+    };
+  });
+  return new Proxy(promise, {
+    get: function(target, name) {
+      if (target[name] != null) {
+        if (typeof target[name] === 'function') {
+          return target[name].bind(target);
+        } else {
+          return target[name];
+        }
+      } else {
+        return scheduler[name];
+      }
     }
-  };
+  });
 };

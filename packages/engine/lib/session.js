@@ -36,8 +36,8 @@ session = function(action = {}) {
     namespace = action.state.namespace.slice();
     action.state.namespace = [];
     // Schedule the action and get the result as a promise
-    prom = action.scheduler.add(async function() {
-      var actions, child, handlers;
+    prom = action.scheduler.push(async function() {
+      var actions, child, schl;
       // Validate the namespace
       child = (await action.registry.get(namespace));
       if (!child) {
@@ -61,8 +61,8 @@ session = function(action = {}) {
             }
           ]);
           (Array.isArray(actions) ? actions : [actions]).map(function(action) {
-            if (actions.config == null) {
-              actions.config = {};
+            if (action.config == null) {
+              action.config = {};
             }
             if (action.parent != null) {
               action.config.parent = action.parent;
@@ -75,14 +75,12 @@ session = function(action = {}) {
       if (!Array.isArray(actions)) {
         return session(actions);
       } else {
-        handlers = actions.map(function(action) {
-          return function() {
+        schl = schedule();
+        return Promise.all(actions.map(function(action) {
+          return schl.push(function() {
             return session(action);
-          };
-        });
-        return action.scheduler.add(handlers, {
-          force: true
-        });
+          });
+        }));
       }
     });
     return new Proxy(prom, {
@@ -149,15 +147,13 @@ session = function(action = {}) {
   });
   // Execute the action
   result = new Promise(async function(resolve, reject) {
-    var action_from_registry, k, on_end, on_result, output, pump, ref, v;
+    var action_from_registry, k, on_result, output, pump, ref, v;
     // Hook intented to modify the current action being created
     action = (await action.plugins.hook({
       event: 'nikita:session:normalize',
       args: action,
       hooks: ((ref = action.hooks) != null ? ref.on_normalize : void 0) || action.on_normalize,
-      handler: function(action) {
-        return normalize(action);
-      }
+      handler: normalize
     }));
     // Load action from registry
     if (action.metadata.namespace) {
@@ -168,7 +164,7 @@ session = function(action = {}) {
         action[k] = merge(action_from_registry[k], action[k]);
       }
     }
-    // Hook attented to alter the execution of an action handler
+    // Hook attended to alter the execution of an action handler
     output = action.plugins.hook({
       event: 'nikita:session:action',
       args: action,
@@ -184,12 +180,7 @@ session = function(action = {}) {
     };
     output.then(pump, pump);
     // Make sure the promise is resolved after the scheduler and its children
-    on_end = new Promise(function(resolve, reject) {
-      return action.scheduler.on_end(resolve, function(err) {
-        return reject(err);
-      });
-    });
-    Promise.all([output, on_end]).then(function(values) {
+    Promise.all([output, action.scheduler]).then(function(values) {
       return on_result(void 0, values.shift());
     }, function(err) {
       return on_result(err);

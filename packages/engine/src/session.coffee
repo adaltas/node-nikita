@@ -18,7 +18,7 @@ session = (action={}) ->
     namespace = action.state.namespace.slice()
     action.state.namespace = []
     # Schedule the action and get the result as a promise
-    prom = action.scheduler.add ->
+    prom = action.scheduler.push ->
       # Validate the namespace
       child = await action.registry.get namespace
       unless child
@@ -32,15 +32,16 @@ session = (action={}) ->
         handler: ({args, parent, namespace}) ->
           actions = contextualize [...args, metadata: namespace: namespace]
           (if Array.isArray actions then actions else [actions]).map (action) ->
-            actions.config ?= {}
+            action.config ?= {}
             action.config.parent = action.parent if action.parent?
             action.parent = parent
           actions
       unless Array.isArray actions
-        session(actions)
+        session actions
       else
-        handlers = actions.map (action) -> -> session(action)
-        action.scheduler.add(handlers, force: true)
+        schl = schedule()
+        Promise.all actions.map (action) ->
+          schl.push -> session action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
@@ -83,15 +84,14 @@ session = (action={}) ->
       event: 'nikita:session:normalize'
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
-      handler: (action) ->
-        normalize action
+      handler: normalize
     # Load action from registry
     if action.metadata.namespace
       action_from_registry = await action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
       for k, v of action_from_registry
         action[k] = merge action_from_registry[k], action[k]
-    # Hook attented to alter the execution of an action handler
+    # Hook attended to alter the execution of an action handler
     output = action.plugins.hook
       event: 'nikita:session:action'
       args: action
@@ -103,10 +103,7 @@ session = (action={}) ->
     pump = -> action.scheduler.pump()
     output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
-    on_end = new Promise (resolve, reject) ->
-      action.scheduler.on_end resolve, (err) ->
-        reject err
-    Promise.all [output, on_end]
+    Promise.all [output, action.scheduler]
     .then (values) ->
       on_result undefined, values.shift()
     , (err) ->
