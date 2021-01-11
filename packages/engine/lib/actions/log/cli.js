@@ -190,7 +190,7 @@ handler = function({config, metadata, ssh}) {
       //   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
       //   null
       'nikita:action:end': function(action, error, output) {
-        var color, headers, line, status, time;
+        var color, headers, line, status;
         if (!action.metadata.header) {
           return;
         }
@@ -210,13 +210,12 @@ handler = function({config, metadata, ssh}) {
           return null;
         }
         // delete ids[action.index]
-        time = config.time ? utils.string.print_time(Date.now() - action.metadata.time) : '';
         headers = get_headers(action);
         line = format_line({
           host: config.host,
           header: headers.join(config.divider),
           status: status,
-          time: time
+          time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''
         });
         if (color) {
           line = color(line);

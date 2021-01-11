@@ -242,19 +242,24 @@ describe 'actions.log.cli', ->
           "\u001b[31m#{host}   c   ✘\u001b[39m\n"
         ]
     
-    they.skip 'option time', ({ssh}) ->
-      # TODO: waiting for the time plugin
+    they 'option time', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
       nikita
         ssh: ssh
-      .log.cli
-        stream: new MyWritable data
-        colors: false
-      .call metadata: header: 'h1', (->)
-      # .wait 200
-      .call ->
-        data[0].should.match /#{host}   h1   -  \dms\n/
+      , ->
+        @log.cli
+          stream: new MyWritable data
+          colors: false
+        @call metadata: header: 'h1', ->
+          @wait 100
+        @call metadata: header: 'h2', ->
+          @call metadata: header: 'h3', ->
+            @wait 100
+          @wait 100
+        @call ->
+          data[0].should.match /h1   -  1\d{2}ms\n/
+          data[1].should.match /h2 : h3   -  1\d{2}ms\n/
+          data[2].should.match /h2   -  2\d{2}ms\n/
 
   describe 'session events', ->
           
