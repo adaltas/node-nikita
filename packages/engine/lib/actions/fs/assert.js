@@ -43,7 +43,10 @@ on_action = function({config, metadata}) {
     config.filetype = [config.filetype];
   }
   if ((ref1 = typeof config.mode) === 'number' || ref1 === 'string') {
-    return config.mode = [config.mode];
+    config.mode = [config.mode];
+  }
+  if (config.filter instanceof RegExp) {
+    return config.filter = [config.filter];
   }
 };
 
@@ -87,6 +90,13 @@ constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
 one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
 'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
 'ifsock',  'socket'.`
+    },
+    'filter': {
+      type: 'array',
+      items: {
+        instanceof: 'RegExp'
+      },
+      description: `Text to filter in actual content before matching.`
     },
     'gid': {
       oneOf: [
@@ -154,7 +164,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
 
 // ## Handler
 handler = async function({config}) {
-  var _hash, algo, data, err, exists, filetype, hash, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stats;
+  var _hash, algo, data, err, exists, filetype, filter, hash, i, j, len, len1, ref, ref1, ref10, ref11, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stats;
   config.filetype = (function() {
     var i, len, ref, results;
     ref = config.filetype || [];
@@ -289,6 +299,15 @@ handler = async function({config}) {
   // Assert content equal
   if ((config.content != null) && (typeof config.content === 'string' || Buffer.isBuffer(config.content))) {
     ({data} = (await this.fs.base.readFile(config.target)));
+    ref9 = config.filter || [];
+    for (i = 0, len = ref9.length; i < len; i++) {
+      filter = ref9[i];
+      data = filter[Symbol.replace](data, '');
+    }
+    // RegExp returns string
+    if (typeof data === 'string') {
+      data = Buffer.from(data);
+    }
     if (config.trim) {
       data = utils.buffer.trim(data, config.encoding);
     }
@@ -314,6 +333,11 @@ handler = async function({config}) {
   // Assert content match
   if ((config.content != null) && config.content instanceof RegExp) {
     ({data} = (await this.fs.base.readFile(config.target)));
+    ref10 = config.filter || [];
+    for (j = 0, len1 = ref10.length; j < len1; j++) {
+      filter = ref10[j];
+      data = filter[Symbol.replace](data, '');
+    }
     if (!config.not) {
       if (!config.content.test(data)) {
         throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH({
@@ -406,7 +430,7 @@ handler = async function({config}) {
     }
   }
   // Assert file permissions
-  if ((ref9 = config.mode) != null ? ref9.length : void 0) {
+  if ((ref11 = config.mode) != null ? ref11.length : void 0) {
     ({stats} = (await this.fs.base.stat(config.target)));
     if (!config.not) {
       if (!utils.mode.compare(config.mode, stats.mode)) {

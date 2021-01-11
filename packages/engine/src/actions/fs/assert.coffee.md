@@ -36,6 +36,7 @@ console.info(`File exists: ${status}`)
       config.target = metadata.argument if metadata.argument?
       config.filetype = [config.filetype] if typeof config.filetype in ['number', 'string']
       config.mode = [config.mode] if typeof config.mode in ['number', 'string']
+      config.filter = [config.filter] if config.filter instanceof RegExp
 
 ## Schema
 
@@ -63,6 +64,13 @@ console.info(`File exists: ${status}`)
           one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
           'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
           'ifsock',  'socket'.
+          """
+        'filter':
+          type: 'array'
+          items:
+            instanceof: 'RegExp'
+          description: """
+          Text to filter in actual content before matching.
           """
         'gid':
           oneOf: [{type: 'integer'}, {type: 'string'}]
@@ -162,6 +170,11 @@ console.info(`File exists: ${status}`)
       # Assert content equal
       if config.content? and (typeof config.content is 'string' or Buffer.isBuffer config.content)
         {data} = await @fs.base.readFile config.target
+        for filter in config.filter or []
+          data = filter[Symbol.replace] data, ''
+        # RegExp returns string
+        if typeof data is 'string'
+          data = Buffer.from data
         data = utils.buffer.trim data, config.encoding if config.trim
         unless config.not
           unless data.equals config.content
@@ -173,6 +186,8 @@ console.info(`File exists: ${status}`)
       # Assert content match
       if config.content? and config.content instanceof RegExp
         {data} = await @fs.base.readFile config.target
+        for filter in config.filter or []
+          data = filter[Symbol.replace] data, ''
         unless config.not
           unless config.content.test data
             throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH config: config, expect: data
