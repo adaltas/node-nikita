@@ -40,7 +40,6 @@ console.info(`Container was unpaused: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
       # Validation
       throw Error 'Missing container parameter' unless config.container?
       await @docker.tools.execute

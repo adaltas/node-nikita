@@ -47,11 +47,6 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  log({
-    message: "Entering Docker unpause",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/unpause'
-  });
   if (config.container == null) {
     // Validation
     throw Error('Missing container parameter');

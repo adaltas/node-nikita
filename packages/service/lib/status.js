@@ -66,7 +66,6 @@ handler = async function({
     tools: {log}
   }) {
   var err, status;
-  // log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
   log({
     message: `Status for service ${config.name}`,
     level: 'INFO',

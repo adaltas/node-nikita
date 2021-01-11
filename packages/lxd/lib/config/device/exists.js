@@ -40,7 +40,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var properties;
-  // log message: "Entering lxd.config.device.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/device/exists'
   ({properties} = (await this.lxd.config.device.show({
     container: config.container,
     device: config.device

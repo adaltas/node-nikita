@@ -37,7 +37,6 @@ console.info(`Network was detached: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
       #Execute
       await @execute
         command: """

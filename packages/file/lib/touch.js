@@ -68,11 +68,6 @@ handler = async function({
     tools: {log}
   }) {
   var status;
-  log({
-    message: "Entering file.touch",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/touch'
-  });
   // status is false if the file doesn't exist and true otherwise
   ({status} = (await this.call(async function() {
     var exists;

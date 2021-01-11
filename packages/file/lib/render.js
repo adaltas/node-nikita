@@ -97,11 +97,6 @@ handler = async function({
     tools: {log}
   }) {
   var data;
-  log({
-    message: "Entering file.render",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/render'
-  });
   // Read source
   if (config.source) {
     ({data} = (await this.fs.base.readFile({

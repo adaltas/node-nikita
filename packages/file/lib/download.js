@@ -225,11 +225,6 @@ handler = async function({
     tools: {log, path}
   }) {
   var algo, cookie, err, exists, hash, hash_source, hash_target, header, match, protocols_ftp, protocols_http, ref, ref1, ref2, ref3, ref4, ref5, shortcircuit, source_hash, source_url, stageDestination, stats;
-  log({
-    message: 'Entering file.download',
-    level: 'DEBUG',
-    module: 'nikita/lib/file/download'
-  });
   if (config.md5 != null) {
     if ((ref = typeof config.md5) !== 'string' && ref !== 'boolean') {
       throw Error(`Invalid MD5 Hash:${config.md5}`);

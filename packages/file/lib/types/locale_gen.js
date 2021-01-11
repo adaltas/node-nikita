@@ -51,7 +51,6 @@ the command if value is a boolean.`
 handler = async function({config}) {
   var data, i, j, len, locale, locales, match, ref, ref1, status;
   if (config.rootdir) {
-    // log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
     config.target = `${path.join(config.rootdir, config.target)}`;
   }
   // Write configuration

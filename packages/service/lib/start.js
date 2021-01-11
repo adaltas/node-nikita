@@ -55,7 +55,6 @@ handler = async function({
   }) {
   var err, status;
   try {
-    // log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
     ({status} = (await this.execute({
       command: `ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep -w "${config.name}" || exit 3
 if command -v systemctl >/dev/null 2>&1; then

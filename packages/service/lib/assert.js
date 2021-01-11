@@ -52,7 +52,6 @@ schema = {
 // ## Handler
 handler = async function({config, metadata}) {
   var err, status;
-  // log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
   if (config.srv_name == null) {
     config.srv_name = config.name;
   }

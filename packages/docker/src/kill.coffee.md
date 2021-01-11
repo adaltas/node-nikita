@@ -51,8 +51,7 @@ console.info(`Container was killed: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
+    handler = ({config}) ->
       {status} = await @docker.tools.execute
         command: "ps | egrep ' #{config.container}$' | grep 'Up'"
         code_skipped: 1

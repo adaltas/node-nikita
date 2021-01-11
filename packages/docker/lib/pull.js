@@ -49,7 +49,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var name, status, tag;
-  // log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
   // Validate
   [name, tag] = config.image.split(':');
   config.image = name;

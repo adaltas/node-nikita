@@ -39,7 +39,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering lxd.running", level: 'DEBUG', module: '@nikitajs/lxd/lib/running'
   return (await this.execute({
     command: `lxc list -c ns --format csv | grep '${config.container},RUNNING' || exit 42`,
     code_skipped: 42

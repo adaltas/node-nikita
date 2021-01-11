@@ -131,7 +131,6 @@ default location of the Oracle JDK installation.
 ## Handler
 
     handler = ({config, ssh, metadata: {tmpdir}}) ->
-      # log message: "Entering java.keystore_add", level: 'DEBUG', module: 'nikita/lib/java/keystore_add'
       p = if ssh then path.posix else path
       # Update paths in case of download
       files =

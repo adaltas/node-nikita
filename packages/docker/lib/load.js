@@ -62,11 +62,6 @@ handler = async function({
     tools: {log}
   }) {
   var command, i, image, images, infos, j, k, len, len1, new_image, new_images, new_k, ref, ref1, status, stderr, stdout;
-  log({
-    message: "Entering Docker load",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/load'
-  });
   // Validate parameters
   if (config.input == null) {
     config.input = config.source;

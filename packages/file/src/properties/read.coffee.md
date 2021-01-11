@@ -49,8 +49,7 @@ console.info(`Properties:`, properties)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties/read'
+    handler = ({config}) ->
       {data} = await @fs.base.readFile
         target: config.target
         encoding: config.encoding

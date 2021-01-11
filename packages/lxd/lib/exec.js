@@ -40,7 +40,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
   return (await this.execute(config, {
     trap: false
   }, {

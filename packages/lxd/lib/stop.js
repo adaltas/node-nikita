@@ -27,7 +27,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering stop", level: 'DEBUG', module: '@nikitajs/lxd/lib/stop'
   return (await this.execute({
     command: `lxc list -c ns --format csv | grep '${config.container},STOPPED' && exit 42
 lxc stop ${config.container}`,

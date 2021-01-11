@@ -61,7 +61,6 @@ couldn't find any suitable parser on NPM.
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
       # Global Options
       config.ruby ?= {}
       config[k] ?= v for k, v of config.ruby

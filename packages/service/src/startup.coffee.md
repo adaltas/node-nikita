@@ -52,7 +52,6 @@ console.info(`Service was desactivated on startup: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
       config.startup = [config.startup] if Array.isArray config.startup
       # Action
       log message: "Startup service #{config.name}", level: 'INFO', module: 'nikita/lib/service/startup'

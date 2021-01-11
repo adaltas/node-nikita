@@ -38,9 +38,15 @@ handler = async function({config}) {
     config: config,
     serializer: {
       'nikita:action:start': function(action) {
-        var header, headers, last_event_type, walk;
+        var content, header, headers, last_event_type, walk;
+        content = [];
+        if (action.metadata.module) {
+          content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
+            return index + 1;
+          })).join('.')})\n`);
+        }
         if (!action.metadata.header) {
-          return;
+          return content.join('');
         }
         ({last_event_type} = state);
         state.last_event_type = 'nikita:action:start';
@@ -62,7 +68,10 @@ handler = async function({config}) {
         // headers = await act.tools.walk ({config}) ->
         //   config.header
         header = headers.reverse().join(config.divider);
-        return [last_event_type !== 'nikita:action:start' ? '\n' : void 0, '#'.repeat(headers.length), ' ', header, '\n\n'].join('');
+        content.push('\n');
+        content.push('#'.repeat(headers.length));
+        content.push(` ${header}\n`);
+        return content.join('');
       },
       // 'diff': (log) ->
       //   "\n```diff\n#{log.message}```\n\n" unless log.message
@@ -86,15 +95,15 @@ handler = async function({config}) {
         var out;
         out = [];
         if (log.message.indexOf('\n') === -1) {
-          out.push(`\nRunning Command: \`${log.message}\`\n\n`);
+          out.push(`\nRunning Command: \`${log.message}\`\n`);
         } else {
-          out.push(`\n\`\`\`stdin\n${log.message}\n\`\`\`\n\n`);
+          out.push(`\n\`\`\`stdin\n${log.message}\n\`\`\`\n`);
         }
         // stdining = log.message isnt null
         return out.join('');
       },
       'stderr': function(log) {
-        return `\n\`\`\`stderr\n${log.message}\`\`\`\n\n`;
+        return `\n\`\`\`stderr\n${log.message}\`\`\`\n`;
       },
       'stdout_stream': function(log) {
         var out;
@@ -115,7 +124,7 @@ handler = async function({config}) {
           out.push(log.message);
         }
         if (state.stdout_count === 0) {
-          out.push('\n```\n\n');
+          out.push('\n```\n');
         }
         return out.join('');
       },
@@ -123,7 +132,7 @@ handler = async function({config}) {
         var content;
         state.last_event_type = 'text';
         content = [];
-        content.push(`${log.message}`);
+        content.push(`\n${log.message}`);
         if (log.module) {
           content.push(` (${log.depth}.${log.level}, written by ${log.module})`);
         }

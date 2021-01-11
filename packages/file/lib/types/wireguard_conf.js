@@ -27,7 +27,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  //log message: "Entering file.types.wireguard_conf", level: 'DEBUG', module: 'nikita/file/lib/types/wireguard_conf'
   if (config.target == null) {
     config.target = `/etc/wireguard/${config.interface}.conf`;
   }

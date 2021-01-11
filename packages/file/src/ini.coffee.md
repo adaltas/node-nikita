@@ -127,7 +127,6 @@ console.info(`Content was updated: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       org_props = {}
       default_props = {}
       parse = config.parse or utils.ini.parse

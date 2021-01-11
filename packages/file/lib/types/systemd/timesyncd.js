@@ -70,7 +70,6 @@ systemd-timesyncd\` after having wrote the configuration file.`
 handler = async function({config}) {
   var status;
   if (config.rootdir) {
-    // log message: "Entering file.types.timesyncd", level: "DEBUG", module: "nikita/file/lib/types/systemd"
     // Configs
     config.target = `${path.join(config.rootdir, config.target)}`;
   }

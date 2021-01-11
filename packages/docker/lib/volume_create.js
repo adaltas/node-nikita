@@ -74,16 +74,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var status;
-  log({
-    message: "Entering Docker volume_create",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/volume_create'
-  });
   if (typeof config.label === 'string') {
     // Normalize config
     config.label = [config.label];

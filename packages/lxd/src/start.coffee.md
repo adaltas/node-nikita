@@ -31,7 +31,6 @@ console.info(`Container was started: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
       command_init = [
         'lxc', 'start', config.container
       ].join ' '

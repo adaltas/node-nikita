@@ -162,7 +162,6 @@ console.info(`Container was built: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       number_of_step = 0
       userargs = []
       # status unmodified if final tag already exists

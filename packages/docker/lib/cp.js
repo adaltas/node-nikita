@@ -61,16 +61,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var _, err, source_container, source_mkdir, source_path, stats, target_container, target_mkdir, target_path;
-  log({
-    message: "Entering Docker cp",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/cp'
-  });
   [_, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
   [_, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
   if (source_container && target_container) {

@@ -36,7 +36,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var command_delete;
-  // log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
   command_delete = ['lxc', 'storage', 'delete', config.name].join(' ');
   //Execute
   return (await this.execute({

@@ -144,7 +144,6 @@ console.info(`Content was written: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
       try if config.merge
         {data} = await @fs.base.readFile

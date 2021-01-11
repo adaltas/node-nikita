@@ -56,16 +56,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var exists, running;
-  log({
-    message: "Entering Docker rm",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/rm'
-  });
   ({
     status: exists,
     data: running

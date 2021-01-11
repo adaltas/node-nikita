@@ -355,11 +355,6 @@ handler = async function({
     tools: {log}
   }) {
   var command, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
-  log({
-    message: "Entering Docker run",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/run'
-  });
   if (!((config.name != null) || config.rm)) {
     // Validate parameters
     log({

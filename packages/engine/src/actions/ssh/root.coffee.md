@@ -93,7 +93,6 @@ console.info(`Public key was updoaded for root user: ${status}`)
 ## Handler
 
     handler = ({metadata, config, tools: {log}}) ->
-      log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       config.host ?= config.ip
       # config.command ?= 'su -'
       config.username ?= null

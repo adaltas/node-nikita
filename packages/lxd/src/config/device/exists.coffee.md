@@ -37,7 +37,6 @@ console.info(status ? `device exists, type is ${config.type}` : 'device missing'
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.config.device.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/device/exists'
       {properties} = await @lxd.config.device.show
         container: config.container
         device: config.device

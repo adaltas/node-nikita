@@ -37,7 +37,6 @@ console.info(`Network was attached: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
       #Build command
       command_attach = [
         'lxc'

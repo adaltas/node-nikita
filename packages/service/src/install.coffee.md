@@ -96,7 +96,6 @@ console.info(`Package installed: ${status}`)
 ## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
-      # log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Config
       config.installed ?= state['nikita:execute:installed'] if config.cache
       config.outdated ?= state['nikita:execute:outdated'] if config.cache

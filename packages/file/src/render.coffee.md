@@ -72,7 +72,6 @@ console.info(`File was rendered: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Read source
       if config.source
         {data} = await @fs.base.readFile

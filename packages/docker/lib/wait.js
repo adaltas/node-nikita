@@ -43,15 +43,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker wait",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/wait'
-  });
+handler = async function({config}) {
   // Old implementation was `wait {container} | read r; return $r`
   return (await this.docker.tools.execute(`wait ${config.container}`));
 };

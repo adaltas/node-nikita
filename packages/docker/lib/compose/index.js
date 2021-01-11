@@ -83,11 +83,6 @@ handler = async function({
     tools: {find, log}
   }) {
   var clean_target, containers, k, ref, status, stdout, v;
-  log({
-    message: "Entering Docker Compose",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/compose/up'
-  });
   // Global config
   config.docker = (await find(function({
       config: {docker}

@@ -40,7 +40,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var command_attach;
-  // log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
   //Build command
   command_attach = ['lxc', 'network', 'attach', config.network, config.container].join(' ');
   //Execute

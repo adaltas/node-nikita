@@ -82,7 +82,6 @@ console.info(`File was pushed: ${status}`)
 ## Handler
 
     handler = ({config, metadata: {tmpdir}}) ->
-      # log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/push'
       # Make source file with content
       if config.content?
         tmpfile = path.join tmpdir, "nikita.#{Date.now()}#{Math.round(Math.random()*1000)}"

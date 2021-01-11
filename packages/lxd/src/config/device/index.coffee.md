@@ -203,7 +203,6 @@ console.info(`Disk was created: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
       # Normalize config
       for k, v of config.properties
         continue if typeof v is 'string'

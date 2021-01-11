@@ -58,8 +58,7 @@ console.info(`Container was copied: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
+    handler = ({config}) ->
       [_, source_container, source_path] = /(.*:)?(.*)/.exec config.source
       [_, target_container, target_path] = /(.*:)?(.*)/.exec config.target
       throw Error 'Incompatible source and target config' if source_container and target_container

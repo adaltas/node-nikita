@@ -38,7 +38,6 @@ console.info(config)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
       {stdout} = await @execute
         command: [
           'lxc', 'query',

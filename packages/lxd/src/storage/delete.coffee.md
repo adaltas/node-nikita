@@ -34,7 +34,6 @@ console.info(`Storage was deleted: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
       command_delete = [
         'lxc'
         'storage'

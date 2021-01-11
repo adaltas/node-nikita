@@ -134,7 +134,6 @@ use an empty string to not define any run level.`
 // ## Handler
 handler = async function({config, parent, state}) {
   var chkname, pkgname, srvname, status;
-  // log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
   pkgname = config.yum_name || config.name;
   chkname = config.chk_name || config.srv_name || config.name;
   srvname = config.srv_name || config.chk_name || config.name;

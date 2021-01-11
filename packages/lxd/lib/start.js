@@ -35,7 +35,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var command_init;
-  // log message: "Entering lxd.start", level: 'DEBUG', module: '@nikitajs/lxd/lib/start'
   command_init = ['lxc', 'start', config.container].join(' ');
   // Execution
   return (await this.execute({

@@ -60,7 +60,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var k, ref, status, stdout, v;
-  // log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
   // Global Options
   if (config.ruby == null) {
     config.ruby = {};

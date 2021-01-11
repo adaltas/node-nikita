@@ -67,7 +67,6 @@ Reload the service daemon provider depending on the os.
 ## Handler
 
     handler = ({config, tools: {path}}) ->
-      # log message: "Entering service.init", level: 'DEBUG', module: 'nikita/lib/service/init'
       # check if file is target is directory
       # detect daemon loader provider to construct target
       config.name ?= path.basename(config.source).split('.')[0]

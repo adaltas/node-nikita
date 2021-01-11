@@ -60,9 +60,8 @@ info.map( (container) =>
 
 ## Handler
 
-    handler = ({args, config, tools: {log}}) ->
+    handler = ({args, config}) ->
       isCointainerArray = Array.isArray arg?.container for arg in args
-      log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Ensure target container exists
       {status: exists} = await @docker.tools.execute
         command: "ps -a | egrep ' #{config.container}$'"

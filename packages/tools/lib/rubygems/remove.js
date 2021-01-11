@@ -52,7 +52,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var gems, k, ref, v, version;
-  // log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
   // Global config
   if (config.ruby == null) {
     config.ruby = {};

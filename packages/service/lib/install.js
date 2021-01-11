@@ -105,7 +105,6 @@ handler = async function({
   }) {
   var cacheonly, err, flag, i, installedIndex, j, k, l, len, len1, len2, outdatedIndex, pkg, ref, ref1, ref2, ref3, ref4, status, stdout;
   if (config.cache) {
-    // log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
     // Config
     if (config.installed == null) {
       config.installed = state['nikita:execute:installed'];

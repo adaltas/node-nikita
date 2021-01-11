@@ -7,21 +7,31 @@ return unless tags.posix
 
 describe 'actions.log.md', ->
   
+  they 'write entering message', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @log.md basedir: tmpdir
+      @fs.assert
+        target: "#{tmpdir}/localhost.log"
+        content: /^Entering.*$/mg
+
   they 'write message', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
-    , ({metadata: {tmpdir}})->
+    , ({metadata: {tmpdir}}) ->
       @log.md basedir: tmpdir
-      @call ({tools: {log}}) ->
+      @call ({tools: {log}})->
         log message: 'ok'
-      # @file.assert
-      #   source: "#{tmpdir}/localhost.log"
-      #   content: /^ok\n/
-      #   log: false
       @fs.assert
+        trim: true
+        filter: [
+          /^Entering.*$/mg
+        ]
         target: "#{tmpdir}/localhost.log"
-        content: 'ok\n'
+        content: "ok"
   
   they 'write message and module', ({ssh}) ->
     nikita
@@ -32,8 +42,12 @@ describe 'actions.log.md', ->
       @call ({tools: {log}}) ->
         log message: 'ok', module: 'nikita/test/log/md'
       @fs.assert
+        trim: true
+        filter: [
+          /^Entering.*$/mg
+        ]
         target: "#{tmpdir}/localhost.log"
-        content: 'ok (1.INFO, written by nikita/test/log/md)\n'
+        content: 'ok (1.INFO, written by nikita/test/log/md)'
 
   describe 'header', ->
   
@@ -53,9 +67,12 @@ describe 'actions.log.md', ->
           @call metadata: header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
+          trim: true
+          filter: [
+            /^Entering.*$/mg
+          ]
           target: "#{tmpdir}/localhost.log"
           content: """
-          
           # h1
           
           ok 1
@@ -63,12 +80,9 @@ describe 'actions.log.md', ->
           ## h1 : h2
           
           ok 2
-          
           """
       
     they 'honors header', ({ssh}) ->
-      # this currently fail because there is 2 empty lines between the headers
-      # instead of only one
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -78,15 +92,17 @@ describe 'actions.log.md', ->
           @call metadata: header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
+          trim: true
+          filter: [
+            /^Entering.*$/mg
+          ]
           target: "#{tmpdir}/localhost.log"
           content: """
-          
           # h1
           
           ## h1 : h2
           
           ok 2
-          
           """
 
   describe 'execute', ->

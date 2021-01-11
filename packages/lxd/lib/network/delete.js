@@ -35,7 +35,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
   //Execute
   return (await this.execute({
     command: `lxc network list --format csv | grep ${config.network} || exit 42

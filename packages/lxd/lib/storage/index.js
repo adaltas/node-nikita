@@ -57,7 +57,6 @@ fields](https://lxd.readthedocs.io/en/latest/storage/).`
 handler = async function({config}) {
   var changes, code, currentProperties, k, key, ref, status, stdout, v, value;
   ref = config.properties;
-  // log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
   // Normalize config
   for (k in ref) {
     v = ref[k];

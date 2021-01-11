@@ -114,11 +114,6 @@ handler = async function({
     tools: {log}
   }) {
   var err, location, rebooting, ref;
-  log({
-    message: "Entering ssh.root",
-    level: 'DEBUG',
-    module: 'nikita/lib/ssh/root'
-  });
   if (config.host == null) {
     config.host = config.ip;
   }

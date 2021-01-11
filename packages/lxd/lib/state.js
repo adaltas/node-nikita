@@ -36,7 +36,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var stdout;
-  // log message: "Entering lxd.state", level: "DEBUG", module: "@nikitajs/lxd/lib/state"
   ({stdout} = (await this.execute({
     command: ['lxc', 'query', '/' + ['1.0', 'instances', config.container, 'state'].join('/')].join(' ')
   })));

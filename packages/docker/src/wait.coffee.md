@@ -39,8 +39,7 @@ console.info(`Did we really had to wait: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
+    handler = ({config}) ->
       # Old implementation was `wait {container} | read r; return $r`
       await @docker.tools.execute "wait #{config.container}"
 

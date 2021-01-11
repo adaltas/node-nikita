@@ -111,7 +111,6 @@ console.info(`Service status: ${status}`)
 ## Handler
 
     handler = ({config, parent, state}) ->
-      # log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
       pkgname = config.yum_name or config.name
       chkname = config.chk_name or config.srv_name or config.name
       srvname = config.srv_name or config.chk_name or config.name

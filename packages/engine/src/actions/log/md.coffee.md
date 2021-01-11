@@ -30,7 +30,9 @@ Write log to the host filesystem in Markdown.
       state = last_event_type: undefined
       await @call log_fs, config: config, serializer:
         'nikita:action:start': (action) ->
-          return unless action.metadata.header
+          content = []
+          content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n" if action.metadata.module
+          return content.join '' unless action.metadata.header
           {last_event_type} = state
           state.last_event_type = 'nikita:action:start'
           walk = (parent) ->
@@ -45,13 +47,10 @@ Write log to the host filesystem in Markdown.
           # headers = await act.tools.walk ({config}) ->
           #   config.header
           header = headers.reverse().join config.divider
-          [
-            '\n' unless last_event_type is 'nikita:action:start'
-            '#'.repeat headers.length
-            ' '
-            header
-            '\n\n'
-          ].join ''
+          content.push '\n'
+          content.push '#'.repeat headers.length
+          content.push " #{header}\n"
+          content.join ''
         # 'diff': (log) ->
         #   "\n```diff\n#{log.message}```\n\n" unless log.message
         # 'end': ->
@@ -73,12 +72,12 @@ Write log to the host filesystem in Markdown.
         'stdin': (log) ->
           out = []
           if log.message.indexOf('\n') is -1
-          then out.push "\nRunning Command: `#{log.message}`\n\n"
-          else out.push "\n```stdin\n#{log.message}\n```\n\n"
+          then out.push "\nRunning Command: `#{log.message}`\n"
+          else out.push "\n```stdin\n#{log.message}\n```\n"
           # stdining = log.message isnt null
           out.join ''
         'stderr': (log) ->
-          "\n```stderr\n#{log.message}```\n\n"
+          "\n```stderr\n#{log.message}```\n"
         'stdout_stream': (log) ->
           state.last_event_type = 'stdout_stream'
           # return if log.message is null and stdouting is 0
@@ -91,12 +90,12 @@ Write log to the host filesystem in Markdown.
           out = []
           out.push '\n```stdout\n' if state.stdout_count is 1
           out.push log.message if state.stdout_count > 0
-          out.push '\n```\n\n' if state.stdout_count is 0
+          out.push '\n```\n' if state.stdout_count is 0
           out.join ''
         'text': (log) ->
           state.last_event_type = 'text'
           content = []
-          content.push "#{log.message}"
+          content.push "\n#{log.message}"
           content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module
           content.push "\n"
           content.join ''

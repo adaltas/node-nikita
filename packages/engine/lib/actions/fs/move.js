@@ -68,11 +68,6 @@ handler = async function({
     ssh
   }) {
   var exists, hash;
-  log({
-    message: "Entering move",
-    level: 'DEBUG',
-    module: 'nikita/lib/system/move'
-  });
   // SSH connection
   ssh = (await this.ssh(config.ssh));
   log({

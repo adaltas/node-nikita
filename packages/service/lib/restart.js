@@ -47,7 +47,6 @@ handler = async function({
     tools: {log}
   }) {
   var loader, status;
-  // log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
   log({
     message: `Restart service ${config.name}`,
     level: 'INFO',

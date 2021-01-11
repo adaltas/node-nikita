@@ -43,7 +43,6 @@ console.info(`Service was stopped: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering service.stop", level: 'DEBUG', module: 'nikita/lib/service/stop'
       log message: "Stop service #{config.name}", level: 'INFO', module: 'nikita/lib/service/stop'
       try
         {status} = await @execute

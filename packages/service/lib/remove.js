@@ -61,7 +61,6 @@ handler = async function({
     tools: {log}
   }) {
   var cacheonly, err, installed, pkg, status, stdout;
-  // log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
   // config.manager ?= state['nikita:service:manager'] # not supported
   log({
     message: `Remove service ${config.name}`,

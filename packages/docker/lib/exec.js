@@ -95,11 +95,6 @@ handler = async function({
     tools: {log}
   }) {
   var command;
-  log({
-    message: "Entering Docker exec",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/exec'
-  });
   if (config.service == null) {
     config.service = false;
   }

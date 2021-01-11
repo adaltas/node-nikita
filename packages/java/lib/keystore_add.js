@@ -138,7 +138,6 @@ handler = async function({
     metadata: {tmpdir}
   }) {
   var err, files, p;
-  // log message: "Entering java.keystore_add", level: 'DEBUG', module: 'nikita/lib/java/keystore_add'
   p = ssh ? path.posix : path;
   // Update paths in case of download
   files = {

@@ -293,7 +293,6 @@ additional properties.`
 handler = async function({config}) {
   var changes, err, k, key, properties, ref, status, v, value;
   ref = config.properties;
-  // log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
   // Normalize config
   for (k in ref) {
     v = ref[k];

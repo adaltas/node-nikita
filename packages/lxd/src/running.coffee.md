@@ -36,7 +36,6 @@ console.info(`Container is running: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.running", level: 'DEBUG', module: '@nikitajs/lxd/lib/running'
       await @execute
         command: """
         lxc list -c ns --format csv | grep '#{config.container},RUNNING' || exit 42

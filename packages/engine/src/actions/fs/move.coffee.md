@@ -58,7 +58,6 @@ console.info(`Directory was moved: ${status}`)
 ## Handler
 
     handler = ({config, metadata, tools: {log, path}, ssh}) ->
-      log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
       ssh = await @ssh config.ssh
       log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'

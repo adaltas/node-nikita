@@ -67,7 +67,6 @@ section called "Time". Thus, everything in `content` will be automatically put
 under a "Time" key so that the user doesn't have to do it manually.
 
     handler = ({config}) ->
-      # log message: "Entering file.types.timesyncd", level: "DEBUG", module: "nikita/file/lib/types/systemd"
       # Configs
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
       if Array.isArray config.content.NTP
