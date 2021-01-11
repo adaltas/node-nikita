@@ -77,7 +77,6 @@ handler = async function({
     tools: {path}
   }) {
   var loader, status;
-  // log message: "Entering service.init", level: 'DEBUG', module: 'nikita/lib/service/init'
   // check if file is target is directory
   // detect daemon loader provider to construct target
   if (config.name == null) {

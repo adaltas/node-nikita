@@ -58,7 +58,6 @@ console.info(`File was written: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Trim
       unless config.trim
         fnl_props = config.content

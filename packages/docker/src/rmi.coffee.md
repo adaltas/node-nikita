@@ -52,8 +52,7 @@ force options is set.
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
+    handler = ({config}) ->
       await @docker.tools.execute
         command: [
           'images'

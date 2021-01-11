@@ -164,11 +164,6 @@ handler = async function({
     tools: {log}
   }) {
   var _hash, algo, cookie, hash, header, ref, status, u;
-  log({
-    message: "Entering file.cache",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/cache'
-  });
   if (config.target == null) {
     config.target = config.cache_file;
   }

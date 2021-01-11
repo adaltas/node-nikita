@@ -15,7 +15,6 @@ This action honors all the config from "nikita.file.ini".
 ## Handler
 
     handler = ({config}) ->
-      #log message: "Entering file.types.yum_repo", level: 'DEBUG', module: 'nikita/lib/file/types/yum_repo'
       # Set the target directory to yum's default path if target is a file name
       config.target = path.resolve '/etc/yum.repos.d', config.target
       await @file.ini

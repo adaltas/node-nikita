@@ -30,7 +30,6 @@ console.info(`Container was deleted: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
       await @execute
         command: """
         lxc info #{config.container} > /dev/null || exit 42

@@ -25,15 +25,9 @@ connection avaible to the action.`
 // ## Handler
 handler = function({
     config,
-    parent: {state},
-    tools: {log}
+    parent: {state}
   }) {
   var conn, ref, ref1;
-  log({
-    message: "Entering ssh.close",
-    level: 'DEBUG',
-    module: 'nikita/lib/ssh/close'
-  });
   // Retrieve connection from parameters or state
   conn = config.ssh ? config.ssh : state['nikita:ssh:connection'];
   if (!conn) {

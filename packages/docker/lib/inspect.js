@@ -69,21 +69,12 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    args,
-    config,
-    tools: {log}
-  }) {
+handler = async function({args, config}) {
   var arg, exists, i, info, isCointainerArray, len;
   for (i = 0, len = args.length; i < len; i++) {
     arg = args[i];
     isCointainerArray = Array.isArray(arg != null ? arg.container : void 0);
   }
-  log({
-    message: "Entering Docker kill",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/kill'
-  });
   ({
     // Ensure target container exists
     status: exists

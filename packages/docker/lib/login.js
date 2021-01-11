@@ -45,15 +45,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker login",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/login'
-  });
+handler = async function({config}) {
   return (await this.docker.tools.execute({
     command: [
       'login',

@@ -55,15 +55,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker rmi",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/rmi'
-  });
+handler = async function({config}) {
   await this.docker.tools.execute({
     command: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
     code_skipped: [1]

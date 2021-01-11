@@ -34,7 +34,6 @@ console.info(`Network was deleted: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
       #Execute
       await @execute
         command: """

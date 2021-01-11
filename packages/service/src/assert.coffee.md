@@ -48,7 +48,6 @@ to "['start', 'restart']" to ensure the service will be always started.
 ## Handler
 
     handler = ({config, metadata}) ->
-      # log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       config.srv_name ?= config.name
       config.name = [config.name]
       # Assert a Package is installed

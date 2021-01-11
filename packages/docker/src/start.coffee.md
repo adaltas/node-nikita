@@ -51,7 +51,6 @@ console.info(`Container was started: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       {status} = await @docker.tools.status config, metadata: shy: true
       if status
       then log message: "Container already started #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'

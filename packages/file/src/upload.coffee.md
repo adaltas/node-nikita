@@ -77,7 +77,6 @@ console.info(`File was uploaded: ${status}`)
         algo = 'md5'
       log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
-      log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       # Stat the target and redefine its path if a directory
       stats = await @call metadata: raw_output: true, ->
         try

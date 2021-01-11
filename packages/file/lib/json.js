@@ -87,16 +87,8 @@ stringified into JSON.`
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var data, err;
-  log({
-    message: "Entering file.json",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/json'
-  });
   if (config.merge) {
     try {
       ({data} = (await this.fs.base.readFile({

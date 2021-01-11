@@ -28,7 +28,6 @@ in "/etc/pacman.conf".
 ## Handler
 
     handler = ({config}) ->
-      #log message: "Entering file.types.wireguard_conf", level: 'DEBUG', module: 'nikita/file/lib/types/wireguard_conf'
       config.target ?= "/etc/wireguard/#{config.interface}.conf"
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
       await @file.ini

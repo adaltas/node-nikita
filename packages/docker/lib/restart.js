@@ -47,15 +47,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker restart",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/restart'
-  });
+handler = async function({config}) {
   return (await this.docker.tools.execute({
     command: ['restart', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
   }));

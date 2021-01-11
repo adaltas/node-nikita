@@ -36,7 +36,6 @@ console.info(`Property was set: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
       # Normalize config
       for k, v of config.properties
         continue if typeof v is 'string'

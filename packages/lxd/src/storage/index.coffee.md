@@ -52,7 +52,6 @@ console.info(`Storage was created or config updated: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.storage", level: 'DEBUG', module: '@nikitajs/lxd/lib/storage'
       # Normalize config
       for k, v of config.properties
         continue if typeof v is 'string'

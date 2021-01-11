@@ -51,7 +51,6 @@ console.info(`File was touched: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # status is false if the file doesn't exist and true otherwise
       {status} = await @call ->
         log message: "Check if target exists \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'

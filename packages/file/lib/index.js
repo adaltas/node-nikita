@@ -422,11 +422,6 @@ handler = async function({
     tools: {log}
   }) {
   var backup, char, contentChanged, context, err, exists, i, j, k, len, len1, raw, ref, ref1, source, target, targetContent, targetContentHash, targetStats, text, w;
-  log({
-    message: "Entering file",
-    level: 'DEBUG',
-    module: 'nikita/lib/file'
-  });
   // Content: pass all arguments to function calls
   context = arguments[0];
   log({

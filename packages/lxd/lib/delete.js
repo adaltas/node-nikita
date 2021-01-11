@@ -32,7 +32,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering lxd.delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
   return (await this.execute({
     command: `lxc info ${config.container} > /dev/null || exit 42
 ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' ')}`,

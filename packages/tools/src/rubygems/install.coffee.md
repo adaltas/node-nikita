@@ -88,7 +88,6 @@ console.info(`Gem installed: ${status}`)
 ## Handler
 
     handler = ({config, ssh, tools: {path}}) ->
-      # log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
       # Global config
       config.ruby ?= {}
       config[k] ?= v for k, v of config.ruby

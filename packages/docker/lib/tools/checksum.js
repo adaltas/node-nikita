@@ -57,11 +57,6 @@ handler = async function({
     tools: {find, log}
   }) {
   var checksum, k, ref, status, stdout, v;
-  log({
-    message: "Entering Docker checksum",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/checksum'
-  });
   // Global config
   config.docker = (await find(function({
       config: {docker}

@@ -42,15 +42,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker volume_rm",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/volume_rm'
-  });
+handler = async function({config}) {
   if (!config.name) {
     // Validation
     throw Error("Missing required option name");

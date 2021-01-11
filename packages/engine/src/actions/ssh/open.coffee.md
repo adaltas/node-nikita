@@ -160,7 +160,6 @@ pass all the properties through the `ssh` property.
 ## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
-      log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
       if utils.ssh.is config.ssh
         if not state['nikita:ssh:connection']

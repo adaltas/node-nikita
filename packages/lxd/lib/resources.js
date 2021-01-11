@@ -41,7 +41,6 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var stdout;
-  // log message: "Entering lxd.resources", level: "DEBUG", module: "@nikitajs/lxd/lib/resources"
   ({stdout} = (await this.execute({
     command: ['lxc', 'query', '/' + ['1.0', 'resources'].join('/')].join(' ')
   })));

@@ -121,11 +121,6 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/file/upload'
   });
-  log({
-    message: "Entering file.upload",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/upload'
-  });
   // Stat the target and redefine its path if a directory
   stats = (await this.call({
     metadata: {

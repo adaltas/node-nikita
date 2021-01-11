@@ -260,7 +260,6 @@ console.info(`Container was run: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
       # Validate parameters
       log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm
       # Construct exec command

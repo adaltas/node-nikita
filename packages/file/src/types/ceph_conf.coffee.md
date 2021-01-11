@@ -51,7 +51,6 @@ file][ceph-conf] as Ceph daemons expect it.
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
       await @file.ini
         stringify: utils.ini.stringify

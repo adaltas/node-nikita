@@ -53,11 +53,6 @@ handler = async function({
     tools: {log}
   }) {
   var status;
-  log({
-    message: "Entering Docker stop",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/stop'
-  });
   // rm is false by default only if config.service is true
   ({status} = (await this.docker.tools.status(config, {
     metadata: {

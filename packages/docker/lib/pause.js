@@ -43,15 +43,7 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  log({
-    message: "Entering Docker pause",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/pause'
-  });
+handler = async function({config}) {
   return (await this.docker.tools.execute({
     command: `pause ${config.container}`
   }));

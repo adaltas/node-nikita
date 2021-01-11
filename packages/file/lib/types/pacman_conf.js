@@ -44,7 +44,6 @@ exists and is modified.`
 // ## Handler
 handler = async function({config}) {
   if (config.rootdir) {
-    //log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
     config.target = `${path.join(config.rootdir, config.target)}`;
   }
   return (await this.file.ini({

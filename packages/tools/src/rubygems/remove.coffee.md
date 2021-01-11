@@ -52,7 +52,6 @@ uninstall -i /usr/share/gems json"
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
       # Global config
       config.ruby ?= {}
       config[k] ?= v for k, v of config.ruby

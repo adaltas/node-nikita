@@ -320,7 +320,6 @@ console.info(data)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
       # Content: pass all arguments to function calls
       context = arguments[0]
       log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file'

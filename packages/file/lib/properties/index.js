@@ -67,11 +67,6 @@ handler = async function({
     tools: {log}
   }) {
   var data, exists, fnl_props, k, key, keys, org_props, properties, ref, status, v;
-  log({
-    message: "Entering file.properties",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/properties'
-  });
   // Trim
   if (!config.trim) {
     fnl_props = config.content;

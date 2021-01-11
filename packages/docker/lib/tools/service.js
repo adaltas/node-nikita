@@ -36,11 +36,6 @@ handler = async function({
     tools: {find, log}
   }) {
   var k, ref, v;
-  log({
-    message: "Entering Docker service",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/service'
-  });
   // Global config
   config.docker = (await find(function({
       config: {docker}

@@ -159,7 +159,6 @@ console.info(`Iptables was updated: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
       log message: "List existing rules", level: 'WARN', module: 'nikita/lib/iptables'
       {status} = await @service.status
         name: 'iptables'

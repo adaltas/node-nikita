@@ -63,7 +63,6 @@ exists and is modified.`
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering file.types.krb5_conf", level: 'DEBUG', module: 'nikita/file/lib/types/krb5_conf'
   return (await this.file.ini({
     parse: utils.ini.parse_brackets_then_curly,
     stringify: utils.ini.stringify_brackets_then_curly

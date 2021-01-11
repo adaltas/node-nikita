@@ -170,11 +170,6 @@ handler = async function({
     tools: {log}
   }) {
   var command, dockerfile_commands, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
-  log({
-    message: "Entering Docker build",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/build'
-  });
   number_of_step = 0;
   userargs = [];
   // status unmodified if final tag already exists

@@ -173,11 +173,6 @@ handler = async function({
     tools: {log}
   }) {
   var conn, err, location;
-  log({
-    message: "Entering ssh.open",
-    level: 'DEBUG',
-    module: 'nikita/lib/ssh/open'
-  });
   // No need to connect if ssh is a connection
   if (utils.ssh.is(config.ssh)) {
     if (!state['nikita:ssh:connection']) {

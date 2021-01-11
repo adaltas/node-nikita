@@ -127,7 +127,6 @@ handler = async function({
     tools: {log}
   }) {
   var content, data, default_props, err, org_props, parse, stringify;
-  // log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
   org_props = {};
   default_props = {};
   parse = config.parse || utils.ini.parse;

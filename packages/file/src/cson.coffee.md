@@ -57,7 +57,6 @@ console.info(`Content was updated: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
       if config.merge
         log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'

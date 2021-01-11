@@ -49,7 +49,6 @@ console.info(`Image was pulled: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Validate
       [name, tag] = config.image.split(':')
       config.image = name

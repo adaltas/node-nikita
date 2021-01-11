@@ -58,11 +58,6 @@ handler = async function({
     tools: {log}
   }) {
   var status;
-  log({
-    message: "Entering Docker start",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/start'
-  });
   ({status} = (await this.docker.tools.status(config, {
     metadata: {
       shy: true

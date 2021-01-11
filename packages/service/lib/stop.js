@@ -54,7 +54,6 @@ handler = async function({
     tools: {log}
   }) {
   var err, status;
-  // log message: "Entering service.stop", level: 'DEBUG', module: 'nikita/lib/service/stop'
   log({
     message: `Stop service ${config.name}`,
     level: 'INFO',

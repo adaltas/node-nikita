@@ -43,7 +43,6 @@ console.info(`Service was started: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
       try
         {status} = await @execute
           command: """

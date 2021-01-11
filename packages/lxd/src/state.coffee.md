@@ -32,7 +32,6 @@ console.info(config)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.state", level: "DEBUG", module: "@nikitajs/lxd/lib/state"
       {stdout} = await @execute
         command: [
           'lxc', 'query',

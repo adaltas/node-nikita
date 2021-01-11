@@ -76,8 +76,7 @@ console.info(`File was merged: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
+    handler = ({config}) ->
       if config.merge
         try
           {data} = await @fs.base.readFile

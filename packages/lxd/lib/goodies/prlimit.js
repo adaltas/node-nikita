@@ -43,7 +43,6 @@ schema = {
 handler = async function({config}) {
   var description, err, hard, i, limits, line, resource, soft, stdout, units;
   try {
-    // log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
     ({stdout} = (await this.execute({
       command: `command -p prlimit || exit 3
 sudo prlimit -p $(lxc info ${config.container} | awk '$1==\"Pid:\"{print $2}')`

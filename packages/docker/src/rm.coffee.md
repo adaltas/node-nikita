@@ -55,8 +55,7 @@ console.info(`Container was removed: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
+    handler = ({config}) ->
       {status: exists, data: running} = await @docker.tools.execute
         metadata: templated: false
         command: """

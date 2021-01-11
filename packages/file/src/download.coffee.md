@@ -170,7 +170,6 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
 ## Handler
 
     handler = ({config, ssh, tools: {log, path}}) ->
-      log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       if config.md5?
         throw Error "Invalid MD5 Hash:#{config.md5}" unless typeof config.md5 in ['string', 'boolean']
         algo = 'md5'

@@ -39,7 +39,6 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  // log message: "Entering lxd.network.detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
   //Execute
   return (await this.execute({
     command: `lxc config device list ${config.container} | grep ${config.network} || exit 42

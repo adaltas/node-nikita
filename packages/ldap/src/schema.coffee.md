@@ -52,8 +52,7 @@ console.info(`Schema created or modified: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata: {tmpdir}}) ->
-      log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
+    handler = ({config, metadata: {tmpdir}, tools: {log}}) ->
       # Auth related config
       binddn = if config.binddn then "-D #{config.binddn}" else ''
       passwd = if config.passwd then "-w #{config.passwd}" else ''

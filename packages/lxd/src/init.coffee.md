@@ -90,7 +90,6 @@ now.
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
       command_init = [
         'lxc', 'init', config.image, config.container
         "--network #{config.network}" if config.network

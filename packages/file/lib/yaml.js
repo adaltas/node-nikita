@@ -171,11 +171,6 @@ handler = async function({
     tools: {log}
   }) {
   var data, err;
-  log({
-    message: "Entering file.yaml",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/yaml'
-  });
   try {
     // Start real work
     if (config.merge) {

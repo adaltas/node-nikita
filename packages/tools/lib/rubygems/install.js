@@ -90,7 +90,6 @@ handler = async function({
     tools: {path}
   }) {
   var current_filenames, current_gems, files, gems, i, is_version_matching, j, k, len, len1, line, name, name1, ref, ref1, source, sources, stdout, v, version, versions;
-  // log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
   // Global config
   if (config.ruby == null) {
     config.ruby = {};

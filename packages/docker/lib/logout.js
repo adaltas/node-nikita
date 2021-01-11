@@ -33,16 +33,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var command;
-  log({
-    message: "Entering Docker logout",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/logout'
-  });
   if (config.container == null) {
     // Validate parameters
     return callback(Error('Missing container parameter'));

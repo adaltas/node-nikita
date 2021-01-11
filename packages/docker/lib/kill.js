@@ -58,16 +58,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var status;
-  log({
-    message: "Entering Docker kill",
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/kill'
-  });
   ({status} = (await this.docker.tools.execute({
     command: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1

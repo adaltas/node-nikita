@@ -126,7 +126,6 @@ console.info(`File downloaded: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
       config.target ?= config.cache_file
       config.target ?= path.basename config.source
       config.target = path.resolve config.cache_dir, config.target

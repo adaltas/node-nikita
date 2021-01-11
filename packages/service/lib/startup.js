@@ -63,7 +63,6 @@ handler = async function({
   }) {
   var c, command, current_startup, err, i, j, k, len, level, message, ref, ref1, startup_off, startup_on, status, stderr, stdout;
   if (Array.isArray(config.startup)) {
-    // log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
     config.startup = [config.startup];
   }
   // Action

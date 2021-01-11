@@ -47,7 +47,6 @@ console.info(`File was updated: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
       config.target = "#{path.join config.rootdir, config.target}" if config.rootdir
       # Write configuration
       {data} = await @fs.base.readFile

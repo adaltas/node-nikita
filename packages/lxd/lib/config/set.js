@@ -43,7 +43,6 @@ schema = {
 handler = async function({config}) {
   var changes, k, key, keys, properties, ref, status, stdout, v, value;
   ref = config.properties;
-  // log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
   // Normalize config
   for (k in ref) {
     v = ref[k];

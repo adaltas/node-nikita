@@ -38,7 +38,6 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
 ## Handler
 
     handler = ({config}) ->
-      # log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
       try
         {stdout} = await @execute
           command: """

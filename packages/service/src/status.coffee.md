@@ -55,7 +55,6 @@ We might think about re-integrating them.
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
       log message: "Status for service #{config.name}", level: 'INFO', module: 'nikita/lib/service/status'
       try
         {status} = await @execute

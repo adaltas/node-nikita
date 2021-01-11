@@ -51,7 +51,6 @@ console.info(`Package or service was removed: ${status}`)
 ## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
-      # log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
       # config.manager ?= state['nikita:service:manager'] # not supported
       log message: "Remove service #{config.name}", level: 'INFO', module: 'nikita/lib/service/remove'
       cacheonly = if config.cacheonly then '-C' else ''

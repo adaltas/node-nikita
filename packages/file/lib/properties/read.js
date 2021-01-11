@@ -55,16 +55,8 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
+handler = async function({config}) {
   var _, data, i, k, len, line, lines, properties, v;
-  log({
-    message: "Entering file.properties",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/properties/read'
-  });
   ({data} = (await this.fs.base.readFile({
     target: config.target,
     encoding: config.encoding

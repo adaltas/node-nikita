@@ -173,7 +173,6 @@ handler = async function({
     tools: {log}
   }) {
   var command, newrules, oldrules, status, stdout;
-  // log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
   log({
     message: "List existing rules",
     level: 'WARN',

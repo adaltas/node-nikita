@@ -51,14 +51,10 @@ configuration.`
 // ## Handler
 handler = async function({
     config,
-    metadata: {tmpdir}
+    metadata: {tmpdir},
+    tools: {log}
   }) {
   var binddn, conf, ldif, passwd, status, uri;
-  log({
-    message: "Entering ldap.schema",
-    level: 'DEBUG',
-    module: 'nikita/lib/ldap/schema'
-  });
   // Auth related config
   binddn = config.binddn ? `-D ${config.binddn}` : '';
   passwd = config.passwd ? `-w ${config.passwd}` : '';
