@@ -15,7 +15,7 @@ describe 'plugins.log', ->
         .should.finally.containEql
           message: 'getme'
           level: 'INFO'
-          index: undefined
+          index: 0
           module: undefined
           namespace: []
           type: 'text'
