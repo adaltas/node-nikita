@@ -29,6 +29,7 @@ create = ->
     require './plugins/output_logs'
     require './plugins/schema'
     require './plugins/ssh'
+    require './plugins/time'
     require './plugins/templated'
     require './plugins/tools_dig'
     require './plugins/tools_events'

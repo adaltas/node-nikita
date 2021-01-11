@@ -151,13 +151,12 @@ nikita
           # action = ids[action.index]
           return null if action.metadata.disabled
           # delete ids[action.index]
-          time = if config.time then utils.string.print_time Date.now() - action.metadata.time else ''
           headers = get_headers action
           line = format_line
             host: config.host
             header: headers.join config.divider
             status: status
-            time: time
+            time: if config.time then utils.string.print_time action.metadata.time_end - action.metadata.time_start else ''
           line = color line if color
           return line+'\n'
         # 'stdin': null
