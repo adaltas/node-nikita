@@ -117,7 +117,56 @@ describe 'actions.fs.assert', ->
             'expect "Directory" type, got "File" type,'
             "location is \"#{tmpdir}/a_file\"."
           ].join ' '
-  
+
+  describe 'config `filter`', ->
+
+    they 'filter single pattern', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.base.writeFile
+          target: "#{tmpdir}/a_file"
+          content: "match filter me"
+        @fs.assert
+          filter: /filter /
+          target: "#{tmpdir}/a_file"
+          content: /^.*match me.*$/m
+
+    they 'filter array of patterns', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.base.writeFile
+          target: "#{tmpdir}/a_file"
+          content: "match filter1 filter2 me"
+        @fs.assert
+          filter: [
+            /filter1 /
+            /filter2 /
+          ]
+          target: "#{tmpdir}/a_file"
+          content: /^.*match me.*$/m
+
+    they 'filter multi line content', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.base.writeFile
+          target: "#{tmpdir}/a_file"
+          content: """
+          match me
+          filter this string
+          filter and this string
+          and me
+          """
+        @fs.assert
+          filter: /^filter.*$\n/mg
+          target: "#{tmpdir}/a_file"
+          content: "match me\nand me"
+
   describe 'config `content` string', ->
   
     they 'content match', ({ssh}) ->
@@ -174,7 +223,7 @@ describe 'actions.fs.assert', ->
           ].join ' '
   
   describe 'config `content` regexp', ->
-  
+
     they 'content match regexp', ({ssh}) ->
       nikita
         ssh: ssh
@@ -186,7 +235,7 @@ describe 'actions.fs.assert', ->
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: /^.*match.*$/m
-  
+
     they 'content unmatch', ({ssh}) ->
       nikita
         ssh: ssh
