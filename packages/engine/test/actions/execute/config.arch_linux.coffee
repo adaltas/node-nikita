@@ -17,22 +17,22 @@ describe 'actions.execute.config.arch_linux', ->
       @fs.base.writeFile
         target: '/mnt/root/hello'
         content: "you"
-      {stdout} = await @execute
-        arch_chroot: true
-        rootdir: '/mnt'
-        # target is written to "/tmp" by default which is a mount point
-        # so a file in host isnt visible from jail
-        target: '/root/my_script'
-        command: "cat /root/hello"
-      stdout.should.eql 'you'
-      @execute
-        always: true # todo, need to create this option (run even on error)
-        command: """
-        umount /mnt
-        """
-      {stats} = await @fs.base.stat
-        target: '/mnt/root/hello'
-      utils.stats.isFile(stats.mode).should.be.true()
+      try
+        {stdout} = await @execute
+          arch_chroot: true
+          rootdir: '/mnt'
+          # target is written to "/tmp" by default which is a mount point
+          # so a file in host isnt visible from jail
+          target: '/root/my_script'
+          command: "cat /root/hello"
+        stdout.should.eql 'you'
+      catch err
+        throw err
+      finally
+        @execute
+          command: """
+          umount /mnt
+          """
 
   they 'require ', ({ssh}) ->
     nikita
