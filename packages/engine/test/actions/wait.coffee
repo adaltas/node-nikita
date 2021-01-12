@@ -8,9 +8,11 @@ return unless tags.posix
 describe 'actions.wait', ->
 
   they 'time as main argument', ({ssh}) ->
-    before = Date.now()
+    before = 0
     nikita
       ssh: ssh
+    .call ->
+      before = Date.now()
     .wait 500
     .wait '500'
     .wait 0
