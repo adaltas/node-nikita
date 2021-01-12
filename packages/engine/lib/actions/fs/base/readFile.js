@@ -5,7 +5,7 @@
 
 // ```js
 // const {data} = await nikita.fs.base.readFile({
-//   target: "#{scratch}/a_file",
+//   target: `${scratch}/a_file`,
 //   encoding: 'ascii'
 // })
 // console.log(data)

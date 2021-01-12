@@ -26,6 +26,7 @@ create = ->
     require './plugins/conditions_os'
     require './plugins/global'
     require './plugins/history'
+    require './plugins/pubsub'
     require './plugins/output_logs'
     require './plugins/schema'
     require './plugins/ssh'
