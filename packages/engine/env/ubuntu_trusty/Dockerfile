@@ -18,5 +18,7 @@ RUN apt-get install -y openssh-server \
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/engine
+# Enable color output in TTY
+ENV TERM xterm
 
 ENTRYPOINT ["/run.sh"]

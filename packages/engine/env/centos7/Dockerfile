@@ -29,6 +29,7 @@ RUN yum clean all
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/engine
+# Enable color output in TTY
 ENV TERM xterm
 
 #CMD ["node_modules/.bin/mocha", "test/api/"]
