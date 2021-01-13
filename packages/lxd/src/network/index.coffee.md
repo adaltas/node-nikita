@@ -35,6 +35,16 @@ console.info(`Network was created: ${status}`)
           """
         'properties':
           type: 'object'
+          properties:
+            'dns.domain':
+              type: 'string'
+              format: 'hostname'
+              description: '''
+              Domain to advertise to DHCP clients and use for DNS resolution.
+              Note, single label domains like `nikita` are supported by LXD but
+              are not valid. For exemple, FreeIPA will fail to Initialize. Use
+              `nikita.local` instead.
+              '''
           patternProperties:
             '': type: ['string', 'boolean', 'number']
           description: """

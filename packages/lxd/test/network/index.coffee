@@ -6,6 +6,25 @@ they = require('ssh2-they').configure ssh
 return unless tags.lxd
 
 describe 'lxd.network.create', ->
+  
+  they 'schema dns.domain', ({ssh}) ->
+    nikita
+      ssh: ssh
+    , ->
+      @lxd.network.delete
+        network: "testnet0"
+      await @lxd.network
+        network: "testnet0"
+        properties:
+          'ipv4.address': '192.0.2.1/30'
+          'dns.domain': 'nikita.local'
+      @lxd.network
+        network: "testnet0"
+        properties:
+          'ipv4.address': '192.0.2.1/30'
+          'dns.domain': '(oo)'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
 
   they 'Create a new network', ({ssh}) ->
     nikita
