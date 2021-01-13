@@ -8,17 +8,16 @@ return unless tags.posix
 describe 'actions.wait', ->
 
   they 'time as main argument', ({ssh}) ->
-    before = 0
     nikita
       ssh: ssh
-    .call ->
-      before = Date.now()
-    .wait 500
-    .wait '500'
-    .wait 0
-    .call ->
+    , ->
+      {before} = await @call ->
+        before: Date.now()
+      await @wait 200
+      await @wait '200'
+      await @wait 0
       interval = Date.now() - before
-      (interval >= 1000 and interval < 1500).should.be.true()
+      (interval >= 400 and interval < 600).should.be.true()
 
   they 'validate argument', ({ssh}) ->
     before = Date.now()
