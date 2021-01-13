@@ -7,6 +7,7 @@ module.exports =
   mode: require './mode'
   object: require './object'
   os: require './os'
+  promise: require './promise'
   regexp: require './regexp'
   schema: require './schema'
   semver: require './semver'
