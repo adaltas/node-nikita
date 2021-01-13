@@ -34,6 +34,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    # For FreeIPA, host must have fs.protected_regular set to 0,
+    # check with `sysctl -a | grep protected`
+    echo '0' > /proc/sys/fs/protected_regular && sysctl -p 
     apt-get update
     apt-get install -y zfsutils-linux
     zpool create -f lxd /dev/sdc

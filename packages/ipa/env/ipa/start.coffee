@@ -8,9 +8,8 @@ require '@nikitajs/tools/lib/register'
 # Jan 20th, 2020: upgrading ubuntu to 19.10
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
-# solution involve `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
-# Dec 4th, 2020: same for centos/7 20201203_07:08
-# solution involve `chmod -R 777 /tmp`
+# solution involve to run on the host machine
+# `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
 
 # console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
 # parameters({
@@ -114,7 +113,6 @@ nikita
       [ -f /etc/ipa/default.conf ] && exit 42
       yum install -y freeipa-server
       hostnamectl set-hostname freeipa.nikita.local --static
-      chmod -R 777 /tmp
       #{[
         'ipa-server-install', '-U'
         #  Basic options
