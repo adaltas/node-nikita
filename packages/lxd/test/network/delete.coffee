@@ -13,9 +13,6 @@ describe 'lxd.network.delete', ->
     , ->
       @lxd.network
         network: "testnet0"
-      @lxd.network.detach
-        network: "testnet0"
-        container: "u0"
       {status} = await @lxd.network.delete
         network: "testnet0"
       status.should.be.true()
@@ -26,9 +23,6 @@ describe 'lxd.network.delete', ->
     , ->
       @lxd.network
         network: "testnet0"
-      @lxd.network.detach
-        network: "testnet0"
-        container: "u0"
       @lxd.network.delete
         network: "testnet0"
       {status} = await @lxd.network.delete

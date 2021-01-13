@@ -15,7 +15,7 @@ networks:
     ipv4.address: 10.10.10.1/24
     ipv4.nat: true
     ipv6.address: none
-    dns.domain: nikita
+    dns.domain: nikita.local
 containers:
   nikita
     image: images:centos/7

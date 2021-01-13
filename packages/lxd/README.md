@@ -13,9 +13,22 @@ npm test
 
 ## Notes
 
+### Networks
+
+The LXD tests create two bridge networks:
+
+* Nikita LXD public: `nktlxdpub`, `192.0.2.1/30` (reserved IP subnet ssigned as TEST-NET-1)
+* Nikita LXD private: `nktlxdprv`, `192.0.2.5/30` (reserved IP subnet ssigned as TEST-NET-1)
+
+To avoid collision, other tests must create and use their own bridge.
+
 ### Windows and MacOS users
 
-The procedure is abstracted inside the `./bin/cluster start` command. Below are the manual commands to make it work.
+LXD is only available on Linux. To work around this limitation, we run LXD in a virtual machine which is managed by [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/).
+
+The Nikita project folder is mounted in `/nikita` inside the VM. The LXD tests don't need to know about it because they only interact with the local `lxc` command. For the tests who need to know this path, the location of the Nikita folder inside the VM can be defined with `export NIKITA_HOME=/nikita`. For example, the FreeIPA tests in 'packages/ipa/env/ipa' use it.
+
+The procedure is abstracted inside the `./bin/cluster start` command. Below are the manual commands to make it work if you wish to do it yourself.
 
 Install:
 

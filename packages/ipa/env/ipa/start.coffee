@@ -36,9 +36,12 @@ nikita
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
   metadata: header: 'Container'
+  # FreeIPA do a reverse lookup on initialisation
+  # Using the default bridge yields to the error
+  # `The host name freeipa.nikita does not match the value freeipa.lxd obtained by reverse lookup on IP address fd42:f662:97ea:ba7f:216:3eff:fe1d:96f2%215`
   networks:
-    lxdbr0freeipa:
-      'ipv4.address': '172.16.0.1/24'
+    nktipapub:
+      'ipv4.address': '10.10.11.1/24'
       'ipv4.nat': true
       'ipv6.address': 'none'
       'dns.domain': 'nikita.local'
@@ -53,7 +56,7 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          name: 'eth0', nictype: 'bridged', parent: 'lxdbr0freeipa'
+          name: 'eth0', nictype: 'bridged', parent: 'nktipapub'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
         ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'

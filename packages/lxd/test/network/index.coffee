@@ -10,89 +10,116 @@ describe 'lxd.network.create', ->
   they 'Create a new network', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network.delete
-        network: "testnet0"
-      {status} = await @lxd.network
-        network: "testnet0"
-      status.should.be.true()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        @clean()
+        {status} = await @lxd.network
+          network: "testnet0"
+        status.should.be.true()
+      finally
+        @clean()
 
   they 'Different types of config parameters', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network.delete
-        network: "testnet0"
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-          'ipv4.dhcp': false
-          'bridge.mtu': 2000
-      status.should.be.true()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+            'ipv4.dhcp': false
+            'bridge.mtu': 2000
+        status.should.be.true()
+      finally
+        @clean()
 
   they 'Network already created', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network.delete
-        network: "testnet0"
-      @lxd.network
-        network: "testnet0"
-      {status} = await @lxd.network
-        network: "testnet0"
-      status.should.be.false()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        @lxd.network
+          network: "testnet0"
+        {status} = await @lxd.network
+          network: "testnet0"
+        status.should.be.false()
+      finally
+        @clean()
 
   they 'Add new properties', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network.delete
-        network: "testnet0"
-      @lxd.network
-        network: "testnet0"
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-          'ipv4.dhcp': false
-      status.should.be.true()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        @lxd.network
+          network: "testnet0"
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+            'ipv4.dhcp': false
+        status.should.be.true()
+      finally
+        @clean()
 
   they 'Change a property', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network.delete
-        network: "testnet0"
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-          'ipv4.dhcp': true
-      status.should.be.true()
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-          'ipv4.dhcp': true
-      status.should.be.false()
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-          'ipv4.dhcp': false
-      status.should.be.true()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+            'ipv4.dhcp': true
+        status.should.be.true()
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+            'ipv4.dhcp': true
+        status.should.be.false()
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+            'ipv4.dhcp': false
+        status.should.be.true()
+      finally
+        @clean()
 
   they 'Configuration unchanged', ({ssh}) ->
     nikita
       ssh: ssh
-    , ->
-      @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-      {status} = await @lxd.network
-        network: "testnet0"
-        properties:
-          'ipv4.address': "178.16.0.1/24"
-      status.should.be.false()
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.network.delete
+          network: "testnet0"
+      try
+        @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+        {status} = await @lxd.network
+          network: "testnet0"
+          properties:
+            'ipv4.address': "192.0.2.1/30"
+        status.should.be.false()
+      finally
+        @clean()

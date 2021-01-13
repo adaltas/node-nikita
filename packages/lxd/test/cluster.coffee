@@ -54,28 +54,30 @@ describe 'lxd.cluster', ->
 
   they 'Create container with devices', ({ssh}) ->
     @timeout -1 # yum install take a lot of time
-    clean = ->
-      await @lxd.delete
-        container: 'c1'
-        force: true
-      await @lxd.network.delete
-        network: 'lxdbr0public'
-      await @lxd.network.delete
-        network: 'lxdbr1private'
-    nikita ->
-      @call clean
+    nikita
+      ssh: ssh
+    , ({registry}) ->
+      await registry.register ['clean'], ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.network.delete
+          network: 'nktlxdpub'
+        await @lxd.network.delete
+          network: 'nktlxdprv'
+      @clean()
       await @lxd.cluster
         networks:
-          lxdbr0public:
-            'ipv4.address': '172.16.0.1/24'
+          nktlxdpub:
+            'ipv4.address': '192.0.2.1/30'
             'ipv4.nat': true
             'ipv6.address': 'none'
-            'dns.domain': 'nikita'
-          lxdbr1private:
-            'ipv4.address': '10.10.10.1/24'
+            'dns.domain': 'nikita.local'
+          nktlxdprv:
+            'ipv4.address': '192.0.2.5/30'
             'ipv4.nat': false
             'ipv6.address': 'none'
-            'dns.domain': 'nikita'
+            'dns.domain': 'nikita.local'
         containers:
           c1:
             image: 'images:centos/7'
@@ -83,10 +85,10 @@ describe 'lxd.cluster', ->
               nikitadir: source: '/nikita', path: '/nikita'
             nic:
               eth0:
-                name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+                name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
               eth1:
-                name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-                ip: '10.10.10.11', netmask: '255.255.255.0'
+                name: 'eth1', nictype: 'bridged', parent: 'nktlxdprv'
+                ip: '192.0.2.5', netmask: '255.255.255.0'
       await @wait time: 200
       {exists} = await @lxd.config.device.exists
         container: 'c1'
@@ -100,36 +102,46 @@ describe 'lxd.cluster', ->
         container: 'c1'
         device: 'eth1'
       exists.should.be.true()
-      @call clean
+      @clean()
 
   they 'prepare ssh', ({ssh}) ->
     @timeout -1
-    handler = ({config}) ->
-      @lxd.delete
-        container: 'c1'
-        force: true
-      @lxd.network.delete
-        network: 'lxdbr1private'
-      @lxd.cluster
-        networks:
-          lxdbr1private:
-            'ipv4.address': '10.10.10.1/24'
-            'ipv4.nat': false
-            'ipv6.address': 'none'
-            'dns.domain': 'nikita'
-        containers:
-          c1:
-            image: 'images:centos/7'
-            nic:
-              eth1:
-                name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-                ip: '10.10.10.11', netmask: '255.255.255.0'
-            ssh:
-              enabled: config.enabled
-      @network.tcp.assert
-        host: '10.10.10.11'
-        port: 22
-        not: not config.enabled
     nikita
-    .call handler, enabled: true
-    .call handler, enabled: false
+      ssh: ssh
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        @lxd.delete
+          container: 'c1'
+          force: true
+        @lxd.network.delete
+          network: 'nktlxdprv'
+      await registry.register 'test', ({config}) ->
+        @lxd.cluster
+          networks:
+            nktlxdprv:
+              'ipv4.address': '192.0.2.5/30'
+              'ipv4.nat': true
+              'ipv6.address': 'none'
+              'dns.domain': 'nikita.local'
+          containers:
+            c1:
+              image: 'images:centos/7'
+              nic:
+                eth0: # Overwrite the default DHCP Nat enabled interface
+                  name: 'eth0', nictype: 'bridged', parent: 'nktlxdprv'
+                  ip: '192.0.2.6', netmask: '255.255.255.0'
+              ssh:
+                enabled: config.enabled
+        @lxd.exec
+          container: 'c1'
+          command: '''
+          echo > /dev/tcp/192.0.2.6/22
+          '''
+          code: if config.enabled then 0 else 1
+      try
+        await @clean()
+        await @test enabled: true
+        await @clean()
+        await @test enabled: false
+      finally
+        await @clean()
