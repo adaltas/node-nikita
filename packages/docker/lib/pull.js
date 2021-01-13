@@ -29,6 +29,14 @@ var handler, schema;
 schema = {
   type: 'object',
   properties: {
+    'all': {
+      type: 'boolean',
+      default: false,
+      description: `Pull all tagged images in the repository.`
+    },
+    'docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+    },
     'image': {
       type: 'string',
       description: `Name of an image or a repository to pull. It can contain \`tag\`.`
@@ -36,14 +44,8 @@ schema = {
     'tag': {
       type: 'string',
       description: `Specific image tag within a repository to pull. Default to \`latest\`.`
-    },
-    'all': {
-      type: 'boolean',
-      default: false,
-      description: `Pull all tagged images in the repository.`
     }
-  },
-  required: ['image']
+  }
 };
 
 // ## Handler

@@ -157,7 +157,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, dockerfile_commands, i, image_id, j, k, l, len, len1, len2, len3, line, lines, m, number_of_cache, number_of_step, opt, ref, ref1, ref2, ref3, ref4, ref5, source, stderr, stdout, userargs;
+  var dockerfile_commands, i, image_id, k, len, line, lines, number_of_cache, number_of_step, ref, ref1, ref2, source, stderr, stdout, userargs;
   number_of_step = 0;
   userargs = [];
   // status unmodified if final tag already exists

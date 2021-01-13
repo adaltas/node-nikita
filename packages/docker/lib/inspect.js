@@ -63,12 +63,9 @@ schema = {
 };
 
 // ## Handler
-handler = async function({args, config}) {
-  var arg, exists, i, info, isCointainerArray, len;
-  for (i = 0, len = args.length; i < len; i++) {
-    arg = args[i];
-    isCointainerArray = Array.isArray(arg != null ? arg.container : void 0);
-  }
+handler = async function({config}) {
+  var info, isCointainerArray;
+  isCointainerArray = Array.isArray(config.container);
   ({
     data: info
   } = (await this.docker.tools.execute({
