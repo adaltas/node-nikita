@@ -30,6 +30,12 @@ module.exports = function() {
               }
               for (j = 0, len1 = config.length; j < len1; j++) {
                 condition = config[j];
+                if (condition.arch == null) {
+                  condition.arch = [];
+                }
+                if (!Array.isArray(condition.arch)) {
+                  condition.arch = [condition.arch];
+                }
                 if (condition.name == null) {
                   condition.name = [];
                 }
@@ -43,12 +49,13 @@ module.exports = function() {
                   condition.version = [condition.version];
                 }
                 condition.version = utils.semver.sanitize(condition.version, 'x');
-                if (condition.arch == null) {
-                  condition.arch = [];
+                if (condition.linux_version == null) {
+                  condition.linux_version = [];
                 }
-                if (!Array.isArray(condition.arch)) {
-                  condition.arch = [condition.arch];
+                if (!Array.isArray(condition.linux_version)) {
+                  condition.linux_version = [condition.linux_version];
                 }
+                condition.linux_version = utils.semver.sanitize(condition.linux_version, 'x');
               }
             }
             return action;
@@ -99,23 +106,23 @@ handlers = {
         },
         parent: action
       }, async function() {
-        var arch, match, name, status, stdout, version;
+        var arch, linux_version, match, name, status, stdout, version;
         ({status, stdout} = (await this.execute({
           command: utils.os.os
         })));
         if (!status) {
           return final_run = false;
         }
-        [arch, name, version] = stdout.split('|');
-        if (name.toLowerCase() === 'red hat') {
-          name = 'redhat';
-        }
+        [arch, name, version, linux_version] = stdout.split('|');
         if (match = /^(\d+)\.(\d+)/.exec(version)) {
-          // Remove patch version (eg centos 7.8)
+          // Remove patch version (eg. 7.8.12 -> 7.8)
           version = `${match[0]}`;
         }
+        if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
+          linux_version = `${match[0]}`;
+        }
         match = action.conditions.if_os.some(function(condition) {
-          var a, n, v;
+          var a, lv, n, v;
           a = !condition.arch.length || condition.arch.some(function(value) {
             if (typeof value === 'string' && value === arch) {
               return true;
@@ -132,7 +139,8 @@ handlers = {
               return true;
             }
           });
-          v = !condition.version.length || condition.version.some(function(value) {
+          // Arch Linux has only linux_version
+          v = !version.length || !condition.version.length || condition.version.some(function(value) {
             version = utils.semver.sanitize(version, '0');
             if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
               return true;
@@ -141,7 +149,16 @@ handlers = {
               return true;
             }
           });
-          return a && n && v;
+          lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
+            linux_version = utils.semver.sanitize(linux_version, '0');
+            if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
+              return true;
+            }
+            if (value instanceof RegExp && value.test(linux_version)) {
+              return true;
+            }
+          });
+          return a && n && v && lv;
         });
         if (!match) {
           return final_run = false;
@@ -166,23 +183,23 @@ handlers = {
         },
         parent: action
       }, async function() {
-        var arch, match, name, status, stdout, version;
+        var arch, linux_version, match, name, status, stdout, version;
         ({status, stdout} = (await this.execute({
           command: utils.os.os
         })));
         if (!status) {
           return final_run = false;
         }
-        [arch, name, version] = stdout.split('|');
-        if (name.toLowerCase() === 'red hat') {
-          name = 'redhat';
-        }
+        [arch, name, version, linux_version] = stdout.split('|');
         if (match = /^(\d+)\.(\d+)/.exec(version)) {
-          // Remove patch version (eg centos 7.8)
+          // Remove patch version (eg. 7.8.12 -> 7.8)
           version = `${match[0]}`;
         }
+        if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
+          linux_version = `${match[0]}`;
+        }
         match = action.conditions.unless_os.some(function(condition) {
-          var a, n, v;
+          var a, lv, n, v;
           a = !condition.arch.length || condition.arch.some(function(value) {
             if (typeof value === 'string' && value === arch) {
               return true;
@@ -199,7 +216,8 @@ handlers = {
               return true;
             }
           });
-          v = !condition.version.length || condition.version.some(function(value) {
+          // Arch Linux has only linux_version
+          v = !version.length || !condition.version.length || condition.version.some(function(value) {
             version = utils.semver.sanitize(version, '0');
             if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
               return true;
@@ -208,7 +226,16 @@ handlers = {
               return true;
             }
           });
-          return a && n && v;
+          lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
+            linux_version = utils.semver.sanitize(linux_version, '0');
+            if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
+              return true;
+            }
+            if (value instanceof RegExp && value.test(linux_version)) {
+              return true;
+            }
+          });
+          return a && n && v && lv;
         });
         if (match) {
           return final_run = false;

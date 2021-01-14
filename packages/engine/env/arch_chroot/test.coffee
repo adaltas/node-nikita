@@ -6,10 +6,7 @@ module.exports =
   conditions_if_os:
     arch: '64'
     name: 'arch'
-    version: '4.10.0-1'
-  docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
-    host: 'dind:2375'
-    # machine: 'nikita'
+    linux_version: '4.19'
   ssh: [
     null
     { ssh: host: 'localhost', username: 'root' }
