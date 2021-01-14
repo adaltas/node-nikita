@@ -1,7 +1,8 @@
 
 # `nikita.network.http`
 
-Perform an HTTP request. It uses internaly the curl command.
+Perform an HTTP request. Internaly, the action requires the presence of the
+`curl` command.
 
 ## Return
 
@@ -19,6 +20,23 @@ Perform an HTTP request. It uses internaly the curl command.
   The HTTP response status message.
 * `output.type` (string)   
   The format type if provided or detected, possible values is only "json" for now.
+
+## Error
+
+The `error.code` reflects the native `curl` errors code. You can get a list of
+them with `man 3 libcurl-errors`. For example:
+
+```js
+try
+  nikita.network.http({
+    ssh: ssh,
+    url: "http://2222:localhost"
+  })
+} catch (err) {
+  assert(err.code, 'CURLE_URL_MALFORMAT')
+  assert(err.message, 'CURLE_URL_MALFORMAT: the curl command exited with code `3`.')
+}
+```
 
 ## Hooks
 
@@ -165,7 +183,7 @@ Perform an HTTP request. It uses internaly the curl command.
           #{ unless config.principal then '' else [
             'echo', config.password, '|', 'kinit', config.principal, '>/dev/null'
           ].join ' '}
-          command -v curl >/dev/null || exit 3
+          command -v curl >/dev/null || exit 90
           #{[
             'curl'
             '--include' # Include protocol headers in the output (H/F)
@@ -206,8 +224,17 @@ Perform an HTTP request. It uses internaly the curl command.
           else
             output.body.push line
       catch err
-        throw Error "Required Dependencies: curl is required to perform HTTP requests" if err.exit_code is 3
-        throw err
+        if code = utils.curl.error(err.exit_code)
+          throw utils.error code, [
+            "the curl command exited with code `#{err.exit_code}`."
+          ]
+        else if err.exit_code is 90
+          throw utils.error 'NIKITA_NETWORK_DOWNLOAD_CURL_REQUIRED', [
+            'the `curl` command could not be found'
+            'and is required to perform HTTP requests,'
+            'make sure it is available in your `$PATH`.'
+          ]
+        else throw err
       await @fs.chmod
         if: config.target and config.mode
         mode: config.mode
@@ -234,4 +261,4 @@ Perform an HTTP request. It uses internaly the curl command.
 ## Dependencies
 
     url = require 'url'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '../utils'

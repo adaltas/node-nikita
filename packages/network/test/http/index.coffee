@@ -106,6 +106,14 @@ describe 'network.http', ->
       headers['Content-Type'].should.eql 'application/json'
       type.should.eql 'json'
       await srv.close()
+    
+    they 'honors curl exit code', ({ssh}) ->
+      nikita.network.http
+        ssh: ssh
+        url: "http://2222:localhost"
+      .should.be.rejectedWith
+        code: 'CURLE_URL_MALFORMAT'
+        message: 'CURLE_URL_MALFORMAT: the curl command exited with code `3`.'
 
   describe 'options', ->
 
