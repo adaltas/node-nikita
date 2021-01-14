@@ -68,93 +68,100 @@ server = ->
 
 describe 'network.http', ->
 
-  they 'a simple json GET', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    {
-      body, data, headers,
-      status_code, status_message, type
-    } = await nikita.network.http
-      ssh: ssh
-      url: "http://localhost:#{srv.port}"
-    status_code.should.eql 200
-    status_message.should.eql 'OK'
-    body.should.eql '{"key": "value"}'
-    data.should.eql { key: 'value' }
-    headers['Content-Type'].should.eql 'application/json'
-    type.should.eql 'json'
-    srv.close()
+  describe 'usage', ->
 
-  they 'escape single and double quotes', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    {
-      body, data, headers,
-      status_code, status_message, type
-    } = await nikita.network.http
-      ssh: ssh
-      url: "http://localhost:#{srv.port}/ping"
-      data:
-        'te\'st': 'va\'lue'
-        'te"st': 'va"lue'
-    status_code.should.eql 200
-    status_message.should.eql 'OK'
-    body.should.eql '{"te\'st":"va\'lue","te\\"st":"va\\"lue"}'
-    data.should.eql { 'te\'st': 'va\'lue', 'te"st': 'va"lue' }
-    headers['Content-Type'].should.eql 'application/json'
-    type.should.eql 'json'
-    await srv.close()
+    they 'a simple json GET', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      {
+        body, data, headers,
+        status_code, status_message, type
+      } = await nikita.network.http
+        ssh: ssh
+        url: "http://localhost:#{srv.port}"
+      status_code.should.eql 200
+      status_message.should.eql 'OK'
+      body.should.eql '{"key": "value"}'
+      data.should.eql { key: 'value' }
+      headers['Content-Type'].should.eql 'application/json'
+      type.should.eql 'json'
+      srv.close()
 
-  they 'request 404', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    output = await nikita.network.http
-      ssh: ssh
-      url: "http://localhost:#{srv.port}/request_404"
-    output = merge output, raw: null, logs: [], headers: Date: null
-    output.should.eql
-      body: ''
-      data: undefined
-      headers:
-        'Date': null
-        'Connection': 'keep-alive'
-        'Transfer-Encoding': 'chunked'
-      http_version: '1.1'
-      logs: []
-      raw: null
-      status: true
-      status_code: 404
-      status_message: 'Not found'
-      type: undefined
-    srv.close()
+    they 'escape single and double quotes', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      {
+        body, data, headers,
+        status_code, status_message, type
+      } = await nikita.network.http
+        ssh: ssh
+        url: "http://localhost:#{srv.port}/ping"
+        data:
+          'te\'st': 'va\'lue'
+          'te"st': 'va"lue'
+      status_code.should.eql 200
+      status_message.should.eql 'OK'
+      body.should.eql '{"te\'st":"va\'lue","te\\"st":"va\\"lue"}'
+      data.should.eql { 'te\'st': 'va\'lue', 'te"st': 'va"lue' }
+      headers['Content-Type'].should.eql 'application/json'
+      type.should.eql 'json'
+      await srv.close()
 
-  they 'request 301 from ipa', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    {status_code} = await nikita.network.http
-      ssh: ssh
-      url: "http://localhost:#{srv.port}/request_301"
-    status_code.should.eql 301
-    await srv.close()
+  describe 'options', ->
 
-  they 'follow redirect', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    {status_code, data} = await nikita.network.http
-      location: true
-      ssh: ssh
-      url: "http://localhost:#{srv.port}/follow_redirect_1"
-    status_code.should.eql 200
-    data.should.eql key: 'value'
-    await srv.close()
+    they 'option location (follow redirect)', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      {status_code, data} = await nikita.network.http
+        location: true
+        ssh: ssh
+        url: "http://localhost:#{srv.port}/follow_redirect_1"
+      status_code.should.eql 200
+      data.should.eql key: 'value'
+      await srv.close()
+  
+  describe 'response', ->
 
-  they 'content type with charset', ({ssh}) ->
-    srv = server()
-    await srv.listen()
-    {status_code, data} = await nikita.network.http
-      ssh: ssh
-      location: true
-      url: "http://localhost:#{srv.port}/content_type_with_charset"
-    status_code.should.eql 200
-    data.should.eql key: 'value'
-    await srv.close()
+    they 'code 404', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      output = await nikita.network.http
+        ssh: ssh
+        url: "http://localhost:#{srv.port}/request_404"
+      output = merge output, raw: null, logs: [], headers: Date: null
+      output.should.match
+        body: ''
+        data: undefined
+        headers:
+          'Date': null
+          'Connection': 'keep-alive'
+          'Transfer-Encoding': 'chunked'
+        http_version: '1.1'
+        logs: []
+        raw: null
+        status: true
+        status_code: 404
+        status_message: 'Not found'
+        type: undefined
+      srv.close()
+
+    they 'code 301 from ipa', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      {status_code} = await nikita.network.http
+        ssh: ssh
+        url: "http://localhost:#{srv.port}/request_301"
+      status_code.should.eql 301
+      await srv.close()
+
+    they 'content type with charset', ({ssh}) ->
+      srv = server()
+      await srv.listen()
+      {status_code, data, headers} = await nikita.network.http
+        ssh: ssh
+        location: true
+        url: "http://localhost:#{srv.port}/content_type_with_charset"
+      headers['Content-Type'].should.eql 'application/json; charset=utf-8'
+      status_code.should.eql 200
+      data.should.eql key: 'value'
+      await srv.close()
