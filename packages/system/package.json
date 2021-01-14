@@ -1,0 +1,88 @@
+{
+  "name": "@nikitajs/system",
+  "description": "Nikita system actions.",
+  "keywords": [
+    "nikita",
+    "build",
+    "cli",
+    "deploy",
+    "ssh",
+    "install",
+    "linux",
+    "system",
+    "sysctl",
+    "authconfig",
+    "cgroups",
+    "limits",
+    "mod"
+  ],
+  "version": "0.9.7",
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "coffeescript": "^2.5.1",
+    "mocha": "^8.2.0",
+    "should": "^13.2.3",
+    "mocha-they": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@nikitajs/engine": "^0.9.7"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "files": [
+    "/lib"
+  ],
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register",
+      "@nikitajs/tools/src/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/system"
+  },
+  "scripts": {
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/tools\\\/src/@nikitajs\\\/tools\\\/lib/g'",
+    "pretest": "npm run build",
+    "test": "mocha 'test/**/*.coffee'",
+    "testall": "mocha 'test/**/*.coffee' && env/run.sh"
+  }
+}
