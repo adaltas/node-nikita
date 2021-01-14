@@ -19,13 +19,16 @@ module.exports = ->
           for config in [action.conditions.if_os, action.conditions.unless_os]
             continue unless config
             for condition in config
+              condition.arch ?= []
+              condition.arch = [condition.arch] unless Array.isArray condition.arch
               condition.name ?= []
               condition.name = [condition.name] unless Array.isArray condition.name
               condition.version ?= []
               condition.version = [condition.version] unless Array.isArray condition.version
               condition.version = utils.semver.sanitize condition.version, 'x'
-              condition.arch ?= []
-              condition.arch = [condition.arch] unless Array.isArray condition.arch
+              condition.linux_version ?= []
+              condition.linux_version = [condition.linux_version] unless Array.isArray condition.linux_version
+              condition.linux_version = utils.semver.sanitize condition.linux_version, 'x'
           action
     'nikita:session:action':
       after: '@nikitajs/engine/src/plugins/conditions'
@@ -55,10 +58,10 @@ handlers =
         {status, stdout} = await @execute
           command: utils.os.os
         return final_run = false unless status
-        [arch, name, version] = stdout.split '|'
-        name = 'redhat' if name.toLowerCase() is 'red hat'
-        # Remove patch version (eg centos 7.8)
+        [arch, name, version, linux_version] = stdout.split '|'
+        # Remove patch version (eg. 7.8.12 -> 7.8)
         version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+        linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
         match = action.conditions.if_os.some (condition) ->
           a = !condition.arch.length || condition.arch.some (value) ->
             return true if typeof value is 'string' and value is arch
@@ -66,11 +69,16 @@ handlers =
           n = !condition.name.length || condition.name.some (value) ->
             return true if typeof value is 'string' and value is name
             return true if value instanceof RegExp and value.test name
-          v = !condition.version.length || condition.version.some (value) ->
+          # Arch Linux has only linux_version
+          v = !version.length || !condition.version.length || condition.version.some (value) ->
             version = utils.semver.sanitize version, '0'
             return true if typeof value is 'string' and utils.semver.satisfies version, value
             return true if value instanceof RegExp and value.test version
-          return a and n and v
+          lv = !condition.linux_version.length || condition.linux_version.some (value) ->
+            linux_version = utils.semver.sanitize linux_version, '0'
+            return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
+            return true if value instanceof RegExp and value.test linux_version
+          return a and n and v and lv
         final_run = false unless match
     final_run
   unless_os: (action) ->
@@ -87,10 +95,10 @@ handlers =
         {status, stdout} = await @execute
           command: utils.os.os
         return final_run = false unless status
-        [arch, name, version] = stdout.split '|'
-        name = 'redhat' if name.toLowerCase() is 'red hat'
-        # Remove patch version (eg centos 7.8)
+        [arch, name, version, linux_version] = stdout.split '|'
+        # Remove patch version (eg. 7.8.12 -> 7.8)
         version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+        linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
         match = action.conditions.unless_os.some (condition) ->
           a = !condition.arch.length || condition.arch.some (value) ->
             return true if typeof value is 'string' and value is arch
@@ -98,10 +106,15 @@ handlers =
           n = !condition.name.length || condition.name.some (value) ->
             return true if typeof value is 'string' and value is name
             return true if value instanceof RegExp and value.test name
-          v = !condition.version.length || condition.version.some (value) ->
+          # Arch Linux has only linux_version
+          v = !version.length || !condition.version.length || condition.version.some (value) ->
             version = utils.semver.sanitize version, '0'
             return true if typeof value is 'string' and utils.semver.satisfies version, value
             return true if value instanceof RegExp and value.test version
-          return a and n and v
+          lv = !condition.linux_version.length || condition.linux_version.some (value) ->
+            linux_version = utils.semver.sanitize linux_version, '0'
+            return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
+            return true if value instanceof RegExp and value.test linux_version
+          return a and n and v and lv
         final_run = false if match
     final_run

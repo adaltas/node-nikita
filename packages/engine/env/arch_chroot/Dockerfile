@@ -21,7 +21,7 @@ RUN pacman --noconfirm -S openssh \
 RUN pacman --noconfirm -S zip git
 
 # Install arch-chroot
-ENV ARCHLINUX_VERSION 2020.12.01
+ENV ARCHLINUX_VERSION 2021.01.01
 RUN pacman --noconfirm -S arch-install-scripts tar gzip \
  && curl -L "https://mirrors.edge.kernel.org/archlinux/iso/$ARCHLINUX_VERSION/archlinux-bootstrap-$ARCHLINUX_VERSION-x86_64.tar.gz" -o /var/tmp/archlinux-bootstrap.tar.gz \
  && tar xzf /var/tmp/archlinux-bootstrap.tar.gz -C /var/tmp \

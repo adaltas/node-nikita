@@ -8,11 +8,18 @@ return unless tags.conditions_if_os
 describe 'plugin.condition if_os', ->
   
   they 'match name string', ({ssh}) ->
-    {status} = await nikita
-      if_os: name: conditions_if_os.name
-      handler: -> true
+    nikita
       ssh: ssh
-    status.should.be.true()
+    , ->
+      {status} = await @call
+        if_os: name: conditions_if_os.name
+        handler: -> true
+      status.should.be.true()
+      {status} = await @call
+        if_os: name: 'invalid'
+        handler: -> true
+        ssh: ssh
+      status.should.be.false()
 
   they 'match name array', ({ssh}) ->
     {status} = await nikita
@@ -30,11 +37,30 @@ describe 'plugin.condition if_os', ->
       ssh: ssh
     status.should.be.true()
 
-  they 'match name string and major version', ({ssh}) ->
+  they 'match Linux version string', ({ssh}) ->
     {status} = await nikita
       if_os:
+        linux_version: conditions_if_os.linux_version
+      handler: -> true
+      ssh: ssh
+    status.should.be.true()
+
+  they 'match name string and major version', ({ssh}) ->
+    # Arch Linux has only linux_version
+    if conditions_if_os.version
+    then condition = version: conditions_if_os.version
+    else condition = linux_version: conditions_if_os.linux_version
+    {status} = await nikita
+      if_os: condition,
         name: conditions_if_os.name
-        version: conditions_if_os.version.split('.')[0]
+      handler: -> true
+      ssh: ssh
+    status.should.be.true()
+  
+  they 'match major Linux version', ({ssh}) ->
+    {status} = await nikita
+      if_os:
+        linux_version: conditions_if_os.linux_version.split('.')[0]
       handler: -> true
       ssh: ssh
     status.should.be.true()
@@ -46,13 +72,25 @@ describe 'plugin.condition if_os', ->
       handler: -> true
       ssh: ssh
     status.should.be.true()
-  
+
+  they 'match name string, version string, Linux version string and arch string', ({ssh}) ->
+    {status} = await nikita
+      if_os: conditions_if_os
+      handler: -> true
+      ssh: ssh
+    status.should.be.true()
+
   they 'match array', ({ssh}) ->
+    # Arch Linux has only linux_version
+    if conditions_if_os.version
+    then condition = [version: conditions_if_os.version]
+    else condition = [linux_version: conditions_if_os.linux_version]
+    condition.push 8
     {status} = await nikita
       if_os: [
         name: conditions_if_os.name
       ,
-        version: [conditions_if_os.version, '8']
+        condition
       ]
       handler: -> true
       ssh: ssh
