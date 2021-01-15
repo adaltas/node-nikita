@@ -31,6 +31,15 @@ schema = {
       type: 'string',
       description: `The command to execute.`
     },
+    'shell': {
+      type: 'string',
+      default: 'sh',
+      description: `The shell in which to execute commands, for example \`sh\`, \`bash\` or
+\`zsh\`.`
+    },
+    'trim': {
+      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trim'
+    },
     'trap': {
       $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
     }
@@ -43,7 +52,7 @@ handler = async function({config}) {
   return (await this.execute(config, {
     trap: false
   }, {
-    command: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- bash`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
+    command: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
   }));
 };
 

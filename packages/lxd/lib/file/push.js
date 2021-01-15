@@ -112,7 +112,7 @@ handler = async function({
 command -v openssl >/dev/null || exit 3
 sourceDgst=\`openssl dgst -${config.algo} ${config.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`
 # Get target hash
-targetDgst=\`cat <<EOF | lxc exec ${config.container} -- bash
+targetDgst=\`cat <<EOF | lxc exec ${config.container} -- sh
 # Ensure openssl is available
 command -v openssl >/dev/null || exit 4
 # Target does not exist

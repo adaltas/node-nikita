@@ -27,9 +27,18 @@ console.info(stdout)
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'command':
           type: 'string'
-          description: """
+          description: '''
           The command to execute.
-          """
+          '''
+        'shell':
+          type: 'string'
+          default: 'sh'
+          description: '''
+          The shell in which to execute commands, for example `sh`, `bash` or
+          `zsh`.
+          '''
+        'trim':
+          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trim'
         'trap':
           $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
       required: ['container', 'command']
@@ -39,7 +48,7 @@ console.info(stdout)
     handler =  ({config}) ->
       await @execute config, trap: false,
         command: [
-          "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- bash"
+          "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- #{config.shell}"
           'set -e' if config.trap
           config.command
           'NIKITALXDEXEC'
