@@ -86,7 +86,7 @@ describe 'network.http', ->
         headers['Content-Type'].should.eql 'application/json'
         type.should.eql 'json'
       finally
-        srv.close()
+        srv?.close()
 
     they 'escape single and double quotes', ({ssh}) ->
       try
@@ -107,7 +107,7 @@ describe 'network.http', ->
         headers['Content-Type'].should.eql 'application/json'
         type.should.eql 'json'
       finally
-        await srv.close()
+        await srv?.close()
     
     they 'honors curl exit code', ({ssh}) ->
       nikita.network.http
@@ -129,7 +129,7 @@ describe 'network.http', ->
         status_code.should.eql 200
         data.should.eql key: 'value'
       finally
-        await srv.close()
+        await srv?.close()
   
   describe 'response', ->
 
@@ -155,7 +155,7 @@ describe 'network.http', ->
           status_message: 'Not found'
           type: undefined
       finally
-        srv.close()
+        srv?.close()
 
     they 'code 301 from ipa', ({ssh}) ->
       try
@@ -165,7 +165,7 @@ describe 'network.http', ->
           url: "http://localhost:#{srv.port}/request_301"
         status_code.should.eql 301
       finally
-        srv.close()
+        srv?.close()
 
     they 'content type with charset', ({ssh}) ->
       try
@@ -178,4 +178,4 @@ describe 'network.http', ->
         status_code.should.eql 200
         data.should.eql key: 'value'
       finally
-        srv.close()
+        srv?.close()
