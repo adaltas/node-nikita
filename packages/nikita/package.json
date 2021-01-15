@@ -32,15 +32,16 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^0.9.7",
     "@nikitajs/db": "^0.9.7",
     "@nikitajs/docker": "^0.9.7",
-    "@nikitajs/filetypes": "^0.9.7",
+    "@nikitajs/engine": "^0.9.7",
+    "@nikitajs/file": "^0.9.7",
     "@nikitajs/ipa": "^0.9.7",
     "@nikitajs/java": "^0.9.7",
     "@nikitajs/krb5": "^0.9.7",
     "@nikitajs/ldap": "^0.9.7",
     "@nikitajs/lxd": "^0.9.7",
+    "@nikitajs/network": "^0.9.7",
     "@nikitajs/service": "^0.9.7",
     "@nikitajs/tools": "^0.9.7"
   },
@@ -63,7 +64,7 @@
     "directory": "packages/nikita"
   },
   "scripts": {
-    "test": "mocha 'test/**/*.coffee'",
-    "testall": "mocha 'test/**/*.coffee'"
+    "test": "mocha 'test/**/*.js'",
+    "testall": "mocha 'test/**/*.js'"
   }
 }
