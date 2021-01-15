@@ -260,7 +260,7 @@ property when expecting a large stdout output.`
     'stdout_trim': {
       type: 'boolean',
       default: false,
-      description: `Trim stdout argument passed in the callback.`
+      description: `Trim the stdout output.`
     },
     'stderr': {
       instanceof: 'Object', // must be `stream.Writable`
@@ -283,7 +283,7 @@ property when expecting a large stderr output.`
     'stderr_trim': {
       type: 'boolean',
       default: false,
-      description: `Trim stderr argument passed in the callback.`
+      description: `Trim the stderr output.`
     },
     'sudo': {
       type: 'boolean',
@@ -301,6 +301,11 @@ config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
       type: 'boolean',
       default: false,
       description: `Exit immediately if a commands exits with a non-zero status.`
+    },
+    'trim': {
+      type: 'boolean',
+      default: false,
+      description: `Trim both the stdout and stderr outputs.`
     },
     'uid': {
       type: 'integer',

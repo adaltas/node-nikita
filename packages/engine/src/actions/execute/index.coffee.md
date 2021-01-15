@@ -220,7 +220,7 @@ console.info(stdout)
           type: 'boolean'
           default: false
           description: """
-          Trim stdout argument passed in the callback.
+          Trim the stdout output.
           """
         'stderr':
           instanceof: 'Object' # must be `stream.Writable`
@@ -247,7 +247,7 @@ console.info(stdout)
           type: 'boolean'
           default: false
           description: """
-          Trim stderr argument passed in the callback.
+          Trim the stderr output.
           """
         'sudo':
           type: 'boolean'
@@ -268,6 +268,12 @@ console.info(stdout)
           default: false
           description: """
           Exit immediately if a commands exits with a non-zero status.
+          """
+        'trim':
+          type: 'boolean'
+          default: false
+          description: """
+          Trim both the stdout and stderr outputs.
           """
         'uid':
           type: 'integer'
