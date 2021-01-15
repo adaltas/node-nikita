@@ -1,12 +1,12 @@
 
 http = require 'http'
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../test'
+they = require('mocha-they')(config)
 
 return unless tags.posix
 
-portincr = 12345
+portincr = 22445
 server = ->
   new Promise (resolve) ->
     srv = http.createServer (req, res) ->
@@ -22,30 +22,33 @@ server = ->
 describe 'network.tcp.assert', ->
 
   they 'port and host', ({ssh}) ->
-    srv = await server()
-    {status} = await nikita.network.tcp.assert
-      host: 'localhost'
-      port: srv.port
-      ssh: ssh
-    status.should.be.true()
-    await srv.close()
+    try
+      srv = await server()
+      {status} = await nikita.network.tcp.assert
+        host: 'localhost'
+        port: srv.port
+        ssh: ssh
+      status.should.be.true()
+    finally
+      await srv.close()
 
   they 'multiple servers', ({ssh}) ->
-    servers = [
-      await server()
-    ,
-      await server()
-    ]
-    {status} = await nikita.network.tcp.assert
-      servers: [
-        host: 'localhost', port: '12346'
+    try
+      servers = [
+        await server()
       ,
-        host: 'localhost', port: '12347'
+        await server()
       ]
-      ssh: ssh
-    status.should.be.true()
-    servers.map (srv) ->
-      await srv.close()
+      {status} = await nikita.network.tcp.assert
+        servers: [
+          host: 'localhost', port: '12346'
+        ,
+          host: 'localhost', port: '12347'
+        ]
+        ssh: ssh
+      status.should.be.true()
+    finally
+      servers.map (srv) -> srv.close()
 
   they 'port is not listening', ({ssh}) ->
     nikita.network.tcp.assert
@@ -62,12 +65,14 @@ describe 'network.tcp.assert', ->
       not: true
       ssh: ssh
     status.should.be.true()
-    srv = await server()
-    {status} = await nikita.network.tcp.assert
-      host: 'localhost'
-      port: srv.port
-      not: true
-      ssh: ssh
-    .should.be.rejectedWith
-      message: "Address listening: \"localhost:#{srv.port}\""
-    await srv.close()
+    try
+      srv = await server()
+      {status} = await nikita.network.tcp.assert
+        host: 'localhost'
+        port: srv.port
+        not: true
+        ssh: ssh
+      .should.be.rejectedWith
+        message: "Address listening: \"localhost:#{srv.port}\""
+    finally
+      await srv.close()

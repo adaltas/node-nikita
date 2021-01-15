@@ -71,8 +71,6 @@
     "directory": "packages/core"
   },
   "scripts": {
-    "build": "coffee -b -o lib src",
-    "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'"
+    "build": "coffee -b -o lib src"
   }
 }

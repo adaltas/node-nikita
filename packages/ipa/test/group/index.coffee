@@ -1,8 +1,8 @@
 
 {merge} = require 'mixme'
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, ipa} = require '../test'
-they = require('ssh2-they').configure ssh
+{tags, config, ipa} = require '../test'
+they = require('mocha-they')(config)
 
 return unless tags.ipa
 

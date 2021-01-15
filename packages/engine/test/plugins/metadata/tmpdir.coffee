@@ -3,8 +3,8 @@ path = require 'path'
 os = require 'os'
 fs = require 'ssh2-fs'
 nikita = require '../../../src'
-{tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 return unless tags.api
 
@@ -25,12 +25,17 @@ describe 'plugins.metadata.tmpdir', ->
   describe 'cascade', ->
 
     they 'current action', ({ssh}) ->
-      tmpdir = await nikita.call ssh: ssh, metadata: tmpdir: true, ({metadata, ssh})->
-        await fs.exists ssh, metadata.tmpdir
-        .should.be.resolvedWith true
-        metadata.tmpdir
-      fs.exists ssh, tmpdir
-      .should.be.resolvedWith false
+      nikita
+        ssh: ssh
+      , ({ssh}) ->
+        tmpdir = await @call
+          metadata: tmpdir: true
+        , ({metadata}) ->
+          await fs.exists ssh, metadata.tmpdir
+          .should.be.resolvedWith true
+          metadata.tmpdir
+        fs.exists ssh, tmpdir
+        .should.be.resolvedWith false
 
     they 'in children', ({ssh}) ->
       nikita.call ssh: ssh, metadata: tmpdir: true, ({metadata, ssh})->

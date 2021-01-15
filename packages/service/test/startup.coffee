@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, service} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config, service} = require './test'
+they = require('mocha-they')(config)
 
 return unless tags.service_startup
 

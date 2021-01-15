@@ -11,7 +11,11 @@ module.exports =
     # run `cat /etc/redhat-release` to check the Centos version
     version: '7.9'
     linux_version: '4.19'
-  ssh: [
-    null
-    { ssh: host: 'localhost', username: 'root' }
+  config: [
+    label: 'local'
+  ,
+    label: 'remote'
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_rsa'
   ]

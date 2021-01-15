@@ -1,8 +1,8 @@
 
 nikita = require '../../../../src'
 utils = require '../../../../src/utils'
-{tags, ssh} = require '../../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../../test'
+they = require('mocha-they')(config)
 
 return unless tags.posix
 
@@ -58,10 +58,11 @@ describe 'actions.fs.base.unlink', ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
-    .fs.mkdir
-      target: "{{parent.metadata.tmpdir}}/a_target"
-    .fs.base.unlink
-      target: "{{parent.metadata.tmpdir}}/a_target"
-    .should.be.rejectedWith
-      code: 'NIKITA_FS_UNLINK_EPERM'
-      message: /NIKITA_FS_UNLINK_EPERM: you do not have the permission to remove the file, got ".*\/a_target"/
+    , ->
+      @fs.mkdir
+        target: "{{parent.metadata.tmpdir}}/a_target"
+      @fs.base.unlink
+        target: "{{parent.metadata.tmpdir}}/a_target"
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_UNLINK_EPERM'
+        message: /NIKITA_FS_UNLINK_EPERM: you do not have the permission to remove the file, got ".*\/a_target"/

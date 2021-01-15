@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, krb5} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config, krb5} = require './test'
+they = require('mocha-they')(config)
 
 return unless tags.krb5_addprinc
 

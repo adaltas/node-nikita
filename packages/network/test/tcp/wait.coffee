@@ -1,14 +1,14 @@
 
 http = require 'http'
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../test'
+they = require('mocha-they')(config)
 
 return unless tags.posix
 
 describe 'network.tcp.wait', ->
 
-  portincr = 12345
+  portincr = 22545
   server = ->
     port = portincr++
     srv =
@@ -19,7 +19,9 @@ describe 'network.tcp.wait', ->
       listen: ->
         new Promise (resolve) ->
           srv.listening = true
-          srv.app.listen srv.port, resolve
+          srv.app.listen srv.port
+          .on 'listening', -> resolve srv
+          .on 'error', (err) -> reject err
       close: ->
         new Promise (resolve) ->
           srv.app.close resolve
@@ -140,96 +142,106 @@ describe 'network.tcp.wait', ->
   describe 'status', ->
 
     they 'test status `false`', ({ssh}) ->
-      srv = server()
-      await srv.listen()
-      await nikita
-        ssh: ssh
-      , ({tools: {events}}) ->
-        {status} = await @network.tcp.wait
-          interval: 200
-          host: 'localhost'
-          port: srv.port
-        status.should.be.false()
-      srv.close()
+      try
+        srv = server()
+        await srv.listen()
+        await nikita
+          ssh: ssh
+        , ({tools: {events}}) ->
+          {status} = await @network.tcp.wait
+            interval: 200
+            host: 'localhost'
+            port: srv.port
+          status.should.be.false()
+      finally
+        srv.close()
     
     they 'test status `true`', ({ssh}) ->
-      srv = server()
-      await nikita
+      nikita
         ssh: ssh
       , ({tools: {events}}) ->
-        events.on 'stderr_stream', (log) ->
-          if /Connection failed/.test log.message?.toString()
-            srv.listen()
-        {status} = await @network.tcp.wait
-          interval: 200
-          host: 'localhost'
-          port: srv.port
-        status.should.be.true()
-      srv.close()
+        try
+          srv = server()
+          events.on 'stderr_stream', (log) ->
+            if /Connection failed/.test log.message?.toString()
+              srv.listen()
+          {status} = await @network.tcp.wait
+            interval: 200
+            host: 'localhost'
+            port: srv.port
+          status.should.be.true()
+        finally
+          srv.close()
 
   describe 'config', ->
 
     they 'quorum true', ({ssh}) ->
-      srv1 = server()
-      srv2 = server()
-      srv3 = server()
-      await nikita
+      nikita
         ssh: ssh
       , ({tools: {events}}) ->
-        events.on 'stderr_stream', (log) ->
-          if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
-            srv1.listen()
-            srv2.listen()
-        {status} = await @network.tcp.wait
-          server: [
-            { host: 'localhost', port: srv1.port }
-            { host: 'localhost', port: srv2.port }
-            { host: 'localhost', port: srv3.port }
-          ]
-          quorum: true
-          interval: 200
-        status.should.be.true()
-      srv1.close()
-      srv2.close()
+        try
+          srv1 = server()
+          srv2 = server()
+          srv3 = server()
+          events.on 'stderr_stream', (log) ->
+            if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+              srv1.listen()
+              srv2.listen()
+          {status} = await @network.tcp.wait
+            server: [
+              { host: 'localhost', port: srv1.port }
+              { host: 'localhost', port: srv2.port }
+              { host: 'localhost', port: srv3.port }
+            ]
+            quorum: true
+            interval: 200
+          status.should.be.true()
+        finally
+          srv1.close()
+          srv2.close()
 
     they 'quorum even number', ({ssh}) ->
-      srv1 = server()
-      srv2 = server()
-      await nikita
+      nikita
         ssh: ssh
       , ({tools: {events}}) ->
-        events.on 'stderr_stream', (log) ->
-          if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
-            srv1.listen()
-        {status} = await @network.tcp.wait
-          interval: 200
-          server: [
-            { host: 'localhost', port: srv1.port }
-            { host: 'localhost', port: srv2.port }
-          ]
-          quorum: 1
-        status.should.be.true()
-      srv1.close()
+        try
+          srv1 = server()
+          srv2 = server()
+          events.on 'stderr_stream', (log) ->
+            if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+              srv1.listen()
+          {status} = await @network.tcp.wait
+            interval: 200
+            server: [
+              { host: 'localhost', port: srv1.port }
+              { host: 'localhost', port: srv2.port }
+            ]
+            quorum: 1
+          status.should.be.true()
+        finally
+          srv1.close()
 
     they 'quorum odd number', ({ssh}) ->
-      srv1 = server()
-      srv2 = server()
-      srv3 = server()
-      await nikita
+      nikita
         ssh: ssh
       , ({tools: {events}}) ->
-        events.on 'stderr_stream', (log) ->
-          if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
-            srv1.listen()
-            srv2.listen()
-        {status} = await @network.tcp.wait
-          interval: 200
-          server: [
-            { host: 'localhost', port: srv1.port }
-            { host: 'localhost', port: srv2.port }
-            { host: 'localhost', port: srv3.port }
-          ]
-          quorum: 2
-        status.should.be.true()
-      srv1.close()
-      srv2.close()
+        try
+          srv1 = server()
+          srv2 = server()
+          srv3 = server()
+          events.on 'stderr_stream', (log) ->
+            if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+              srv1.listen()
+              srv2.listen()
+          {status} = await @network.tcp.wait
+            interval: 200
+            server: [
+              { host: 'localhost', port: srv1.port }
+              { host: 'localhost', port: srv2.port }
+              { host: 'localhost', port: srv3.port }
+            ]
+            quorum: 2
+          status.should.be.true()
+        finally
+          srv1.close()
+          srv2.close()

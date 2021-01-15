@@ -2,7 +2,7 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('mocha-they')(config)...
 
 return unless tags.posix
 

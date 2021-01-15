@@ -1,8 +1,8 @@
 
 conditions = require '../../src/misc/conditions'
 nikita = require '../../src'
-{tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh...
+{tags, config} = require '../test'
+they = require('mocha-they')(config)...
 
 return unless tags.posix
 

@@ -2,8 +2,8 @@
 path = require 'path'
 nikita = require '../../../src'
 utils = require '../../../src/utils'
-{tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 describe 'actions.fs.mkdir', ->
   return unless tags.posix

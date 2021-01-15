@@ -16,7 +16,7 @@ module.exports = config
 # Cache images
 return unless config.tags.docker
 nikita = require '@nikitajs/engine/lib'
-they = require('ssh2-they').configure config.ssh
+they = require('mocha-they')(config.config)
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
   nikita(ssh: ssh, docker: config.docker).docker.pull image: 'httpd'

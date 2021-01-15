@@ -2,9 +2,9 @@
 connect = require 'ssh2-connect'
 nikita = require '../../../src'
 utils = require '../../../src/utils'
-{tags, ssh} = require '../../test'
+{tags, config} = require '../../test'
 # All test are executed with an ssh connection passed as an argument
-they = require('ssh2-they').configure ssh.filter (ssh) -> !!ssh
+they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
 
 return unless tags.posix
 
@@ -14,36 +14,23 @@ describe 'actions.ssh.open', ->
     
     they 'config.host', ({ssh}) ->
       nikita
-      .ssh.open {...ssh.config, host: '_invalid_', debug: undefined}
+      .ssh.open {...ssh, host: '_invalid_', debug: undefined}
       .should.be.rejectedWith code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       
   describe 'connection properties', ->
 
     they 'with handler config', ({ssh}) ->
       nikita ->
-        @ssh.open
-          host: ssh.config.host
-          port: ssh.config.port
-          username: ssh.config.username
-          password: ssh.config.password
-          private_key: ssh.config.privateKey
-          public_key: ssh.config.publicKey
+        @ssh.open ssh
         .then ({status, ssh}) ->
           status.should.be.true()
           utils.ssh.is( ssh ).should.be.true()
         @ssh.close()
 
     they 'check status and return connection', ({ssh}) ->
-      config =
-        host: ssh.config.host
-        port: ssh.config.port
-        username: ssh.config.username
-        password: ssh.config.password
-        private_key: ssh.config.privateKey
-        public_key: ssh.config.publicKey
       nikita
-      .ssh.open config
-      .ssh.open config
+      .ssh.open ssh
+      .ssh.open ssh
       .call ({sibling, siblings}) ->
         # Status
         siblings
@@ -58,26 +45,14 @@ describe 'actions.ssh.open', ->
 
     they.skip 'with global config', ({ssh}) ->
       nikita
-        global: ssh:
-          host: ssh.config.host
-          port: ssh.config.port
-          username: ssh.config.username
-          password: ssh.config.password
-          private_key: ssh.config.privateKey
-          public_key: ssh.config.publicKey
+        global: ssh: ssh
       .ssh.open()
       .call ->
         @ssh().then ({ssh}) -> utils.ssh.is ssh
       @ssh.close()
 
     they 'check status with instance', ({ssh}) ->
-      conn = await connect
-        host: ssh.config.host
-        port: ssh.config.port
-        username: ssh.config.username
-        password: ssh.config.password
-        private_key: ssh.config.privateKey
-        public_key: ssh.config.publicKey
+      conn = await connect ssh
       nikita
       .ssh.open ssh: conn
       .ssh.open ssh: conn
@@ -92,32 +67,28 @@ describe 'actions.ssh.open', ->
       .ssh.close()
 
     they.skip 'directly as the main argument', ({ssh}) ->
+      conn = await connect ssh
       nikita
-      .ssh.open ssh
+      .ssh.open conn
       .ssh.close()
   
   describe 'errors', ->
     
     they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
-      conn = await connect ssh.config
-      conn.config.host = 'something.else' # Fake another connection
+      conn1 = await connect ssh
+      conn2 = await connect ssh
+      conn2.config.host = 'something.else' # Fake another connection
       nikita ->
-        @ssh.open ssh: ssh
-        await @ssh.open ssh: conn
+        @ssh.open ssh: conn1
+        await @ssh.open ssh: conn2
         .should.be.rejectedWith code: 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE'
-        @ssh.close ssh: conn
+        @ssh.close ssh: conn1
+        @ssh.close ssh: conn2
     
     they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ({ssh}) ->
-      config =
-        host: ssh.config.host
-        port: ssh.config.port
-        username: ssh.config.username
-        password: ssh.config.password
-        private_key: ssh.config.privateKey
-        public_key: ssh.config.publicKey
       nikita ->
-        @ssh.open config
-        await @ssh.open config, host: 'something.else'
+        @ssh.open ssh
+        await @ssh.open ssh, host: 'something.else'
         .should.be.rejectedWith code: 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG'
         @ssh.close()
     

@@ -8,7 +8,11 @@ module.exports =
     name: 'nginx-light'
     srv_name: 'nginx'
     chk_name: 'nginx'
-  ssh: [
-    null
-    { ssh: host: 'localhost', username: 'root' }
+  config: [
+    label: 'local'
+  ,
+    label: 'remote'
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_rsa'
   ]

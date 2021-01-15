@@ -14,7 +14,7 @@ config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
 module.exports = config
 
 nikita = require '@nikitajs/engine/lib'
-they = require('ssh2-they').configure config.ssh
+they = require('mocha-they')(config.ssh)
 
 they 'cache to avoid timeout later', ({ssh}) ->
   @timeout 0

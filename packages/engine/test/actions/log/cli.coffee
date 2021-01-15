@@ -1,8 +1,8 @@
 
 fs = require 'fs'
 nikita = require '../../../src'
-{tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 return unless tags.posix
 
@@ -21,7 +21,7 @@ describe 'actions.log.cli', ->
         
     they 'default options', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -43,7 +43,7 @@ describe 'actions.log.cli', ->
     
     they 'pass over actions without header', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -65,7 +65,7 @@ describe 'actions.log.cli', ->
 
     they 'status boolean', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -82,7 +82,7 @@ describe 'actions.log.cli', ->
 
     they 'status with shy', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -100,7 +100,7 @@ describe 'actions.log.cli', ->
     they.skip 'status with relax', ({ssh}) ->
       # TODO: see relax tests
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -120,7 +120,7 @@ describe 'actions.log.cli', ->
 
     they 'bypass disabled', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -140,7 +140,7 @@ describe 'actions.log.cli', ->
 
     they 'bypass conditionnal', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -160,7 +160,7 @@ describe 'actions.log.cli', ->
 
     they 'option depth', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -181,7 +181,7 @@ describe 'actions.log.cli', ->
 
     they 'option divider', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -203,7 +203,7 @@ describe 'actions.log.cli', ->
 
     they 'option pad', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -225,7 +225,7 @@ describe 'actions.log.cli', ->
 
     they 'option colors', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       nikita
         ssh: ssh
       .log.cli
@@ -265,7 +265,7 @@ describe 'actions.log.cli', ->
           
     they 'when resolved', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       await nikita
         ssh: ssh
       , ->
@@ -281,7 +281,7 @@ describe 'actions.log.cli', ->
               
     they 'when rejected', ({ssh}) ->
       data = []
-      host = ssh?.config.host or 'localhost'
+      host = ssh?.host or 'localhost'
       try
         await nikita
           ssh: ssh

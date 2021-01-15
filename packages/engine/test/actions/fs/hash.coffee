@@ -1,8 +1,8 @@
 
 crypto = require 'crypto'
 nikita = require '../../../src'
-{tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 describe 'actions.fs.hash', ->
   return unless tags.posix

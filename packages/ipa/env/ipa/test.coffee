@@ -7,9 +7,11 @@ module.exports =
     password: 'admin_pw'
     # referer: 'https://freeipa.nikita.local/ipa/xml'
     url: 'https://freeipa.nikita.local/ipa/session/json'
-  ssh: [
-    null
+  config: [
+    label: 'local'
   ,
-    sudo: true
-    ssh: host: '127.0.0.1', username: 'nikita'
+    label: 'remote'
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_rsa'
   ]

@@ -1,8 +1,8 @@
 
 memory = require '../../src/plugins/pubsub/engines/memory'
 nikita = require '../../src'
-{tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../test'
+they = require('mocha-they')(config)
 
 
 describe 'plugins.pubsub', ->

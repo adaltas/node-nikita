@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, ldap} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config, ldap} = require './test'
+they = require('mocha-they')(config)
 utils = require '../src/utils'
 
 return unless tags.ldap_index

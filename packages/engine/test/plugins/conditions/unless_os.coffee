@@ -1,7 +1,7 @@
 
 nikita = require '../../../src'
-{tags, ssh, conditions_if_os} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config, conditions_if_os} = require '../../test'
+they = require('mocha-they')(config)
 
 return unless tags.conditions_if_os
 

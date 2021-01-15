@@ -2,7 +2,7 @@
 nikita = require '../../src'
 pidfile_running = require '../../src/misc/pidfile_running'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('mocha-they')(config)...
 
 return unless tags.posix
 

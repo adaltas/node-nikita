@@ -1,8 +1,8 @@
 
 nikita = require '@nikitajs/engine/lib'
 path = require 'path'
-{tags, ssh, docker} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config, docker} = require './test'
+they = require('mocha-they')(config)
 
 return unless tags.docker
 

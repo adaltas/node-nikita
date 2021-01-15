@@ -2,8 +2,8 @@
 path = require 'path'
 {Minimatch} = require 'minimatch'
 nikita = require '../../../src'
-{tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 describe 'actions.fs.glob', ->
   return unless tags.posix

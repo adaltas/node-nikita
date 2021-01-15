@@ -11,7 +11,11 @@ module.exports =
     # run `cat /etc/lsb-release` to check the Ubuntu version
     version: '14.04'
     linux_version: '4.19'
-  ssh: [
-    null
-    { ssh: host: 'localhost', username: 'root' }
+  config: [
+    label: 'local'
+  ,
+    label: 'remote'
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_rsa'
   ]

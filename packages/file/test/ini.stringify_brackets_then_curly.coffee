@@ -1,8 +1,8 @@
 
 nikita = require '@nikitajs/engine/lib'
 utils = require '../src/utils'
-{tags, ssh} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config} = require './test'
+they = require('mocha-they')(config)
 
 return unless tags.posix
 

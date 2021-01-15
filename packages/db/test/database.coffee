@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, db} = require './test'
-they = require('ssh2-they').configure ssh
+{tags, config, db} = require './test'
+they = require('mocha-they')(config)
 {command} = require '../src/query'
 
 return unless tags.db

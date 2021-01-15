@@ -14,10 +14,11 @@ module.exports =
       binddn: 'cn=admin,cn=config'
       passwd: 'config'
     suffix_dn: 'dc=example,dc=org'
-  ssh: [
-    null
+  config: [
+    label: 'local'
   ,
-    ssh: host: '127.0.0.1', username: process.env.USER
-    # no password, will use private key
-    # if found in "~/.ssh/id_rsa"
+    label: 'remote'
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_rsa'
   ]

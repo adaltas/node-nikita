@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, ssh, ruby} = require '../test'
-they = require('ssh2-they').configure ssh
+{tags, config, ruby} = require '../test'
+they = require('mocha-they')(config)
 
 return unless tags.tools_rubygems
 
