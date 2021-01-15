@@ -37,6 +37,9 @@
       "email": "david@adaltas.com"
     }
   ],
+  "dependencies": {
+    "@nikitajs/file": "^0.9.7"
+  },
   "peerDependencies": {
     "@nikitajs/engine": "^0.9.7"
   },
