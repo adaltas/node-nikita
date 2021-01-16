@@ -22,7 +22,7 @@
 // * Detect name from lxd_target
 
 // ## Schema
-var handler, path, schema;
+var handler, path, schema, utils;
 
 schema = {
   type: 'object',
@@ -132,7 +132,7 @@ EOF\`
         throw Error("Invalid Requirement: openssl not installed on host");
       }
       if (err.exit_code === 4) {
-        throw Error("Invalid Requirement: openssl not installed on container");
+        throw utils.error('NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL', ['the openssl package must be installed in the container', 'and accessible from the `$PATH`.']);
       }
     }
   }
@@ -168,3 +168,5 @@ module.exports = {
 
 // ## Dependencies
 path = require('path');
+
+utils = require('../utils');

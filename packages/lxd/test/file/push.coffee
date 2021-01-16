@@ -12,6 +12,28 @@ before ->
     command: "lxc image copy ubuntu:default `lxc remote get-default`:"
 
 describe 'lxd.file.push', ->
+  
+  they 'require openssl', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @lxd.delete
+        container: 'c1'
+        force: true
+      await @lxd.init
+        image: 'images:alpine/edge'
+        container: 'c1'
+      await @lxd.start
+        container: 'c1'
+      await @file.touch
+        target: "#{tmpdir}/a_file"
+      @lxd.file.push
+        container: 'c1'
+        source: "#{tmpdir}/a_file"
+        target: '/root/a_file'
+      .should.be.rejectedWith
+        code: 'NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL'
 
   they 'a new file', ({ssh}) ->
     nikita

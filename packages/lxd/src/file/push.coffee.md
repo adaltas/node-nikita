@@ -118,7 +118,10 @@ console.info(`File was pushed: ${status}`)
         catch err
           throw Error "Invalid Option: source is not a file, got #{JSON.stringify config.source}" if err.exit_code is 2
           throw Error "Invalid Requirement: openssl not installed on host" if err.exit_code is 3
-          throw Error "Invalid Requirement: openssl not installed on container" if err.exit_code is 4
+          throw utils.error 'NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL', [
+            'the openssl package must be installed in the container'
+            'and accessible from the `$PATH`.'
+          ] if err.exit_code is 4
       if not status_running or status
         await @execute
           command: """
@@ -154,3 +157,4 @@ console.info(`File was pushed: ${status}`)
 ## Dependencies
 
     path = require 'path'
+    utils = require '../utils'
