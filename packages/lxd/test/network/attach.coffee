@@ -5,12 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.network.attach', ->
 
   they 'Attach a network to a container', ({ssh}) ->
@@ -26,7 +20,7 @@ describe 'lxd.network.attach', ->
       try
         @clean()
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'u0'
         @lxd.network
           network: "testnet0"
@@ -50,7 +44,7 @@ describe 'lxd.network.attach', ->
       @clean()
       try
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'u0'
         @lxd.network
           network: "testnet0"

@@ -5,12 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.file.push', ->
   
   they 'require openssl', ({ssh}) ->
@@ -40,15 +34,19 @@ describe 'lxd.file.push', ->
       ssh: ssh
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @lxd.delete
+      await @lxd.delete
         container: 'c1'
         force: true
-      @lxd.init
-        image: 'ubuntu:'
+      await @lxd.init
+        image: 'images:alpine/edge'
         container: 'c1'
-      @lxd.start
+      await @lxd.start
         container: 'c1'
-      @file
+      await @wait 300 # Wait for network to be ready
+      await @lxd.exec
+        container: 'c1'
+        command: 'apk add openssl'
+      await @file
         target: "#{tmpdir}/a_file"
         content: 'something'
       {status} = await @lxd.file.push
@@ -60,7 +58,6 @@ describe 'lxd.file.push', ->
         container: 'c1'
         target: '/root/a_file'
       status.should.be.true()
-  
 
   they 'the same file', ({ssh}) ->
     nikita
@@ -71,10 +68,14 @@ describe 'lxd.file.push', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       @lxd.start
         container: 'c1'
+      await @wait 300 # Wait for network to be ready
+      @lxd.exec
+        container: 'c1'
+        command: 'apk add openssl'
       @file
         target: "#{tmpdir}/a_file"
         content: 'something'
@@ -88,7 +89,6 @@ describe 'lxd.file.push', ->
         target: '/root/a_file'
       status.should.be.false()
   
-
   describe 'content', ->
 
     they 'a new file', ({ssh}) ->
@@ -99,10 +99,14 @@ describe 'lxd.file.push', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.start
           container: 'c1'
+        await @wait 300 # Wait for network to be ready
+        @lxd.exec
+          container: 'c1'
+          command: 'apk add openssl'
         {status} = await @lxd.file.push
           container: 'c1'
           target: '/root/a_file'
@@ -112,7 +116,6 @@ describe 'lxd.file.push', ->
           container: 'c1'
           command: 'cat /root/a_file'
         stdout.trim().should.eql 'something'
-    
 
     they 'the same file', ({ssh}) ->
       nikita
@@ -122,10 +125,14 @@ describe 'lxd.file.push', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.start
           container: 'c1'
+        await @wait 300 # Wait for network to be ready
+        @lxd.exec
+          container: 'c1'
+          command: 'apk add openssl'
         @lxd.file.push
           container: 'c1'
           target: '/root/a_file'

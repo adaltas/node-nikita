@@ -5,12 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.config.set', ->
 
   they 'Set multiple keys', ({ssh}) ->
@@ -21,7 +15,7 @@ describe 'lxd.config.set', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       {status} = await @lxd.config.set
         container: 'c1'
@@ -48,7 +42,7 @@ describe 'lxd.config.set', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       {status} = await @lxd.config.set
         container: 'c1'

@@ -5,12 +5,14 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout -1
-  await nikita.execute
-    command: "lxc image copy images:centos/7 `lxc remote get-default`:"
-
 describe 'lxd.cluster', ->
+  
+  before ->
+    @timeout -1
+    # TODO: support and replace with alpine,
+    # we will have to work around networking in the machine first
+    await nikita.execute
+      command: "lxc image copy images:centos/7 `lxc remote get-default`:"
   
   describe 'validation', ->
     

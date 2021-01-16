@@ -6,11 +6,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before () ->
-  @timeout -1
-  await nikita.execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.config.device', ->
 
   describe 'schema', ->
@@ -22,7 +17,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -39,7 +34,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -56,7 +51,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -77,7 +72,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         {status} = await @lxd.config.device
           container: 'c1'
@@ -99,7 +94,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -125,7 +120,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -153,7 +148,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -178,7 +173,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         @lxd.config.device
           container: 'c1'

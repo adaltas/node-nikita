@@ -5,10 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd_prlimit
 
-before ->
-  @timeout -1
-  await nikita.execute "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.goodie.prlimit', ->
 
   they 'stdout', ({ssh}) ->
@@ -19,7 +15,7 @@ describe 'lxd.goodie.prlimit', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       @lxd.start
         container: 'c1'

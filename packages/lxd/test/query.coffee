@@ -5,11 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita.execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.query', ->
 
   they 'with path', ({ssh}) ->

@@ -5,12 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita
-  .execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.config.device.exists', ->
 
   they 'Device does not exist', ({ssh}) ->
@@ -21,7 +15,7 @@ describe 'lxd.config.device.exists', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       {exists} = await @lxd.config.device.exists
         container: 'c1'
@@ -36,7 +30,7 @@ describe 'lxd.config.device.exists', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       @lxd.config.device
         container: 'c1'

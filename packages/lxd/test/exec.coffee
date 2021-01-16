@@ -5,11 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita.execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.exec', ->
 
   they 'a command with pipe inside', ({ssh}) ->
@@ -20,17 +15,59 @@ describe 'lxd.exec', ->
         container: 'c1'
         force: true
       await @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       await @lxd.start
         container: 'c1'
       {status, stdout} = await @lxd.exec
         container: 'c1'
         command: """
-        cat /etc/lsb-release | grep DISTRIB_ID
+        cat /etc/os-release | egrep ^ID=
         """
-      stdout.trim().should.eql 'DISTRIB_ID=Ubuntu'
+      stdout.trim().should.eql 'ID=alpine'
       status.should.be.true()
+
+  describe 'option shell', ->
+    
+    they 'default to shell', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.init
+          image: 'images:alpine/edge'
+          container: 'c1'
+        await @lxd.start
+          container: 'c1'
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          command: 'echo $0'
+          trim: true
+        stdout.should.eql 'sh'
+          
+    they 'set to bash', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.init
+          image: 'images:alpine/edge'
+          container: 'c1'
+        await @lxd.start
+          container: 'c1'
+        await @lxd.exec
+          container: 'c1'
+          command: 'apk add bash'
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          command: 'echo $0'
+          shell: 'bash'
+          trim: true
+        stdout.should.eql 'bash'
 
   describe 'option trap', ->
 
@@ -42,7 +79,7 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         await @lxd.start
           container: 'c1'
@@ -64,7 +101,7 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'c1'
         await @lxd.start
           container: 'c1'

@@ -20,7 +20,7 @@ describe 'lxd.network.detach', ->
       try
         @clean()
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'u0'
         @lxd.network
           network: "testnet0"
@@ -47,7 +47,7 @@ describe 'lxd.network.detach', ->
       try
         @clean()
         @lxd.init
-          image: 'ubuntu:'
+          image: 'images:alpine/edge'
           container: 'u0'
         @lxd.network
           network: "testnet0"

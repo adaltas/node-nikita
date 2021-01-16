@@ -5,11 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita.execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.state', ->
       
   they 'Show instance state', ({ssh}) ->
@@ -20,7 +15,7 @@ describe 'lxd.state', ->
         container: 'u1'
         force: true
       await @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'u1'
       {status, config} = await @lxd.state
         container: 'u1'

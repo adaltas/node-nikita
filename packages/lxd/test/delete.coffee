@@ -5,11 +5,6 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-before ->
-  @timeout(-1)
-  await nikita.execute
-    command: "lxc image copy ubuntu:default `lxc remote get-default`:"
-
 describe 'lxd.delete', ->
 
   they 'Delete a container', ({ssh}) ->
@@ -17,7 +12,7 @@ describe 'lxd.delete', ->
       ssh: ssh
     , ->
       await @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       await @lxd.stop
         container: 'c1'
@@ -33,7 +28,7 @@ describe 'lxd.delete', ->
       ssh: ssh
     , ->
       await @lxd.init
-        image: 'ubuntu:'
+        image: 'images:alpine/edge'
         container: 'c1'
       await @lxd.start
         container: 'c1'

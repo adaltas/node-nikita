@@ -12,3 +12,31 @@ if not process.env['NIKITA_TEST_MODULE'] and (
 config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
 # Export configuration
 module.exports = config
+
+# Cache container and vm images
+
+return unless config.tags.lxd
+nikita = require '@nikitajs/engine/lib'
+they = require('mocha-they')(config.config)
+
+they 'cache container image to avoid timeout later', ({ssh}) ->
+  @timeout 0
+  nikita(ssh: ssh).execute
+    command: 'lxc image copy images:alpine/edge `lxc remote get-default`:'
+
+they 'cache vm image to avoid timeout later', ({ssh}) ->
+  @timeout 0
+  nikita
+    ssh: ssh
+  .execute
+    command: 'lxc image copy images:alpine/edge `lxc remote get-default`: --vm'
+  # It takes time to retrieve files from a VM image archive the first
+  # time after downloading. It is way faster for a container image, so
+  # we don't need it.
+  .execute
+    command: '''
+    lxc info vm1 >/dev/null && exit 42
+    echo "" | lxc init images:alpine/edge vm1 --vm
+    lxc rm -f vm1
+    '''
+    code_skipped: 42
