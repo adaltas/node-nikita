@@ -62,9 +62,6 @@ handler = async function({
     tools: {log}
   }) {
   var c, command, current_startup, err, i, j, k, len, level, message, ref, ref1, startup_off, startup_on, status, stderr, stdout;
-  if (Array.isArray(config.startup)) {
-    config.startup = [config.startup];
-  }
   // Action
   log({
     message: `Startup service ${config.name}`,
@@ -133,14 +130,17 @@ fi`,
   if (config.command === 'chkconfig') {
     ({status, stdout, stderr} = (await this.execute({
       command: `chkconfig --list ${config.name}`,
-      code_skipped: 1
+      code_skipped: 1,
+      metadata: {
+        shy: true
+      }
     })));
     // Invalid service name return code is 0 and message in stderr start by error
     if (/^error/.test(stderr)) {
       log({
         message: `Invalid chkconfig name for \"${config.name}\"`,
         level: 'ERROR',
-        module: 'mecano/lib/service/startup'
+        module: 'nikita/lib/service/startup'
       });
       throw Error(`Invalid chkconfig name for \`${config.name}\``);
     }
@@ -156,13 +156,13 @@ fi`,
       }
     }
     if (config.startup === true && current_startup.length) {
-      status = false;
+      return;
     }
     if (config.startup === current_startup) {
-      status = false;
+      return;
     }
     if (status && config.startup === false && current_startup === '') {
-      status = false;
+      return;
     }
     if (config.startup) {
       command = `chkconfig --add ${config.name};`;
@@ -187,22 +187,17 @@ fi`,
       await this.execute({
         command: command
       });
-      status = true;
     }
     if (!config.startup) {
       log({
         message: "Desactivating startup rules",
         level: 'DEBUG',
-        module: 'mecano/lib/service/startup'
+        module: 'nikita/lib/service/startup'
       });
-      if (typeof log === "function") {
-        log("Mecano `service.startup`: s");
-      }
       // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
       await this.execute({
         command: `chkconfig ${config.name} off`
       });
-      status = true;
     }
     message = config.startup ? 'activated' : 'disabled';
     log(status ? {

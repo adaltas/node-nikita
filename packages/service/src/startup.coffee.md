@@ -52,7 +52,6 @@ console.info(`Service was desactivated on startup: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      config.startup = [config.startup] if Array.isArray config.startup
       # Action
       log message: "Startup service #{config.name}", level: 'INFO', module: 'nikita/lib/service/startup'
       unless config.command
@@ -102,18 +101,19 @@ console.info(`Service was desactivated on startup: ${status}`)
         {status, stdout, stderr} = await @execute
           command: "chkconfig --list #{config.name}"
           code_skipped: 1
+          metadata: shy: true
         # Invalid service name return code is 0 and message in stderr start by error
         if /^error/.test stderr
-          log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR', module: 'mecano/lib/service/startup'
+          log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR', module: 'nikita/lib/service/startup'
           throw Error "Invalid chkconfig name for `#{config.name}`"
         current_startup = ''
         if status
           for c in stdout.split(' ').pop().trim().split '\t'
             [level, status] = c.split ':'
             current_startup += level if ['on', 'marche'].indexOf(status) > -1
-        status = false if config.startup is true and current_startup.length
-        status = false if config.startup is current_startup
-        status = false if status and config.startup is false and current_startup is ''
+        return if config.startup is true and current_startup.length
+        return if config.startup is current_startup
+        return if status and config.startup is false and current_startup is ''
         if config.startup
           command = "chkconfig --add #{config.name};"
           if typeof config.startup is 'string'
@@ -128,14 +128,11 @@ console.info(`Service was desactivated on startup: ${status}`)
             command += "chkconfig #{config.name} on;"
           await @execute
             command: command
-          status = true
         unless config.startup
-          log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/lib/service/startup'
-          log? "Mecano `service.startup`: s"
+          log message: "Desactivating startup rules", level: 'DEBUG', module: 'nikita/lib/service/startup'
           # Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
           await @execute
             command: "chkconfig #{config.name} off"
-          status = true
         message = if config.startup then 'activated' else 'disabled'
         log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
