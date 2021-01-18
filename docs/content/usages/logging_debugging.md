@@ -8,25 +8,25 @@ Nikita provides multiple mechanisms to report, dive into the logs and intercept 
 
 ## Quick debugging
 
-While developing, you can use the ["debug" options](/metadata/debug/) to get visual and detailed information. This option [cascaded](/action/cascade/) and, as such, will be passed to every child actions.
+While developing, you can use the ["debug" metadata](/metadata/debug/) to get visual and detailed information. This config [cascaded](/action/cascade/) and, as such, will be passed to every child actions.
 
-The option can be provided directly to the action in trouble:
+The metadata can be provided directly to the action in trouble:
 
 ```javascript
 require('nikita')
-// Pass debug as an additional option
+// Pass debug as metadata
 .system.execute({
   cmd: 'whoami',
-  debug: true
+  metadata: debug: true
 })
 ```
 
-Alternatively, the "debug" options can be defined globally when initializing the session:
+Alternatively, the "debug" metadata can be defined globally when initializing the session:
 
 ```javascript
 nikita = require('nikita')
 // Pass debug globally
-nikita({debug: true})
+nikita({metadata: debug: true})
 // Action has debugging activated
 .system.execute({
   cmd: 'whoami'
@@ -74,14 +74,14 @@ The serializer is an object which must be implemented by the user. Keys correspo
 
 ### Extending `nikita.log.fs`
 
-The `nikita.log.fs` action provide an easy and quick way to write your own logging actions. For example, both the `nikita.log.csv` and the `nikita.log.md` described below rely upon it. This way, you can leverage existing options:
+The `nikita.log.fs` action provide an easy and quick way to write your own logging actions. For example, both the `nikita.log.csv` and the `nikita.log.md` described below rely upon it. This way, you can leverage existing config:
 
 * `archive` (boolean)   
   Save a copy of the previous logs inside a dedicated directory, default is
   "false".
 * `basedir` (string)    
   Directory where to store logs relative to the process working directory.
-  Default to the "log" directory. Note, if the "archive" option is activated
+  Default to the "log" directory. Note, if the "archive" config is activated
   log file will be stored accessible from "./log/latest".
 * `filename` (string)   
   Name of the log file, contextually rendered with all options passed to
@@ -91,7 +91,7 @@ The `nikita.log.fs` action provide an easy and quick way to write your own loggi
 For example, below is a lightly modify version of the `nikita.log.csv` action:
 
 ```js
-module.exports = { ssh: false, handler: function({options}){
+module.exports = { ssh: false, handler: function({config}){
   this.log.fs({ serializer: {
     diff: function(log){
       return "${log.type},${log.level},${JSON.stringify log.message},\n"
@@ -114,9 +114,9 @@ module.exports = { ssh: false, handler: function({options}){
 
 ## CLI reporting
 
-The CLI reporting is build on top of the log events. It print pretty and colorful information to the standard output of your terminal. In case no tty is detected, no color formatting will be written by default unless the `color` options is "true" or made of an object.
+The CLI reporting is build on top of the log events. It print pretty and colorful information to the standard output of your terminal. In case no tty is detected, no color formatting will be written by default unless the `color` config is "true" or made of an object.
 
-The action will only report if the header option is found.
+The action will only report if the "header" metadata is found.
 
 No argument is required by default:
 
@@ -155,4 +155,4 @@ require('nikita')
 
 ## CSV and Markdown logs
 
-The `nikita.log.csv` and `nikita.log.md` actions both use the `nikita.log.fs` with a custom serializer. Thus, they support all the options from the `nikita.log.fs` action.
+The `nikita.log.csv` and `nikita.log.md` actions both use the `nikita.log.fs` with a custom serializer. Thus, they support all the config from the `nikita.log.fs` action.

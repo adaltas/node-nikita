@@ -1,12 +1,10 @@
 ---
 title: Metadata "sudo"
-redirects:
-- /options/sudo/
 ---
 
 # Metadata "sudo" (boolean, optional, false)
 
-The "sudo" option escalates the right of the current user with `root` privileges. Passwordless sudo for the user must be enabled. The "sudo" option is cascaded to all its children.
+The "sudo" metadata escalates the right of the current user with `root` privileges. Passwordless sudo for the user must be enabled. The "sudo" metadata is cascaded to all its children.
 
 ## Usage
 

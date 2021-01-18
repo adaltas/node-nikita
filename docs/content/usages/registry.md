@@ -31,20 +31,20 @@ For example, the above example could be registered and accessed by the name `nik
 
 ```js
 require('nikita')
-.register(['redis', 'install'], function({options}){
-  if( !options.conf_file ){
-    options.conf_file = '/etc/redis.conf'
+.register(['redis', 'install'], function({config}){
+  if( !config.conf_file ){
+    config.conf_file = '/etc/redis.conf'
   }
-  if( !options.properties ){
-    options.properties = {}
+  if( !config.properties ){
+    config.properties = {}
   }
-  if( !options.properties.port ){
-    options.properties.port = 6379
+  if( !config.properties.port ){
+    config.properties.port = 6379
   }
   @service('redis');
   @file.ini({
     target: '/etc/redis.conf',
-    properties: options.properties
+    properties: config.properties
     delimiter: ' ',
     merge: true
   });
@@ -71,20 +71,20 @@ For example, our Redis example could be re-written :
 ```js
 moodule.exorts = function(nikita){
   nikita
-  .register(['redis', 'install'], function({options}){
-     if( !options.conf_file ){
-       options.conf_file = '/etc/redis.conf'
+  .register(['redis', 'install'], function({config}){
+     if( !config.conf_file ){
+       config.conf_file = '/etc/redis.conf'
      }
-     if( !options.properties ){
-       options.properties = {}
+     if( !config.properties ){
+       config.properties = {}
      }
-     if( !options.properties.port ){
-       options.properties.port = 6379
+     if( !config.properties.port ){
+       config.properties.port = 6379
      }
      @service('redis');
      @file.ini({
        target: '/etc/redis.conf',
-       properties: options.properties
+       properties: config.properties
        delimiter: ' ',
        merge: true
      });
@@ -126,7 +126,7 @@ The following methods are available:
 * `nikital.registry()`   
   Return all the action registry.
 
-All the above function are also available both globally and locally. For example `require('nikita').register('action', '/path/to/action')` register an action globally while the same action will be attache locally to a single Nikita instance instance with `require('nikita')(options).register('action', '/path/to/action')`.
+All the above function are also available both globally and locally. For example `require('nikita').register('action', '/path/to/action')` register an action globally while the same action will be attache locally to a single Nikita instance instance with `require('nikita')(config).register('action', '/path/to/action')`.
 
 ## Registration
 
@@ -136,24 +136,24 @@ With an action path:
 
 ```javascript
 nikita.register('first_action', 'path/to/action')
-nikita.first_action(options);
+nikita.first_action(config);
 ```
 
 With a namespace and an action path:
 
 ```javascript
 nikita.register(['second', 'action'], 'path/to/action')
-nikita.second.action(options);
+nikita.second.action(config);
 ```
 
 With an action object:
 
 ```javascript
 nikita.register('third_action', {
-  relax: true,
-  handler: function({options}){ console.info(options.relax) }
+  metadata: {relax: true},
+  handler: function({metadata}){ console.info(metadata.relax) }
 })
-nikita.third_action(options);
+nikita.third_action(config);
 ```
 
 With a namespace and an action object:
@@ -161,9 +161,9 @@ With a namespace and an action object:
 ```javascript
 nikita.register(['fourth', 'action'], {
   relax: true,
-  handler: function({options}){ console.info(options.relax) }
+  handler: function({metadata}){ console.info(metadata.relax) }
 })
-nikita.fourth.action(options);
+nikita.fourth.action(config);
 ```
 
 Multiple actions:
@@ -177,7 +177,7 @@ nikita.register({
   }
 })
 nikita
-.fifth_action(options);
-.sixth(options);
-.sixth.action(options);
+.fifth_action(config);
+.sixth(config);
+.sixth.action(config);
 ```

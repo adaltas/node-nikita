@@ -1,16 +1,14 @@
 ---
 title: Metadata "once"
-redirects:
-- /options/once/
 ---
 
 # Metadata "once" (boolean|array|string, optional, false)
 
-This option compare multiple actions in a Nikita session and ensure that the same actions are only executed once.
+The "once" metadata compare multiple actions in a Nikita session and ensure that the same actions are only executed once.
 
 ## Usage
 
-If `true`, all the option will be compared, included values defined as function. Here is an example:
+If `true`, all the config will be compared, included values defined as function. Here is an example:
 
 ```js
 require('nikita')
@@ -22,7 +20,7 @@ require('nikita')
 })
 ```
 
-If a string or an array of strings, only the listed options will be compared:
+If a string or an array of strings, only the listed config will be compared:
 
 ```js
 require('nikita')

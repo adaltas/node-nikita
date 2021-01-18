@@ -7,21 +7,21 @@ sort: 4
 
 Nikita is designed to run transparently either locally or remotely through SSH. The tests are themselves written to run in both modes.
 
-The option "ssh" must be provided for the action to run remotely. This option may either be an existing SSH connection object or a configuration object.
+The config "ssh" must be provided for the action to run remotely. This config may either be an existing SSH connection object or a configuration object.
 
 ## Implementation
 
 Behind the scene, the [ssh2] package written by [Brian White][brian] is used to assure the SSH transport. This is a pure JavaScript package written for node.js.
 
-To create the connection, we use the [ssh2-connect]. The package simplifies the creation of connection and also provides a few additionnal options.
+To create the connection, we use the [ssh2-connect]. The package simplifies the creation of connection and also provides a few additionnal configs.
 
-## Options
+## Config
 
-If the ssh property is a configuration object, the options used to initialize the SSH connection are the one of the [ssh2] package as well as the one of the [ssh2-connect] package.
+If the ssh property is a configuration object, the config used to initialize the SSH connection is the one of the [ssh2] package as well as the one of the [ssh2-connect] package.
 
 Note that the [ssh2-connect] package will automatically convert the properties from snake case to camel case.
 
-The [ssh2] options:
+The [ssh2] config:
 
 *   `host` (string)   
     Hostname or IP address of the server, default is 'localhost'.
@@ -65,7 +65,7 @@ The [ssh2] options:
 *   `agentForward` (boolean)   
     Set to true to use OpenSSH agent forwarding ('auth-agent@openssh.com'). Default: false
 
-The [ssh2-connect] options:
+The [ssh2-connect] config:
 
 -   `username` (string)   
     The username used to initiate the connection, default to the current
@@ -106,7 +106,7 @@ connect({
 
 ```js
 const nikita = require('nikita');
-// Pass the connection properties to the `ssh` option
+// Pass the connection properties to the `ssh` config
 nikita
 .file.touch({
   ssh: {
@@ -126,7 +126,7 @@ nikita
 
 If root privileges are required and root access is not available because no authorised key has been set, it is possible to let Nikita deploy the public key or execute Nikita with [`sudo`](/metadata/sudo/).
 
-The `root` option instruct the `ssh.open` action to enable root access through another user. This user must have passwordless sudo enabled.
+The `root` config instruct the `ssh.open` action to enable root access through another user. This user must have passwordless sudo enabled.
 
 ```js
 const nikita = require('nikita');
@@ -148,7 +148,7 @@ nikita
 .ssh.close()
 ```
 
-To enable `sudo`, just enable sudo as a global option or for any action. The option will be propagated to its children.
+To enable `sudo`, just enable sudo as a global config or for any action. The config will be propagated to its children.
 
 ```js
 const nikita = require('nikita');

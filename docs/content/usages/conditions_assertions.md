@@ -4,11 +4,11 @@ sort: 5
 
 # Conditions and assertions
 
-Conditions and assertions are a set of options available to every handlers to control and guaranty their execution.
+Conditions and assertions are a set of configs available to every handlers to control and guaranty their execution.
 
-Conditions are executed before a handler and all conditions must pass for the handler to be executed. The name of the options are prefixed with "if\_" and "unless\_" for their negation.
+Conditions are executed before a handler and all conditions must pass for the handler to be executed. The name of the config is prefixed with "if\_" and "unless\_" for their negation.
 
-Assertions are executed after a handler and an error is thrown if the assertion doesn't validate. The name of the options are prefixed with "should\_" and "should\_not\_" for their negation.
+Assertions are executed after a handler and an error is thrown if the assertion doesn't validate. The name of the config is prefixed with "should\_" and "should\_not\_" for their negation.
 
 ## Usage
 
@@ -24,8 +24,8 @@ require('nikita')
   source:'/tmp/file',
   content: 'hello',
   if_exists: true,
-  if: function({options}, callback){
-    fs.stat(options.source, function(err, stat){
+  if: function({config}, callback){
+    fs.stat(config.source, function(err, stat){
       // Render the file if we own it
       callback(err, stat.uid === process.getuid())
     })
@@ -35,17 +35,17 @@ require('nikita')
 })
 ```
 
-## Option `if`
+## Config `if`
 
 Condition the execution of an action to a user defined condition interpreted as
-`true`. It is available as the `unless` of `options`.
+`true`. It is available as the `unless` of `config`.
 
 When `if` is a boolean, a string, a number or null, its value determines the
 output.
 
 If it's a function, the arguments vary depending on the callback signature. With
-1 argument, the argument is an context object including the `options` object and
-the handler is run synchronously. With 2 arguments, the arguments are an options
+1 argument, the argument is an context object including the `config` object and
+the handler is run synchronously. With 2 arguments, the arguments are a config
 object plus a callback and the handler is run asynchronously.
 
 If it's an array, all its element must positively resolve for the condition to
@@ -63,25 +63,25 @@ require('nikita')
     'ok',
     1,
     true,
-    function({options}){ return true },
-    function({options}, callback){ callback(null, true) }
+    function({config}){ return true },
+    function({config}, callback){ callback(null, true) }
   ]
 }, function(err, {status}){
   console.info(err || "File written")
 })
 ```
 
-## Option `unless`
+## Config `unless`
 
 Condition the execution of an action to a user defined condition interpreted as
-`false`. It is available as the `unless` of `options`.
+`false`. It is available as the `unless` of `config`.
 
 When `if` is a boolean, a string, a number or null, its value determine the
 output.
 
 If it's a function, the arguments vary depending on the callback signature. With
-1 argument, the argument is an context object including the `options` object and
-the handler is run synchronously. With 2 arguments, the arguments are an options
+1 argument, the argument is an context object including the `config` object and
+the handler is run synchronously. With 2 arguments, the arguments are a config
 object plus a callback and the handler is run asynchronously.
 
 If it's an array, all its element must negatively resolve for the condition to
@@ -100,15 +100,15 @@ require('nikita')
     0,
     false,
     null,
-    function({options}){ return false },
-    function({options}, callback){ callback(null, false) }
+    function({config}){ return false },
+    function({config}, callback){ callback(null, false) }
   ]
 }, function(err, {status}){
   console.info(err || "File written")
 })
 ```
   
-## Option `if_exec`
+## Config `if_exec`
 
 Run an action if a shell command succeed.
 
@@ -128,20 +128,20 @@ require('nikita')
 })
 ```
   
-## Option `unless_exec`
+## Config `unless_exec`
 
 Run an action unless a command succeed.
 
-Work on the property `unless_exec` in `options`. The value may 
+Work on the property `unless_exec` in `Config`. The value may 
 be a single shell command or an array of commands.
   
-## Option `if_exists`
+## Config `if_exists`
 
 Run an action if a file exists.
 
 The value may be a file path or an array of file paths. You could also set the
 value to `true`, in which case it will be set with the `target`
-option.
+config.
 
 The content of the file "/tmp/file" will be updated if the file exists and if "/tmp/flag" 
 exists as well:
@@ -160,15 +160,15 @@ require('nikita')
 })
 ```
 
-## Option `unless_exists`
+## Config `unless_exists`
 
 Skip an action if a file exists.
 
 The value may be a file path or an array of file paths. You could also set the
 value to `true`, in which case it will be set with the `target`
-option.
+config.
 
-## Option `should_exist`
+## Config `should_exist`
 
 Ensure a file exist before runing a handler or an error is thrown.
 
@@ -189,9 +189,9 @@ require('nikita')
 })
 ```
 
-## Option `should_not_exist`
+## Config `should_not_exist`
 
-Ensure a file already exist before runing a handler or an error is thrown.
+Ensure a file already exist before running a handler or an error is thrown.
 
 The value may be a file path or an array of file paths.
 
@@ -210,16 +210,16 @@ require('nikita')
 ## Internal API
 
 Conditions are expressed in its own module "nikita/lib/misc/conditions" and
-can be used outsite the scope of Nikita.
+can be used outside the scope of Nikita.
 
-For each option is defined a function to test the condition. Thus, all options
+For each config is defined a function to test the condition. Thus, all config
 share the same API and receive 3 arguments:
 
-*   `options` Object with all the options passed to the handler
+*   `config` Object with all the configs passed to the handler
 *   `succeed` Callback executed on success
 *   `skip` Callback executed when a condition is not fulfill
 
-Options are followed by two callbacks. The first callback is called if all the 
+Config is followed by two callbacks. The first callback is called if all the 
 provided command were executed successfully otherwise the second callback is 
 called.
 
