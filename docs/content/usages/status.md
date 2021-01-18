@@ -11,7 +11,7 @@ The status is an information indicating whether an action had any impact or not.
 - modification of a configuration file (json, yaml, ini...)   
   The status is true if a property or any metadata associated with the file has changed. A change of format, like prettifying the source code, will not affect the status while the addition of a new property and the modification on the value of an existing property will set the status to "true".
 - checking if a port is open
-  The status is set to "true" if a server is listening on that port and "false" otherwise. This is arguably an alternative usage. In such case, it is often used conjointly with the "shy" option to ensure that parent actions don't get their status modified.
+  The status is set to "true" if a server is listening on that port and "false" otherwise. This is arguably an alternative usage. In such case, it is often used conjointly with the "shy" metadata to ensure that parent actions don't get their status modified.
 
 Status is a central concept in Nikita implemented inside every action. Early on, it was decided that actions will be idempotent and indicate whether a change occurred or not. The latter is what we call the status. It is formalised as a simple boolean passed to the callback as the `status` property. It is also available to subsequent action through the `getStatus` function.
 
@@ -24,7 +24,7 @@ Asynchronous handlers receive a callback. Once completed, the callback may be ca
 ```javascript
 require('nikita')
 // Parent action
-.call(function({options}, callback){
+.call(function({config}, callback){
   // Do something
   setImmediate(function(){
     // Set the status to "true", default is "false"
@@ -53,7 +53,7 @@ require('nikita')
 // Parent action
 .call(function(){
   // Child action
-  this.call(function({options}, callback){
+  this.call(function({config}, callback){
     // Set the status to "true"
     callback(null === true)
   })
@@ -70,10 +70,10 @@ The `next` function is called once a list of actions has terminated or if any er
 ```js
 require('nikita')
 // All actions are false
-.call(function({options}, callback){
+.call(function({config}, callback){
   callback(null, false)
 })
-.call(function({options}, callback){
+.call(function({config}, callback){
   callback(null, false)
 })
 // Then status is false
@@ -81,13 +81,13 @@ require('nikita')
   assert(status, false)
 })
 // One actions is true
-.call(function({options}, callback){
+.call(function({config}, callback){
   callback(null, false)
 })
-.call(function({options}, callback){
+.call(function({config}, callback){
   callback(null, true)
 })
-.call(function({options}, callback){
+.call(function({config}, callback){
   callback(null, false)
 })
 // Then status is true

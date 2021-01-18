@@ -1,14 +1,12 @@
 ---
 title: Metadata "retry"
-redirects:
-- /options/retry/
 ---
 
 # Metadata "retry" (number|boolean, optional, 1)
 
-Setting the "retry" property provides control over how many time an action is re-scheduled on error before it is finally treated as a failure.
+Setting the "retry" metadata provides control over how many time an action is re-scheduled on error before it is finally treated as a failure.
 
-It is commonly used conjointly with the ["attempt" option](/metadata/attempt/) which provide an indicator over how many times an action was rescheduled.
+It is commonly used conjointly with the ["attempt" metadata](/metadata/attempt/) which provide an indicator over how many times an action was rescheduled.
 
 ## Usage
 
@@ -38,7 +36,7 @@ require('nikita')
 .call({
   retry: 2,
   relax: true
-}, function({options}, callback){
+}, function({config}, callback){
   // Will fail two times
   throw Error('Oups')
 }

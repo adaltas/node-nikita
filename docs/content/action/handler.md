@@ -13,31 +13,31 @@ However, you should not be afraid to write your own handler, it is as easy as wr
 
 ## Synchronous handlers
 
-Synchronous handlers expect one arguments, the options passed to the action:
+Synchronous handlers expect one arguments, the config passed to the action:
 
 ```js
 require('nikita')
 .call({
   key: 'value',
-  handler: function({options}){
+  handler: function({config}){
     // do something
-    assert(options.key, 'value')
+    assert(config.key, 'value')
   }
 })
 ```
 
 ## Asynchronous handlers
 
-asynchronous handlers expect two arguments, the options and a callback function to be called when the action has terminated:
+Asynchronous handlers expect two arguments, the config and a callback function to be called when the action has terminated:
 
 ```js
 require('nikita')
 .call({
   key: 'value',
-  handler: function({options}, callback){
+  handler: function({config}, callback){
     setImmediate(function(){
       // do something
-      assert(options.key, 'value')
+      assert(config.key, 'value')
     })
   }
 })
@@ -45,16 +45,16 @@ require('nikita')
 
 ## Style
 
-You will probably never see an handler function being defined by the "handler" option key. Instead, we define it with an alternative syntax by passing the handler function as an independent argument. The example above is preferably rewritten as:
+You will probably never see an handler function being defined by the "handler" config key. Instead, we define it with an alternative syntax by passing the handler function as an independent argument. The example above is preferably rewritten as:
 
 ```js
 require('nikita')
 .call({
   key: 'value'
-}, function({options}, callback){
+}, function({config}, callback){
   setImmediate(function(){
     // do something
-    assert(options.key, 'value')
+    assert(config.key, 'value')
   })
 })
 ```
@@ -67,15 +67,15 @@ Synchronous functions may call child action which are executed asynchronously. T
 
 ```js
 require('nikita')
-.call(function({options}){
+.call(function({config}){
   console.info('1')
-  this.call(function({options}, callback){
+  this.call(function({config}, callback){
     setImmediate(function(){
       console.info('2')
     })
   })
 })
-.call(function({options}){
+.call(function({config}){
   console.info('3')
 })
 ```

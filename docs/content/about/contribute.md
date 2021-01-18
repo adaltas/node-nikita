@@ -54,11 +54,11 @@ If you’re only fixing a bug, it’s fine to submit a pull request right away b
 
 Note, this section shall receive additional comments as we move forward.
 
-* Options are listed by alphabetical order
-* Options 1st line in the form of "* `name` (arg1, arg2)   "
-* Options arg list the accept types separated by "|", types are bool, string, obj, int, float
-* Options types can be surrounded by square braket to indicate an array, eg: "[int]"
-* Options dont list global options
+* Configs are listed by alphabetical order
+* Configs 1st line in the form of "* `name` (arg1, arg2)   "
+* Configs arg list the accept types separated by "|", types are bool, string, obj, int, float
+* Configs types can be surrounded by square braket to indicate an array, eg: "[int]"
+* Configs don't list global configs
 * Argument are listed in provided order
 * First two arguments must always be "err" and "status"
 

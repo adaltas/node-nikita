@@ -136,25 +136,25 @@ At the end of the tutorial, we will show you how a code would look if written in
 
 ### Actions handler
 
-An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated metadata, called options. It is materialized as a JavaScript object, for example:
+An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated metadata, called config. It is materialized as a JavaScript object, for example:
 
 ```js
 {
   who: 'leon',
-  handler: function({options}){
-    console.info(options.who)
+  handler: function({config}){
+    console.info(config.who)
   }
 }
 ```
 
-As you can see, options are made available as the first argument of the handler. This handler is synchronous. Declaring a second argument will mark the function as asynchronous. This second argument is a callback function to be called once the action is done.
+As you can see, config is made available as the first argument of the handler. This handler is synchronous. Declaring a second argument will mark the function as asynchronous. This second argument is a callback function to be called once the action is done.
 
 ```js
 {
   who: 'leon',
-  handler: function({options}, callback){
+  handler: function({config}, callback){
     setImmediate(function(){
-      console.info(options.who)
+      console.info(config.who)
     })
   }
 }
@@ -168,8 +168,8 @@ To execute an action, you must create a Nikita session and execute the `call` fu
 nikita = require('nikita')
 nikita.call({
   who: 'leon',
-  handler: function({options}){
-    console.info(options.who)
+  handler: function({config}){
+    console.info(config.who)
   }
 })
 ```
@@ -180,8 +180,8 @@ The function `nikita.call` is very flexible in how arguments are passed. It rece
 nikita = require('nikita')
 nikita.call({
   who: 'leon'
-}, function({options}){
-    console.info(options.who)
+}, function({config}){
+    console.info(config.who)
   }
 )
 ```
@@ -196,8 +196,8 @@ The action callback is called with two arguments, an error if any and an object 
 nikita = require('nikita')
 nikita.call(
   // Handler
-  function({options}){
-    console.info(options.who)
+  function({config}){
+    console.info(config.who)
   },
   // Callback
   function(err, {status}){
@@ -220,7 +220,7 @@ assert = require('assert')
 fs = require('fs')
 nikita = require('nikita')
 // Touch implementation
-touch = function({options}, callback){
+touch = function({config}, callback){
   fs.stat('/tmp/a_file', function(err, stat){
     if(err && err.code !== 'ENOENT') return callback(err)
     if(!err) return callback(null, false)
@@ -253,7 +253,7 @@ File "./lib/touch.js":
 // Dependencies
 fs = require('fs')
 // Touch implementation
-module.exports = function({options}, callback){
+module.exports = function({config}, callback){
   fs.stat('/tmp/a_file', function(err, stat){
     if(err && err.code !== 'ENOENT') return callback(err)
     if(!err) return callback(null, false)
@@ -293,9 +293,9 @@ nikita
 })
 ```
 
-### Passing options
+### Passing config
 
-The `touch` action is now a separate Node.js module. It is a vanilla JavaScript function. You can create your own options to control the behavior of your actions. In our example, we created the `target` option to know which file to touch:
+The `touch` action is now a separate Node.js module. It is a vanilla JavaScript function. You can create your own config to control the behavior of your actions. In our example, we created the `target` config to know which file to touch:
 
 File "./lib/touch.js":
 
@@ -303,11 +303,11 @@ File "./lib/touch.js":
 // Dependencies
 fs = require('fs')
 // Touch implementation
-module.exports = function({options}, callback){
-  fs.stat(options.target, function(err, stat){
+module.exports = function({config}, callback){
+  fs.stat(config.target, function(err, stat){
     if(err && err.code !== 'ENOENT') return callback(err)
     if(!err) return callback(null, false)
-    fs.writeFile(options.target, '', function(err){
+    fs.writeFile(config.target, '', function(err){
       callback(err, true)
     })
   })
@@ -329,7 +329,7 @@ nikita
 
 ### Passing metadata
 
-There are several properties which are globally available to every actions such as `header`, `retry`, `relax`. Those are [metadata][/metadata/] and they are not to be confused with options. We encourage you to navigate the documentation. Covering all of them is not in the scope of this tutorial.
+There are several properties which are globally available to every actions such as `header`, `retry`, `relax`. Those are [metadata][/metadata/] and they are not to be confused with config. We encourage you to navigate the documentation. Covering all of them is not in the scope of this tutorial.
 
 ### Registering actions
 
@@ -362,7 +362,7 @@ For the sake of this tutorial, we will create a basic Redis installation. The in
 - Get the server up and running   
   *Learn how to leverage exit code to alter the action status.*
 - Checking the service health   
-  *Learn how to use the `relax` and `shy` option.*
+  *Learn how to use the `relax` and `shy` config.*
 - SSH activation   
   *Learn how easy and transparent it is to activate SSH.*
 - Composition   
@@ -386,7 +386,7 @@ require('nikita')
 })
 ```
 
-The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" options.
+The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" config.
 
 To extract and compile Redis, we will write a shell script which will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". There are also some assertions prefixed by "should_" and "should_not_" which will throw an error unless satisfied.
 
@@ -408,7 +408,7 @@ require('nikita')
 
 *Learn how to merge or overwrite a configuration by serializing a JavaScript vanilla object.*
 
-Before starting the server, we will write a configuration file. The Redis format is made of key value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` option set to one space. The action also comes with some handy options like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
+Before starting the server, we will write a configuration file. The Redis format is made of key value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
 
 ```js
 require('nikita')
@@ -429,7 +429,7 @@ require('nikita')
 
 *Learn how to activate pretty reporting and detailed logs written in Markdown.*
 
-So far, the action callback was used to catch errors and status and to manually output a message to the user with the `console.info` JavaScript function. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` option is present:
+So far, the action callback was used to catch errors and status and to manually output a message to the user with the `console.info` JavaScript function. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` config is present:
 
 ```js
 require('nikita')
@@ -491,9 +491,9 @@ require('nikita')
 
 ### Checking the service health
 
-*Learn how to use the `relax` and `shy` option.*
+*Learn how to use the `relax` and `shy` config.*
 
-The Redis "PING" command is expected to return "PONG" if the server is healthy. We will illustrate the usage of the `relax` and `shy` options with this use case. The `relax` option will send the error to the callback without propagating it to the overall session, thus allowing the Nikita session to exit gracefully while printing 'x' in case of an error. Similarly, the `shy` option will allow us to set the status to "true" and print "✔" on success without modifying the global status as obtained from `nikita.next` because it is not considered as a change of state.
+The Redis "PING" command is expected to return "PONG" if the server is healthy. We will illustrate the usage of the `relax` and `shy` config with this use case. The `relax` config will send the error to the callback without propagating it to the overall session, thus allowing the Nikita session to exit gracefully while printing 'x' in case of an error. Similarly, the `shy` config will allow us to set the status to "true" and print "✔" on success without modifying the global status as obtained from `nikita.next` because it is not considered as a change of state.
 
 ```js
 require('nikita')
@@ -516,7 +516,7 @@ require('nikita')
 Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, all the tests are provided with an ssh argument and are executed twice. The first time with the connection set to null and the second time with an established SSH connection.
 
 Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, 	
-inversely, the `nikita.ssh.close` action must be registered last. Both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` option to selected actions activates and deactivates the SSH connection.
+inversely, the `nikita.ssh.close` action must be registered last. Both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
 
 ```js
 require('nikita')
@@ -555,7 +555,7 @@ ssh `whoami`@127.0.0.1 "echo 'I am inside'; exit"
 
 *Learn how to chain multiple actions sequentially and compose them as children of other actions*
 
-It is time to finalize our script and run all these actions sequentially. Every time you call an action, you scheduled it into the internal Nikita session for later execution. Because calling an action return the Nikita session unless a `get` option is encountered, it is possible to chain multiple calls.
+It is time to finalize our script and run all these actions sequentially. Every time you call an action, you scheduled it into the internal Nikita session for later execution. Because calling an action return the Nikita session unless a `get` config is encountered, it is possible to chain multiple calls.
 
 It is also possible to group multiple actions into one action, creating a hierarchical representation and enabling composition. In our example, we will regroup all Redis actions related to installation into a single action.
 
@@ -615,7 +615,7 @@ require('nikita')
 .ssh.close()
 ```
 
-Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible options:
+Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible config:
 
 File "app.js"
 

@@ -23,7 +23,7 @@ The topics of this section are organized by relevance, the first ones being cons
 * [Local and remote (SSH) execution](/usages/local_remote/)   
   Actions are designed to run transparently either locally or remotely through SSH. The tests are themselves written to run in both modes.
 * [Conditions and assertions](/usages/conditions_assertions/)   
-  Conditions and assertions are a set of options available to every handlers to control and guaranty their execution.
+  Conditions and assertions are a set of configs available to every handlers to control and guaranty their execution.
 * [Debugging and Logging](/usages/logging_debugging/)   
   Nikita provides multiple mechanisms to report, dive into the logs and intercept instructions. Most of them can be instantaneously activated and you are provided with simple building blocks to quickly write your own.
 * [Events API](/usages/events/)   

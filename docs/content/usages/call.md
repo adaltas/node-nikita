@@ -13,8 +13,8 @@ In its simplest form, user defined handler is just a function passed to "call". 
 
 ```js
 nikita
-.call(function({options}, callback){
-  fs.touch(options.file, callback);
+.call(function({config}, callback){
+  fs.touch(config.file, callback);
 });
 ```
 
@@ -23,20 +23,20 @@ This is internally converted to:
 ```js
 nikita
 .call({
-  handler: function({options}, callback){
-    fs.touch(options.file, callback);
+  handler: function({config}, callback){
+    fs.touch(config.file, callback);
   }
 });
 ```
 
-Use the expanded object syntax to pass additional information. For example, we could add the retry option:
+Use the expanded object syntax to pass additional information. For example, we could add the "retry" metadata:
 
 ```js
 nikita
 .call({
   retry: 2,
-  handler: function({options}, callback){
-    fs.touch(options.file, callback);
+  handler: function({config}, callback){
+    fs.touch(config.file, callback);
   }
 });
 ```
@@ -47,8 +47,8 @@ Note, the above code could be arguably simplified using 2 arguments:
 nikita
 .call({
   retry: 2,
-}, function({options}, callback){
-  fs.touch(options.file, callback);
+}, function({config}, callback){
+  fs.touch(config.file, callback);
 });
 ```
 
@@ -58,7 +58,7 @@ If no handler is yet defined, a string is interpreted as an external module expo
 
 ```js
 nikita
-// String with an additionnal option object
+// String with an additional config object
 .call( 'path/to/module', {
   retry: 2,
 })

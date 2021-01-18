@@ -26,18 +26,18 @@ When using the [`call` action](/usages/call/), [handler functions](/action/handl
 ```js
 require('nikita')
 // Synchronous call
-.call({file: '/tmp/sync_file'}, function({options}){
-  fs.touchSync(options.file);
+.call({file: '/tmp/sync_file'}, function({config}){
+  fs.touchSync(config.file);
 })
 // Asynchronous call
-.call file: '/tmp/async_file', function({options}, callback){
-  fs.touch(options.file, callback;
+.call file: '/tmp/async_file', function({config}, callback){
+  fs.touch(config.file, callback;
 )};
 ```
 
 ### Synchronous execution
 
-Synchronous handlers take an optional "options" argument. The function signature is `handler([options])`.
+Synchronous handlers take an optional "config" argument. The function signature is `handler([config])`.
 
 Errors are simply thrown and caught by Nikita. There is no direct way to modify the status unless asynchronous handlers are called as children.
 
@@ -46,8 +46,8 @@ require('nikita')
 .call(function(){
   console.info('a first sync user function');
 });
-.call({type: 'sync'}, function({options}){
-  console.info('a second ' + options.type + ' user function');
+.call({type: 'sync'}, function({config}){
+  console.info('a second ' + config.type + ' user function');
 });
 ```
 
@@ -72,10 +72,10 @@ Status of the synchronous parent handler is bubbled up from asynchronous child h
 ```js
 nikita
 .call(function(){
-  this.call(function({options}, callback){
+  this.call(function({config}, callback){
     callback(null, false);
   });
-  this.call(function({options}, callback){
+  this.call(function({config}, callback){
     callback(null, true);
   });
 }, function(err, {status}){
@@ -86,19 +86,19 @@ nikita
 
 ### Asynchronous execution
 
-Asynchronous handlers take 2 arguments. The function signature is `handler({options}, callback)`.
+Asynchronous handlers take 2 arguments. The function signature is `handler({config}, callback)`.
 
 If any, errors are passed to the callback as its first argument. Otherwise, a value of "null" or "undefined" indicates a success. The second value is the status passed as boolean. Set it to "true" to indicate a change in state. Additional arguments will be transmitted to the callback function.
 
 ```js
 require('nikita')
-.call(function({options}, callback){
+.call(function({config}, callback){
   setImmediate(function(){
     console.info('An async user function indicating a change in state');
     callback(null, true);
   });
 })
-.call(function({options}, callback){
+.call(function({config}, callback){
   setImmediate(function(){
     console.info('An async user function passing an error');
     callback(Error('CatchMe'));
@@ -116,12 +116,12 @@ require('nikita')
   // Entering the callback
   if(err){ return throw err };
   // Synchronous call
-  this.call({file: '/tmp/sync_file'}, function({options}){
-    fs.touchSync(options.file);
+  this.call({file: '/tmp/sync_file'}, function({config}){
+    fs.touchSync(config.file);
   })
   // Asynchronous call
-  this.call file: '/tmp/async_file', function({options}, callback){
-    fs.touch(options.file, callback;
+  this.call file: '/tmp/async_file', function({config}, callback){
+    fs.touch(config.file, callback;
   )};
 })
 ```

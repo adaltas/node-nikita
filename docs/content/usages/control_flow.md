@@ -29,7 +29,7 @@ The actions will be executed in this sequence:
 * "service" for "my_pkg_2"
 * "file.yaml"
 
-This tree-like traversal is leverage by the "header" option and the "log.cli" action to display a report to the therminal.
+This tree-like traversal is leverage by the "header" metadata and the "log.cli" action to display a report to the therminal.
 
 ```js
 require('nikita')
@@ -136,7 +136,7 @@ require('nikita')
 });
 ```
 
-Note, the function `end` may receive condition options. For example, the callback function from the previous example could be rewritten as:
+Note, the function `end` may receive condition config. For example, the callback function from the previous example could be rewritten as:
 
 ```js
 function(err, {stdout}){

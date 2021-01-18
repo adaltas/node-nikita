@@ -1,16 +1,14 @@
 ---
 title: Metadata "tolerant"
-redirects:
-- /options/tolerant/
 ---
 
 # Metadata "tolerant" (boolean, optional, false)
 
-The "tolerant" option guaranty the execution of any action wether there was an error or not in a previous actions.
+The "tolerant" metadata guaranty the execution of any action wether there was an error or not in a previous actions.
 
 ## Usage
 
-The sleep value is a a boolean activating the option if `true`. By default, the option is set to `false`
+The sleep value is a a boolean activating the metadata if `true`. By default, the metadata is set to `false`
 
 ```js
 require('nikita')
