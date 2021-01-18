@@ -3,7 +3,7 @@ module.exports =
   tags:
     service_install: true
     service_startup: true
-    service_systemctl: true
+    service_systemctl: false # cant be activated because systemctl not compatible with Docker
   service:
     name: 'cronie'
     srv_name: 'crond'
