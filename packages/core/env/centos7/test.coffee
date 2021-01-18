@@ -5,7 +5,6 @@ module.exports =
     system_chmod: true
     system_discover: true
     system_info: true
-    system_limits: true
     system_tmpfs: true
   conditions_is_os:
     arch: '64'

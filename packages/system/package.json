@@ -41,12 +41,13 @@
     }
   ],
   "dependencies": {
+    "@nikitajs/file": "^0.9.7"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
-    "mocha": "^8.2.0",
+    "mocha": "^8.2.1",
     "should": "^13.2.3",
-    "mocha-they": "^0.1.0"
+    "mocha-they": "^0.1.2"
   },
   "peerDependencies": {
     "@nikitajs/engine": "^0.9.7"
@@ -62,7 +63,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/tools/src/register"
+      "@nikitajs/system/src/register"
     ],
     "inline-diffs": true,
     "timeout": 40000,
@@ -80,7 +81,7 @@
     "directory": "packages/system"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/tools\\\/src/@nikitajs\\\/tools\\\/lib/g'",
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/system\\\/src/@nikitajs\\\/system\\\/lib/g'",
     "pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'",
     "testall": "mocha 'test/**/*.coffee' && env/run.sh"

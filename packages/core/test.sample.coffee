@@ -15,6 +15,5 @@ module.exports =
     system_discover: false
     system_execute_arc_chroot: false
     system_info: false
-    system_limits: false
     system_tmpfs: false
     system_user: false

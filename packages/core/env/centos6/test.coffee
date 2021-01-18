@@ -6,7 +6,6 @@ module.exports =
     system_cgroups: true
     system_discover: true
     system_info: true
-    system_limits: true
   conditions_is_os:
     arch: '64'
     name: 'centos'

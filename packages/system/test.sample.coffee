@@ -1,6 +1,8 @@
 
 module.exports =
-  tags: {}
+  tags:
+    api: true
+    system_limits: false
   config: [
     label: 'local'
   ,
