@@ -36,7 +36,6 @@ exports.createPages = ({ actions, graphql }) => {
           node {
             frontmatter {
               title
-              redirects
               disabled
             }
             fields {
