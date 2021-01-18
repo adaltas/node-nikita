@@ -1,0 +1,62 @@
+{
+  "name": "nikita-docs",
+  "description": "Nikita Official Documentation",
+  "version": "1.0.0",
+  "author": "David Worms <david@adaltas.com>",
+  "dependencies": {
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.2",
+    "classnames": "^2.2.6",
+    "gatsby": "^2.30.3",
+    "gatsby-image": "^2.9.0",
+    "gatsby-plugin-catch-links": "^2.8.0",
+    "gatsby-plugin-glamor": "^2.8.0",
+    "gatsby-plugin-google-analytics": "^2.9.0",
+    "gatsby-plugin-manifest": "^2.10.0",
+    "gatsby-plugin-material-ui": "^2.1.10",
+    "gatsby-plugin-offline": "^3.8.0",
+    "gatsby-plugin-react-helmet": "^3.8.0",
+    "gatsby-plugin-robots-txt": "^1.5.5",
+    "gatsby-plugin-sharp": "^2.12.2",
+    "gatsby-plugin-sitemap": "^2.10.0",
+    "gatsby-remark-autolink-headers": "^2.9.0",
+    "gatsby-remark-prismjs": "^3.11.0",
+    "gatsby-source-filesystem": "^2.9.1",
+    "gatsby-transformer-remark": "^2.14.0",
+    "glamor": "^2.20.40",
+    "prism-themes": "^1.5.0",
+    "prismjs": "^1.23.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-helmet": "^6.1.0",
+    "react-icons": "^4.1.0",
+    "react-modal": "^3.12.1",
+    "react-particles-js": "^3.4.1",
+    "react-scroll": "^1.8.1",
+    "react-syntax-highlighter": "^15.4.3",
+    "react-typography": "^0.16.19",
+    "typeface-roboto": "^1.1.13",
+    "typography": "^0.16.19"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adaltas/node-nikita-docs"
+  },
+  "keywords": [
+    "gatsby"
+  ],
+  "license": "MIT",
+  "main": "n/a",
+  "scripts": {
+    "build": "gatsby build",
+    "deploy": "gatsby build && gh-pages -d public",
+    "develop": "gatsby develop",
+    "format": "prettier --write 'src/**/*.js'",
+    "serve": "gatsby serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1"
+  }
+}
