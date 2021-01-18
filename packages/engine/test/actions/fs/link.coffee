@@ -40,6 +40,13 @@ describe 'actions.fs.link', ->
         target: "#{tmpdir}/test"
         exec: true
       .should.be.finally.containEql status: false
+      @fs.assert
+        target: "#{tmpdir}/test"
+        content: """
+        #!/bin/bash
+        exec #{__filename} $@
+        """
+        trim: true
   
   they 'should link dir', ({ssh}) ->
     # Create a non existing link
