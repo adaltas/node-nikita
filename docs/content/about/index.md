@@ -1,11 +1,8 @@
 ---
-title: About
 sort: 1
 ---
 
 # About
-
-## Introduction
 
 Nikita is designed to help developers and operators to deploy infrastructures and softwares. It is an automation and deployment orchestration solution that we originally wrote to deploy Big Data infrastructures and distributed applications over it.
 

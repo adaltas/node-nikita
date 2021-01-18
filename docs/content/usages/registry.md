@@ -1,5 +1,4 @@
 ---
-title: Action Registration
 description: Registration API - register and access actions by names
 keywords: registry, API, actions
 sort: 3
@@ -7,9 +6,7 @@ sort: 3
 
 # Action Registration
 
-## Introduction
-
-The registration API allows actions to be registered and access by names. To write an action commonly involves writting a function and schedule it for execution by using the `call` action:
+The registration API allows actions to be registered and access by names. To write an action commonly involves writing a function and schedule it for execution by using the `call` action:
 
 ```js
 require('nikita')

@@ -1,11 +1,8 @@
 ---
-title: Logging and Debugging
 sort: 6
 ---
 
 # Logging and Debugging
-
-## Introduction
 
 Nikita provides multiple mechanisms to report, dive into the logs and intercept instructions. Most of them can be instantaneously activated and you are provided with simple building blocks to quickly write your own.
 

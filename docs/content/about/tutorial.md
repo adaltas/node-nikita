@@ -1,37 +1,34 @@
 ---
-title: Tutorial
 description: Instructions on how to get up and running
 sort: 2
 ---
 
 # Tutorial
 
-## Introduction
-
 This tutorial covers the basics to get started and to use Nikita. It is organized in 4 sections:
 
-- What is nikita ?
-- Installation instructions
-- Core concepts
-- Real life example
+- [What is Nikita?](#what-is-nikita)
+- [Installation instructions](#installation-instructions)
+- [Core concepts](#core-concepts)
+- [Real life example](#real-life-example)
 
 Feel free to skip the second section if you are familiar with Node.js and its ecosystem.
 
 For detailed information, navigate the documentation or submit an issue if you don't find the answers to your questions. Also, if you are looking for examples, the source code is well documented and its test coverage quite complete. We highly encourage you to navigate the tests. Tests are self contained and very easy to understand. They also provide you the guaranty of reading a working code.
 
-## What is Nikita ?
+## What is Nikita?
 
 Nikita is build as a library, which provides simple functions on a host (server, desktop, machine, vm...) either locally or remotely over ssh.
 
 ### Technologies
 
-Nikita is written in JavaScript and executed by NodeJs. It is delivered as a Node.js package and is available on npm.
+Nikita is written in JavaScript and executed by NodeJs. It is delivered as a Node.js package and is available on NPM.
 
 ### Use cases
 
-It can serve  multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts..) or you can use it to automate and orchestrate  components' deployments (installations, functional tests, lifecycle management...).
+It can serve  multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate  components' deployments (installations, functional tests, lifecycle management...).
 
-Take a view at [ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage bigdata system.
+Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage Big Data system.
 
 ### What is inside Nikita
 

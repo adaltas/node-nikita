@@ -1,11 +1,8 @@
 ---
-title: Introduction
 sort: 1
 ---
 
 # Introduction
-
-## Introduction
 
 Automation is central when operating and scaling complex systems. The more servers and services there are to manage, the harder it gets for a team to fulfill their operational duties without proper automation in place.
 

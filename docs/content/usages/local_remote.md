@@ -5,8 +5,6 @@ sort: 4
 
 # Local and remote (SSH) execution
 
-## Introduction
-
 Nikita is designed to run transparently either locally or remotely through SSH. The tests are themselves written to run in both modes.
 
 The option "ssh" must be provided for the action to run remotely. This option may either be an existing SSH connection object or a configuration object.

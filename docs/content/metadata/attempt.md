@@ -6,8 +6,6 @@ redirects:
 
 # Metadata "attempt" (number, readonly, 0)
 
-## Introduction
-
 The "attempt" property is an indicator of the number of times an action has been rescheduled for execution when an error occurred.
 
 It is only readable from inside an handler function. An attempt to pass this option when calling an action will have no incidence. It is meant to be used conjointly with the ["retry" option](/metadata/retry/).

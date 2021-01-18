@@ -6,8 +6,6 @@ redirects:
 
 # Metadata "tolerant" (boolean, optional, false)
 
-## Description
-
 The "tolerant" option guaranty the execution of any action wether there was an error or not in a previous actions.
 
 ## Usage
