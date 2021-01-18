@@ -5,8 +5,6 @@ sort: 3
 
 # Action
 
-## Introduction
-
 An action is the single unit of work in Nikita. Technically, it is a simple JavaScript object consisting of well defined properties as well as some specific properties related to each action. Such actions include writing a file in a given format, executing a shell command or controlling the life cycle of a Unix service.
 
 The most important and only required option is the `handler` function, which does all the work. Handlers are designed to be stateless. They take some input information, do some work and send back some output information. They are executed sequentially, in the order of declaration. They may themselves call other actions to achieve their purpose. Thus, despite being executed sequentially, actions are organized as hierarchical trees.

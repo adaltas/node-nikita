@@ -2,12 +2,9 @@
 title: License (MIT)
 description: Content of the MIT license
 sort: 6
-community: true
 ---
 
-# Software License Agreement - MIT License (MIT)
-
-## Content
+# Software License Agreement - MIT License
 
 Copyright (c) 2012 SARL Adaltas
 

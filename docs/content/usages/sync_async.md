@@ -5,8 +5,6 @@ sort: 2
 
 # Sync and async execution
 
-## Introduction
-
 The asynchronous nature of JavaScript coupled with how Nikita registers new actions can be a little tricky for newcomers. Handlers can be written in both synchronous and asynchronous based on the presence of a callback argument in the handler signature. Moreover, it is possible to write a synchronous handler which schedules asynchronous actions.
 
 ## Nikita session

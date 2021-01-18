@@ -6,8 +6,6 @@ redirects:
 
 # Metadata "sleep" (number, optional, 3000)
 
-## Description
-
 The "sleep" option indicates the time lapse when a failed action is rescheduled. It only has effect if the "attempt" option is set to a value greater than 1 and when the action failed and is rescheduled.
 
 ## Usage

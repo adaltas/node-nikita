@@ -1,11 +1,8 @@
 ---
-title: Status
 sort: 3
 ---
 
 # Status
-
-## Introduction
 
 The status is an information indicating whether an action had any impact or not. Its meaning may differ from one action to another. Here are a few examples:
 

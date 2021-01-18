@@ -1,12 +1,8 @@
 ---
-title: Conditions and assertions
 sort: 5
-state: review
 ---
 
 # Conditions and assertions
-
-## Introduction
 
 Conditions and assertions are a set of options available to every handlers to control and guaranty their execution.
 

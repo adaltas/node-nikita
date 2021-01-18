@@ -1,11 +1,8 @@
 ---
-title: Usages
 sort: 2
 ---
 
 # Usage
-
-## Introduction
 
 The Nikita API is simple and concise. It also powerful and comes with a lot of functionalities. This section detail the subtleties of the API organized by topics. A lot of effort were made to illustrate each topic with clear examples.
 
