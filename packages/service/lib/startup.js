@@ -89,10 +89,11 @@ fi`,
       throw Error("Unsupported Loader");
     }
   }
-  if (config.command === 'systemctl') {
-    try {
-      ({status} = (await this.execute({
-        command: `startup=${config.startup ? '1' : ''}
+  switch (config.command) {
+    case 'systemctl':
+      try {
+        ({status} = (await this.execute({
+          command: `startup=${config.startup ? '1' : ''}
 if systemctl is-enabled ${config.name}; then
   [ -z "$startup" ] || exit 3
   echo 'Disable ${config.name}'
@@ -102,117 +103,116 @@ else
   echo 'Enable ${config.name}'
   systemctl enable ${config.name}
 fi`,
-        trap: true,
-        code_skipped: 3,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir
+          trap: true,
+          code_skipped: 3,
+          arch_chroot: config.arch_chroot,
+          rootdir: config.rootdir
+        })));
+        message = config.startup ? 'activated' : 'disabled';
+        return log(status ? {
+          message: `Service startup updated: ${message}`,
+          level: 'WARN',
+          module: 'nikita/lib/service/remove'
+        } : {
+          message: `Service startup not modified: ${message}`,
+          level: 'INFO',
+          module: 'nikita/lib/service/remove'
+        });
+      } catch (error) {
+        err = error;
+        if (config.startup) {
+          throw Error(`Startup Enable Failed: ${config.name}`);
+        }
+        if (!config.startup) {
+          throw Error(`Startup Disable Failed: ${config.name}`);
+        }
+      }
+      break;
+    case 'chkconfig':
+      ({status, stdout, stderr} = (await this.execute({
+        command: `chkconfig --list ${config.name}`,
+        code_skipped: 1,
+        metadata: {
+          shy: true
+        }
       })));
+      // Invalid service name return code is 0 and message in stderr start by error
+      if (/^error/.test(stderr)) {
+        log({
+          message: `Invalid chkconfig name for \"${config.name}\"`,
+          level: 'ERROR',
+          module: 'nikita/lib/service/startup'
+        });
+        throw Error(`Invalid chkconfig name for \`${config.name}\``);
+      }
+      current_startup = '';
+      if (status) {
+        ref1 = stdout.split(' ').pop().trim().split('\t');
+        for (j = 0, len = ref1.length; j < len; j++) {
+          c = ref1[j];
+          [level, status] = c.split(':');
+          if (['on', 'marche'].indexOf(status) > -1) {
+            current_startup += level;
+          }
+        }
+      }
+      if (config.startup === true && current_startup.length) {
+        return;
+      }
+      if (config.startup === current_startup) {
+        return;
+      }
+      if (status && config.startup === false && current_startup === '') {
+        return;
+      }
+      if (config.startup) {
+        command = `chkconfig --add ${config.name};`;
+        if (typeof config.startup === 'string') {
+          startup_on = startup_off = '';
+          for (i = k = 0; k < 6; i = ++k) {
+            if (config.startup.indexOf(i) !== -1) {
+              startup_on += i;
+            } else {
+              startup_off += i;
+            }
+          }
+          if (startup_on) {
+            command += `chkconfig --level ${startup_on} ${config.name} on;`;
+          }
+          if (startup_off) {
+            command += `chkconfig --level ${startup_off} ${config.name} off;`;
+          }
+        } else {
+          command += `chkconfig ${config.name} on;`;
+        }
+        await this.execute({
+          command: command
+        });
+      }
+      if (!config.startup) {
+        log({
+          message: "Desactivating startup rules",
+          level: 'DEBUG',
+          module: 'nikita/lib/service/startup'
+        });
+        // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
+        await this.execute({
+          command: `chkconfig ${config.name} off`
+        });
+      }
       message = config.startup ? 'activated' : 'disabled';
-      log(status ? {
+      return log(status ? {
         message: `Service startup updated: ${message}`,
         level: 'WARN',
-        module: 'nikita/lib/service/remove'
+        module: 'nikita/lib/service/startup'
       } : {
         message: `Service startup not modified: ${message}`,
         level: 'INFO',
-        module: 'nikita/lib/service/remove'
-      });
-    } catch (error) {
-      err = error;
-      if (config.startup) {
-        throw Error(`Startup Enable Failed: ${config.name}`);
-      }
-      if (!config.startup) {
-        throw Error(`Startup Disable Failed: ${config.name}`);
-      }
-    }
-  }
-  if (config.command === 'chkconfig') {
-    ({status, stdout, stderr} = (await this.execute({
-      command: `chkconfig --list ${config.name}`,
-      code_skipped: 1,
-      metadata: {
-        shy: true
-      }
-    })));
-    // Invalid service name return code is 0 and message in stderr start by error
-    if (/^error/.test(stderr)) {
-      log({
-        message: `Invalid chkconfig name for \"${config.name}\"`,
-        level: 'ERROR',
         module: 'nikita/lib/service/startup'
       });
-      throw Error(`Invalid chkconfig name for \`${config.name}\``);
-    }
-    current_startup = '';
-    if (status) {
-      ref1 = stdout.split(' ').pop().trim().split('\t');
-      for (j = 0, len = ref1.length; j < len; j++) {
-        c = ref1[j];
-        [level, status] = c.split(':');
-        if (['on', 'marche'].indexOf(status) > -1) {
-          current_startup += level;
-        }
-      }
-    }
-    if (config.startup === true && current_startup.length) {
-      return;
-    }
-    if (config.startup === current_startup) {
-      return;
-    }
-    if (status && config.startup === false && current_startup === '') {
-      return;
-    }
-    if (config.startup) {
-      command = `chkconfig --add ${config.name};`;
-      if (typeof config.startup === 'string') {
-        startup_on = startup_off = '';
-        for (i = k = 0; k < 6; i = ++k) {
-          if (config.startup.indexOf(i) !== -1) {
-            startup_on += i;
-          } else {
-            startup_off += i;
-          }
-        }
-        if (startup_on) {
-          command += `chkconfig --level ${startup_on} ${config.name} on;`;
-        }
-        if (startup_off) {
-          command += `chkconfig --level ${startup_off} ${config.name} off;`;
-        }
-      } else {
-        command += `chkconfig ${config.name} on;`;
-      }
-      await this.execute({
-        command: command
-      });
-    }
-    if (!config.startup) {
-      log({
-        message: "Desactivating startup rules",
-        level: 'DEBUG',
-        module: 'nikita/lib/service/startup'
-      });
-      // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
-      await this.execute({
-        command: `chkconfig ${config.name} off`
-      });
-    }
-    message = config.startup ? 'activated' : 'disabled';
-    log(status ? {
-      message: `Service startup updated: ${message}`,
-      level: 'WARN',
-      module: 'nikita/lib/service/startup'
-    } : {
-      message: `Service startup not modified: ${message}`,
-      level: 'INFO',
-      module: 'nikita/lib/service/startup'
-    });
-  }
-  if (config.command === 'update-rc') {
-    ({status} = (await this.execute({
-      command: `startup=${config.startup ? '1' : ''}
+    case 'update-rc':
+      ({status} = (await this.execute({
+        command: `startup=${config.startup ? '1' : ''}
 if ls /etc/rc*.d/S??${config.name}; then
   [ -z "$startup" ] || exit 3
   echo 'Disable ${config.name}'
@@ -222,20 +222,20 @@ else
   echo 'Enable ${config.name}'
   update-rc.d -f ${config.name} enable
 fi`,
-      code_skipped: 3,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir
-    })));
-    message = config.startup ? 'activated' : 'disabled';
-    return log(status ? {
-      message: `Service startup updated: ${message}`,
-      level: 'WARN',
-      module: 'nikita/lib/service/remove'
-    } : {
-      message: `Service startup not modified: ${message}`,
-      level: 'INFO',
-      module: 'nikita/lib/service/remove'
-    });
+        code_skipped: 3,
+        arch_chroot: config.arch_chroot,
+        rootdir: config.rootdir
+      })));
+      message = config.startup ? 'activated' : 'disabled';
+      return log(status ? {
+        message: `Service startup updated: ${message}`,
+        level: 'WARN',
+        module: 'nikita/lib/service/remove'
+      } : {
+        message: `Service startup not modified: ${message}`,
+        level: 'INFO',
+        module: 'nikita/lib/service/remove'
+      });
   }
 };
 
