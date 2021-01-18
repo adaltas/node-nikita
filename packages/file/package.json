@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/file",
-  "version": "0.9.7-alpha.2",
+  "version": "0.9.7",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "nikita",

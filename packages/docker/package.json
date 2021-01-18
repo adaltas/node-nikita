@@ -38,13 +38,13 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^0.9.7-alpha.2"
+    "@nikitajs/file": "^0.9.7"
   },
   "peerDependencies": {
     "@nikitajs/engine": "^0.9.7"
   },
   "devDependencies": {
-    "@nikitajs/network": "^0.9.7-alpha.0",
+    "@nikitajs/network": "^0.9.7",
     "coffeescript": "^2.5.1",
     "mocha": "^8.2.0",
     "should": "^13.2.3",
