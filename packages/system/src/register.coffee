@@ -7,6 +7,7 @@ registry = require '@nikitajs/engine/lib/registry'
 module.exports =
   system:
     limits: '@nikitajs/system/src/limits'
+    mod: '@nikitajs/system/src/mod'
 (->
   try
     await registry.register module.exports

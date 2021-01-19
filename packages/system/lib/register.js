@@ -8,7 +8,8 @@ registry = require('@nikitajs/engine/lib/registry');
 
 module.exports = {
   system: {
-    limits: '@nikitajs/system/lib/limits'
+    limits: '@nikitajs/system/lib/limits',
+    mod: '@nikitajs/system/lib/mod'
   }
 };
 

@@ -7,7 +7,7 @@ Control system limits for a user.
 
 ### `nproc` and `nofile`
 
-There is two cases, depending on the specified value:
+There are two cases, depending on the specified value:
 
 1. Integer value   
   If an int value is specified, then nikita checks that the value is lesser than
