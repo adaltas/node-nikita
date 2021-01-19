@@ -153,11 +153,11 @@
 var handler, on_action, path, schema, utils;
 
 on_action = function({config}) {
-  if (!((config.source || (config.content != null)) || config.replace || (config.write != null))) {
+  if (!((config.source || (config.content != null)) || (config.replace != null) || (config.write != null))) {
     // Validate parameters
-    throw Error('Missing source or content');
+    throw Error('Missing source or content or replace or write');
   }
-  if (config.source && config.content) {
+  if (config.source && (config.content != null)) {
     throw Error('Define either source or content');
   }
   if (!config.target) {

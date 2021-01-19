@@ -6,6 +6,27 @@ they = require('mocha-they')(config)
 return unless tags.posix
 
 describe 'file', ->
+  
+  describe 'schema and validation', ->
+    
+    they 'check for empty replace if no source and no content', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          target: "#{tmpdir}/check_replace"
+          content: 'a\nb\nc'
+        await @file
+          target: "#{tmpdir}/check_replace"
+          match: 'b'
+          replace: ''
+        @file
+          target: "#{tmpdir}/check_replace"
+          match: 'b'
+          replace: null
+        .should.be.rejectedWith
+          message: 'Missing source or content or replace or write'
 
   describe 'config `content`', ->
   
@@ -459,7 +480,7 @@ describe 'file', ->
           target: "#{tmpdir}/fromto.md"
           content: 'switch that one\nand\nswitch this one\nand not this one'
   
-    they 'with match as a regular expression', ({ssh}) ->
+    they 'with match as a regexp', ({ssh}) ->
       # With a match
       nikita
         ssh: ssh
@@ -480,7 +501,7 @@ describe 'file', ->
           target: "#{tmpdir}/replace"
           content: 'email=david(at)adaltas(dot)com\nusername=david (was root)'
 
-    they 'with match as a regular expression and multiple content', ({ssh}) ->
+    they 'with match as a regexp and multiple content', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -494,6 +515,23 @@ describe 'file', ->
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'here we are\nmy friend, lets try\nyou coquin'
+
+    they 'with match as a regexp on line and empty string', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          append: true
+          content: 'aaa\nmatch\nccc\nmatch'
+          eof: true
+          match: /^match(\n|$)/mg
+          replace: ''
+          target: "#{tmpdir}/replace"
+        .should.be.finally.containEql status: true
+        @fs.assert
+          target: "#{tmpdir}/replace"
+          content: 'aaa\nccc\n'
 
     they 'with match with global and multilines', ({ssh}) ->
       nikita

@@ -153,8 +153,8 @@ console.info(data)
 
     on_action = ({config}) ->
       # Validate parameters
-      throw Error 'Missing source or content' unless (config.source or config.content?) or config.replace or config.write?
-      throw Error 'Define either source or content' if config.source and config.content
+      throw Error 'Missing source or content or replace or write' unless (config.source or config.content?) or config.replace? or config.write?
+      throw Error 'Define either source or content' if config.source and config.content?
       throw Error 'Missing target' unless config.target
       if config.content
         if typeof config.content is 'number'
