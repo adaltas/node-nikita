@@ -56,7 +56,7 @@ handlers =
         parent: action
       , ->
         {status, stdout} = await @execute
-          command: utils.os.os
+          command: utils.os.command
         return final_run = false unless status
         [arch, name, version, linux_version] = stdout.split '|'
         # Remove patch version (eg. 7.8.12 -> 7.8)
@@ -93,7 +93,7 @@ handlers =
         parent: action
       , ->
         {status, stdout} = await @execute
-          command: utils.os.os
+          command: utils.os.command
         return final_run = false unless status
         [arch, name, version, linux_version] = stdout.split '|'
         # Remove patch version (eg. 7.8.12 -> 7.8)

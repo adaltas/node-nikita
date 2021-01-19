@@ -108,7 +108,7 @@ handlers = {
       }, async function() {
         var arch, linux_version, match, name, status, stdout, version;
         ({status, stdout} = (await this.execute({
-          command: utils.os.os
+          command: utils.os.command
         })));
         if (!status) {
           return final_run = false;
@@ -185,7 +185,7 @@ handlers = {
       }, async function() {
         var arch, linux_version, match, name, status, stdout, version;
         ({status, stdout} = (await this.execute({
-          command: utils.os.os
+          command: utils.os.command
         })));
         if (!status) {
           return final_run = false;
