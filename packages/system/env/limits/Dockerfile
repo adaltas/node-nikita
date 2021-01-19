@@ -1,3 +1,4 @@
+# trusty is 14.04
 FROM ubuntu:trusty
 MAINTAINER David Worms
 
@@ -14,11 +15,9 @@ RUN apt-get update -y \
 RUN apt-get install -y openssh-server \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-  
-  ADD ./run.sh /run.sh
-  RUN mkdir -p /nikita
-  WORKDIR /nikita/packages/system
-  # Enable color output in TTY
-  ENV TERM xterm
 
-  ENTRYPOINT ["/run.sh"]
+ADD ./run.sh /run.sh
+RUN mkdir -p /nikita
+WORKDIR /nikita/packages/system
+
+ENTRYPOINT ["/run.sh"]
