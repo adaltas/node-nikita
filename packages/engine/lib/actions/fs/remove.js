@@ -13,8 +13,7 @@
 
 // ## Implementation details
 
-// Files are removed localling using the Unix "rm" utility. Porting [rimraf] over
-// SSH would be too slow.
+// Files are removed localling using the Unix "rm" utility.
 
 // ## Simple example
 
@@ -44,7 +43,7 @@
 // ```
 
 // ## Hook
-var handler, on_action, schema;
+var handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
@@ -63,6 +62,10 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
+    'recursive': {
+      type: 'boolean',
+      description: `Attempt to remove the file hierarchy rooted in the directory.`
+    },
     'source': {
       type: 'string',
       description: `Alias for "target".`
@@ -87,7 +90,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var file, files, i, len, status;
+  var err, file, files, i, len, status;
   // Start real work
   ({files} = (await this.fs.glob(config.target)));
   for (i = 0, len = files.length; i < len; i++) {
@@ -97,15 +100,29 @@ handler = async function({
       level: 'INFO',
       module: 'nikita/lib/fs/remove'
     });
-    ({status} = (await this.execute({
-      command: `rm -rf '${file}'`
-    })));
-    if (status) {
-      log({
-        message: `File ${file} removed`,
-        level: 'WARN',
-        module: 'nikita/lib/fs/remove'
-      });
+    try {
+      ({status} = (await this.execute({
+        command: [
+          'rm',
+          '-d', // Attempt to remove directories as well as other types of files.
+          config.recursive ? '-r' : void 0,
+          file
+        // "rm -rf '#{file}'"
+        ].join(' ')
+      })));
+      if (status) {
+        log({
+          message: `File ${file} removed`,
+          level: 'WARN',
+          module: 'nikita/lib/fs/remove'
+        });
+      }
+    } catch (error) {
+      err = error;
+      if (utils.string.lines(err.stderr.trim()).length === 1) {
+        err.message = ['failed to remove the file, got message', JSON.stringify(err.stderr.trim())].join(' ');
+      }
+      throw err;
     }
   }
   return {};
@@ -122,4 +139,5 @@ module.exports = {
   }
 };
 
-// [rimraf]: https://github.com/isaacs/rimraf
+// ## Dependencies
+utils = require('../../utils');

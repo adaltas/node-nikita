@@ -13,8 +13,7 @@ version of `unlink` based on the `rm` command.
 
 ## Implementation details
 
-Files are removed localling using the Unix "rm" utility. Porting [rimraf] over
-SSH would be too slow.
+Files are removed localling using the Unix "rm" utility.
 
 ## Simple example
 
@@ -56,6 +55,11 @@ console.info(`Directories was removed: ${status}`)
     schema =
       type: 'object'
       properties:
+        'recursive':
+          type: 'boolean'
+          description: '''
+          Attempt to remove the file hierarchy rooted in the directory.
+          '''
         'source':
           type: 'string'
           description: """
@@ -75,9 +79,22 @@ console.info(`Directories was removed: ${status}`)
       {files} = await @fs.glob config.target
       for file in files
         log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/fs/remove'
-        {status} = await @execute
-          command: "rm -rf '#{file}'"
-        log message: "File #{file} removed", level: 'WARN', module: 'nikita/lib/fs/remove' if status
+        try
+          {status} = await @execute
+            command: [
+              'rm'
+              '-d' # Attempt to remove directories as well as other types of files.
+              '-r' if config.recursive
+              file
+              # "rm -rf '#{file}'"
+            ].join ' '
+          log message: "File #{file} removed", level: 'WARN', module: 'nikita/lib/fs/remove' if status
+        catch err
+          err.message = [
+            'failed to remove the file, got message'
+            JSON.stringify err.stderr.trim()
+          ].join ' ' if utils.string.lines(err.stderr.trim()).length is 1
+          throw err
       {}
 
 ## Exports
@@ -89,4 +106,6 @@ console.info(`Directories was removed: ${status}`)
       metadata:
         schema: schema
 
-[rimraf]: https://github.com/isaacs/rimraf
+## Dependencies
+
+    utils = require '../../utils'

@@ -119,3 +119,34 @@ describe 'actions.fs.remove', ->
       @fs.remove
         target: "#{tmpdir}/remove_dir"
       .should.be.finally.containEql status: false
+
+  they 'a dir without recursive', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.mkdir
+        target: "#{tmpdir}/remove_dir"
+      @fs.base.writeFile
+        target: "#{tmpdir}/remove_dir/a_file"
+        content: ''
+      @fs.remove
+        target: "#{tmpdir}/remove_dir"
+      .should.be.rejectedWith
+        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+        message: /Directory not empty/
+
+  they 'a dir without recursive', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.mkdir
+        target: "#{tmpdir}/remove_dir"
+      @fs.base.writeFile
+        target: "#{tmpdir}/remove_dir/a_file"
+        content: ''
+      @fs.remove
+        recursive: true
+        target: "#{tmpdir}/remove_dir"
+      .should.be.finally.containEql status: true
