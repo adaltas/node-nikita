@@ -8,18 +8,50 @@ return unless tags.posix
 
 describe 'actions.fs.base.rmdir', ->
 
-  they 'remove', ({ssh}) ->
+  they 'dir is removed', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
     , ->
       @fs.base.mkdir
-        target: "{{parent.metadata.tmpdir}}/a_file"
+        target: "{{parent.metadata.tmpdir}}/a_dir"
       @fs.base.rmdir
-        target: "{{parent.metadata.tmpdir}}/a_file"
+        target: "{{parent.metadata.tmpdir}}/a_dir"
       @fs.base.exists
-        target: "{{parent.metadata.tmpdir}}/a_file"
+        target: "{{parent.metadata.tmpdir}}/a_dir"
       .should.be.finally.containEql exists: false
+
+  they 'config recursive false, default', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ->
+      @fs.base.mkdir
+        target: "{{parent.metadata.tmpdir}}/a_dir"
+      @fs.base.writeFile
+        target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
+        content: ''
+      @fs.base.rmdir
+        target: "{{parent.metadata.tmpdir}}/a_dir"
+      .should.be.rejectedWith
+        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+
+  they 'config recursive true', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ->
+      @fs.base.mkdir
+        target: "{{parent.metadata.tmpdir}}/a_dir"
+      @fs.base.writeFile
+        target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
+        content: ''
+      await @fs.base.rmdir
+        target: "{{parent.metadata.tmpdir}}/a_dir"
+        recursive: true
+      @fs.assert
+        target: "{{parent.metadata.tmpdir}}/a_dir"
+        not: true
 
   they 'NIKITA_FS_RMDIR_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita

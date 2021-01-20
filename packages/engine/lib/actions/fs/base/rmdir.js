@@ -39,8 +39,7 @@ handler = async function({
   var err;
   try {
     await this.execute({
-      command: `[ ! -d '${config.target}' ] && exit 2
-rmdir '${config.target}'`
+      command: [`[ ! -d '${config.target}' ] && exit 2`, !config.recursive ? `rmdir '${config.target}'` : `rm -R '${config.target}'`].join('\n')
     });
     return log({
       message: "Directory successfully removed",

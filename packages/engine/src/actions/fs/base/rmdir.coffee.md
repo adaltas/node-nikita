@@ -25,13 +25,17 @@ Delete a directory.
     handler = ({config, tools: {log}}) ->
       try
         await @execute
-          command: """
-          [ ! -d '#{config.target}' ] && exit 2
-          rmdir '#{config.target}'
-          """
+          command: [
+            "[ ! -d '#{config.target}' ] && exit 2"
+            unless config.recursive
+              "rmdir '#{config.target}'"
+            else
+              "rm -R '#{config.target}'"
+          ].join '\n'
         log message: "Directory successfully removed", level: 'INFO', module: 'nikita/lib/fs/write'
       catch err
-        err = errors.NIKITA_FS_RMDIR_TARGET_ENOENT config: config, err: err if err.exit_code is 2
+        if err.exit_code is 2
+          err = errors.NIKITA_FS_RMDIR_TARGET_ENOENT config: config, err: err
         throw err
 
 ## Exports
