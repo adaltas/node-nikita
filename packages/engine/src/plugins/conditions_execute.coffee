@@ -31,8 +31,8 @@ handlers =
           metadata:
             condition: true
             depth: action.metadata.depth
+            namespace: ['execute']
           parent: action
-          namespace: ['execute']
         , condition
         final_run = false unless status
       catch err
@@ -50,8 +50,8 @@ handlers =
           metadata:
             condition: true
             depth: action.metadata.depth
+            namespace: ['execute']
           parent: action
-          namespace: ['execute']
         , condition
         final_run = false if status
       catch err

@@ -18,10 +18,6 @@ module.exports = normalize = function(action) {
   if (action.hooks == null) {
     action.hooks = {};
   }
-  if (action.namespace) {
-    action.metadata.namespace = action.namespace;
-    delete action.namespace;
-  }
   for (property in action) {
     value = action[property];
     if (indexOf.call(properties, property) >= 0) {

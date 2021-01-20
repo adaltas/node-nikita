@@ -53,10 +53,10 @@ handlers = {
             },
             metadata: {
               condition: true,
-              depth: action.metadata.depth
+              depth: action.metadata.depth,
+              namespace: ['execute']
             },
-            parent: action,
-            namespace: ['execute']
+            parent: action
           }, condition)));
           if (!status) {
             return final_run = false;
@@ -90,10 +90,10 @@ handlers = {
             },
             metadata: {
               condition: true,
-              depth: action.metadata.depth
+              depth: action.metadata.depth,
+              namespace: ['execute']
             },
-            parent: action,
-            namespace: ['execute']
+            parent: action
           }, condition)));
           if (status) {
             return final_run = false;

@@ -5,9 +5,6 @@ module.exports = normalize = (action) ->
   action.metadata ?= {}
   action.config ?= {}
   action.hooks ?= {}
-  if action.namespace
-    action.metadata.namespace = action.namespace
-    delete action.namespace
   for property, value of action
     continue if property in properties
     if /^on_/.test property
