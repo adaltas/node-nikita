@@ -1,8 +1,8 @@
 
-nikita = require '../../src'
+nikita = require '../../../src'
 stream = require 'stream'
 
-describe 'plugins.log', ->
+describe 'plugins.tools.log', ->
 
   describe 'events', ->
     
