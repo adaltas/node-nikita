@@ -34,11 +34,10 @@ nikita
       trap: true
       code_skipped: 42
     await @lxd.exec
-      metadata: header: 'SSH'
+      metadata: header: 'SSH keys'
       container: config.container
       command: """
       mkdir -p /root/.ssh && chmod 700 /root/.ssh
-      yum install -y openssh-server openssh-clients
       if [ ! -f /root/.ssh/id_rsa ]; then
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
         cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
