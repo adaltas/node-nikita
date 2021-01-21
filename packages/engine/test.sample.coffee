@@ -2,6 +2,9 @@
 module.exports =
   tags:
     api: true
+    conditions_if_os: false
+    chown: false
+    sudo: false
     posix: true
     system_execute_arc_chroot: false
   config: [
