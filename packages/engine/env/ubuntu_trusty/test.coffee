@@ -5,8 +5,8 @@ module.exports =
     conditions_if_os: true
     posix: true
   conditions_if_os:
-    arch: '64'
-    name: 'ubuntu'
+    arch: 'x86_64'
+    distribution: 'ubuntu'
     # change the minor version according to the latest used in the Dockerfile,
     # run `cat /etc/lsb-release` to check the Ubuntu version
     version: '14.04'
