@@ -33,8 +33,13 @@ Reload the service daemon provider depending on the os.
           description: """
           Filter function to extend the nunjucks engine.
           """
+        'gid':
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
         'local':
           $ref: 'module://@nikitajs/file/lib/index#/properties/local'
+        'mode':
+          default: '0o755'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
         'name':
           type: 'string'
           description: """
@@ -57,12 +62,7 @@ Reload the service daemon provider depending on the os.
           provider,the OS and use the source filename as the name.
           """
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
-        'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
-        'mode':
-          default: '0o755'
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
       required: ['source']
 ## Handler
 

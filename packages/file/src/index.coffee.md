@@ -232,7 +232,7 @@ console.info(data)
           Name of the marker from where the content will be replaced.
           """
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
         'local':
           type: 'boolean', default: false
           description: """
@@ -245,7 +245,7 @@ console.info(data)
           Replace this marker, default to the replaced string if missing.
           """
         'mode':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
         'place_before':
           oneOf: [{type: 'string'}, {type: 'boolean'}, {instanceof: 'RegExp'}]
           description: """
@@ -279,7 +279,7 @@ console.info(data)
           Name of the marker until where the content will be replaced.
           """
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
+          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
         'unlink':
           type: 'boolean', default: false
           description: """

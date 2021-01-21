@@ -3,101 +3,135 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.chown
-
 describe 'actions.fs.chown', ->
+  
+  describe 'schema', ->
 
-  they 'throw error if target does not exists', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 1234
+    return unless tags.api
+    
+    it 'require target', ->
+      nikita.fs.chown()
       .should.be.rejectedWith
-        message: "NIKITA_FS_STAT_TARGET_ENOENT: failed to stat the target, no file exists for target, got \"#{tmpdir}/a_file\""
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `fs.chown`:'
+          '#/required config should have required property \'target\'.'
+        ].join ' '
+  
+  describe 'usage', ->
 
-  they 'use stat shortcircuit', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}, log, tools: {events}}) ->
-      await @execute """
-      echo '' > '#{tmpdir}/a_file'
-      userdel 'toto'; groupdel 'toto'
-      groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
-      """
-      logs = []
-      events.on 'text', (log) -> logs.push log
-      {stats} = await @fs.base.stat "#{tmpdir}/a_file"
-      await @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678, stats: stats
-      logs
-      .map( (log) -> log.message )
-      .some (log) -> log is 'Stat short-circuit'
-      .should.be.true()
+    return unless tags.chown
 
-  they 'change both uid and gid', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}, log, tools: {events}}) ->
-      await @execute """
-      echo '' > '#{tmpdir}/a_file'
-      userdel 'toto'; groupdel 'toto'
-      groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
-      """
-      logs = []
-      events.on 'text', (log) -> logs.push log
-      await @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678
-      logs.map( (log) -> log.message ).should.eql [
-        'change uid from 0 to 1234'
-        'change gid from 0 to 5678'
-      ]
+    they 'throw error if target does not exists', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 1234
+        .should.be.rejectedWith
+          message: "NIKITA_FS_STAT_TARGET_ENOENT: failed to stat the target, no file exists for target, got \"#{tmpdir}/a_file\""
 
-  they 'change only uid', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}, log, tools: {events}}) ->
-      await @execute """
-      echo '' > '#{tmpdir}/a_file'
-      userdel 'toto'; groupdel 'toto'
-      groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
-      """
-      logs = []
-      events.on 'text', (log) -> logs.push log
-      await @fs.chown "#{tmpdir}/a_file", uid: 1234
-      logs.map( (log) -> log.message ).should.eql [
-        'change uid from 0 to 1234'
-      ]
+    they 'use stat shortcircuit', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+        {logs} = await @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678, stats: stats
+        logs
+        .map (log) -> log.message
+        .should.matchAny 'Stat short-circuit'
 
-  they 'change only gid', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}, log, tools: {events}}) ->
-      await @execute """
-      echo '' > '#{tmpdir}/a_file'
-      userdel 'toto'; groupdel 'toto'
-      groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
-      """
-      logs = []
-      events.on 'text', (log) -> logs.push log
-      await @fs.chown "#{tmpdir}/a_file", gid: 5678
-      logs.map( (log) -> log.message ).should.eql [
-        'change gid from 0 to 5678'
-      ]
+    they 'change both uid and gid as integer', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {logs} = await @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678
+        logs.map (log) -> log.message
+        .should.match [
+          'change uid from 0 to 1234'
+          'change gid from 0 to 5678'
+        ]
 
-  they 'detect status with uid', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      await @execute """
-      echo '' > '#{tmpdir}/a_file'
-      userdel 'toto'; groupdel 'toto'
-      groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
-      """
-      @fs.chown "#{tmpdir}/a_file", uid: 1234
-      .should.finally.containEql status: true
-      @fs.chown "#{tmpdir}/a_file", uid: 1234
-      .should.finally.containEql status: false
+    they 'change only uid as integer', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {logs} = await @fs.chown "#{tmpdir}/a_file", uid: 1234
+        logs.map (log) -> log.message
+        .should.matchAny 'change uid from 0 to 1234'
+
+    they 'change only uid as string', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {logs} = await @fs.chown "#{tmpdir}/a_file", uid: 'toto'
+        logs.map (log) -> log.message
+        .should.matchAny 'change uid from 0 to 1234'
+
+    they 'change only gid as integer', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {logs} = await @fs.chown "#{tmpdir}/a_file", gid: 5678
+        logs.map (log) -> log.message
+        .should.matchAny 'change gid from 0 to 5678'
+
+    they 'change only gid as string', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        {logs} = await @fs.chown "#{tmpdir}/a_file", gid: 'toto'
+        logs.map (log) -> log.message
+        .should.matchAny 'change gid from 0 to 5678'
+
+    they 'detect status with uid', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @execute """
+        echo '' > '#{tmpdir}/a_file'
+        userdel 'toto'; groupdel 'toto'
+        groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
+        """
+        @fs.chown "#{tmpdir}/a_file", uid: 1234
+        .should.finally.containEql status: true
+        @fs.chown "#{tmpdir}/a_file", uid: 1234
+        .should.finally.containEql status: false

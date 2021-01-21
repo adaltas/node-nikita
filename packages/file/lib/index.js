@@ -274,7 +274,7 @@ true.`
       description: `Name of the marker from where the content will be replaced.`
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/gid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
     },
     'local': {
       type: 'boolean',
@@ -294,7 +294,7 @@ option.`
       description: `Replace this marker, default to the replaced string if missing.`
     },
     'mode': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
     },
     'place_before': {
       oneOf: [
@@ -357,7 +357,7 @@ with content.`
       description: `Name of the marker until where the content will be replaced.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/base/chown#/properties/uid'
+      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
     },
     'unlink': {
       type: 'boolean',

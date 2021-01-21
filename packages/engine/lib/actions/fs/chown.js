@@ -52,8 +52,14 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      type: 'integer',
-      // oneOf: [{type: 'integer'}, {type: 'string'}]
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
       description: `Unix group name or id who owns the target file.`
     },
     'stats': {
@@ -66,8 +72,14 @@ stat object associated with the target if one is already available.`
       description: `Location of the file which permissions will change.`
     },
     'uid': {
-      type: 'integer',
-      // oneOf: [{type: 'integer'}, {type: 'string'}]
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
       description: `Unix user name or id who owns the target file.`
     }
   },
