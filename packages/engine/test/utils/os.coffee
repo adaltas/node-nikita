@@ -1,6 +1,12 @@
 
 {merge} = require 'mixme'
 {whoami} = require '../../src/utils/os'
+cleanup = (property, value) ->
+  if value?
+    process.env[property] = value
+  else
+    delete process.env[property]
+
 
 describe 'utils.os', ->
 
@@ -14,20 +20,20 @@ describe 'utils.os', ->
       {USERPROFILE} = process.env
       process.env['USERPROFILE'] = 'C:\\Users\\Zin_user'
       whoami(platform: 'win32').should.eql 'Zin_user'
-      process.env['USERPROFILE'] = USERPROFILE
+      cleanup 'USERPROFILE', USERPROFILE
       
     it 'for linux root', ->
       {USER, HOME} = process.env
       delete process.env['USER'] # Found this on Docker environment
       process.env['HOME'] = '/root'
       whoami(platform: 'linux').should.eql 'root'
-      process.env['USER'] = USER
-      process.env['HOME'] = HOME
+      cleanup 'USER', USER
+      cleanup 'HOME', HOME
       
     it 'for linux user', ->
       {USER, HOME} = process.env
       delete process.env['USER'] # Found this on Docker environment
       process.env['HOME'] = '/home/linux_username'
       whoami(platform: 'linux').should.eql 'linux_username'
-      process.env['USER'] = USER
-      process.env['HOME'] = HOME
+      cleanup 'USER', USER
+      cleanup 'HOME', HOME
