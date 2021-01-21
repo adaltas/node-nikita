@@ -1,4 +1,5 @@
 
+{merge} = require 'mixme'
 nikita = require '../../src'
 utils = require '../../src/utils'
 {tags, config} = require '../test'
@@ -6,6 +7,15 @@ utils = require '../../src/utils'
 they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
 
 describe 'utils.ssh', ->
+
+  it 'immutable', ->
+    config1 = config2 =
+      host: '127.0.0.1',
+      username: undefined,
+      private_key_path: '~/.ssh/id_rsa'
+    original = merge config1
+    utils.ssh.compare(config1,config2)
+    config1.should.eql original
 
   they 'compare two null', ({ssh}) ->
     utils.ssh.compare(null, null).should.be.true()
@@ -15,18 +25,24 @@ describe 'utils.ssh', ->
     utils.ssh.compare(ssh, ssh).should.be.true()
 
   they 'compare identical connections', ({ssh}) ->
-    {ssh: conn1} = await nikita.ssh.open ssh
-    {ssh: conn2} = await nikita.ssh.open ssh
-    utils.ssh.compare(conn1, conn2).should.be.true()
-    nikita.ssh.close ssh: conn1
-    nikita.ssh.close ssh: conn2
+    try
+      {ssh: conn1} = await nikita.ssh.open ssh
+      {ssh: conn2} = await nikita.ssh.open ssh
+      utils.ssh.compare(conn1, conn2).should.be.true()
+    finally
+      nikita.ssh.close ssh: conn1
+      nikita.ssh.close ssh: conn2
 
   they 'compare a connection with a config', ({ssh}) ->
-    {ssh: conn} = await nikita.ssh.open ssh
-    utils.ssh.compare(conn, ssh).should.be.true()
-    nikita.ssh.close ssh: conn
+    try
+      {ssh: conn} = await nikita.ssh.open ssh
+      utils.ssh.compare(conn, ssh).should.be.true()
+    finally
+      nikita.ssh.close ssh: conn
 
   they 'compare a config with a connection', ({ssh}) ->
-    {ssh: conn} = await nikita.ssh.open ssh
-    utils.ssh.compare(ssh, conn).should.be.true()
-    nikita.ssh.close ssh: conn
+    try
+      {ssh: conn} = await nikita.ssh.open ssh
+      utils.ssh.compare(ssh, conn).should.be.true()
+    finally
+      nikita.ssh.close ssh: conn
