@@ -7,35 +7,35 @@ return unless tags.conditions_if_os
 
 describe 'plugin.condition unless_os', ->
 
-  they 'match name string', ({ssh}) ->
+  they 'match distribution string', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
       {status} = await @call
-        unless_os: name: conditions_if_os.name
+        unless_os: distribution: conditions_if_os.distribution
         handler: -> true
       status.should.be.false()
       {status} = await @call
-        unless_os: name: 'invalid'
+        unless_os: distribution: 'invalid'
         handler: -> true
         ssh: ssh
       status.should.be.true()
 
-  they 'match name array', ({ssh}) ->
+  they 'match distribution array', ({ssh}) ->
     {status} = await nikita
-      unless_os: name: ['invalid1', 'invalid2']
+      unless_os: distribution: ['invalid1', 'invalid2']
       handler: -> true
       ssh: ssh
     status.should.be.true()
     
-  they 'match name string and version string', ({ssh}) ->
+  they 'match distribution string and version string', ({ssh}) ->
     # Arch Linux has only linux_version
     if conditions_if_os.version
     then condition = version: '1'
     else condition = linux_version: '1'
     {status} = await nikita
       unless_os: condition,
-        name: 'invalid'
+        distribution: 'invalid'
       handler: -> true
       ssh: ssh
     status.should.be.true()
@@ -48,7 +48,7 @@ describe 'plugin.condition unless_os', ->
       ssh: ssh
     status.should.be.true()
     
-  they 'match name string, version string, Linux version string and arch string', ({ssh}) ->
+  they 'match distribution string, version string, Linux version string and arch string', ({ssh}) ->
     {status} = await nikita
       unless_os: conditions_if_os
       handler: -> true
@@ -58,8 +58,8 @@ describe 'plugin.condition unless_os', ->
   they 'match array', ({ssh}) ->
     {status} = await nikita
       unless_os: [
-        { name: ['invalid1', 'invalid2'] }
-        { name: 'invalid' }
+        { distribution: ['invalid1', 'invalid2'] }
+        { distribution: 'invalid' }
       ]
       handler: -> true
       ssh: ssh

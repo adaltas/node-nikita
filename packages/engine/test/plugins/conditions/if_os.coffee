@@ -7,31 +7,31 @@ return unless tags.conditions_if_os
 
 describe 'plugin.condition if_os', ->
   
-  they 'match name string', ({ssh}) ->
+  they 'match distribution string', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
       {status} = await @call
-        if_os: name: conditions_if_os.name
+        if_os: distribution: conditions_if_os.distribution
         handler: -> true
       status.should.be.true()
       {status} = await @call
-        if_os: name: 'invalid'
+        if_os: distribution: 'invalid'
         handler: -> true
         ssh: ssh
       status.should.be.false()
 
-  they 'match name array', ({ssh}) ->
+  they 'match distribution array', ({ssh}) ->
     {status} = await nikita
-      if_os: name: [conditions_if_os.name, 'invalid']
+      if_os: distribution: [conditions_if_os.distribution, 'invalid']
       handler: -> true
       ssh: ssh
     status.should.be.true()
 
-  they 'match name string and version string', ({ssh}) ->
+  they 'match distribution string and version string', ({ssh}) ->
     {status} = await nikita
       if_os:
-        name: conditions_if_os.name
+        distribution: conditions_if_os.distribution
         version: conditions_if_os.version
       handler: -> true
       ssh: ssh
@@ -45,14 +45,14 @@ describe 'plugin.condition if_os', ->
       ssh: ssh
     status.should.be.true()
 
-  they 'match name string and major version', ({ssh}) ->
+  they 'match distribution string and major version', ({ssh}) ->
     # Arch Linux has only linux_version
     if conditions_if_os.version
     then condition = version: conditions_if_os.version
     else condition = linux_version: conditions_if_os.linux_version
     {status} = await nikita
       if_os: condition,
-        name: conditions_if_os.name
+        distribution: conditions_if_os.distribution
       handler: -> true
       ssh: ssh
     status.should.be.true()
@@ -73,7 +73,7 @@ describe 'plugin.condition if_os', ->
       ssh: ssh
     status.should.be.true()
 
-  they 'match name string, version string, Linux version string and arch string', ({ssh}) ->
+  they 'match distribution string, version string, Linux version string and arch string', ({ssh}) ->
     {status} = await nikita
       if_os: conditions_if_os
       handler: -> true
@@ -88,7 +88,7 @@ describe 'plugin.condition if_os', ->
     condition.push 8
     {status} = await nikita
       if_os: [
-        name: conditions_if_os.name
+        distribution: conditions_if_os.distribution
       ,
         condition
       ]

@@ -28,17 +28,17 @@ module.exports =
     LINUX_VERSION=`uname -r | sed 's/\\(.*\\)-.*/\\1/'`
     # RHEL 7 (CentOS 7), Ubuntu/Debian, Arch Linux
     if [ -f /etc/os-release ]; then
-      NAME=`cat /etc/os-release | egrep '^ID=' | sed 's/^\\(ID="\\?\\)\\?\\([A-Za-z]*\\).*/\\2/'`
+      DISTRIB=`cat /etc/os-release | egrep '^ID=' | sed 's/^\\(ID="\\?\\)\\?\\([A-Za-z]*\\).*/\\2/'`
     # RHEL 6 (CentOS 6)
     elif [ -f /etc/redhat-release ]; then
-      NAME=`cat /etc/redhat-release | sed 's/^\\(Red \\)\\?\\([A-Za-z]*\\).*/\\1\\2/' | tr '[:upper:]' '[:lower:]'`
-      if [ $NAME == 'red hat' ]; then
-        NAME='rhel'
+      DISTRIB=`cat /etc/redhat-release | sed 's/^\\(Red \\)\\?\\([A-Za-z]*\\).*/\\1\\2/' | tr '[:upper:]' '[:lower:]'`
+      if [ $DISTRIB == 'red hat' ]; then
+        DISTRIB='rhel'
       fi
     else
       exit 2
     fi
-    case $NAME in
+    case $DISTRIB in
       # RHEL and CentOS
       rhel|centos)
         # `cat /etc/redhat-release` prints for:
@@ -64,7 +64,7 @@ module.exports =
       *)
         exit 2
     esac
-    echo -n "$ARCH|$NAME|$VERSION|$LINUX_VERSION"
+    echo -n "$ARCH|$DISTRIB|$VERSION|$LINUX_VERSION"
     """
   whoami: ({ssh, platform = process.platform} = {}) ->
     return ssh.config.username if ssh

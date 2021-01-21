@@ -36,11 +36,11 @@ module.exports = function() {
                 if (!Array.isArray(condition.arch)) {
                   condition.arch = [condition.arch];
                 }
-                if (condition.name == null) {
-                  condition.name = [];
+                if (condition.distribution == null) {
+                  condition.distribution = [];
                 }
-                if (!Array.isArray(condition.name)) {
-                  condition.name = [condition.name];
+                if (!Array.isArray(condition.distribution)) {
+                  condition.distribution = [condition.distribution];
                 }
                 if (condition.version == null) {
                   condition.version = [];
@@ -106,14 +106,14 @@ handlers = {
         },
         parent: action
       }, async function() {
-        var arch, linux_version, match, name, status, stdout, version;
+        var arch, distribution, linux_version, match, status, stdout, version;
         ({status, stdout} = (await this.execute({
           command: utils.os.command
         })));
         if (!status) {
           return final_run = false;
         }
-        [arch, name, version, linux_version] = stdout.split('|');
+        [arch, distribution, version, linux_version] = stdout.split('|');
         if (match = /^(\d+)\.(\d+)/.exec(version)) {
           // Remove patch version (eg. 7.8.12 -> 7.8)
           version = `${match[0]}`;
@@ -131,11 +131,11 @@ handlers = {
               return true;
             }
           });
-          n = !condition.name.length || condition.name.some(function(value) {
-            if (typeof value === 'string' && value === name) {
+          n = !condition.distribution.length || condition.distribution.some(function(value) {
+            if (typeof value === 'string' && value === distribution) {
               return true;
             }
-            if (value instanceof RegExp && value.test(name)) {
+            if (value instanceof RegExp && value.test(distribution)) {
               return true;
             }
           });
@@ -183,14 +183,14 @@ handlers = {
         },
         parent: action
       }, async function() {
-        var arch, linux_version, match, name, status, stdout, version;
+        var arch, distribution, linux_version, match, status, stdout, version;
         ({status, stdout} = (await this.execute({
           command: utils.os.command
         })));
         if (!status) {
           return final_run = false;
         }
-        [arch, name, version, linux_version] = stdout.split('|');
+        [arch, distribution, version, linux_version] = stdout.split('|');
         if (match = /^(\d+)\.(\d+)/.exec(version)) {
           // Remove patch version (eg. 7.8.12 -> 7.8)
           version = `${match[0]}`;
@@ -208,11 +208,11 @@ handlers = {
               return true;
             }
           });
-          n = !condition.name.length || condition.name.some(function(value) {
-            if (typeof value === 'string' && value === name) {
+          n = !condition.distribution.length || condition.distribution.some(function(value) {
+            if (typeof value === 'string' && value === distribution) {
               return true;
             }
-            if (value instanceof RegExp && value.test(name)) {
+            if (value instanceof RegExp && value.test(distribution)) {
               return true;
             }
           });

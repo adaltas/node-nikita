@@ -21,8 +21,8 @@ module.exports = ->
             for condition in config
               condition.arch ?= []
               condition.arch = [condition.arch] unless Array.isArray condition.arch
-              condition.name ?= []
-              condition.name = [condition.name] unless Array.isArray condition.name
+              condition.distribution ?= []
+              condition.distribution = [condition.distribution] unless Array.isArray condition.distribution
               condition.version ?= []
               condition.version = [condition.version] unless Array.isArray condition.version
               condition.version = utils.semver.sanitize condition.version, 'x'
@@ -58,7 +58,7 @@ handlers =
         {status, stdout} = await @execute
           command: utils.os.command
         return final_run = false unless status
-        [arch, name, version, linux_version] = stdout.split '|'
+        [arch, distribution, version, linux_version] = stdout.split '|'
         # Remove patch version (eg. 7.8.12 -> 7.8)
         version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
         linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
@@ -66,9 +66,9 @@ handlers =
           a = !condition.arch.length || condition.arch.some (value) ->
             return true if typeof value is 'string' and value is arch
             return true if value instanceof RegExp and value.test arch
-          n = !condition.name.length || condition.name.some (value) ->
-            return true if typeof value is 'string' and value is name
-            return true if value instanceof RegExp and value.test name
+          n = !condition.distribution.length || condition.distribution.some (value) ->
+            return true if typeof value is 'string' and value is distribution
+            return true if value instanceof RegExp and value.test distribution
           # Arch Linux has only linux_version
           v = !version.length || !condition.version.length || condition.version.some (value) ->
             version = utils.semver.sanitize version, '0'
@@ -95,7 +95,7 @@ handlers =
         {status, stdout} = await @execute
           command: utils.os.command
         return final_run = false unless status
-        [arch, name, version, linux_version] = stdout.split '|'
+        [arch, distribution, version, linux_version] = stdout.split '|'
         # Remove patch version (eg. 7.8.12 -> 7.8)
         version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
         linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
@@ -103,9 +103,9 @@ handlers =
           a = !condition.arch.length || condition.arch.some (value) ->
             return true if typeof value is 'string' and value is arch
             return true if value instanceof RegExp and value.test arch
-          n = !condition.name.length || condition.name.some (value) ->
-            return true if typeof value is 'string' and value is name
-            return true if value instanceof RegExp and value.test name
+          n = !condition.distribution.length || condition.distribution.some (value) ->
+            return true if typeof value is 'string' and value is distribution
+            return true if value instanceof RegExp and value.test distribution
           # Arch Linux has only linux_version
           v = !version.length || !condition.version.length || condition.version.some (value) ->
             version = utils.semver.sanitize version, '0'
