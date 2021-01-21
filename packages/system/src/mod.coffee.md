@@ -107,7 +107,7 @@ require('nikita')
         on_action: on_action
       metadata:
         schema: schema
-        argument: 'modules'
+        argument_to_config: 'modules'
 
 ## Dependencies
 

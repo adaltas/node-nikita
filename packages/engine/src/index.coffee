@@ -19,7 +19,7 @@ create = ->
     require './metadata/tmpdir'
     require './metadata/uuid'
     require './plugins/args'
-    require './plugins/argument'
+    require './plugins/argument_to_config'
     require './plugins/conditions'
     require './plugins/conditions_execute'
     require './plugins/conditions_exists'

@@ -113,7 +113,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        argument: 'command'
+        argument_to_config: 'command'
         schema: schema
 
 ## Dependencies

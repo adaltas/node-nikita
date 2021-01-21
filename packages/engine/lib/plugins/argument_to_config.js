@@ -7,19 +7,11 @@ module.exports = function() {
   return {
     module: '@nikitajs/engine/lib/plugins/argument',
     hooks: {
-      'nikita:session:normalize': {
-        handler: function(action) {
-          if (action.hasOwnProperty('argument')) {
-            action.metadata.argument_name = action.argument;
-            return delete action.argument;
-          }
-        }
-      },
       'nikita:session:action': {
         handler: function(action) {
           var base, name;
-          if (action.metadata.argument_name) {
-            if ((base = action.config)[name = action.metadata.argument_name] == null) {
+          if (action.metadata.argument_to_config) {
+            if ((base = action.config)[name = action.metadata.argument_to_config] == null) {
               base[name] = action.metadata.argument;
             }
           }
