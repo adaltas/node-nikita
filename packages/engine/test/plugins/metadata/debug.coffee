@@ -14,7 +14,7 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.call metadata: debug: ws, ({tools: {log}}) ->
         log 'Some message'
-      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
     it 'stdin, stdout, stderr', ->
       data = []
@@ -26,9 +26,9 @@ describe 'metadata "debug"', ->
         """
         metadata: debug: ws
       data.join().should.eql [
-        '\u001b[33m[1.INFO @nikitajs/engine/src/actions/execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
-        '\u001b[36m[1.INFO @nikitajs/engine/src/actions/execute] to_stdout\u001b[39m\n'
-        '\u001b[35m[1.INFO @nikitajs/engine/src/actions/execute] to_stderr\u001b[39m\n'
+        '\u001b[33m[1.1.INFO execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
+        '\u001b[36m[1.1.INFO execute] to_stdout\u001b[39m\n'
+        '\u001b[35m[1.1.INFO execute] to_stderr\u001b[39m\n'
       ].join()
     
   describe 'print', ->
@@ -40,7 +40,7 @@ describe 'metadata "debug"', ->
       await nikita.call metadata: debug: true, ({tools: {log}}) ->
         log 'Some message'
       process.stderr.write = write
-      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
     it 'stdout', ->
       data = []
@@ -49,7 +49,7 @@ describe 'metadata "debug"', ->
       await nikita.call metadata: debug: 'stdout', ({tools: {log}}) ->
         log 'Some message'
       process.stdout.write = write
-      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
     it 'stream writer', ->
       data = []
@@ -57,7 +57,7 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.call metadata: debug: ws, ({tools: {log}}) ->
         log 'Some message'
-      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
     
   describe 'cascade', ->
   
@@ -67,11 +67,12 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.call metadata: debug: ws, ({tools: {log}}) ->
         log 'Parent message'
+        @call (->)
         @call ({tools: {log}}) ->
           log 'Child message'
       data.join().should.eql [
-        '\u001b[32m[1.INFO undefined] Parent message\u001b[39m\n'
-        '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
+        '\u001b[32m[1.1.INFO call] Parent message\u001b[39m\n'
+        '\u001b[32m[1.1.2.INFO call] Child message\u001b[39m\n'
       ].join ','
       
     it 'not available in parent', ->
@@ -82,7 +83,7 @@ describe 'metadata "debug"', ->
         log 'Parent message'
         @call metadata: debug: ws, ({tools: {log}}) ->
           log 'Child message'
-      data.join().should.eql '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.1.INFO call] Child message\u001b[39m\n'
       
     it 'not available in parent sibling', ->
       data = []
@@ -90,11 +91,12 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita
       .call ->
+        @call (->)
         @call metadata: debug: ws, ({tools: {log}}) ->
           log 'Child message'
       .call ({tools: {log}}) ->
         log 'Sibling message'
-      data.join().should.eql '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.1.2.INFO call] Child message\u001b[39m\n'
   
   describe 'error', ->
       

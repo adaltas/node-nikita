@@ -30,10 +30,17 @@ module.exports = function() {
         debug = action.metadata.debug = {
           ws: debug === 'stdout' ? action.metadata.debug.ws = process.stdout : debug instanceof stream.Writable ? action.metadata.debug.ws = debug : action.metadata.debug.ws = process.stderr,
           listener: function(log) {
-            var msg, ref, ref1;
+            var msg, name, namespace, position, ref, ref1;
             if (!(((ref = log.type) === 'stdout_stream' || ref === 'stderr_stream') && log.message === null)) {
               msg = typeof log.message === 'string' ? log.message.trim() : typeof log.message === 'number' ? log.message : ((ref1 = log.message) != null ? ref1.toString : void 0) != null ? log.message.toString().trim() : JSON.stringify(log.message);
-              msg = `[${log.depth}.${log.level} ${log.module}] ${msg}`;
+              position = log.position.map(function(i) {
+                return i + 1;
+              }).join('.');
+              if (log.namespace) {
+                namespace = log.namespace.join('.');
+              }
+              name = namespace || log.module;
+              msg = ['[', position + '.' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
               msg = (function() {
                 switch (log.type) {
                   case 'stdin':

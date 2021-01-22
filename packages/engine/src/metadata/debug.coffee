@@ -39,7 +39,16 @@ module.exports = ->
             else if typeof log.message is 'number' then log.message
             else if log.message?.toString? then log.message.toString().trim()
             else JSON.stringify log.message
-            msg = "[#{log.depth}.#{log.level} #{log.module}] #{ msg}"
+            position = log.position.map((i) -> i+1).join '.'
+            namespace = log.namespace.join '.' if log.namespace
+            name = namespace or log.module
+            msg = [
+              '['
+              position+'.'+log.level
+              ' '+name if name
+              '] '
+              msg
+            ].join ''
             msg = switch log.type
               when 'stdin' then "\x1b[33m#{msg}\x1b[39m"
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
