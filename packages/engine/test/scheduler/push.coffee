@@ -1,7 +1,9 @@
 
 schedule = require '../../src/schedulers/native'
+{tags} = require '../test'
 
 describe 'scheduler', ->
+  return unless tags.api
 
   describe 'push return', ->
 
