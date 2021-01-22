@@ -18,6 +18,7 @@ module.exports = {
     mod: '@nikitajs/system/lib/mod'
     running: '@nikitajs/system/lib/running',
     tmpfs: '@nikitajs/system/lib/tmpfs',
+    uid_gid: '@nikitajs/system/lib/uid_gid',
   }
 };
 

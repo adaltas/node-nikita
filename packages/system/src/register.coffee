@@ -15,6 +15,7 @@ module.exports =
     mod: '@nikitajs/system/src/mod'
     running: '@nikitajs/system/src/running'
     tmpfs: '@nikitajs/system/src/tmpfs'
+    uid_gid: '@nikitajs/system/src/uid_gid'
 (->
   try
     await registry.register module.exports
