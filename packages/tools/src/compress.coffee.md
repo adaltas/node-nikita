@@ -74,6 +74,7 @@ console.info(`File was compressed: ${status}`)
       await @fs.remove
         if: config.clean
         source: config.source
+        recursive: true
       output
 
 ## Extention to type

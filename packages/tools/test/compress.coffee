@@ -74,7 +74,7 @@ describe 'tools.compress', ->
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
-        content: 'hellow'
+        content: 'hello'
       {status} = await @tools.compress
         source: "#{tmpdir}/a_dir/a_file"
         target: "#{tmpdir}/a_dir.tar.xz"
@@ -91,7 +91,7 @@ describe 'tools.compress', ->
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/a_dir/a_file"
-        content: 'hellow'
+        content: 'hello'
       {status} = await @tools.compress
         source: "#{tmpdir}/a_dir"
         target: "#{tmpdir}/a_dir.tar.xz"
