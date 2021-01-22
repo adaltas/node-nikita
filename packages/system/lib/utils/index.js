@@ -3,6 +3,7 @@ var utils;
 
 utils = require('@nikitajs/engine/lib/utils');
 
-module.exports = {...utils};
-
-// Add package related functions
+module.exports = {
+  ...utils,
+  tmpfs: require('./tmpfs')
+};

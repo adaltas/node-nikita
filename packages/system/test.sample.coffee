@@ -3,6 +3,7 @@ module.exports =
   tags:
     api: true
     system_limits: false
+    system_tmpfs: false
   config: [
     label: 'local'
   ,

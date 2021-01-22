@@ -1,0 +1,14 @@
+
+# Run all tests: `docker-compose up --abort-on-container-exit`
+# Enter console: `docker-compose run --rm --entrypoint /bin/bash nodejs` and `service sshd start`
+# Run a subset of the tests: `docker-compose run --rm nodejs test/service`
+
+version: '2'
+services:
+  nodejs:
+    build: .
+    image: nikita_system_tmpfs
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/system/env/tmpfs/test.coffee
