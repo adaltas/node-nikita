@@ -61,13 +61,13 @@ describe 'tools.repo', ->
         target: "#{tmpdir}/repo/centos.repo"
         content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
   
-  they 'delete files with replace option', ({ssh}) ->
+  they 'delete files with clean option', ({ssh}) ->
     nikita
       ssh: ssh
-      metadata: tmpdir: true
+      metadata: tmpdir: true, dirty: true
     , ({metadata: {tmpdir}}) ->
       await @file
-        target: "#{tmpdir}/CentOS.repo"
+        target: "#{tmpdir}/source/CentOS.repo"
         content: """
           [base]
           name=CentOS-$releasever - Base
@@ -76,19 +76,23 @@ describe 'tools.repo', ->
           gpgcheck=1
           gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
         """
+      await @tools.repo
+        source: "#{tmpdir}/source/CentOS.repo"
+        target: "#{tmpdir}/target/CentOS.repo"
       {status} = await @tools.repo
-        # metadata: debug: true
-        source: "#{tmpdir}/CentOS.repo"
+        source: "#{tmpdir}/source/CentOS.repo"
+        target: "#{tmpdir}/target/CentOS.repo"
         clean: 'test*'
       status.should.be.false()
       @file.touch
-        target: "#{tmpdir}/test.repo"
+        target: "#{tmpdir}/target/test.repo"
       {status} = await @tools.repo
-        source: "#{tmpdir}/CentOS.repo"
-        clean: "#{tmpdir}/test*"
+        source: "#{tmpdir}/source/CentOS.repo"
+        target: "#{tmpdir}/target/CentOS.repo"
+        clean: "test*"
       status.should.be.true()
       @fs.assert
-        target: "#{tmpdir}/test.repo"
+        target: "#{tmpdir}/target/test.repo"
         not: true
   
   they 'Download GPG Keys option', ({ssh}) ->

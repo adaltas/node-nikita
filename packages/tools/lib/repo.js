@@ -25,8 +25,9 @@ schema = {
     },
     'clean': {
       type: 'string',
-      description: `Globing expression used to match replaced files, path will resolve to
-'/etc/yum.repos.d' if relative.`
+      description: `Globing expression used to match replaced files. When relative, the
+path is resolved to the parent target directory which is
+'/etc/yum.repos.d' when the target is a filename.`
     },
     'gpg_dir': {
       type: 'string',
@@ -79,7 +80,7 @@ handler = async function({
   }
   config.target = path.resolve('/etc/yum.repos.d', config.target);
   if (config.clean) {
-    config.clean = path.resolve('/etc/yum.repos.d', config.clean);
+    config.clean = path.resolve(path.dirname(config.target), config.clean);
   }
   remote_files = [];
   repoids = [];

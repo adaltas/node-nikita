@@ -26,8 +26,9 @@ console.info(`Repo was updated: ${status}`)
         'clean':
           type: 'string'
           description: """
-          Globing expression used to match replaced files, path will resolve to
-          '/etc/yum.repos.d' if relative.
+          Globing expression used to match replaced files. When relative, the
+          path is resolved to the parent target directory which is
+          '/etc/yum.repos.d' when the target is a filename.
           """
         'gpg_dir':
           type: 'string'
@@ -75,7 +76,7 @@ console.info(`Repo was updated: ${status}`)
       # TODO wdavidw 180115, target should be mandatory and not default to the source filename
       config.target ?= path.resolve "/etc/yum.repos.d", path.basename config.source if config.source?
       config.target = path.resolve '/etc/yum.repos.d', config.target
-      config.clean = path.resolve '/etc/yum.repos.d', config.clean if config.clean
+      config.clean = path.resolve path.dirname(config.target), config.clean if config.clean
       remote_files = []
       repoids = []
       # Delete
