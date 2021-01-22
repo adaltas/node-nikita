@@ -4,14 +4,11 @@
 // Expose disk information. Internally, it parse the result of the "df" command. 
 // The properties "total", "used" and "available" are expressed in bytes.
 
-// ## Options
+// ## Implementation
 
-// There are no required options.
+// The action rely on the `df` command and the presence of the `--output` option.
 
-// - `output` ([string])   
-//   The list of properties to be returned; valid properties are 'source',
-//   'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail',
-//   'pcent' and 'target'; default to all of them.
+// Tests are filtered with the `system_info_disks` tag.
 
 // ## Callback
 
@@ -111,57 +108,74 @@
 //     mountpoint: '/dev/shm' } ]
 // ```
 
-// ## Source Code
-var string;
+// ## Schema
+var handler, schema, utils;
 
-module.exports = function({options}, callback) {
-  if (options.output == null) {
-    options.output = ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'];
-  }
-  return this.system.execute({
-    header: 'Disk',
-    cmd: `df --output='${options.output.join(',')}'`
-  }, function(err, {stdout}) {
-    var disk, disks, i, line, property;
-    if (err) {
-      return callback(err);
+schema = {
+  type: 'object',
+  properties: {
+    'output': {
+      type: 'array',
+      default: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'],
+      items: {
+        type: 'string',
+        enum: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'] //todo use and test $ref /properties/output/default
+      },
+      description: `The list of properties to be returned, default to all of them.`
     }
-    disks = (function() {
-      var j, k, len, len1, ref, ref1, results;
-      ref = string.lines(stdout);
-      results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        line = ref[i];
-        if (i === 0) {
-          continue;
-        }
-        if (/^\s*$/.test(line)) {
-          continue;
-        }
-        line = line.split(/\s+/);
-        disk = {
-          df: {}
-        };
-        ref1 = options.output;
-        for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
-          property = ref1[i];
-          disk.df[property] = line[i];
-        }
-        disk.filesystem = disk.df.source;
-        disk.total = disk.df.itotal * 1024;
-        disk.used = disk.df.iused * 1024;
-        disk.available = disk.df.avail * 1024;
-        disk.available_pourcent = disk.df.pcent;
-        disk.mountpoint = disk.df.target;
-        results.push(disk);
+  }
+};
+
+// ## Handler
+handler = async function({config}, callback) {
+  var disk, disks, i, line, property, stdout;
+  ({stdout} = (await this.execute({
+    command: `df --output='${config.output.join(',')}'`
+  })));
+  disks = (function() {
+    var j, k, len, len1, ref, ref1, results;
+    ref = utils.string.lines(stdout);
+    results = [];
+    for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      line = ref[i];
+      if (i === 0) {
+        continue;
       }
-      return results;
-    })();
-    return callback(null, {
-      disks: disks
-    });
-  });
+      if (/^\s*$/.test(line)) {
+        continue;
+      }
+      line = line.split(/\s+/);
+      disk = {
+        df: {}
+      };
+      ref1 = config.output;
+      for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
+        property = ref1[i];
+        disk.df[property] = line[i];
+      }
+      disk.filesystem = disk.df.source;
+      disk.total = disk.df.itotal * 1024;
+      disk.used = disk.df.iused * 1024;
+      disk.available = disk.df.avail * 1024;
+      disk.available_pourcent = disk.df.pcent;
+      disk.mountpoint = disk.df.target;
+      results.push(disk);
+    }
+    return results;
+  })();
+  return {
+    disks: disks
+  };
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  metadata: {
+    schema: schema,
+    shy: true
+  }
 };
 
 // ## Dependencies
-string = require('../../misc/string');
+utils = require('../utils');

@@ -4,14 +4,11 @@
 Expose disk information. Internally, it parse the result of the "df" command. 
 The properties "total", "used" and "available" are expressed in bytes.
 
-## Options
+## Implementation
 
-There are no required options.
+The action rely on the `df` command and the presence of the `--output` option.
 
-- `output` ([string])   
-  The list of properties to be returned; valid properties are 'source',
-  'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail',
-  'pcent' and 'target'; default to all of them.
+Tests are filtered with the `system_info_disks` tag.
 
 ## Callback
 
@@ -111,35 +108,56 @@ Here is how the output may look like:
     mountpoint: '/dev/shm' } ]
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      options.output ?= [
-        'source', 'fstype', 'itotal', 'iused',
-        'iavail', 'ipcent', 'size', 'used', 'avail',
-        'pcent', 'target'
-      ]
-      @system.execute
-        header: 'Disk'
-        cmd: "df --output='#{options.output.join ','}'"
-      , (err, {stdout}) ->
-        return callback err if err
-        disks = for line, i in string.lines stdout
-          continue if i is 0
-          continue if /^\s*$/.test line
-          line = line.split /\s+/
-          disk = {df: {}}
-          for property, i in options.output
-            disk.df[property] = line[i]
-          disk.filesystem = disk.df.source
-          disk.total = disk.df.itotal * 1024
-          disk.used = disk.df.iused * 1024
-          disk.available = disk.df.avail * 1024
-          disk.available_pourcent = disk.df.pcent
-          disk.mountpoint = disk.df.target
-          disk
-        callback null, disks: disks
+    schema =
+      type: 'object'
+      properties:
+        'output':
+          type: 'array'
+          default: [
+            'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size',
+            'used', 'avail', 'pcent', 'target'
+          ]
+          items:
+            type: 'string'
+            enum: [ #todo use and test $ref /properties/output/default
+              'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size',
+              'used', 'avail', 'pcent', 'target'
+            ]
+          description: '''
+          The list of properties to be returned, default to all of them.
+          '''
+
+## Handler
+
+    handler = ({config}, callback) ->
+      {stdout} = await @execute
+        command: "df --output='#{config.output.join ','}'"
+      disks = for line, i in utils.string.lines stdout
+        continue if i is 0
+        continue if /^\s*$/.test line
+        line = line.split /\s+/
+        disk = {df: {}}
+        for property, i in config.output
+          disk.df[property] = line[i]
+        disk.filesystem = disk.df.source
+        disk.total = disk.df.itotal * 1024
+        disk.used = disk.df.iused * 1024
+        disk.available = disk.df.avail * 1024
+        disk.available_pourcent = disk.df.pcent
+        disk.mountpoint = disk.df.target
+        disk
+      disks: disks
+
+## Exports
+
+    module.exports =
+      handler: handler
+      metadata:
+        schema: schema
+        shy: true
 
 ## Dependencies
 
-    string = require '../../misc/string'
+    utils = require '../utils'

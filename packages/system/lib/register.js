@@ -10,6 +10,10 @@ module.exports = {
   system: {
     authconfig: '@nikitajs/system/lib/authconfig',
     cgroups: '@nikitajs/system/lib/cgroups',
+    info: {
+      disks: '@nikitajs/system/lib/info/disks',
+      os: '@nikitajs/system/lib/info/os'
+    },
     limits: '@nikitajs/system/lib/limits',
     mod: '@nikitajs/system/lib/mod'
     running: '@nikitajs/system/lib/running',

@@ -1,18 +1,17 @@
 
-nikita = require '../../src'
+nikita = require '@nikitajs/engine/lib'
 {tags, config} = require '../test'
-they = require('mocha-they')(config)...
+they = require('mocha-they')(config)
 
-return unless tags.system_info
+return unless tags.system_info_disks
 
 describe 'system.info.disks', ->
 
   they 'with no options', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.info.disks (err, {status, disks}) ->
-      throw err if err
-      status.should.be.false()
+    , ->
+      {status, disks} = await @system.info.disks()
       disks.length.should.be.above 0
       for disk in disks
         Object.keys(disk).should.eql [
@@ -24,4 +23,3 @@ describe 'system.info.disks', ->
           'iavail', 'ipcent', 'size', 'used', 'avail',
           'pcent', 'target'
         ]
-    .promise()

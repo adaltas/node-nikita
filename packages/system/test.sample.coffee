@@ -2,6 +2,8 @@
 module.exports =
   tags:
     api: true
+    system_info_disks: false
+    system_info_os: false
     system_limits: false
     system_tmpfs: false
   config: [
