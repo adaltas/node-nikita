@@ -2,9 +2,8 @@
 string = require '../../src/utils/string'
 {tags} = require '../test'
 
-return unless tags.api
-
 describe 'utils.string', ->
+  return unless tags.api
 
   it 'escapeshellarg', ->
     string.escapeshellarg("try to 'parse this").should.eql "'try to '\"'\"'parse this'"

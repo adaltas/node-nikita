@@ -2,9 +2,8 @@
 utils = require '../../src/utils'
 {tags} = require '../test'
 
-return unless tags.api
-
 describe 'utils.stats', ->
+  return unless tags.api
 
   describe 'type', ->
 

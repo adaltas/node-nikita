@@ -2,9 +2,8 @@
 mode = require '../../src/utils/mode'
 {tags} = require '../test'
 
-return unless tags.api
-
 describe 'utils.mode', ->
+  return unless tags.api
 
   describe 'stringify', ->
     

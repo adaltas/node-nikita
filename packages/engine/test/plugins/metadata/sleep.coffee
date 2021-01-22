@@ -2,9 +2,8 @@
 nikita = require '../../../src'
 {tags} = require '../../test'
 
-return unless tags.api
-
 describe 'plugins.metadata.sleep (plugin.retry)', ->
+  return unless tags.api
   
   describe 'validation', ->
     

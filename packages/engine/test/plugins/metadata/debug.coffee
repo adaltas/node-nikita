@@ -3,9 +3,8 @@ stream = require 'stream'
 nikita = require '../../../src'
 {tags} = require '../../test'
 
-return unless tags.api
-
 describe 'metadata "debug"', ->
+  return unless tags.api
   
   describe 'type', ->
   

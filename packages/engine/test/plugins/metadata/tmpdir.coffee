@@ -6,9 +6,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.api
-
 describe 'plugins.metadata.tmpdir', ->
+  return unless tags.api
   
   describe 'validation', ->
 

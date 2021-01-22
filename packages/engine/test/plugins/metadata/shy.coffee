@@ -2,9 +2,8 @@
 nikita = require '../../../src'
 {tags} = require '../../test'
 
-return unless tags.api
-
 describe 'plugins.metadata.shy', ->
+  return unless tags.api
 
   it 'dont alter status', ->
     {status} = await nikita ->

@@ -4,9 +4,8 @@ registry = require '../../../src/registry'
 register = require '../../../src/register'
 {tags} = require '../../test'
 
-return unless tags.api
-
 describe 'plugins.metadata.depth', ->
+  return unless tags.api
 
   it 'start at 0', ->
     nikita ({metadata}) ->

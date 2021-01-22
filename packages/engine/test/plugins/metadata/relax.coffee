@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags} = require '../../test'
 err = require '../../../src/utils/error'
 
-return unless tags.api
-
 describe 'plugins.metadata.relax', ->
+  return unless tags.api
 
   it 'handler throw error', ->
     {error} = await nikita.call metadata: relax: true, ->

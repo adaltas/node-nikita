@@ -5,9 +5,8 @@ utils = require '../../src/utils'
 # All test are executed with an ssh connection passed as an argument
 they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
 
-return unless tags.api
-
 describe '`plugins.ssh`', ->
+  return unless tags.api
 
   they 'from config in root action', ({ssh}) ->
     nikita ssh: ssh, ({ssh: conn}) ->
