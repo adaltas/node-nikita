@@ -12,15 +12,15 @@ describe 'ipa.service.show', ->
       ssh: ssh
     , ->
       {result} = await @ipa.service.show connection: ipa,
-        principal: 'HTTP/freeipa.nikita.local'
-      result.dn.should.eql 'krbprincipalname=HTTP/freeipa.nikita.local@NIKITA.LOCAL,cn=services,cn=accounts,dc=nikita,dc=local'
+        principal: 'HTTP/ipa.nikita.local'
+      result.dn.should.eql 'krbprincipalname=HTTP/ipa.nikita.local@NIKITA.LOCAL,cn=services,cn=accounts,dc=nikita,dc=local'
 
   they 'get missing service', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
       @ipa.service.show connection: ipa,
-        principal: 'missing/freeipa.nikita.local'
+        principal: 'missing/ipa.nikita.local'
       .should.be.rejectedWith
         code: 4001
-        message: 'missing/freeipa.nikita.local@NIKITA.LOCAL: service not found'
+        message: 'missing/ipa.nikita.local@NIKITA.LOCAL: service not found'

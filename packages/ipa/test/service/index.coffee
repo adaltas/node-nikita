@@ -13,14 +13,14 @@ describe 'ipa.service', ->
       ssh: ssh
     , ->
       @ipa.service.del
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
       {status} = await @ipa.service
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
       status.should.be.true()
       @ipa.service.del
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
 
   they 'create an existing service', ({ssh}) ->
@@ -28,15 +28,15 @@ describe 'ipa.service', ->
       ssh: ssh
     , ->
       @ipa.service.del
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
       @ipa.service
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
       {status} = await @ipa.service
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa
       status.should.be.false()
       @ipa.service.del
-        principal: 'service_add/freeipa.nikita.local',
+        principal: 'service_add/ipa.nikita.local',
         connection: ipa

@@ -12,7 +12,6 @@ describe 'ipa.user.exists', ->
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
         ssh: ssh
-        metadata: debug: true
       .ipa.user.exists connection: ipa,
         username: 'user_exists'
 

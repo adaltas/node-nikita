@@ -6,7 +6,7 @@ module.exports =
     principal: 'admin'
     password: 'admin_pw'
     # referer: 'https://freeipa.nikita.local/ipa/xml'
-    url: 'https://freeipa.nikita.local/ipa/session/json'
+    url: 'https://ipa.nikita.local/ipa/session/json'
   config: [
     label: 'local'
   ,

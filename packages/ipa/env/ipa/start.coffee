@@ -45,7 +45,7 @@ nikita
       'ipv6.address': 'none'
       'dns.domain': 'nikita.local'
   containers:
-    freeipa:
+    'nikita-ipa':
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
@@ -61,15 +61,6 @@ nikita
         ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'
         ipa_ui_https: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
-      user:
-        nikita: sudo: true, authorized_keys: "#{__dirname}/assets/id_rsa.pub"
-  prevision: ({config}) ->
-    await @tools.ssh.keygen
-      metadata: header: 'SSH key'
-      target: "#{__dirname}/assets/id_rsa"
-      bits: 2048
-      key_format: 'PEM'
-      comment: 'nikita'
   provision_container: ({config}) ->
     await @lxd.exec
       metadata: header: 'Node.js'
@@ -84,26 +75,19 @@ nikita
       """
       trap: true
       code_skipped: 42
-    await @lxd.file.push
-      metadata: header: 'User Private Key'
-      container: config.container
-      gid: 'nikita'
-      uid: 'nikita'
-      source: "#{__dirname}/assets/id_rsa"
-      target: '/home/nikita/.ssh/id_rsa'
     await @lxd.exec
-      metadata: header: 'Root SSH dir'
+      metadata: header: 'SSH keys'
       container: config.container
-      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
-    await @lxd.file.push
-      metadata: header: 'Root SSH Private Key'
-      container: config.container
-      gid: 'root'
-      uid: 'root'
-      source: "#{__dirname}/assets/id_rsa"
-      target: '/root/.ssh/id_rsa'
+      command: """
+      mkdir -p /root/.ssh && chmod 700 /root/.ssh
+      if [ ! -f /root/.ssh/id_rsa ]; then
+        ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
+        cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
+      fi
+      """
+      trap: true
     await @lxd.exec
-      metadata: header: 'Install FreeIPA'
+      metadata: header: 'Install FreeIPA', debug: true
       container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:
@@ -111,16 +95,28 @@ nikita
       # echo admin_pw | kinit admin
       command: """
       [ -f /etc/ipa/default.conf ] && exit 42
-      yum install -y freeipa-server
-      hostnamectl set-hostname freeipa.nikita.local --static
+      yum install -y freeipa-server ipa-server-dns
+      hostnamectl set-hostname ipa.nikita.local --static
       #{[
         'ipa-server-install', '-U'
         #  Basic options
         "-a admin_pw"
         "-p manager_pw"
-        "--hostname freeipa.nikita.local"
+        # The container is named `nikita-ipa` and it is attached to a network
+        # with the `nikita.local` DNS domain. Thus, the default FQDN is
+        # `nikita-ipa.nikita.local` and you can do a reverse DNS lookup with
+        # `dig -x`.
+        "--hostname ipa.nikita.local"
         "--domain nikita.local"
+        # We can set a different FQDN like `ipa.nikita.local` with `hostnamectl
+        # set-hostname {fqdn} --static`. However, FreeIPA will complain when it
+        # starts because the reverse DNS lookup check fail to match the FQDN. A
+        # possible solution is to have FreeIPA managing the DNS with
+        # `--setup-dns`.
+        "--setup-dns --auto-reverse --auto-forwarders"
         # Kerberos REALM
         "-r NIKITA.LOCAL"
       ].join ' '}
       """
+      # ipa-server-install --uninstall
+      # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local -r NIKITA.LOCAL --auto-reverse --setup-dns
