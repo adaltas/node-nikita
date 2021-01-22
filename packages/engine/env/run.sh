@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 CWD=`pwd`/`dirname ${BASH_SOURCE}`
 
 cd $CWD/arch_chroot

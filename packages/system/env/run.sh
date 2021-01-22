@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 CWD=`pwd`/`dirname ${BASH_SOURCE}`
