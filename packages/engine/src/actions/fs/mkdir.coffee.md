@@ -169,6 +169,7 @@ console.info(`Directory was created: ${status}`)
         utils.error 'NIKITA_MKDIR_TARGET_INVALID_TYPE', [
           'target exists but it is not a directory,'
           "got #{JSON.stringify utils.stats.type stats.mode} type"
+          "for #{JSON.stringify target}"
         ],
           target: target
 

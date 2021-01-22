@@ -196,6 +196,7 @@ describe 'actions.fs.mkdir', ->
             'NIKITA_MKDIR_TARGET_INVALID_TYPE:',
             'target exists but it is not a directory,'
             'got "File" type'
+            "for \"#{tmpdir}/a_file\""
           ].join ' '
 
 describe 'system.mkdir options uid/gid', ->

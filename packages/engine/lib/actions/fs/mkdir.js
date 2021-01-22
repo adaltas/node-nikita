@@ -248,7 +248,7 @@ errors = {
     });
   },
   NIKITA_MKDIR_TARGET_INVALID_TYPE: function({stats, target}) {
-    return utils.error('NIKITA_MKDIR_TARGET_INVALID_TYPE', ['target exists but it is not a directory,', `got ${JSON.stringify(utils.stats.type(stats.mode))} type`], {
+    return utils.error('NIKITA_MKDIR_TARGET_INVALID_TYPE', ['target exists but it is not a directory,', `got ${JSON.stringify(utils.stats.type(stats.mode))} type`, `for ${JSON.stringify(target)}`], {
       target: target
     });
   }
