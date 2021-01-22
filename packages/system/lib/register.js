@@ -10,6 +10,11 @@ module.exports = {
   system: {
     authconfig: '@nikitajs/system/lib/authconfig',
     cgroups: '@nikitajs/system/lib/cgroups',
+    group: {
+      '': '@nikitajs/system/lib/group',
+      read: '@nikitajs/system/lib/group/read',
+      remove: '@nikitajs/system/lib/group/remove'
+    },
     info: {
       disks: '@nikitajs/system/lib/info/disks',
       os: '@nikitajs/system/lib/info/os'
@@ -19,6 +24,11 @@ module.exports = {
     running: '@nikitajs/system/lib/running',
     tmpfs: '@nikitajs/system/lib/tmpfs',
     uid_gid: '@nikitajs/system/lib/uid_gid',
+    user: {
+      '': '@nikitajs/system/lib/user',
+      read: '@nikitajs/system/lib/user/read',
+      remove: '@nikitajs/system/lib/user/remove'
+    }
   }
 };
 

@@ -31,3 +31,5 @@ docker-compose up --abort-on-container-exit
 cd $CWD/tmpfs
 docker-compose up --abort-on-container-exit
 
+cd $CWD/user
+docker-compose up --abort-on-container-exit

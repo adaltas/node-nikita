@@ -8,6 +8,10 @@ module.exports =
   system:
     authconfig: '@nikitajs/system/src/authconfig'
     cgroups: '@nikitajs/system/src/cgroups'
+    group:
+      '': '@nikitajs/system/src/group'
+      read: '@nikitajs/system/src/group/read'
+      remove: '@nikitajs/system/src/group/remove'
     info:
       disks: '@nikitajs/system/src/info/disks'
       os: '@nikitajs/system/src/info/os'
@@ -16,6 +20,10 @@ module.exports =
     running: '@nikitajs/system/src/running'
     tmpfs: '@nikitajs/system/src/tmpfs'
     uid_gid: '@nikitajs/system/src/uid_gid'
+    user:
+      '': '@nikitajs/system/src/user'
+      read: '@nikitajs/system/src/user/read'
+      remove: '@nikitajs/system/src/user/remove'
 (->
   try
     await registry.register module.exports

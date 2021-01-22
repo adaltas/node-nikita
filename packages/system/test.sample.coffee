@@ -2,10 +2,15 @@
 module.exports =
   tags:
     api: true
+    posix: true
+    system_authconfig: false
+    system_cgroups: false
+    system_group: false
     system_info_disks: false
     system_info_os: false
     system_limits: false
     system_tmpfs: false
+    system_user: false
   config: [
     label: 'local'
   ,
