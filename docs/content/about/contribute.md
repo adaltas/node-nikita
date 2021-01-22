@@ -20,7 +20,7 @@ Contributions go far beyond pull requests and commits. we are thrilled to receiv
 
 ## Open Development
 
-All work on Nikita happens directly on GitHub. We currently commit directly on the master branch. In the future, both core team members and external contributors could send pull requests which go through the same review process.
+All work on Nikita happens directly on GitHub. Both core team members and external contributors send pull requests which go through the same review process.
 
 ## Branch Organization
 
@@ -30,9 +30,9 @@ If you send a pull request, please do it against the master branch. We maintain 
 
 ## Semantic Versioning
 
-Nikita follows semantic versioning. We release patch versions for bugfixes, minor versions for new features, and major versions for any breaking changes. When we make breaking changes, we also introduce deprecation warnings in a minor version so that our users learn about the upcoming changes and migrate their code in advance.
+Nikita follows [Semantic Versioning](https://semver.org/) (aka SemVer). We release patch versions for bug fixes, minor versions for new features, and major versions for any breaking changes. When we make breaking changes, we also introduce deprecation warnings in a minor version so that our users learn about the upcoming changes and migrate their code in advance.
 
-Every significant change is documented in the changelog file.
+Every significant change is documented in the [Changelog](changelog) file.
 
 ## Documentation
 
@@ -50,17 +50,23 @@ If you intend to change the public API, or make any non-trivial changes to the i
 
 If you’re only fixing a bug, it’s fine to submit a pull request right away but we still recommend to file an issue detailing what you’re fixing. This is helpful in case we don’t accept that specific fix but want to keep track of the issue.
 
-### Project Guideline
+### Conventional Commits
 
-Note, this section shall receive additional comments as we move forward.
+The Nikita Git repository follows the [Conventional Commits](https://www.conventionalcommits.org) specification that provides an easy set of rules for creating an explicit commit history.
 
-* Configs are listed by alphabetical order
-* Configs 1st line in the form of "* `name` (arg1, arg2)   "
-* Configs arg list the accept types separated by "|", types are bool, string, obj, int, float
-* Configs types can be surrounded by square braket to indicate an array, eg: "[int]"
-* Configs don't list global configs
-* Argument are listed in provided order
-* First two arguments must always be "err" and "status"
+Here's how a commit message looks like:
+
+```text
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+The `<type>` message follows [the Angular convention](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) and must be one from the list: `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`. The `[optional scope]` message is associated to the directory name of [the available packages](https://github.com/adaltas/node-nikita/tree/master/packages). A scope is optional and is contained within parentheses, e.g., `feat(engine): ability to parse arrays`. Follow [the specification](https://www.conventionalcommits.org) to learn more about Conventional Commits.
+
+Commit messages are automatically validated, in case of any mistake the error message is prompted. Internally, we use [Husky](https://typicode.github.io/husky/) which plugs into Git by registering a hook to call [commitlint](https://commitlint.js.org/) to validate the format of the messages.
 
 ## Bugs
 
@@ -70,4 +76,4 @@ We are using GitHub Issues for our public bugs. We keep a close eye on this and 
 
 ### Reporting New Issues
 
-The best way to get your bug fixed is to provide a reduced test case. You can get inspiration from our current [test suite](https://github.com/adaltas/node-nikita/tree/master/test). Some test require a specific environment which is provided through [docker environments](https://github.com/adaltas/node-nikita/tree/master/docker).
+The best way to get your bug fixed is to provide a reduced test case. You can get inspiration from our current [tests' suite](https://github.com/adaltas/node-nikita/tree/master/packages/core/test). Note, tests are filtered by tags and some tests require a specific environment which is provided through [Docker or LXD environments](https://github.com/adaltas/node-nikita/tree/master/packages/tools/env).
