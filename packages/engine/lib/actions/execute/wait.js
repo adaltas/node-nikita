@@ -157,7 +157,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    argument: 'command',
+    argument_to_config: 'command',
     schema: schema
   }
 };
