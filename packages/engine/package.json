@@ -114,7 +114,7 @@
     "directory": "packages/engine"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/engine\\\/src/@nikitajs\\\/engine\\\/lib/g'",
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/engine\\/src/@nikitajs\\/engine\\/lib/g'",
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "pretest": "npm run build",

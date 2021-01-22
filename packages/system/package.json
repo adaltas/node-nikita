@@ -82,7 +82,7 @@
     "directory": "packages/system"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/system\\\/src/@nikitajs\\\/system\\\/lib/g'",
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/system\\/src/@nikitajs\\/system\\/lib/g'",
     "pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'",
     "testall": "mocha 'test/**/*.coffee' && env/run.sh"
