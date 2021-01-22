@@ -61,7 +61,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    argument_name: 'username',
+    argument_to_config: 'username',
     global: 'db',
     shy: true,
     schema: schema

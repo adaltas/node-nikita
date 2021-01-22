@@ -58,7 +58,7 @@ Create a user for the destination database.
     module.exports =
       handler: handler
       metadata:
-        argument_name: 'database'
+        argument_to_config: 'database'
         global: 'db'
         schema: schema
 

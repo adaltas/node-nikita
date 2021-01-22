@@ -57,7 +57,7 @@ schemas.map( ({name, owner}) => {
     module.exports =
       handler: handler
       metadata:
-        argument_name: 'database'
+        argument_to_config: 'database'
         global: 'db'
         schema: schema
       

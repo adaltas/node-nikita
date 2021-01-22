@@ -44,7 +44,7 @@ Check if a database exists.
     module.exports =
       handler: handler
       metadata:
-        argument_name: 'database'
+        argument_to_config: 'database'
         global: 'db'
         shy: true
         schema: schema

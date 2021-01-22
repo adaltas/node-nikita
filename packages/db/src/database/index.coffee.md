@@ -107,7 +107,7 @@ console.info(`Database created or modified: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        argument_name: 'database'
+        argument_to_config: 'database'
         global: 'db'
         schema: schema
 
