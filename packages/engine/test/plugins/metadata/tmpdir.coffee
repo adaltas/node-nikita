@@ -30,12 +30,22 @@ describe 'plugins.metadata.tmpdir', ->
       , ({ssh}) ->
         tmpdir = await @call
           metadata: tmpdir: true
-        , ({metadata}) ->
-          await fs.exists ssh, metadata.tmpdir
-          .should.be.resolvedWith true
-          metadata.tmpdir
-        fs.exists ssh, tmpdir
-        .should.be.resolvedWith false
+        , ({metadata: {tmpdir}}) ->
+          await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+          tmpdir
+        fs.exists(ssh, tmpdir).should.be.resolvedWith false
+
+    they 'remove directory with files and foders inside', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ({ssh}) ->
+        tmpdir = await @call
+          metadata: tmpdir: true
+        , ({metadata: {tmpdir}}) ->
+          await fs.mkdir ssh, "#{tmpdir}/a_dir"
+          await fs.writeFile ssh, "#{tmpdir}/a_dir/a_file", ''
+          tmpdir
+        fs.exists(ssh, tmpdir).should.be.resolvedWith false
 
     they 'in children', ({ssh}) ->
       nikita.call ssh: ssh, metadata: tmpdir: true, ({metadata, ssh})->
