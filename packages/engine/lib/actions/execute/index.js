@@ -312,6 +312,11 @@ config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
       description: `Unix user id.`
     }
   },
+  dependencies: {
+    arch_chroot: {
+      required: ['rootdir']
+    }
+  },
   required: ['command']
 };
 
@@ -360,9 +365,7 @@ handler = async function({
     // TODO move next 2 lines this to schema or on_action ?
     throw Error("Incompatible properties: bash, arch_chroot");
   }
-  if (config.arch_chroot && !config.rootdir) {
-    throw Error("Required Option: \"rootdir\" with \"arch_chroot\"");
-  }
+  // throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
   // Environment variables are merged with parent
   env = merge({}, ...(await walk(function({
       config: {env}

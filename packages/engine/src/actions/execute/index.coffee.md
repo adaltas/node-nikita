@@ -280,6 +280,8 @@ console.info(stdout)
           description: """
           Unix user id.
           """
+      dependencies:
+        arch_chroot: required: ['rootdir']
       required: ['command']
           
 ## Handler
@@ -296,7 +298,7 @@ console.info(stdout)
       dry = await find ({config: {dry}}) -> dry
       # TODO move next 2 lines this to schema or on_action ?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
-      throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
+      # throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
       # Environment variables are merged with parent
       env = merge {}, ...await walk ({config: {env}}) -> env
       # Serialize env in a sourced file
