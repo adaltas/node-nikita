@@ -18,7 +18,6 @@
 var errors, fs, handler, on_action, schema, utils;
 
 on_action = {
-  // after: '@nikitajs/engine/lib/plugins/tools_find'
   before: '@nikitajs/engine/lib/metadata/tmpdir',
   handler: async function({
       config,
@@ -35,9 +34,8 @@ on_action = {
       config.target = metadata.argument;
     }
     if (sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
-      metadata.tmpdir = true;
+      return metadata.tmpdir = true;
     }
-    return metadata.tmpdir = true;
   }
 };
 

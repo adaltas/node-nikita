@@ -17,14 +17,12 @@ console.info(`Stream was created: ${status}`)
 ## Hooks
 
     on_action =
-      # after: '@nikitajs/engine/src/plugins/tools_find'
       before: '@nikitajs/engine/src/metadata/tmpdir'
       handler: ({config, metadata, tools: {find}}) ->
         sudo = await find ({config: {sudo}}) -> sudo
         config.target = metadata.argument if metadata.argument?
         if sudo or config.flags?[0] is 'a'
           metadata.tmpdir = true
-        metadata.tmpdir = true
 
 ## Schema
 
