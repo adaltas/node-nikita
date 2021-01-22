@@ -10,6 +10,9 @@ cd /nikita/packages/system
 npx mocha 'test/**/*.coffee'
 EOF
 
+cd $CWD/cgroups
+docker-compose up --abort-on-container-exit
+
 cd $CWD/info_archlinux
 docker-compose up --abort-on-container-exit
 
