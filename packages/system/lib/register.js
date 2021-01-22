@@ -8,8 +8,12 @@ registry = require('@nikitajs/engine/lib/registry');
 
 module.exports = {
   system: {
+    authconfig: '@nikitajs/system/lib/authconfig',
+    cgroups: '@nikitajs/system/lib/cgroups',
     limits: '@nikitajs/system/lib/limits',
     mod: '@nikitajs/system/lib/mod'
+    running: '@nikitajs/system/lib/running',
+    tmpfs: '@nikitajs/system/lib/tmpfs',
   }
 };
 
