@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require '../test'
+{config, images, tags} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd

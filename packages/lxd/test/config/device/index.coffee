@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/engine/lib'
 assert = require 'assert'
-{tags, config} = require '../../test'
+{config, images, tags} = require '../../test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
@@ -17,7 +17,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -34,7 +34,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -51,7 +51,7 @@ describe 'lxd.config.device', ->
         force: true
       .lxd.init
         container: 'c1'
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
       .lxd.config.device
         container: 'c1'
         device: 'test'
@@ -72,7 +72,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         {status} = await @lxd.config.device
           container: 'c1'
@@ -94,7 +94,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -120,7 +120,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -148,7 +148,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.config.device
           container: 'c1'
@@ -173,7 +173,7 @@ describe 'lxd.config.device', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.config.device
           container: 'c1'

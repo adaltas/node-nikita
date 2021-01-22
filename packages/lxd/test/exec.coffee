@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require './test'
+{config, images, tags} = require './test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
@@ -15,7 +15,7 @@ describe 'lxd.exec', ->
         container: 'c1'
         force: true
       await @lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'c1'
       await @lxd.start
         container: 'c1'
@@ -37,7 +37,7 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         await @lxd.start
           container: 'c1'
@@ -55,11 +55,14 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         await @lxd.start
           container: 'c1'
         await @lxd.exec
+          metadata: # Wait for network to be ready
+            retry: 3
+            sleep: 200
           container: 'c1'
           command: 'apk add bash'
         {stdout} = await @lxd.exec
@@ -79,7 +82,7 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         await @lxd.start
           container: 'c1'
@@ -101,7 +104,7 @@ describe 'lxd.exec', ->
           container: 'c1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         await @lxd.start
           container: 'c1'

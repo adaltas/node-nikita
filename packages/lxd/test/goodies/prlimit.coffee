@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require '../test'
+{config, images, tags} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd_prlimit
@@ -15,7 +15,7 @@ describe 'lxd.goodie.prlimit', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'c1'
       @lxd.start
         container: 'c1'

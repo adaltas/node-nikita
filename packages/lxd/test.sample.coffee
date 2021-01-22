@@ -3,6 +3,8 @@ module.exports =
   tags:
     lxd: true
     lxd_prlimit: true
+  images:
+    alpine: 'alpine/3.13'
   config: [
     label: 'local'
   ,

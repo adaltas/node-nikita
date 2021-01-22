@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require '../test'
+{config, images, tags} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
@@ -16,7 +16,7 @@ describe 'lxd.file.push', ->
         container: 'c1'
         force: true
       await @lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'c1'
       await @lxd.start
         container: 'c1'
@@ -38,12 +38,14 @@ describe 'lxd.file.push', ->
         container: 'c1'
         force: true
       await @lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'c1'
       await @lxd.start
         container: 'c1'
-      await @wait 300 # Wait for network to be ready
       await @lxd.exec
+        metadata: # Wait for network to be ready
+          retry: 3
+          sleep: 200
         container: 'c1'
         command: 'apk add openssl'
       await @file
@@ -68,12 +70,14 @@ describe 'lxd.file.push', ->
         container: 'c1'
         force: true
       @lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'c1'
       @lxd.start
         container: 'c1'
-      await @wait 300 # Wait for network to be ready
-      @lxd.exec
+      await @lxd.exec
+        metadata: # Wait for network to be ready
+          retry: 3
+          sleep: 200
         container: 'c1'
         command: 'apk add openssl'
       @file
@@ -99,12 +103,14 @@ describe 'lxd.file.push', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.start
           container: 'c1'
-        await @wait 300 # Wait for network to be ready
-        @lxd.exec
+        await @lxd.exec
+          metadata: # Wait for network to be ready
+            retry: 3
+            sleep: 200
           container: 'c1'
           command: 'apk add openssl'
         {status} = await @lxd.file.push
@@ -125,12 +131,14 @@ describe 'lxd.file.push', ->
           container: 'c1'
           force: true
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'c1'
         @lxd.start
           container: 'c1'
-        await @wait 300 # Wait for network to be ready
-        @lxd.exec
+        await @lxd.exec
+          metadata: # Wait for network to be ready
+            retry: 3
+            sleep: 200
           container: 'c1'
           command: 'apk add openssl'
         @lxd.file.push

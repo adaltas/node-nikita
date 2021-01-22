@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require '../test'
+{config, images, tags} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
@@ -20,7 +20,7 @@ describe 'lxd.network.attach', ->
       try
         @clean()
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u0'
         @lxd.network
           network: "testnet0"
@@ -44,7 +44,7 @@ describe 'lxd.network.attach', ->
       @clean()
       try
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u0'
         @lxd.network
           network: "testnet0"

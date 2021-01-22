@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/engine/lib'
-{tags, config} = require './test'
+{config, images, tags} = require './test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
@@ -12,7 +12,7 @@ describe 'lxd.init', ->
     it 'Container name is between 1 and 63 characters long', ->
       nikita
       .lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: "very-long-long-long-long-long-long-long-long-long-long-long-long-long-name"
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -27,7 +27,7 @@ describe 'lxd.init', ->
     it 'Container name accepts letters, numbers and dashes from the ASCII table', ->
       nikita
       .lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'my_name'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -42,7 +42,7 @@ describe 'lxd.init', ->
     it 'Container name is not started with a digit or a dash', ->
       nikita ->
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: '1u'
         .should.be.rejectedWith
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -54,7 +54,7 @@ describe 'lxd.init', ->
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
           ].join ' '
         @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: '-u1'
         .should.be.rejectedWith
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -69,7 +69,7 @@ describe 'lxd.init', ->
     it 'Container name is not end with a dash', ->
       nikita
       .lxd.init
-        image: 'images:alpine/edge'
+        image: "images:#{images.alpine}"
         container: 'u1-'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -91,7 +91,7 @@ describe 'lxd.init', ->
           container: 'u1'
           force: true
         {status} = await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u1'
         status.should.be.true()
   
@@ -103,7 +103,7 @@ describe 'lxd.init', ->
           container: 'u1'
           force: true
         {status} = await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u1'
         status.should.be.true()
   
@@ -115,10 +115,10 @@ describe 'lxd.init', ->
           container: 'u1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u1'
         {status} = await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'u1'
         status.should.be.false()
   
@@ -130,7 +130,7 @@ describe 'lxd.init', ->
           container: 'vm1'
           force: true
         {status} = await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
         status.should.be.true()
@@ -143,11 +143,11 @@ describe 'lxd.init', ->
           container: 'vm1'
           force: true
         await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
         {status} = await @lxd.init
-          image: 'images:alpine/edge'
+          image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
         status.should.be.false()
