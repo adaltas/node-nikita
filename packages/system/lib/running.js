@@ -3,13 +3,6 @@
 
 // Check if a process is running.
 
-// ## Options
-
-// * `pid` (string, optional)   
-//   The PID of the process to inspect; required if `target` is not provided.
-// * `target` (string, optional)   
-//   Path to the file storing the PID value; required if `pid` is not provided.
-
 // ## Check if the pid is running
 
 // The example check if a pid match a running process.
@@ -40,55 +33,91 @@
 // });
 // ```
 
-// ## Source code
-module.exports = function({options}) {
-  this.log({
-    message: "Entering system.running",
-    level: 'DEBUG',
-    module: 'nikita/lib/system/running'
-  });
-  if (!((options.pid != null) || options.target)) {
+// ## Hooks
+var handler, on_action, schema;
+
+on_action = function({config}) {
+  if (typeof config.pid === 'string') {
+    return config.pid = parseInt(config.pid, 10);
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'pid': {
+      type: 'integer',
+      description: `The PID of the process to inspect, required if \`target\` is not provided.`
+    },
+    'target': {
+      type: 'string',
+      description: `Path to the file storing the PID value, required if \`pid\` is not provided.`
+    }
+  },
+  anyOf: [
+    {
+      required: ['pid']
+    },
+    {
+      required: ['target']
+    }
+  ]
+};
+
+// ## Handler
+handler = async function({
+    config,
+    tools: {log}
+  }) {
+  var code, stdout;
+  if (!((config.pid != null) || config.target)) {
     // Validate parameters
     throw Error('Invalid Options: one of pid or target must be provided');
   }
-  if ((options.pid != null) && options.target) {
+  if ((config.pid != null) && config.target) {
     throw Error('Invalid Options: either pid or target must be provided');
   }
-  this.system.execute({
-    if: options.pid != null,
-    cmd: `kill -s 0 '${options.pid}' >/dev/null 2>&1 || exit 42`,
-    code_skipped: 42
-  }, (err, {code}) => {
-    return this.log((function() {
+  if (config.pid) {
+    ({code} = (await this.execute({
+      command: `kill -s 0 '${config.pid}' >/dev/null 2>&1 || exit 42`,
+      code_skipped: 42
+    })));
+    log((function() {
       switch (code) {
         case 0:
           return {
-            message: `PID ${options.pid} is running`,
+            message: `PID ${config.pid} is running`,
             level: 'INFO',
             module: 'nikita/lib/system/running'
           };
         case 42:
           return {
-            message: `PID ${options.pid} is not running`,
+            message: `PID ${config.pid} is not running`,
             level: 'INFO',
             module: 'nikita/lib/system/running'
           };
       }
     })());
-  });
-  return this.system.execute({
-    if: options.target,
-    cmd: `[ -f '${options.target}' ] || exit 43
-pid=\`cat '${options.target}'\`
+    if (code === 0) {
+      return {
+        running: true
+      };
+    }
+  }
+  if (config.target) {
+    ({code, stdout} = (await this.execute({
+      command: `[ -f '${config.target}' ] || exit 43
+pid=\`cat '${config.target}'\`
 echo $pid
 if ! kill -s 0 "$pid" >/dev/null 2>&1; then
-  rm '${options.target}';
+  rm '${config.target}';
   exit 42;
 fi`,
-    code_skipped: [42, 43],
-    stdout_trim: true
-  }, function(err, {code, stdout}) {
-    return this.log((function() {
+      code_skipped: [42, 43],
+      stdout_trim: true
+    })));
+    log((function() {
       switch (code) {
         case 0:
           return {
@@ -104,11 +133,31 @@ fi`,
           };
         case 43:
           return {
-            message: `PID file ${options.target} does not exists`,
+            message: `PID file ${config.target} does not exists`,
             level: 'INFO',
             module: 'nikita/lib/system/running'
           };
       }
     })());
-  });
+    if (code === 0) {
+      return {
+        running: true
+      };
+    }
+  }
+  return {
+    running: false
+  };
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  metadata: {
+    // raw_output: true
+    schema: schema
+  }
 };
