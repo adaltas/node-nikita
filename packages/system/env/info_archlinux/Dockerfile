@@ -23,8 +23,8 @@ RUN pacman --noconfirm -S openssh \
 # Install docker
 # RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/system
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

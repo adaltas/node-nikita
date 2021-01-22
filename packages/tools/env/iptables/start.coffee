@@ -19,15 +19,6 @@ nikita
           path: '/nikita'
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       ssh: enabled: true
-      user:
-        nikita: sudo: true, authorized_keys: "#{__dirname}/../../assets/id_rsa.pub"
-  prevision: ->
-    await @tools.ssh.keygen
-      metadata: header: 'SSH key'
-      target: "#{__dirname}/../../assets/id_rsa"
-      bits: 2048
-      key_format: 'PEM'
-      comment: 'nikita'
   provision_container: ({config}) ->
     await @lxd.exec
       metadata: header: 'Node.js'
@@ -42,21 +33,14 @@ nikita
       """
       trap: true
       code_skipped: 42
-    await @lxd.file.push
-      metadata: header: 'User Private Key'
-      container: config.container
-      gid: 'nikita'
-      uid: 'nikita'
-      source: "#{__dirname}/../../assets/id_rsa"
-      target: '/home/nikita/.ssh/id_rsa'
     await @lxd.exec
-      metadata: header: 'Root SSH dir'
+      metadata: header: 'SSH keys'
       container: config.container
-      command: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
-    await @lxd.file.push
-      metadata: header: 'Root SSH Private Key'
-      container: config.container
-      gid: 'root'
-      uid: 'root'
-      source: "#{__dirname}/../../assets/id_rsa"
-      target: '/root/.ssh/id_rsa'
+      command: """
+      mkdir -p /root/.ssh && chmod 700 /root/.ssh
+      if [ ! -f /root/.ssh/id_rsa ]; then
+        ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
+        cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
+      fi
+      """
+      trap: true

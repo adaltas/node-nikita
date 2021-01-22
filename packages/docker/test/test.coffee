@@ -19,4 +19,7 @@ nikita = require '@nikitajs/engine/lib'
 they = require('mocha-they')(config.config)
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
-  nikita(ssh: ssh, docker: config.docker).docker.pull image: 'httpd'
+  nikita
+    ssh: ssh
+    docker: config.docker
+  .docker.pull image: 'httpd'

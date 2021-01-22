@@ -36,8 +36,5 @@ RUN yum clean all
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/service
-ENV TERM xterm
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
-ENTRYPOINT ["/run.sh"]
-CMD []
+ENTRYPOINT ["/entrypoint.sh"]

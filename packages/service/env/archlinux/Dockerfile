@@ -26,18 +26,8 @@ RUN pacman --noconfirm -S zip git
 # Install docker
 RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
 
-# # Install arch-chroot
-# Note, jan 3rd 2020: test are passing without this, not sure why it was here
-# in the first place.
-# RUN pacman --noconfirm -S arch-install-scripts tar gzip \
-#  && curl -L https://mirrors.kernel.org/archlinux/iso/2018.07.01/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz \
-#  && tar xzf /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -C /var/tmp \
-#  && rm -f /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz
-
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/service
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
-# CMD []
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

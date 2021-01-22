@@ -34,20 +34,10 @@ RUN yum install -y openssh-server openssh-clients \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
-# Install Java, OpenSSL, GIT and compression dependencies
-# RUN yum install -y \
-#   java \
-#   openssl \
-#   git \
-#   zip unzip bzip2
-
 RUN yum clean all
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/service
-ENV TERM xterm
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
-ENTRYPOINT ["/run.sh"]
-CMD []
+ENTRYPOINT ["/entrypoint.sh"]

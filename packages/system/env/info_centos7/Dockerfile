@@ -23,8 +23,8 @@ RUN yum install -y openssh-server openssh-clients \
 
 RUN yum clean all
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/system
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

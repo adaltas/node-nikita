@@ -1,22 +1,11 @@
 #!/bin/bash
 set -e
 
-CWD=`pwd`/`dirname ${BASH_SOURCE}`
+cd `pwd`/`dirname ${BASH_SOURCE}`
 
-cd $CWD/arch_chroot
-docker-compose up --abort-on-container-exit
-
-cd $CWD/centos6
-docker-compose up --abort-on-container-exit
-
-cd $CWD/centos7
-docker-compose up --abort-on-container-exit
-
-cd $CWD/chown
-docker-compose up --abort-on-container-exit
-
-cd $CWD/sudo
-docker-compose up --abort-on-container-exit
-
-cd $CWD/ubuntu_trusty
-docker-compose up --abort-on-container-exit
+./arch_chroot/run.sh
+./centos6/run.sh
+./centos7/run.sh
+./chown/run.sh
+./sudo/run.sh
+./ubuntu_trusty/run.sh

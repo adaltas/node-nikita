@@ -29,10 +29,10 @@ RUN yum install -y mysql
 
 RUN yum clean all
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/db
 ENV TERM xterm
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD []

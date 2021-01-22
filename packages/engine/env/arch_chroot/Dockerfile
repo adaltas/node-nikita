@@ -27,8 +27,8 @@ RUN pacman --noconfirm -S arch-install-scripts tar gzip \
  && tar xzf /var/tmp/archlinux-bootstrap.tar.gz -C /var/tmp \
  && rm -f /var/tmp/archlinux-bootstrap.tar.gz
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/engine
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

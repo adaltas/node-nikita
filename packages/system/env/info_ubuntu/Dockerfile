@@ -19,8 +19,8 @@ RUN apt-get install -y openssh-server \
 RUN apt-get install -y supervisor
 ADD ./supervisord.conf /etc/supervisord.conf
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/system
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

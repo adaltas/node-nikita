@@ -26,11 +26,8 @@ RUN yum install -y openssl
 
 RUN yum clean all
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/tools
-ENV TERM xterm
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
-ENTRYPOINT ["/run.sh"]
-CMD []
+ENTRYPOINT ["/entrypoint.sh"]

@@ -15,10 +15,10 @@ RUN apt-get install -y openssh-server \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/engine
 # Enable color output in TTY
 ENV TERM xterm
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

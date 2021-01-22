@@ -13,14 +13,24 @@ describe 'system.user.read', ->
       nikita
         ssh: ssh
       , ->
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
-        {status} = await @system.user 'toto'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
+        {status} = await @system.user
+          name: 'toto'
+          system: true
+          uid: 1000
         status.should.be.true()
         {user} = await @system.user.read
           getent: true
           uid: 'toto'
-        user.should.eql '' # TODO
+        user.should.match
+          user: 'toto'
+          uid: 1000
+          comment: ''
+          home: '/home/toto'
+          shell: '/bin/sh'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
   
   describe 'usage', ->
     return unless tags.posix

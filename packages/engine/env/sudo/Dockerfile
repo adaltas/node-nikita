@@ -40,9 +40,10 @@ RUN yum install -y openssl
 
 # Finalize
 RUN yum clean all
-ADD ./run.sh /run.sh
+
+ADD ./entrypoint.sh /entrypoint.sh
 WORKDIR /home/nikita/work/packages/engine
 ENV TERM xterm
 USER nikita
-ENTRYPOINT ["/run.sh"]
-CMD []
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -19,12 +19,12 @@ RUN apt-get install -y openssh-server \
  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
-COPY ./run.sh /run.sh
-RUN mkdir -p /nikita
-WORKDIR /nikita/packages/tools
-
 # Install local dependencies
 RUN apt-get install -y dconf-cli gnome-terminal
 COPY dbus.conf /etc/dbus-1/session.d/dbus.conf
 
-ENTRYPOINT ["/run.sh"]
+COPY ./entrypoint.sh /entrypoint.sh
+RUN mkdir -p /nikita
+WORKDIR /nikita/packages/tools
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -29,10 +29,8 @@ RUN yum install -y openldap-clients
 
 RUN yum clean all
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/ldap
-ENV TERM xterm
 
-ENTRYPOINT ["/run.sh"]
-CMD []
+ENTRYPOINT ["/entrypoint.sh"]

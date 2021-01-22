@@ -66,7 +66,7 @@ describe 'tools.repo', ->
       ssh: ssh
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/CentOS.repo"
         content: """
           [base]
@@ -77,6 +77,7 @@ describe 'tools.repo', ->
           gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
         """
       {status} = await @tools.repo
+        # metadata: debug: true
         source: "#{tmpdir}/CentOS.repo"
         clean: 'test*'
       status.should.be.false()

@@ -31,10 +31,7 @@ RUN chmod +x /usr/local/bin/docker-compose
 RUN yum clean all
 ADD ./supervisord.conf /etc/supervisord.conf
 
-ADD ./run.sh /run.sh
+ADD ./entrypoint.sh /entrypoint.sh
 WORKDIR /nikita/packages/docker
-ENV TERM xterm
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
-ENTRYPOINT ["/run.sh"]
-CMD []
+ENTRYPOINT ["/entrypoint.sh"]
