@@ -10,7 +10,7 @@ This tutorial covers the basics to get started and to use Nikita. It is organize
 - [What is Nikita?](#what-is-nikita)
 - [Installation instructions](#installation-instructions)
 - [Core concepts](#core-concepts)
-- [Real life example](#real-life-example)
+- [Real-life example](#real-life-example)
 
 Feel free to skip the second section if you are familiar with Node.js and its ecosystem.
 
@@ -18,17 +18,23 @@ For detailed information, navigate the documentation or submit an issue if you d
 
 ## What is Nikita?
 
-Nikita is build as a library, which provides simple functions on a host (server, desktop, machine, vm...) either locally or remotely over ssh.
+Nikita is build as a library, which provides simple functions on a host (server, desktop, machine, vm...) either locally or remotely over SSH.
 
 ### Technologies
 
-Nikita is written in JavaScript and executed by NodeJs. It is delivered as a Node.js package and is available on NPM.
+Nikita is written in JavaScript and executed by NodeJs. It is delivered as a Node.js package and is available on [NPM](https://www.npmjs.com/package/nikita).
 
 ### Use cases
 
-It can serve  multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate  components' deployments (installations, functional tests, lifecycle management...).
+It can serve multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate components' deployments (installations, functional tests, lifecycle management...).
 
-Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage Big Data system.
+Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage Big Data systems.
+
+### Supported platforms
+
+Nikita targets Unix-like system including Linux and macOS. Windows is not supported as a targeting node where to execute actions. It is however known to work as a Nikita host. This mean you can run Nikita from a Windows host as long as you are targeting Linux nodes over SSH.
+
+Throughout this tutorial, it is assumed you work on Linux or macOS. To be able to run the same code examples without modifications on Windows, the easiest way would be to work inside a [Node.js Docker container](https://hub.docker.com/_/node). Before that, you have to install Docker Desktop following [this guide](https://docs.docker.com/docker-for-windows/install/) and start a container with the command `docker run -it node bash`.
 
 ### What is inside Nikita
 
@@ -36,21 +42,21 @@ Nikita comes with a set of default functions.
 It is bundled with many handy functions covering a large range of usage:
   - write files
   - execute shell commands
-  - package managements
+  - package management
   - run docker containers
 
-You are encouraged to extend Nikita with your own actions. To write an action is just about writing a plain vanilla javascript function.
+You are encouraged to extend Nikita with your own [actions](/action). To write an action is just about writing a plain vanilla JavaScript function.
 
 ## Installation instructions
 
 ### Dependencies
 
-To run your code, you must have Node.js and NPM (or YARN) installed. The procedure depends on your operating system. They are multiple alternatives to install Node.js:
+To run your code, you must have Node.js and NPM (or YARN) installed. The procedure depends on your operating system. There are multiple alternatives to install Node.js:
 
-- [Download](https://Node.js.org/en/download/)   
-  The [official download page](https://Node.js.org/en/download/) provides you with the choices of downloading an installer, the binary files and the source code.
-- [Package manager](https://Node.js.org/en/download/package-manager/)   
-  The [package manager](https://Node.js.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depends on your system.
+- [Download](https://nodejs.org/en/download/)   
+  The [official download page](https://nodejs.org/en/download/) provides you with the choices of downloading an installer, the binary files and the source code.
+- [Package manager](https://nodejs.org/en/download/package-manager/)   
+  The [package manager](https://nodejs.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depends on your system.
 - Node.js version manager
   [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advance users, this is our recommended procedure as we personally use [N](https://github.com/tj/n).
 
@@ -58,8 +64,7 @@ Once installed, you should have the `node` and `npm` commands available from you
 
 ### Initialization
 
-A Nikita project is a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason we will use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track our development.
-Several tools are available such as [GIT](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [GIT](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
+A Nikita project is a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason we will use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track our development. Several tools are available such as [GIT](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [GIT](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
 
 ```bash
 # Create a new folder
@@ -67,6 +72,7 @@ mkdir tutorial
 cd tutorial
 # Initialize the git repository
 git init
+# Change URL to your remote repository URL
 git remote add origin https://github.com/adaltas/node-nikita-tutorial.git
 # Ignore files
 cat > .gitignore <<MD
@@ -132,8 +138,6 @@ This tutorial is written in JavaScript to get you started quickly. If you naviga
 
 CoffeeScript has a very clean syntax and is perfectly suited with the declarative aspect of the Nikita API. In the end, the source code looks like one written in YAML while preserving the advantages of a procedural language like JavaScript. A second advantage we found with CoffeeScript is its [literate functionality](http://coffeescript.org/#literate) which let you write Markdown files with CoffeeScript code inside. Your source code looks a bit like a Notebook, it is a markdown document with documentation and code organized in blocks.
 
-At the end of the tutorial, we will show you how a code would look if written in CoffeeScript. 
-
 ### Actions handler
 
 An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated metadata, called config. It is materialized as a JavaScript object, for example:
@@ -147,64 +151,29 @@ An action is the basic building block in Nikita. It is basically a function, cal
 }
 ```
 
-As you can see, config is made available as the first argument of the handler. This handler is synchronous. Declaring a second argument will mark the function as asynchronous. This second argument is a callback function to be called once the action is done.
-
-```js
-{
-  who: 'leon',
-  handler: function({config}, callback){
-    setImmediate(function(){
-      console.info(config.who)
-    })
-  }
-}
-```
+As you can see, config is made available as the first argument of the handler.
 
 ### Calling actions
 
 To execute an action, you must create a Nikita session and execute the `call` function:
 
-```js
-nikita = require('nikita')
-nikita.call({
-  who: 'leon',
-  handler: function({config}){
-    console.info(config.who)
-  }
-})
-```
+`embed:about/tutorial/samples/call.js`
 
 The function `nikita.call` is very flexible in how arguments are passed. It receives zero to multiple objects which will be merged together. Also, a function is interpreted as the action handler, being converted to an object with the `handler` property. It means the previous example could be rewritten as:
 
-```js
-nikita = require('nikita')
-nikita.call({
-  who: 'leon'
-}, function({config}){
-    console.info(config.who)
-  }
-)
-```
+`embed:about/tutorial/samples/call.converted.js`
 
-### Actions callback
+### Actions promise
 
-A second function is interpreted as a method to get notified when your handler has completed. It will be converted  to an object with the `callback` property. We call it the action callback.
+All Nikita actions return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To execute your commands sequentially after calling a Nikita action, you have to call an anonymous asynchronous function and await for the result from Promise.
 
-The action callback is called with two arguments, an error if any and an object containing information from the handler.
+`embed:about/tutorial/samples/promise.js`
 
-```js
-nikita = require('nikita')
-nikita.call(
-  // Handler
-  function({config}){
-    console.info(config.who)
-  },
-  // Callback
-  function(err, {status}){
-    console.info(err ? err.message : status)
-  }
-)
-```
+### Scheduling actions
+
+You can create a chain of actions that will be executed one after another.
+
+<!-- TODO: finish here -->
 
 ### Idempotence and status
 
@@ -214,84 +183,21 @@ The status is used and interpreted with different meanings but in most cases it 
 
 > Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to "true" instead of "false". Simply remove the file with `rm /tmp/a_file` to overcome this issue.
 
-```js
-// Dependencies
-assert = require('assert')
-fs = require('fs')
-nikita = require('nikita')
-// Touch implementation
-touch = function({config}, callback){
-  fs.stat('/tmp/a_file', function(err, stat){
-    if(err && err.code !== 'ENOENT') return callback(err)
-    if(!err) return callback(null, false)
-    fs.writeFile('/tmp/a_file', '', function(err){
-      callback(err, true)
-    })
-  })
-}
-// New Nikita session
-nikita
-// First time calling touch
-.call(touch, function(err, {status}){
-  assert.equal(status, true)
-})
-// Second time calling touch
-.call(touch, function(err, {status}){
-  assert.equal(status, false)
-})
-```
+`embed:about/tutorial/samples/idempotence.js`
 
 Note, there is an existing `nikita.file.touch` action which does just that with additional functionalities such as detecting and applying changes of ownerships and permissions.
 
 ### External actions
 
-In order to reuse our new `touch` action, we could isolate it into a separate file. The new file is called a module in Node.js terminology. Nikita `call` will accept the exported object or function. A string is interpreted as the module path and will be automatically imported. Let's create two files "./lib/touch.js" and "app.js":
+In order to reuse our new `touch` action, we could isolate it into a separate file. The new file is called a module in Node.js terminology. Nikita `call` will accept the exported object or function. Let's create two files "./lib/touch.js" and "app.js":
 
 File "./lib/touch.js":
 
-```js
-// Dependencies
-fs = require('fs')
-// Touch implementation
-module.exports = function({config}, callback){
-  fs.stat('/tmp/a_file', function(err, stat){
-    if(err && err.code !== 'ENOENT') return callback(err)
-    if(!err) return callback(null, false)
-    fs.writeFile('/tmp/a_file', '', function(err){
-      callback(err, true)
-    })
-  })
-}
-```
+`embed:about/tutorial/samples/external/lib/touch.js`
 
-File "app.js":
+File "./app.js":
 
-```js
-// Dependencies
-assert = require('assert')
-nikita = require('nikita')
-touch = require('./lib/touch')
-// New Nikita session
-nikita
-// Calling touch module
-.call(touch, function(err, {status}){
-  assert.equal(status, true)
-})
-```
-
-Which is identical to:
-
-```js
-// Dependencies
-nikita = require('nikita')
-assert = require('assert')
-// New Nikita session
-nikita
-// Calling touch module
-.call('./lib/touch', function(err, {status}){
-  assert.equal(status, true)
-})
-```
+`embed:about/tutorial/samples/external/app.js`
 
 ### Passing config
 
@@ -299,242 +205,147 @@ The `touch` action is now a separate Node.js module. It is a vanilla JavaScript 
 
 File "./lib/touch.js":
 
-```js
-// Dependencies
-fs = require('fs')
-// Touch implementation
-module.exports = function({config}, callback){
-  fs.stat(config.target, function(err, stat){
-    if(err && err.code !== 'ENOENT') return callback(err)
-    if(!err) return callback(null, false)
-    fs.writeFile(config.target, '', function(err){
-      callback(err, true)
-    })
-  })
-}
-```
+`embed:about/tutorial/samples/config/lib/touch.js`
 
-File "app.js": 
-```js
-// Dependencies
-assert = require('assert')
-nikita = require('nikita')
-// New Nikita session
-nikita
-// Calling touch module
-.call('./lib/touch', {'target': '/tmp/a_file'}, function(err, {status}){
-  assert(status, true)
-})
-```
+File "./app.js": 
+
+`embed:about/tutorial/samples/config/app.js`
 
 ### Passing metadata
 
-There are several properties which are globally available to every actions such as `header`, `retry`, `relax`. Those are [metadata][/metadata/] and they are not to be confused with config. We encourage you to navigate the documentation. Covering all of them is not in the scope of this tutorial.
+There are several properties which are globally available to every actions such as `header`, `retry`, `relax`. Those are [metadata](/metadata/) and they are not to be confused with config. We encourage you to navigate the documentation. Covering all of them is not in the scope of this tutorial.
 
 ### Registering actions
 
-Instead of using the `call` action, it might be more comfortable to call our `touch` action by its name. To do so, we will register it. Actions can be registered in the current session or globally. In the example below, we will register it globally:
+Instead of using the `call` action, it might be more comfortable to call our `touch` action by its name. To do so, we will register it. Actions can be registered in the current Nikita session or globally. In the example below, we will register it in the session:
 
-```js
-// Dependencies
-assert = require('assert')
-nikita = require('nikita')
-// Register the touch action
-nikita.registry.register({'touch': './lib/touch'})
-// New Nikita session
-nikita
-// Calling the touch action
-.touch({'target': './touchme'}, function(err, {status}){
-  assert(status, true)
-})
-```
+`embed:about/tutorial/samples/config/register.js`
 
-## Real world example
+## Real-life example
 
 For the sake of this tutorial, we will create a basic Redis installation. The installation steps are:
 
-- Source compilation   
+1. Source compilation   
   *Learn how to execute shell commands and use conditions.*
-- Redis configuration file   
+2. Redis configuration file   
   *Learn how to merge or overwrite a configuration by serializing a JavaScript vanilla object.*
-- CLI reporting and logs   
+3. CLI reporting and logs   
   *Learn how to activate pretty reporting and detailed logs written in Markdown.*
-- Get the server up and running   
+4. Get the server up and running   
   *Learn how to leverage exit code to alter the action status.*
-- Checking the service health   
-  *Learn how to use the `relax` and `shy` config.*
-- SSH activation   
+5. Checking the service health   
+  *Learn how to use the `relax` and `shy` metadata.*
+6. SSH activation   
   *Learn how easy and transparent it is to activate SSH.*
-- Composition   
-  *Learn how to chain multiple actions sequentially and compose them as children of other actions*
+7. Composition   
+  *Learn how to chain multiple actions sequentially and compose them as children of other actions.*
 
-### Source compilation
+### 1. Source compilation
 
-*Learn how to execute shell command and use conditions.*
+*Learn how to execute shell commands and use conditions.*
 
 Following the [Redis quickstart guide](https://redis.io/topics/quickstart), getting Redis up and ready is about downloading the package and executing the `redis-server` command. We will do this with idempotence in mind.
 
 To download Redis, we will use the existing `nikita.file.download` action.
 
-```js
-require('nikita')
-.file.download({
-  source: 'http://download.redis.io/redis-stable.tar.gz',
-  target: 'cache/redis-stable.tar.gz'
-}, function(err, {status}){
-  console.info('Redis download', err ? 'x' : status ? '✔' : '-')
-})
-```
+`embed:about/tutorial/samples/redis/1.download.js`
 
 The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" config.
 
-To extract and compile Redis, we will write a shell script which will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". There are also some assertions prefixed by "should_" and "should_not_" which will throw an error unless satisfied.
+To extract and compile Redis, we will write a shell script with `nikita.execute` action. It will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_".
 
-```js
-require('nikita')
-.system.execute({
-  unless_exists: 'redis-stable/src/redis-server',
-  cmd: `
-  tar xzf cache/redis-stable.tar.gz
-  cd redis-stable
-  make
-  `
-}, function(err, {status}){
-  console.info('Redis installation', err ? 'x' : status ? '✔' : '-')
-})
-```
+`embed:about/tutorial/samples/redis/1.compile.js`
 
-### Redis configuration file
+Adding an absolute path like "/tmp/nikita-tutorial" to shell commands each time we want to control it would be too annoying. That's why `nikita.execute` actions comes with the `cwd` configuration property standing for "current working directory". This is way a lot prettier:
+
+`embed:about/tutorial/samples/redis/1.compile_cwd.js`
+
+### 2. Redis configuration file
 
 *Learn how to merge or overwrite a configuration by serializing a JavaScript vanilla object.*
 
 Before starting the server, we will write a configuration file. The Redis format is made of key value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
 
-```js
-require('nikita')
-.file.properties({
-  target: 'conf/redis.conf',
-  separator: ' ',
-  content: {
-    'bind': '127.0.0.1',
-    'protected-mode': 'yes',
-    'port': 6379
-  }
-}, function(err, {status}){
-  console.info('Redis configuration', err ? 'x' : status ? '✔' : '-')
-})
-```
+`embed:about/tutorial/samples/redis/2.config.js`
 
-### CLI reporting and logs
+### 3. CLI reporting and logs
 
 *Learn how to activate pretty reporting and detailed logs written in Markdown.*
 
-So far, the action callback was used to catch errors and status and to manually output a message to the user with the `console.info` JavaScript function. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` config is present:
+So far, the action output was used to manually print a message for the user with the `console.info` JavaScript function signalling a status of execution. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
-```js
-require('nikita')
-// Activate CLI reporting
-.log.cli()
-// Call any action
-.file.properties({
-  // The CLI message
-  header: 'Redis configuration',
-  target: 'conf/redis.conf',
-  separator: ' ',
-  content: {
-    'bind': '127.0.0.1',
-    'protected-mode': 'yes',
-    'port': 6379
-  }
-})
+`embed:about/tutorial/samples/redis/3.log_cli.js`
+
+The message contains information such as the hostname or the ip address where the action is executed, the custom header, the status symbol and time of execution. It ends with `♥` to indicate termination of the Nikita session:
+
+```bash
+localhost   Redis configuration   ✔  109ms
+localhost      ♥  
 ```
 
-Nikita doesn't have to run as a black box. What if an action failed and the error message is not explicit enough? What if a system command failed and we need to dig and get detailed information? Multiple error reporting action are made available such as the `nikita.log.md` which writes logs in the Markdown format:
+What if an action failed and the error message is not explicit enough? What if a system command failed and we need to dig and get detailed information? Nikita doesn't have to run as a black box. Multiple error reporting actions are made available such as the `nikita.log.md` which writes logs in the Markdown format:
 
-```js
-require('nikita')
-.log.md()
-.file.properties({
-  header: 'Redis configuration',
-  target: 'conf/redis.conf',
-  separator: ' ',
-  content: {
-    'bind': '127.0.0.1',
-    'protected-mode': 'yes',
-    'port': 6379
-  }
-})
-```
+`embed:about/tutorial/samples/redis/3.log_md.js`
 
-Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://Node.js.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/usages/logging_debugging/) documentation.
+Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://nodejs.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/usages/logging_debugging/) documentation.
 
-### Get the server up and running
+### 4. Get the server up and running
 
 *Learn how to leverage exit code to alter the action status.*
 
-The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the shell exit code. The value "0" will indicate that the server was started, the value "3" will indicate that it was already running and any other exit code will be treated as an error.
+The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value "0" will indicate that the server was started, the value "3" will indicate that it was already running and any other exit code will be treated as an error.
 
-```js
-require('nikita')
-.system.execute({
-  code_skipped: 3,
-  cmd: `
-  # Exit code 3 if ping is successful
-  ./src/redis-cli ping && exit 3
-  # Otherwise start the server
-  nohup ./src/redis-server conf/redis.conf &
-  `
-}, function(err, {status}){
-  console.info('Redis startup', err ? 'x' : status ? '✔' : '-')
-})
+`embed:about/tutorial/samples/redis/4.start.js`
+
+### 5. Checking the service health
+
+*Learn how to use the `relax` and `shy` metadata.*
+
+The Redis `PING` command is expected to return `PONG` if the server is healthy. Let's take this use case to illustrate the usage of the `relax` and `shy` metadata properties.
+
+The `relax` metadata sends the error to the result output without throwing an exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
+
+Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of parent `nikita.call` action, because it is not considered as a change of its state.
+
+`embed:about/tutorial/samples/redis/5.health.js`
+
+When Redis server is started, this prints:
+
+```
+localhost   Redis Check : Check   -  12ms
+localhost   Redis Check   -  18ms
+localhost      ♥  
 ```
 
-### Checking the service health
+Running the same code without `shy: true`, would print:
 
-*Learn how to use the `relax` and `shy` config.*
-
-The Redis "PING" command is expected to return "PONG" if the server is healthy. We will illustrate the usage of the `relax` and `shy` config with this use case. The `relax` config will send the error to the callback without propagating it to the overall session, thus allowing the Nikita session to exit gracefully while printing 'x' in case of an error. Similarly, the `shy` config will allow us to set the status to "true" and print "✔" on success without modifying the global status as obtained from `nikita.next` because it is not considered as a change of state.
-
-```js
-require('nikita')
-.system.execute({
-  relax: true,
-  shy: true,
-  cmd: './src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
-}, function(err, {status}){
-  console.info('Redis check', err ? 'x' : status ? '✔' : '-')
-})
-.next(function(err, {status}){
-  console.info('Finished', err ? 'x' : status ? '✔' : '-')
-})
+```
+localhost   Redis Check : Check   ✔  13ms
+localhost   Redis Check   ✔  18ms
+localhost      ♥  
 ```
 
-### SSH activation
+Demonstrating an error when Redis server is not started:
+
+```
+localhost   Redis Check : Check   ✘  12ms
+localhost   Redis Check   -  17ms
+localhost      ♥  
+```
+
+### 6. SSH activation
 
 *Learn how easy and transparent it is to activate SSH.*
 
-Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, all the tests are provided with an ssh argument and are executed twice. The first time with the connection set to null and the second time with an established SSH connection.
+Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [all the tests](/about/developers/#tests-execution) are provided with an ssh argument and are executed twice. The first time with the connection set to null and the second time with an established SSH connection.
 
-Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, 	
-inversely, the `nikita.ssh.close` action must be registered last. Both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
+Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
 
-```js
-require('nikita')
-// Open the SSH Connection
-.ssh.open({
-  host: '127.0.0.1',
-  port: '22',
-  private_key_path: '~/.ssh/id_rsa'
-})
-// Call one or multiple actions
-.call(function(){
-  console.info('Business as usual')
-})
-// Close the SSH Connection
-.ssh.close()
-```
+> Note: both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
 
-The above example assumes that you can self connect with SSH locally. If this is not the case, SSH must be installed and listening on port 22 and you must follows the instruction targeting your operating system to get it up and running. A pair of SSH private and public keys, respectively installed at "~/.ssh/id_rsa" and "~/.ssh/id_rsa.pub", must be present and your public key must be registered inside "~/.ssh/authorized_keys". If this isn't already the case, you can run the following commands:
+`embed:about/tutorial/samples/redis/6.ssh.js`
+
+The above example assumes that you can self connect with SSH locally. If this is not the case, SSH must be installed and listening on port 22 and you must follow the instruction targeting your operating system to get it up and running. A pair of SSH private and public keys, respectively installed at "~/.ssh/id_rsa" and "~/.ssh/id_rsa.pub", must be present and your public key must be registered inside "~/.ssh/authorized_keys". If this isn't already the case, you can run the following commands:
 
 ```bash
 # Detect if private key is already present
@@ -551,160 +362,26 @@ chmod 0600 ~/.ssh/authorized_keys
 ssh `whoami`@127.0.0.1 "echo 'I am inside'; exit"
 ```
 
-### Composition
+### 7. Composition
 
-*Learn how to chain multiple actions sequentially and compose them as children of other actions*
+*Learn how to chain multiple actions sequentially and compose them as children of other actions.*
 
-It is time to finalize our script and run all these actions sequentially. Every time you call an action, you scheduled it into the internal Nikita session for later execution. Because calling an action return the Nikita session unless a `get` config is encountered, it is possible to chain multiple calls.
+It is time to finalize our script and run all these actions sequentially. Every time you call an action, you scheduled it into the internal Nikita session for later execution. Because calling an action returns the Nikita session unless a `get` config is encountered, it is possible to chain multiple calls.
 
 It is also possible to group multiple actions into one action, creating a hierarchical representation and enabling composition. In our example, we will regroup all Redis actions related to installation into a single action.
 
-```js
-require('nikita')
-.log.cli()
-.log.md()
-.ssh.open({
-  host: '127.0.0.1',
-  port: '22',
-  private_key_path: '~/.ssh/id_rsa'
-})
-.call({
-  header: 'Redis Installation',
-  handler: function(){
-    this
-    .file.download({
-      header: 'Download',
-      source: 'http://download.redis.io/redis-stable.tar.gz',
-      target: 'cache/redis-stable.tar.gz'
-    })
-    .system.execute({
-      header: 'Compilation',
-      unless_exists: 'redis-stable/src/redis-server',
-      cmd: `
-      tar xzf cache/redis-stable.tar.gz
-      cd redis-stable
-      make
-      `
-    })
-    .file.properties({
-      header: 'Configuration',
-      target: 'conf/redis.conf',
-      separator: ' ',
-      content: {
-        'bind': '127.0.0.1',
-        'protected-mode': 'yes',
-        'port': 6379
-      }
-    })
-    .system.execute({
-      header: 'Startup',
-      code_skipped: 3,
-      cmd: `
-      ./src/redis-cli ping && exit 3
-      nohup ./src/redis-server conf/redis.conf &
-      `
-    })
-  }
-})
-.system.execute({
-  header: 'Redis Check',
-  relax: true,
-  shy: true,
-  cmd: './src/redis-cli -h 127.0.0.1 -p 6379 ping'
-})
-.ssh.close()
-```
+`embed:about/tutorial/samples/redis/7.composition/index.js`
 
-Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible config:
+Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible configuration:
 
-File "app.js"
+File "app.js":
 
-```js
-// Configuration
-options = {
-  ssh: {
-    host: '127.0.0.1',
-    port: '22',
-    username: process.env.USER,
-    private_key_path: '~/.ssh/id_rsa'
-  },
-  redis: {
-    cwd: '/tmp/nikita-tutorial',
-    config: {}
-  }
-}
-// Run the application
-require('nikita')
-.log.cli()
-.log.md()
-.ssh.open({header: 'SSH Open'}, options.ssh)
-.call({header: 'Redis Install'}, './lib/install', options.redis)
-.call({header: 'Redis Check'}, './lib/check', options.redis)
-.ssh.close({header: 'SSH Close'})
-```
+`embed:about/tutorial/samples/redis/7.composition/app.js`
 
-File "./lib/install.js"
+File "./lib/install.js":
 
-```js
-module.exports = function({options}){
-  // Default options
-  if(!options.url){ options.url = 'http://download.redis.io/redis-stable.tar.gz' }
-  if(!options.config){ options.config = {} }
-  if(!options.config['bind']){ options.config['bind'] = '127.0.0.1' }
-  if(!options.config['protected-mode']){ options.config['protected-mode'] = 'yes' }
-  if(!options.config['port']){ options.config['port'] = 6379 }
-  // Do the job
-  this
-  .file.download({
-    header: 'Download',
-    source: options.url,
-    target: 'cache/redis-stable.tar.gz'
-  })
-  .system.execute({
-    header: 'Compilation',
-    unless_exists: 'redis-stable/src/redis-server',
-    cmd: `
-    tar xzf cache/redis-stable.tar.gz
-    cd redis-stable
-    make
-    `
-  })
-  .file.properties({
-    header: 'Configuration',
-    target: 'conf/redis.conf',
-    separator: ' ',
-    content: options.config
-  })
-  .system.execute({
-    header: 'Startup',
-    code_skipped: 3,
-    cmd: `
-    ./src/redis-cli ping && exit 3
-    nohup ./redis-stable/src/redis-server conf/redis.conf &
-    `
-  })
-}
-```
+`embed:about/tutorial/samples/redis/7.composition/lib/install.js`
 
-File "./lib/check.js"
+File "./lib/check.js":
 
-```js
-module.exports = function(){
-  // Get options from config if present
-  if(options.config){
-    if(options.config.host){ options.host = options.config.host }
-    if(options.config.port){ options.port = options.config.port }
-  }
-  // Default options
-  if(!options.host){ options.host = '127.0.0.1' }
-  if(!options.port){ options.port = 6379 }
-  // Do the job
-  this
-  .system.execute({
-    header: 'Redis Check',
-    relax: true,
-    shy: true,
-    cmd: `./redis-stable/src/redis-cli -h ${options.host} -p  ${options.port} ping`
-  })
-}
-```
+`embed:about/tutorial/samples/redis/7.composition/lib/check.js`
