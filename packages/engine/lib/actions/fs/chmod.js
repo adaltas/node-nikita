@@ -86,8 +86,7 @@ handler = async function({
   });
   log({
     message: `Permissions changed from \"${stats.mode.toString(8)}\" to \"${config.mode.toString(8)}\" on \"${config.target}\"`,
-    level: 'WARN',
-    module: 'nikita/lib/fs/chmod'
+    level: 'WARN'
   });
   return true;
 };

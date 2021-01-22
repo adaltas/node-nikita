@@ -56,10 +56,10 @@ console.info(`Cron entry created or modified: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       if config.user?
-        log message: "Using user #{config.user}", level: 'DEBUG', module: 'nikita/tools/lib/cron/add'
+        log message: "Using user #{config.user}", level: 'DEBUG'
         crontab = "crontab -u #{config.user}"
       else
-        log message: "Using default user", level: 'DEBUG', module: 'nikita/tools/lib/cron/add'
+        log message: "Using default user", level: 'DEBUG'
         crontab = "crontab"
       jobs = []
       {stdout, stderr} = await @execute
@@ -78,7 +78,7 @@ console.info(`Cron entry created or modified: ${status}`)
         if regex.test job
           added = false
           break if job is new_job # Found job, stop here
-          log message: "Entry has changed", level: 'WARN', module: 'nikita/tools/lib/cron/add'
+          log message: "Entry has changed", level: 'WARN'
           utils.diff job, new_job, config
           job = new_job
           modified = true
@@ -86,7 +86,7 @@ console.info(`Cron entry created or modified: ${status}`)
         job
       if added
         jobs.push new_job
-        log message: "Job not found in crontab, adding", level: 'WARN', module: 'nikita/tools/lib/cron/add'
+        log message: "Job not found in crontab, adding", level: 'WARN'
       jobs = null unless added or modified
       return status: false unless jobs
       if config.exec

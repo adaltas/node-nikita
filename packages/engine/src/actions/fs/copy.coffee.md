@@ -115,17 +115,17 @@ console.info(`File was copied: ${status}`)
     handler = ({config, tools: {status, log, path}}) ->
       # Retrieve stats information about the source unless provided through the "source_stats" option.
       if config.source_stats
-        log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        log message: "Source Stats: using short circuit", level: 'DEBUG'
         source_stats = config.source_stats
       else
-        log message: "Stats source file #{config.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        log message: "Stats source file #{config.source}", level: 'DEBUG'
         {stats: source_stats} = await @fs.base.stat target: config.source
       # Retrieve stat information about the traget unless provided through the "target_stats" option.
       if config.target_stats
-        log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        log message: "Target Stats: using short circuit", level: 'DEBUG'
         target_stats = config.target_stats
       else
-        log message: "Stats target file #{config.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        log message: "Stats target file #{config.target}", level: 'DEBUG'
         try
           {stats: target_stats} = await @fs.base.stat target: config.target
         catch err
@@ -151,7 +151,7 @@ console.info(`File was copied: ${status}`)
         sourceEndWithSlash = config.source.lastIndexOf('/') is config.source.length - 1
         if target_stats and not sourceEndWithSlash
           config.target = path.resolve config.target, path.basename config.source
-        log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
+        log message: "Source is a directory", level: 'INFO'
         {files} = await @fs.glob "#{config.source}/**", dot: true
         for source in files then do (source) =>
           target = path.resolve config.target, path.relative config.source, source
@@ -192,13 +192,13 @@ console.info(`File was copied: ${status}`)
         throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
       # Copy a file if content match with source
       if hash_source is hash_target
-        log message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
+        log message: "Hash matches as '#{hash_source}'", level: 'INFO'
       else
-        log message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+        log message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN'
         await @fs.base.copy
           source: config.source
           target: config.target
-        log message: "File copied from #{config.source} into #{config.target}", level: 'INFO', module: 'nikita/lib/system/copy' if status
+        log message: "File copied from #{config.source} into #{config.target}", level: 'INFO' if status
       # File ownership and permissions
       config.uid ?= source_stats.uid if config.preserve
       config.gid ?= source_stats.gid if config.preserve

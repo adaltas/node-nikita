@@ -112,7 +112,7 @@ console.info(`User created or modified: ${status}`)
               "-s #{user.userPassword}"
               "#{utils.string.escapeshellarg user.dn}"
             ].join ' '
-          log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
+          log message: "Password modified", level: 'WARN'
           modified = true
       status: modified
 

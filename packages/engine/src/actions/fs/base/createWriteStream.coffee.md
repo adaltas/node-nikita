@@ -80,12 +80,12 @@ console.info(`Stream was created: ${status}`)
         [ ! -f '#{config.target}' ] && exit
         cp '#{config.target}' '#{config.target_tmp}'
         """
-        log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO', module: 'nikita/lib/fs/createWriteStream'
+        log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO'
       catch err
-        log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createWriteStream'
+        log message: "Failed to place original file in temporary path", level: 'ERROR'
         throw err
       # Start writing the content
-      log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
+      log message: 'Writting file', level: 'DEBUG'
       await new Promise (resolve, reject) ->
         ws = await fs.createWriteStream ssh, config.target_tmp or config.target,
           flags: config.flags,

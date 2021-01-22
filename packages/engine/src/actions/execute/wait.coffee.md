@@ -88,7 +88,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
         break if quorum_current >= config.quorum
         run = =>
           count++
-          log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/lib/wait/execute'
+          log message: "Attempt ##{count}", level: 'INFO'
           {status} = await @execute
             command: command
             code: config.code or 0
@@ -102,7 +102,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
                 await run()
                 resolve()
               , config.interval
-          log message: "Finish wait for execution", level: 'INFO', module: 'nikita/lib/wait/execute'
+          log message: "Finish wait for execution", level: 'INFO'
           quorum_current++
           modified = true if count > 1
         await run()

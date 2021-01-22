@@ -72,8 +72,7 @@ handler = async function({
   }
   log({
     message: `Getting image checksum :${config.image}`,
-    level: 'DEBUG',
-    module: 'nikita/lib/docker/checksum'
+    level: 'DEBUG'
   });
   // Run `docker images` with the following config:
   // - `--no-trunc`: display full checksum
@@ -88,8 +87,7 @@ handler = async function({
   if (status) {
     log({
       message: `Image checksum for ${config.image}: ${checksum}`,
-      level: 'INFO',
-      module: 'nikita/lib/docker/checksum'
+      level: 'INFO'
     });
   }
   return {

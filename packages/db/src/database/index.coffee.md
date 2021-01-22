@@ -52,9 +52,9 @@ console.info(`Database created or modified: ${status}`)
       config.user = [config.user] if typeof config.user is 'string'
       # Defines and check the engine type
       config.engine = config.engine.toLowerCase()
-      log message: "Database engine set to #{config.engine}", level: 'DEBUG', module: 'nikita/db/database'
+      log message: "Database engine set to #{config.engine}", level: 'DEBUG'
       # Create database unless exist
-      log message: "Check if database #{config.database} exists", level: 'DEBUG', module: 'nikita/db/database'
+      log message: "Check if database #{config.database} exists", level: 'DEBUG'
       switch config.engine
         when 'mariadb', 'mysql'
           config.character_set ?= 'latin1' # MySQL default
@@ -74,10 +74,10 @@ console.info(`Database created or modified: ${status}`)
       unless exists
         await @execute
           command: command_database_create
-        log message: "Database created: #{JSON.stringify config.database}", level: 'WARN', module: 'nikita/db/database'
+        log message: "Database created: #{JSON.stringify config.database}", level: 'WARN'
       # Associate users to the database
       for user in config.user
-        log message: "Check if user #{user} has PRIVILEGES on #{config.database} ", level: 'DEBUG', module: 'nikita/db/database'
+        log message: "Check if user #{user} has PRIVILEGES on #{config.database} ", level: 'DEBUG'
         {exists} = await @db.user.exists config,
           username: user
         throw Error "DB user does not exists: #{user}" unless exists
@@ -99,7 +99,7 @@ console.info(`Database created or modified: ${status}`)
           #{command_grant_privileges}
           """
           code_skipped: 3
-        log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN', module: 'nikita/db/database' if status
+        log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN' if status
       null
 
 ## Exports

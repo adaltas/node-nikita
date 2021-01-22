@@ -76,7 +76,7 @@ The result of the above action can be viewed with the command
             config.name
           ].join ' '
           code_skipped: 9
-        log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group' unless status
+        log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN' unless status
       else # Modify group
         changes = ['gid'].filter (k) -> config[k]? and "#{info[k]}" isnt "#{config[k]}"
         if changes.length
@@ -86,9 +86,9 @@ The result of the above action can be viewed with the command
               " -g #{config.gid}" if config.gid
               config.name
             ].join ' '
-          log message: "Group information modified", level: 'WARN', module: 'nikita/lib/system/group'
+          log message: "Group information modified", level: 'WARN'
         else
-          log message: "Group information unchanged", level: 'INFO', module: 'nikita/lib/system/group'
+          log message: "Group information unchanged", level: 'INFO'
 
 ## Exports
 

@@ -59,19 +59,19 @@ console.info(`Content was updated: ${status}`)
     handler = ({config, tools: {log}}) ->
       # Start real work
       if config.merge
-        log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
+        log message: "Get Target Content", level: 'DEBUG'
         try
           {data} = await @fs.base.readFile
             target: config.target
             encoding: config.encoding
           data = season.parse data
           config.content = merge data, config.content
-          log message: "Target Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
+          log message: "Target Merged", level: 'DEBUG'
         catch err
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           # File does not exists, this is ok, there is simply nothing to merge
-          log message: "No Target To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
-      log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
+          log message: "No Target To Merged", level: 'DEBUG'
+      log message: "Serialize Content", level: 'DEBUG'
       await @file
         content: season.stringify config.content
         target: config.target

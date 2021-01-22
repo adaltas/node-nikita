@@ -60,7 +60,7 @@ console.info(`keytab was created or updated: ${status}`)
         code_skipped: 1
         metadata: shy: true
       if status
-        log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktadd'
+        log message: "Keytab exists, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout
           continue unless match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
           [_, kvno, mdate, principal] = match
@@ -84,8 +84,8 @@ console.info(`keytab was created or updated: ${status}`)
           mdate = parseInt(values[2], 10) * 1000
           kvno = parseInt values[8], 10
           princ = mdate: mdate, kvno: kvno
-          log message: "Keytab kvno '#{keytab[config.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktadd'
-          log message: "Keytab mdate '#{new Date keytab[config.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'nikita/krb5/ktadd'
+          log message: "Keytab kvno '#{keytab[config.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO'
+          log message: "Keytab mdate '#{new Date keytab[config.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO'
       # Remove principal from keytab
       if keytab[config.principal]? and (keytab[config.principal]?.kvno isnt princ.kvno or keytab[config.principal].mdate isnt princ.mdate)
         await @krb5.execute

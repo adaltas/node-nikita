@@ -68,7 +68,7 @@ console.info(`File was written: ${status}`)
           v = v.trim() if typeof v is 'string'
           fnl_props[k] = v
       org_props = {}
-      log message: "Merging \"#{if config.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
+      log message: "Merging \"#{if config.merge then 'true' else 'false'}\"", level: 'DEBUG'
       # Read Original
       {exists} = await @fs.base.exists target: config.target
       if exists
@@ -86,7 +86,7 @@ console.info(`File was written: ${status}`)
         for k in Object.keys(fnl_props) then keys[k] = true
         for key in Object.keys keys
           if "#{org_props[key]}" isnt "#{fnl_props[key]}"
-            log message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: 'ryba/lib/file/properties'
+            log message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN'
             status = true if fnl_props[key]?
         status
       # Merge

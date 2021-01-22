@@ -78,7 +78,7 @@ console.info(`Directories was removed: ${status}`)
       # Start real work
       {files} = await @fs.glob config.target
       for file in files
-        log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/fs/remove'
+        log message: "Removing file #{file}", level: 'INFO'
         try
           {status} = await @execute
             command: [
@@ -88,7 +88,7 @@ console.info(`Directories was removed: ${status}`)
               file
               # "rm -rf '#{file}'"
             ].join ' '
-          log message: "File #{file} removed", level: 'WARN', module: 'nikita/lib/fs/remove' if status
+          log message: "File #{file} removed", level: 'WARN' if status
         catch err
           err.message = [
             'failed to remove the file, got message'

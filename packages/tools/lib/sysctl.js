@@ -94,8 +94,7 @@ handler = async function({
   status = false;
   log({
     message: `Read target: ${config.target}`,
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/sysctl'
+    level: 'DEBUG'
   });
   try {
     ({data} = (await this.fs.base.readFile({
@@ -124,8 +123,7 @@ handler = async function({
       // Skip property
       if (indexOf.call(config.properties, key) >= 0 && (config.properties[key] == null)) {
         log(`Removing Property: ${key}, was ${value}`, {
-          level: 'INFO',
-          module: 'nikita/lib/tools/sysctl'
+          level: 'INFO'
         });
         status = true;
         continue;
@@ -161,8 +159,7 @@ handler = async function({
       continue;
     }
     log(`Update Property: key \"${key}\" from \"${final[key]}\" to \"${value}\"`, {
-      level: 'INFO',
-      module: 'nikita/lib/tools/sysctl'
+      level: 'INFO'
     });
     final[key] = value;
     status = true;

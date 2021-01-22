@@ -52,7 +52,7 @@ native docker command.
       # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
-      log message: "Getting image checksum :#{config.image}", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
+      log message: "Getting image checksum :#{config.image}", level: 'DEBUG'
       # Run `docker images` with the following config:
       # - `--no-trunc`: display full checksum
       # - `--quiet`: discard headers
@@ -62,7 +62,7 @@ native docker command.
         compose: config.compose
         machine: config.machine
       checksum = if stdout is '' then undefined else stdout.toString().trim()
-      log message: "Image checksum for #{config.image}: #{checksum}", level: 'INFO', module: 'nikita/lib/docker/checksum' if status
+      log message: "Image checksum for #{config.image}: #{checksum}", level: 'INFO' if status
       status: status, checksum: checksum
 
 ## Exports

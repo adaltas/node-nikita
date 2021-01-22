@@ -91,15 +91,15 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         uid: uid? and stats.uid isnt uid
         gid: gid? and stats.gid isnt gid
       if not changes.uid and not changes.gid
-        log message: "Matching ownerships on '#{config.target}'", level: 'INFO', module: 'nikita/lib/chown'
+        log message: "Matching ownerships on '#{config.target}'", level: 'INFO'
         return false
       # Apply changes
       try
         await @fs.base.chown target: config.target, uid: uid, gid: gid
       catch err
         console.log err
-      log message: "change uid from #{stats.uid} to #{uid}", level: 'WARN', module: 'nikita/lib/chown' if changes.uid
-      log message: "change gid from #{stats.gid} to #{gid}", level: 'WARN', module: 'nikita/lib/chown' if changes.gid
+      log message: "change uid from #{stats.uid} to #{uid}", level: 'WARN' if changes.uid
+      log message: "change gid from #{stats.gid} to #{gid}", level: 'WARN' if changes.gid
       true
 
 ## Exports

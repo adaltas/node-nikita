@@ -62,7 +62,7 @@ console.info(`Container was saved: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # Saves image to local tmp path, than copy it
-      log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO', module: 'nikita/lib/docker/save'
+      log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO'
       await @docker.tools.execute
         command: [
           "save -o #{config.output} #{config.image}"

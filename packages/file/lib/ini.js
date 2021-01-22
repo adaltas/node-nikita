@@ -167,22 +167,19 @@ handler = async function({
     config.content = merge(org_props, config.content);
     log({
       message: "Get content for merge",
-      level: 'DEBUG',
-      module: 'nikita/lib/file/ini'
+      level: 'DEBUG'
     });
   }
   if (config.clean) {
     log({
       message: "Clean content",
-      level: 'INFO',
-      module: 'nikita/lib/file/ini'
+      level: 'INFO'
     });
     utils.object.clean(config.content);
   }
   log({
     message: "Serialize content",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/ini'
+    level: 'DEBUG'
   });
   stringify = config.stringify || utils.ini.stringify;
   return (await this.file({

@@ -86,8 +86,7 @@ handler = async function({
   if (!config.dn) {
     log({
       message: "Get DN of the database to modify",
-      level: 'DEBUG',
-      module: 'nikita/ldap/index'
+      level: 'DEBUG'
     });
     ({dn} = (await this.ldap.tools.database(config, {
       suffix: config.suffix
@@ -95,15 +94,13 @@ handler = async function({
     config.dn = dn;
     log({
       message: `Database DN is ${dn}`,
-      level: 'INFO',
-      module: 'nikita/ldap/index'
+      level: 'INFO'
     });
   }
   // List all indexes of the directory
   log({
     message: "List all indexes of the directory",
-    level: 'DEBUG',
-    module: 'nikita/ldap/index'
+    level: 'DEBUG'
   });
   ({stdout} = (await this.ldap.search(config, {
     attributes: ['olcDbIndex'],

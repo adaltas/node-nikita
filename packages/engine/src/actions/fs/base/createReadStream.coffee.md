@@ -81,12 +81,12 @@ console.info(Buffer.concat(buffers).toString())
           cp '#{config.target}' '#{config.target_tmp}'
           chown '#{current_username}' '#{config.target_tmp}'
           """
-        log message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
+        log message: "Placing original file in temporary path before reading", level: 'INFO'
       catch err
-        log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'
+        log message: "Failed to place original file in temporary path", level: 'ERROR'
         throw err
       # Read the stream
-      log message: "Reading file #{config.target_tmp or config.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+      log message: "Reading file #{config.target_tmp or config.target}", level: 'DEBUG'
       new Promise (resolve, reject) ->
         buffers = []
         rs = await fs.createReadStream ssh, config.target_tmp or config.target

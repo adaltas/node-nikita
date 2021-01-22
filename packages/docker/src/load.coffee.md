@@ -61,9 +61,9 @@ console.info(`Image was loaded: ${status}`);
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
       images = {}
       delete config.command
-      log message: 'Storing previous state of image', level: 'INFO', module: 'nikita/lib/docker/load'
-      log message: 'No checksum provided', level: 'INFO', module: 'nikita/lib/docker/load' if !config.checksum?
-      log message: "Checksum provided :#{config.checksum}", level: 'INFO', module: 'nikita/lib/docker/load' if config.checksum
+      log message: 'Storing previous state of image', level: 'INFO'
+      log message: 'No checksum provided', level: 'INFO' if !config.checksum?
+      log message: "Checksum provided :#{config.checksum}", level: 'INFO' if config.checksum
       config.checksum ?= ''
       {stdout} = await @docker.tools.execute
         command: "images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
@@ -75,17 +75,17 @@ console.info(`Image was loaded: ${status}`);
           if image != ''
             infos = image.split(':')
             # if image is here we skip
-            log message: "Image already exist checksum :#{config.checksum}, repo:tag \"#{infos[0]}:#{infos[1]}\"", level: 'INFO', module: 'nikita/lib/docker/load' if infos[2] == config.checksum
+            log message: "Image already exist checksum :#{config.checksum}, repo:tag \"#{infos[0]}:#{infos[1]}\"", level: 'INFO' if infos[2] == config.checksum
             return false if infos[2] == config.checksum
             images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
-      log message: "Start Loading #{config.input} ", level: 'INFO', module: 'nikita/lib/docker/load'
+      log message: "Start Loading #{config.input} ", level: 'INFO'
       await @docker.tools.execute
         command: command
       {stdout, stderr} = await @docker.tools.execute
         command: 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
       new_images = {}
       status = false
-      log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'
+      log message: 'Comparing new images', level: 'INFO'
       if utils.string.lines(stdout).length > 1
         for image in utils.string.lines stdout.toString()
           if image != ''
@@ -99,7 +99,7 @@ console.info(`Image was loaded: ${status}`);
           for k, image of images
             if image != new_image && new_k == k
               status = true
-              log message: 'Identical images', level: 'INFO', module: 'nikita/lib/docker/load'
+              log message: 'Identical images', level: 'INFO'
               break
       status: status, stdout: stdout, stderr: stderr
           

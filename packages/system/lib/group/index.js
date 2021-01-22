@@ -90,8 +90,7 @@ handler = async function({
     if (!status) { // Modify group
       return log({
         message: "Group defined elsewhere than '/etc/group', exit code is 9",
-        level: 'WARN',
-        module: 'nikita/lib/system/group'
+        level: 'WARN'
       });
     }
   } else {
@@ -104,14 +103,12 @@ handler = async function({
       });
       return log({
         message: "Group information modified",
-        level: 'WARN',
-        module: 'nikita/lib/system/group'
+        level: 'WARN'
       });
     } else {
       return log({
         message: "Group information unchanged",
-        level: 'INFO',
-        module: 'nikita/lib/system/group'
+        level: 'INFO'
       });
     }
   }

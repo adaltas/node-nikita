@@ -67,8 +67,8 @@ console.info(`Service was started: ${status}`)
           code_skipped: 3
           arch_chroot: config.arch_chroot
           rootdir: config.rootdir
-        log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if status
-        log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not status
+        log message: "Service is started", level: 'INFO' if status
+        log message: "Service already started", level: 'WARN' if not status
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

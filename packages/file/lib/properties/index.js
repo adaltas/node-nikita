@@ -85,8 +85,7 @@ handler = async function({
   org_props = {};
   log({
     message: `Merging \"${config.merge ? 'true' : 'false'}\"`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file/properties'
+    level: 'DEBUG'
   });
   // Read Original
   ({exists} = (await this.fs.base.exists({
@@ -122,8 +121,7 @@ handler = async function({
       if (`${org_props[key]}` !== `${fnl_props[key]}`) {
         log({
           message: `Property '${key}' was '${org_props[k]}' and is now '${fnl_props[k]}'`,
-          level: 'WARN',
-          module: 'ryba/lib/file/properties'
+          level: 'WARN'
         });
         if (fnl_props[key] != null) {
           status = true;

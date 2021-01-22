@@ -73,8 +73,7 @@ handler = async function({
     var exists;
     log({
       message: `Check if target exists \"${config.target}\"`,
-      level: 'DEBUG',
-      module: 'nikita/lib/file/touch'
+      level: 'DEBUG'
     });
     ({exists} = (await this.fs.base.exists({
       target: config.target
@@ -82,8 +81,7 @@ handler = async function({
     if (!exists) {
       log({
         message: "Destination does not exists",
-        level: 'INFO',
-        module: 'nikita/lib/file/touch'
+        level: 'INFO'
       });
     }
     return !exists;

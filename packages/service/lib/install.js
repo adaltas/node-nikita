@@ -158,8 +158,7 @@ handler = async function({
   // Start real work
   log({
     message: `Install service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/install'
+    level: 'INFO'
   });
   // List installed packages
   if (config.installed == null) {
@@ -187,8 +186,7 @@ fi`,
       if (status) {
         log({
           message: "Installed packages retrieved",
-          level: 'INFO',
-          module: 'nikita/lib/service/install'
+          level: 'INFO'
         });
         config.installed = (function() {
           var len3, m, ref3, results;
@@ -234,8 +232,7 @@ fi`,
       if (status) {
         log({
           message: "Outdated package list retrieved",
-          level: 'INFO',
-          module: 'nikita/lib/service/install'
+          level: 'INFO'
         });
         config.outdated = utils.string.lines(stdout.trim());
       } else {
@@ -301,14 +298,12 @@ fi`,
   if (config.cache) {
     log({
       message: "Caching installed on \"nikita:execute:installed\"",
-      level: 'INFO',
-      module: 'nikita/lib/service/install'
+      level: 'INFO'
     });
     state['nikita:execute:installed'] = config.installed;
     log({
       message: "Caching outdated list on \"nikita:execute:outdated\"",
-      level: 'INFO',
-      module: 'nikita/lib/service/install'
+      level: 'INFO'
     });
     state['nikita:execute:outdated'] = config.outdated;
     return {

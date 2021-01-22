@@ -154,8 +154,7 @@ handler = async function({
   if (config.private_key_path && !config.private_key) {
     log({
       message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/ssh/root'
+      level: 'DEBUG'
     });
     location = (await utils.tilde.normalize(config.private_key_path));
     try {
@@ -174,14 +173,12 @@ handler = async function({
     var child, command, conn;
     log({
       message: "Connecting",
-      level: 'DEBUG',
-      module: 'nikita/lib/ssh/root'
+      level: 'DEBUG'
     });
     conn = !metadata.dry ? (await connect(config)) : null;
     log({
       message: "Connected",
-      level: 'INFO',
-      module: 'nikita/lib/ssh/root'
+      level: 'INFO'
     });
     command = [];
     command.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`);
@@ -218,13 +215,11 @@ fi;`);
     }
     log({
       message: "Enable Root Access",
-      level: 'DEBUG',
-      module: 'nikita/lib/ssh/root'
+      level: 'DEBUG'
     });
     log({
       message: command,
-      type: 'stdin',
-      module: 'nikita/lib/ssh/root'
+      type: 'stdin'
     });
     if (!metadata.dry) {
       child = exec({
@@ -234,8 +229,7 @@ fi;`);
         if ((err != null ? err.code : void 0) === 2) {
           log({
             message: "Root Access Enabled",
-            level: 'WARN',
-            module: 'nikita/lib/ssh/root'
+            level: 'WARN'
           });
           err = null;
           return rebooting = true;
@@ -246,29 +240,25 @@ fi;`);
       child.stdout.on('data', (data) => {
         return log({
           message: data,
-          type: 'stdout',
-          module: 'nikita/lib/ssh/root'
+          type: 'stdout'
         });
       });
       child.stdout.on('end', (data) => {
         return log({
           message: null,
-          type: 'stdout',
-          module: 'nikita/lib/ssh/root'
+          type: 'stdout'
         });
       });
       child.stderr.on('data', (data) => {
         return log({
           message: data,
-          type: 'stderr',
-          module: 'nikita/lib/ssh/root'
+          type: 'stderr'
         });
       });
       return child.stderr.on('end', (data) => {
         return log({
           message: null,
-          type: 'stderr',
-          module: 'nikita/lib/ssh/root'
+          type: 'stderr'
         });
       });
     }

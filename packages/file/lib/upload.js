@@ -113,13 +113,11 @@ handler = async function({
   }
   log({
     message: `Source is \"${config.source}\"`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file/upload'
+    level: 'DEBUG'
   });
   log({
     message: `Destination is \"${config.target}\"`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file/upload'
+    level: 'DEBUG'
   });
   // Stat the target and redefine its path if a directory
   stats = (await this.call({
@@ -224,8 +222,7 @@ handler = async function({
   });
   log({
     message: "Unstaged uploaded file",
-    level: 'INFO',
-    module: 'nikita/lib/file/upload'
+    level: 'INFO'
   });
   if (config.mode != null) {
     await this.fs.chmod({

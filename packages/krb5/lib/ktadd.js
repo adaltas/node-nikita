@@ -77,8 +77,7 @@ handler = async function({
   if (status) {
     log({
       message: "Keytab exists, check kvno validity",
-      level: 'DEBUG',
-      module: 'nikita/krb5/ktadd'
+      level: 'DEBUG'
     });
     ref = utils.string.lines(stdout);
     for (i = 0, len = ref.length; i < len; i++) {
@@ -123,13 +122,11 @@ handler = async function({
       };
       log({
         message: `Keytab kvno '${(ref1 = keytab[config.principal]) != null ? ref1.kvno : void 0}', principal kvno '${princ.kvno}'`,
-        level: 'INFO',
-        module: 'nikita/krb5/ktadd'
+        level: 'INFO'
       });
       log({
         message: `Keytab mdate '${new Date((ref2 = keytab[config.principal]) != null ? ref2.mdate : void 0)}', principal mdate '${new Date(princ.mdate)}'`,
-        level: 'INFO',
-        module: 'nikita/krb5/ktadd'
+        level: 'INFO'
       });
     }
   }

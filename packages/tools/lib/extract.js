@@ -124,8 +124,7 @@ handler = async function({
   command = null;
   log({
     message: `Format is ${format}`,
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/extract'
+    level: 'DEBUG'
   });
   switch (format) {
     case 'tgz':

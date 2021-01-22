@@ -72,15 +72,13 @@ handler = async function({
   ssh = (await this.ssh(config.ssh));
   log({
     message: "Stat target",
-    level: 'DEBUG',
-    module: 'nikita/lib/system/move'
+    level: 'DEBUG'
   });
   ({exists} = (await this.fs.base.exists(config.target)));
   if (!exists) {
     log({
       message: `Rename ${config.source} to ${config.target}`,
-      level: 'WARN',
-      module: 'nikita/lib/system/move'
+      level: 'WARN'
     });
     await this.fs.base.rename({
       source: config.source,
@@ -91,16 +89,14 @@ handler = async function({
   if (config.force) {
     log({
       message: `Remove ${config.target}`,
-      level: 'WARN',
-      module: 'nikita/lib/system/move'
+      level: 'WARN'
     });
     await this.fs.remove({
       target: config.target
     });
     log({
       message: `Rename ${config.source} to ${config.target}`,
-      level: 'WARN',
-      module: 'nikita/lib/system/move'
+      level: 'WARN'
     });
     await this.fs.base.rename({
       source: config.source,
@@ -111,36 +107,31 @@ handler = async function({
   if (!config.target_md5) {
     log({
       message: "Get target md5",
-      level: 'DEBUG',
-      module: 'nikita/lib/system/move'
+      level: 'DEBUG'
     });
     ({hash} = (await this.fs.hash(config.target)));
     log({
       message: "Destination md5 is \"hash\"",
-      level: 'INFO',
-      module: 'nikita/lib/system/move'
+      level: 'INFO'
     });
     config.target_md5 = hash;
   }
   if (!config.source_md5) {
     log({
       message: "Get source md5",
-      level: 'DEBUG',
-      module: 'nikita/lib/system/move'
+      level: 'DEBUG'
     });
     ({hash} = (await this.fs.hash(config.source)));
     log({
       message: "Source md5 is \"hash\"",
-      level: 'INFO',
-      module: 'nikita/lib/system/move'
+      level: 'INFO'
     });
     config.source_md5 = hash;
   }
   if (config.source_md5 === config.target_md5) {
     log({
       message: `Remove ${config.source}`,
-      level: 'WARN',
-      module: 'nikita/lib/system/move'
+      level: 'WARN'
     });
     await this.fs.remove({
       target: config.source
@@ -149,16 +140,14 @@ handler = async function({
   }
   log({
     message: `Remove ${config.target}`,
-    level: 'WARN',
-    module: 'nikita/lib/system/move'
+    level: 'WARN'
   });
   await this.fs.remove({
     target: config.target
   });
   log({
     message: `Rename ${config.source} to ${config.target}`,
-    level: 'WARN',
-    module: 'nikita/lib/system/move'
+    level: 'WARN'
   });
   await this.fs.base.rename({
     source: config.source,

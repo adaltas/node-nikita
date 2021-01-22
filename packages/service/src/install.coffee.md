@@ -113,7 +113,7 @@ console.info(`Package installed: ${status}`)
         config.yaourt_flags[i] = "-#{flag}" if flag.length is 1
         config.yaourt_flags[i] = "--#{flag}" if flag.length > 1
       # Start real work
-      log message: "Install service #{config.name}", level: 'INFO', module: 'nikita/lib/service/install'
+      log message: "Install service #{config.name}", level: 'INFO'
       # List installed packages
       unless config.installed?
         try
@@ -137,7 +137,7 @@ console.info(`Package installed: ${status}`)
             stdout_log: false
             metadata: shy: true
           if status
-            log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
+            log message: "Installed packages retrieved", level: 'INFO'
             config.installed = for pkg in utils.string.lines(stdout) then pkg
         catch err
           throw Error "Unsupported Package Manager" if err.exit_code is 2
@@ -164,7 +164,7 @@ console.info(`Package installed: ${status}`)
             stdout_log: false
             metadata: shy: true
           if status
-            log message: "Outdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
+            log message: "Outdated package list retrieved", level: 'INFO'
             config.outdated = utils.string.lines stdout.trim()
           else
             config.outdated = []
@@ -206,9 +206,9 @@ console.info(`Package installed: ${status}`)
         catch err
           throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err.exit_code is 2
       if config.cache
-        log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
+        log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
         state['nikita:execute:installed'] = config.installed
-        log message: "Caching outdated list on \"nikita:execute:outdated\"", level: 'INFO', module: 'nikita/lib/service/install'
+        log message: "Caching outdated list on \"nikita:execute:outdated\"", level: 'INFO'
         state['nikita:execute:outdated'] = config.outdated
         status: true
 

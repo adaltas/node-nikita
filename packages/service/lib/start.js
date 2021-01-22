@@ -74,15 +74,13 @@ fi`,
     if (status) {
       log({
         message: "Service is started",
-        level: 'INFO',
-        module: 'nikita/lib/service/start'
+        level: 'INFO'
       });
     }
     if (!status) {
       return log({
         message: "Service already started",
-        level: 'WARN',
-        module: 'nikita/lib/service/start'
+        level: 'WARN'
       });
     }
   } catch (error) {

@@ -144,8 +144,7 @@ handler = async function({
       });
       log({
         message: "Password modified",
-        level: 'WARN',
-        module: 'nikita/ldap/user'
+        level: 'WARN'
       });
       modified = true;
     }

@@ -37,7 +37,7 @@ console.info(`Service was restarted: ${status}`)
 ## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
-      log message: "Restart service #{config.name}", level: 'INFO', module: 'nikita/lib/service/restart'
+      log message: "Restart service #{config.name}", level: 'INFO'
       {loader} = await @service.discover {}
       config.loader ?= loader
       {status} = await @execute

@@ -322,8 +322,8 @@ console.info(data)
     handler = ({config, tools: {log}}) ->
       # Content: pass all arguments to function calls
       context = arguments[0]
-      log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
-      log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
+      log message: "Source is \"#{config.source}\"", level: 'DEBUG'
+      log message: "Destination is \"#{config.target}\"", level: 'DEBUG'
       config.content = config.content.call @, context if typeof config.content is 'function'
       config.diff ?= config.diff or !!config.stdout
       switch config.eof
@@ -355,7 +355,7 @@ console.info(data)
         # Option "local" force to bypass the ssh
         # connection, use by the upload function
         source = config.source or config.target
-        log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
+        log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG'
         {exists} = await @fs.base.exists
           ssh: config.ssh unless config.local
           sudo: if config.local then false else config.sudo
@@ -363,7 +363,7 @@ console.info(data)
         unless exists
           throw Error "Source does not exist: #{JSON.stringify config.source}" if config.source
           config.content = ''
-        log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
+        log message: "Reading source", level: 'DEBUG'
         {data: config.content} = await @fs.base.readFile
           ssh: if config.local then false else undefined
           sudo: if config.local then false else undefined
@@ -382,24 +382,24 @@ console.info(data)
       # Stat the target
       targetStats = await @call metadata: raw_output: true, ->
         return null unless typeof config.target is 'string'
-        log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
+        log message: "Stat target", level: 'DEBUG'
         try
           {stats} = await @fs.base.lstat target: config.target
           if utils.stats.isDirectory stats.mode
             throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
             config.target = "#{config.target}/#{path.basename config.source}"
-            log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
+            log message: "Destination is a directory and is now \"config.target\"", level: 'INFO'
             # Destination is the parent directory, let's see if the file exist inside
             {stats} = await @fs.base.stat target: config.target, metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
             throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
-            log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
+            log message: "New target exists", level: 'INFO'
           else if utils.stats.isSymbolicLink stats.mode
-            log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
+            log message: "Destination is a symlink", level: 'INFO'
             if config.unlink
               await @fs.base.unlink target: config.target
               stats = null
           else if utils.stats.isFile stats.mode
-            log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
+            log message: "Destination is a file", level: 'INFO'
           else
             throw Error "Invalid File Type Destination: #{config.target}"
           stats
@@ -419,11 +419,11 @@ console.info(data)
       # else if transform throws an error, the error isnt caught but rather thrown
       config.content = await config.transform.call undefined, config: config if config.transform
       if config.remove_empty_lines
-        log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
+        log message: "Remove empty lines", level: 'DEBUG'
         config.content = config.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
       utils.partial config, log if config.write.length
       if config.eof
-        log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
+        log message: 'Checking option eof', level: 'DEBUG'
         if config.eof is true
           for char, i in config.content
             if char is '\r'
@@ -433,9 +433,9 @@ console.info(data)
               config.eof = char
               break
           config.eof = '\n' if config.eof is true
-          log message: "Option eof is true, guessing as #{JSON.stringify config.eof}", level: 'INFO', module: 'nikita/lib/file'
+          log message: "Option eof is true, guessing as #{JSON.stringify config.eof}", level: 'INFO'
         unless utils.string.endsWith config.content, config.eof
-          log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
+          log message: 'Add eof', level: 'INFO'
           config.content += config.eof
       # Read the target, compute its hash and diff its content
       if targetStats
@@ -448,9 +448,9 @@ console.info(data)
       if contentChanged
         {raw, text} = utils.diff targetContent, config.content, config
         config.diff text, raw if typeof config.diff is 'function'
-        log type: 'diff', message: text, level: 'INFO', module: 'nikita/lib/file'
+        log type: 'diff', message: text, level: 'INFO'
       if config.backup and contentChanged
-        log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
+        log message: "Create backup", level: 'INFO'
         config.backup_mode ?= 0o0400
         backup = if typeof config.backup is 'string' then config.backup else ".#{Date.now()}"
         await @fs.copy
@@ -460,7 +460,7 @@ console.info(data)
           metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
       # Call the target with the content when a function
       if typeof config.target is 'function'
-        log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
+        log message: 'Write target with user function', level: 'INFO'
         await config.target content: config.content
       else
         # Ownership and permission are also handled

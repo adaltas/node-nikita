@@ -43,7 +43,7 @@ console.info(`Service was stopped: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Stop service #{config.name}", level: 'INFO', module: 'nikita/lib/service/stop'
+      log message: "Stop service #{config.name}", level: 'INFO'
       try
         {status} = await @execute
           command: """
@@ -68,8 +68,8 @@ console.info(`Service was stopped: ${status}`)
           code_skipped: 3
           arch_chroot: config.arch_chroot
           rootdir: config.rootdir
-        log message: "Service is stopped", level: 'INFO', module: 'nikita/lib/service/stop' if status
-        log message: "Service already stopped", level: 'WARN', module: 'nikita/lib/service/stop' if not status
+        log message: "Service is stopped", level: 'INFO' if status
+        log message: "Service already stopped", level: 'WARN' if not status
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

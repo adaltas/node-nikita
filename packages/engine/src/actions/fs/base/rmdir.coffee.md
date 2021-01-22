@@ -32,7 +32,7 @@ Delete a directory.
             else
               "rm -R '#{config.target}'"
           ].join '\n'
-        log message: "Directory successfully removed", level: 'INFO', module: 'nikita/lib/fs/write'
+        log message: "Directory successfully removed", level: 'INFO'
       catch err
         if err.exit_code is 2
           err = errors.NIKITA_FS_RMDIR_TARGET_ENOENT config: config, err: err

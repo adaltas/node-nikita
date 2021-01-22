@@ -71,21 +71,18 @@ handler = async function({
   delete config.command;
   log({
     message: 'Storing previous state of image',
-    level: 'INFO',
-    module: 'nikita/lib/docker/load'
+    level: 'INFO'
   });
   if (config.checksum == null) {
     log({
       message: 'No checksum provided',
-      level: 'INFO',
-      module: 'nikita/lib/docker/load'
+      level: 'INFO'
     });
   }
   if (config.checksum) {
     log({
       message: `Checksum provided :${config.checksum}`,
-      level: 'INFO',
-      module: 'nikita/lib/docker/load'
+      level: 'INFO'
     });
   }
   if (config.checksum == null) {
@@ -107,8 +104,7 @@ handler = async function({
           // if image is here we skip
           log({
             message: `Image already exist checksum :${config.checksum}, repo:tag \"${infos[0]}:${infos[1]}\"`,
-            level: 'INFO',
-            module: 'nikita/lib/docker/load'
+            level: 'INFO'
           });
         }
         if (infos[2] === config.checksum) {
@@ -120,8 +116,7 @@ handler = async function({
   }
   log({
     message: `Start Loading ${config.input} `,
-    level: 'INFO',
-    module: 'nikita/lib/docker/load'
+    level: 'INFO'
   });
   await this.docker.tools.execute({
     command: command
@@ -133,8 +128,7 @@ handler = async function({
   status = false;
   log({
     message: 'Comparing new images',
-    level: 'INFO',
-    module: 'nikita/lib/docker/load'
+    level: 'INFO'
   });
   if (utils.string.lines(stdout).length > 1) {
     ref1 = utils.string.lines(stdout.toString());
@@ -158,8 +152,7 @@ handler = async function({
           status = true;
           log({
             message: 'Identical images',
-            level: 'INFO',
-            module: 'nikita/lib/docker/load'
+            level: 'INFO'
           });
           break;
         }

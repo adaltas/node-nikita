@@ -55,7 +55,7 @@ We might think about re-integrating them.
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "Status for service #{config.name}", level: 'INFO', module: 'nikita/lib/service/status'
+      log message: "Status for service #{config.name}", level: 'INFO'
       try
         {status} = await @execute
           command: """
@@ -79,7 +79,7 @@ We might think about re-integrating them.
           code_skipped: 3
           arch_chroot: config.arch_chroot
           rootdir: config.rootdir
-        log message: "Status for #{config.name} is #{if status then 'started' else 'stoped'}", level: 'INFO', module: 'nikita/lib/service/status'
+        log message: "Status for #{config.name} is #{if status then 'started' else 'stoped'}", level: 'INFO'
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

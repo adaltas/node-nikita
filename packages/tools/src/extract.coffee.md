@@ -113,7 +113,7 @@ console.info(`File was extracted: ${status}`)
       throw Error "Not a File: #{config.source}" unless utils.stats.isFile stats.mode
       # Extract the source archive
       command = null
-      log message: "Format is #{format}", level: 'DEBUG', module: 'nikita/lib/tools/extract'
+      log message: "Format is #{format}", level: 'DEBUG'
       switch format
         when 'tgz' then command = "tar xzf #{config.source} -C #{target} #{tar_opts.join ' '}"
         when 'tar' then command = "tar xf #{config.source} -C #{target} #{tar_opts.join ' '}"

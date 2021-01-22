@@ -117,8 +117,7 @@ handler = async function({
       count++;
       log({
         message: `Attempt #${count}`,
-        level: 'INFO',
-        module: 'nikita/lib/wait/execute'
+        level: 'INFO'
       });
       ({status} = (await this.execute({
         command: command,
@@ -138,8 +137,7 @@ handler = async function({
       }
       log({
         message: "Finish wait for execution",
-        level: 'INFO',
-        module: 'nikita/lib/wait/execute'
+        level: 'INFO'
       });
       quorum_current++;
       if (count > 1) {

@@ -118,24 +118,21 @@ handler = async function({
 cp '${config.target}' '${config.target_tmp}'`);
       log({
         message: "Append prepared by placing a copy of the original file in a temporary path",
-        level: 'INFO',
-        module: 'nikita/lib/fs/createWriteStream'
+        level: 'INFO'
       });
     }
   } catch (error) {
     err = error;
     log({
       message: "Failed to place original file in temporary path",
-      level: 'ERROR',
-      module: 'nikita/lib/fs/createWriteStream'
+      level: 'ERROR'
     });
     throw err;
   }
   // Start writing the content
   log({
     message: 'Writting file',
-    level: 'DEBUG',
-    module: 'nikita/lib/fs/createWriteStream'
+    level: 'DEBUG'
   });
   await new Promise(async function(resolve, reject) {
     var ws;

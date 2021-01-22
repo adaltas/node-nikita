@@ -68,8 +68,7 @@ handler = async function({
   var err, status;
   log({
     message: `Status for service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/status'
+    level: 'INFO'
   });
   try {
     ({status} = (await this.execute({
@@ -89,8 +88,7 @@ fi`,
     })));
     return log({
       message: `Status for ${config.name} is ${status ? 'started' : 'stoped'}`,
-      level: 'INFO',
-      module: 'nikita/lib/service/status'
+      level: 'INFO'
     });
   } catch (error) {
     err = error;

@@ -62,15 +62,13 @@ handler = async function({
   if (config.user != null) {
     log({
       message: `Using user ${config.user}`,
-      level: 'DEBUG',
-      module: 'nikita/tools/lib/cron/add'
+      level: 'DEBUG'
     });
     crontab = `crontab -u ${config.user}`;
   } else {
     log({
       message: "Using default user",
-      level: 'DEBUG',
-      module: 'nikita/tools/lib/cron/add'
+      level: 'DEBUG'
     });
     crontab = "crontab";
   }
@@ -107,8 +105,7 @@ handler = async function({
         }
         log({
           message: "Entry has changed",
-          level: 'WARN',
-          module: 'nikita/tools/lib/cron/add'
+          level: 'WARN'
         });
         utils.diff(job, new_job, config);
         job = new_job;
@@ -125,8 +122,7 @@ handler = async function({
     jobs.push(new_job);
     log({
       message: "Job not found in crontab, adding",
-      level: 'WARN',
-      module: 'nikita/tools/lib/cron/add'
+      level: 'WARN'
     });
   }
   if (!(added || modified)) {

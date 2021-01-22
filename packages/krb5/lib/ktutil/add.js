@@ -93,8 +93,7 @@ handler = async function({
   if (status) {
     log({
       message: "Principal exist in Keytab, check kvno validity",
-      level: 'DEBUG',
-      module: 'nikita/krb5/ktutil/add'
+      level: 'DEBUG'
     });
     ref = utils.string.lines(stdout);
     for (i = 0, len = ref.length; i < len; i++) {
@@ -158,8 +157,7 @@ handler = async function({
       // remove entry if kvno not identical
       log({
         message: `Remove from Keytab kvno '${entry.kvno}', principal kvno '${princ.kvno}'`,
-        level: 'INFO',
-        module: 'nikita/krb5/ktutil/add'
+        level: 'INFO'
       });
       command += `delete_entry ${entry != null ? entry.slot : void 0}\n`;
     }

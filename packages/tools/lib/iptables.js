@@ -175,8 +175,7 @@ handler = async function({
   var command, newrules, oldrules, status, stdout;
   log({
     message: "List existing rules",
-    level: 'WARN',
-    module: 'nikita/lib/iptables'
+    level: 'WARN'
   });
   ({status} = (await this.service.status({
     name: 'iptables'
@@ -199,8 +198,7 @@ handler = async function({
   }
   log({
     message: `${command.length} modified rules`,
-    level: 'WARN',
-    module: 'nikita/lib/iptables'
+    level: 'WARN'
   });
   return (await this.execute({
     command: `${command.join('; ')}; service iptables save;`,

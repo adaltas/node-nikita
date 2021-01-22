@@ -365,7 +365,7 @@ console.info(stdout)
         config.command = "sudo #{config.command}"
       # Execute
       new Promise (resolve, reject) ->
-        log message: config.command_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
+        log message: config.command_original, type: 'stdin', level: 'INFO' if config.stdin_log
         result =
           stdout: []
           stderr: []
@@ -384,7 +384,7 @@ console.info(stdout)
         if config.stdout_return or config.stdout_log
           child.stdout.on 'data', (data) ->
             stdout_stream_open = true if config.stdout_log
-            log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if config.stdout_log
+            log message: data, type: 'stdout_stream' if config.stdout_log
             if config.stdout_return
               if Array.isArray result.stdout # A string once `exit` is called
                 result.stdout.push data
@@ -398,7 +398,7 @@ console.info(stdout)
         if config.stderr_return or config.stderr_log
           child.stderr.on 'data', (data) ->
             stderr_stream_open = true if config.stderr_log
-            log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if config.stderr_log
+            log message: data, type: 'stderr_stream' if config.stderr_log
             if config.stderr_return
               if Array.isArray result.stderr # A string once `exit` is called
                 result.stderr.push data
@@ -415,8 +415,8 @@ console.info(stdout)
           # called before the "stdout" "data" event when running
           # `npm test`
           setImmediate ->
-            log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and config.stdout_log
-            log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and config.stderr_log
+            log message: null, type: 'stdout_stream' if stdout_stream_open and config.stdout_log
+            log message: null, type: 'stderr_stream' if  stderr_stream_open and config.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
             result.stdout = result.stdout.trim() if config.trim or config.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
@@ -428,8 +428,8 @@ console.info(stdout)
               result.data = switch config.format
                 when 'json' then JSON.parse result.stdout
                 when 'yaml' then yaml.safeLoad result.stdout
-            log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and config.stdout_log
-            log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and config.stderr_log
+            log message: result.stdout, type: 'stdout' if result.stdout and result.stdout isnt '' and config.stdout_log
+            log message: result.stderr, type: 'stderr' if result.stderr and result.stderr isnt '' and config.stderr_log
             if config.stdout
               child.stdout.unpipe config.stdout
             if config.stderr
@@ -446,7 +446,7 @@ console.info(stdout)
             if config.code_skipped.indexOf(code) is -1
               result.status = true
             else
-              log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
+              log message: "Skip exit code \"#{code}\"", level: 'INFO'
             resolve result
 
 ## Exports

@@ -203,16 +203,14 @@ handler = async function({
     await this.fs.base.mkdir(target, opts);
     log({
       message: `Directory \"${target}\" created `,
-      level: 'INFO',
-      module: 'nikita/lib/system/mkdir'
+      level: 'INFO'
     });
   }
   // Target directory update
   if (creates.length === 0) {
     log({
       message: "Directory already exists",
-      level: 'DEBUG',
-      module: 'nikita/lib/system/mkdir'
+      level: 'DEBUG'
     });
     await this.fs.chown({
       target: config.target,

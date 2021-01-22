@@ -43,8 +43,7 @@ handler = async function({
     });
     return log({
       message: "Directory successfully removed",
-      level: 'INFO',
-      module: 'nikita/lib/fs/write'
+      level: 'INFO'
     });
   } catch (error) {
     err = error;

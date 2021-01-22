@@ -134,15 +134,13 @@ handler = async function({
   if (config.source_stats) {
     log({
       message: "Source Stats: using short circuit",
-      level: 'DEBUG',
-      module: 'nikita/lib/system/copy'
+      level: 'DEBUG'
     });
     source_stats = config.source_stats;
   } else {
     log({
       message: `Stats source file ${config.source}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/system/copy'
+      level: 'DEBUG'
     });
     ({
       stats: source_stats
@@ -154,15 +152,13 @@ handler = async function({
   if (config.target_stats) {
     log({
       message: "Target Stats: using short circuit",
-      level: 'DEBUG',
-      module: 'nikita/lib/system/copy'
+      level: 'DEBUG'
     });
     target_stats = config.target_stats;
   } else {
     log({
       message: `Stats target file ${config.target}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/system/copy'
+      level: 'DEBUG'
     });
     try {
       ({
@@ -210,8 +206,7 @@ handler = async function({
     }
     log({
       message: "Source is a directory",
-      level: 'INFO',
-      module: 'nikita/lib/system/copy'
+      level: 'INFO'
     });
     ({files} = (await this.fs.glob(`${config.source}/**`, {
       dot: true
@@ -295,14 +290,12 @@ handler = async function({
   if (hash_source === hash_target) {
     log({
       message: `Hash matches as '${hash_source}'`,
-      level: 'INFO',
-      module: 'nikita/lib/file/download'
+      level: 'INFO'
     });
   } else {
     log({
       message: `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
-      level: 'WARN',
-      module: 'nikita/lib/file/download'
+      level: 'WARN'
     });
     await this.fs.base.copy({
       source: config.source,
@@ -311,8 +304,7 @@ handler = async function({
     if (status) {
       log({
         message: `File copied from ${config.source} into ${config.target}`,
-        level: 'INFO',
-        module: 'nikita/lib/system/copy'
+        level: 'INFO'
       });
     }
   }

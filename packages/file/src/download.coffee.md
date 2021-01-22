@@ -186,7 +186,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         algo = 'md5'
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
-      log message: "Using force: #{JSON.stringify config.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if config.force
+      log message: "Using force: #{JSON.stringify config.force}", level: 'DEBUG' if config.force
       source_url = url.parse config.source
       match = null
       # Disable caching if source is a local file and cache isnt explicitly set by user
@@ -202,7 +202,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # we compare it with the target file signature and stop if they match
       if typeof source_hash is 'string'
         {shortcircuit} = await @call metadata: shy: true, ->
-          log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
+          log message: "Shortcircuit check if provided hash match target", level: 'WARN'
           try
             {hash} = await @fs.hash config.target, algo: algo
             shortcircuit: !source_hash is hash
@@ -210,7 +210,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             throw err if err.code isnt 'NIKITA_FS_STAT_TARGET_ENOENT'
             shortcircuit: false
         return true if shortcircuit
-        log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'nikita/lib/file/download'
+        log message: "Destination with valid signature, download aborted", level: 'INFO'
       # Download the file and place it inside local cache
       # Overwrite the config.source and source_url properties to make them
       # look like a local file instead of an HTTP URL
@@ -236,14 +236,14 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         {stats} = await @fs.base.stat
           target: config.target
         if utils.stats.isDirectory stats?.mode
-          log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
+          log message: "Destination is a directory", level: 'DEBUG'
           config.target = path.join config.target, path.basename config.source
       catch err
         throw err if err.code isnt 'NIKITA_FS_STAT_TARGET_ENOENT'
       stageDestination = "#{config.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if source_url.protocol in protocols_http
-        log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
-        log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
+        log message: "HTTP Download", level: 'DEBUG'
+        log message: "Download file from url using curl", level: 'INFO'
         # Ensure target directory exists
         await @fs.mkdir
           metadata: shy: true
@@ -281,7 +281,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             metadata: shy: true
             target: stageDestination
       else if source_url.protocol not in protocols_http and not ssh
-        log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
+        log message: "File Download without ssh (with or without cache)", level: 'DEBUG'
         hash_source = hash_target = null
         {hash} = await @fs.hash target: config.source, algo: algo
         hash_source = hash
@@ -301,7 +301,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             source: config.source
             target: stageDestination
       else if source_url.protocol not in protocols_http and ssh
-        log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
+        log message: "File Download with ssh (with or without cache)", level: 'DEBUG'
         hash_source = hash_target = null
         {hash} = await @fs.hash target: config.source, algo: algo, ssh: false, sudo: false
         hash_source = hash
@@ -323,10 +323,10 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
               stream: (ws) ->
                 rs = fs.createReadStream config.source
                 rs.pipe ws
-            log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination}", level: 'INFO', module: 'nikita/lib/file/download'
+            log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination}", level: 'INFO'
           catch err
-            log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR', module: 'nikita/lib/file/download'
-      log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
+            log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR'
+      log message: "Unstage downloaded file", level: 'DEBUG'
       unless match
         await @fs.move
           source: stageDestination

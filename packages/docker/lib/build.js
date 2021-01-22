@@ -220,18 +220,15 @@ handler = async function({
       '-t ' + utils.string.escapeshellarg(config.image + (config.tag ? `:${config.tag}` : '')),
       (config.content != null ? (log({
         message: "Building from text: Docker won't have a context. ADD/COPY not working",
-        level: 'WARN',
-        module: 'nikita/docker/build'
+        level: 'WARN'
       }),
       config.content != null ? `- <<DOCKERFILE\n${config.content}\nDOCKERFILE` : void 0) : config.file != null ? (log({
         message: `Building from Dockerfile: \"${config.file}\"`,
-        level: 'INFO',
-        module: 'nikita/docker/build'
+        level: 'INFO'
       }),
       `-f ${config.file} ${config.cwd}`) : (log({
         message: "Building from CWD",
-        level: 'INFO',
-        module: 'nikita/docker/build'
+        level: 'INFO'
       }),
       '.'))
     ].join(' '),
@@ -257,8 +254,7 @@ handler = async function({
     // Read Dockerfile if necessary to count steps
     log({
       message: `Reading Dockerfile from : ${config.file}`,
-      level: 'INFO',
-      module: 'nikita/lib/build'
+      level: 'INFO'
     });
     ({
       data: config.content

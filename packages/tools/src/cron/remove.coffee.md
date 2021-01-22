@@ -41,10 +41,10 @@ console.info(`Cron entry was removed: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       if config.user?
-        log message: "Using user #{config.user}", level: 'INFO', module: 'nikita/tools/lib/cron/remove'
+        log message: "Using user #{config.user}", level: 'INFO'
         crontab = "crontab -u #{config.user}"
       else
-        log message: "Using default user", level: 'INFO', module: 'nikita/tools/lib/cron/remove'
+        log message: "Using default user", level: 'INFO'
         crontab = "crontab"
       status = false
       jobs = []
@@ -58,10 +58,10 @@ console.info(`Cron entry was removed: ${status}`)
       jobs = stdout.trim().split '\n'
       for job, i in jobs
         continue unless regex.test job
-        log message: "Job '#{job}' matches. Removing from list", level: 'WARN', module: 'nikita/tools/lib/cron/remove'
+        log message: "Job '#{job}' matches. Removing from list", level: 'WARN'
         status = true
         jobs.splice i, 1
-      log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/tools/lib/cron/remove'
+      log message: "No Job matches. Skipping", level: 'INFO'
       return unless status
       await @execute
         command: """

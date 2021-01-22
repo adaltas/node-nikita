@@ -94,8 +94,7 @@ handler = async function({
   if (!config.dn) {
     log({
       message: "Get DN of the database to modify",
-      level: 'DEBUG',
-      module: 'nikita/ldap/index'
+      level: 'DEBUG'
     });
     ({dn} = (await this.ldap.tools.database(config, {
       suffix: config.suffix
@@ -103,8 +102,7 @@ handler = async function({
     config.dn = dn;
     log({
       message: `Database DN is ${dn}`,
-      level: 'INFO',
-      module: 'nikita/ldap/index'
+      level: 'INFO'
     });
   }
   ref = config.acls;
@@ -113,8 +111,7 @@ handler = async function({
     // Get ACLs
     log({
       message: "List all ACL of the directory",
-      level: 'DEBUG',
-      module: 'nikita/ldap/acl'
+      level: 'DEBUG'
     });
     ({stdout} = (await this.ldap.search(config, {
       attributes: ['olcAccess'],
@@ -180,16 +177,14 @@ handler = async function({
       if (is_perfect_match) {
         log({
           message: "No modification to apply",
-          level: 'INFO',
-          module: 'nikita/ldap/acl'
+          level: 'INFO'
         });
         continue;
       }
       if (not_found_acl.length) {
         log({
           message: "Modify access after undefined acl",
-          level: 'INFO',
-          module: 'nikita/ldap/acl'
+          level: 'INFO'
         });
         ref4 = olcAccess.by;
         for (o = 0, len5 = ref4.length; o < len5; o++) {
@@ -200,8 +195,7 @@ handler = async function({
       } else {
         log({
           message: "Modify access after reorder",
-          level: 'INFO',
-          module: 'nikita/ldap/acl'
+          level: 'INFO'
         });
         if (typeof log === "function") {
           log('nikita `ldap.acl`: m');
@@ -211,8 +205,7 @@ handler = async function({
     } else {
       log({
         message: "Insert a new access",
-        level: 'INFO',
-        module: 'nikita/ldap/acl'
+        level: 'INFO'
       });
       index = olcAccesses.length;
       if (acl.first) { // not tested

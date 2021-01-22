@@ -114,14 +114,12 @@ handler = async function({
   }
   log({
     message: `target set to ${config.target}`,
-    level: 'DEBUG',
-    module: 'nikita/tmpfs/index'
+    level: 'DEBUG'
   });
   if (config.merge) {
     log({
       message: "opening target file for merge",
-      level: 'DEBUG',
-      module: 'nikita/tmpfs/index'
+      level: 'DEBUG'
     });
     try {
       ({data} = (await this.fs.base.readFile({
@@ -132,8 +130,7 @@ handler = async function({
       content = merge(source, content);
       log({
         message: "content has been merged",
-        level: 'DEBUG',
-        module: 'nikita/tmpfs/index'
+        level: 'DEBUG'
       });
     } catch (error) {
       err = error;
@@ -154,8 +151,7 @@ handler = async function({
   if (status) {
     log({
       message: `re-creating ${config.mount} tmpfs file`,
-      level: 'INFO',
-      module: 'nikita/tmpfs/index'
+      level: 'INFO'
     });
     this.execute({
       command: `systemd-tmpfiles --remove ${config.target}`

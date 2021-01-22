@@ -88,14 +88,14 @@ console.info(`ACL modified: ${status}`)
       status = false
       # Get DN
       unless config.dn
-        log message: "Get DN of the database to modify", level: 'DEBUG', module: 'nikita/ldap/index'
+        log message: "Get DN of the database to modify", level: 'DEBUG'
         {dn} = await @ldap.tools.database config,
           suffix: config.suffix
         config.dn = dn
-        log message: "Database DN is #{dn}", level: 'INFO', module: 'nikita/ldap/index'
+        log message: "Database DN is #{dn}", level: 'INFO'
       for acl in config.acls
         # Get ACLs
-        log message: "List all ACL of the directory", level: 'DEBUG', module: 'nikita/ldap/acl'
+        log message: "List all ACL of the directory", level: 'DEBUG'
         {stdout} = await @ldap.search config,
           attributes: ['olcAccess']
           base: "#{config.dn}"
@@ -134,19 +134,19 @@ console.info(`ACL modified: ${status}`)
                 found = false if acl_by isnt access_by
               not_found_acl.push acl_by unless found
           if is_perfect_match
-            log message: "No modification to apply", level: 'INFO', module: 'nikita/ldap/acl'
+            log message: "No modification to apply", level: 'INFO'
             continue
           if not_found_acl.length
-            log message: "Modify access after undefined acl", level: 'INFO', module: 'nikita/ldap/acl'
+            log message: "Modify access after undefined acl", level: 'INFO'
             for access_by in olcAccess.by
               not_found_acl.push access_by
             olcAccess.by = not_found_acl
           else
-            log message: "Modify access after reorder", level: 'INFO', module: 'nikita/ldap/acl'
+            log message: "Modify access after reorder", level: 'INFO'
             log? 'nikita `ldap.acl`: m'
             olcAccess.by = acl.by
         else
-          log message: "Insert a new access", level: 'INFO', module: 'nikita/ldap/acl'
+          log message: "Insert a new access", level: 'INFO'
           index = olcAccesses.length
           if acl.first # not tested
             index = 0

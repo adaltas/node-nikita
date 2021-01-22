@@ -119,8 +119,7 @@ handler = async function({
   if (!changes.uid && !changes.gid) {
     log({
       message: `Matching ownerships on '${config.target}'`,
-      level: 'INFO',
-      module: 'nikita/lib/chown'
+      level: 'INFO'
     });
     return false;
   }
@@ -138,15 +137,13 @@ handler = async function({
   if (changes.uid) {
     log({
       message: `change uid from ${stats.uid} to ${uid}`,
-      level: 'WARN',
-      module: 'nikita/lib/chown'
+      level: 'WARN'
     });
   }
   if (changes.gid) {
     log({
       message: `change gid from ${stats.gid} to ${gid}`,
-      level: 'WARN',
-      module: 'nikita/lib/chown'
+      level: 'WARN'
     });
   }
   return true;

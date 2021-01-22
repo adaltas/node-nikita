@@ -53,7 +53,7 @@ console.info(`Service was desactivated on startup: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # Action
-      log message: "Startup service #{config.name}", level: 'INFO', module: 'nikita/lib/service/startup'
+      log message: "Startup service #{config.name}", level: 'INFO'
       unless config.command
         {stdout} = await @execute
           command: """
@@ -105,7 +105,7 @@ console.info(`Service was desactivated on startup: ${status}`)
             metadata: shy: true
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
-            log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR', module: 'nikita/lib/service/startup'
+            log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR'
             throw Error "Invalid chkconfig name for `#{config.name}`"
           current_startup = ''
           if status
@@ -130,7 +130,7 @@ console.info(`Service was desactivated on startup: ${status}`)
             await @execute
               command: command
           unless config.startup
-            log message: "Desactivating startup rules", level: 'DEBUG', module: 'nikita/lib/service/startup'
+            log message: "Desactivating startup rules", level: 'DEBUG'
             # Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
             await @execute
               command: "chkconfig #{config.name} off"

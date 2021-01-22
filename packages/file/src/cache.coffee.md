@@ -145,41 +145,41 @@ console.info(`File downloaded: ${status}`)
         _hash = false
       u = url.parse config.source
       if u.protocol isnt null
-        log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
+        log message: "Bypass source hash computation for non-file protocols", level: 'WARN'
       else
         if _hash is true
           _hash = await @fs.hash config.source
           _hash = if _hash?.hash then _hash.hash else false
-          log message: "Computed hash value is '#{_hash}'", level: 'INFO', module: 'nikita/lib/file/cache'
+          log message: "Computed hash value is '#{_hash}'", level: 'INFO'
       # Download the file if
       # - file doesnt exist
       # - option force is provided
       # - hash isnt true and doesnt match
       {status} = await @call ->
-        log message: "Check if target (#{config.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
+        log message: "Check if target (#{config.target}) exists", level: 'DEBUG'
         {exists} = await @fs.base.exists target: config.target
         if exists
-          log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
+          log message: "Target file exists", level: 'INFO'
           # If no checksum , we ignore MD5 check
           if config.force
-            log message: "Force mode, cache will be overwritten", level: 'DEBUG', module: 'nikita/lib/file/cache'
+            log message: "Force mode, cache will be overwritten", level: 'DEBUG'
             return true
           else if _hash and typeof _hash is 'string'
             # then we compute the checksum of the file
-            log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/file/cache'
+            log message: "Comparing #{algo} hash", level: 'DEBUG'
             {hash} = await @fs.hash config.target
             # And compare with the checksum provided by the user
             if _hash is hash
-              log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
+              log message: "Hashes match, skipping", level: 'DEBUG'
               return false
-            log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
+            log message: "Hashes don't match, delete then re-download", level: 'WARN'
             await @fs.base.unlink target: config.target
             true
           else
-            log message: "Target file exists, check disabled, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
+            log message: "Target file exists, check disabled, skipping", level: 'DEBUG'
             false
         else
-          log message: "Target file does not exists", level: 'INFO', module: 'nikita/lib/file/cache'
+          log message: "Target file does not exists", level: 'INFO'
           true
       return status unless status
       # Place into cache

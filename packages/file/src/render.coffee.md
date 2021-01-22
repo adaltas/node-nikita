@@ -82,7 +82,7 @@ console.info(`File was rendered: ${status}`)
         if data?
           config.source = undefined
           config.content = data
-      log message: "Rendering with #{config.engine}", level: 'DEBUG', module: 'nikita/lib/file/render'
+      log message: "Rendering with #{config.engine}", level: 'DEBUG'
       config.transform = ({config}) ->
         template = handlebars.compile config.content.toString()
         template config.context

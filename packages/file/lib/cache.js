@@ -192,8 +192,7 @@ handler = async function({
   if (u.protocol !== null) {
     log({
       message: "Bypass source hash computation for non-file protocols",
-      level: 'WARN',
-      module: 'nikita/lib/file/cache'
+      level: 'WARN'
     });
   } else {
     if (_hash === true) {
@@ -201,8 +200,7 @@ handler = async function({
       _hash = (_hash != null ? _hash.hash : void 0) ? _hash.hash : false;
       log({
         message: `Computed hash value is '${_hash}'`,
-        level: 'INFO',
-        module: 'nikita/lib/file/cache'
+        level: 'INFO'
       });
     }
   }
@@ -214,8 +212,7 @@ handler = async function({
     var exists, hash;
     log({
       message: `Check if target (${config.target}) exists`,
-      level: 'DEBUG',
-      module: 'nikita/lib/file/cache'
+      level: 'DEBUG'
     });
     ({exists} = (await this.fs.base.exists({
       target: config.target
@@ -223,38 +220,33 @@ handler = async function({
     if (exists) {
       log({
         message: "Target file exists",
-        level: 'INFO',
-        module: 'nikita/lib/file/cache'
+        level: 'INFO'
       });
       // If no checksum , we ignore MD5 check
       if (config.force) {
         log({
           message: "Force mode, cache will be overwritten",
-          level: 'DEBUG',
-          module: 'nikita/lib/file/cache'
+          level: 'DEBUG'
         });
         return true;
       } else if (_hash && typeof _hash === 'string') {
         // then we compute the checksum of the file
         log({
           message: `Comparing ${algo} hash`,
-          level: 'DEBUG',
-          module: 'nikita/lib/file/cache'
+          level: 'DEBUG'
         });
         ({hash} = (await this.fs.hash(config.target)));
         // And compare with the checksum provided by the user
         if (_hash === hash) {
           log({
             message: "Hashes match, skipping",
-            level: 'DEBUG',
-            module: 'nikita/lib/file/cache'
+            level: 'DEBUG'
           });
           return false;
         }
         log({
           message: "Hashes don't match, delete then re-download",
-          level: 'WARN',
-          module: 'nikita/lib/file/cache'
+          level: 'WARN'
         });
         await this.fs.base.unlink({
           target: config.target
@@ -263,16 +255,14 @@ handler = async function({
       } else {
         log({
           message: "Target file exists, check disabled, skipping",
-          level: 'DEBUG',
-          module: 'nikita/lib/file/cache'
+          level: 'DEBUG'
         });
         return false;
       }
     } else {
       log({
         message: "Target file does not exists",
-        level: 'INFO',
-        module: 'nikita/lib/file/cache'
+        level: 'INFO'
       });
       return true;
     }

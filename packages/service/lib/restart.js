@@ -49,8 +49,7 @@ handler = async function({
   var loader, status;
   log({
     message: `Restart service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/restart'
+    level: 'INFO'
   });
   ({loader} = (await this.service.discover({})));
   if (config.loader == null) {

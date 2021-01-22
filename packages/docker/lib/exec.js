@@ -102,8 +102,7 @@ handler = async function({
   } else if (config.gid != null) {
     log({
       message: 'config.gid ignored unless config.uid is provided',
-      level: 'WARN',
-      module: 'nikita/lib/docker/exec'
+      level: 'WARN'
     });
   }
   command += ` ${config.container} ${config.command}`;

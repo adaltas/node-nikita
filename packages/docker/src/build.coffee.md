@@ -186,13 +186,13 @@ console.info(`Container was built: ${status}`)
           '-t ' + utils.string.escapeshellarg config.image+if config.tag then ":#{config.tag}" else ''
           (
             if config.content?
-              log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
+              log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN'
               "- <<DOCKERFILE\n#{config.content}\nDOCKERFILE" if config.content?
             else if config.file?
-              log message: "Building from Dockerfile: \"#{config.file}\"", level: 'INFO', module: 'nikita/docker/build'
+              log message: "Building from Dockerfile: \"#{config.file}\"", level: 'INFO'
               "-f #{config.file} #{config.cwd}"
             else
-              log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
+              log message: "Building from CWD", level: 'INFO'
               '.'
           )
         ].join ' '
@@ -213,7 +213,7 @@ console.info(`Container was built: ${status}`)
           write: config.write
       # Read Dockerfile if necessary to count steps
       else
-        log message: "Reading Dockerfile from : #{config.file}", level: 'INFO', module: 'nikita/lib/build'
+        log message: "Reading Dockerfile from : #{config.file}", level: 'INFO'
         {data: config.content} = await @fs.base.readFile
           target: config.file
           encoding: 'utf8'

@@ -46,15 +46,13 @@ handler = async function({
   if (config.user != null) {
     log({
       message: `Using user ${config.user}`,
-      level: 'INFO',
-      module: 'nikita/tools/lib/cron/remove'
+      level: 'INFO'
     });
     crontab = `crontab -u ${config.user}`;
   } else {
     log({
       message: "Using default user",
-      level: 'INFO',
-      module: 'nikita/tools/lib/cron/remove'
+      level: 'INFO'
     });
     crontab = "crontab";
   }
@@ -80,16 +78,14 @@ handler = async function({
     }
     log({
       message: `Job '${job}' matches. Removing from list`,
-      level: 'WARN',
-      module: 'nikita/tools/lib/cron/remove'
+      level: 'WARN'
     });
     status = true;
     jobs.splice(i, 1);
   }
   log({
     message: "No Job matches. Skipping",
-    level: 'INFO',
-    module: 'nikita/tools/lib/cron/remove'
+    level: 'INFO'
   });
   if (!status) {
     return;

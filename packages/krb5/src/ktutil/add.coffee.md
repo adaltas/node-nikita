@@ -75,7 +75,7 @@ console.info(`Keytab was created or modified: ${status}`)
         code_skipped: 1
         metadata: shy: true
       if status
-        log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
+        log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout
           continue unless match = /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec line
           [_, slot, kvno, timestamp, principal, enctype] = match
@@ -110,7 +110,7 @@ console.info(`Keytab was created or modified: ${status}`)
         if entry? and (entry?.kvno isnt princ.kvno)
           command ?= "echo -e 'rkt #{config.keytab}\n"
           # remove entry if kvno not identical
-          log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
+          log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO'
           command += "delete_entry #{entry?.slot}\n"
       if entries.length > princ_entries.length
         if command?

@@ -64,8 +64,7 @@ handler = async function({
   // config.manager ?= state['nikita:service:manager'] # not supported
   log({
     message: `Remove service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/remove'
+    level: 'INFO'
   });
   cacheonly = config.cacheonly ? '-C' : '';
   if (config.cache) {
@@ -93,8 +92,7 @@ fi`,
       if (status) {
         log({
           message: "Installed packages retrieved",
-          level: 'INFO',
-          module: 'nikita/lib/service/remove'
+          level: 'INFO'
         });
         installed = (function() {
           var i, len, ref, results;
@@ -153,8 +151,7 @@ fi`,
       handler: function() {
         log({
           message: "Caching installed on \"nikita:execute:installed\"",
-          level: 'INFO',
-          module: 'nikita/lib/service/remove'
+          level: 'INFO'
         });
         return state['nikita:execute:installed'] = installed;
       }

@@ -126,13 +126,11 @@ handler = async function({
   target = `${config.target}/${config.name}/${filename}`;
   log({
     message: `Source is ${JSON.stringify(config.source)}`,
-    level: 'INFO',
-    module: 'nikita/lib/tools/backup'
+    level: 'INFO'
   });
   log({
     message: `Target is ${JSON.stringify(target)}`,
-    level: 'INFO',
-    module: 'nikita/lib/tools/backup'
+    level: 'INFO'
   });
   await this.fs.mkdir(`${path.dirname(target)}`);
   if (config.source && !config.compress) {

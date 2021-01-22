@@ -129,10 +129,10 @@ console.info(`Directory was created: ${status}`)
           val = if i is creates.length - 1 then config[attr] else config.parent?[attr]
           opts[attr] = val if val?
         await @fs.base.mkdir target, opts
-        log message: "Directory \"#{target}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
+        log message: "Directory \"#{target}\" created ", level: 'INFO'
       # Target directory update
       if creates.length is 0
-        log message: "Directory already exists", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+        log message: "Directory already exists", level: 'DEBUG'
         await @fs.chown
           target: config.target
           stats: stats

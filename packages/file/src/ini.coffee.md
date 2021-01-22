@@ -153,11 +153,11 @@ console.info(`Content was updated: ${status}`)
       # Merge
       if config.merge
         config.content = merge org_props, config.content
-        log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
+        log message: "Get content for merge", level: 'DEBUG'
       if config.clean
-        log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
+        log message: "Clean content", level: 'INFO'
         utils.object.clean config.content
-      log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
+      log message: "Serialize content", level: 'DEBUG'
       stringify = config.stringify or utils.ini.stringify
       await @file
         target: config.target

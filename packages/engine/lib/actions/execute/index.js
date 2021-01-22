@@ -482,8 +482,7 @@ handler = async function({
       log({
         message: config.command_original,
         type: 'stdin',
-        level: 'INFO',
-        module: 'nikita/lib/system/execute'
+        level: 'INFO'
       });
     }
     result = {
@@ -523,8 +522,7 @@ handler = async function({
         if (config.stdout_log) {
           log({
             message: data,
-            type: 'stdout_stream',
-            module: 'nikita/lib/system/execute'
+            type: 'stdout_stream'
           });
         }
         if (config.stdout_return) {
@@ -544,8 +542,7 @@ handler = async function({
         if (config.stderr_log) {
           log({
             message: data,
-            type: 'stderr_stream',
-            module: 'nikita/lib/system/execute'
+            type: 'stderr_stream'
           });
         }
         if (config.stderr_return) {
@@ -566,15 +563,13 @@ handler = async function({
         if (stdout_stream_open && config.stdout_log) {
           log({
             message: null,
-            type: 'stdout_stream',
-            module: 'nikita/lib/system/execute'
+            type: 'stdout_stream'
           });
         }
         if (stderr_stream_open && config.stderr_log) {
           log({
             message: null,
-            type: 'stderr_stream',
-            module: 'nikita/lib/system/execute'
+            type: 'stderr_stream'
           });
         }
         result.stdout = result.stdout.map(function(d) {
@@ -605,15 +600,13 @@ handler = async function({
         if (result.stdout && result.stdout !== '' && config.stdout_log) {
           log({
             message: result.stdout,
-            type: 'stdout',
-            module: 'nikita/lib/system/execute'
+            type: 'stdout'
           });
         }
         if (result.stderr && result.stderr !== '' && config.stderr_log) {
           log({
             message: result.stderr,
-            type: 'stderr',
-            module: 'nikita/lib/system/execute'
+            type: 'stderr'
           });
         }
         if (config.stdout) {
@@ -633,8 +626,7 @@ handler = async function({
         } else {
           log({
             message: `Skip exit code \"${code}\"`,
-            level: 'INFO',
-            module: 'nikita/lib/system/execute'
+            level: 'INFO'
           });
         }
         return resolve(result);

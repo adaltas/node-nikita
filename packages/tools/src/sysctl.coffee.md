@@ -88,7 +88,7 @@ console.info(`Systcl was reloaded: ${status}`)
       # Read current properties
       current = {}
       status = false
-      log message: "Read target: #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
+      log message: "Read target: #{config.target}", level: 'DEBUG'
       try
         {data} = await @fs.base.readFile
           ssh: config.ssh
@@ -108,7 +108,7 @@ console.info(`Systcl was reloaded: ${status}`)
           value = value.trim()
           # Skip property
           if key in config.properties and not config.properties[key]?
-            log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+            log "Removing Property: #{key}, was #{value}", level: 'INFO'
             status = true
             continue
           # Set property
@@ -123,7 +123,7 @@ console.info(`Systcl was reloaded: ${status}`)
         continue unless value?
         value = "#{value}" if typeof value is 'number'
         continue if current[key] is value
-        log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+        log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO'
         final[key] = value
         status = true
       if status

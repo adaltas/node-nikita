@@ -112,8 +112,7 @@ handler = async function({
   }
   log({
     message: `Rendering with ${config.engine}`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file/render'
+    level: 'DEBUG'
   });
   config.transform = function({config}) {
     var template;

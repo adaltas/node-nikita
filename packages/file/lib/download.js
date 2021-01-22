@@ -251,8 +251,7 @@ handler = async function({
   if (config.force) {
     log({
       message: `Using force: ${JSON.stringify(config.force)}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/file/download'
+      level: 'DEBUG'
     });
   }
   source_url = url.parse(config.source);
@@ -287,8 +286,7 @@ handler = async function({
       var err, hash;
       log({
         message: "Shortcircuit check if provided hash match target",
-        level: 'WARN',
-        module: 'nikita/lib/file/download'
+        level: 'WARN'
       });
       try {
         ({hash} = (await this.fs.hash(config.target, {
@@ -312,8 +310,7 @@ handler = async function({
     }
     log({
       message: "Destination with valid signature, download aborted",
-      level: 'INFO',
-      module: 'nikita/lib/file/download'
+      level: 'INFO'
     });
   }
   // Download the file and place it inside local cache
@@ -346,8 +343,7 @@ handler = async function({
     if (utils.stats.isDirectory(stats != null ? stats.mode : void 0)) {
       log({
         message: "Destination is a directory",
-        level: 'DEBUG',
-        module: 'nikita/lib/file/download'
+        level: 'DEBUG'
       });
       config.target = path.join(config.target, path.basename(config.source));
     }
@@ -361,13 +357,11 @@ handler = async function({
   if (ref3 = source_url.protocol, indexOf.call(protocols_http, ref3) >= 0) {
     log({
       message: "HTTP Download",
-      level: 'DEBUG',
-      module: 'nikita/lib/file/download'
+      level: 'DEBUG'
     });
     log({
       message: "Download file from url using curl",
-      level: 'INFO',
-      module: 'nikita/lib/file/download'
+      level: 'INFO'
     });
     // Ensure target directory exists
     await this.fs.mkdir({
@@ -460,8 +454,7 @@ handler = async function({
   } else if ((ref4 = source_url.protocol, indexOf.call(protocols_http, ref4) < 0) && !ssh) {
     log({
       message: "File Download without ssh (with or without cache)",
-      level: 'DEBUG',
-      module: 'nikita/lib/file/download'
+      level: 'DEBUG'
     });
     hash_source = hash_target = null;
     ({hash} = (await this.fs.hash({
@@ -504,8 +497,7 @@ handler = async function({
   } else if ((ref5 = source_url.protocol, indexOf.call(protocols_http, ref5) < 0) && ssh) {
     log({
       message: "File Download with ssh (with or without cache)",
-      level: 'DEBUG',
-      module: 'nikita/lib/file/download'
+      level: 'DEBUG'
     });
     hash_source = hash_target = null;
     ({hash} = (await this.fs.hash({
@@ -553,23 +545,20 @@ handler = async function({
         });
         log({
           message: `Downloaded local source ${JSON.stringify(config.source)} to remote target ${JSON.stringify(stageDestination)}`,
-          level: 'INFO',
-          module: 'nikita/lib/file/download'
+          level: 'INFO'
         });
       } catch (error) {
         err = error;
         log({
           message: `Downloaded local source ${JSON.stringify(config.source)} to remote target ${JSON.stringify(stageDestination)} failed`,
-          level: 'ERROR',
-          module: 'nikita/lib/file/download'
+          level: 'ERROR'
         });
       }
     }
   }
   log({
     message: "Unstage downloaded file",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/download'
+    level: 'DEBUG'
   });
   if (!match) {
     await this.fs.move({

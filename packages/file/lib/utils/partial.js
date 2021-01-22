@@ -11,8 +11,7 @@ module.exports = function(config, log) {
   }
   log({
     message: "Replacing sections of the file",
-    level: 'DEBUG',
-    module: 'nikita/lib/misc/string'
+    level: 'DEBUG'
   });
   ref1 = config.write;
   results = [];
@@ -25,8 +24,7 @@ module.exports = function(config, log) {
       if (typeof opts.match === 'string') {
         log({
           message: "Convert match string to regexp",
-          level: 'DEBUG',
-          module: 'nikita/lib/misc/string'
+          level: 'DEBUG'
         });
       }
       if (typeof opts.match === 'string') {
@@ -39,8 +37,7 @@ module.exports = function(config, log) {
         config.content = config.content.replace(opts.match, opts.replace);
         results.push(log({
           message: "Match existing partial",
-          level: 'INFO',
-          module: 'nikita/lib/misc/string'
+          level: 'INFO'
         }));
       } else if (opts.place_before && typeof opts.replace === 'string') {
         if (typeof opts.place_before === "string") {
@@ -49,16 +46,14 @@ module.exports = function(config, log) {
         if (opts.place_before instanceof RegExp) {
           log({
             message: "Replace with match and place_before regexp",
-            level: 'DEBUG',
-            module: 'nikita/lib/misc/string'
+            level: 'DEBUG'
           });
           posoffset = 0;
           orgContent = config.content;
           while ((res = opts.place_before.exec(orgContent)) !== null) {
             log({
               message: "Before regexp found a match",
-              level: 'INFO',
-              module: 'nikita/lib/misc/string'
+              level: 'INFO'
             });
             pos = posoffset + res.index; //+ res[0].length
             config.content = config.content.slice(0, pos) + opts.replace + '\n' + config.content.slice(pos);
@@ -71,8 +66,7 @@ module.exports = function(config, log) {
         } else {
           log({
             message: "Forgot how we could get there, test shall say it all",
-            level: 'DEBUG',
-            module: 'nikita/lib/misc/string'
+            level: 'DEBUG'
           });
           linebreak = config.content.length === 0 || config.content.substr(config.content.length - 1) === '\n' ? '' : '\n';
           results.push(config.content = opts.replace + linebreak + config.content);
@@ -81,16 +75,14 @@ module.exports = function(config, log) {
         if (typeof opts.append === "string") {
           log({
             message: "Convert append string to regexp",
-            level: 'DEBUG',
-            module: 'nikita/lib/misc/string'
+            level: 'DEBUG'
           });
           opts.append = new RegExp(`^.*${utils.regexp.quote(opts.append)}.*$`, 'mg');
         }
         if (opts.append instanceof RegExp) {
           log({
             message: "Replace with match and append regexp",
-            level: 'DEBUG',
-            module: 'nikita/lib/misc/string'
+            level: 'DEBUG'
           });
           posoffset = 0;
           orgContent = config.content;
@@ -100,8 +92,7 @@ module.exports = function(config, log) {
             while ((res = opts.append.exec(orgContent)) !== null) {
               log({
                 message: "Append regexp found a match",
-                level: 'INFO',
-                module: 'nikita/lib/misc/string'
+                level: 'INFO'
               });
               pos = posoffset + res.index + res[0].length;
               config.content = config.content.slice(0, pos) + '\n' + opts.replace + config.content.slice(pos);
@@ -124,8 +115,7 @@ module.exports = function(config, log) {
     } else if (opts.place_before === true) {
       results.push(log({
         message: "Before is true, need to explain how we could get here",
-        level: 'INFO',
-        module: 'nikita/lib/misc/string'
+        level: 'INFO'
       }));
     } else if (opts.from || opts.to) {
       if (opts.from && opts.to) {
@@ -134,14 +124,12 @@ module.exports = function(config, log) {
         if ((from != null) && (to == null)) {
           results.push(log({
             message: "Found 'from' but missing 'to', skip writing",
-            level: 'WARN',
-            module: 'nikita/lib/misc/string'
+            level: 'WARN'
           }));
         } else if ((from == null) && (to != null)) {
           results.push(log({
             message: "Missing 'from' but found 'to', skip writing",
-            level: 'WARN',
-            module: 'nikita/lib/misc/string'
+            level: 'WARN'
           }));
         } else if ((from == null) && (to == null)) {
           if (opts.append) {
@@ -149,8 +137,7 @@ module.exports = function(config, log) {
           } else {
             results.push(log({
               message: "Missing 'from' and 'to' without append, skip writing",
-              level: 'WARN',
-              module: 'nikita/lib/misc/string'
+              level: 'WARN'
             }));
           }
         } else {
@@ -163,8 +150,7 @@ module.exports = function(config, log) {
         } else {
           results.push(log({
             message: "Missing 'from', skip writing",
-            level: 'WARN',
-            module: 'nikita/lib/misc/string'
+            level: 'WARN'
           }));
         }
       } else if (!opts.from && opts.to) {
@@ -175,8 +161,7 @@ module.exports = function(config, log) {
         } else {
           results.push(log({
             message: "Missing 'to', skip writing",
-            level: 'WARN',
-            module: 'nikita/lib/misc/string'
+            level: 'WARN'
           }));
         }
       } else {

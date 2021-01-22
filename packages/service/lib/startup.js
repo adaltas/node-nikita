@@ -65,8 +65,7 @@ handler = async function({
   // Action
   log({
     message: `Startup service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/startup'
+    level: 'INFO'
   });
   if (!config.command) {
     ({stdout} = (await this.execute({
@@ -140,8 +139,7 @@ fi`,
       if (/^error/.test(stderr)) {
         log({
           message: `Invalid chkconfig name for \"${config.name}\"`,
-          level: 'ERROR',
-          module: 'nikita/lib/service/startup'
+          level: 'ERROR'
         });
         throw Error(`Invalid chkconfig name for \`${config.name}\``);
       }
@@ -192,8 +190,7 @@ fi`,
       if (!config.startup) {
         log({
           message: "Desactivating startup rules",
-          level: 'DEBUG',
-          module: 'nikita/lib/service/startup'
+          level: 'DEBUG'
         });
         // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
         await this.execute({

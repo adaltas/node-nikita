@@ -117,8 +117,8 @@ console.info(`File was backed up: ${status}`)
       filename = "#{filename}.#{compress}" if compress
       
       target = "#{config.target}/#{config.name}/#{filename}"
-      log message: "Source is #{JSON.stringify config.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
-      log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
+      log message: "Source is #{JSON.stringify config.source}", level: 'INFO'
+      log message: "Target is #{JSON.stringify target}", level: 'INFO'
       await @fs.mkdir "#{path.dirname target}"
       if config.source and not config.compress
         await @fs.copy

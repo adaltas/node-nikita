@@ -103,14 +103,14 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
       if config.uid?
         config.name ?= config.uid unless /^[0-9]+/.exec config.uid
       config.target ?=  if config.name? then "/etc/tmpfiles.d/#{config.name}.conf" else '/etc/tmpfiles.d/default.conf'
-      log message: "target set to #{config.target}", level: 'DEBUG', module: 'nikita/tmpfs/index'
+      log message: "target set to #{config.target}", level: 'DEBUG'
       if config.merge
-        log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
+        log message: "opening target file for merge", level: 'DEBUG'
         try
           {data} = await @fs.base.readFile target: config.target, encoding: 'utf8'
           source = utils.tmpfs.parse data
           content = merge source, content
-          log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
+          log message: "content has been merged", level: 'DEBUG'
         catch err
           throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       # Seriazile and write the content
@@ -122,7 +122,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         target: config.target
         uid: config.uid
       if status
-        log message: "re-creating #{config.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
+        log message: "re-creating #{config.mount} tmpfs file", level: 'INFO'
         @execute
           command: "systemd-tmpfiles --remove #{config.target}"
         @execute

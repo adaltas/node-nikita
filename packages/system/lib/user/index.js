@@ -143,8 +143,7 @@ handler = async function({
   var changed, err, group, groups, groups_info, i, j, k, len, len1, ref, ref1, status, user_info, users;
   log({
     message: "Entering user",
-    level: 'DEBUG',
-    module: 'nikita/lib/system/user/add'
+    level: 'DEBUG'
   });
   if (config.system == null) {
     config.system = false;
@@ -186,8 +185,7 @@ handler = async function({
   if (groups_info) {
     log({
       message: `Got group information for ${JSON.stringify(config.name)}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/system/group'
+      level: 'DEBUG'
     });
   }
   if (config.home) {
@@ -225,8 +223,7 @@ handler = async function({
     ]);
     log({
       message: "User defined elsewhere than '/etc/passwd', exit code is 9",
-      level: 'WARN',
-      module: 'nikita/lib/system/user/add'
+      level: 'WARN'
     });
   } else {
     changed = [];
@@ -297,8 +294,7 @@ usermod --pass="$hash" ${config.name}`,
     if (status) {
       return log({
         message: "Password modified",
-        level: 'WARN',
-        module: 'nikita/lib/system/user/add'
+        level: 'WARN'
       });
     }
   }

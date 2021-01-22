@@ -144,7 +144,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Handler
 
     handler = ({metadata, config, tools: {log}}) ->
-      log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
+      log message: "Entering user", level: 'DEBUG'
       config.system ?= false
       config.gid ?= null
       config.password_sync ?= true
@@ -164,7 +164,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         if: user_info and config.groups
         cache: config.cache
       groups_info = groups
-      log message: "Got group information for #{JSON.stringify config.name}", level: 'DEBUG', module: 'nikita/lib/system/group' if groups_info
+      log message: "Got group information for #{JSON.stringify config.name}", level: 'DEBUG' if groups_info
       if config.home
         @system.mkdir
           unless_exists: path.dirname config.home
@@ -195,7 +195,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           command: "chown #{config.name}. #{config.home}"
           if: config.home
         ]
-        log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
+        log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN'
       else
         changed = []
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
@@ -244,7 +244,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           arch_chroot: config.arch_chroot
           rootdir: config.rootdir
           sudo: config.sudo
-        log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if status
+        log message: "Password modified", level: 'WARN' if status
 
 ## Exports
 

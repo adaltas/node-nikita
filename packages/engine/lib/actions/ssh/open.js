@@ -210,8 +210,7 @@ handler = async function({
   if (!(config.private_key || config.password)) {
     log({
       message: `Read Private Key from: ${config.private_key_path}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/ssh/open'
+      level: 'DEBUG'
     });
     location = (await utils.tilde.normalize(config.private_key_path));
     try {
@@ -230,15 +229,13 @@ handler = async function({
     // Establish connection
     log({
       message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-      level: 'DEBUG',
-      module: 'nikita/lib/ssh/open'
+      level: 'DEBUG'
     });
     conn = (await connect(config));
     state['nikita:ssh:connection'] = conn;
     log({
       message: "Connection is established",
-      level: 'INFO',
-      module: 'nikita/lib/ssh/open'
+      level: 'INFO'
     });
     return {
       status: true,
@@ -248,23 +245,20 @@ handler = async function({
     err = error;
     log({
       message: "Connection failed",
-      level: 'WARN',
-      module: 'nikita/lib/ssh/open'
+      level: 'WARN'
     });
   }
   // Enable root access
   if (config.root.username) {
     log({
       message: "Bootstrap Root Access",
-      level: 'INFO',
-      module: 'nikita/lib/ssh/open'
+      level: 'INFO'
     });
     await this.ssh.root(config.root);
   }
   log({
     message: "Establish Connection: attempt after enabling root access",
-    level: 'DEBUG',
-    module: 'nikita/lib/ssh/open'
+    level: 'DEBUG'
   });
   return (await this.call({
     metadata: {

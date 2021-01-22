@@ -257,7 +257,7 @@ console.info(`Container was run: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # Validate parameters
-      log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm
+      log message: "Should specify a container name if rm is false", level: 'WARN' unless config.name? or config.rm
       # Construct exec command
       command = 'run'
       # Classic config
@@ -294,11 +294,11 @@ console.info(`Container was run: ${status}`)
         command: "ps -a | egrep ' #{config.name}$'"
         code_skipped: 1
         metadata: shy: true
-      log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
+      log message: "Container already running. Skipping", level: 'INFO' if status
       result = await @docker.tools.execute
         command: command
         if: -> not config.name? or status is false
-      log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if result.status
+      log message: "Container now running", level: 'WARN' if result.status
       result
 
 ## Exports

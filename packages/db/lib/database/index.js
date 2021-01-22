@@ -73,14 +73,12 @@ handler = async function({
   config.engine = config.engine.toLowerCase();
   log({
     message: `Database engine set to ${config.engine}`,
-    level: 'DEBUG',
-    module: 'nikita/db/database'
+    level: 'DEBUG'
   });
   // Create database unless exist
   log({
     message: `Check if database ${config.database} exists`,
-    level: 'DEBUG',
-    module: 'nikita/db/database'
+    level: 'DEBUG'
   });
   switch (config.engine) {
     case 'mariadb':
@@ -116,8 +114,7 @@ handler = async function({
     });
     log({
       message: `Database created: ${JSON.stringify(config.database)}`,
-      level: 'WARN',
-      module: 'nikita/db/database'
+      level: 'WARN'
     });
   }
   ref = config.user;
@@ -126,8 +123,7 @@ handler = async function({
     user = ref[i];
     log({
       message: `Check if user ${user} has PRIVILEGES on ${config.database} `,
-      level: 'DEBUG',
-      module: 'nikita/db/database'
+      level: 'DEBUG'
     });
     ({exists} = (await this.db.user.exists(config, {
       username: user
@@ -166,8 +162,7 @@ ${command_grant_privileges}`,
     if (status) {
       log({
         message: `Privileges granted: to ${JSON.stringify(user)} on ${JSON.stringify(config.database)}`,
-        level: 'WARN',
-        module: 'nikita/db/database'
+        level: 'WARN'
       });
     }
   }

@@ -26,9 +26,9 @@ describe 'metadata "debug"', ->
         """
         metadata: debug: ws
       data.join().should.eql [
-        '\u001b[33m[1.INFO nikita/lib/system/execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
-        '\u001b[36m[1.INFO nikita/lib/system/execute] to_stdout\u001b[39m\n'
-        '\u001b[35m[1.INFO nikita/lib/system/execute] to_stderr\u001b[39m\n'
+        '\u001b[33m[1.INFO @nikitajs/engine/src/actions/execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
+        '\u001b[36m[1.INFO @nikitajs/engine/src/actions/execute] to_stdout\u001b[39m\n'
+        '\u001b[35m[1.INFO @nikitajs/engine/src/actions/execute] to_stderr\u001b[39m\n'
       ].join()
     
   describe 'print', ->

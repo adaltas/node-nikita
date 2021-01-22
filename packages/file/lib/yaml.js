@@ -190,16 +190,14 @@ handler = async function({
   if (config.clean) {
     log({
       message: "Clean content",
-      level: 'INFO',
-      module: 'nikita/lib/file/yaml'
+      level: 'INFO'
     });
     // console.info JSON.stringify config.content, null, true
     utils.object.clean(config.content);
   }
   log({
     message: "Serialize content",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/yaml'
+    level: 'DEBUG'
   });
   config.content = yaml.safeDump(config.content, {
     noRefs: true,

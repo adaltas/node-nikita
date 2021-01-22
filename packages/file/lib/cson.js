@@ -69,8 +69,7 @@ handler = async function({
   if (config.merge) {
     log({
       message: "Get Target Content",
-      level: 'DEBUG',
-      module: 'nikita/lib/file/cson'
+      level: 'DEBUG'
     });
     try {
       ({data} = (await this.fs.base.readFile({
@@ -81,8 +80,7 @@ handler = async function({
       config.content = merge(data, config.content);
       log({
         message: "Target Merged",
-        level: 'DEBUG',
-        module: 'nikita/lib/file/cson'
+        level: 'DEBUG'
       });
     } catch (error) {
       err = error;
@@ -92,15 +90,13 @@ handler = async function({
       // File does not exists, this is ok, there is simply nothing to merge
       log({
         message: "No Target To Merged",
-        level: 'DEBUG',
-        module: 'nikita/lib/file/cson'
+        level: 'DEBUG'
       });
     }
   }
   log({
     message: "Serialize Content",
-    level: 'DEBUG',
-    module: 'nikita/lib/file/cson'
+    level: 'DEBUG'
   });
   await this.file({
     content: season.stringify(config.content),

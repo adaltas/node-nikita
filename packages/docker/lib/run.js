@@ -353,8 +353,7 @@ handler = async function({
     // Validate parameters
     log({
       message: "Should specify a container name if rm is false",
-      level: 'WARN',
-      module: 'nikita/docker/run'
+      level: 'WARN'
     });
   }
   // Construct exec command
@@ -455,8 +454,7 @@ handler = async function({
   if (status) {
     log({
       message: "Container already running. Skipping",
-      level: 'INFO',
-      module: 'nikita/docker/run'
+      level: 'INFO'
     });
   }
   result = (await this.docker.tools.execute({
@@ -468,8 +466,7 @@ handler = async function({
   if (result.status) {
     log({
       message: "Container now running",
-      level: 'WARN',
-      module: 'nikita/docker/run'
+      level: 'WARN'
     });
   }
   return result;

@@ -426,13 +426,11 @@ handler = async function({
   context = arguments[0];
   log({
     message: `Source is \"${config.source}\"`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file'
+    level: 'DEBUG'
   });
   log({
     message: `Destination is \"${config.target}\"`,
-    level: 'DEBUG',
-    module: 'nikita/lib/file'
+    level: 'DEBUG'
   });
   if (typeof config.content === 'function') {
     config.content = config.content.call(this, context);
@@ -483,8 +481,7 @@ handler = async function({
     source = config.source || config.target;
     log({
       message: `Force local source is \"${config.local ? 'true' : 'false'}\"`,
-      level: 'DEBUG',
-      module: 'nikita/lib/file'
+      level: 'DEBUG'
     });
     ({exists} = (await this.fs.base.exists({
       ssh: !config.local ? config.ssh : void 0,
@@ -499,8 +496,7 @@ handler = async function({
     }
     log({
       message: "Reading source",
-      level: 'DEBUG',
-      module: 'nikita/lib/file'
+      level: 'DEBUG'
     });
     ({
       data: config.content
@@ -540,8 +536,7 @@ handler = async function({
     }
     log({
       message: "Stat target",
-      level: 'DEBUG',
-      module: 'nikita/lib/file'
+      level: 'DEBUG'
     });
     try {
       ({stats} = (await this.fs.base.lstat({
@@ -552,8 +547,7 @@ handler = async function({
         config.target = `${config.target}/${path.basename(config.source)}`;
         log({
           message: "Destination is a directory and is now \"config.target\"",
-          level: 'INFO',
-          module: 'nikita/lib/file'
+          level: 'INFO'
         });
         // Destination is the parent directory, let's see if the file exist inside
         ({stats} = (await this.fs.base.stat({
@@ -567,14 +561,12 @@ handler = async function({
         }
         log({
           message: "New target exists",
-          level: 'INFO',
-          module: 'nikita/lib/file'
+          level: 'INFO'
         });
       } else if (utils.stats.isSymbolicLink(stats.mode)) {
         log({
           message: "Destination is a symlink",
-          level: 'INFO',
-          module: 'nikita/lib/file'
+          level: 'INFO'
         });
         if (config.unlink) {
           await this.fs.base.unlink({
@@ -585,8 +577,7 @@ handler = async function({
       } else if (utils.stats.isFile(stats.mode)) {
         log({
           message: "Destination is a file",
-          level: 'INFO',
-          module: 'nikita/lib/file'
+          level: 'INFO'
         });
       } else {
         throw Error(`Invalid File Type Destination: ${config.target}`);
@@ -620,8 +611,7 @@ handler = async function({
   if (config.remove_empty_lines) {
     log({
       message: "Remove empty lines",
-      level: 'DEBUG',
-      module: 'nikita/lib/file'
+      level: 'DEBUG'
     });
     config.content = config.content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1");
   }
@@ -631,8 +621,7 @@ handler = async function({
   if (config.eof) {
     log({
       message: 'Checking option eof',
-      level: 'DEBUG',
-      module: 'nikita/lib/file'
+      level: 'DEBUG'
     });
     if (config.eof === true) {
       ref1 = config.content;
@@ -652,15 +641,13 @@ handler = async function({
       }
       log({
         message: `Option eof is true, guessing as ${JSON.stringify(config.eof)}`,
-        level: 'INFO',
-        module: 'nikita/lib/file'
+        level: 'INFO'
       });
     }
     if (!utils.string.endsWith(config.content, config.eof)) {
       log({
         message: 'Add eof',
-        level: 'INFO',
-        module: 'nikita/lib/file'
+        level: 'INFO'
       });
       config.content += config.eof;
     }
@@ -686,15 +673,13 @@ handler = async function({
     log({
       type: 'diff',
       message: text,
-      level: 'INFO',
-      module: 'nikita/lib/file'
+      level: 'INFO'
     });
   }
   if (config.backup && contentChanged) {
     log({
       message: "Create backup",
-      level: 'INFO',
-      module: 'nikita/lib/file'
+      level: 'INFO'
     });
     if (config.backup_mode == null) {
       config.backup_mode = 0o0400;
@@ -713,8 +698,7 @@ handler = async function({
   if (typeof config.target === 'function') {
     log({
       message: 'Write target with user function',
-      level: 'INFO',
-      module: 'nikita/lib/file'
+      level: 'INFO'
     });
     await config.target({
       content: config.content

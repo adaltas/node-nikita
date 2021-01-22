@@ -84,13 +84,13 @@ console.info(`Index created or modified: ${status}`)
       add = {}
       modify = {}
       unless config.dn
-        log message: "Get DN of the database to modify", level: 'DEBUG', module: 'nikita/ldap/index'
+        log message: "Get DN of the database to modify", level: 'DEBUG'
         {dn} = await @ldap.tools.database config,
           suffix: config.suffix
         config.dn = dn
-        log message: "Database DN is #{dn}", level: 'INFO', module: 'nikita/ldap/index'
+        log message: "Database DN is #{dn}", level: 'INFO'
       # List all indexes of the directory
-      log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
+      log message: "List all indexes of the directory", level: 'DEBUG'
       {stdout} = await @ldap.search config,
         attributes: ['olcDbIndex']
         base: "#{config.dn}"

@@ -52,7 +52,7 @@ console.info(`Package or service was removed: ${status}`)
 
     handler = ({config, parent: {state}, tools: {log}}) ->
       # config.manager ?= state['nikita:service:manager'] # not supported
-      log message: "Remove service #{config.name}", level: 'INFO', module: 'nikita/lib/service/remove'
+      log message: "Remove service #{config.name}", level: 'INFO'
       cacheonly = if config.cacheonly then '-C' else ''
       if config.cache
         installed = state['nikita:execute:installed']
@@ -75,7 +75,7 @@ console.info(`Package or service was removed: ${status}`)
             stdout_log: false
             metadata: shy: true
           if status
-            log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/remove'
+            log message: "Installed packages retrieved", level: 'INFO'
             installed = for pkg in utils.string.lines(stdout) then pkg
         catch err
           throw Error "Unsupported Package Manager" if err.exit_code is 2
@@ -106,7 +106,7 @@ console.info(`Package or service was removed: ${status}`)
       if config.cache
         await @call
           handler: ->
-            log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/remove'
+            log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
             state['nikita:execute:installed'] = installed
 
 ## Export

@@ -75,8 +75,8 @@ console.info(`File was uploaded: ${status}`)
         algo = 'sha1'
       else
         algo = 'md5'
-      log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
-      log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      log message: "Source is \"#{config.source}\"", level: 'DEBUG'
+      log message: "Destination is \"#{config.target}\"", level: 'DEBUG'
       # Stat the target and redefine its path if a directory
       stats = await @call metadata: raw_output: true, ->
         try
@@ -125,7 +125,7 @@ console.info(`File was uploaded: ${status}`)
         sudo: false
         source: stage_target
         target: config.target
-      log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload'
+      log message: "Unstaged uploaded file", level: 'INFO'
       if config.mode?
         await @fs.chmod
           ssh: false

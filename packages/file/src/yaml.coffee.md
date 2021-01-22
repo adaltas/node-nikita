@@ -154,10 +154,10 @@ console.info(`Content was written: ${status}`)
       catch err
         throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.clean
-        log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
+        log message: "Clean content", level: 'INFO'
         # console.info JSON.stringify config.content, null, true
         utils.object.clean config.content
-      log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+      log message: "Serialize content", level: 'DEBUG'
       config.content = yaml.safeDump config.content, noRefs: true, lineWidth: config.line_width
       await @file config
 

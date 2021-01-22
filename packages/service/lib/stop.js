@@ -56,8 +56,7 @@ handler = async function({
   var err, status;
   log({
     message: `Stop service ${config.name}`,
-    level: 'INFO',
-    module: 'nikita/lib/service/stop'
+    level: 'INFO'
   });
   try {
     ({status} = (await this.execute({
@@ -79,15 +78,13 @@ fi`,
     if (status) {
       log({
         message: "Service is stopped",
-        level: 'INFO',
-        module: 'nikita/lib/service/stop'
+        level: 'INFO'
       });
     }
     if (!status) {
       return log({
         message: "Service already stopped",
-        level: 'WARN',
-        module: 'nikita/lib/service/stop'
+        level: 'WARN'
       });
     }
   } catch (error) {

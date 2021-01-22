@@ -195,7 +195,7 @@ pass all the properties through the `ssh` property.
       ] unless config.private_key or config.password or config.private_key_path
       # Read private key if option is a path
       unless config.private_key or config.password
-        log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG'
         location = await utils.tilde.normalize config.private_key_path
         try
           {data: config.private_key} = await fs.readFile location, 'ascii'
@@ -204,18 +204,18 @@ pass all the properties through the `ssh` property.
           throw err
       # Establish connection
       try
-        log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG'
         conn = await connect config
         state['nikita:ssh:connection'] = conn
-        log message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
+        log message: "Connection is established", level: 'INFO'
         return status: true, ssh: conn
       catch err
-        log message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
+        log message: "Connection failed", level: 'WARN'
       # Enable root access
       if config.root.username
-        log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
+        log message: "Bootstrap Root Access", level: 'INFO'
         await @ssh.root config.root
-      log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+      log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG'
       await @call metadata: retry: 3, ->
         conn = await connect config
         state['nikita:ssh:connection'] = conn

@@ -97,8 +97,7 @@ handler = async function({
     file = files[i];
     log({
       message: `Removing file ${file}`,
-      level: 'INFO',
-      module: 'nikita/lib/fs/remove'
+      level: 'INFO'
     });
     try {
       ({status} = (await this.execute({
@@ -113,8 +112,7 @@ handler = async function({
       if (status) {
         log({
           message: `File ${file} removed`,
-          level: 'WARN',
-          module: 'nikita/lib/fs/remove'
+          level: 'WARN'
         });
       }
     } catch (error) {

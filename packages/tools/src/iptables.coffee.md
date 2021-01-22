@@ -159,7 +159,7 @@ console.info(`Iptables was updated: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      log message: "List existing rules", level: 'WARN', module: 'nikita/lib/iptables'
+      log message: "List existing rules", level: 'WARN'
       {status} = await @service.status
         name: 'iptables'
       throw Error "Service iptables not started" unless status
@@ -171,7 +171,7 @@ console.info(`Iptables was updated: ${status}`)
       newrules = utils.iptables.normalize config.rules
       command = utils.iptables.command oldrules, newrules
       return unless command.length
-      log message: "#{command.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
+      log message: "#{command.length} modified rules", level: 'WARN'
       await @execute
         command: "#{command.join '; '}; service iptables save;"
         sudo: config.sudo
