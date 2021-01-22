@@ -120,7 +120,7 @@ module.exports = {
   },
   metadata: {
     schema: schema,
-    argument: 'modules'
+    argument_to_config: 'modules'
   }
 };
 

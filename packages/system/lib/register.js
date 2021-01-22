@@ -15,7 +15,7 @@ module.exports = {
       os: '@nikitajs/system/lib/info/os'
     },
     limits: '@nikitajs/system/lib/limits',
-    mod: '@nikitajs/system/lib/mod'
+    mod: '@nikitajs/system/lib/mod',
     running: '@nikitajs/system/lib/running',
     tmpfs: '@nikitajs/system/lib/tmpfs',
     uid_gid: '@nikitajs/system/lib/uid_gid',

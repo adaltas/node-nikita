@@ -41,13 +41,14 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^0.9.7"
+    "@nikitajs/file": "^0.9.7",
+    "diff": "^5.0.0"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
     "mocha": "^8.2.1",
-    "should": "^13.2.3",
-    "mocha-they": "^0.1.2"
+    "mocha-they": "^0.1.2",
+    "should": "^13.2.3"
   },
   "peerDependencies": {
     "@nikitajs/engine": "^0.9.7"
