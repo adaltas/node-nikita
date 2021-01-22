@@ -10,7 +10,7 @@ version: '3'
 services:
   nodejs:
     build: .
-    image: nikita_engine_centos6_nodejs
+    image: nikita_engine_centos6
     container_name: nikita_engine_centos6_nodejs
     volumes:
       - ../../../../:/nikita
