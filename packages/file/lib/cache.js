@@ -358,7 +358,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    argument_name: 'source',
+    argument_to_config: 'source',
     schema: schema
   }
 };
