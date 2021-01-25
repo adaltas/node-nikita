@@ -1,45 +1,27 @@
----
-title: Metadata "debug"
----
 
-# Metadata "debug" (boolean, optional, false)
+# Metadata `debug`
 
-The "debug" metadata print detailed logs to the standard error output (`stderr`). It provides a quick and convenient solution to understand the various actions called, what they do and in which order.
+The `debug` metadata print detailed logs to the standard error output (`stderr`). It provides a quick and convenient solution to understand the various actions called, what they do and in which order.
 
-The information thrown by the "debug" metadata is similar to the output of the [logging](/usages/loging_debugging/) facilities. So when shall debugging be used versus logging? The "debug" metadata is for developers who wish to punctually see on their shell what going on inside. The logging facilities are meant to be constantly activated.
+* Type: `boolean`
+* Default: `false`
 
-## Activating debugging
+The information thrown by the `debug` metadata is similar to the output of the [logging](/current/usages/loging_debugging/) facilities. So when shall debugging be used versus logging? The `debug` metadata is for developers who wish to punctually see on their shell what going on inside. The logging facilities are meant to be constantly activated.
 
-Activating debugging is easy, simply pass the "debug" metadata with a value set as `true`:
+## Usage
 
-```js
-require('nikita')
-.file.touch({
-  target: '/tmp/a_file',
-  debug: true
-})
-```
+### Activating debugging
+
+Activating debugging is easy, simply pass the `debug` metadata with a value set as `true`:
+
+`embed:metadata/debug/samples/activate.js`
 
 Of course, it is possible to activate debugging to the overall Nikita session by passing the metadata globally at session creation:
 
-```js
-require('nikita')
-({
-  debug: true
-})
-.file.touch({
-  target: '/tmp/a_file'
-})
-```
+`embed:metadata/debug/samples/activate_globally.js`
 
-## Redirecting output to stdout
+### Redirecting output to stdout
 
-Set the value to "stdout" if you wish to print debugging information to the standart output (`stdout`):
+Set the value to `stdout` if you wish to print debugging information to the standard output (`stdout`):
 
-```js
-require('nikita')
-.file.touch({
-  target: '/tmp/a_file',
-  debug: 'stdout'
-})
-```
+`embed:metadata/debug/samples/stdout.js`
