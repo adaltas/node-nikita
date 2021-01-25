@@ -98,6 +98,15 @@ const styles = theme => ({
         marginBottom: 0,
       },
     },
+    '& .gatsby-highlight-code-line': {
+      background: 'rgba(255,255,255,.2)',
+      marginLeft: '-1rem',
+      marginRight: '-1rem',
+      paddingLeft: '.75rem',
+      paddingRight: '1rem',
+      borderLeft: '0.25rem solid rgba(255,255,255, .75)',
+      display: 'block',
+    },
   }),
   [theme.breakpoints.up(900 + theme.spacing(6))]: {
     content: {
