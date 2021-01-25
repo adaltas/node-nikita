@@ -1,5 +1,5 @@
 ---
-title: Metadata "sudo"
+disabled: true
 ---
 
 # Metadata "sudo" (boolean, optional, false)
