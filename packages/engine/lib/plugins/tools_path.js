@@ -11,7 +11,7 @@ module.exports = {
   hooks: {
     'nikita:session:action': {
       // after: '@nikitajs/engine/lib/metadata/ssh'
-      handler: function(action, handler) {
+      handler: function(action) {
         if (action.tools == null) {
           action.tools = {};
         }
@@ -20,8 +20,7 @@ module.exports = {
         action.tools.path = !action.ssh ? os.platform === 'win32' ? path.win32 : path.posix : path.posix;
         // Reinject posix and win32 path for conveniency
         action.tools.path.posix = path.posix;
-        action.tools.path.win32 = path.win32;
-        return handler;
+        return action.tools.path.win32 = path.win32;
       }
     }
   }

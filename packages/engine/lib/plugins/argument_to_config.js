@@ -10,11 +10,8 @@ module.exports = {
       handler: function(action) {
         var base, name;
         if (action.metadata.argument_to_config) {
-          if ((base = action.config)[name = action.metadata.argument_to_config] == null) {
-            base[name] = action.metadata.argument;
-          }
+          return (base = action.config)[name = action.metadata.argument_to_config] != null ? base[name] : base[name] = action.metadata.argument;
         }
-        return action;
       }
     }
   }

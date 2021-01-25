@@ -22,7 +22,7 @@ module.exports = {
             }
           });
         }
-        return handler.call(null, action);
+        return handler.call(action.context, action);
       };
     }
   }

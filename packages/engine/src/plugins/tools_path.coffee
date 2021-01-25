@@ -8,7 +8,7 @@ module.exports =
   hooks:
     'nikita:session:action':
       # after: '@nikitajs/engine/src/metadata/ssh'
-      handler: (action, handler) ->
+      handler: (action) ->
         action.tools ?= {}
         # Path is alwaws posix over ssh
         # otherwise it is platform dependent
@@ -21,4 +21,3 @@ module.exports =
         # Reinject posix and win32 path for conveniency
         action.tools.path.posix = path.posix
         action.tools.path.win32 = path.win32
-        handler

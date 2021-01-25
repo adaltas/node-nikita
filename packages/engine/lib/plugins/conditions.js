@@ -7,28 +7,30 @@ module.exports = {
   module: '@nikitajs/engine/lib/plugins/conditions',
   require: ['@nikitajs/engine/lib/metadata/raw', '@nikitajs/engine/lib/metadata/disabled'],
   hooks: {
-    'nikita:session:normalize': function(action, handler) {
-      var conditions, property, value;
-      // Ventilate conditions properties defined at root
-      conditions = {};
-      for (property in action) {
-        value = action[property];
-        if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
-          if (conditions[property]) {
-            throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
+    'nikita:session:normalize': {
+      handler: function(action, handler) {
+        var conditions, property, value;
+        // Ventilate conditions properties defined at root
+        conditions = {};
+        for (property in action) {
+          value = action[property];
+          if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
+            if (conditions[property]) {
+              throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
+            }
+            if (!Array.isArray(value)) {
+              value = [value];
+            }
+            conditions[property] = value;
+            delete action[property];
           }
-          if (!Array.isArray(value)) {
-            value = [value];
-          }
-          conditions[property] = value;
-          delete action[property];
         }
+        return async function() {
+          action = (await handler.call(null, ...arguments));
+          action.conditions = conditions;
+          return action;
+        };
       }
-      return async function() {
-        action = (await handler.call(null, ...arguments));
-        action.conditions = conditions;
-        return action;
-      };
     },
     'nikita:session:action': {
       before: '@nikitajs/engine/lib/metadata/disabled',

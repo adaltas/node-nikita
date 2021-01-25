@@ -12,4 +12,3 @@ module.exports =
       handler: (action) ->
         if action.metadata.argument_to_config
           action.config[action.metadata.argument_to_config] ?= action.metadata.argument
-        action

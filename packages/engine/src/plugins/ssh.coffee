@@ -24,7 +24,7 @@ module.exports =
         action = await handler.call null, ...arguments
         action.ssh = ssh
         action
-    'nikita:session:action': (action, handler) ->
+    'nikita:session:action': (action) ->
       # return handler if action.metadata.namespace[0] is 'ssh'
       ssh = await action.tools.find (action) ->
         return undefined if action.ssh is undefined
@@ -46,7 +46,6 @@ module.exports =
       else if ssh is false
         ssh = null
       action.ssh = ssh
-      handler
     'nikita:session:result': ({action}) ->
       if action.metadata.ssh_dispose
         await session

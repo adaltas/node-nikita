@@ -14,4 +14,4 @@ module.exports =
             partial:
               metadata: true
               config: true
-        handler.call null, action
+        handler.call action.context, action

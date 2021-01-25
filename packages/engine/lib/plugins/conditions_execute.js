@@ -25,9 +25,8 @@ module.exports = {
           }
         }
         if (!final_run) {
-          action.metadata.disabled = true;
+          return action.metadata.disabled = true;
         }
-        return action;
       }
     }
   }

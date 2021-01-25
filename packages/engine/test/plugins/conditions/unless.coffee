@@ -58,7 +58,7 @@ describe 'plugin.conditions unless', ->
     it 'skip if string not empty', ->
       nikita.call
         unless: 'abc'
-        handler: -> throw Error 'You are not welcome here'
+      , -> throw Error 'You are not welcome here'
 
     it 'run if string empty', ->
       {status, value} = await nikita.call

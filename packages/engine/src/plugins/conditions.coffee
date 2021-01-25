@@ -8,22 +8,23 @@ module.exports =
     '@nikitajs/engine/src/metadata/disabled'
   ]
   hooks:
-    'nikita:session:normalize': (action, handler) ->
-      # Ventilate conditions properties defined at root
-      conditions = {}
-      for property, value of action
-        if /^(if|unless)($|_[\w_]+$)/.test property
-          throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
-            "Property #{property} is defined multiple times,"
-            'at the root of the action and inside conditions'
-          ] if conditions[property]
-          value = [value] unless Array.isArray value
-          conditions[property] = value
-          delete action[property]
-      ->
-        action = await handler.call null, ...arguments
-        action.conditions = conditions
-        action
+    'nikita:session:normalize':
+      handler: (action, handler) ->
+        # Ventilate conditions properties defined at root
+        conditions = {}
+        for property, value of action
+          if /^(if|unless)($|_[\w_]+$)/.test property
+            throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
+              "Property #{property} is defined multiple times,"
+              'at the root of the action and inside conditions'
+            ] if conditions[property]
+            value = [value] unless Array.isArray value
+            conditions[property] = value
+            delete action[property]
+        ->
+          action = await handler.call null, ...arguments
+          action.conditions = conditions
+          action
     'nikita:session:action':
       before: '@nikitajs/engine/src/metadata/disabled'
       handler: (action) ->

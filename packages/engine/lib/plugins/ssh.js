@@ -31,7 +31,7 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:action': async function(action, handler) {
+    'nikita:session:action': async function(action) {
       var ssh;
       // return handler if action.metadata.namespace[0] is 'ssh'
       ssh = (await action.tools.find(function(action) {
@@ -56,8 +56,7 @@ module.exports = {
       } else if (ssh === false) {
         ssh = null;
       }
-      action.ssh = ssh;
-      return handler;
+      return action.ssh = ssh;
     },
     'nikita:session:result': async function({action}) {
       if (action.metadata.ssh_dispose) {

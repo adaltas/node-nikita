@@ -18,7 +18,6 @@ module.exports =
           final_run = false if local_run is false
         if not final_run
           action.metadata.disabled = true
-        action
 
 handlers =
   if_execute: (action, value) ->
