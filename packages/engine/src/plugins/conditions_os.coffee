@@ -3,7 +3,7 @@ session = require '../session'
 utils = require '../utils'
 exec = require 'ssh2-exec'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/conditions_os'
   require: [
     '@nikitajs/engine/src/plugins/conditions'

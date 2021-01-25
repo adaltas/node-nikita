@@ -10,7 +10,7 @@ Only the logs which type match "text", "stdin", "stdout_stream", "stderr_stream"
 TODO: detect/force isTTY
 ###
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/debug'
   require: '@nikitajs/engine/src/plugins/tools_log'
   hooks:

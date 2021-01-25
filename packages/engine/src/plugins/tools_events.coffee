@@ -1,7 +1,7 @@
 
 {EventEmitter} = require 'events'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/tools_events'
   hooks:
     'nikita:session:normalize': (action, handler) ->

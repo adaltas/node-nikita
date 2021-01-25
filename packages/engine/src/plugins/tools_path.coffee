@@ -2,7 +2,7 @@
 os = require 'os'
 path = require 'path'
 
-module.exports = (action) ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/tools_path'
   # require: '@nikitajs/engine/src/metadata/ssh'
   hooks:

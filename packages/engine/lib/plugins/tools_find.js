@@ -38,37 +38,35 @@ validate = function(action, args) {
   return [action, finder];
 };
 
-module.exports = function(action) {
-  return {
-    module: '@nikitajs/engine/lib/plugins/tools_find',
-    hooks: {
-      'nikita:session:normalize': function(action, handler) {
-        return async function() {
-          // Handler execution
-          action = (await handler.apply(null, arguments));
-          // Register function
-          if (action.tools == null) {
-            action.tools = {};
-          }
-          action.tools.find = async function() {
-            var finder;
-            [action, finder] = validate(action, arguments);
-            return (await find(action, finder));
-          };
-          // Register action
-          action.registry.register(['tools', 'find'], {
-            metadata: {
-              raw: true
-            },
-            handler: async function(action) {
-              var finder;
-              [action, finder] = validate(action, action.args);
-              return (await find(action.parent, finder));
-            }
-          });
-          return action;
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/tools_find',
+  hooks: {
+    'nikita:session:normalize': function(action, handler) {
+      return async function() {
+        // Handler execution
+        action = (await handler.apply(null, arguments));
+        // Register function
+        if (action.tools == null) {
+          action.tools = {};
+        }
+        action.tools.find = async function() {
+          var finder;
+          [action, finder] = validate(action, arguments);
+          return (await find(action, finder));
         };
-      }
+        // Register action
+        action.registry.register(['tools', 'find'], {
+          metadata: {
+            raw: true
+          },
+          handler: async function(action) {
+            var finder;
+            [action, finder] = validate(action, action.args);
+            return (await find(action.parent, finder));
+          }
+        });
+        return action;
+      };
     }
-  };
+  }
 };

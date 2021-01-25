@@ -29,7 +29,7 @@ validate = (action, args) ->
   ] unless typeof walker is 'function'
   [action, walker]
 
-module.exports = (action) ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/tools_walk'
   hooks:
     'nikita:session:normalize': (action, handler) ->

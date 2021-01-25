@@ -13,7 +13,7 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 
 ###
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/tools_log'
   require: '@nikitajs/engine/src/plugins/tools_events'
   hooks:

@@ -1,5 +1,5 @@
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/disabled'
   hooks:
     'nikita:session:action': (action, handler) ->

@@ -28,7 +28,7 @@ validate = (action, args) ->
   ] unless typeof finder is 'function'
   [action, finder]
 
-module.exports = (action) ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/tools_find'
   hooks:
     'nikita:session:normalize': (action, handler) ->

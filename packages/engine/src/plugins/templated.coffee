@@ -1,7 +1,7 @@
 
 templated = require 'self-templated'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/templated'
   hooks:
     'nikita:session:normalize': (action) ->

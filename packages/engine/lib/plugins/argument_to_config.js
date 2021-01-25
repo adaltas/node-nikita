@@ -3,21 +3,19 @@
 The `argument` plugin map an argument which is not an object into a configuration property.
 
 */
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/argument',
-    hooks: {
-      'nikita:session:action': {
-        handler: function(action) {
-          var base, name;
-          if (action.metadata.argument_to_config) {
-            if ((base = action.config)[name = action.metadata.argument_to_config] == null) {
-              base[name] = action.metadata.argument;
-            }
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/argument',
+  hooks: {
+    'nikita:session:action': {
+      handler: function(action) {
+        var base, name;
+        if (action.metadata.argument_to_config) {
+          if ((base = action.config)[name = action.metadata.argument_to_config] == null) {
+            base[name] = action.metadata.argument;
           }
-          return action;
         }
+        return action;
       }
     }
-  };
+  }
 };

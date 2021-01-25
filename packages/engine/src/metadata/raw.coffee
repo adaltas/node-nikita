@@ -1,5 +1,5 @@
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/raw'
   hooks:
     'nikita:registry:normalize': (action) ->

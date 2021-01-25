@@ -3,29 +3,27 @@ var utils;
 
 utils = require('../utils');
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/metadata/position',
-    require: ['@nikitajs/engine/lib/plugins/history'],
-    hooks: {
-      'nikita:session:normalize': {
-        after: '@nikitajs/engine/lib/plugins/history',
-        handler: function(action, handler) {
-          return async function() {
-            action = (await handler.call(null, ...arguments));
-            action.metadata.depth = action.parent ? action.parent.metadata.depth + 1 : 0;
-            // plugins are not activated in the root session with {depth: 0}
-            action.metadata.index = action.siblings ? action.siblings.length : 0;
-            action.metadata.position = action.parent ? action.parent.metadata.position.concat([action.metadata.index]) : [0];
-            return action;
-          };
-        }
-      },
-      'nikita:session:action': function(action) {
-        if (typeof action.metadata.depth !== 'number') {
-          throw utils.error('METADATA_DEPTH_INVALID_VALUE', ["configuration `depth` expect an integer value,", `got ${JSON.stringify(action.metadata.depth)}.`]);
-        }
+module.exports = {
+  module: '@nikitajs/engine/lib/metadata/position',
+  require: ['@nikitajs/engine/lib/plugins/history'],
+  hooks: {
+    'nikita:session:normalize': {
+      after: '@nikitajs/engine/lib/plugins/history',
+      handler: function(action, handler) {
+        return async function() {
+          action = (await handler.call(null, ...arguments));
+          action.metadata.depth = action.parent ? action.parent.metadata.depth + 1 : 0;
+          // plugins are not activated in the root session with {depth: 0}
+          action.metadata.index = action.siblings ? action.siblings.length : 0;
+          action.metadata.position = action.parent ? action.parent.metadata.position.concat([action.metadata.index]) : [0];
+          return action;
+        };
+      }
+    },
+    'nikita:session:action': function(action) {
+      if (typeof action.metadata.depth !== 'number') {
+        throw utils.error('METADATA_DEPTH_INVALID_VALUE', ["configuration `depth` expect an integer value,", `got ${JSON.stringify(action.metadata.depth)}.`]);
       }
     }
-  };
+  }
 };

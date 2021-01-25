@@ -15,12 +15,10 @@ parse = (uri) ->
   pathname: matches[2]
 
 module.exports = (action) ->
-  # schema = create(action)
   ajv = new Ajv
     $data: true
     allErrors: true
     useDefaults: true
-    # extendRefs: 'ignore'
     extendRefs: true
     # coerceTypes: true
     loadSchema: (uri) ->

@@ -106,7 +106,7 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
       handler.call @, args if handler
   # Register initial plugins
   for plugin in plugins
-    obj.register plugin action
+    obj.register if typeof plugin is 'function' then plugin(action) else plugin
   # return the object
   obj
 

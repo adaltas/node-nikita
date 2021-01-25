@@ -12,70 +12,68 @@ Only the logs which type match "text", "stdin", "stdout_stream", "stderr_stream"
 
 TODO: detect/force isTTY
 */
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/metadata/debug',
-    require: '@nikitajs/engine/lib/plugins/tools_log',
-    hooks: {
-      'nikita:session:action': function(action) {
-        var debug;
-        debug = action.metadata.debug || false;
-        if (!(typeof debug === 'boolean' || debug === 'stdout' || debug instanceof stream.Writable)) {
-          throw utils.error('METADATA_DEBUG_INVALID_VALUE', ["configuration `debug` expect a boolean value,", "the string \"stdout\", or a Node.js Stream Writer,", `got ${JSON.stringify(debug)}.`]);
+module.exports = {
+  module: '@nikitajs/engine/lib/metadata/debug',
+  require: '@nikitajs/engine/lib/plugins/tools_log',
+  hooks: {
+    'nikita:session:action': function(action) {
+      var debug;
+      debug = action.metadata.debug || false;
+      if (!(typeof debug === 'boolean' || debug === 'stdout' || debug instanceof stream.Writable)) {
+        throw utils.error('METADATA_DEBUG_INVALID_VALUE', ["configuration `debug` expect a boolean value,", "the string \"stdout\", or a Node.js Stream Writer,", `got ${JSON.stringify(debug)}.`]);
+      }
+      if (!debug) {
+        action.metadata.debug = false;
+        return;
+      }
+      debug = action.metadata.debug = {
+        ws: debug === 'stdout' ? action.metadata.debug.ws = process.stdout : debug instanceof stream.Writable ? action.metadata.debug.ws = debug : action.metadata.debug.ws = process.stderr,
+        listener: function(log) {
+          var msg, name, namespace, position, ref, ref1;
+          if (!(((ref = log.type) === 'stdout_stream' || ref === 'stderr_stream') && log.message === null)) {
+            msg = typeof log.message === 'string' ? log.message.trim() : typeof log.message === 'number' ? log.message : ((ref1 = log.message) != null ? ref1.toString : void 0) != null ? log.message.toString().trim() : JSON.stringify(log.message);
+            position = log.position.map(function(i) {
+              return i + 1;
+            }).join('.');
+            if (log.namespace) {
+              namespace = log.namespace.join('.');
+            }
+            name = namespace || log.module;
+            msg = ['[', position + '.' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
+            msg = (function() {
+              switch (log.type) {
+                case 'stdin':
+                  return `\x1b[33m${msg}\x1b[39m`;
+                case 'stdout_stream':
+                  return `\x1b[36m${msg}\x1b[39m`;
+                case 'stderr_stream':
+                  return `\x1b[35m${msg}\x1b[39m`;
+                default:
+                  return `\x1b[32m${msg}\x1b[39m`;
+              }
+            })();
+            return debug.ws.write(`${msg}\n`);
+          }
         }
-        if (!debug) {
-          action.metadata.debug = false;
+      };
+      action.tools.events.addListener('text', debug.listener);
+      action.tools.events.addListener('stdin', debug.listener);
+      action.tools.events.addListener('stdout_stream', debug.listener);
+      return action.tools.events.addListener('stderr_stream', debug.listener);
+    },
+    'nikita:session:result': {
+      // after: '@nikitajs/engine/lib/plugins/log'
+      handler: function({action}) {
+        var debug;
+        debug = action.metadata.debug;
+        if (!(debug && debug.listener)) { // undefined with invalid value error
           return;
         }
-        debug = action.metadata.debug = {
-          ws: debug === 'stdout' ? action.metadata.debug.ws = process.stdout : debug instanceof stream.Writable ? action.metadata.debug.ws = debug : action.metadata.debug.ws = process.stderr,
-          listener: function(log) {
-            var msg, name, namespace, position, ref, ref1;
-            if (!(((ref = log.type) === 'stdout_stream' || ref === 'stderr_stream') && log.message === null)) {
-              msg = typeof log.message === 'string' ? log.message.trim() : typeof log.message === 'number' ? log.message : ((ref1 = log.message) != null ? ref1.toString : void 0) != null ? log.message.toString().trim() : JSON.stringify(log.message);
-              position = log.position.map(function(i) {
-                return i + 1;
-              }).join('.');
-              if (log.namespace) {
-                namespace = log.namespace.join('.');
-              }
-              name = namespace || log.module;
-              msg = ['[', position + '.' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
-              msg = (function() {
-                switch (log.type) {
-                  case 'stdin':
-                    return `\x1b[33m${msg}\x1b[39m`;
-                  case 'stdout_stream':
-                    return `\x1b[36m${msg}\x1b[39m`;
-                  case 'stderr_stream':
-                    return `\x1b[35m${msg}\x1b[39m`;
-                  default:
-                    return `\x1b[32m${msg}\x1b[39m`;
-                }
-              })();
-              return debug.ws.write(`${msg}\n`);
-            }
-          }
-        };
-        action.tools.events.addListener('text', debug.listener);
-        action.tools.events.addListener('stdin', debug.listener);
-        action.tools.events.addListener('stdout_stream', debug.listener);
-        return action.tools.events.addListener('stderr_stream', debug.listener);
-      },
-      'nikita:session:result': {
-        // after: '@nikitajs/engine/lib/plugins/log'
-        handler: function({action}) {
-          var debug;
-          debug = action.metadata.debug;
-          if (!(debug && debug.listener)) { // undefined with invalid value error
-            return;
-          }
-          action.tools.events.removeListener('text', debug.listener);
-          action.tools.events.removeListener('stdin', debug.listener);
-          action.tools.events.removeListener('stdout_stream', debug.listener);
-          return action.tools.events.removeListener('stderr_stream', debug.listener);
-        }
+        action.tools.events.removeListener('text', debug.listener);
+        action.tools.events.removeListener('stdin', debug.listener);
+        action.tools.events.removeListener('stdout_stream', debug.listener);
+        return action.tools.events.removeListener('stderr_stream', debug.listener);
       }
     }
-  };
+  }
 };

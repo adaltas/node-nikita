@@ -10,32 +10,30 @@ from being shared by all the Docker actions such as the adress of the Docker
 daemon if it is not run locally.
 
 */
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/global',
-    require: ['@nikitajs/engine/lib/plugins/tools_find'],
-    hooks: {
-      'nikita:session:action': {
-        handler: async function(action) {
-          var base, global, k, ref, v;
-          global = action.metadata.global;
-          if (!global) {
-            return action;
-          }
-          action.config[global] = (await action.tools.find(function({config}) {
-            return config[global];
-          }));
-          ref = action.config[global];
-          for (k in ref) {
-            v = ref[k];
-            if ((base = action.config)[k] == null) {
-              base[k] = v;
-            }
-          }
-          delete action.config[global];
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/global',
+  require: ['@nikitajs/engine/lib/plugins/tools_find'],
+  hooks: {
+    'nikita:session:action': {
+      handler: async function(action) {
+        var base, global, k, ref, v;
+        global = action.metadata.global;
+        if (!global) {
           return action;
         }
+        action.config[global] = (await action.tools.find(function({config}) {
+          return config[global];
+        }));
+        ref = action.config[global];
+        for (k in ref) {
+          v = ref[k];
+          if ((base = action.config)[k] == null) {
+            base[k] = v;
+          }
+        }
+        delete action.config[global];
+        return action;
       }
     }
-  };
+  }
 };

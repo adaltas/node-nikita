@@ -12,7 +12,7 @@ daemon if it is not run locally.
 
 ###
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/global'
   require: [
     '@nikitajs/engine/src/plugins/tools_find'

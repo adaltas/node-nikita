@@ -81,21 +81,19 @@ validate = function(action, args) {
   return [action, finder];
 };
 
-module.exports = function(action) {
-  return {
-    module: '@nikitajs/engine/lib/plugins/tools_dig',
-    hooks: {
-      'nikita:session:action': function(action) {
-        // Register function
-        if (action.tools == null) {
-          action.tools = {};
-        }
-        return action.tools.dig = async function() {
-          var finder;
-          [action, finder] = validate(action, arguments);
-          return (await dig_up(action, finder));
-        };
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/tools_dig',
+  hooks: {
+    'nikita:session:action': function(action) {
+      // Register function
+      if (action.tools == null) {
+        action.tools = {};
       }
+      return action.tools.dig = async function() {
+        var finder;
+        [action, finder] = validate(action, arguments);
+        return (await dig_up(action, finder));
+      };
     }
-  };
+  }
 };

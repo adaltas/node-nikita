@@ -9,7 +9,7 @@ Return events emitted inside the action
 stackTrace = require 'stack-trace'
 path = require 'path'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/output_logs'
   require: [
     '@nikitajs/engine/src/plugins/tools_log'

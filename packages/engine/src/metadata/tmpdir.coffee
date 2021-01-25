@@ -7,7 +7,7 @@ process = require 'process'
 fs = require 'ssh2-fs'
 exec = require 'ssh2-exec'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/tmpdir'
   require: [
     '@nikitajs/engine/src/plugins/tools_find'

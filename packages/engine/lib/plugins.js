@@ -202,7 +202,7 @@ module.exports = function({action, chain, parent, plugins = []} = {}) {
 // Register initial plugins
   for (i = 0, len = plugins.length; i < len; i++) {
     plugin = plugins[i];
-    obj.register(plugin(action));
+    obj.register(typeof plugin === 'function' ? plugin(action) : plugin);
   }
   // return the object
   return obj;

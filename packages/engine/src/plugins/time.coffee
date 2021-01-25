@@ -1,5 +1,5 @@
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/time'
   hooks:
     'nikita:session:action':

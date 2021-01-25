@@ -7,51 +7,49 @@ var utils;
 
 utils = require('../utils');
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/args',
-    hooks: {
-      'nikita:session:arguments': {
-        handler: function({args, child}, handler) {
-          // Erase all arguments to re-inject them later
-          if (child.metadata.raw_input) {
-            arguments[0].args = [];
-          }
-          return async function() {
-            var actions;
-            actions = (await handler.apply(null, arguments));
-            // If raw_input is activated, just pass arguments as is
-            // Always one action since arguments are erased
-            if (child.metadata.raw_input) {
-              actions.args = args;
-              actions.metadata.raw_input = true;
-              return actions;
-            }
-            // Otherwise, compute args and pass them to the returned actions
-            args = utils.array.multiply(...args);
-            if (Array.isArray(actions)) {
-              return actions.map(function(action, i) {
-                action.args = args[i];
-                return action;
-              });
-            } else {
-              actions.args = args[0];
-              return actions;
-            }
-          };
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/args',
+  hooks: {
+    'nikita:session:arguments': {
+      handler: function({args, child}, handler) {
+        // Erase all arguments to re-inject them later
+        if (child.metadata.raw_input) {
+          arguments[0].args = [];
         }
-      },
-      'nikita:session:normalize': function(action, handler) {
         return async function() {
-          var args;
-          // Prevent arguments to move into config by normalize
-          args = action.args;
-          delete action.args;
-          action = (await handler.apply(null, arguments));
-          action.args = args;
-          return action;
+          var actions;
+          actions = (await handler.apply(null, arguments));
+          // If raw_input is activated, just pass arguments as is
+          // Always one action since arguments are erased
+          if (child.metadata.raw_input) {
+            actions.args = args;
+            actions.metadata.raw_input = true;
+            return actions;
+          }
+          // Otherwise, compute args and pass them to the returned actions
+          args = utils.array.multiply(...args);
+          if (Array.isArray(actions)) {
+            return actions.map(function(action, i) {
+              action.args = args[i];
+              return action;
+            });
+          } else {
+            actions.args = args[0];
+            return actions;
+          }
         };
       }
+    },
+    'nikita:session:normalize': function(action, handler) {
+      return async function() {
+        var args;
+        // Prevent arguments to move into config by normalize
+        args = action.args;
+        delete action.args;
+        action = (await handler.apply(null, arguments));
+        action.args = args;
+        return action;
+      };
     }
-  };
+  }
 };

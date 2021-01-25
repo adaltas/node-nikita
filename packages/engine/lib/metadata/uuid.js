@@ -5,19 +5,17 @@ var uuid;
   v4: uuid
 } = require('uuid'));
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/metadata/uuid',
-    hooks: {
-      'nikita:session:action': {
-        handler: function(action) {
-          if (action.metadata.depth === 0) {
-            return action.metadata.uuid = uuid();
-          } else {
-            return action.metadata.uuid = action.parent.metadata.uuid;
-          }
+module.exports = {
+  module: '@nikitajs/engine/lib/metadata/uuid',
+  hooks: {
+    'nikita:session:action': {
+      handler: function(action) {
+        if (action.metadata.depth === 0) {
+          return action.metadata.uuid = uuid();
+        } else {
+          return action.metadata.uuid = action.parent.metadata.uuid;
         }
       }
     }
-  };
+  }
 };

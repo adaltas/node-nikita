@@ -3,36 +3,34 @@ var handlers, session;
 
 session = require('../session');
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/conditions_execute',
-    require: ['@nikitajs/engine/lib/plugins/conditions'],
-    hooks: {
-      'nikita:session:action': {
-        after: '@nikitajs/engine/lib/plugins/conditions',
-        before: '@nikitajs/engine/lib/metadata/disabled',
-        handler: async function(action) {
-          var final_run, k, local_run, ref, v;
-          final_run = true;
-          ref = action.conditions;
-          for (k in ref) {
-            v = ref[k];
-            if (handlers[k] == null) {
-              continue;
-            }
-            local_run = (await handlers[k].call(null, action));
-            if (local_run === false) {
-              final_run = false;
-            }
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/conditions_execute',
+  require: ['@nikitajs/engine/lib/plugins/conditions'],
+  hooks: {
+    'nikita:session:action': {
+      after: '@nikitajs/engine/lib/plugins/conditions',
+      before: '@nikitajs/engine/lib/metadata/disabled',
+      handler: async function(action) {
+        var final_run, k, local_run, ref, v;
+        final_run = true;
+        ref = action.conditions;
+        for (k in ref) {
+          v = ref[k];
+          if (handlers[k] == null) {
+            continue;
           }
-          if (!final_run) {
-            action.metadata.disabled = true;
+          local_run = (await handlers[k].call(null, action));
+          if (local_run === false) {
+            final_run = false;
           }
-          return action;
         }
+        if (!final_run) {
+          action.metadata.disabled = true;
+        }
+        return action;
       }
     }
-  };
+  }
 };
 
 handlers = {

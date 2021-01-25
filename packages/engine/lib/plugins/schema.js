@@ -23,12 +23,10 @@ parse = function(uri) {
 
 module.exports = function(action) {
   var ajv, schema;
-  // schema = create(action)
   ajv = new Ajv({
     $data: true,
     allErrors: true,
     useDefaults: true,
-    // extendRefs: 'ignore'
     extendRefs: true,
     // coerceTypes: true
     loadSchema: function(uri) {

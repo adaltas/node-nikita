@@ -8,7 +8,7 @@ Pass an SSH connection or SSH information to an action. Disable SSH if the value
 is `null` or `false`.
 ###
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/ssh'
   require: [
     '@nikitajs/engine/src/plugins/tools_find'

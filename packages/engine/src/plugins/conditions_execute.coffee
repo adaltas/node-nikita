@@ -1,7 +1,7 @@
 
 session = require '../session'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/plugins/conditions_execute'
   require: [
     '@nikitajs/engine/src/plugins/conditions'

@@ -7,86 +7,84 @@ utils = require('../utils');
 
 exec = require('ssh2-exec');
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/conditions_os',
-    require: ['@nikitajs/engine/lib/plugins/conditions'],
-    hooks: {
-      'nikita:session:normalize': {
-        after: '@nikitajs/engine/lib/plugins/conditions',
-        handler: function(action, handler) {
-          return async function() {
-            var condition, config, i, j, len, len1, ref;
-            action = (await handler.call(null, action));
-            if (!action.conditions) {
-              return;
-            }
-            ref = [action.conditions.if_os, action.conditions.unless_os];
-            // Normalize conditions
-            for (i = 0, len = ref.length; i < len; i++) {
-              config = ref[i];
-              if (!config) {
-                continue;
-              }
-              for (j = 0, len1 = config.length; j < len1; j++) {
-                condition = config[j];
-                if (condition.arch == null) {
-                  condition.arch = [];
-                }
-                if (!Array.isArray(condition.arch)) {
-                  condition.arch = [condition.arch];
-                }
-                if (condition.distribution == null) {
-                  condition.distribution = [];
-                }
-                if (!Array.isArray(condition.distribution)) {
-                  condition.distribution = [condition.distribution];
-                }
-                if (condition.version == null) {
-                  condition.version = [];
-                }
-                if (!Array.isArray(condition.version)) {
-                  condition.version = [condition.version];
-                }
-                condition.version = utils.semver.sanitize(condition.version, 'x');
-                if (condition.linux_version == null) {
-                  condition.linux_version = [];
-                }
-                if (!Array.isArray(condition.linux_version)) {
-                  condition.linux_version = [condition.linux_version];
-                }
-                condition.linux_version = utils.semver.sanitize(condition.linux_version, 'x');
-              }
-            }
-            return action;
-          };
-        }
-      },
-      'nikita:session:action': {
-        after: '@nikitajs/engine/lib/plugins/conditions',
-        before: '@nikitajs/engine/lib/metadata/disabled',
-        handler: async function(action) {
-          var final_run, k, local_run, ref, v;
-          final_run = true;
-          ref = action.conditions;
-          for (k in ref) {
-            v = ref[k];
-            if (handlers[k] == null) {
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/conditions_os',
+  require: ['@nikitajs/engine/lib/plugins/conditions'],
+  hooks: {
+    'nikita:session:normalize': {
+      after: '@nikitajs/engine/lib/plugins/conditions',
+      handler: function(action, handler) {
+        return async function() {
+          var condition, config, i, j, len, len1, ref;
+          action = (await handler.call(null, action));
+          if (!action.conditions) {
+            return;
+          }
+          ref = [action.conditions.if_os, action.conditions.unless_os];
+          // Normalize conditions
+          for (i = 0, len = ref.length; i < len; i++) {
+            config = ref[i];
+            if (!config) {
               continue;
             }
-            local_run = (await handlers[k].call(null, action));
-            if (local_run === false) {
-              final_run = false;
+            for (j = 0, len1 = config.length; j < len1; j++) {
+              condition = config[j];
+              if (condition.arch == null) {
+                condition.arch = [];
+              }
+              if (!Array.isArray(condition.arch)) {
+                condition.arch = [condition.arch];
+              }
+              if (condition.distribution == null) {
+                condition.distribution = [];
+              }
+              if (!Array.isArray(condition.distribution)) {
+                condition.distribution = [condition.distribution];
+              }
+              if (condition.version == null) {
+                condition.version = [];
+              }
+              if (!Array.isArray(condition.version)) {
+                condition.version = [condition.version];
+              }
+              condition.version = utils.semver.sanitize(condition.version, 'x');
+              if (condition.linux_version == null) {
+                condition.linux_version = [];
+              }
+              if (!Array.isArray(condition.linux_version)) {
+                condition.linux_version = [condition.linux_version];
+              }
+              condition.linux_version = utils.semver.sanitize(condition.linux_version, 'x');
             }
           }
-          if (!final_run) {
-            action.metadata.disabled = true;
-          }
           return action;
+        };
+      }
+    },
+    'nikita:session:action': {
+      after: '@nikitajs/engine/lib/plugins/conditions',
+      before: '@nikitajs/engine/lib/metadata/disabled',
+      handler: async function(action) {
+        var final_run, k, local_run, ref, v;
+        final_run = true;
+        ref = action.conditions;
+        for (k in ref) {
+          v = ref[k];
+          if (handlers[k] == null) {
+            continue;
+          }
+          local_run = (await handlers[k].call(null, action));
+          if (local_run === false) {
+            final_run = false;
+          }
         }
+        if (!final_run) {
+          action.metadata.disabled = true;
+        }
+        return action;
       }
     }
-  };
+  }
 };
 
 handlers = {

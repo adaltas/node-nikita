@@ -39,37 +39,35 @@ validate = function(action, args) {
   return [action, walker];
 };
 
-module.exports = function(action) {
-  return {
-    module: '@nikitajs/engine/lib/plugins/tools_walk',
-    hooks: {
-      'nikita:session:normalize': function(action, handler) {
-        return async function() {
-          // Handler execution
-          action = (await handler.apply(null, arguments));
-          // Register function
-          if (action.tools == null) {
-            action.tools = {};
-          }
-          action.tools.walk = async function() {
-            var walker;
-            [action, walker] = validate(action, arguments);
-            return (await walk(action, walker));
-          };
-          // Register action
-          action.registry.register(['tools', 'walk'], {
-            metadata: {
-              raw: true
-            },
-            handler: async function(action) {
-              var walker;
-              [action, walker] = validate(action, action.args);
-              return (await walk(action.parent, walker));
-            }
-          });
-          return action;
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/tools_walk',
+  hooks: {
+    'nikita:session:normalize': function(action, handler) {
+      return async function() {
+        // Handler execution
+        action = (await handler.apply(null, arguments));
+        // Register function
+        if (action.tools == null) {
+          action.tools = {};
+        }
+        action.tools.walk = async function() {
+          var walker;
+          [action, walker] = validate(action, arguments);
+          return (await walk(action, walker));
         };
-      }
+        // Register action
+        action.registry.register(['tools', 'walk'], {
+          metadata: {
+            raw: true
+          },
+          handler: async function(action) {
+            var walker;
+            [action, walker] = validate(action, action.args);
+            return (await walk(action.parent, walker));
+          }
+        });
+        return action;
+      };
     }
-  };
+  }
 };

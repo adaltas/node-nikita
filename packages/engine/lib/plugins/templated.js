@@ -3,29 +3,27 @@ var templated;
 
 templated = require('self-templated');
 
-module.exports = function() {
-  return {
-    module: '@nikitajs/engine/lib/plugins/templated',
-    hooks: {
-      'nikita:session:normalize': function(action) {
-        var base;
-        return (base = action.metadata).templated != null ? base.templated : base.templated = true;
-      },
-      'nikita:session:action': function(action, handler) {
-        return function() {
-          var ref;
-          if (action.metadata.templated !== false && ((ref = action.parent) != null ? ref.metadata.templated : void 0) !== false) {
-            action = templated(action, {
-              compile: false,
-              partial: {
-                metadata: true,
-                config: true
-              }
-            });
-          }
-          return handler.call(null, action);
-        };
-      }
+module.exports = {
+  module: '@nikitajs/engine/lib/plugins/templated',
+  hooks: {
+    'nikita:session:normalize': function(action) {
+      var base;
+      return (base = action.metadata).templated != null ? base.templated : base.templated = true;
+    },
+    'nikita:session:action': function(action, handler) {
+      return function() {
+        var ref;
+        if (action.metadata.templated !== false && ((ref = action.parent) != null ? ref.metadata.templated : void 0) !== false) {
+          action = templated(action, {
+            compile: false,
+            partial: {
+              metadata: true,
+              config: true
+            }
+          });
+        }
+        return handler.call(null, action);
+      };
     }
-  };
+  }
 };

@@ -1,7 +1,7 @@
 
 utils = require '../utils'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/relax'
   hooks:
     'nikita:session:action': (action, handler) ->

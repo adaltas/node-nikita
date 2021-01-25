@@ -2,7 +2,7 @@
 {is_object, is_object_literal} = require 'mixme'
 utils = require '../utils'
 
-module.exports = ->
+module.exports =
   module: '@nikitajs/engine/src/metadata/status'
   require: [
     '@nikitajs/engine/src/plugins/history'
