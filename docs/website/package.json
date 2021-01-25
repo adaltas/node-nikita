@@ -21,6 +21,7 @@
     "gatsby-plugin-sharp": "^2.12.2",
     "gatsby-plugin-sitemap": "^2.10.0",
     "gatsby-remark-autolink-headers": "^2.9.0",
+    "gatsby-remark-embed-snippet": "^4.8.0",
     "gatsby-remark-prismjs": "^3.11.0",
     "gatsby-source-filesystem": "^2.9.1",
     "gatsby-transformer-remark": "^2.14.0",
