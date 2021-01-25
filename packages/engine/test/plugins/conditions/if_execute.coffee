@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.posix
 
-describe 'plugin.condition if_execute', ->
+describe 'plugin.conditions if_execute', ->
 
   they 'pass if string command is successfull', ({ssh}) ->
     {status} = await nikita

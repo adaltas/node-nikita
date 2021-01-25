@@ -1,7 +1,7 @@
 
 nikita = require '../../../src'
 
-describe 'plugin.condition unless', ->
+describe 'plugin.conditions unless', ->
   
   describe 'array', ->
 

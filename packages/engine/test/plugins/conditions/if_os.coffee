@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.conditions_if_os
 
-describe 'plugin.condition if_os', ->
+describe 'plugin.conditions if_os', ->
   
   they 'match distribution string', ({ssh}) ->
     nikita

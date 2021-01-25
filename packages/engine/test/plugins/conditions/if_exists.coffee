@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.posix
 
-describe 'plugin.condition if_exists', ->
+describe 'plugin.conditions if_exists', ->
   
   describe 'array', ->
 
