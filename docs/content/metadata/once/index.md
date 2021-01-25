@@ -1,5 +1,5 @@
 ---
-title: Metadata "once"
+disabled: true
 ---
 
 # Metadata "once" (boolean|array|string, optional, false)
