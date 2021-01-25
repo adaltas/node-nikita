@@ -11,7 +11,7 @@ module.exports = {
       return (base = action.metadata).templated != null ? base.templated : base.templated = true;
     },
     'nikita:session:action': function(action, handler) {
-      return function() {
+      return function(action) {
         var ref;
         if (action.metadata.templated !== false && ((ref = action.parent) != null ? ref.metadata.templated : void 0) !== false) {
           action = templated(action, {

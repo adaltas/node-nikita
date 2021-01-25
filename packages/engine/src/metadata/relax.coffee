@@ -16,11 +16,11 @@ module.exports =
           "value, got #{JSON.stringify action.metadata.relax}."
         ]
       return handler unless action.metadata.relax
-      (action) ->
-        args = arguments
+      (args) ->
+        action = args
         new Promise (resolve, reject) ->
           try
-            prom = handler.apply action.context, args
+            prom = handler.call null, args
             # Not, might need to get inspiration from retry to
             # handle the returned promise
             prom

@@ -21,8 +21,8 @@ module.exports =
             "configuration `#{property}` expect a number or a boolean value,"
             "got #{JSON.stringify action.metadata[property]}."
           ]
-      (action) ->
-        args = arguments
+      (args) ->
+        action = args
         {retry} = action.metadata
         config = merge {}, action.config
         # Handle error
@@ -35,6 +35,6 @@ module.exports =
           run()
         run = ->
           try
-            await handler.call @, ...args
+            await handler.call null, args
           catch err then failure err
         run()

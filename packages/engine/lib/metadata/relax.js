@@ -21,13 +21,12 @@ module.exports = {
       if (!action.metadata.relax) {
         return handler;
       }
-      return function(action) {
-        var args;
-        args = arguments;
+      return function(args) {
+        action = args;
         return new Promise(function(resolve, reject) {
           var err, prom;
           try {
-            prom = handler.apply(action.context, args);
+            prom = handler.call(null, args);
             // Not, might need to get inspiration from retry to
             // handle the returned promise
             return prom.then(resolve).catch(function(err) {

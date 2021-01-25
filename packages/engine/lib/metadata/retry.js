@@ -30,9 +30,9 @@ module.exports = {
           throw utils.error(`METADATA_${property.toUpperCase()}_INVALID_VALUE`, [`configuration \`${property}\` expect a number or a boolean value,`, `got ${JSON.stringify(action.metadata[property])}.`]);
         }
       }
-      return function(action) {
-        var args, config, failure, retry, run;
-        args = arguments;
+      return function(args) {
+        var config, failure, retry, run;
+        action = args;
         ({retry} = action.metadata);
         config = merge({}, action.config);
         // Handle error
@@ -49,7 +49,7 @@ module.exports = {
         run = async function() {
           var err;
           try {
-            return (await handler.call(this, ...args));
+            return (await handler.call(null, args));
           } catch (error) {
             err = error;
             return failure(err);
