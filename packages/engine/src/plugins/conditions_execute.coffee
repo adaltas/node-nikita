@@ -24,8 +24,8 @@ handlers =
   if_execute: (action, value) ->
     final_run = true
     for condition in action.conditions.if_execute
-      try await session null, ({run}) ->
-        {status} = await run
+      try
+        {status} = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:
@@ -43,8 +43,8 @@ handlers =
   unless_execute: (action) ->
     final_run = true
     for condition in action.conditions.unless_execute
-      try await session null, ({run}) ->
-        {status} = await run
+      try
+        {status} = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:

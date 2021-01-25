@@ -38,6 +38,17 @@ handlers =
   if: (action) ->
     final_run = true
     for condition in action.conditions.if
+      if typeof condition is 'function'
+        condition = await session
+          hooks:
+            on_result: ({action}) -> delete action.parent
+          metadata:
+            condition: true
+            depth: action.metadata.depth
+            raw_output: true
+          parent: action
+          handler: condition
+          config: action.config
       run = switch typeof condition
         when 'undefined' then false
         when 'boolean' then condition
@@ -48,23 +59,24 @@ handlers =
             !!condition.length
           else if condition is null then false
           else !!Object.keys(condition).length
-        when 'function'
-          await session null, ({run}) ->
-            run
-              hooks:
-                on_result: ({action}) -> delete action.parent
-              metadata:
-                condition: true
-                depth: action.metadata.depth
-                raw_output: true
-              parent: action
-              handler: condition
-              config: action.config
+        else
+          throw Error 'Value type is not handled'
       final_run = false if run is false
     final_run
   unless: (action) ->
     final_run = true
     for condition in action.conditions.unless
+      if typeof condition is 'function'
+        condition = await session
+          hooks:
+            on_result: ({action}) -> delete action.parent
+          metadata:
+            condition: true
+            depth: action.metadata.depth
+            raw_output: true
+          parent: action
+          handler: condition
+          config: action.config
       run = switch typeof condition
         when 'undefined' then true
         when 'boolean' then !condition
@@ -74,17 +86,7 @@ handlers =
           if Buffer.isBuffer condition then !condition.length
           else if condition is null then true
           else !Object.keys(condition).length
-        when 'function'
-          ! await session null, ({run}) ->
-            run
-              hooks:
-                on_result: ({action}) -> delete action.parent
-              metadata:
-                condition: true
-                depth: action.metadata.depth
-                raw_output: true
-              parent: action
-              handler: condition
-              config: action.config
+        else
+          throw Error 'Value type is not handled'
       final_run = false if run is false
     final_run

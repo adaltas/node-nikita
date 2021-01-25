@@ -35,31 +35,28 @@ module.exports = {
 
 handlers = {
   if_execute: async function(action, value) {
-    var code_skipped, condition, err, final_run, i, len, ref, ref1;
+    var code_skipped, condition, err, final_run, i, len, ref, ref1, status;
     final_run = true;
     ref = action.conditions.if_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        await session(null, async function({run}) {
-          var status;
-          ({status} = (await run({
-            hooks: {
-              on_result: function({action}) {
-                return delete action.parent;
-              }
-            },
-            metadata: {
-              condition: true,
-              depth: action.metadata.depth,
-              namespace: ['execute']
-            },
-            parent: action
-          }, condition)));
-          if (!status) {
-            return final_run = false;
-          }
-        });
+        ({status} = (await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth,
+            namespace: ['execute']
+          },
+          parent: action
+        }, condition)));
+        if (!status) {
+          final_run = false;
+        }
       } catch (error) {
         err = error;
         code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);
@@ -72,31 +69,28 @@ handlers = {
     return final_run;
   },
   unless_execute: async function(action) {
-    var code_skipped, condition, err, final_run, i, len, ref, ref1;
+    var code_skipped, condition, err, final_run, i, len, ref, ref1, status;
     final_run = true;
     ref = action.conditions.unless_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        await session(null, async function({run}) {
-          var status;
-          ({status} = (await run({
-            hooks: {
-              on_result: function({action}) {
-                return delete action.parent;
-              }
-            },
-            metadata: {
-              condition: true,
-              depth: action.metadata.depth,
-              namespace: ['execute']
-            },
-            parent: action
-          }, condition)));
-          if (status) {
-            return final_run = false;
-          }
-        });
+        ({status} = (await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth,
+            namespace: ['execute']
+          },
+          parent: action
+        }, condition)));
+        if (status) {
+          final_run = false;
+        }
       } catch (error) {
         err = error;
         code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);

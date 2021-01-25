@@ -61,7 +61,24 @@ handlers = {
     ref = action.conditions.if;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
-      run = (await (async function() {
+      if (typeof condition === 'function') {
+        condition = (await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth,
+            raw_output: true
+          },
+          parent: action,
+          handler: condition,
+          config: action.config
+        }));
+      }
+      run = (function() {
         switch (typeof condition) {
           case 'undefined':
             return false;
@@ -80,26 +97,10 @@ handlers = {
               return !!Object.keys(condition).length;
             }
             break;
-          case 'function':
-            return (await session(null, function({run}) {
-              return run({
-                hooks: {
-                  on_result: function({action}) {
-                    return delete action.parent;
-                  }
-                },
-                metadata: {
-                  condition: true,
-                  depth: action.metadata.depth,
-                  raw_output: true
-                },
-                parent: action,
-                handler: condition,
-                config: action.config
-              });
-            }));
+          default:
+            throw Error('Value type is not handled');
         }
-      })());
+      })();
       if (run === false) {
         final_run = false;
       }
@@ -112,7 +113,24 @@ handlers = {
     ref = action.conditions.unless;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
-      run = (await (async function() {
+      if (typeof condition === 'function') {
+        condition = (await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth,
+            raw_output: true
+          },
+          parent: action,
+          handler: condition,
+          config: action.config
+        }));
+      }
+      run = (function() {
         switch (typeof condition) {
           case 'undefined':
             return true;
@@ -131,26 +149,10 @@ handlers = {
               return !Object.keys(condition).length;
             }
             break;
-          case 'function':
-            return !(await session(null, function({run}) {
-              return run({
-                hooks: {
-                  on_result: function({action}) {
-                    return delete action.parent;
-                  }
-                },
-                metadata: {
-                  condition: true,
-                  depth: action.metadata.depth,
-                  raw_output: true
-                },
-                parent: action,
-                handler: condition,
-                config: action.config
-              });
-            }));
+          default:
+            throw Error('Value type is not handled');
         }
-      })());
+      })();
       if (run === false) {
         final_run = false;
       }

@@ -93,9 +93,13 @@ describe 'plugin.conditions unless', ->
   
   describe 'function', ->
 
-    it 'skip if function returns true', ->
+    it 'skip if function casts to true', ->
       {status} = await nikita.call
         unless: -> true
+        handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
+      {status} = await nikita.call
+        unless: -> 'abc'
         handler: -> throw Error 'You are not welcome here'
       status.should.be.false()
 
@@ -106,9 +110,13 @@ describe 'plugin.conditions unless', ->
         handler: -> throw Error 'You are not welcome here'
       status.should.be.false()
 
-    it 'run if function returns false', ->
+    it 'run if function casts to false', ->
       {status, value} = await nikita.call
         unless: -> false
+        handler: -> true
+      status.should.be.true()
+      {status, value} = await nikita.call
+        unless: -> ''
         handler: -> true
       status.should.be.true()
 

@@ -46,75 +46,73 @@ module.exports =
 handlers =
   if_os: (action) ->
     final_run = true
-    await session null, ({run}) ->
-      run
-        hooks:
-          on_result: ({action}) -> delete action.parent
-        metadata:
-          condition: true
-          depth: action.metadata.depth
-        parent: action
-      , ->
-        {status, stdout} = await @execute
-          command: utils.os.command
-        return final_run = false unless status
-        [arch, distribution, version, linux_version] = stdout.split '|'
-        # Remove patch version (eg. 7.8.12 -> 7.8)
-        version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
-        linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
-        match = action.conditions.if_os.some (condition) ->
-          a = !condition.arch.length || condition.arch.some (value) ->
-            return true if typeof value is 'string' and value is arch
-            return true if value instanceof RegExp and value.test arch
-          n = !condition.distribution.length || condition.distribution.some (value) ->
-            return true if typeof value is 'string' and value is distribution
-            return true if value instanceof RegExp and value.test distribution
-          # Arch Linux has only linux_version
-          v = !version.length || !condition.version.length || condition.version.some (value) ->
-            version = utils.semver.sanitize version, '0'
-            return true if typeof value is 'string' and utils.semver.satisfies version, value
-            return true if value instanceof RegExp and value.test version
-          lv = !condition.linux_version.length || condition.linux_version.some (value) ->
-            linux_version = utils.semver.sanitize linux_version, '0'
-            return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
-            return true if value instanceof RegExp and value.test linux_version
-          return a and n and v and lv
-        final_run = false unless match
+    await session
+      hooks:
+        on_result: ({action}) -> delete action.parent
+      metadata:
+        condition: true
+        depth: action.metadata.depth
+      parent: action
+    , ->
+      {status, stdout} = await @execute
+        command: utils.os.command
+      return final_run = false unless status
+      [arch, distribution, version, linux_version] = stdout.split '|'
+      # Remove patch version (eg. 7.8.12 -> 7.8)
+      version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+      linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      match = action.conditions.if_os.some (condition) ->
+        a = !condition.arch.length || condition.arch.some (value) ->
+          return true if typeof value is 'string' and value is arch
+          return true if value instanceof RegExp and value.test arch
+        n = !condition.distribution.length || condition.distribution.some (value) ->
+          return true if typeof value is 'string' and value is distribution
+          return true if value instanceof RegExp and value.test distribution
+        # Arch Linux has only linux_version
+        v = !version.length || !condition.version.length || condition.version.some (value) ->
+          version = utils.semver.sanitize version, '0'
+          return true if typeof value is 'string' and utils.semver.satisfies version, value
+          return true if value instanceof RegExp and value.test version
+        lv = !condition.linux_version.length || condition.linux_version.some (value) ->
+          linux_version = utils.semver.sanitize linux_version, '0'
+          return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
+          return true if value instanceof RegExp and value.test linux_version
+        return a and n and v and lv
+      final_run = false unless match
     final_run
   unless_os: (action) ->
     final_run = true
-    await session null, ({run}) ->
-      run
-        hooks:
-          on_result: ({action}) -> delete action.parent
-        metadata:
-          condition: true
-          depth: action.metadata.depth
-        parent: action
-      , ->
-        {status, stdout} = await @execute
-          command: utils.os.command
-        return final_run = false unless status
-        [arch, distribution, version, linux_version] = stdout.split '|'
-        # Remove patch version (eg. 7.8.12 -> 7.8)
-        version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
-        linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
-        match = action.conditions.unless_os.some (condition) ->
-          a = !condition.arch.length || condition.arch.some (value) ->
-            return true if typeof value is 'string' and value is arch
-            return true if value instanceof RegExp and value.test arch
-          n = !condition.distribution.length || condition.distribution.some (value) ->
-            return true if typeof value is 'string' and value is distribution
-            return true if value instanceof RegExp and value.test distribution
-          # Arch Linux has only linux_version
-          v = !version.length || !condition.version.length || condition.version.some (value) ->
-            version = utils.semver.sanitize version, '0'
-            return true if typeof value is 'string' and utils.semver.satisfies version, value
-            return true if value instanceof RegExp and value.test version
-          lv = !condition.linux_version.length || condition.linux_version.some (value) ->
-            linux_version = utils.semver.sanitize linux_version, '0'
-            return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
-            return true if value instanceof RegExp and value.test linux_version
-          return a and n and v and lv
-        final_run = false if match
+    await session
+      hooks:
+        on_result: ({action}) -> delete action.parent
+      metadata:
+        condition: true
+        depth: action.metadata.depth
+      parent: action
+    , ->
+      {status, stdout} = await @execute
+        command: utils.os.command
+      return final_run = false unless status
+      [arch, distribution, version, linux_version] = stdout.split '|'
+      # Remove patch version (eg. 7.8.12 -> 7.8)
+      version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+      linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      match = action.conditions.unless_os.some (condition) ->
+        a = !condition.arch.length || condition.arch.some (value) ->
+          return true if typeof value is 'string' and value is arch
+          return true if value instanceof RegExp and value.test arch
+        n = !condition.distribution.length || condition.distribution.some (value) ->
+          return true if typeof value is 'string' and value is distribution
+          return true if value instanceof RegExp and value.test distribution
+        # Arch Linux has only linux_version
+        v = !version.length || !condition.version.length || condition.version.some (value) ->
+          version = utils.semver.sanitize version, '0'
+          return true if typeof value is 'string' and utils.semver.satisfies version, value
+          return true if value instanceof RegExp and value.test version
+        lv = !condition.linux_version.length || condition.linux_version.some (value) ->
+          linux_version = utils.semver.sanitize linux_version, '0'
+          return true if typeof value is 'string' and utils.semver.satisfies linux_version, value
+          return true if value instanceof RegExp and value.test linux_version
+        return a and n and v and lv
+      final_run = false if match
     final_run

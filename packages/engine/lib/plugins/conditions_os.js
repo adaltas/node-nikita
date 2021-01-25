@@ -91,154 +91,150 @@ handlers = {
   if_os: async function(action) {
     var final_run;
     final_run = true;
-    await session(null, function({run}) {
-      return run({
-        hooks: {
-          on_result: function({action}) {
-            return delete action.parent;
+    await session({
+      hooks: {
+        on_result: function({action}) {
+          return delete action.parent;
+        }
+      },
+      metadata: {
+        condition: true,
+        depth: action.metadata.depth
+      },
+      parent: action
+    }, async function() {
+      var arch, distribution, linux_version, match, status, stdout, version;
+      ({status, stdout} = (await this.execute({
+        command: utils.os.command
+      })));
+      if (!status) {
+        return final_run = false;
+      }
+      [arch, distribution, version, linux_version] = stdout.split('|');
+      if (match = /^(\d+)\.(\d+)/.exec(version)) {
+        // Remove patch version (eg. 7.8.12 -> 7.8)
+        version = `${match[0]}`;
+      }
+      if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
+        linux_version = `${match[0]}`;
+      }
+      match = action.conditions.if_os.some(function(condition) {
+        var a, lv, n, v;
+        a = !condition.arch.length || condition.arch.some(function(value) {
+          if (typeof value === 'string' && value === arch) {
+            return true;
           }
-        },
-        metadata: {
-          condition: true,
-          depth: action.metadata.depth
-        },
-        parent: action
-      }, async function() {
-        var arch, distribution, linux_version, match, status, stdout, version;
-        ({status, stdout} = (await this.execute({
-          command: utils.os.command
-        })));
-        if (!status) {
-          return final_run = false;
-        }
-        [arch, distribution, version, linux_version] = stdout.split('|');
-        if (match = /^(\d+)\.(\d+)/.exec(version)) {
-          // Remove patch version (eg. 7.8.12 -> 7.8)
-          version = `${match[0]}`;
-        }
-        if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
-          linux_version = `${match[0]}`;
-        }
-        match = action.conditions.if_os.some(function(condition) {
-          var a, lv, n, v;
-          a = !condition.arch.length || condition.arch.some(function(value) {
-            if (typeof value === 'string' && value === arch) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(arch)) {
-              return true;
-            }
-          });
-          n = !condition.distribution.length || condition.distribution.some(function(value) {
-            if (typeof value === 'string' && value === distribution) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(distribution)) {
-              return true;
-            }
-          });
-          // Arch Linux has only linux_version
-          v = !version.length || !condition.version.length || condition.version.some(function(value) {
-            version = utils.semver.sanitize(version, '0');
-            if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(version)) {
-              return true;
-            }
-          });
-          lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
-            linux_version = utils.semver.sanitize(linux_version, '0');
-            if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(linux_version)) {
-              return true;
-            }
-          });
-          return a && n && v && lv;
+          if (value instanceof RegExp && value.test(arch)) {
+            return true;
+          }
         });
-        if (!match) {
-          return final_run = false;
-        }
+        n = !condition.distribution.length || condition.distribution.some(function(value) {
+          if (typeof value === 'string' && value === distribution) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(distribution)) {
+            return true;
+          }
+        });
+        // Arch Linux has only linux_version
+        v = !version.length || !condition.version.length || condition.version.some(function(value) {
+          version = utils.semver.sanitize(version, '0');
+          if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(version)) {
+            return true;
+          }
+        });
+        lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
+          linux_version = utils.semver.sanitize(linux_version, '0');
+          if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(linux_version)) {
+            return true;
+          }
+        });
+        return a && n && v && lv;
       });
+      if (!match) {
+        return final_run = false;
+      }
     });
     return final_run;
   },
   unless_os: async function(action) {
     var final_run;
     final_run = true;
-    await session(null, function({run}) {
-      return run({
-        hooks: {
-          on_result: function({action}) {
-            return delete action.parent;
+    await session({
+      hooks: {
+        on_result: function({action}) {
+          return delete action.parent;
+        }
+      },
+      metadata: {
+        condition: true,
+        depth: action.metadata.depth
+      },
+      parent: action
+    }, async function() {
+      var arch, distribution, linux_version, match, status, stdout, version;
+      ({status, stdout} = (await this.execute({
+        command: utils.os.command
+      })));
+      if (!status) {
+        return final_run = false;
+      }
+      [arch, distribution, version, linux_version] = stdout.split('|');
+      if (match = /^(\d+)\.(\d+)/.exec(version)) {
+        // Remove patch version (eg. 7.8.12 -> 7.8)
+        version = `${match[0]}`;
+      }
+      if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
+        linux_version = `${match[0]}`;
+      }
+      match = action.conditions.unless_os.some(function(condition) {
+        var a, lv, n, v;
+        a = !condition.arch.length || condition.arch.some(function(value) {
+          if (typeof value === 'string' && value === arch) {
+            return true;
           }
-        },
-        metadata: {
-          condition: true,
-          depth: action.metadata.depth
-        },
-        parent: action
-      }, async function() {
-        var arch, distribution, linux_version, match, status, stdout, version;
-        ({status, stdout} = (await this.execute({
-          command: utils.os.command
-        })));
-        if (!status) {
-          return final_run = false;
-        }
-        [arch, distribution, version, linux_version] = stdout.split('|');
-        if (match = /^(\d+)\.(\d+)/.exec(version)) {
-          // Remove patch version (eg. 7.8.12 -> 7.8)
-          version = `${match[0]}`;
-        }
-        if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
-          linux_version = `${match[0]}`;
-        }
-        match = action.conditions.unless_os.some(function(condition) {
-          var a, lv, n, v;
-          a = !condition.arch.length || condition.arch.some(function(value) {
-            if (typeof value === 'string' && value === arch) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(arch)) {
-              return true;
-            }
-          });
-          n = !condition.distribution.length || condition.distribution.some(function(value) {
-            if (typeof value === 'string' && value === distribution) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(distribution)) {
-              return true;
-            }
-          });
-          // Arch Linux has only linux_version
-          v = !version.length || !condition.version.length || condition.version.some(function(value) {
-            version = utils.semver.sanitize(version, '0');
-            if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(version)) {
-              return true;
-            }
-          });
-          lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
-            linux_version = utils.semver.sanitize(linux_version, '0');
-            if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
-              return true;
-            }
-            if (value instanceof RegExp && value.test(linux_version)) {
-              return true;
-            }
-          });
-          return a && n && v && lv;
+          if (value instanceof RegExp && value.test(arch)) {
+            return true;
+          }
         });
-        if (match) {
-          return final_run = false;
-        }
+        n = !condition.distribution.length || condition.distribution.some(function(value) {
+          if (typeof value === 'string' && value === distribution) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(distribution)) {
+            return true;
+          }
+        });
+        // Arch Linux has only linux_version
+        v = !version.length || !condition.version.length || condition.version.some(function(value) {
+          version = utils.semver.sanitize(version, '0');
+          if (typeof value === 'string' && utils.semver.satisfies(version, value)) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(version)) {
+            return true;
+          }
+        });
+        lv = !condition.linux_version.length || condition.linux_version.some(function(value) {
+          linux_version = utils.semver.sanitize(linux_version, '0');
+          if (typeof value === 'string' && utils.semver.satisfies(linux_version, value)) {
+            return true;
+          }
+          if (value instanceof RegExp && value.test(linux_version)) {
+            return true;
+          }
+        });
+        return a && n && v && lv;
       });
+      if (match) {
+        return final_run = false;
+      }
     });
     return final_run;
   }

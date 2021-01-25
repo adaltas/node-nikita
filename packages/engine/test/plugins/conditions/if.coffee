@@ -108,9 +108,14 @@ describe 'plugin.conditions if', ->
   
   describe 'function', ->
 
-    it 'run if function returns true', ->
+    it 'run if function casts to true', ->
       {status, value} = await nikita.call
         if: -> true
+        handler: -> status: true, value: 'called'
+      status.should.be.true()
+      value.should.eql 'called'
+      {status, value} = await nikita.call
+        if: -> 'abc'
         handler: -> status: true, value: 'called'
       status.should.be.true()
       value.should.eql 'called'
@@ -123,9 +128,13 @@ describe 'plugin.conditions if', ->
       status.should.be.true()
       value.should.eql 'called'
 
-    it 'skip if function returns false', ->
+    it 'skip if function casts to false', ->
       {status} = await nikita.call
         if: -> false
+        handler: -> throw Error 'You are not welcome here'
+      status.should.be.false()
+      {status} = await nikita.call
+        if: -> ''
         handler: -> throw Error 'You are not welcome here'
       status.should.be.false()
 

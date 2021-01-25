@@ -23,16 +23,15 @@ handlers =
     final_run = true
     for condition in action.conditions.if_exists
       try
-        await session null, ({run}) ->
-          run
-            hooks:
-              on_result: ({action}) -> delete action.parent
-            metadata:
-              condition: true
-              depth: action.metadata.depth
-            parent: action
-          , ->
-            await @fs.base.stat target: condition
+        await session
+          hooks:
+            on_result: ({action}) -> delete action.parent
+          metadata:
+            condition: true
+            depth: action.metadata.depth
+          parent: action
+        , ->
+          await @fs.base.stat target: condition
       catch err
         if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           final_run = false
@@ -42,16 +41,15 @@ handlers =
     final_run = true
     for condition in action.conditions.unless_exists
       try
-        await session null, ({run}) ->
-          run
-            hooks:
-              on_result: ({action}) -> delete action.parent
-            metadata:
-              condition: true
-              depth: action.metadata.depth
-            parent: action
-          , ->
-            await @fs.base.stat target: condition
+        await session
+          hooks:
+            on_result: ({action}) -> delete action.parent
+          metadata:
+            condition: true
+            depth: action.metadata.depth
+          parent: action
+        , ->
+          await @fs.base.stat target: condition
         final_run = false
       catch err
         unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'

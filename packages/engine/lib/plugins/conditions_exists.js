@@ -40,23 +40,21 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        await session(null, function({run}) {
-          return run({
-            hooks: {
-              on_result: function({action}) {
-                return delete action.parent;
-              }
-            },
-            metadata: {
-              condition: true,
-              depth: action.metadata.depth
-            },
-            parent: action
-          }, async function() {
-            return (await this.fs.base.stat({
-              target: condition
-            }));
-          });
+        await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth
+          },
+          parent: action
+        }, async function() {
+          return (await this.fs.base.stat({
+            target: condition
+          }));
         });
       } catch (error) {
         err = error;
@@ -76,23 +74,21 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        await session(null, function({run}) {
-          return run({
-            hooks: {
-              on_result: function({action}) {
-                return delete action.parent;
-              }
-            },
-            metadata: {
-              condition: true,
-              depth: action.metadata.depth
-            },
-            parent: action
-          }, async function() {
-            return (await this.fs.base.stat({
-              target: condition
-            }));
-          });
+        await session({
+          hooks: {
+            on_result: function({action}) {
+              return delete action.parent;
+            }
+          },
+          metadata: {
+            condition: true,
+            depth: action.metadata.depth
+          },
+          parent: action
+        }, async function() {
+          return (await this.fs.base.stat({
+            target: condition
+          }));
         });
         final_run = false;
       } catch (error) {
