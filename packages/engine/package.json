@@ -66,7 +66,7 @@
     "mixme": "^0.4.0",
     "pad": "^3.2.0",
     "regexp-quote": "^0.0.0",
-    "self-templated": "^0.0.4",
+    "self-templated": "^0.2.0",
     "ssh2-connect": "^3.1.0",
     "ssh2-exec": "^0.6.0",
     "ssh2-fs": "^1.0.6",

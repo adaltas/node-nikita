@@ -6,12 +6,12 @@ module.exports =
   hooks:
     'nikita:session:normalize': (action) ->
       action.metadata.templated ?= true
-    'nikita:session:action': (action, handler) ->
-      (action) ->
-        if action.metadata.templated isnt false and action.parent?.metadata.templated isnt false
-          action = templated action,
-            compile: false
-            partial:
-              metadata: true
-              config: true
-        handler.call action.context, action
+    'nikita:session:action': (action) ->
+      if action.metadata.templated isnt false and action.parent?.metadata.templated isnt false
+        templated action,
+          array: true
+          compile: false
+          mutate: true
+          partial:
+            metadata: true
+            config: true
