@@ -1,45 +1,21 @@
----
-title: Metadata "sleep"
----
 
-# Metadata "sleep" (number, optional, 3000)
+# Metadata `sleep`
 
-The "sleep" metadata indicates the time lapse when a failed action is rescheduled. It only has effect if the "attempt" metadata is set to a value greater than 1 and when the action failed and is rescheduled.
+The `sleep` metadata indicates the time lapse when a failed action is rescheduled. It only has effect if the [`retry` metadata](/current/metadata/retry/) is set to a value greater than `1` and when the action failed and is rescheduled.
+
+* Type: `number`
+* Default: `3000`
 
 ## Usage
 
-The sleep value is an integer and is interpreted in millisecond. The default value is "3000". Here is an example raising the sleep period to 5 seconds.
+The sleep value is an integer and is interpreted in millisecond. The default value is `3000`. Here is an example raising the sleep period to 5 seconds.
 
-```js
-require('nikita')
-.system.execute({
-  cmd: '[ `whoami` == "root"]',
-  retry: 3,
-  sleep: 5000
-})
-```
+`embed:metadata/sleep/samples/usage.js`
 
 Any value not superior or equal to zero will generate an error.
 
-## Default value
+### Global value
 
 While you can set this metadata on selected actions, it is safe to declare it at the session level. In such case, it will act as the default value and can still be overwritten on a per action basis.
 
-```js
-require(nikita)({
-  sleep: 5000
-})
-// Wait 5 seconds between retries
-.call({
-  retry: 3,
-}, function({config}){
-  if( config.attempt < 3 ) throw Error 'Action Failure'
-})
-// Wait 1 second between retries
-.call({
-  retry: 3,
-  sleep: 1000
-}, function({config}){
-  if( config.attempt < 3 ) throw Error 'Action Failure'
-})
-```
+`embed:metadata/sleep/samples/session.js`
