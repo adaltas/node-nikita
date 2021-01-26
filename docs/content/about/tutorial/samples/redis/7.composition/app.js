@@ -1,3 +1,4 @@
+// hide-next-line
 const nikita = require('nikita');
 // Dependencies
 const install = require('./lib/install');

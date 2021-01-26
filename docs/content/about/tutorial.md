@@ -18,23 +18,25 @@ For detailed information, navigate the documentation or submit an issue if you d
 
 ## What is Nikita?
 
-Nikita is build as a library, which provides simple functions on a host (server, desktop, machine, vm...) either locally or remotely over SSH.
+Nikita is a toolkit to automate the execution of your workflows. Use one of the many available actions or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
 
 ### Technologies
 
-Nikita is written in JavaScript and executed by NodeJs. It is delivered as a Node.js package and is available on [NPM](https://www.npmjs.com/package/nikita).
+Nikita is written in JavaScript and executed with Node.js. It is available on [NPM](https://www.npmjs.com/package/nikita).
 
 ### Use cases
 
-It can serve multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate components' deployments (installations, functional tests, lifecycle management...).
+It serves multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate components' deployments (installations, functional tests, lifecycle management...).
 
 Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage Big Data systems.
 
 ### Supported platforms
 
-Nikita targets Unix-like system including Linux and macOS. Windows is not supported as a targeting node where to execute actions. It is however known to work as a Nikita host. This mean you can run Nikita from a Windows host as long as you are targeting Linux nodes over SSH.
+Nikita targets Unix-like system including Linux and macOS. Windows is not supported as a targeting node where to execute actions. It is however known to work as a Nikita host. This mean you can run Nikita from a Windows host and target Linux nodes over SSH.
 
-Throughout this tutorial, it is assumed you work on Linux or macOS. To be able to run the same code examples without modifications on Windows, the easiest way would be to work inside a [Node.js Docker container](https://hub.docker.com/_/node). Before that, you have to install Docker Desktop following [this guide](https://docs.docker.com/docker-for-windows/install/) and start a container with the command `docker run -it node bash`.
+Throughout this tutorial, it is assumed you work on Linux or macOS. To be able to run the same code examples without modifications on Windows, you can install a Linux virtual machine or use Docker.
+
+At the end of the tutorial, you will learn how to use Nikita over SSH. This way, your Windows host is used to create your workflow and you can target a remote host like a server, a virtual machine or a container.
 
 ### What is inside Nikita
 
@@ -45,7 +47,7 @@ It is bundled with many handy functions covering a large range of usage:
   - package management
   - run docker containers
 
-You are encouraged to extend Nikita with your own [actions](/action). To write an action is just about writing a plain vanilla JavaScript function.
+You are encouraged to extend Nikita with your own [actions](/current/action). To write an action is just about writing a plain vanilla JavaScript function.
 
 ## Installation instructions
 
@@ -72,7 +74,7 @@ mkdir tutorial
 cd tutorial
 # Initialize the git repository
 git init
-# Change URL to your remote repository URL
+# Change the URL with your remote repository URL
 git remote add origin https://github.com/adaltas/node-nikita-tutorial.git
 # Ignore files
 cat > .gitignore <<MD
@@ -140,7 +142,7 @@ CoffeeScript has a very clean syntax and is perfectly suited with the declarativ
 
 ### Actions handler
 
-An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated metadata, called config. It is materialized as a JavaScript object, for example:
+An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated configuration, called `config`. It is materialized as a JavaScript object, for example:
 
 ```js
 {
@@ -151,7 +153,7 @@ An action is the basic building block in Nikita. It is basically a function, cal
 }
 ```
 
-As you can see, config is made available as the first argument of the handler.
+As you can see, `config` is made available as a destructure property of the argument that handler receives.
 
 ### Calling actions
 
@@ -165,23 +167,21 @@ The function `nikita.call` is very flexible in how arguments are passed. It rece
 
 ### Actions promise
 
-All Nikita actions return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To execute your commands sequentially after calling a Nikita action, you have to call an anonymous asynchronous function and await for the result from Promise.
+Nikita actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action's output, you have to call an asynchronous function and await for the result from Promise.
 
 `embed:about/tutorial/samples/promise.js`
 
-### Scheduling actions
+Nikita also provides you the guarantee that your actions are executed sequentially:
 
-You can create a chain of actions that will be executed one after another.
-
-<!-- TODO: finish here -->
+`embed:about/tutorial/samples/promise_sequence.js`
 
 ### Idempotence and status
 
 In the context of software deployment, idempotence means that an action with the same parameters can be executed multiple times without changing the final state of the system. It is a fundamental concept and every action in Nikita follows this principle.
 
-The status is used and interpreted with different meanings but in most cases it indicates that a change occurred. Read the action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return "true" on its first run and "false" later on because the file already exists:
+The status is used and interpreted with different meanings but in most cases it indicates that a change occurred. Read the action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return `true` on its first run and `false` later on because the file already exists:
 
-> Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to "true" instead of "false". Simply remove the file with `rm /tmp/a_file` to overcome this issue.
+> Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to `true` instead of `false`. Simply remove the file with `rm /tmp/a_file` to overcome this issue.
 
 `embed:about/tutorial/samples/idempotence.js`
 
@@ -199,9 +199,9 @@ File "./app.js":
 
 `embed:about/tutorial/samples/external/app.js`
 
-### Passing config
+### Passing `config`
 
-The `touch` action is now a separate Node.js module. It is a vanilla JavaScript function. You can create your own config to control the behavior of your actions. In our example, we created the `target` config to know which file to touch:
+The `touch` action is now a separate Node.js module. It is a vanilla JavaScript function. You can create your own `config` to control the behavior of your actions. In our example, we created the `target` configuration property to know which file to touch:
 
 File "./lib/touch.js":
 
@@ -211,9 +211,9 @@ File "./app.js":
 
 `embed:about/tutorial/samples/config/app.js`
 
-### Passing metadata
+### Passing `metadata`
 
-There are several properties which are globally available to every actions such as `header`, `retry`, `relax`. Those are [metadata](/metadata/) and they are not to be confused with config. We encourage you to navigate the documentation. Covering all of them is not in the scope of this tutorial.
+There are several properties which are generic and globally available to every action such as `header`, `retry`, `relax`, etc. Those are [`metadata` properties](/current/metadata/) and they are not to be confused with `config` properties which are specific to actions.
 
 ### Registering actions
 
@@ -252,11 +252,11 @@ To download Redis, we will use the existing `nikita.file.download` action.
 
 The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" config.
 
-To extract and compile Redis, we will write a shell script with `nikita.execute` action. It will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_".
+To extract and compile Redis, we will write a shell script which will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". There is the `nikita.execute` action to execute shell scripts:
 
 `embed:about/tutorial/samples/redis/1.compile.js`
 
-Adding an absolute path like "/tmp/nikita-tutorial" to shell commands each time we want to control it would be too annoying. That's why `nikita.execute` actions comes with the `cwd` configuration property standing for "current working directory". This is way a lot prettier:
+It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to shell commands each time we want to control it. That's why `nikita.execute` actions comes with the `cwd` configuration property standing for "current working directory". This is way a lot prettier:
 
 `embed:about/tutorial/samples/redis/1.compile_cwd.js`
 
@@ -272,7 +272,7 @@ Before starting the server, we will write a configuration file. The Redis format
 
 *Learn how to activate pretty reporting and detailed logs written in Markdown.*
 
-So far, the action output was used to manually print a message for the user with the `console.info` JavaScript function signalling a status of execution. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
+So far, we retrieved the action output to manually print a message for the user with the `console.info` JavaScript function signalling a status of execution. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
 `embed:about/tutorial/samples/redis/3.log_cli.js`
 
@@ -287,7 +287,7 @@ What if an action failed and the error message is not explicit enough? What if a
 
 `embed:about/tutorial/samples/redis/3.log_md.js`
 
-Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://nodejs.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/usages/logging_debugging/) documentation.
+Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://nodejs.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/current/usages/logging_debugging/) documentation.
 
 ### 4. Get the server up and running
 
@@ -309,7 +309,7 @@ Similarly, the `shy` metadata will allow us to set the status to `true`, but pri
 
 `embed:about/tutorial/samples/redis/5.health.js`
 
-When Redis server is started, this prints:
+When Redis server is started, it prints:
 
 ```
 localhost   Redis Check : Check   -  12ms
@@ -317,7 +317,7 @@ localhost   Redis Check   -  18ms
 localhost      ♥  
 ```
 
-Running the same code without `shy: true`, would print:
+Running the same code without `shy: true` would print:
 
 ```
 localhost   Redis Check : Check   ✔  13ms
@@ -325,7 +325,7 @@ localhost   Redis Check   ✔  18ms
 localhost      ♥  
 ```
 
-Demonstrating an error when Redis server is not started:
+When Redis server is not started, it prints: 
 
 ```
 localhost   Redis Check : Check   ✘  12ms
@@ -337,7 +337,7 @@ localhost      ♥
 
 *Learn how easy and transparent it is to activate SSH.*
 
-Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [all the tests](/about/developers/#tests-execution) are provided with an ssh argument and are executed twice. The first time with the connection set to null and the second time with an established SSH connection.
+Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [all the tests](/current/about/developers/#tests-execution) are provided with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
 
 Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
 

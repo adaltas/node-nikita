@@ -1,3 +1,4 @@
+// hide-next-line
 const nikita = require('nikita');
 nikita
 // Activate Markdown reporting

@@ -1,3 +1,4 @@
+// hide-next-line
 const nikita = require('nikita');
 (async () => {
   var {status} = await nikita.execute({
