@@ -1,46 +1,31 @@
----
-title: Metadata "retry"
----
 
-# Metadata "retry" (number|boolean, optional, 1)
+# Metadata `retry`
 
-Setting the "retry" metadata provides control over how many time an action is re-scheduled on error before it is finally treated as a failure.
+Setting the `retry` metadata provides control over how many times an action is re-scheduled on error before it is finally treated as a failure.
 
-It is commonly used conjointly with the ["attempt" metadata](/metadata/attempt/) which provide an indicator over how many times an action was rescheduled.
+* Type: `number|boolean`
+* Default: `1`
+
+It is commonly used conjointly with the [`attempt` metadata](/current/metadata/attempt/) which provide an indicator over how many times an action was rescheduled.
 
 ## Usage
 
-The default value is "1" which means that actions are not rescheduled on error.
+The default value is `1` which means that actions are not rescheduled on error.
 
-If provided as an number, the value must be superior or equal to `1`. For example, the value 3 means the action will be executed at maximum 3 times. If the third time the action fail, then it will be treated by the Nikita session as a failed action.
+If provided as a number, the value must be superior or equal to `1`. For example, the value `3` means the action will be executed at maximum 3 times. If the third time the action fail, then it will be treated by the Nikita session as a failed action.
 
-```js
-count = 0
-require('nikita')
-.call({ attempt: 3 }, function(){
-  count++
-})
-.next(function(){
-  assert(count, 3)
-})
-```
+`embed:metadata/retry/samples/usage.js`
 
-Set the value as `true` for an unlimited number of retries. The value `false` is the same as `1`.
+### Boolean value
 
-## With the "relax" metadata
+Setting the value as `true` causes unlimited number of retries:
 
-When used with the ["relax"](/metadata/relax/) property, every attempt will be rescheduled. Said differently, marking an action as relax will not prevent the action to be re-executed on error.
+`embed:metadata/retry/samples/boolean.js`
 
-```js
-require('nikita')
-.call({
-  retry: 2,
-  relax: true
-}, function({config}, callback){
-  // Will fail two times
-  throw Error('Oups')
-}
-.call(function(){
-  // Will be executed because last action was not fatal
-}))
-```
+The value `false` is the same as `1`.
+
+## With the `relax` metadata
+
+When used with the [`relax`](/current/metadata/relax/) metadata, every attempt will be rescheduled. Said differently, marking an action as relax will not prevent the action to be re-executed on error.
+
+`embed:metadata/retry/samples/relax.js`
