@@ -91,7 +91,7 @@ class Layout extends React.Component {
           }
           drawer={
             <Menu>
-              {Object.values(menu.children)
+              {Object.values(menu.children.current.children)
               .sort((p1, p2) => p1.data.sort > p2.data.sort)
               .map(page => (
                 <Nav
@@ -136,7 +136,7 @@ const WrappedLayout = props => (
             }
           }
         }
-        menu: allMarkdownRemark(
+        menu: allMdx(
           filter: {
             frontmatter: { disabled: { eq: false } }
             fields: { slug: { regex: "/^/.+/" } }

@@ -1,5 +1,6 @@
 module.exports = {
-  pathPrefix: `/node-nikita-docs`,
+  // Seems it is not used, leave commented until published
+  // pathPrefix: `/node-nikita`,
   siteMetadata: {
     title: 'Nikita',
     siteUrl: `https://nikita.js.org`,
@@ -21,19 +22,19 @@ module.exports = {
         links: [
           {
             label: 'Getting started',
-            url: '/about/',
+            url: '/current/about/',
           },
           {
             label: 'Usages',
-            url: '/usages/',
+            url: '/current/usages/',
           },
           {
             label: 'Metadata',
-            url: '/metadata/',
+            url: '/current/metadata/',
           },
           {
             label: 'Action',
-            url: '/action/',
+            url: '/current/action/',
           },
         ],
         xs: 6,
@@ -52,7 +53,7 @@ module.exports = {
           },
           {
             label: 'License',
-            url: '/about/license',
+            url: '/current/about/license',
           },
         ],
         xs: 6,
@@ -77,7 +78,7 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/../content`,
-        name: 'markdown-pages',
+        name: 'pages',
       },
     },
     // {
@@ -89,9 +90,10 @@ module.exports = {
     //   },
     // },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: "gatsby-plugin-mdx",
       options: {
-        plugins: [
+        extensions: [`.mdx`, `.md`],
+        gatsbyRemarkPlugins: [
           {
             resolve: 'gatsby-remark-autolink-headers',
             options: {
@@ -99,16 +101,16 @@ module.exports = {
             },
           },
           {
-            resolve: 'gatsby-remark-toc-patched',
+            resolve: require.resolve('./plugins/gatsby-remark-toc-patched'),
             options: {
               header: 'Table of Contents', // the custom header text
               include: [
-                '**/*.md', // an include glob to match against
+                `**/*.md`, // an include glob to match against
               ],
             },
           },
           {
-            resolve: `gatsby-remark-embed-snippet`,
+            resolve: 'gatsby-remark-embed-snippet',
             options: {
               directory: `${__dirname}/../content/`,
             },
@@ -129,7 +131,7 @@ module.exports = {
             },
           },
         ],
-      },
+      }
     },
     {
       resolve: `gatsby-plugin-catch-links`,
