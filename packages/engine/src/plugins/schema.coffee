@@ -14,57 +14,69 @@ parse = (uri) ->
   protocol: matches[1]
   pathname: matches[2]
 
-module.exports = (action) ->
-  ajv = new Ajv
-    $data: true
-    allErrors: true
-    useDefaults: true
-    extendRefs: true
-    # coerceTypes: true
-    loadSchema: (uri) ->
-      new Promise (accept, reject) ->
-        {protocol, pathname} = parse uri
-        switch protocol
-          when 'module:'
-            action = require.main.require pathname
-            accept action.metadata.schema
-          when 'registry:'
-            module = pathname.split '/'
-            action = await action.registry.get module
-            accept action.metadata.schema
-  ajv_keywords ajv
-  schema =
-    add: (schema, name) ->
-      return unless schema
-      ajv.addSchema schema, name
-    validate: (action, schema) ->
-      validate = await ajv.compileAsync schema
-      return if validate action.config
-      error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
-        if validate.errors.length is 1
-        then 'one error was found in the configuration of'
-        else 'multiple errors where found in the configuration of'
-        if action.metadata.namespace.length
-        then "action `#{action.metadata.namespace.join('.')}`:"
-        else "root action:"
-        validate.errors
-        .map (err) ->
-          msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
-          msg += (
-            for key, value of err.params
-              continue if key is 'missingProperty'
-              ", #{key} is #{JSON.stringify value}"
-          ).join '' if err.params
-          msg
-        .sort()
-        .join('; ')+'.'
-      ]
-    list: () ->
-      schemas: ajv._schemas
-      refs: ajv._refs
-      fragments: ajv._fragments
+module.exports =
   module: '@nikitajs/engine/src/plugins/schema'
   hooks:
+    'nikita:session:normalize':
+      handler: (action, handler) ->
+        ->
+          # Handler execution
+          action = await handler.apply null, arguments
+          action.tools ?= {}
+          # Get schema from parent action
+          if action.parent?.tools.schema
+            action.tools.schema = action.parent.tools.schema
+            return action
+          # Instantiate a new schema
+          ajv = new Ajv
+            $data: true
+            allErrors: true
+            useDefaults: true
+            extendRefs: true
+            # coerceTypes: true
+            loadSchema: (uri) ->
+              new Promise (accept, reject) ->
+                {protocol, pathname} = parse uri
+                switch protocol
+                  when 'module:'
+                    action = require.main.require pathname
+                    accept action.metadata.schema
+                  when 'registry:'
+                    module = pathname.split '/'
+                    action = await action.registry.get module
+                    accept action.metadata.schema
+          ajv_keywords ajv
+          action.tools.schema =
+            add: (schema, name) ->
+              return unless schema
+              ajv.addSchema schema, name
+            validate: (action, schema) ->
+              validate = await ajv.compileAsync schema
+              return if validate action.config
+              error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
+                if validate.errors.length is 1
+                then 'one error was found in the configuration of'
+                else 'multiple errors where found in the configuration of'
+                if action.metadata.namespace.length
+                then "action `#{action.metadata.namespace.join('.')}`:"
+                else "root action:"
+                validate.errors
+                .map (err) ->
+                  msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
+                  msg += (
+                    for key, value of err.params
+                      continue if key is 'missingProperty'
+                      ", #{key} is #{JSON.stringify value}"
+                  ).join '' if err.params
+                  msg
+                .sort()
+                .join('; ')+'.'
+              ]
+            list: () ->
+              schemas: ajv._schemas
+              refs: ajv._refs
+              fragments: ajv._fragments
+          action
     'nikita:session:action':
       after: [
         '@nikitajs/engine/src/metadata/disabled'
@@ -73,7 +85,6 @@ module.exports = (action) ->
       ]
       handler: (action, handler) ->
         return handler if action.metadata.disabled
-        action.schema = schema
         if action.metadata.schema? and not is_object_literal action.metadata.schema
           throw error 'METADATA_SCHEMA_INVALID_VALUE', [
             "option `schema` expect an object literal value,"
@@ -83,6 +94,6 @@ module.exports = (action) ->
             else "root action."
           ]
         return handler unless action.metadata.schema
-        err = await schema.validate action, action.metadata.schema
+        err = await action.tools.schema.validate action, action.metadata.schema
         if err then throw err else handler
   

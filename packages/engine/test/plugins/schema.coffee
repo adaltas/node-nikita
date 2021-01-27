@@ -4,7 +4,7 @@ nikita = require '../../src'
 describe 'plugins.schema', ->
 
   it 'registered inside action', ->
-    nikita ({schema}) ->
+    nikita ({tools: {schema}}) ->
       schema.add
         'type': 'object'
         'properties':
@@ -159,7 +159,7 @@ describe 'plugins.schema', ->
       # accept its rule or create ours. For example, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
       nikita.call
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'int_to_string':
