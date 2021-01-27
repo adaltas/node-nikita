@@ -427,7 +427,7 @@ console.info(stdout)
             if config.format and config.code.indexOf(code) isnt -1
               result.data = switch config.format
                 when 'json' then JSON.parse result.stdout
-                when 'yaml' then yaml.safeLoad result.stdout
+                when 'yaml' then yaml.load result.stdout
             log message: result.stdout, type: 'stdout' if result.stdout and result.stdout isnt '' and config.stdout_log
             log message: result.stderr, type: 'stderr' if result.stderr and result.stderr isnt '' and config.stderr_log
             if config.stdout

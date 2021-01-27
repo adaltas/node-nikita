@@ -61,7 +61,7 @@ handler = async function({config}) {
   })));
   ({
     config: properties
-  } = yaml.safeLoad(stdout));
+  } = yaml.load(stdout));
   changes = diff(properties, merge(properties, config.properties));
   for (key in changes) {
     value = changes[key];

@@ -18,16 +18,22 @@ on_action = function({config}) {
 // ## Schema
 schema = {
   type: 'object',
-  properties: {
-    'detach': {
-      default: true
+  allOf: [
+    {
+      properties: {
+        'detach': {
+          default: true
+        },
+        'rm': {
+          default: false
+        }
+      }
     },
-    'rm': {
-      default: false
+    {
+      $ref: 'module://@nikitajs/docker/lib/run'
     }
-  },
-  required: ['container', 'image'],
-  $ref: 'module://@nikitajs/docker/lib/run#/properties'
+  ],
+  required: ['container', 'image']
 };
 
 // ## Handler

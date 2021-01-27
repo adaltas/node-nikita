@@ -39,6 +39,7 @@ console.info(`Member was added to the group: ${status}`)
           `no_members`, `user` and `group`.
           """
         'connection':
+          type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['cn', 'connection']

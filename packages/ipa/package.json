@@ -45,7 +45,7 @@
     "@nikitajs/tools": "^0.9.7",
     "coffeescript": "^2.5.1",
     "mixme": "^0.4.0",
-    "mocha": "^8.2.0",
+    "mocha": "^8.2.1",
     "should": "^13.2.3",
     "mocha-they": "^0.1.2"
   },

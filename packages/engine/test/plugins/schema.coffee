@@ -3,6 +3,23 @@ nikita = require '../../src'
 
 describe 'plugins.schema', ->
 
+  it 'expose ajv', ->
+    nikita ({tools: {schema}}) ->
+      schema.ajv.should.be.an.Object()
+
+  it.skip 'validate strict mode', ->
+    # Despite strict mode activated in AJV,
+    # This generates a log instead of raising an error
+    nikita
+      metadata:
+        schema:
+          type: 'object'
+          properties:
+            'parent':
+              required: ['child']
+    , ->
+      console.log 'called by why, the doc say the contrary'
+
   it 'registered inside action', ->
     nikita ({tools: {schema}}) ->
       schema.add
@@ -11,7 +28,7 @@ describe 'plugins.schema', ->
           'a_string': type: 'string'
           'an_integer': type: 'integer', minimum: 1
       , 'test'
-      schema.list().schemas.test.schema.should.eql
+      schema.ajv.schemas.test.schema.should.eql
         type: 'object'
         properties:
           'a_string': type: 'string'
@@ -99,8 +116,8 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/properties/an_integer/minimum config.an_integer should be >= 1,'
-        'comparison is ">=", limit is 1, exclusive is false.'
+        '#/properties/an_integer/minimum config/an_integer should be >= 1,'
+        'comparison is ">=", limit is 1.'
       ].join ' '
 
     it 'nice message with additionalProperties', ->
@@ -175,7 +192,7 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        'registry://test/schema/properties/an_integer/type config.an_object.an_integer should be integer,'
+        'registry://test/schema/properties/an_integer/type config/an_object/an_integer should be integer,'
         'type is "integer".'
       ].join ' '
   
@@ -235,6 +252,5 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/properties/a_regexp/instanceof config.a_regexp should pass "instanceof" keyword validation,'
-        'keyword is "instanceof".'
+        '#/properties/a_regexp/instanceof config/a_regexp should pass "instanceof" keyword validation.'
       ].join ' '

@@ -50,7 +50,7 @@ console.info(`Property was set: ${status}`)
         """
         metadata: shy: true
         code_skipped: 42
-      {config: properties} = yaml.safeLoad stdout
+      {config: properties} = yaml.load stdout
       changes = diff properties, merge properties, config.properties
       # if changes is empty status is false because no command were executed
       # Note, it doesnt seem possible to set multiple keys in one command

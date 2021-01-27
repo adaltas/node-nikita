@@ -55,7 +55,7 @@ schema = {
       description: `Expected exit code, activated by default unless content is provided.`
     },
     'content': {
-      onfOf: [
+      oneOf: [
         {
           type: 'string'
         },

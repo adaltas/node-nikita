@@ -47,7 +47,7 @@ console.info(`Stdout was asserted: ${status}`)
           Expected exit code, activated by default unless content is provided.
           """
         'content':
-          onfOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
           description: """
           Content to match, optional.
           """

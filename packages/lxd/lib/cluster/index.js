@@ -74,7 +74,7 @@ config.`,
               type: 'object',
               default: {},
               patternProperties: {
-                '': { // Device name of disk
+                '.*': { // Device name of disk
                   $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties'
                 }
               }
@@ -85,21 +85,27 @@ config.`,
             'nic': {
               type: 'object',
               default: {},
-              additionalProperties: {
-                // Device name of nic
-                '': {
-                  properties: {
-                    'ip': {
-                      type: 'string',
-                      format: 'ipv4'
+              patternProperties: {
+                '.*': {
+                  type: 'object',
+                  allOf: [
+                    {
+                      properties: {
+                        'ip': {
+                          type: 'string',
+                          format: 'ipv4'
+                        },
+                        'netmask': {
+                          type: 'string',
+                          default: '255.255.255.0',
+                          format: 'ipv4'
+                        }
+                      }
                     },
-                    'netmask': {
-                      type: 'string',
-                      default: '255.255.255.0',
-                      format: 'ipv4'
+                    {
+                      $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties'
                     }
-                  },
-                  $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties'
+                  ]
                 }
               }
             },
@@ -107,7 +113,7 @@ config.`,
               type: 'object',
               default: {},
               patternProperties: {
-                '': {
+                '.*': {
                   $ref: 'module://@nikitajs/lxd/lib/config/device#/properties/properties'
                 }
               }
@@ -116,7 +122,7 @@ config.`,
               type: 'object',
               default: {},
               patternProperties: {
-                '': {
+                '.*': {
                   type: 'object',
                   properties: {
                     'sudo': {
@@ -153,7 +159,7 @@ authorized_keys file.`
       type: 'object',
       default: {},
       patternProperties: {
-        '': {
+        '.*': {
           $ref: 'module://@nikitajs/lxd/lib/network#/properties/properties'
         }
       }

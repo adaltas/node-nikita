@@ -18,7 +18,7 @@ describe 'ipa.user', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors where found in the configuration of action `ipa.user`:'
-          '#/properties/uid/type config.uid should be string, type is "string";'
+          '#/properties/uid/type config/uid should be string, type is "string";'
           '#/required config should have required property \'attributes\';'
           '#/required config should have required property \'connection\'.'
         ].join ' '
@@ -34,9 +34,9 @@ describe 'ipa.user', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors where found in the configuration of action `ipa.user`:'
-          '#/properties/connection/required config.connection should have required property \'password\';'
-          '#/properties/principal/type config.connection.principal should be string, type is "string";'
-          '#/required config.connection should have required property \'url\'.'
+          '#/properties/connection/required config/connection should have required property \'password\';'
+          '#/properties/principal/type config/connection/principal should be string, type is "string";'
+          '#/required config/connection should have required property \'url\'.'
         ].join ' '
 
     it 'coercion of `mail` attribute', ->

@@ -72,16 +72,16 @@ containers:
               'disk':
                 type: 'object'
                 default: {}
-                patternProperties: '': # Device name of disk
+                patternProperties: '.*': # Device name of disk
                   $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/disk/properties/properties'
               'image':
                 $ref: 'module://@nikitajs/lxd/src/init#/properties/image'
               'nic':
                 type: 'object'
                 default: {}
-                additionalProperties:
-                  # Device name of nic
-                  '':
+                patternProperties: '.*':
+                  type: 'object'
+                  allOf: [
                     properties:
                       'ip':
                         type: 'string'
@@ -90,16 +90,18 @@ containers:
                         type: 'string'
                         default: '255.255.255.0'
                         format: 'ipv4'
+                  ,
                     $ref: 'module://@nikitajs/lxd/src/config/device#/definitions/nic/properties/properties'
+                  ]
               'proxy':
                 type: 'object'
                 default: {}
-                patternProperties: '':
+                patternProperties: '.*':
                   $ref: 'module://@nikitajs/lxd/src/config/device#/properties/properties'
               'user':
                 type: 'object'
                 default: {}
-                patternProperties: '':
+                patternProperties: '.*':
                   type: 'object'
                   properties:
                     'sudo':
@@ -128,7 +130,7 @@ containers:
         'networks':
           type: 'object'
           default: {}
-          patternProperties: '':
+          patternProperties: '.*':
             $ref: 'module://@nikitajs/lxd/src/network#/properties/properties'
         'prevision':
           typeof: 'function'

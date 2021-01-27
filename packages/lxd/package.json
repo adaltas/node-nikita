@@ -39,7 +39,7 @@
     }
   ],
   "dependencies": {
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^4.0.0",
     "object-diff": "^0.0.4",
     "shell": "^0.8.4"
   },
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",
-    "mocha": "^8.2.0",
+    "mocha": "^8.2.1",
     "should": "^13.2.3",
     "mocha-they": "^0.1.2"
   },

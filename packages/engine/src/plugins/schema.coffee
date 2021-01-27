@@ -1,7 +1,8 @@
 
 error = require '../utils/error'
-Ajv = require 'ajv'
+Ajv = require('ajv').default
 ajv_keywords = require 'ajv-keywords'
+ajv_formats = require "ajv-formats"
 {is_object_literal} = require 'mixme'
 
 parse = (uri) ->
@@ -32,7 +33,9 @@ module.exports =
             $data: true
             allErrors: true
             useDefaults: true
-            extendRefs: true
+            allowUnionTypes: true # eg type: ['boolean', 'integer']
+            strict: true
+            # extendRefs: true
             # coerceTypes: true
             loadSchema: (uri) ->
               new Promise (accept, reject) ->
@@ -46,7 +49,9 @@ module.exports =
                     action = await action.registry.get module
                     accept action.metadata.schema
           ajv_keywords ajv
+          ajv_formats ajv
           action.tools.schema =
+            ajv: ajv
             add: (schema, name) ->
               return unless schema
               ajv.addSchema schema, name
@@ -72,10 +77,6 @@ module.exports =
                 .sort()
                 .join('; ')+'.'
               ]
-            list: () ->
-              schemas: ajv._schemas
-              refs: ajv._refs
-              fragments: ajv._fragments
           action
     'nikita:session:action':
       after: [

@@ -33,7 +33,7 @@ schema = {
       $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
     }
   },
-  require: ['container']
+  required: ['container']
 };
 
 // ## Handler

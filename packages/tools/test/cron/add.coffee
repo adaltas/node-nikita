@@ -43,7 +43,7 @@ describe 'tools.cron.add', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/properties/when/type config.when should be string, type is "string".'
+          '#/properties/when/type config/when should be string, type is "string".'
         ].join ' '
 
     it 'invalid job: no command', ->
@@ -70,7 +70,7 @@ describe 'tools.cron.add', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/properties/command/minLength config.command should NOT be shorter than 1 characters, limit is 1.'
+          '#/properties/command/minLength config/command should NOT have fewer than 1 characters, limit is 1.'
         ].join ' '
 
   describe 'action', ->

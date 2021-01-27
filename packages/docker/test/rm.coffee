@@ -56,10 +56,10 @@ describe 'docker.rm', ->
       ssh: ssh
       docker: docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_rm'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         port: '499:80'
         name: 'nikita_rm'

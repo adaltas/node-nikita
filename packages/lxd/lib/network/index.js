@@ -35,18 +35,16 @@ schema = {
     },
     'properties': {
       type: 'object',
-      properties: {
-        'dns.domain': {
+      patternProperties: {
+        'dns\\.domain': {
           type: 'string',
           format: 'hostname',
           description: `Domain to advertise to DHCP clients and use for DNS resolution.
 Note, single label domains like \`nikita\` are supported by LXD but
 are not valid. For exemple, FreeIPA will fail to Initialize. Use
 \`nikita.local\` instead.`
-        }
-      },
-      patternProperties: {
-        '': {
+        },
+        '.*': {
           type: ['string', 'boolean', 'number']
         }
       },
@@ -106,7 +104,7 @@ ${[
   if (!(config != null ? config.properties : void 0)) {
     return;
   }
-  current = yaml.safeLoad(stdout);
+  current = yaml.load(stdout);
   changes = diff(current.config, merge(current.config, config.properties));
   for (key in changes) {
     value = changes[key];

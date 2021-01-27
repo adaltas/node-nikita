@@ -28,6 +28,6 @@ describe 'actions.wait', ->
     .should.be.rejectedWith [
       'NIKITA_SCHEMA_VALIDATION_CONFIG:'
       'one error was found in the configuration of action `wait`:'
-      '#/properties/time/type config.time should be integer,'
+      '#/properties/time/type config/time should be integer,'
       'type is "integer".'
     ].join ' '

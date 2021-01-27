@@ -56,6 +56,7 @@ console.info(`User is ${result.uid[0]}`)
           Name of the user to show, alias of `uid`.
           """
         'connection':
+          type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['connection', 'uid']

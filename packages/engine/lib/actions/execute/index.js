@@ -593,7 +593,7 @@ handler = async function({
               case 'json':
                 return JSON.parse(result.stdout);
               case 'yaml':
-                return yaml.safeLoad(result.stdout);
+                return yaml.load(result.stdout);
             }
           })();
         }

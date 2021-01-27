@@ -37,6 +37,7 @@ catch (err){
           Name of the service to show.
           """
         'connection':
+          type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['connection', 'principal']

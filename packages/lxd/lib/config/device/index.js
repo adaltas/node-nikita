@@ -91,6 +91,7 @@ types](https://lxd.readthedocs.io/en/latest/instances/#device-types).`
   required: ['container', 'device', 'properties', 'type'],
   definitions: {
     'disk': {
+      type: 'object',
       properties: {
         'properties': {
           type: 'object',
@@ -114,8 +115,10 @@ device.`
       }
     },
     'infiniband': {
+      type: 'object',
       properties: {
         'properties': {
+          type: 'object',
           properties: {
             'nictype': {
               type: 'string',
@@ -135,6 +138,7 @@ device.`
       }
     },
     'gpu': {
+      type: 'object',
       properties: {
         'type': {
           const: 'gpu'
@@ -142,6 +146,7 @@ device.`
       }
     },
     'nic': {
+      type: 'object',
       properties: {
         'properties': {
           type: 'object',
@@ -179,6 +184,7 @@ additional properties.`
       }
     },
     'nic_physical': {
+      type: 'object',
       properties: {
         'nictype': {
           const: 'physical'
@@ -186,6 +192,7 @@ additional properties.`
       }
     },
     'nic_bridged': {
+      type: 'object',
       properties: {
         'nictype': {
           const: 'bridged'
@@ -193,6 +200,7 @@ additional properties.`
       }
     },
     'nic_macvlan': {
+      type: 'object',
       properties: {
         'nictype': {
           const: 'macvlan'
@@ -200,6 +208,7 @@ additional properties.`
       }
     },
     'nic_p2p': {
+      type: 'object',
       properties: {
         'nictype': {
           const: 'p2p'
@@ -207,6 +216,7 @@ additional properties.`
       }
     },
     'nic_sriov': {
+      type: 'object',
       properties: {
         'nictype': {
           const: 'sriov'
@@ -214,6 +224,7 @@ additional properties.`
       }
     },
     'none': {
+      type: 'object',
       properties: {
         'type': {
           const: 'none'
@@ -221,8 +232,10 @@ additional properties.`
       }
     },
     'proxy': {
+      type: 'object',
       properties: {
         'properties': {
+          type: 'object',
           properties: {
             'connect': {
               type: 'string',
@@ -243,6 +256,7 @@ additional properties.`
       }
     },
     'tpm': {
+      type: 'object',
       properties: {
         'type': {
           const: 'tpm'
@@ -250,6 +264,7 @@ additional properties.`
       }
     },
     'unix-block': {
+      type: 'object',
       properties: {
         'type': {
           const: 'unix-block'
@@ -257,6 +272,7 @@ additional properties.`
       }
     },
     'unix-char': {
+      type: 'object',
       properties: {
         'type': {
           const: 'unix-char'
@@ -264,8 +280,10 @@ additional properties.`
       }
     },
     'unix-hotplug': {
+      type: 'object',
       properties: {
         'properties': {
+          type: 'object',
           properties: {
             'path': {
               type: 'string',
@@ -280,6 +298,7 @@ additional properties.`
       }
     },
     'usb': {
+      type: 'object',
       properties: {
         'type': {
           const: 'usb'

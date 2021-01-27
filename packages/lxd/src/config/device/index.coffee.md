@@ -65,6 +65,7 @@ console.info(`Disk was created: ${status}`)
       required: ['container', 'device', 'properties', 'type']
       definitions:
         'disk':
+          type: 'object'
           properties:
             'properties':
               type: 'object'
@@ -85,8 +86,10 @@ console.info(`Disk was created: ${status}`)
             'type':
               const: 'disk'
         'infiniband':
+          type: 'object'
           properties:
             'properties':
+              type: 'object'
               properties:
                 'nictype':
                   type: 'string'
@@ -103,10 +106,12 @@ console.info(`Disk was created: ${status}`)
             'type':
               const: 'infiniband'
         'gpu':
+          type: 'object'
           properties:
             'type':
               const: 'gpu'
         'nic':
+          type: 'object'
           properties:
             'properties':
               type: 'object'
@@ -130,32 +135,40 @@ console.info(`Disk was created: ${status}`)
             'type':
               const: 'nic'
         'nic_physical':
+          type: 'object'
           properties:
             'nictype':
               const: 'physical'
         'nic_bridged':
+          type: 'object'
           properties:
             'nictype':
               const: 'bridged'
         'nic_macvlan':
+          type: 'object'
           properties:
             'nictype':
               const: 'macvlan'
         'nic_p2p':
+          type: 'object'
           properties:
             'nictype':
               const: 'p2p'
         'nic_sriov':
+          type: 'object'
           properties:
             'nictype':
               const: 'sriov'
         'none':
+          type: 'object'
           properties:
             'type':
               const: 'none'
         'proxy':
+          type: 'object'
           properties:
             'properties':
+              type: 'object'
               properties:
                 'connect':
                   type: 'string'
@@ -173,20 +186,25 @@ console.info(`Disk was created: ${status}`)
             'type':
               const: 'proxy'
         'tpm':
+          type: 'object'
           properties:
             'type':
               const: 'tpm'
         'unix-block':
+          type: 'object'
           properties:
             'type':
               const: 'unix-block'
         'unix-char':
+          type: 'object'
           properties:
             'type':
               const: 'unix-char'
         'unix-hotplug':
+          type: 'object'
           properties:
             'properties':
+              type: 'object'
               properties:
                 'path':
                   type: 'string'
@@ -194,8 +212,10 @@ console.info(`Disk was created: ${status}`)
                   Path inside the instance (only for containers).
                   """
               required: ['path']
-            'type': const: 'unix-hotplug'
+            'type':
+              const: 'unix-hotplug'
         'usb':
+          type: 'object'
           properties:
             'type':
               const: 'usb'

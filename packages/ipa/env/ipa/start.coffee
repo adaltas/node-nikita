@@ -87,7 +87,7 @@ nikita
       """
       trap: true
     await @lxd.exec
-      metadata: header: 'Install FreeIPA', debug: true
+      metadata: header: 'Install FreeIPA'
       container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:

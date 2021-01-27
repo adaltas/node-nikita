@@ -149,7 +149,7 @@ console.info(`Content was written: ${status}`)
         {data} = await @fs.base.readFile
           target: config.target
           encoding: 'utf8'
-        data = yaml.safeLoad data
+        data = yaml.load data
         config.content = merge data, config.content
       catch err
         throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'

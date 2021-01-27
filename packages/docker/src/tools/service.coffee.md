@@ -17,13 +17,16 @@ after execution.
 
     schema =
       type: 'object'
-      properties:
-        'detach':
-          default: true
-        'rm':
-          default: false
+      allOf: [
+        properties:
+          'detach':
+            default: true
+          'rm':
+            default: false
+      ,
+        $ref: 'module://@nikitajs/docker/src/run'
+      ]
       required: ['container', 'image']
-      $ref: 'module://@nikitajs/docker/src/run#/properties'
 
 ## Handler
 

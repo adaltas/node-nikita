@@ -31,7 +31,7 @@ console.info(`Did we really had to wait: ${status}`)
           """
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
-      require: ['container']
+      required: ['container']
 
 ## Handler
 

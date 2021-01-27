@@ -72,7 +72,7 @@ console.info(`Storage was created or config updated: ${status}`)
       return unless code is 42
       # Storage already exists, find the changes
       return unless config?.properties
-      {config: currentProperties} = yaml.safeLoad stdout
+      {config: currentProperties} = yaml.load stdout
       changes = diff currentProperties, config.properties
       # if changes is empty status is false because no command were executed
       {status} = await @execute (

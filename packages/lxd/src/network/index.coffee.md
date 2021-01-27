@@ -35,8 +35,8 @@ console.info(`Network was created: ${status}`)
           """
         'properties':
           type: 'object'
-          properties:
-            'dns.domain':
+          patternProperties:
+            'dns\\.domain':
               type: 'string'
               format: 'hostname'
               description: '''
@@ -45,8 +45,7 @@ console.info(`Network was created: ${status}`)
               are not valid. For exemple, FreeIPA will fail to Initialize. Use
               `nikita.local` instead.
               '''
-          patternProperties:
-            '': type: ['string', 'boolean', 'number']
+            '.*': type: ['string', 'boolean', 'number']
           description: """
           The network configuration, see [available
           fields](https://lxd.readthedocs.io/en/latest/networks/).
@@ -81,7 +80,7 @@ console.info(`Network was created: ${status}`)
       return status: status unless code is 42 # was created
       # Network already exists, find the changes
       return unless config?.properties
-      current = yaml.safeLoad stdout
+      current = yaml.load stdout
       changes = diff current.config, merge current.config, config.properties
       {status} = await @execute (
         command: [

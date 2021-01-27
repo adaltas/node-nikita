@@ -15,8 +15,8 @@ describe 'docker.tools.service', ->
         docker: docker
       .docker.tools.service
         image: 'httpd'
-        name: false
-        port: '499:80'
+        name: 'nikita_test_unique'
+        pid: [true] # docker.run action define type string
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
           
@@ -71,7 +71,8 @@ describe 'docker.tools.service', ->
       .should.be.rejectedWith
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action `docker.tools.service`:'
+          'multiple errors where found in the configuration of action `docker.tools.service`:'
+          '#/required config should have required property \'image\';'
           '#/required config should have required property \'image\'.'
         ].join ' '
 

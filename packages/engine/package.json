@@ -57,15 +57,16 @@
     }
   ],
   "dependencies": {
-    "ajv": "^6.12.6",
-    "ajv-keywords": "^3.5.2",
+    "ajv": "^7.0.3",
+    "ajv-formats": "^1.5.1",
+    "ajv-keywords": "^4.0.0",
     "colors": "^1.4.0",
     "each": "^1.2.2",
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^4.0.0",
     "minimatch": "^3.0.4",
     "mixme": "^0.4.0",
     "pad": "^3.2.0",
-    "plug-and-play": "^2.0.2",
+    "plug-and-play": "^2.1.0",
     "regexp-quote": "^0.0.0",
     "self-templated": "^0.2.0",
     "ssh2-connect": "^3.1.0",
@@ -77,12 +78,12 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "coffeescript": "^2.5.1",
-    "eslint": "^7.11.0",
+    "eslint": "^7.18.0",
     "eslint-plugin-coffee": "^0.1.13",
-    "mocha": "^8.2.0",
+    "mocha": "^8.2.1",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
   },

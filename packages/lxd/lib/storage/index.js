@@ -98,7 +98,7 @@ ${[
   }
   ({
     config: currentProperties
-  } = yaml.safeLoad(stdout));
+  } = yaml.load(stdout));
   changes = diff(currentProperties, config.properties);
   for (key in changes) {
     value = changes[key];

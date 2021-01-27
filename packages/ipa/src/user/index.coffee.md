@@ -61,8 +61,13 @@ console.info(`User was updated: ${status}`)
           description: """
           Attributes associated with the user to add or modify.
           """
-        'force_userpassword': type: 'boolean'
+        'force_userpassword':
+          type: 'boolean'
+          description: '''
+          Force the password to be re-initialized on user update.
+          '''
         'connection':
+          type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['attributes', 'connection', 'uid']

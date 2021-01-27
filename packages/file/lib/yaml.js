@@ -178,7 +178,7 @@ handler = async function({
         target: config.target,
         encoding: 'utf8'
       })));
-      data = yaml.safeLoad(data);
+      data = yaml.load(data);
       config.content = merge(data, config.content);
     }
   } catch (error) {

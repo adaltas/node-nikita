@@ -28,6 +28,7 @@ console.info(`Service was deleted: ${status}`)
           Name of the service to delete.
           """
         'connection':
+          type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'
           required: ['principal', 'password']
       required: ['connection', 'principal']
