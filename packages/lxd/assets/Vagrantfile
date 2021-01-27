@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
     file_to_disk = File.join(vagrant_root, 'lxd_zpool.vdi')
     unless File.exist?(file_to_disk)
       # lxc images are tiny by default. Not much storage needed.
-      vb.customize ['createhd', '--filename', file_to_disk, '--size', 10 * 1024]
+      vb.customize ['createhd', '--filename', file_to_disk, '--size', 20 * 1024]
     end
     # enabling hostiocache like this isn't safe, but it should be faster.
     vb.customize ['storagectl', :id, '--name', 'SCSI', '--hostiocache', 'on']
