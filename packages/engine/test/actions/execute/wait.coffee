@@ -108,13 +108,13 @@ describe 'actions.execute.wait', ->
         @call ->
           setTimeout ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
-          , 30
+          , 100
           setTimeout ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
-          , 60
+          , 200
           setTimeout ->
             nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
-          , 90
+          , 300
         {status} = await @execute.wait
           command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
