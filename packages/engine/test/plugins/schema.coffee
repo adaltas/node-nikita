@@ -26,7 +26,7 @@ describe 'plugins.schema', ->
       {a_string, an_integer} = await @call
         a_string: 'a value'
         an_integer: 1
-        schema:
+        metadata: schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -34,18 +34,56 @@ describe 'plugins.schema', ->
         handler: ({config}) -> config
       a_string.should.be.a.String()
       an_integer.should.be.a.Number()
+  
+  describe 'plugins', ->
     
-  it 'doesnt apply when condition is false', ->
-    nikita
-    .call
-      schema:
+    it 'run after the disabled plugin', ->
+      schema =
         type: 'object'
         properties:
           'a_string': type: 'string'
         required: ['a_string']
-      if: false
-    , -> throw Error 'KO'
-    .should.be.resolved()
+      # No validation occured when disabled
+      nikita
+      .call
+        metadata:
+          disabled: true
+          schema: schema
+      , -> throw Error 'KO'
+      .should.be.resolved()
+      # Validation occured when not disabled
+      nikita
+      .call
+        metadata:
+          disabled: false
+          schema: schema
+      , -> throw Error 'KO'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+    
+    it 'run after the condition plugin', ->
+      schema =
+        type: 'object'
+        properties:
+          'a_string': type: 'string'
+        required: ['a_string']
+      # No validation occured when condition failed
+      nikita
+      .call
+        metadata:
+          schema: schema
+        if: false
+      , -> throw Error 'KO'
+      .should.be.resolved()
+      # Validation occured if condition succeed
+      nikita
+      .call
+        metadata:
+          schema: schema
+        if: true
+      , -> throw Error 'KO'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
   
   describe 'errors', ->
 

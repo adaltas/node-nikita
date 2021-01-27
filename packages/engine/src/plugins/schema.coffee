@@ -84,7 +84,6 @@ module.exports =
         '@nikitajs/engine/src/plugins/global'
       ]
       handler: (action, handler) ->
-        return handler if action.metadata.disabled
         if action.metadata.schema? and not is_object_literal action.metadata.schema
           throw error 'METADATA_SCHEMA_INVALID_VALUE', [
             "option `schema` expect an object literal value,"

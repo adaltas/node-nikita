@@ -4,4 +4,4 @@ module.exports =
   hooks:
     'nikita:session:action': (action, handler) ->
       action.metadata.disabled ?= false
-      if action.metadata.disabled then (->) else handler
+      if action.metadata.disabled then null else handler

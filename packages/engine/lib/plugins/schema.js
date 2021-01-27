@@ -120,9 +120,6 @@ module.exports = {
       after: ['@nikitajs/engine/lib/metadata/disabled', '@nikitajs/engine/lib/plugins/conditions', '@nikitajs/engine/lib/plugins/global'],
       handler: async function(action, handler) {
         var err;
-        if (action.metadata.disabled) {
-          return handler;
-        }
         if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {
           throw error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)} in`, action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`.` : "root action."]);
         }
