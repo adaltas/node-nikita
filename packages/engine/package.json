@@ -104,7 +104,7 @@
       "coffeescript/register"
     ],
     "inline-diffs": true,
-    "timeout": 40000,
+    "timeout": 5000,
     "reporter": "spec",
     "recursive": true
   },
