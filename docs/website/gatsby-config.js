@@ -95,6 +95,9 @@ module.exports = {
         extensions: [`.mdx`, `.md`],
         gatsbyRemarkPlugins: [
           {
+            resolve: 'gatsby-remark-title-to-frontmatter',
+          },
+          {
             resolve: 'gatsby-remark-autolink-headers',
             options: {
               offsetY: '64', // <600: 48; >600:64
