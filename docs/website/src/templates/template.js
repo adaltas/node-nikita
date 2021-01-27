@@ -4,6 +4,9 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 // Gatsby
 import { graphql } from 'gatsby'
+// MDX
+import { MDXProvider } from "@mdx-js/react"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 // Local
 import Layout from '../components/Layout'
 
@@ -15,7 +18,9 @@ class Template extends Component {
     const { page } = data // data.markdownRemark holds our post data
     return (
       <Layout page={{...page.fields, ...page.frontmatter}}>
-        <div dangerouslySetInnerHTML={{ __html: page.html }} />
+        <MDXProvider>
+          <MDXRenderer>{page.body}</MDXRenderer>
+        </MDXProvider>
       </Layout>
     )
   }
@@ -24,8 +29,8 @@ export default withStyles(styles, { withTheme: true })(Template)
 
 export const pageQuery = graphql`
   query($path: String!) {
-    page: markdownRemark(fields: { slug: { eq: $path } }) {
-      html
+    page: mdx(fields: { slug: { eq: $path } }) {
+      body
       fields {
         slug
         edit_url

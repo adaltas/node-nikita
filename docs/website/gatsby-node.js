@@ -4,20 +4,20 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 
 exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions
-  if (node.internal.type === `MarkdownRemark`) {
+  if (node.internal.type === `Mdx`) {
     node.frontmatter.disabled = !!node.frontmatter.disabled
-    slug = createFilePath({ node, getNode, basePath: `pages` })
+    slug = createFilePath({ node, getNode })
     edit_url =
       "https://github.com/adaltas/node-nikita/edit/master/" +
       path.relative(__dirname, node.fileAbsolutePath)
     createNodeField({
       node,
-      name: `slug`,
-      value: slug,
+      name: 'slug',
+      value: `/current${slug}`,
     })
     createNodeField({
       node,
-      name: `edit_url`,
+      name: 'edit_url',
       value: edit_url,
     })
   }
@@ -28,7 +28,7 @@ exports.createPages = ({ actions, graphql }) => {
   const template = path.resolve(`src/templates/template.js`)
   return graphql(`
     {
-      allMarkdownRemark(
+      allMdx(
         sort: { order: DESC, fields: [frontmatter___sort] }
         limit: 1000
       ) {
@@ -49,7 +49,7 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
-    result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    result.data.allMdx.edges.forEach(({ node }) => {
       if (node.frontmatter.disabled) return
       createPage({
         path: node.fields.slug,
