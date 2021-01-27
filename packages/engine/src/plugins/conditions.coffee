@@ -27,6 +27,7 @@ module.exports =
           action
     'nikita:session:action':
       before: '@nikitajs/engine/src/metadata/disabled'
+      after: '@nikitajs/engine/src/plugins/templated'
       handler: (action) ->
         final_run = true
         for k, v of action.conditions

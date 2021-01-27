@@ -6,23 +6,27 @@ selfTemplated = require('self-templated');
 module.exports = {
   name: '@nikitajs/engine/lib/plugins/templated',
   hooks: {
-    'nikita:session:action': async function(action) {
-      var templated;
-      templated = (await action.tools.find(function(action) {
-        return action.metadata.templated;
-      }));
-      if (templated === false) {
-        return;
-      }
-      return selfTemplated(action, {
-        array: true,
-        compile: false,
-        mutate: true,
-        partial: {
-          metadata: true,
-          config: true
+    'nikita:session:action': {
+      after: ['@nikitajs/engine/lib/plugins/schema'],
+      // '@nikitajs/engine/lib/metadata/tmpdir'
+      handler: async function(action) {
+        var templated;
+        templated = (await action.tools.find(function(action) {
+          return action.metadata.templated;
+        }));
+        if (templated === false) {
+          return;
         }
-      });
+        return selfTemplated(action, {
+          array: true,
+          compile: false,
+          mutate: true,
+          partial: {
+            metadata: true,
+            config: true
+          }
+        });
+      }
     }
   }
 };

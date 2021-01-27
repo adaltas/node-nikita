@@ -34,6 +34,7 @@ module.exports = {
     },
     'nikita:session:action': {
       before: '@nikitajs/engine/lib/metadata/disabled',
+      after: '@nikitajs/engine/lib/plugins/templated',
       handler: async function(action) {
         var final_run, k, local_run, ref, v;
         final_run = true;

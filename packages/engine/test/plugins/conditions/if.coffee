@@ -60,7 +60,7 @@ describe 'plugin.conditions if', ->
         handler: -> 'called'
       .should.be.finally.eql 'called'
 
-    it.skip 'run if `{{"string"}}`', ->
+    it 'run if `{{"string"}}`', ->
       count = 0
       nikita
       .call
@@ -76,7 +76,7 @@ describe 'plugin.conditions if', ->
         if: ''
         handler: -> throw Error 'forbidden'
 
-    it.skip 'skip if `{{""}}`',->
+    it 'skip if `{{""}}`',->
       nikita.call
         if: '{{config.db.test}}'
         db: test: ''

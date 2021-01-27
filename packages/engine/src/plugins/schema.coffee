@@ -1,3 +1,8 @@
+###
+The plugin enrich the config object with default values defined in the JSON
+schema. Thus, it mst be defined after every module which modify the config
+object.
+###
 
 error = require '../utils/error'
 Ajv = require('ajv').default
@@ -55,8 +60,8 @@ module.exports =
             add: (schema, name) ->
               return unless schema
               ajv.addSchema schema, name
-            validate: (action, schema) ->
-              validate = await ajv.compileAsync schema
+            validate: (action) ->
+              validate = await ajv.compileAsync action.metadata.schema
               return if validate action.config
               error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
                 if validate.errors.length is 1
@@ -80,8 +85,6 @@ module.exports =
           action
     'nikita:session:action':
       after: [
-        '@nikitajs/engine/src/metadata/disabled'
-        '@nikitajs/engine/src/plugins/conditions'
         '@nikitajs/engine/src/plugins/global'
       ]
       handler: (action, handler) ->
@@ -94,6 +97,8 @@ module.exports =
             else "root action."
           ]
         return handler unless action.metadata.schema
-        err = await action.tools.schema.validate action, action.metadata.schema
-        if err then throw err else handler
+        err = await action.tools.schema.validate action
+        ->
+          throw err if err
+          handler.apply null, arguments
   
