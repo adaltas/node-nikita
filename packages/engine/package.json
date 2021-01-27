@@ -65,6 +65,7 @@
     "minimatch": "^3.0.4",
     "mixme": "^0.4.0",
     "pad": "^3.2.0",
+    "plug-and-play": "^2.0.2",
     "regexp-quote": "^0.0.0",
     "self-templated": "^0.2.0",
     "ssh2-connect": "^3.1.0",

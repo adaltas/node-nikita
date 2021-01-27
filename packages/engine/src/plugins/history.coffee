@@ -1,7 +1,7 @@
 
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/history'
+  name: '@nikitajs/engine/src/plugins/history'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->

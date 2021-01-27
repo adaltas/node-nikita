@@ -82,7 +82,7 @@ validate = function(action, args) {
 };
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/tools_dig',
+  name: '@nikitajs/engine/lib/plugins/tools_dig',
   hooks: {
     'nikita:session:action': function(action) {
       // Register function

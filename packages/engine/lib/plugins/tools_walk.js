@@ -40,7 +40,7 @@ validate = function(action, args) {
 };
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/tools_walk',
+  name: '@nikitajs/engine/lib/plugins/tools_walk',
   hooks: {
     'nikita:session:normalize': function(action, handler) {
       return async function() {

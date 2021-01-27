@@ -8,7 +8,7 @@ var utils;
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/args',
+  name: '@nikitajs/engine/lib/plugins/args',
   hooks: {
     'nikita:session:arguments': {
       handler: function({args, child}, handler) {

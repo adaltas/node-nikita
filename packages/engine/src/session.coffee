@@ -2,7 +2,7 @@
 {merge} = require 'mixme'
 registry = require './registry'
 schedule = require './schedulers/native'
-plugins = require './plugins'
+plugandplay = require 'plug-and-play'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'
 utils = require './utils'
@@ -26,8 +26,8 @@ session = (action={}) ->
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]
-      actions = await action.plugins.hook
-        event: 'nikita:session:arguments'
+      actions = await action.plugins.call
+        name: 'nikita:session:arguments'
         args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
           actions = contextualize [...args, metadata: namespace: namespace]
@@ -56,18 +56,17 @@ session = (action={}) ->
     action.state.namespace.push name
     new Proxy on_call, get: on_get
   # Initialize the plugins manager
-  action.plugins = plugins
+  action.plugins = plugandplay
     plugins: action.plugins
     chain: new Proxy on_call, get: on_get
     parent: if action.parent then action.parent.plugins else undefined
-    action: action
   # Initialize the registry to manage action registration
   action.registry = registry.create
     plugins: action.plugins
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
-      await action.plugins.hook
-        event: 'nikita:session:register'
+      await action.plugins.call
+        name: 'nikita:session:register'
         args: name: name, action: act
   # Register run helper
   action.run = ->
@@ -80,8 +79,8 @@ session = (action={}) ->
   # Execute the action
   result = new Promise (resolve, reject) ->
     # Hook intented to modify the current action being created
-    action = await action.plugins.hook
-      event: 'nikita:session:normalize'
+    action = await action.plugins.call
+      name: 'nikita:session:normalize'
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: normalize
@@ -92,8 +91,8 @@ session = (action={}) ->
       for k, v of action_from_registry
         action[k] = merge action_from_registry[k], action[k]
     # Hook attended to alter the execution of an action handler
-    output = action.plugins.hook
-      event: 'nikita:session:action'
+    output = action.plugins.call
+      name: 'nikita:session:action'
       args: action
       hooks: action.hooks.on_action
       handler: (action) ->
@@ -110,8 +109,8 @@ session = (action={}) ->
       on_result err
     # Hook to catch error and format output once all children are executed
     on_result = (error, output) ->
-      action.plugins.hook
-        event: 'nikita:session:result'
+      action.plugins.call
+        name: 'nikita:session:result'
         args: action: action, error: error, output: output
         hooks: action.hooks.on_result
         handler: ({action, error, output}) ->
@@ -119,13 +118,13 @@ session = (action={}) ->
       .then resolve, reject
   result.then (output) ->
     return unless action.parent is undefined
-    action.plugins.hook
-      event: 'nikita:session:resolved'
+    action.plugins.call
+      name: 'nikita:session:resolved'
       args: action: action, output: output
   , (err) ->
     return unless action.parent is undefined
-    action.plugins.hook
-      event: 'nikita:session:rejected'
+    action.plugins.call
+      name: 'nikita:session:rejected'
       args: action: action, error: err
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled

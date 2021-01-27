@@ -3,7 +3,7 @@ session = require '../session'
 utils = require '../utils'
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/assertion'
+  name: '@nikitajs/engine/src/plugins/assertion'
   require: [
     '@nikitajs/engine/src/metadata/raw'
     '@nikitajs/engine/src/metadata/disabled'

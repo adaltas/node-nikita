@@ -4,7 +4,7 @@ var handlers, session;
 session = require('../session');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/conditions_execute',
+  name: '@nikitajs/engine/lib/plugins/conditions_execute',
   require: ['@nikitajs/engine/lib/plugins/conditions'],
   hooks: {
     'nikita:session:action': {

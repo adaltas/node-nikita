@@ -13,7 +13,7 @@ Only the logs which type match "text", "stdin", "stdout_stream", "stderr_stream"
 TODO: detect/force isTTY
 */
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/debug',
+  name: '@nikitajs/engine/lib/metadata/debug',
   require: '@nikitajs/engine/lib/plugins/tools_log',
   hooks: {
     'nikita:session:action': function(action) {

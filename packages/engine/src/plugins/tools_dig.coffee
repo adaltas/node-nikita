@@ -59,7 +59,7 @@ validate = (action, args) ->
   [action, finder]
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/tools_dig'
+  name: '@nikitajs/engine/src/plugins/tools_dig'
   hooks:
     'nikita:session:action': (action) ->
       # Register function

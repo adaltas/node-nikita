@@ -6,7 +6,7 @@ var is_object, is_object_literal, utils;
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/status',
+  name: '@nikitajs/engine/lib/metadata/status',
   require: ['@nikitajs/engine/lib/plugins/history', '@nikitajs/engine/lib/metadata/raw'],
   hooks: {
     // 'nikita:registry:normalize': (action) ->

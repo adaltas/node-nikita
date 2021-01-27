@@ -2,7 +2,7 @@
 utils = require '../utils'
 
 module.exports =
-  module: '@nikitajs/engine/src/metadata/position'
+  name: '@nikitajs/engine/src/metadata/position'
   require: [
     '@nikitajs/engine/src/plugins/history'
   ]

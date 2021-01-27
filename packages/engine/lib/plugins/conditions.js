@@ -4,7 +4,7 @@ var handlers, session;
 session = require('../session');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/conditions',
+  name: '@nikitajs/engine/lib/plugins/conditions',
   require: ['@nikitajs/engine/lib/metadata/raw', '@nikitajs/engine/lib/metadata/disabled'],
   hooks: {
     'nikita:session:normalize': {

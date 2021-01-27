@@ -3,7 +3,7 @@
 utils = require '../utils'
 
 module.exports =
-  module: '@nikitajs/engine/src/metadata/retry'
+  name: '@nikitajs/engine/src/metadata/retry'
   hooks:
     'nikita:session:action': (action, handler) ->
       action.metadata.attempt ?= 0

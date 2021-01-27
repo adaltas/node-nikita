@@ -12,7 +12,7 @@ stackTrace = require('stack-trace');
 path = require('path');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/output_logs',
+  name: '@nikitajs/engine/lib/plugins/output_logs',
   require: ['@nikitajs/engine/lib/plugins/tools_log', '@nikitajs/engine/lib/metadata/status', '@nikitajs/engine/lib/metadata/raw'],
   hooks: {
     'nikita:session:action': {

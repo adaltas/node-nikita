@@ -2,7 +2,7 @@
 {v4: uuid} = require 'uuid'
 
 module.exports =
-  module: '@nikitajs/engine/src/metadata/uuid'
+  name: '@nikitajs/engine/src/metadata/uuid'
   hooks:
     'nikita:session:action':
       handler: (action) ->

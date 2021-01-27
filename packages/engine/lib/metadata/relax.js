@@ -5,7 +5,7 @@ var utils,
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/relax',
+  name: '@nikitajs/engine/lib/metadata/relax',
   hooks: {
     'nikita:session:action': function(action, handler) {
       var base;

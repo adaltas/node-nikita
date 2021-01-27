@@ -4,7 +4,7 @@ var utils;
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/position',
+  name: '@nikitajs/engine/lib/metadata/position',
   require: ['@nikitajs/engine/lib/plugins/history'],
   hooks: {
     'nikita:session:normalize': {

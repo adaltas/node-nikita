@@ -15,7 +15,7 @@ fs = require('ssh2-fs');
 exec = require('ssh2-exec');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/tmpdir',
+  name: '@nikitajs/engine/lib/metadata/tmpdir',
   require: ['@nikitajs/engine/lib/plugins/tools_find', '@nikitajs/engine/lib/plugins/tools_path'],
   hooks: {
     'nikita:session:action': {

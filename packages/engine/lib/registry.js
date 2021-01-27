@@ -180,8 +180,8 @@ create = function({chain, on_register, parent, plugins} = {}) {
     action = merge(action);
     if (plugins) {
       // Hook attented to modify an action returned by the registry
-      return (await plugins.hook({
-        event: 'nikita:registry:normalize',
+      return (await plugins.call({
+        name: 'nikita:registry:normalize',
         args: action,
         handler: function(action) {
           return normalize(action);

@@ -11,7 +11,7 @@ daemon if it is not run locally.
 
 */
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/global',
+  name: '@nikitajs/engine/lib/plugins/global',
   require: ['@nikitajs/engine/lib/plugins/tools_find'],
   hooks: {
     'nikita:session:action': {

@@ -3,7 +3,7 @@ os = require 'os'
 path = require 'path'
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/tools_path'
+  name: '@nikitajs/engine/src/plugins/tools_path'
   # require: '@nikitajs/engine/src/metadata/ssh'
   hooks:
     'nikita:session:action':

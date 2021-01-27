@@ -6,7 +6,7 @@ var uuid;
 } = require('uuid'));
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/uuid',
+  name: '@nikitajs/engine/lib/metadata/uuid',
   hooks: {
     'nikita:session:action': {
       handler: function(action) {

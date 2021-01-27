@@ -9,7 +9,7 @@ continuing their execution.
 
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/pubsub'
+  name: '@nikitajs/engine/src/plugins/pubsub'
   require:
     '@nikitajs/engine/src/plugins/tools_find'
   hooks:

@@ -1,6 +1,6 @@
 
 module.exports =
-  module: '@nikitajs/engine/src/metadata/disabled'
+  name: '@nikitajs/engine/src/metadata/disabled'
   hooks:
     'nikita:session:action': (action, handler) ->
       action.metadata.disabled ?= false

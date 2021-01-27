@@ -7,7 +7,7 @@ The `args` plugin place the original argument into the action "args" property.
 utils = require '../utils'
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/args'
+  name: '@nikitajs/engine/src/plugins/args'
   hooks:
     'nikita:session:arguments':
       handler: ({args, child}, handler) ->

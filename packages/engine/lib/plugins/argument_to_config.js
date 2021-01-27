@@ -4,7 +4,7 @@ The `argument` plugin map an argument which is not an object into a configuratio
 
 */
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/argument',
+  name: '@nikitajs/engine/lib/plugins/argument',
   hooks: {
     'nikita:session:action': {
       handler: function(action) {

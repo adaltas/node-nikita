@@ -8,7 +8,7 @@ utils = require('../utils');
 exec = require('ssh2-exec');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/conditions_os',
+  name: '@nikitajs/engine/lib/plugins/conditions_os',
   require: ['@nikitajs/engine/lib/plugins/conditions'],
   hooks: {
     'nikita:session:normalize': {

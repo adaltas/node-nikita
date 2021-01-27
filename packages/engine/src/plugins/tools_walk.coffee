@@ -30,7 +30,7 @@ validate = (action, args) ->
   [action, walker]
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/tools_walk'
+  name: '@nikitajs/engine/src/plugins/tools_walk'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->

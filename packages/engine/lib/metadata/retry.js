@@ -6,7 +6,7 @@ var merge, utils;
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/metadata/retry',
+  name: '@nikitajs/engine/lib/metadata/retry',
   hooks: {
     'nikita:session:action': function(action, handler) {
       var base, base1, base2, i, len, property, ref;

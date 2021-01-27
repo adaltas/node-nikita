@@ -12,7 +12,7 @@ Pass an SSH connection or SSH information to an action. Disable SSH if the value
 is `null` or `false`.
 */
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/ssh',
+  name: '@nikitajs/engine/lib/plugins/ssh',
   require: ['@nikitajs/engine/lib/plugins/tools_find'],
   hooks: {
     'nikita:session:normalize': function(action, handler) {

@@ -2,7 +2,7 @@
 session = require '../session'
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/conditions_exists'
+  name: '@nikitajs/engine/src/plugins/conditions_exists'
   require: [
     '@nikitajs/engine/src/plugins/conditions'
   ]

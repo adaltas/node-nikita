@@ -29,7 +29,7 @@ validate = (action, args) ->
   [action, finder]
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/tools_find'
+  name: '@nikitajs/engine/src/plugins/tools_find'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->

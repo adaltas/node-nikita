@@ -10,7 +10,7 @@ stackTrace = require 'stack-trace'
 path = require 'path'
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/output_logs'
+  name: '@nikitajs/engine/src/plugins/output_logs'
   require: [
     '@nikitajs/engine/src/plugins/tools_log'
     '@nikitajs/engine/src/metadata/status'

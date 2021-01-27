@@ -22,7 +22,7 @@ parse = function(uri) {
 };
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/schema',
+  name: '@nikitajs/engine/lib/plugins/schema',
   hooks: {
     'nikita:session:normalize': {
       handler: function(action, handler) {

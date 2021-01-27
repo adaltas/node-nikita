@@ -15,7 +15,7 @@ parse = (uri) ->
   pathname: matches[2]
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/schema'
+  name: '@nikitajs/engine/src/plugins/schema'
   hooks:
     'nikita:session:normalize':
       handler: (action, handler) ->

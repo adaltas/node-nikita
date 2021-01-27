@@ -130,8 +130,8 @@ Options include:
     action = merge action
     if plugins
       # Hook attented to modify an action returned by the registry
-      await plugins.hook
-        event: 'nikita:registry:normalize'
+      await plugins.call
+        name: 'nikita:registry:normalize'
         args: action
         handler: (action) ->
           normalize action

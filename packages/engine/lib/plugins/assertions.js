@@ -6,7 +6,7 @@ session = require('../session');
 utils = require('../utils');
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/assertion',
+  name: '@nikitajs/engine/lib/plugins/assertion',
   require: ['@nikitajs/engine/lib/metadata/raw', '@nikitajs/engine/lib/metadata/disabled'],
   hooks: {
     'nikita:session:normalize': function(action, handler) {

@@ -4,7 +4,7 @@ var EventEmitter;
 ({EventEmitter} = require('events'));
 
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/tools_events',
+  name: '@nikitajs/engine/lib/plugins/tools_events',
   hooks: {
     'nikita:session:normalize': function(action, handler) {
       return async function() {

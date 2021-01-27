@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 registry = require '../../src/registry'
-plugins = require '../../src/plugins'
+plugandplay = require 'plug-and-play'
 
 describe 'registry.get', ->
 
@@ -56,7 +56,7 @@ describe 'registry.get', ->
 
   it 'return an immutable copy of the action', ->
     reg = registry.create
-      plugins: plugins
+      plugins: plugandplay
         plugins: [
           ->
             hooks:
@@ -68,7 +68,7 @@ describe 'registry.get', ->
     action = await reg.get 'action'
     # Ensure the returned action is altered
     action.should.match
-      config: 
+      config:
         key: 'new value', new_key: 'new value'
       handler: (val) -> val.should.be.a.Function()
     # Now, make sure the action is not altered

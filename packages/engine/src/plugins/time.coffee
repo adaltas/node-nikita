@@ -1,6 +1,6 @@
 
 module.exports =
-  module: '@nikitajs/engine/src/plugins/time'
+  name: '@nikitajs/engine/src/plugins/time'
   hooks:
     'nikita:session:action':
       handler: (action) ->

@@ -8,7 +8,7 @@ fs = require 'ssh2-fs'
 exec = require 'ssh2-exec'
 
 module.exports =
-  module: '@nikitajs/engine/src/metadata/tmpdir'
+  name: '@nikitajs/engine/src/metadata/tmpdir'
   require: [
     '@nikitajs/engine/src/plugins/tools_find'
     '@nikitajs/engine/src/plugins/tools_path'

@@ -7,7 +7,7 @@ continuing their execution.
 
 */
 module.exports = {
-  module: '@nikitajs/engine/lib/plugins/pubsub',
+  name: '@nikitajs/engine/lib/plugins/pubsub',
   require: '@nikitajs/engine/lib/plugins/tools_find',
   hooks: {
     'nikita:session:action': async function(action) {
