@@ -1,14 +1,13 @@
 
-templated = require 'self-templated'
+selfTemplated = require 'self-templated'
 
 module.exports =
   name: '@nikitajs/engine/src/plugins/templated'
   hooks:
-    'nikita:session:normalize': (action) ->
-      action.metadata.templated ?= true
     'nikita:session:action': (action) ->
-      return unless action.metadata.templated
-      templated action,
+      templated = await action.tools.find (action) -> action.metadata.templated
+      return if templated is false
+      selfTemplated action,
         array: true
         compile: false
         mutate: true

@@ -21,23 +21,33 @@ describe 'plugins.templated', ->
       .should.be.finally.containEql
         key: 'get value from parent'
 
-  it 'default', ->
-    nikita.call ({metadata: {templated}}) ->
-      templated.should.be.true()
-
   it 'when `false`', ->
     nikita.call
       metadata: templated: false
     , ({metadata: {templated}}) ->
       templated.should.be.false()
 
-  it 'disable plugin', ->
+  it 'disabled in current', ->
     nikita
       metadata: templated: false
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
-      handler: ({config}) ->
-        config
+      handler: ({config}) -> config
     .should.be.finally.containEql
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
+
+  it 'disabled in parent', ->
+    nikita ->
+      @call
+        metadata: templated: false
+      , ->
+        @call ->
+          @call ->
+            key_1: 'value 1'
+            key_2: 'value 2 and {{config.key_1}}'
+            handler: ({config}) -> config
+          .should.be.finally.containEql
+            key_1: 'value 1'
+            key_2: 'value 2 and {{config.key_1}}'
+        

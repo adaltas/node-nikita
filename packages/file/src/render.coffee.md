@@ -16,11 +16,11 @@ its first argument.
 * `status`   
   Value is true if rendered file was created or modified.   
 
-## Rendering with Nunjucks
+## Rendering with Handlebar
 
 ```js
 const {status} = await nikita.file.render({
-  source: './some/a_template.j2',
+  source: './some/a_template.hbs',
   target: '/tmp/a_file',
   context: {
     username: 'a_user'

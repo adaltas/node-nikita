@@ -1,4 +1,8 @@
 
+###
+Traverse the parent hierarchy until it find a value.
+###
+
 utils = require '../utils'
 
 find = (action, finder) ->
