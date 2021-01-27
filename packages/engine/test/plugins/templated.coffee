@@ -41,12 +41,3 @@ describe 'plugins.templated', ->
     .should.be.finally.containEql
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
-
-  it 'disable plugin in parent', ->
-    nikita
-      metadata: templated: false
-      key: 'value'
-    , ->
-      @call key: "ignore {{parent.config.key}} from parent", ({config}) -> config
-      .should.be.finally.containEql
-        key: 'ignore {{parent.config.key}} from parent'

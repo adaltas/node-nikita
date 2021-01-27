@@ -11,18 +11,18 @@ module.exports = {
       return (base = action.metadata).templated != null ? base.templated : base.templated = true;
     },
     'nikita:session:action': function(action) {
-      var ref;
-      if (action.metadata.templated !== false && ((ref = action.parent) != null ? ref.metadata.templated : void 0) !== false) {
-        return templated(action, {
-          array: true,
-          compile: false,
-          mutate: true,
-          partial: {
-            metadata: true,
-            config: true
-          }
-        });
+      if (!action.metadata.templated) {
+        return;
       }
+      return templated(action, {
+        array: true,
+        compile: false,
+        mutate: true,
+        partial: {
+          metadata: true,
+          config: true
+        }
+      });
     }
   }
 };
