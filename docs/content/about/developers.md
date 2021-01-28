@@ -1,5 +1,5 @@
 ---
-title: Developer
+navtitle: Developer
 sort: 3
 ---
 

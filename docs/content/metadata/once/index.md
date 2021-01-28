@@ -1,5 +1,6 @@
 ---
 disabled: true
+navtitle: once
 ---
 
 # Metadata "once" (boolean|array|string, optional, false)

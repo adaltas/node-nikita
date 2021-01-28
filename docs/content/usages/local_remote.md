@@ -1,5 +1,5 @@
 ---
-title: Local and Remote (SSH)
+navtitle: Local and Remote (SSH)
 sort: 4
 ---
 

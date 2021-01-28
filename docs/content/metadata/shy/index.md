@@ -1,3 +1,6 @@
+---
+navtitle: shy
+---
 
 # Metadata `shy`
 
