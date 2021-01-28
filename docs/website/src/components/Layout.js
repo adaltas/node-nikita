@@ -56,6 +56,7 @@ class Layout extends React.Component {
       })
       parentMenu.data = {
         id: slugs.join('/'),
+        navtitle: edge.node.frontmatter.navtitle,
         title: edge.node.frontmatter.title,
         slug: edge.node.fields.slug,
         sort: edge.node.frontmatter.sort || 99,
@@ -148,6 +149,7 @@ const WrappedLayout = props => (
               id
               excerpt(pruneLength: 250)
               frontmatter {
+                navtitle
                 title
                 sort
               }

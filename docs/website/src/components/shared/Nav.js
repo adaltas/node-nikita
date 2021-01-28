@@ -70,7 +70,7 @@ class Nav extends React.Component {
           className={classNames(classes.link, classes.leaf)}
           onClick={onClickLink}
         >
-          {page.data.title}
+          {page.data.navtitle || page.data.title}
         </MenuItem>
       ))
     return (
