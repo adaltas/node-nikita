@@ -1,5 +1,5 @@
 ---
-title: License (MIT)
+navtitle: License (MIT)
 description: Content of the MIT license
 sort: 6
 ---

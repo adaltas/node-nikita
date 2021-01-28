@@ -1,5 +1,6 @@
 ---
 disabled: true
+navtitle: sudo
 ---
 
 # Metadata "sudo" (boolean, optional, false)

@@ -1,3 +1,6 @@
+---
+navtitle: debug
+---
 
 # Metadata `debug`
 

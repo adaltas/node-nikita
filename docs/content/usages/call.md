@@ -1,5 +1,5 @@
 ---
-title: Call
+navtitle: Call
 sort: 2
 ---
 

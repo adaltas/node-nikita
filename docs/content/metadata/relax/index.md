@@ -1,3 +1,6 @@
+---
+navtitle: relax
+---
 
 # Metadata `relax`
 

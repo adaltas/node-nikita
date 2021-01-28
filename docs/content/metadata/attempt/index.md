@@ -1,3 +1,6 @@
+---
+navtitle: attempt
+---
 
 # Metadata `attempt`
 

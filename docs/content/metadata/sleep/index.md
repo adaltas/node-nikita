@@ -1,3 +1,6 @@
+---
+navtitle: sleep
+---
 
 # Metadata `sleep`
 

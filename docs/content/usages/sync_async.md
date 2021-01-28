@@ -1,5 +1,5 @@
 ---
-title: Sync and async
+navtitle: Sync and async
 sort: 2
 ---
 
