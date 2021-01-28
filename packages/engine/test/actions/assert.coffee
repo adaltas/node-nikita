@@ -90,6 +90,8 @@ describe 'actions.assert', ->
           -> true
         ,
           -> new Promise (resolve) -> resolve false
+        ,
+          -> true
         ]
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
