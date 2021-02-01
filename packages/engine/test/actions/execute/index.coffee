@@ -94,25 +94,28 @@ describe 'actions.execute', ->
           code: [42, 43]
         .should.be.resolved()
 
-    they 'invalid exit code', ({ssh}) ->
-      nikita ssh: ssh, ->
-        @execute
-          command: "exit 42"
-        .should.be.rejectedWith [
-          'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
-          'an unexpected exit code was encountered,'
-          'command is "exit 42",'
-          'got 42 instead of 0.'
-        ].join ' '
-        @execute
-          command: "exit 42"
-          code: [1,2,3]
-        .should.be.rejectedWith [
-          'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
-          'an unexpected exit code was encountered,'
-          'command is "exit 42",'
-          'got 42 while expecting one of [1,2,3].'
-        ].join ' '
+    they 'invalid exit code with default', ({ssh}) ->
+      nikita.execute
+        command: "exit 42"
+        ssh: ssh
+      .should.be.rejectedWith [
+        'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+        'an unexpected exit code was encountered,'
+        'command is "exit 42",'
+        'got 42 instead of 0.'
+      ].join ' '
+
+    they 'invalid exit code unmatching provided codes', ({ssh}) ->
+      nikita.execute
+        command: "exit 42"
+        code: [1,2,3]
+        ssh: ssh
+      .should.be.rejectedWith [
+        'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+        'an unexpected exit code was encountered,'
+        'command is "exit 42",'
+        'got 42 while expecting one of [1,2,3].'
+      ].join ' '
 
     they 'should honor code skipped', ({ssh}) ->
       nikita ssh: ssh, ->
