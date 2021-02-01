@@ -15,7 +15,7 @@ module.exports = {
       assertions = {};
       for (property in action) {
         value = action[property];
-        if (/^(assert)($|_[\w_]+$)/.test(property)) {
+        if (/^(un)?assert$/.test(property)) {
           if (assertions[property]) {
             throw Error('ASSERTION_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside assertions']);
           }
@@ -61,7 +61,7 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       if (typeof assertion === 'function') {
-        assertion = (await session({
+        run = (await session({
           hooks: {
             on_result: function({action}) {
               return delete action.parent;
@@ -79,30 +79,12 @@ handlers = {
           error: error,
           output: output
         }));
-      }
-      run = (function() {
-        switch (typeof assertion) {
-          case 'undefined':
-            return false;
-          case 'boolean':
-            return condition;
-          case 'number':
-            return !!condition;
-          case 'string':
-            return !!condition.length;
-          case 'object':
-            if (Buffer.isBuffer(condition)) {
-              return !!condition.length;
-            } else if (condition === null) {
-              return false;
-            } else {
-              return !!Object.keys(condition).length;
-            }
-            break;
-          default:
-            throw Error('Value type is not handled');
+        if (typeof run !== 'boolean') {
+          throw Error;
         }
-      })();
+      } else {
+        run = utils.object.match(output, assertion);
+      }
       if (run === false) {
         final_run = false;
       }
@@ -112,11 +94,11 @@ handlers = {
   unassert: async function(action, error, output) {
     var assertion, final_run, i, len, ref, run;
     final_run = true;
-    ref = action.assertions.unless;
+    ref = action.assertions.unassert;
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       if (typeof assertion === 'function') {
-        assertion = (await session({
+        run = (await session({
           hooks: {
             on_result: function({action}) {
               return delete action.parent;
@@ -129,33 +111,17 @@ handlers = {
           },
           parent: action,
           handler: assertion,
-          config: action.config
+          config: action.config,
+          error: error,
+          output: output
         }));
-      }
-      run = (function() {
-        switch (typeof assertion) {
-          case 'undefined':
-            return true;
-          case 'boolean':
-            return !assertion;
-          case 'number':
-            return !condition;
-          case 'string':
-            return !assertion.length;
-          case 'object':
-            if (Buffer.isBuffer(assertion)) {
-              return !assertion.length;
-            } else if (assertion === null) {
-              return true;
-            } else {
-              return !Object.keys(assertion).length;
-            }
-            break;
-          default:
-            throw Error('Value type is not handled');
+        if (typeof run !== 'boolean') {
+          throw Error;
         }
-      })();
-      if (run === false) {
+      } else {
+        run = utils.object.match(output, assertion);
+      }
+      if (run === true) {
         final_run = false;
       }
     }

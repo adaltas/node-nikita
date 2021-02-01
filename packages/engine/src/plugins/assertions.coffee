@@ -3,7 +3,7 @@ session = require '../session'
 utils = require '../utils'
 
 module.exports =
-  name: '@nikitajs/engine/src/plugins/assertion'
+  name: '@nikitajs/engine/src/plugins/assertions'
   require: [
     '@nikitajs/engine/src/metadata/raw'
     '@nikitajs/engine/src/metadata/disabled'
@@ -13,7 +13,7 @@ module.exports =
       # Ventilate assertions properties defined at root
       assertions = {}
       for property, value of action
-        if /^(assert)($|_[\w_]+$)/.test property
+        if /^(un)?assert$/.test property
           throw Error 'ASSERTION_DUPLICATED_DECLARATION', [
             "Property #{property} is defined multiple times,"
             'at the root of the action and inside assertions'
@@ -40,7 +40,7 @@ handlers =
     final_run = true
     for assertion in action.assertions.assert
       if typeof assertion is 'function'
-        assertion = await session
+        run = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:
@@ -53,25 +53,16 @@ handlers =
           config: action.config
           error: error
           output: output
-      run = switch typeof assertion
-        when 'undefined' then false
-        when 'boolean' then condition
-        when 'number' then !!condition
-        when 'string' then !!condition.length
-        when 'object'
-          if Buffer.isBuffer(condition)
-            !!condition.length
-          else if condition is null then false
-          else !!Object.keys(condition).length
-        else
-          throw Error 'Value type is not handled'
+        throw Error unless typeof run is 'boolean'
+      else
+        run = utils.object.match output, assertion
       final_run = false if run is false
     final_run
   unassert: (action, error, output) ->
     final_run = true
-    for assertion in action.assertions.unless
+    for assertion in action.assertions.unassert
       if typeof assertion is 'function'
-        assertion = await session
+        run = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:
@@ -81,16 +72,8 @@ handlers =
           parent: action
           handler: assertion
           config: action.config
-      run = switch typeof assertion
-        when 'undefined' then true
-        when 'boolean' then !assertion
-        when 'number' then !condition
-        when 'string' then !assertion.length
-        when 'object'
-          if Buffer.isBuffer assertion then !assertion.length
-          else if assertion is null then true
-          else !Object.keys(assertion).length
-        else
-          throw Error 'Value type is not handled'
-      final_run = false if run is false
+        throw Error unless typeof run is 'boolean'
+      else
+        run = utils.object.match output, assertion
+      final_run = false if run is true
     final_run

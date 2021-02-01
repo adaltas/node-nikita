@@ -1,5 +1,5 @@
 
-{copy, diff, equals, filter} = require '../../src/utils/object'
+{copy, diff, equals, filter, match} = require '../../src/utils/object'
 
 describe 'utils.object', ->
   
@@ -46,3 +46,152 @@ describe 'utils.object', ->
     it 'black and white list', ->
       filter a: 1, b: 2, c: 3, ['b'], ['a', 'b']
       .should.eql a: 1
+      
+  describe 'match', ->
+    
+    describe 'scalar', ->
+    
+      it '0', ->
+        match 0, 0
+        .should.be.true()
+        
+      it 'null', ->
+        match null, null
+        .should.be.true()
+        
+      it 'null in object', ->
+        match
+          key: null
+        ,
+          key: null
+        .should.be.true()
+        
+      it 'undefined', ->
+        match undefined, undefined
+        .should.be.true()
+        
+      it 'undefined in object', ->
+        match
+          key: undefined
+        ,
+          key: undefined
+        .should.be.true()
+      
+    describe 'object', ->
+    
+      it 'object same', ->
+        match
+          a: '123'
+          b: '456'
+        ,
+          a: '123'
+          b: '456'
+        .should.be.true()
+          
+      it 'object partial source', ->
+        match
+          a: '123'
+        ,
+          a: '123'
+          b: '456'
+        .should.be.false()
+          
+      it 'object partial target', ->
+        match
+          a: '123'
+          b: '456'
+        ,
+          a: '123'
+        .should.be.true()
+        
+      it 'deep object', ->
+        match
+          a: '123'
+          c:
+            c1: '456'
+        ,
+          c:
+            c1: '456'
+        .should.be.true()
+          
+    describe 'array', ->
+    
+      it 'same', ->
+        match [
+            '123', '456'
+          ], [
+            '123', '456'
+          ]
+        .should.be.true()
+        
+      it 'not same order', ->
+        match [
+            '123', '456'
+          ], [
+            '456', '123'
+          ]
+        .should.be.false()
+        
+      it 'deep', ->
+        match [
+            a:
+              b: ['123', '456']
+          ], [
+            a:
+              b: ['123', '456']
+          ]
+        .should.be.true()
+        
+    describe 'buffer', ->
+          
+      it 'true with source and target buffers', ->
+        match
+          a: '123'
+          c:
+            c1: Buffer.from '456'
+        ,
+          c:
+            c1: Buffer.from '456'
+        .should.be.true()
+          
+      it 'true if source string match target buffer', ->
+        match
+          a: '123'
+          c:
+            c1: '456'
+        ,
+          c:
+            c1: Buffer.from '456'
+        .should.be.true()
+              
+      it 'true if source buffer match target string', ->
+        match
+          a: '123'
+          c:
+            c1: Buffer.from '456'
+        ,
+          c:
+            c1: '456'
+        .should.be.true()
+        
+    describe 'regex', ->
+          
+      it 'true', ->
+        match
+          a: '123'
+          c:
+            c1: '456'
+        ,
+          c:
+            c1: /^\d+$/
+        .should.be.true()
+          
+      it 'false', ->
+        match
+          a: '123'
+          c:
+            c1: '456'
+        ,
+          c:
+            c1: /^\d$/
+        .should.be.false()

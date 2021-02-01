@@ -1,196 +1,218 @@
 
 nikita = require '../../../src'
 
-describe 'plugin.assertions assert', ->
+describe 'plugin.assertions unassert', ->
   
   describe 'array', ->
 
-    it 'success if all assertion are `true`', ->
+    it 'success if all assertion are `false`', ->
       nikita.call
-        assert: [ (-> true), (-> true)]
+        unassert: [ (-> false), (-> false)]
         handler: (->)
       .should.be.resolved()
 
-    it 'skip if one conditions is `false`', ->
+    it 'error if one conditions is `true`', ->
       nikita.call
-        assert: [ (-> true), (-> false), (-> true)]
+        unassert: [ (-> false), (-> true), (-> false)]
         handler: (->)
       .should.be.rejectedWith
         code: 'NIKITA_INVALID_ASSERTION'
   
   describe 'boolean, integer', ->
-
-    it 'success if `true`', ->
+  
+    it 'success if `true` with `false`', ->
       nikita.call
-        assert: true
-        handler: -> true
-        metadata:
-          raw_output: true
-      .should.be.resolved()
-
-    it 'success if `false`', ->
-      nikita.call
-        assert: false
+        unassert: true
         handler: -> false
         metadata:
           raw_output: true
       .should.be.resolved()
-
-    it 'success if `1`', ->
+  
+    it 'error if `true`', ->
       nikita.call
-        assert: 1
+        unassert: true
+        handler: -> true
+        metadata:
+          raw_output: true
+      .should.be.rejected()
+  
+    it 'sucess if `false` with `true`', ->
+      nikita.call
+        unassert: false
+        handler: -> true
+        metadata:
+          raw_output: true
+      .should.be.resolved()
+  
+    it 'error if `false`', ->
+      nikita.call
+        unassert: false
+        handler: -> false
+        metadata:
+          raw_output: true
+      .should.be.rejected()
+  
+    it 'error if `1`', ->
+      nikita.call
+        unassert: 1
         handler: -> 1
         metadata:
           raw_output: true
-      .should.be.resolved()
-
-    it 'success if `0`', ->
+      .should.be.rejected()
+  
+    it 'error if `0`', ->
       nikita.call
-        assert: 0
+        unassert: 0
         handler: -> 0
         metadata:
           raw_output: true
-      .should.be.resolved()
-          
+      .should.be.rejected()
+  
   describe 'null, undefined', ->
-
-    it 'success if `null`', ->
+  
+    it 'error if `null`', ->
       nikita.call
-        assert: null
+        unassert: null
         handler: -> null
         metadata:
           raw_output: true
-      .should.be.resolved()
-
-    it 'success if `undefined`', ->
+      .should.be.rejected()
+  
+    it 'error if `undefined`', ->
       nikita.call
-        assert: undefined
-        handler: -> undefined
-        metadata:
-          raw_output: true
-      .should.be.resolved()
-
-    it 'error because `null` dont match `undefined`', ->
-      nikita.call
-        assert: null
+        unassert: undefined
         handler: -> undefined
         metadata:
           raw_output: true
       .should.be.rejected()
+  
+    it 'success because `null` dont match `undefined`', ->
+      nikita.call
+        unassert: null
+        handler: -> undefined
+        metadata:
+          raw_output: true
+      .should.be.resolved()
   
   describe 'string + buffer', ->
   
     it 'run if `"string"`', ->
       nikita.call
-        assert: 'abc'
+        unassert: 'abc'
         handler: -> 'abc'
         metadata:
           raw_output: true
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success if string match template `{{"abc"}}`',->
       nikita.call
-        assert: result: '{{config.db.test}}'
+        unassert: result: '{{config.db.test}}'
         db: test: 'abc'
         handler: -> result: 'abc'
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success if empty string match template `{{""}}`',->
       nikita.call
-        assert: result: '{{config.db.test}}'
+        unassert: result: '{{config.db.test}}'
         db: test: ''
         handler: -> result: ''
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success if regexp match string', -> # was skipped
       nikita.call
-        assert: result: /^\w+$/
+        unassert: result: /^\w+$/
         handler: -> result: 'abc'
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success if string match empty', -> # was skipped
       nikita.call
-        assert: result: ''
+        unassert: result: ''
         handler: -> result: ''
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success if buffer match string', ->
       nikita.call
-        assert: Buffer.from 'abc'
+        unassert: Buffer.from 'abc'
         handler: -> 'abc'
         metadata:
           raw_output: true
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'error if buffer dont match string', ->
       nikita.call
-        assert: Buffer.from 'abc'
+        unassert: Buffer.from 'abc'
         handler: -> 'def'
         metadata:
           raw_output: true
-      .should.be.rejected()
-    
+      .should.be.resolved()
+  
   describe 'object', ->
-
+  
     it 'sucess when some keys are matching', ->
       nikita.call
-        assert: {k:"v"}
+        unassert: {k:"v"}
         handler: -> a: 'b', k: 'v'
-      .should.be.resolved()
-
-    it 'error when no keys are matching', ->
-      nikita.call
-        assert: {k:"v"}
-        handler: -> a: 'b', c: 'd'
       .should.be.rejected()
   
+    it 'error when no keys are matching', ->
+      nikita.call
+        unassert: {k:"v"}
+        handler: -> a: 'b', c: 'd'
+      .should.be.resolved()
+  
   describe 'function', ->
-
+  
     it 'success when action returns true', ->
       nikita.call
-        assert: -> true
+        unassert: -> true
         handler: (->)
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'success when action resolve true', ->
       nikita.call
-        assert: -> new Promise (resolve) ->
+        unassert: -> new Promise (resolve) ->
           setImmediate -> resolve true
         handler: (->)
-      .should.be.resolved()
-
+      .should.be.rejected()
+  
     it 'error if action returns false', ->
       nikita.call
-        assert: -> false
+        unassert: -> false
         handler: (->)
-      .should.be.rejectedWith
-        code: 'NIKITA_INVALID_ASSERTION'
-
+      .should.be.resolved()
+  
     it 'error if action resolve false', ->
       nikita.call
-        assert: -> new Promise (resolve) ->
+        unassert: -> new Promise (resolve) ->
           setImmediate -> resolve false
         handler: (->)
-      .should.be.rejectedWith
-        code: 'NIKITA_INVALID_ASSERTION'
-
-    it 'success if all validate', ->
+      .should.be.resolved()
+  
+    it 'success if all fail', ->
       nikita.call
-        assert: [
+        unassert: [
+          -> false
+          -> false
+        ]
+        handler: (->)
+      .should.be.resolved()
+  
+    it 'error if all validate', ->
+      nikita.call
+        unassert: [
           -> true
           -> true
         ]
         handler: (->)
-      .should.be.resolved()
-      
-    it 'error if not all validate', ->
+      .should.be.rejected()
+  
+    it 'error if not all fail', ->
       {status, value} = await nikita.call
-        assert: [
+        unassert: [
           -> true
           -> false
         ]
         handler: (->)
-      .should.be.rejectedWith
-        code: 'NIKITA_INVALID_ASSERTION'
-
-    
+      .should.be.rejected()
+  
+  

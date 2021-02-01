@@ -1,5 +1,6 @@
 
 array = require './array'
+regexp = require './regexp'
 {snake_case} = require './string'
 {is_object_literal} = require 'mixme'
 
@@ -45,6 +46,34 @@ module.exports =
   #   for k in keys
   #     return false if obj1[k] isnt obj2[k]
   #   return true
+  match: (source, target) ->
+    if is_object_literal target
+      return false unless is_object_literal source
+      for k, v of target
+        return false unless module.exports.match source[k], v
+      return true
+    else if Array.isArray target
+      return false unless Array.isArray source
+      return false unless target.length is source.length
+      for v, i in target
+        return false unless module.exports.match source[i], v
+      return true
+    else if typeof source is 'string'
+      if regexp.is target
+        target.test source
+      else if Buffer.isBuffer target
+        target.equals Buffer.from source
+      else
+        source is target
+    else if Buffer.isBuffer source
+      if Buffer.isBuffer target
+        source.equals target
+      else if typeof target is 'string'
+        source.equals Buffer.from target
+      else
+        false
+    else
+      source is target
   filter: (source, black, white) ->
     black ?= []
     obj = {}
