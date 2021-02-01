@@ -39,9 +39,10 @@ session = (action={}) ->
       unless Array.isArray actions
         session actions
       else
-        schl = schedule()
-        Promise.all actions.map (action) ->
-          schl.push -> session action
+        # schl = schedule()
+        # Promise.all actions.map (action) ->
+        #   schl.push -> session action
+        schedule actions.map (action) -> -> session action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->

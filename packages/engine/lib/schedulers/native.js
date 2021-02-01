@@ -3,50 +3,68 @@ var utils;
 
 utils = require('../utils');
 
-module.exports = function() {
-  var promise, running, scheduler, stack;
+module.exports = function(handlers) {
+  var promise, scheduler, stack, state;
   stack = [];
-  running = false;
   scheduler = null;
-  promise = new Promise(function(fresolve, freject) {
-    return scheduler = {
+  state = {
+    error: void 0,
+    output: [],
+    resolved: false,
+    running: false
+  };
+  promise = new Promise(function(resolve, reject) {
+    scheduler = {
       pump: function() {
-        var handler, reject, resolve;
-        if (running) {
+        var item;
+        if (state.running) {
           return;
         }
-        if (!stack.length) {
-          return fresolve();
+        if (!state.resolved) {
+          if (state.error) {
+            state.resolved = true;
+            return reject(state.error);
+          } else if (!stack.length) {
+            state.resolved = true;
+            return resolve(state.output);
+          }
         }
-        running = true;
-        [handler, resolve, reject] = stack.shift();
-        return setImmediate(function() {
-          var res;
-          res = handler.call();
-          if (res != null ? res.then : void 0) {
-            return res.then(function() {
-              running = false;
-              resolve.apply(null, arguments);
-              return setImmediate(function() {
-                return scheduler.pump();
-              });
-            }, function() {
-              running = false;
-              reject.apply(null, arguments);
-              return setImmediate(function() {
-                return scheduler.pump();
-              });
+        if (!stack.length) {
+          return;
+        }
+        state.running = true;
+        item = stack.shift();
+        item = item;
+        return setImmediate(async function() {
+          var error, result;
+          try {
+            result = (await item.handler.call());
+            state.running = false;
+            item.resolve.call(null, result);
+            if (item.options.output) {
+              state.output.push(result);
+            }
+            return setImmediate(function() {
+              return scheduler.pump();
             });
-          } else if (Array.isArray(res)) {
-            running = false;
-            return scheduler.unshift(res).then(resolve, reject);
-          } else if (res) {
-            throw Error(`Invalid state ${JSON.stringify(res)}`);
+          } catch (error1) {
+            error = error1;
+            state.running = false;
+            item.reject.call(null, error);
+            if (stack.length !== 0) {
+              state.error = error;
+            }
+            return setImmediate(function() {
+              return scheduler.pump();
+            });
           }
         });
       },
-      unshift: function(handlers, {pump = true} = {}) {
+      unshift: function(handlers, options = {}) {
         var isArray;
+        if (options.pump == null) {
+          options.pump = true;
+        }
         isArray = Array.isArray(handlers);
         if (!(isArray || typeof handlers === 'function')) {
           throw Error('Invalid Argument');
@@ -54,13 +72,16 @@ module.exports = function() {
         return new Promise(function(resolve, reject) {
           var handler;
           if (!isArray) {
-            stack.unshift([handlers, resolve, reject]);
-            if (pump) {
-              return scheduler.pump();
-            }
+            stack.unshift({
+              handler: handlers,
+              resolve: resolve,
+              reject: reject,
+              options: options
+            });
+            return scheduler.pump();
           } else {
-            // Unshift from the last to the first element to preservce order
-            Promise.all(((function() {
+            // Unshift from the last to the first element to preserve order
+            return Promise.all(((function() {
               var i, len, ref, results;
               ref = handlers.reverse();
               results = [];
@@ -72,13 +93,10 @@ module.exports = function() {
               }
               return results;
             })()).reverse()).then(resolve, reject);
-            if (pump) {
-              return scheduler.pump();
-            }
           }
         });
       },
-      push: function(handlers) {
+      push: function(handlers, options = {}) {
         var isArray;
         isArray = Array.isArray(handlers);
         if (!(isArray || typeof handlers === 'function')) {
@@ -87,7 +105,12 @@ module.exports = function() {
         return new Promise(function(resolve, reject) {
           var handler;
           if (!isArray) {
-            stack.push([handlers, resolve, reject]);
+            stack.push({
+              handler: handlers,
+              resolve: resolve,
+              reject: reject,
+              options: options
+            });
             return scheduler.pump();
           } else {
             return Promise.all((function() {
@@ -95,7 +118,7 @@ module.exports = function() {
               results = [];
               for (i = 0, len = handlers.length; i < len; i++) {
                 handler = handlers[i];
-                results.push(scheduler.push(handler));
+                results.push(scheduler.push(handler, options));
               }
               return results;
             })()).then(resolve, reject);
@@ -103,6 +126,11 @@ module.exports = function() {
         });
       }
     };
+    if (handlers) {
+      return scheduler.push(handlers, {
+        output: true
+      });
+    }
   });
   return new Proxy(promise, {
     get: function(target, name) {
