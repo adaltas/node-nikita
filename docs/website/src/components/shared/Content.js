@@ -1,6 +1,5 @@
 // React
 import React, { Component } from 'react'
-import ReactDom from 'react-dom'
 import PropTypes from 'prop-types'
 // Material UI
 import IconButton from '@material-ui/core/IconButton'
@@ -8,6 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import EditIcon from '@material-ui/icons/EditOutlined'
 import ListIcon from '@material-ui/icons/ListOutlined'
 import { withStyles } from '@material-ui/core/styles'
+import Toc from "./Toc"
 
 require('prismjs/themes/prism-tomorrow.css')
 
@@ -81,23 +81,6 @@ const styles = theme => ({
       background: '#E6E6E6',
       color: '#000',
     },
-    '& .toc': {
-      borderTop: '1px solid #E5E7EA',
-      borderBottom: '1px solid #E5E7EA',
-      padding: '5px 0',
-      display: 'none',
-      // background: '#E5E7EA',
-      // borderRadius: 5,
-      // padding: '20px 20px',
-      '& h2': {
-        marginTop: 0,
-        // marginBottom: 0,
-      },
-      '& ul': {
-        marginTop: 0,
-        marginBottom: 0,
-      },
-    },
     '& .gatsby-highlight-code-line': {
       background: 'rgba(255,255,255,.2)',
       marginLeft: '-1rem',
@@ -116,6 +99,8 @@ const styles = theme => ({
   icons: {
     float: 'right',
     color: '#cccccc',
+    top: '-3.8rem',
+    position: 'relative',
     '&:link,&:visited': {
       color: '#cccccc !important',
     },
@@ -127,53 +112,52 @@ const styles = theme => ({
 })
 
 class Content extends Component {
-  // componentDidMount(){
-  //   if(!this.props.page) return;
-  //   const contentNode = ReactDom.findDOMNode(this.refs.content)
-  //   const tocNode = contentNode.querySelector('.toc')
-  //   if( !tocNode ) return
-  //   const display = window.getComputedStyle(tocNode).display
-  //   tocNode.style.display = display === 'none' ? '' : 'none'
-  // }
+  state = { isOpen: false }
   render() {
-    const { classes, children, page } = this.props
-    const toggleToc = () => {
-      if (!this.props.page) return
-      const contentNode = ReactDom.findDOMNode(this.refs.content)
-      const tocNode = contentNode.querySelector('.toc')
-      if (!tocNode) return
-      const display = window.getComputedStyle(tocNode).display
-      tocNode.style.display = display === 'none' ? 'block' : 'none'
+    const onToggle = () => {
+      this.setState({ isOpen: !this.state.isOpen })
     }
+    const { classes, children, page } = this.props
     return (
       <main ref="content" className={classes.content}>
         {page && (
-          <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
-            <IconButton
-              color="inherit"
-              href={page.edit_url}
-              aria-labelledby="content-edit"
-              className={classes.icons}
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        {page && (
-          <Tooltip
-            id="content-toc"
-            title="Toggle table of content"
-            enterDelay={300}
-          >
-            <IconButton
-              color="inherit"
-              aria-labelledby="content-toc"
-              className={classes.icons}
-              onClick={toggleToc}
-            >
-              <ListIcon />
-            </IconButton>
-          </Tooltip>
+          <>
+            <h1>{page.title}</h1>
+            <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
+              <IconButton
+                color="inherit"
+                href={page.edit_url}
+                aria-labelledby="content-edit"
+                className={classes.icons}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            {page.tableOfContents.items
+              && (
+              <>
+                <Tooltip
+                  id="content-toc"
+                  title="Toggle table of content"
+                  enterDelay={300}
+                >
+                  <IconButton
+                    color="inherit"
+                    aria-labelledby="content-toc"
+                    className={classes.icons}
+                    onClick={onToggle}
+                  >
+                    <ListIcon />
+                  </IconButton>
+                </Tooltip>
+                <Toc
+                  startLevel={1}
+                  isOpen={this.state.isOpen}
+                  items={page.tableOfContents.items}
+                />
+              </>
+            )}
+          </>
         )}
         {children}
       </main>

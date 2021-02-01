@@ -17,7 +17,7 @@ class Template extends Component {
     const { data } = this.props
     const { page } = data // data.markdownRemark holds our post data
     return (
-      <Layout page={{...page.fields, ...page.frontmatter}}>
+      <Layout page={{...page.fields, ...page.frontmatter, tableOfContents: page.tableOfContents}}>
         <MDXProvider>
           <MDXRenderer>{page.body}</MDXRenderer>
         </MDXProvider>
@@ -40,6 +40,7 @@ export const pageQuery = graphql`
         description
         keywords
       }
+      tableOfContents(maxDepth: 2)
     }
   }
 `
