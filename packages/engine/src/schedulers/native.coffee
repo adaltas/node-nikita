@@ -56,7 +56,7 @@ module.exports = (handlers) ->
       push: (handlers, options={}) ->
         isArray = Array.isArray handlers
         throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
-        new Promise (resolve, reject) ->
+        prom = new Promise (resolve, reject) ->
           unless isArray
             stack.push
               handler: handlers
@@ -68,7 +68,10 @@ module.exports = (handlers) ->
             Promise.all(
               scheduler.push handler, options for handler in handlers
             ).then resolve, reject
+        prom.catch (->) # Handle strict unhandled rejections
+        prom
     scheduler.push handlers, output: true if handlers
+  promise.catch (->) # Handle strict unhandled rejections
   new Proxy promise, get: (target, name) ->
     if target[name]?
       if typeof target[name] is 'function'
