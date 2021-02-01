@@ -51,21 +51,24 @@
 var handler, schema, utils;
 
 schema = {
-  'target': {
-    type: 'string',
-    description: `Path to the passwd definition file, use the \`getent passwd\` by default
+  type: 'object',
+  properties: {
+    'target': {
+      type: 'string',
+      description: `Path to the passwd definition file, use the \`getent passwd\` by default
 which use to "/etc/passwd".`
-  },
-  'uid': {
-    oneOf: [
-      {
-        type: 'integer'
-      },
-      {
-        type: 'string'
-      }
-    ],
-    description: `Retrieve the information for a specific user name or uid.`
+    },
+    'uid': {
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
+      description: `Retrieve the information for a specific user name or uid.`
+    }
   }
 };
 
