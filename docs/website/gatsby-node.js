@@ -25,7 +25,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage, createRedirect } = actions
-  const template = path.resolve(`src/templates/template.js`)
+  const template = path.resolve(`src/templates/page.js`)
   return graphql(`
     {
       allMdx(
