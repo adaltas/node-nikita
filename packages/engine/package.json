@@ -100,6 +100,10 @@
   "license": "MIT",
   "main": "./lib/index",
   "mocha": {
+    "node-flags": {
+      "not working": true,
+      "unhandled-rejections": "strict"
+    },
     "throw-deprecation": true,
     "require": [
       "should",
@@ -120,7 +124,7 @@
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'",
+    "test": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'",
     "testall": "mocha 'test/**/*.coffee' && env/run.sh"
   }
 }

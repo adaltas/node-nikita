@@ -97,12 +97,12 @@ module.exports = function(handlers) {
         });
       },
       push: function(handlers, options = {}) {
-        var isArray;
+        var isArray, prom;
         isArray = Array.isArray(handlers);
         if (!(isArray || typeof handlers === 'function')) {
           throw Error('Invalid Argument');
         }
-        return new Promise(function(resolve, reject) {
+        prom = new Promise(function(resolve, reject) {
           var handler;
           if (!isArray) {
             stack.push({
@@ -124,6 +124,8 @@ module.exports = function(handlers) {
             })()).then(resolve, reject);
           }
         });
+        prom.catch((function() {})); // Handle strict unhandled rejections
+        return prom;
       }
     };
     if (handlers) {
@@ -132,6 +134,7 @@ module.exports = function(handlers) {
       });
     }
   });
+  promise.catch((function() {})); // Handle strict unhandled rejections
   return new Proxy(promise, {
     get: function(target, name) {
       if (target[name] != null) {
