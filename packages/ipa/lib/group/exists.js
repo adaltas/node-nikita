@@ -28,6 +28,7 @@ schema = {
       description: `Name of the group to check for existence.`
     },
     'connection': {
+      type: 'object',
       $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }

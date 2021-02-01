@@ -46,6 +46,7 @@ schema = {
 \`no_members\`, \`user\` and \`group\`.`
     },
     'connection': {
+      type: 'object',
       $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }

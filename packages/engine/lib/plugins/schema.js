@@ -121,8 +121,6 @@ module.exports = {
       }
     },
     'nikita:session:action': {
-      // '@nikitajs/engine/lib/metadata/disabled'
-      // '@nikitajs/engine/lib/plugins/conditions'
       after: ['@nikitajs/engine/lib/plugins/global'],
       handler: async function(action, handler) {
         var err;

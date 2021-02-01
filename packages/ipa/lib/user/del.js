@@ -40,6 +40,7 @@ schema = {
       description: `Name of the user to delete, alias of \`uid\`.`
     },
     'connection': {
+      type: 'object',
       $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }

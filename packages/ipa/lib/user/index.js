@@ -79,9 +79,11 @@ schema = {
       description: `Attributes associated with the user to add or modify.`
     },
     'force_userpassword': {
-      type: 'boolean'
+      type: 'boolean',
+      description: `Force the password to be re-initialized on user update.`
     },
     'connection': {
+      type: 'object',
       $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
     }

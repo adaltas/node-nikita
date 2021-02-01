@@ -26,206 +26,207 @@ schema = {
   type: 'object',
   properties: {
     'connection': {
+      type: 'object',
       $ref: 'module://@nikitajs/network/lib/http',
       required: ['principal', 'password']
-    }
-  },
-  criterias: {
-    type: 'object',
-    properties: {
-      'login': {
-        type: 'string'
-      },
-      'first': {
-        type: 'string'
-      },
-      'last': {
-        type: 'string'
-      },
-      'cn': {
-        type: 'string'
-      },
-      'displayname': {
-        type: 'string'
-      },
-      'initials': {
-        type: 'string'
-      },
-      'homedir': {
-        type: 'string'
-      },
-      'gecos': {
-        type: 'string'
-      },
-      'shell': {
-        type: 'string'
-      },
-      'principal': {
-        type: 'string'
-      },
-      'principal_expiration': {
-        type: ['string', 'object'],
-        instance_of: Date,
-        format: 'date-time'
-      },
-      'password_expiration': {
-        type: ['string', 'object'],
-        instance_of: Date,
-        format: 'date-time'
-      },
-      'email': {
-        type: 'string'
-      },
-      'password': {
-        type: 'string'
-      },
-      'uid': {
-        type: 'integer'
-      },
-      'gidnumber': {
-        type: 'integer'
-      },
-      'street': {
-        type: 'string'
-      },
-      'city': {
-        type: 'string'
-      },
-      'state': {
-        type: 'string'
-      },
-      'postalcode': {
-        type: 'string'
-      },
-      'phone': {
-        type: 'string'
-      },
-      'mobile': {
-        type: 'string'
-      },
-      'pager': {
-        type: 'string'
-      },
-      'fax': {
-        type: 'string'
-      },
-      'orgunit': {
-        type: 'string'
-      },
-      'title': {
-        type: 'string'
-      },
-      'manager': {
-        type: 'string'
-      },
-      'carlicense': {
-        type: 'string'
-      },
-      'ipauserauthtype': {
-        type: 'string',
-        enum: [
-          'password',
-          'radius',
-          'otp' // user_auth_type
-        ]
-      },
-      'class': {
-        type: 'string'
-      },
-      'radius': {
-        type: 'string'
-      },
-      'radius_username': {
-        type: 'string'
-      },
-      'departmentnumber': {
-        type: 'string'
-      },
-      'employeenumber': {
-        type: 'string'
-      },
-      'employeetype': {
-        type: 'string'
-      },
-      'preferredlanguage': {
-        type: 'string'
-      },
-      'certificate': {
-        type: 'string'
-      },
-      'disabled': {
-        type: 'boolean'
-      },
-      'preserved': {
-        type: 'boolean'
-      },
-      'timelimit': {
-        type: 'integer'
-      },
-      'sizelimit': {
-        type: 'integer'
-      },
-      'pkey_only': {
-        type: 'string'
-      },
-      'in_group': {
-        type: 'array',
-        items: {
+    },
+    'criterias': {
+      type: 'object',
+      properties: {
+        'login': {
           type: 'string'
-        }
-      },
-      'not_in_group': {
-        type: 'array',
-        items: {
+        },
+        'first': {
           type: 'string'
-        }
-      },
-      'in_netgroup': {
-        type: 'array',
-        items: {
+        },
+        'last': {
           type: 'string'
-        }
-      },
-      'not_in_netgroup': {
-        type: 'array',
-        items: {
+        },
+        'cn': {
           type: 'string'
-        }
-      },
-      'in_role': {
-        type: 'array',
-        items: {
+        },
+        'displayname': {
           type: 'string'
-        }
-      },
-      'not_in_role': {
-        type: 'array',
-        items: {
+        },
+        'initials': {
           type: 'string'
-        }
-      },
-      'in_hbacrule': {
-        type: 'array',
-        items: {
+        },
+        'homedir': {
           type: 'string'
-        }
-      },
-      'not_in_hbacrule': {
-        type: 'array',
-        items: {
+        },
+        'gecos': {
           type: 'string'
-        }
-      },
-      'in_sudorule': {
-        type: 'array',
-        items: {
+        },
+        'shell': {
           type: 'string'
-        }
-      },
-      'not_in_sudorule': {
-        type: 'array',
-        items: {
+        },
+        'principal': {
           type: 'string'
+        },
+        'principal_expiration': {
+          type: ['string', 'object'],
+          instanceof: 'Date',
+          format: 'date-time'
+        },
+        'password_expiration': {
+          type: ['string', 'object'],
+          instanceof: 'Date',
+          format: 'date-time'
+        },
+        'email': {
+          type: 'string'
+        },
+        'password': {
+          type: 'string'
+        },
+        'uid': {
+          type: 'integer'
+        },
+        'gidnumber': {
+          type: 'integer'
+        },
+        'street': {
+          type: 'string'
+        },
+        'city': {
+          type: 'string'
+        },
+        'state': {
+          type: 'string'
+        },
+        'postalcode': {
+          type: 'string'
+        },
+        'phone': {
+          type: 'string'
+        },
+        'mobile': {
+          type: 'string'
+        },
+        'pager': {
+          type: 'string'
+        },
+        'fax': {
+          type: 'string'
+        },
+        'orgunit': {
+          type: 'string'
+        },
+        'title': {
+          type: 'string'
+        },
+        'manager': {
+          type: 'string'
+        },
+        'carlicense': {
+          type: 'string'
+        },
+        'ipauserauthtype': {
+          type: 'string',
+          enum: [
+            'password',
+            'radius',
+            'otp' // user_auth_type
+          ]
+        },
+        'class': {
+          type: 'string'
+        },
+        'radius': {
+          type: 'string'
+        },
+        'radius_username': {
+          type: 'string'
+        },
+        'departmentnumber': {
+          type: 'string'
+        },
+        'employeenumber': {
+          type: 'string'
+        },
+        'employeetype': {
+          type: 'string'
+        },
+        'preferredlanguage': {
+          type: 'string'
+        },
+        'certificate': {
+          type: 'string'
+        },
+        'disabled': {
+          type: 'boolean'
+        },
+        'preserved': {
+          type: 'boolean'
+        },
+        'timelimit': {
+          type: 'integer'
+        },
+        'sizelimit': {
+          type: 'integer'
+        },
+        'pkey_only': {
+          type: 'string'
+        },
+        'in_group': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'not_in_group': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'in_netgroup': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'not_in_netgroup': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'in_role': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'not_in_role': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'in_hbacrule': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'not_in_hbacrule': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'in_sudorule': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        },
+        'not_in_sudorule': {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
         }
       }
     }
