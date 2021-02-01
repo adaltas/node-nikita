@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'action.scheduler', -> # Test on_call
+describe 'action.scheduler', ->
 
   describe 'arguments', ->
 
@@ -23,15 +23,14 @@ describe 'action.scheduler', -> # Test on_call
     it 'executed 1 args with 2 actions sequentially', ->
       stack = []
       nikita.call [
-        handler: ->
+        ->
           stack.push 1
           new Promise (resolve) ->
             setTimeout ->
               stack.push 2
               resolve 1
             , 100
-      ,
-        handler: ->
+        ->
           stack.push 3
           new Promise (resolve) ->
             setTimeout ->
@@ -69,6 +68,91 @@ describe 'action.scheduler', -> # Test on_call
           resolve()
       result = await app
       result.should.eql 'value @ 0'
+  
+  describe 'error in last child', ->
+
+    it 'return rejected promise', ->
+      nikita ->
+        @call ->
+          @call ->
+            new Promise (resolve, reject) ->
+              reject Error 'catchme'
+        .should.be.rejectedWith 'catchme'
+
+    it 'await throw error', ->
+      nikita ->
+        @call ->
+          @call ->
+            await @call ->
+              new Promise (resolve, reject) ->
+                reject Error 'catchme'
+        .should.be.rejectedWith 'catchme'
+        
+    it 'await with try/catch', ->
+      nikita ->
+        @call ->
+          try
+            await @call ->
+              new Promise (resolve, reject) ->
+                reject Error 'catchme'
+          catch err
+            err.message.should.eql 'catchme'
+  
+    it 'throw error and return valid output', ->
+      nikita ->
+        @call ->
+          @call ->
+            @call ->
+              throw Error 'catchme'
+            true
+        .should.finally.match status: true
+
+    it 'reject promise and return valid output', ->
+      nikita ->
+        @call ->
+          @call ->
+            @call ->
+              new Promise (resolve, reject) ->
+                reject Error 'catchme'
+            true
+        .should.finally.match status: true
+  
+  describe 'error in array of actions', ->
+
+    it 'array with an error sent synchronously', ->
+      stack = []
+      nikita.call [
+          ->
+            stack.push 1
+            true
+          ->
+            stack.push 2
+            throw Error 'catchme'
+          ->
+            stack.push 3
+            true
+        ]
+      .should.be.rejectedWith 'catchme'
+      .then -> stack.should.eql [1,2]
+
+    it 'array with an error sent asynchronously', ->
+      stack = []
+      nikita.call [
+          ->
+            stack.push 1
+            true
+          ->
+            stack.push 2
+            new Promise (resolve, reject) ->
+              setTimeout ->
+                reject Error 'catchme'
+              , 100
+          ->
+            stack.push 3
+            true
+        ]
+      .should.be.rejectedWith 'catchme'
+      .then -> stack.should.eql [1,2]
   
   describe 'error handling', ->
 

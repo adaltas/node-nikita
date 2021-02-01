@@ -37,7 +37,7 @@ session = function(action = {}) {
     action.state.namespace = [];
     // Schedule the action and get the result as a promise
     prom = action.scheduler.push(async function() {
-      var actions, child, schl;
+      var actions, child;
       // Validate the namespace
       child = (await action.registry.get(namespace));
       if (!child) {
@@ -75,11 +75,13 @@ session = function(action = {}) {
       if (!Array.isArray(actions)) {
         return session(actions);
       } else {
-        schl = schedule();
-        return Promise.all(actions.map(function(action) {
-          return schl.push(function() {
+        // schl = schedule()
+        // Promise.all actions.map (action) ->
+        //   schl.push -> session action
+        return schedule(actions.map(function(action) {
+          return function() {
             return session(action);
-          });
+          };
         }));
       }
     });
