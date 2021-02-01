@@ -1,6 +1,7 @@
 
 array = require './array'
 {snake_case} = require './string'
+{is_object_literal} = require 'mixme'
 
 module.exports =
   clean: (content, undefinedOnly) ->
@@ -33,17 +34,17 @@ module.exports =
       diff[k] ?= []
       diff[k][1] = v
     diff
-  equals: (obj1, obj2, keys) ->
-    keys1 = Object.keys obj1
-    keys2 = Object.keys obj2
-    if keys
-      keys1 = keys1.filter (k) -> keys.indexOf(k) isnt -1
-      keys2 = keys2.filter (k) -> keys.indexOf(k) isnt -1
-    else keys = keys1
-    return false if keys1.length isnt keys2.length
-    for k in keys
-      return false if obj1[k] isnt obj2[k]
-    return true
+  # equals: (obj1, obj2, keys) ->
+  #   keys1 = Object.keys obj1
+  #   keys2 = Object.keys obj2
+  #   if keys
+  #     keys1 = keys1.filter (k) -> keys.indexOf(k) isnt -1
+  #     keys2 = keys2.filter (k) -> keys.indexOf(k) isnt -1
+  #   else keys = keys1
+  #   return false if keys1.length isnt keys2.length
+  #   for k in keys
+  #     return false if obj1[k] isnt obj2[k]
+  #   return true
   filter: (source, black, white) ->
     black ?= []
     obj = {}

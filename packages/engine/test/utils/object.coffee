@@ -14,14 +14,13 @@ describe 'utils.object', ->
       copy source, ['a', 'c']
       source.should.eql {a: 'value 1', b: 'value 2', c: 1, d: 2}
 
-  describe 'equals', ->
-
-    it 'two objects', ->
-      equals({a: '1', b: '2'}, {a: '1', b: '2'}).should.be.true()
-      equals({a: '1', b: '1'}, {a: '2', b: '2'}).should.be.false()
-      equals({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}, ['a', 'c']).should.be.true()
-      equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'c']).should.be.true()
-      equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'b']).should.be.false()
+  # describe 'equals', ->
+  #   it 'two objects', ->
+  #     equals({a: '1', b: '2'}, {a: '1', b: '2'}).should.be.true()
+  #     equals({a: '1', b: '1'}, {a: '2', b: '2'}).should.be.false()
+  #     equals({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}, ['a', 'c']).should.be.true()
+  #     equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'c']).should.be.true()
+  #     equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'b']).should.be.false()
 
   describe 'diff', ->
 
