@@ -182,20 +182,22 @@ receives SIGKILL.`
     'nice': {
       oneOf: [
         {
-          type: 'integer'
+          type: 'integer',
+          minimum: -20,
+          maximum: 19
         },
         {
           type: 'object',
           patternProperties: {
             '^-|soft|hard$': {
-              type: 'integer'
+              type: 'integer',
+              minimum: -20,
+              maximum: 19
             }
           },
           additionalProperties: false
         }
       ],
-      minimum: -20,
-      maximum: 19,
       description: `Max nice priority allowed to raise to values.`
     },
     'nofile': {

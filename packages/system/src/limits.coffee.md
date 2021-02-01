@@ -191,14 +191,17 @@ page for further information.
         'nice':
           oneOf: [
             type: 'integer'
+            minimum: -20
+            maximum: 19
           ,
             type: 'object'
             patternProperties:
-              '^-|soft|hard$': type: 'integer'
+              '^-|soft|hard$':
+                type: 'integer'
+                minimum: -20
+                maximum: 19
             additionalProperties: false
           ]
-          minimum: -20
-          maximum: 19
           description: '''
           Max nice priority allowed to raise to values.
           '''
