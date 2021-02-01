@@ -6,7 +6,7 @@ session = require('../session');
 utils = require('../utils');
 
 module.exports = {
-  name: '@nikitajs/engine/lib/plugins/assertion',
+  name: '@nikitajs/engine/lib/plugins/assertions',
   require: ['@nikitajs/engine/lib/metadata/raw', '@nikitajs/engine/lib/metadata/disabled'],
   hooks: {
     'nikita:session:normalize': function(action, handler) {
@@ -111,9 +111,7 @@ handlers = {
           },
           parent: action,
           handler: assertion,
-          config: action.config,
-          error: error,
-          output: output
+          config: action.config
         }));
         if (typeof run !== 'boolean') {
           throw Error;

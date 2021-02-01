@@ -21,6 +21,7 @@ create = ->
     require './plugins/args'
     require './plugins/argument_to_config'
     require './plugins/assertions'
+    require './plugins/assertions_exists'
     require './plugins/conditions'
     require './plugins/conditions_execute'
     require './plugins/conditions_exists'
