@@ -80,10 +80,12 @@ describe 'plugins.metadata.tmpdir', ->
       nikita
         ssh: ssh
       , ->
-        @call metadata: tmpdir: true, dirty: true, (->)
-        @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
-        .should.resolvedWith exists: true
-        @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
+        try
+          @call metadata: tmpdir: true, dirty: true, (->)
+          {exists} = await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
+          exists.should.be.true()
+        finally
+          @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
 
     they 'is false', ({ssh}) ->
       nikita
