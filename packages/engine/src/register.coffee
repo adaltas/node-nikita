@@ -40,6 +40,7 @@ module.exports =
     'mkdir': '@nikitajs/engine/src/actions/fs/mkdir'
     'move': '@nikitajs/engine/src/actions/fs/move'
     'remove': '@nikitajs/engine/src/actions/fs/remove'
+    'wait': '@nikitajs/engine/src/actions/fs/wait'
   'log':
     '': handler: (->)
     'cli': '@nikitajs/engine/src/actions/log/cli'
