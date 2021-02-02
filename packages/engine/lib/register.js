@@ -47,7 +47,8 @@ module.exports = {
     'link': '@nikitajs/engine/lib/actions/fs/link',
     'mkdir': '@nikitajs/engine/lib/actions/fs/mkdir',
     'move': '@nikitajs/engine/lib/actions/fs/move',
-    'remove': '@nikitajs/engine/lib/actions/fs/remove'
+    'remove': '@nikitajs/engine/lib/actions/fs/remove',
+    'wait': '@nikitajs/engine/lib/actions/fs/wait'
   },
   'log': {
     '': {
