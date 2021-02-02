@@ -103,12 +103,12 @@ pass all the properties through the `ssh` property.
           anyOf: [{format: 'ipv4'}, {format: 'hostname'}]
           default: '127.0.0.1'
           description: """
-          Hostname or IP address of the remove server.
+          Hostname or IP address of the remote server.
           """
         'ip':
           type: 'string'
           description: """
-          IP address of the remove server, used if "host" option isn't already
+          IP address of the remote server, used if "host" option isn't already
           defined.
           """
         'password':
@@ -121,7 +121,7 @@ pass all the properties through the `ssh` property.
           type: 'integer'
           default: 22
           description: """
-          Port of the remove server.
+          Port of the remote server.
           """
         'private_key':
           type: 'string'

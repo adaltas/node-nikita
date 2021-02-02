@@ -118,11 +118,11 @@ schema = {
         }
       ],
       default: '127.0.0.1',
-      description: `Hostname or IP address of the remove server.`
+      description: `Hostname or IP address of the remote server.`
     },
     'ip': {
       type: 'string',
-      description: `IP address of the remove server, used if "host" option isn't already
+      description: `IP address of the remote server, used if "host" option isn't already
 defined.`
     },
     'password': {
@@ -133,7 +133,7 @@ connection.`
     'port': {
       type: 'integer',
       default: 22,
-      description: `Port of the remove server.`
+      description: `Port of the remote server.`
     },
     'private_key': {
       type: 'string',
