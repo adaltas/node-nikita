@@ -108,8 +108,7 @@ pass all the properties through the `ssh` property.
         'ip':
           type: 'string'
           description: """
-          IP address of the remote server, used if "host" option isn't already
-          defined.
+          IP address of the remote server, used if `host` isn't already defined.
           """
         'password':
           type: 'string'
@@ -126,14 +125,14 @@ pass all the properties through the `ssh` property.
         'private_key':
           type: 'string'
           description: """
-          Content of the private key used to anthenticate the user and create
+          Content of the private key used to authenticate the user and create
           the SSH connection. It is only used if `password` is not provided.
           """
         'private_key_path':
           type: 'string'
           default: '~/.ssh/id_rsa'
           description: """
-          Local file location of the private key used to anthenticate the user
+          Local file location of the private key used to authenticate the user
           and create the SSH connection. It is only used if `password` and
           `private_key` are not provided.
           """
@@ -153,7 +152,7 @@ pass all the properties through the `ssh` property.
           type: 'string'
           default: 'root'
           description: """
-          Username of the user used to anthenticate and create the SSH
+          Username of the user used to authenticate and create the SSH
           connection.
           """
 
