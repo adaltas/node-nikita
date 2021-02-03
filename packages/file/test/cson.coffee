@@ -21,7 +21,7 @@ describe 'file.cson', ->
       .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
-        content: 'user: \"torval\"'
+        content: 'user: \'torval\''
 
   they 'merge target', ({ssh}) ->
     nikita
@@ -38,7 +38,7 @@ describe 'file.cson', ->
       .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
-        content: 'user: \"torval\"\nmerge: true'
+        content: 'user: \'torval\'\nmerge: true'
 
   they 'merge target which does not exists', ({ssh}) ->
     nikita
@@ -52,4 +52,4 @@ describe 'file.cson', ->
       .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
-        content: 'user: \"torval\"'
+        content: 'user: \'torval\''

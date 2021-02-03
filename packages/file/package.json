@@ -53,11 +53,11 @@
     }
   ],
   "dependencies": {
+    "cson": "^7.20.0",
     "diff": "^5.0.0",
     "handlebars": "^4.7.6",
     "ini": "^1.3.8",
     "mixme": "^0.4.0",
-    "season": "^6.0.2",
     "xmlbuilder": "^15.1.1",
     "xmldom": "^0.4.0"
   },

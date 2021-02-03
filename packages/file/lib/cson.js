@@ -21,7 +21,7 @@
 // ```
 
 // ## Schema
-var handler, merge, schema, season;
+var cson, handler, merge, schema;
 
 schema = {
   type: 'object',
@@ -76,7 +76,7 @@ handler = async function({
         target: config.target,
         encoding: config.encoding
       })));
-      data = season.parse(data);
+      data = cson.parse(data);
       config.content = merge(data, config.content);
       log({
         message: "Target Merged",
@@ -99,7 +99,7 @@ handler = async function({
     level: 'DEBUG'
   });
   await this.file({
-    content: season.stringify(config.content),
+    content: cson.stringify(config.content),
     target: config.target,
     backup: config.backup,
     gid: config.gid,
@@ -120,8 +120,8 @@ module.exports = {
 // ## Dependencies
 ({merge} = require('mixme'));
 
-season = require('season');
+cson = require('cson');
 
 // ## Resources
 
-// [season]: https://www.npmjs.com/package/season
+// [cson]: https://www.npmjs.com/package/cson

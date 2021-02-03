@@ -64,7 +64,7 @@ console.info(`Content was updated: ${status}`)
           {data} = await @fs.base.readFile
             target: config.target
             encoding: config.encoding
-          data = season.parse data
+          data = cson.parse data
           config.content = merge data, config.content
           log message: "Target Merged", level: 'DEBUG'
         catch err
@@ -73,7 +73,7 @@ console.info(`Content was updated: ${status}`)
           log message: "No Target To Merged", level: 'DEBUG'
       log message: "Serialize Content", level: 'DEBUG'
       await @file
-        content: season.stringify config.content
+        content: cson.stringify config.content
         target: config.target
         backup: config.backup
         gid: config.gid
@@ -91,8 +91,8 @@ console.info(`Content was updated: ${status}`)
 ## Dependencies
 
     {merge} = require 'mixme'
-    season = require 'season'
+    cson = require('cson')
 
 ## Resources
 
-[season]: https://www.npmjs.com/package/season
+[cson]: https://www.npmjs.com/package/cson
