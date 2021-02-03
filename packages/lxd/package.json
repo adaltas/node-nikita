@@ -11,7 +11,7 @@
     "lxd",
     "container"
   ],
-  "version": "0.9.7",
+  "version": "1.0.0-alpha.0",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -49,8 +49,8 @@
   "devDependencies": {
     "coffeescript": "^2.5.1",
     "mocha": "^8.2.1",
-    "should": "^13.2.3",
-    "mocha-they": "^0.1.2"
+    "mocha-they": "^0.1.2",
+    "should": "^13.2.3"
   },
   "engines": {
     "node": ">= 10.0.0"

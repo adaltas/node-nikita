@@ -10,7 +10,7 @@
     "tls",
     "ssl"
   ],
-  "version": "0.9.7",
+  "version": "1.0.0-alpha.0",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -41,13 +41,13 @@
     "@nikitajs/core": "^0.9.7"
   },
   "devDependencies": {
-    "@nikitajs/lxd": "^0.9.7",
-    "@nikitajs/tools": "^0.9.7",
+    "@nikitajs/lxd": "^1.0.0-alpha.0",
+    "@nikitajs/tools": "^1.0.0-alpha.0",
     "coffeescript": "^2.5.1",
     "mixme": "^0.4.0",
     "mocha": "^8.2.1",
-    "should": "^13.2.3",
-    "mocha-they": "^0.1.2"
+    "mocha-they": "^0.1.2",
+    "should": "^13.2.3"
   },
   "engines": {
     "node": ">= 10.0.0"
@@ -78,7 +78,7 @@
     "directory": "packages/ipa"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\\/ipa\\\/src/@nikitajs\\\/ipa\\\/lib/g'",
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/ipa\\/src/@nikitajs\\/ipa\\/lib/g'",
     "pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'",
     "testall": "mocha 'test/**/*.coffee' && env/run.sh"

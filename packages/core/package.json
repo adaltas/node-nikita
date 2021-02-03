@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/core",
-  "version": "0.9.7",
+  "version": "1.0.0-alpha.0",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "nikita",
