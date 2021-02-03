@@ -23,6 +23,17 @@ describe 'plugins.metadata.relax', ->
       context.call ({context}) -> # with parent
         context.call metadata: relax: true, ->
           throw Error 'Dont cry, laugh outloud'
+  
+  it 'does not depend on the sibling position, fix #282', ->
+    # Error thrown in last child
+    {error} = await nikita metadata: relax: true, ->
+      @call -> throw Error 'catchme'
+    error.message.should.eql 'catchme'
+    # Error not thrown in last child
+    {error} = await nikita metadata: relax: true, ->
+      @call -> throw Error 'catchme'
+      @call -> true
+    error.message.should.eql 'catchme'
 
   it.skip 'sync with error throw in child', ->
     nikita
