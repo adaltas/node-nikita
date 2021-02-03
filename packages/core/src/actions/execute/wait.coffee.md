@@ -115,7 +115,3 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
       metadata:
         argument_to_config: 'command'
         schema: schema
-
-## Dependencies
-
-    each = require 'each'

@@ -61,7 +61,6 @@
     "ajv-formats": "^1.5.1",
     "ajv-keywords": "^4.0.0",
     "colors": "^1.4.0",
-    "each": "^1.2.2",
     "js-yaml": "^4.0.0",
     "minimatch": "^3.0.4",
     "mixme": "^0.4.0",

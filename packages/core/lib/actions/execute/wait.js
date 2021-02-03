@@ -15,7 +15,7 @@
 // ```
 
 // ## Schema
-var each, handler, schema;
+var handler, schema;
 
 schema = {
   type: 'object',
@@ -159,6 +159,3 @@ module.exports = {
     schema: schema
   }
 };
-
-// ## Dependencies
-each = require('each');
