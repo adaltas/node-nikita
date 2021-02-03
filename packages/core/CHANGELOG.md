@@ -5,20 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [1.0.0-alpha.0](https://github.com/adaltas/node-nikita/compare/@nikitajs/core@0.9.7...@nikitajs/core@1.0.0-alpha.0) (2021-02-03)
 
-
-### Features
-
-* **engine:** (un)assert_exists ([59e0961](https://github.com/adaltas/node-nikita/commit/59e0961f5aa56d70abddf797673b7842c6f9120c))
-* **engine:** add index and position metadata ([d61b978](https://github.com/adaltas/node-nikita/commit/d61b9785bf465146dabfd25625e282a0a5c4091f))
-* **engine:** new pubsub plugin ([fd9a42a](https://github.com/adaltas/node-nikita/commit/fd9a42aced9da6a8fb537d71c18acd1d1d589378))
-* **network:** support for curl error code in download ([72d9f53](https://github.com/adaltas/node-nikita/commit/72d9f534530b462f36703b497c7a0e327e622344))
-
-
-
-
-
-
-# Changelog
+The jump to version 1.0.0 is a major which rewrite every single part of the code. The list of changes is too big to be reproduce here. We'll started generating the changelog from this version.
 
 ## Version 0.9.7
 
