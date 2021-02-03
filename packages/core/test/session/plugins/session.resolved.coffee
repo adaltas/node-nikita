@@ -11,7 +11,7 @@ describe 'session.plugins.session.resolved', ->
     n = nikita ({context, plugins, registry}) ->
       plugins.register
         'hooks':
-          'nikita:session:resolved': ({action, output}) ->
+          'nikita:resolved': ({action, output}) ->
             stack.push 'end'
       @call ->
         stack.push '1'

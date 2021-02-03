@@ -9,7 +9,7 @@ module.exports =
     '@nikitajs/core/src/metadata/disabled'
   ]
   hooks:
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       # Ventilate assertions properties defined at root
       assertions = {}
       for property, value of action
@@ -25,7 +25,7 @@ module.exports =
         action = await handler.call null, ...arguments
         action.assertions = assertions
         action
-    'nikita:session:result': ({action, error, output}) ->
+    'nikita:result': ({action, error, output}) ->
       final_run = true
       for k, v of action.assertions
         continue unless handlers[k]?

@@ -9,7 +9,7 @@ utils = require '../utils'
 module.exports =
   name: '@nikitajs/core/src/plugins/args'
   hooks:
-    'nikita:session:arguments':
+    'nikita:arguments':
       handler: ({args, child}, handler) ->
         # Erase all arguments to re-inject them later
         if child.metadata.raw_input
@@ -31,7 +31,7 @@ module.exports =
           else
             actions.args = args[0]
             actions
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       ->
         # Prevent arguments to move into config by normalize
         args = action.args

@@ -124,20 +124,20 @@ handler = function({
   //   return unless config.serializer.stderr
   //   data = config.serializer.stderr log
   //   config.stream.write data if data?
-  events.on('nikita:session:resolved', function() {
+  events.on('nikita:resolved', function() {
     var data;
-    if (config.serializer['nikita:session:resolved']) {
-      data = config.serializer['nikita:session:resolved'].apply(null, arguments);
+    if (config.serializer['nikita:resolved']) {
+      data = config.serializer['nikita:resolved'].apply(null, arguments);
       if (data != null) {
         config.stream.write(data);
       }
     }
     return close();
   });
-  events.on('nikita:session:rejected', function(err) {
+  events.on('nikita:rejected', function(err) {
     var data;
-    if (config.serializer['nikita:session:rejected']) {
-      data = config.serializer['nikita:session:rejected'].apply(null, arguments);
+    if (config.serializer['nikita:rejected']) {
+      data = config.serializer['nikita:rejected'].apply(null, arguments);
       if (data != null) {
         config.stream.write(data);
       }

@@ -152,7 +152,7 @@ handler = function({config, metadata, ssh}) {
         return null;
       },
       // 'diff': null
-      'nikita:session:resolved': function() {
+      'nikita:resolved': function() {
         var color, line;
         color = config.colors ? config.colors.status_true : false;
         line = format_line({
@@ -166,7 +166,7 @@ handler = function({config, metadata, ssh}) {
         }
         return line + '\n';
       },
-      'nikita:session:rejected': function({error}) {
+      'nikita:rejected': function({error}) {
         var color, line;
         color = config.colors ? config.colors.status_error : false;
         line = format_line({

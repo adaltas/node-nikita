@@ -15,7 +15,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/output_logs',
   require: ['@nikitajs/core/lib/plugins/tools_log', '@nikitajs/core/lib/metadata/status', '@nikitajs/core/lib/metadata/raw'],
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       after: '@nikitajs/core/lib/plugins/tools_log',
       handler: function(action) {
         action.state.logs = [];
@@ -40,7 +40,7 @@ module.exports = {
         })(action.tools.log);
       }
     },
-    'nikita:session:result': {
+    'nikita:result': {
       after: '@nikitajs/core/lib/metadata/status',
       handler: function({action, output}, handler) {
         if (action.metadata.raw_output) {

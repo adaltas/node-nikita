@@ -6,7 +6,7 @@ selfTemplated = require('self-templated');
 module.exports = {
   name: '@nikitajs/core/lib/plugins/templated',
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/schema'],
       // '@nikitajs/core/lib/metadata/tmpdir'
       handler: async function(action) {

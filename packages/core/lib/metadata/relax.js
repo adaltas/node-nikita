@@ -6,7 +6,7 @@ utils = require('../utils');
 module.exports = {
   name: '@nikitajs/core/lib/metadata/relax',
   hooks: {
-    'nikita:session:action': function(action, handler) {
+    'nikita:action': function(action, handler) {
       var base;
       if ((base = action.metadata).relax == null) {
         base.relax = false;
@@ -19,7 +19,7 @@ module.exports = {
       }
       return handler;
     },
-    'nikita:session:result': function(args) {
+    'nikita:result': function(args) {
       if (!args.action.metadata.relax) {
         return;
       }

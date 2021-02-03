@@ -10,7 +10,7 @@ module.exports =
     '@nikitajs/core/src/metadata/disabled'
   ]
   hooks:
-    'nikita:session:normalize':
+    'nikita:normalize':
       # This is hanging, no time for investigation
       # after: [
       #   '@nikitajs/core/src/plugins/assertions'
@@ -31,7 +31,7 @@ module.exports =
           action = await handler.call null, ...arguments
           mutate action.assertions, assertions
           action
-    'nikita:session:result': ({action, error, output}) ->
+    'nikita:result': ({action, error, output}) ->
       final_run = true
       for k, v of action.assertions
         continue unless handlers[k]?

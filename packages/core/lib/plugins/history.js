@@ -2,7 +2,7 @@
 module.exports = {
   name: '@nikitajs/core/lib/plugins/history',
   hooks: {
-    'nikita:session:normalize': function(action, handler) {
+    'nikita:normalize': function(action, handler) {
       return async function() {
         action = (await handler.call(null, ...arguments));
         action.children = [];
@@ -15,7 +15,7 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:result': function({action, error, output}) {
+    'nikita:result': function({action, error, output}) {
       if (!action.parent) {
         return;
       }

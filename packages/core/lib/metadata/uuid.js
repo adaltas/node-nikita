@@ -8,7 +8,7 @@ var uuid;
 module.exports = {
   name: '@nikitajs/core/lib/metadata/uuid',
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       handler: function(action) {
         if (action.metadata.depth === 0) {
           return action.metadata.uuid = uuid();

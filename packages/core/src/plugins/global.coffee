@@ -18,7 +18,7 @@ module.exports =
     '@nikitajs/core/src/plugins/tools_find'
   ]
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       handler: (action) ->
         global = action.metadata.global
         return action unless global

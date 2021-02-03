@@ -23,7 +23,7 @@ parse = (uri) ->
 module.exports =
   name: '@nikitajs/core/src/plugins/schema'
   hooks:
-    'nikita:session:normalize':
+    'nikita:normalize':
       handler: (action, handler) ->
         ->
           # Handler execution
@@ -83,7 +83,7 @@ module.exports =
                 .join('; ')+'.'
               ]
           action
-    'nikita:session:action':
+    'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/global'
       ]

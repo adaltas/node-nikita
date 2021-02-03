@@ -7,7 +7,7 @@ module.exports =
     '@nikitajs/core/src/plugins/conditions'
   ]
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       after: '@nikitajs/core/src/plugins/conditions'
       before: '@nikitajs/core/src/metadata/disabled'
       handler: (action) ->

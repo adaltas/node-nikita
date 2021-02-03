@@ -2,12 +2,12 @@
 module.exports = {
   name: '@nikitajs/core/lib/plugins/time',
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       handler: function(action) {
         return action.metadata.time_start = Date.now();
       }
     },
-    'nikita:session:result': {
+    'nikita:result': {
       before: '@nikitajs/core/lib/plugins/history',
       handler: function({action}) {
         return action.metadata.time_end = Date.now();

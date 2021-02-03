@@ -2,7 +2,7 @@
 module.exports = {
   name: '@nikitajs/core/lib/metadata/disabled',
   hooks: {
-    'nikita:session:action': function(action, handler) {
+    'nikita:action': function(action, handler) {
       var base;
       if ((base = action.metadata).disabled == null) {
         base.disabled = false;

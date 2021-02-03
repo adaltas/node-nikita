@@ -9,7 +9,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/assertions',
   require: ['@nikitajs/core/lib/metadata/raw', '@nikitajs/core/lib/metadata/disabled'],
   hooks: {
-    'nikita:session:normalize': function(action, handler) {
+    'nikita:normalize': function(action, handler) {
       var assertions, property, value;
       // Ventilate assertions properties defined at root
       assertions = {};
@@ -32,7 +32,7 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:result': async function({action, error, output}) {
+    'nikita:result': async function({action, error, output}) {
       var final_run, k, local_run, ref, v;
       final_run = true;
       ref = action.assertions;

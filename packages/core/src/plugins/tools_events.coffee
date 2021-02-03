@@ -4,7 +4,7 @@
 module.exports =
   name: '@nikitajs/core/src/plugins/tools_events'
   hooks:
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       ->
         # Handler execution
         action = await handler.apply null, arguments
@@ -14,9 +14,9 @@ module.exports =
         then action.parent.tools.events
         else action.tools.events = new EventEmitter()
         action
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       action.tools.events.emit 'nikita:action:start', action
-    'nikita:session:result':
+    'nikita:result':
       after: '@nikitajs/core/src/metadata/status'
       handler: ({action, error, output}, handler) ->
         ({action}) ->
@@ -27,8 +27,8 @@ module.exports =
           catch err
             action.tools.events.emit 'nikita:action:end', action, err, output
             throw err
-    'nikita:session:resolved': ({action}) ->
-      action.tools.events.emit 'nikita:session:resolved', ...arguments
-    'nikita:session:rejected': ({action}) ->
-      action.tools.events.emit 'nikita:session:rejected', ...arguments
+    'nikita:resolved': ({action}) ->
+      action.tools.events.emit 'nikita:resolved', ...arguments
+    'nikita:rejected': ({action}) ->
+      action.tools.events.emit 'nikita:rejected', ...arguments
       

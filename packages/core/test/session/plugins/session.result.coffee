@@ -10,7 +10,7 @@ describe 'session.plugins.session.result', ->
     called = false
     await session plugins: [
       ->
-        hooks: 'nikita:session:result': ({action}, handler) ->
+        hooks: 'nikita:result': ({action}, handler) ->
           await new Promise (resolved) ->
             called = true
             setImmediate resolved

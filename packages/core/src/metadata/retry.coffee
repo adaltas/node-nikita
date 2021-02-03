@@ -5,7 +5,7 @@ utils = require '../utils'
 module.exports =
   name: '@nikitajs/core/src/metadata/retry'
   hooks:
-    'nikita:session:action': (action, handler) ->
+    'nikita:action': (action, handler) ->
       action.metadata.attempt ?= 0
       action.metadata.retry ?= 1
       action.metadata.sleep ?= 3000

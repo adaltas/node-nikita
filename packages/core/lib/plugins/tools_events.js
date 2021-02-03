@@ -6,7 +6,7 @@ var EventEmitter;
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools_events',
   hooks: {
-    'nikita:session:normalize': function(action, handler) {
+    'nikita:normalize': function(action, handler) {
       return async function() {
         // Handler execution
         action = (await handler.apply(null, arguments));
@@ -18,10 +18,10 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:action': function(action) {
+    'nikita:action': function(action) {
       return action.tools.events.emit('nikita:action:start', action);
     },
-    'nikita:session:result': {
+    'nikita:result': {
       after: '@nikitajs/core/lib/metadata/status',
       handler: function({action, error, output}, handler) {
         return async function({action}) {
@@ -38,11 +38,11 @@ module.exports = {
         };
       }
     },
-    'nikita:session:resolved': function({action}) {
-      return action.tools.events.emit('nikita:session:resolved', ...arguments);
+    'nikita:resolved': function({action}) {
+      return action.tools.events.emit('nikita:resolved', ...arguments);
     },
-    'nikita:session:rejected': function({action}) {
-      return action.tools.events.emit('nikita:session:rejected', ...arguments);
+    'nikita:rejected': function({action}) {
+      return action.tools.events.emit('nikita:rejected', ...arguments);
     }
   }
 };

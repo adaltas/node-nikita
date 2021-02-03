@@ -3,14 +3,14 @@
 module.exports =
   name: '@nikitajs/core/src/plugins/history'
   hooks:
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       ->
         action = await handler.call null, ...arguments
         action.children = []
         action.siblings = action.parent.children if action.parent
         action.sibling = action.siblings.slice(-1)[0] if action.parent
         action
-    'nikita:session:result': ({action, error, output}) ->
+    'nikita:result': ({action, error, output}) ->
       return unless action.parent
       action.parent.children.push
         children: action.children

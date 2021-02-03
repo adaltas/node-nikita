@@ -27,7 +27,7 @@ session = (action={}) ->
           "got #{JSON.stringify namespace}."
         ]
       actions = await action.plugins.call
-        name: 'nikita:session:arguments'
+        name: 'nikita:arguments'
         args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
           actions = contextualize [...args, metadata: namespace: namespace]
@@ -67,7 +67,7 @@ session = (action={}) ->
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
       await action.plugins.call
-        name: 'nikita:session:register'
+        name: 'nikita:register'
         args: name: name, action: act
   # Register run helper
   action.run = ->
@@ -81,7 +81,7 @@ session = (action={}) ->
   result = new Promise (resolve, reject) ->
     # Hook intented to modify the current action being created
     action = await action.plugins.call
-      name: 'nikita:session:normalize'
+      name: 'nikita:normalize'
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: normalize
@@ -93,7 +93,7 @@ session = (action={}) ->
         action[k] = merge action_from_registry[k], action[k]
     # Hook attended to alter the execution of an action handler
     output = action.plugins.call
-      name: 'nikita:session:action'
+      name: 'nikita:action'
       args: action
       hooks: action.hooks.on_action
       handler: (action) ->
@@ -111,7 +111,7 @@ session = (action={}) ->
     # Hook to catch error and format output once all children are executed
     on_result = (error, output) ->
       action.plugins.call
-        name: 'nikita:session:result'
+        name: 'nikita:result'
         args: action: action, error: error, output: output
         hooks: action.hooks.on_result
         handler: ({action, error, output}) ->
@@ -120,12 +120,12 @@ session = (action={}) ->
   result.then (output) ->
     return unless action.parent is undefined
     action.plugins.call
-      name: 'nikita:session:resolved'
+      name: 'nikita:resolved'
       args: action: action, output: output
   , (err) ->
     return unless action.parent is undefined
     action.plugins.call
-      name: 'nikita:session:rejected'
+      name: 'nikita:rejected'
       args: action: action, error: err
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled

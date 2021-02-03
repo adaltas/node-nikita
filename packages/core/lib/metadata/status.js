@@ -12,7 +12,7 @@ module.exports = {
     // 'nikita:registry:normalize': (action) ->
     //   action.metadata ?= {}
     //   action.metadata.shy ?= false
-    'nikita:session:normalize': function(action, handler) {
+    'nikita:normalize': function(action, handler) {
       // Do not default shy to false or metadata from the registry will be overwritten
       // Todo: create a test to illutrate it
       // action.metadata.shy ?= false
@@ -63,7 +63,7 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:result': {
+    'nikita:result': {
       before: '@nikitajs/core/lib/plugins/history',
       handler: function({action, error, output}) {
         var inherit;

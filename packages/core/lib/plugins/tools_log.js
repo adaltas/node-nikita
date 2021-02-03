@@ -21,13 +21,13 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/tools_log',
   require: '@nikitajs/core/lib/plugins/tools_events',
   hooks: {
-    'nikita:session:normalize': function(action) {
+    'nikita:normalize': function(action) {
       var ref, ref1;
       if ((action.metadata.log == null) && (((ref = action.parent) != null ? (ref1 = ref.metadata) != null ? ref1.log : void 0 : void 0) != null)) {
         return action.metadata.log = action.parent.metadata.log;
       }
     },
-    'nikita:session:action': {
+    'nikita:action': {
       after: '@nikitajs/core/lib/plugins/tools_events',
       handler: function(action) {
         if (action.tools == null) {

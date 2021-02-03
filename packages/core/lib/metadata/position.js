@@ -7,7 +7,7 @@ module.exports = {
   name: '@nikitajs/core/lib/metadata/position',
   require: ['@nikitajs/core/lib/plugins/history'],
   hooks: {
-    'nikita:session:normalize': {
+    'nikita:normalize': {
       after: '@nikitajs/core/lib/plugins/history',
       handler: function(action, handler) {
         return async function() {
@@ -20,7 +20,7 @@ module.exports = {
         };
       }
     },
-    'nikita:session:action': function(action) {
+    'nikita:action': function(action) {
       if (typeof action.metadata.depth !== 'number') {
         throw utils.error('METADATA_DEPTH_INVALID_VALUE', ["configuration `depth` expect an integer value,", `got ${JSON.stringify(action.metadata.depth)}.`]);
       }

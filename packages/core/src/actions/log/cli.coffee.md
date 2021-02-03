@@ -105,7 +105,7 @@ nikita
           ids[action.metadata.index] = action
           null
         # 'diff': null
-        'nikita:session:resolved': ->
+        'nikita:resolved': ->
           color = if config.colors
           then config.colors.status_true
           else false
@@ -116,7 +116,7 @@ nikita
             time: ''
           line = color line if color
           return line+'\n'
-        'nikita:session:rejected': ({error}) ->
+        'nikita:rejected': ({error}) ->
           color = if config.colors
           then config.colors.status_error
           else false

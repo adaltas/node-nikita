@@ -14,7 +14,7 @@ module.exports =
   name: '@nikitajs/core/src/metadata/debug'
   require: '@nikitajs/core/src/plugins/tools_log'
   hooks:
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       debug = action.metadata.debug or false
       unless typeof debug is 'boolean' or debug is 'stdout' or debug instanceof stream.Writable
         throw utils.error 'METADATA_DEBUG_INVALID_VALUE', [
@@ -59,7 +59,7 @@ module.exports =
       action.tools.events.addListener 'stdin', debug.listener
       action.tools.events.addListener 'stdout_stream', debug.listener
       action.tools.events.addListener 'stderr_stream', debug.listener
-    'nikita:session:result':
+    'nikita:result':
       # after: '@nikitajs/core/src/plugins/log'
       handler: ({action}) ->
         debug = action.metadata.debug

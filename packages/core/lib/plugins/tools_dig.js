@@ -84,7 +84,7 @@ validate = function(action, args) {
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools_dig',
   hooks: {
-    'nikita:session:action': function(action) {
+    'nikita:action': function(action) {
       // Register function
       if (action.tools == null) {
         action.tools = {};

@@ -9,7 +9,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/tools_path',
   // require: '@nikitajs/core/lib/metadata/ssh'
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       // after: '@nikitajs/core/lib/metadata/ssh'
       handler: function(action) {
         if (action.tools == null) {

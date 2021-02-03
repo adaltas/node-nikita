@@ -14,7 +14,7 @@ module.exports =
     '@nikitajs/core/src/plugins/tools_find'
   ]
   hooks:
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       # Dont interfere with ssh actions
       return handler if action.metadata.namespace[0] is 'ssh'
       if action.hasOwnProperty 'ssh'
@@ -24,7 +24,7 @@ module.exports =
         action = await handler.call null, ...arguments
         action.ssh = ssh
         action
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       # return handler if action.metadata.namespace[0] is 'ssh'
       ssh = await action.tools.find (action) ->
         return undefined if action.ssh is undefined
@@ -46,7 +46,7 @@ module.exports =
       else if ssh is false
         ssh = null
       action.ssh = ssh
-    'nikita:session:result': ({action}) ->
+    'nikita:result': ({action}) ->
       if action.metadata.ssh_dispose
         await session
           # Need to inject `tools.log`

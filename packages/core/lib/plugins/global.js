@@ -14,7 +14,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/global',
   require: ['@nikitajs/core/lib/plugins/tools_find'],
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       handler: async function(action) {
         var base, global, k, ref, v;
         global = action.metadata.global;

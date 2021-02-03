@@ -7,7 +7,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/conditions',
   require: ['@nikitajs/core/lib/metadata/raw', '@nikitajs/core/lib/metadata/disabled'],
   hooks: {
-    'nikita:session:normalize': {
+    'nikita:normalize': {
       handler: function(action, handler) {
         var conditions, property, value;
         // Ventilate conditions properties defined at root
@@ -32,7 +32,7 @@ module.exports = {
         };
       }
     },
-    'nikita:session:action': {
+    'nikita:action': {
       before: '@nikitajs/core/lib/metadata/disabled',
       after: '@nikitajs/core/lib/plugins/templated',
       handler: async function(action) {

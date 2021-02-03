@@ -14,7 +14,7 @@ module.exports =
     '@nikitajs/core/src/plugins/tools_path'
   ]
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/ssh'
         '@nikitajs/core/src/metadata/uuid'
@@ -45,7 +45,7 @@ module.exports =
           action.metadata.tmpdir_dispose = true
         catch err
           throw err unless err.code is 'EEXIST'
-    'nikita:session:result':
+    'nikita:result':
       before: '@nikitajs/core/src/plugins/ssh'
       handler: ({action}) ->
         # Value of tmpdir could still be true if there was an error in

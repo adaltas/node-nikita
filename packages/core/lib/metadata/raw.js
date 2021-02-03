@@ -15,7 +15,7 @@ module.exports = {
       }
       return (base2 = action.metadata).raw_output != null ? base2.raw_output : base2.raw_output = action.metadata.raw;
     },
-    'nikita:session:action': function(action) {
+    'nikita:action': function(action) {
       var base, base1, base2;
       if ((base = action.metadata).raw == null) {
         base.raw = false;

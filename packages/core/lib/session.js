@@ -44,7 +44,7 @@ session = function(action = {}) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(namespace)}.`]));
       }
       actions = (await action.plugins.call({
-        name: 'nikita:session:arguments',
+        name: 'nikita:arguments',
         args: {
           args: args,
           child: child,
@@ -123,7 +123,7 @@ session = function(action = {}) {
     parent: action.parent ? action.parent.registry : registry,
     on_register: async function(name, act) {
       return (await action.plugins.call({
-        name: 'nikita:session:register',
+        name: 'nikita:register',
         args: {
           name: name,
           action: act
@@ -151,7 +151,7 @@ session = function(action = {}) {
     var action_from_registry, k, on_result, output, pump, ref, v;
     // Hook intented to modify the current action being created
     action = (await action.plugins.call({
-      name: 'nikita:session:normalize',
+      name: 'nikita:normalize',
       args: action,
       hooks: ((ref = action.hooks) != null ? ref.on_normalize : void 0) || action.on_normalize,
       handler: normalize
@@ -167,7 +167,7 @@ session = function(action = {}) {
     }
     // Hook attended to alter the execution of an action handler
     output = action.plugins.call({
-      name: 'nikita:session:action',
+      name: 'nikita:action',
       args: action,
       hooks: action.hooks.on_action,
       handler: function(action) {
@@ -189,7 +189,7 @@ session = function(action = {}) {
     // Hook to catch error and format output once all children are executed
     return on_result = function(error, output) {
       return action.plugins.call({
-        name: 'nikita:session:result',
+        name: 'nikita:result',
         args: {
           action: action,
           error: error,
@@ -211,7 +211,7 @@ session = function(action = {}) {
       return;
     }
     return action.plugins.call({
-      name: 'nikita:session:resolved',
+      name: 'nikita:resolved',
       args: {
         action: action,
         output: output
@@ -222,7 +222,7 @@ session = function(action = {}) {
       return;
     }
     return action.plugins.call({
-      name: 'nikita:session:rejected',
+      name: 'nikita:rejected',
       args: {
         action: action,
         error: err

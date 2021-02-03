@@ -6,7 +6,7 @@ module.exports =
   name: '@nikitajs/core/src/plugins/tools_path'
   # require: '@nikitajs/core/src/metadata/ssh'
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       # after: '@nikitajs/core/src/metadata/ssh'
       handler: (action) ->
         action.tools ?= {}

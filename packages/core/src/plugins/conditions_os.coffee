@@ -9,7 +9,7 @@ module.exports =
     '@nikitajs/core/src/plugins/conditions'
   ]
   hooks:
-    'nikita:session:normalize':
+    'nikita:normalize':
       after: '@nikitajs/core/src/plugins/conditions'
       handler: (action, handler) ->
         ->
@@ -30,7 +30,7 @@ module.exports =
               condition.linux_version = [condition.linux_version] unless Array.isArray condition.linux_version
               condition.linux_version = utils.semver.sanitize condition.linux_version, 'x'
           action
-    'nikita:session:action':
+    'nikita:action':
       after: '@nikitajs/core/src/plugins/conditions'
       before: '@nikitajs/core/src/metadata/disabled'
       handler: (action) ->

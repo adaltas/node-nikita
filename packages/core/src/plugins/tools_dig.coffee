@@ -61,7 +61,7 @@ validate = (action, args) ->
 module.exports =
   name: '@nikitajs/core/src/plugins/tools_dig'
   hooks:
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       # Register function
       action.tools ?= {}
       action.tools.dig = ->

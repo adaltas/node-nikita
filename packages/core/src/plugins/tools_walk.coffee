@@ -32,7 +32,7 @@ validate = (action, args) ->
 module.exports =
   name: '@nikitajs/core/src/plugins/tools_walk'
   hooks:
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       ->
         # Handler execution
         action = await handler.apply null, arguments

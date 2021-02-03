@@ -17,10 +17,10 @@ module.exports =
   name: '@nikitajs/core/src/plugins/tools_log'
   require: '@nikitajs/core/src/plugins/tools_events'
   hooks:
-    'nikita:session:normalize': (action) ->
+    'nikita:normalize': (action) ->
       if not action.metadata.log? and action.parent?.metadata?.log?
         action.metadata.log = action.parent.metadata.log
-    'nikita:session:action':
+    'nikita:action':
       after: '@nikitajs/core/src/plugins/tools_events'
       handler: (action) ->
         action.tools ?= {}

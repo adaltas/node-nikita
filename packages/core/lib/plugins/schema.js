@@ -31,7 +31,7 @@ parse = function(uri) {
 module.exports = {
   name: '@nikitajs/core/lib/plugins/schema',
   hooks: {
-    'nikita:session:normalize': {
+    'nikita:normalize': {
       handler: function(action, handler) {
         return async function() {
           var ajv, ref;
@@ -120,7 +120,7 @@ module.exports = {
         };
       }
     },
-    'nikita:session:action': {
+    'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/global'],
       handler: async function(action, handler) {
         var err;

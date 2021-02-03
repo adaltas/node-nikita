@@ -7,7 +7,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/conditions_execute',
   require: ['@nikitajs/core/lib/plugins/conditions'],
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       after: '@nikitajs/core/lib/plugins/conditions',
       before: '@nikitajs/core/lib/metadata/disabled',
       handler: async function(action) {

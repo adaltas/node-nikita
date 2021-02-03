@@ -8,7 +8,7 @@ module.exports =
     '@nikitajs/core/src/metadata/disabled'
   ]
   hooks:
-    'nikita:session:normalize':
+    'nikita:normalize':
       handler: (action, handler) ->
         # Ventilate conditions properties defined at root
         conditions = {}
@@ -25,7 +25,7 @@ module.exports =
           action = await handler.call null, ...arguments
           action.conditions = conditions
           action
-    'nikita:session:action':
+    'nikita:action':
       before: '@nikitajs/core/src/metadata/disabled'
       after: '@nikitajs/core/src/plugins/templated'
       handler: (action) ->

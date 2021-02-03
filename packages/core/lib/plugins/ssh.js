@@ -15,7 +15,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/ssh',
   require: ['@nikitajs/core/lib/plugins/tools_find'],
   hooks: {
-    'nikita:session:normalize': function(action, handler) {
+    'nikita:normalize': function(action, handler) {
       var ssh;
       if (action.metadata.namespace[0] === 'ssh') {
         // Dont interfere with ssh actions
@@ -31,7 +31,7 @@ module.exports = {
         return action;
       };
     },
-    'nikita:session:action': async function(action) {
+    'nikita:action': async function(action) {
       var ssh;
       // return handler if action.metadata.namespace[0] is 'ssh'
       ssh = (await action.tools.find(function(action) {
@@ -58,7 +58,7 @@ module.exports = {
       }
       return action.ssh = ssh;
     },
-    'nikita:session:result': async function({action}) {
+    'nikita:result': async function({action}) {
       if (action.metadata.ssh_dispose) {
         return (await session({
           // Need to inject `tools.log`

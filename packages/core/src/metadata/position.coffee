@@ -7,7 +7,7 @@ module.exports =
     '@nikitajs/core/src/plugins/history'
   ]
   hooks:
-    'nikita:session:normalize':
+    'nikita:normalize':
       after: '@nikitajs/core/src/plugins/history'
       handler: (action, handler) ->
         ->
@@ -17,7 +17,7 @@ module.exports =
           action.metadata.index = if action.siblings then action.siblings.length else 0
           action.metadata.position = if action.parent then action.parent.metadata.position.concat [action.metadata.index] else [0]
           action
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       unless typeof action.metadata.depth is 'number'
         throw utils.error 'METADATA_DEPTH_INVALID_VALUE', [
           "configuration `depth` expect an integer value,"

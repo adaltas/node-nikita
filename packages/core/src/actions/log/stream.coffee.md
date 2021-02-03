@@ -78,14 +78,14 @@ Write log to custom destinations in a user provided format.
       #   return unless config.serializer.stderr
       #   data = config.serializer.stderr log
       #   config.stream.write data if data?
-      events.on 'nikita:session:resolved', ->
-        if config.serializer['nikita:session:resolved']
-          data = config.serializer['nikita:session:resolved'].apply null, arguments
+      events.on 'nikita:resolved', ->
+        if config.serializer['nikita:resolved']
+          data = config.serializer['nikita:resolved'].apply null, arguments
           config.stream.write data if data?
         close()
-      events.on 'nikita:session:rejected', (err) ->
-        if config.serializer['nikita:session:rejected']
-          data = config.serializer['nikita:session:rejected'].apply null, arguments
+      events.on 'nikita:rejected', (err) ->
+        if config.serializer['nikita:rejected']
+          data = config.serializer['nikita:rejected'].apply null, arguments
           config.stream.write data if data?
         close()
       null

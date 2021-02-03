@@ -4,7 +4,7 @@
 module.exports =
   name: '@nikitajs/core/src/metadata/uuid'
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       handler: (action) ->
         if action.metadata.depth is 0
           action.metadata.uuid = uuid()

@@ -18,7 +18,7 @@ module.exports = {
   name: '@nikitajs/core/lib/metadata/tmpdir',
   require: ['@nikitajs/core/lib/plugins/tools_find', '@nikitajs/core/lib/plugins/tools_path'],
   hooks: {
-    'nikita:session:action': {
+    'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/metadata/uuid'],
       handler: async function(action) {
         var err, ref, rootdir, ssh, tmpdir;
@@ -56,7 +56,7 @@ module.exports = {
         }
       }
     },
-    'nikita:session:result': {
+    'nikita:result': {
       before: '@nikitajs/core/lib/plugins/ssh',
       handler: async function({action}) {
         var ssh, tmpdir;

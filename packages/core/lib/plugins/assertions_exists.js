@@ -11,7 +11,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/assertions',
   require: ['@nikitajs/core/lib/metadata/raw', '@nikitajs/core/lib/metadata/disabled'],
   hooks: {
-    'nikita:session:normalize': {
+    'nikita:normalize': {
       // This is hanging, no time for investigation
       // after: [
       //   '@nikitajs/core/lib/plugins/assertions'
@@ -40,7 +40,7 @@ module.exports = {
         };
       }
     },
-    'nikita:session:result': async function({action, error, output}) {
+    'nikita:result': async function({action, error, output}) {
       var final_run, k, local_run, ref, v;
       final_run = true;
       ref = action.assertions;

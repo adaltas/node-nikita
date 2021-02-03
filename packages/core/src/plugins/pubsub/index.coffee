@@ -13,7 +13,7 @@ module.exports =
   require:
     '@nikitajs/core/src/plugins/tools_find'
   hooks:
-    'nikita:session:action': (action) ->
+    'nikita:action': (action) ->
       engine = await action.tools.find ({metadata}) ->
         metadata.pubsub
       return action unless engine

@@ -17,7 +17,7 @@ module.exports =
     '@nikitajs/core/src/metadata/raw'
   ]
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       after: '@nikitajs/core/src/plugins/tools_log'
       handler: (action) ->
         action.state.logs = []
@@ -36,7 +36,7 @@ module.exports =
             action.state.logs.push log
             log
         )(action.tools.log)
-    'nikita:session:result':
+    'nikita:result':
       after: '@nikitajs/core/src/metadata/status'
       handler: ({action, output}, handler) ->
         return handler if action.metadata.raw_output

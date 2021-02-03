@@ -10,7 +10,7 @@ describe 'session.plugins.session.register', ->
     nikita ({plugins, registry}) ->
       plugins.register
         'hooks':
-          'nikita:session:register': ({action}, handler)->
+          'nikita:register': ({action}, handler)->
             action.key = 'new value'
             handler
       @registry.register ['an', 'action'],
@@ -23,7 +23,7 @@ describe 'session.plugins.session.register', ->
     nikita ({context, plugins, registry}) ->
       plugins.register
         hooks:
-          'nikita:session:register': ({action}, handler)->
+          'nikita:register': ({action}, handler)->
             new Promise (resolve, reject) ->
               setImmediate ->
                 action.key = 'new value'
@@ -38,7 +38,7 @@ describe 'session.plugins.session.register', ->
     nikita ({context, plugins, registry}) ->
       plugins.register
         'hooks':
-          'nikita:session:register': ({action}, handler)->
+          'nikita:register': ({action}, handler)->
             (handler is undefined).should.be.ok()
             handler
       context.registry.register ['an', 'action'], {}

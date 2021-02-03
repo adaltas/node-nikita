@@ -12,7 +12,7 @@ module.exports =
     # 'nikita:registry:normalize': (action) ->
     #   action.metadata ?= {}
     #   action.metadata.shy ?= false
-    'nikita:session:normalize': (action, handler) ->
+    'nikita:normalize': (action, handler) ->
       # Do not default shy to false or metadata from the registry will be overwritten
       # Todo: create a test to illutrate it
       # action.metadata.shy ?= false
@@ -45,7 +45,7 @@ module.exports =
             throw Error "Invalid Index #{index}" unless sibling
             sibling.output.status
         action
-    'nikita:session:result':
+    'nikita:result':
       before: '@nikitajs/core/src/plugins/history'
       handler: ({action, error, output}) ->
         inherit = (output) ->

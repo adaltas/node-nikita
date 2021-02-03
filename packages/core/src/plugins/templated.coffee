@@ -4,7 +4,7 @@ selfTemplated = require 'self-templated'
 module.exports =
   name: '@nikitajs/core/src/plugins/templated'
   hooks:
-    'nikita:session:action':
+    'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/schema'
         # '@nikitajs/core/src/metadata/tmpdir'

@@ -10,7 +10,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/pubsub',
   require: '@nikitajs/core/lib/plugins/tools_find',
   hooks: {
-    'nikita:session:action': async function(action) {
+    'nikita:action': async function(action) {
       var engine;
       engine = (await action.tools.find(function({metadata}) {
         return metadata.pubsub;

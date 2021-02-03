@@ -4,7 +4,7 @@ utils = require '../utils'
 module.exports =
   name: '@nikitajs/core/src/metadata/relax'
   hooks:
-    'nikita:session:action': (action, handler) ->
+    'nikita:action': (action, handler) ->
       action.metadata.relax ?= false
       if typeof action.metadata.relax is 'string' or
       action.metadata.relax instanceof RegExp
@@ -16,7 +16,7 @@ module.exports =
           "value, got #{JSON.stringify action.metadata.relax}."
         ]
       return handler
-    'nikita:session:result': (args) ->
+    'nikita:result': (args) ->
       return unless args.action.metadata.relax
       return unless args.error
       return if args.error.code is 'METADATA_RELAX_INVALID_VALUE'

@@ -8,7 +8,7 @@ utils = require('../utils');
 module.exports = {
   name: '@nikitajs/core/lib/metadata/retry',
   hooks: {
-    'nikita:session:action': function(action, handler) {
+    'nikita:action': function(action, handler) {
       var base, base1, base2, i, len, property, ref;
       if ((base = action.metadata).attempt == null) {
         base.attempt = 0;

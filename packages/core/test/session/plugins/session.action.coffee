@@ -12,7 +12,7 @@ describe 'session.plugins.session.action', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               new Promise (resolve, reject) ->
                 setImmediate ->
                   resolve (action) ->
@@ -30,7 +30,7 @@ describe 'session.plugins.session.action', ->
       session ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               await new Promise (resolve) -> setImmediate resolve
               handler
         @call name: 'parent', ->
@@ -44,7 +44,7 @@ describe 'session.plugins.session.action', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
@@ -58,7 +58,7 @@ describe 'session.plugins.session.action', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
@@ -72,7 +72,7 @@ describe 'session.plugins.session.action', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               new Promise (resolve, reject) ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
@@ -87,7 +87,7 @@ describe 'session.plugins.session.action', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:session:action': (action, handler) ->
+            'nikita:action': (action, handler) ->
               new Promise (resolve, reject) ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'

@@ -11,7 +11,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/conditions_os',
   require: ['@nikitajs/core/lib/plugins/conditions'],
   hooks: {
-    'nikita:session:normalize': {
+    'nikita:normalize': {
       after: '@nikitajs/core/lib/plugins/conditions',
       handler: function(action, handler) {
         return async function() {
@@ -61,7 +61,7 @@ module.exports = {
         };
       }
     },
-    'nikita:session:action': {
+    'nikita:action': {
       after: '@nikitajs/core/lib/plugins/conditions',
       before: '@nikitajs/core/lib/metadata/disabled',
       handler: async function(action) {

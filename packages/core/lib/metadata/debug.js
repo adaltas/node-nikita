@@ -16,7 +16,7 @@ module.exports = {
   name: '@nikitajs/core/lib/metadata/debug',
   require: '@nikitajs/core/lib/plugins/tools_log',
   hooks: {
-    'nikita:session:action': function(action) {
+    'nikita:action': function(action) {
       var debug;
       debug = action.metadata.debug || false;
       if (!(typeof debug === 'boolean' || debug === 'stdout' || debug instanceof stream.Writable)) {
@@ -61,7 +61,7 @@ module.exports = {
       action.tools.events.addListener('stdout_stream', debug.listener);
       return action.tools.events.addListener('stderr_stream', debug.listener);
     },
-    'nikita:session:result': {
+    'nikita:result': {
       // after: '@nikitajs/core/lib/plugins/log'
       handler: function({action}) {
         var debug;
