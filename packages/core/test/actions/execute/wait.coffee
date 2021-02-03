@@ -45,7 +45,7 @@ describe 'actions.execute.wait', ->
           "test -d #{tmpdir}/file_1"
           "test -d #{tmpdir}/file_2"
         ]
-        interval: 20
+        interval: 40
       status.should.be.true()
 
   describe 'log', ->
@@ -121,7 +121,7 @@ describe 'actions.execute.wait', ->
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
-          interval: 20
+          interval: 40
           # quorum: 1
         status.should.be.true()
         @fs.assert
@@ -149,7 +149,7 @@ describe 'actions.execute.wait', ->
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
-          interval: 20
+          interval: 40
           quorum: 2
         status.should.be.true()
         @fs.assert
@@ -177,7 +177,7 @@ describe 'actions.execute.wait', ->
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
-          interval: 20
+          interval: 40
           quorum: true
         status.should.be.true()
         @fs.assert
