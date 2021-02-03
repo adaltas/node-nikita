@@ -16,20 +16,13 @@ module.exports =
           "value, got #{JSON.stringify action.metadata.relax}."
         ]
       return handler unless action.metadata.relax
-      (args) ->
-        action = args
-        new Promise (resolve, reject) ->
-          try
-            prom = handler.call null, args
-            # Not, might need to get inspiration from retry to
-            # handle the returned promise
-            prom
-            .then resolve
-            .catch (err) ->
-              if typeof action.metadata.relax is 'boolean' or
-              err.code in action.metadata.relax or
-              action.metadata.relax.some((v) -> err.code.match v)
-                resolve error: err
-              reject err
-          catch err
-            resolve error: err
+      (action) ->
+        try
+          result = await handler.call null, action
+          return result
+        catch err
+          if action.metadata.relax is true or
+            action.metadata.relax.includes(err.code) or
+            action.metadata.relax.some((v) -> err.code.match v)
+          then return error: err
+          else throw err
