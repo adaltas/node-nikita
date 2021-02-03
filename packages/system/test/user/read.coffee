@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 {tags, config} = require '../test'
 they = require('mocha-they')(config)
 
@@ -104,7 +104,7 @@ describe 'system.user.read', ->
           uid: '99'
         user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
 
-    they 'throw error if uid dont match any user', ({ssh}) ->
+    they 'throw error if uid is a username dont match any user', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -120,6 +120,18 @@ describe 'system.user.read', ->
           uid: 'nobody'
         .should.be.rejectedWith
           message: 'Invalid Option: no uid matching "nobody"'
+    
+    they 'throw error if uid is an id dont match any user', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}})->
+        @file
+          target: "#{tmpdir}/etc/passwd"
+          content: """
+          root:x:0:root
+          bin:x:1:root,bin,daemon
+          """
         @system.user.read
           target: "#{tmpdir}/etc/passwd"
           uid: '99'

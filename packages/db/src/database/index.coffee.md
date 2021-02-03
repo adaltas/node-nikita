@@ -37,8 +37,8 @@ console.info(`Database created or modified: ${status}`)
           description: """
           This users who will be granted superuser permissions.
           """
-        'engine':
-          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'core':
+          $ref: 'module://@nikitajs/db/src/query#/properties/core'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

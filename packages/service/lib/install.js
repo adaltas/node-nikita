@@ -34,7 +34,7 @@ schema = {
   type: 'object',
   properties: {
     'arch_chroot': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/arch_chroot'
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
     },
     'cache': {
       type: 'boolean',
@@ -45,7 +45,7 @@ schema = {
       description: `Run the yum command entirely from system cache, don't update cache.`
     },
     'code_skipped': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/code_skipped',
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/code_skipped',
       description: `Error code to skip when using nikita.service.`
     },
     'installed': {
@@ -76,7 +76,7 @@ converted to an array with all the outdated service names as keys; if
 anything else (default), no caching will take place.`
     },
     'rootdir': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/rootdir'
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     },
     'pacman_flags': {
       type: 'array',
@@ -324,4 +324,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('@nikitajs/core/lib/utils');

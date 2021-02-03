@@ -44,8 +44,8 @@ schema = {
       ],
       description: `This users who will be granted superuser permissions.`
     },
-    'engine': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
+    'core': {
+      $ref: 'module://@nikitajs/db/lib/query#/properties/core'
     },
     'host': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/host'

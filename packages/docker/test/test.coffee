@@ -15,7 +15,7 @@ module.exports = config
 
 # Cache images
 return unless config.tags.docker
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 they = require('mocha-they')(config.config)
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0

@@ -275,4 +275,4 @@ console.info(`Servers listening: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'

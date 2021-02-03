@@ -32,8 +32,8 @@ schema = {
       type: 'string',
       description: `The database name storing the schemas.`
     },
-    'engine': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
+    'core': {
+      $ref: 'module://@nikitajs/db/lib/query#/properties/core'
     },
     'host': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/host'
@@ -79,4 +79,4 @@ module.exports = {
 
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('@nikitajs/core/lib/utils');

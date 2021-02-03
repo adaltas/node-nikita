@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 {tags, config, service} = require './test'
 they = require('mocha-they')(config)
 

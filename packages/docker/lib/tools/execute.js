@@ -91,7 +91,7 @@ ref = ['code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log', 'stdout', 'st
 for (i = 0, len = ref.length; i < len; i++) {
   property = ref[i];
   (schema.properties[`${property}`] = {
-    $ref: `module://@nikitajs/engine/lib/actions/execute#/properties/${property}`
+    $ref: `module://@nikitajs/core/lib/actions/execute#/properties/${property}`
   });
 }
 
@@ -177,7 +177,7 @@ $${bin} ${opts} ${config.command}`
 module.exports = {
   handler: handler,
   hooks: {
-    on_action: require('@nikitajs/engine/lib/actions/execute').hooks.on_action
+    on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
   },
   metadata: {
     schema: schema

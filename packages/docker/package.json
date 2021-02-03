@@ -41,7 +41,7 @@
     "@nikitajs/file": "^0.9.7"
   },
   "peerDependencies": {
-    "@nikitajs/engine": "^0.9.7"
+    "@nikitajs/core": "^0.9.7"
   },
   "devDependencies": {
     "@nikitajs/network": "^0.9.7",

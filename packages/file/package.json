@@ -72,7 +72,7 @@
     "mocha-they": "^0.1.2"
   },
   "peerDependencies": {
-    "@nikitajs/engine": "^0.9.7"
+    "@nikitajs/core": "^0.9.7"
   },
   "engines": {
     "node": ">= 10.0.0"

@@ -30,8 +30,8 @@ schemas.map( ({name, owner}) => {
           description: """
           The database name storing the schemas.
           """
-        'engine':
-          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'core':
+          $ref: 'module://@nikitajs/db/src/query#/properties/core'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':
@@ -63,4 +63,4 @@ schemas.map( ({name, owner}) => {
       
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'

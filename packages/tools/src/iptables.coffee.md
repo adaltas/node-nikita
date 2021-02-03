@@ -65,7 +65,7 @@ console.info(`Iptables was updated: ${status}`)
           One or more objects containing iptables rule definitions.
           """
         'sudo':
-          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
+          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
       definitions:
         'rule':
           allOf: [

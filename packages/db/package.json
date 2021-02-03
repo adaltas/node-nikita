@@ -38,7 +38,7 @@
     }
   ],
   "peerDependencies": {
-    "@nikitajs/engine": "^0.9.7"
+    "@nikitajs/core": "^0.9.7"
   },
   "devDependencies": {
     "coffeescript": "^2.5.1",

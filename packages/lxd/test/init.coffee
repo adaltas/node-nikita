@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 {config, images, tags} = require './test'
 they = require('mocha-they')(config)
 
@@ -39,32 +39,33 @@ describe 'lxd.init', ->
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
   
-    it 'Container name is not started with a digit or a dash', ->
-      nikita ->
-        @lxd.init
-          image: "images:#{images.alpine}"
-          container: '1u'
-        .should.be.rejectedWith
-          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-          message: [
-            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'one error was found in the configuration of action `lxd.init`:'
-            '#/properties/container/pattern config/container should match pattern'
-            '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
-            'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
-          ].join ' '
-        @lxd.init
-          image: "images:#{images.alpine}"
-          container: '-u1'
-        .should.be.rejectedWith
-          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-          message: [
-            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'one error was found in the configuration of action `lxd.init`:'
-            '#/properties/container/pattern config/container should match pattern'
-            '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
-            'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
-          ].join ' '
+    it 'Container name should not start with a digit', ->
+      nikita.lxd.init
+        image: "images:#{images.alpine}"
+        container: '1u'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `lxd.init`:'
+          '#/properties/container/pattern config/container should match pattern'
+          '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
+          'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
+        ].join ' '
+    
+    it 'Container name should not start with a dash', ->
+      nikita.lxd.init
+        image: "images:#{images.alpine}"
+        container: '-u1'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `lxd.init`:'
+          '#/properties/container/pattern config/container should match pattern'
+          '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
+          'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
+        ].join ' '
   
     it 'Container name is not end with a dash', ->
       nikita

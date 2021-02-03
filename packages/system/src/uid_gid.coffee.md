@@ -32,7 +32,7 @@ console.info(`Group gid is ${config.gid}`)
       type: 'object'
       properties:
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'group_target':
           type: 'string'
           description: '''
@@ -44,7 +44,7 @@ console.info(`Group gid is ${config.gid}`)
           Path to the passwd definition file, default to "/etc/passwd".
           '''
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
 
 ## Handler
 

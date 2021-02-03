@@ -87,4 +87,4 @@ console.info(`Command was executed: ${status}`)
 ## Dependencies
 
     {mutate} = require 'mixme'
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'

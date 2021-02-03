@@ -217,12 +217,14 @@ console.info(data)
           "\n" if "true" and not detected.
           """
         'encoding':
-          type: 'string', default: 'utf8'
+          type: 'string'
+          default: 'utf8'
           description: """
           Encoding of the source and target files.
           """
         'engine':
-          type: 'string', default: 'handlebars'
+          type: 'string'
+          default: 'handlebars'
           description: """
           Template engine being used.
           """
@@ -232,7 +234,7 @@ console.info(data)
           Name of the marker from where the content will be replaced.
           """
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'local':
           type: 'boolean', default: false
           description: """
@@ -245,7 +247,7 @@ console.info(data)
           Replace this marker, default to the replaced string if missing.
           """
         'mode':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'place_before':
           oneOf: [{type: 'string'}, {type: 'boolean'}, {instanceof: 'RegExp'}]
           description: """
@@ -279,7 +281,7 @@ console.info(data)
           Name of the marker until where the content will be replaced.
           """
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
         'unlink':
           type: 'boolean', default: false
           description: """

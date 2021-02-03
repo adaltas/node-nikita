@@ -72,5 +72,5 @@ console.info(`Principal was removed: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'
     {mutate} = require 'mixme'

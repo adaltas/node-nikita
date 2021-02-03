@@ -3,7 +3,7 @@ var nikita, path;
 
 path = require('path');
 
-nikita = require('@nikitajs/engine/lib');
+nikita = require('@nikitajs/core/lib');
 
 require('@nikitajs/lxd/lib/register');
 

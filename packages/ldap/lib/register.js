@@ -2,7 +2,7 @@
 // Registration of `nikita.ldap` actions
 var registry;
 
-registry = require('@nikitajs/engine/lib/registry');
+registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
   ldap: {

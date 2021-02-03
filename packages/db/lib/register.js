@@ -2,7 +2,7 @@
 // Registration of `nikita.db` actions
 var registry;
 
-registry = require('@nikitajs/engine/lib/registry');
+registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
   db: {

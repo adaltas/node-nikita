@@ -46,7 +46,7 @@ a timestamp if value is not a string, only apply if the target file
 exists and is modified.`
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid',
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid',
       description: `File group name or group id.`
     },
     'merge': {
@@ -59,7 +59,7 @@ exists and is modified.`
       description: `The mount point dir to create on system startup.`
     },
     'mode': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode',
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode',
       description: `Mode of the target configuration file`
     },
     'name': {
@@ -80,7 +80,7 @@ file  as '\`name\`.conf'.`
 /etc/tmpfiles.d/default.conf.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid',
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid',
       description: `File user name or user id.`
     }
   },

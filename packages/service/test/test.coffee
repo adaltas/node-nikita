@@ -13,7 +13,7 @@ config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
 # Export configuration
 module.exports = config
 
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 they = require('mocha-they')(config.ssh)
 
 they 'cache to avoid timeout later', ({ssh}) ->

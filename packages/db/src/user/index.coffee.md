@@ -24,8 +24,8 @@ Create a user for the destination database.
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
         'admin_password':
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
-        'engine':
-          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
+        'core':
+          $ref: 'module://@nikitajs/db/src/query#/properties/core'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

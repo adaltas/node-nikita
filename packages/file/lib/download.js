@@ -130,7 +130,7 @@ server.`
       description: `Force cache overwrite if it exists`
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
     },
     'http_headers': {
       type: 'array',
@@ -160,7 +160,7 @@ now), may be the string checksum or will be deduced from source if
 "true".`
     },
     'mode': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
     },
     'proxy': {
       type: 'string',
@@ -212,7 +212,7 @@ is provided without any.`
       description: `File path where to write content to. Pass the content.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
     }
   },
   required: ['target', 'source']

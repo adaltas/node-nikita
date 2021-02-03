@@ -16,7 +16,7 @@ module.exports = config
 # Cache container and vm images
 
 return unless config.tags.lxd
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 they = require('mocha-they')(config.config)
 
 they 'cache container image to avoid timeout later', ({ssh}) ->

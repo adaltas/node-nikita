@@ -1,7 +1,7 @@
 
 # parse the content of tmpfs daemon configuration file
 
-string = require '@nikitajs/engine/lib/utils/string'
+string = require '@nikitajs/core/lib/utils/string'
 
 module.exports =
   parse: (str) ->

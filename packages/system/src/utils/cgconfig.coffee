@@ -1,5 +1,5 @@
 
-utils = require '@nikitajs/engine/lib/utils'
+utils = require '@nikitajs/core/lib/utils'
 
 module.exports =
   parse: (str) ->

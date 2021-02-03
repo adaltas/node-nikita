@@ -37,7 +37,7 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
     },
     'group_target': {
       type: 'string',
@@ -48,7 +48,7 @@ schema = {
       description: `Path to the passwd definition file, default to "/etc/passwd".`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
     }
   }
 };

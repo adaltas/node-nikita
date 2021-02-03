@@ -33,11 +33,11 @@ console.info(`Service was stopped: ${status}`)
       type: 'object'
       properties:
         'arch_chroot':
-          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/arch_chroot'
+          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
         'rootdir':
-          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/rootdir'
+          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
       required: ['name']
 
 ## Handler

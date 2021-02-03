@@ -107,7 +107,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           Force cache overwrite if it exists
           """
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'http_headers':
           type: 'array', items: type: 'string'
           description: """
@@ -129,7 +129,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           "true".
           """
         'mode':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'proxy':
           type: 'string'
           description: """
@@ -164,7 +164,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           File path where to write content to. Pass the content.
           """
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
       required: ['target', 'source']
 
 ## Handler

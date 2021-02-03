@@ -111,7 +111,7 @@ default location of the Oracle JDK installation.
           Path to OpenSSl command line tool.
           """
         'parent':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/mkdir#/properties/parent'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/parent'
         'keystore':
           type: 'string'
           description: """

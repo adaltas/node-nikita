@@ -45,7 +45,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           exists and is modified.
           '''
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
           description: '''
           File group name or group id.
           '''
@@ -61,7 +61,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           The mount point dir to create on system startup.
           '''
         'mode':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
           description: '''
           Mode of the target configuration file
           '''
@@ -86,7 +86,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           /etc/tmpfiles.d/default.conf.
           '''
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
           description: '''
           File user name or user id.
           '''

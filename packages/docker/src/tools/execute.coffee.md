@@ -75,7 +75,7 @@ Execute a docker command.
       additionalProperties: false
     (
       schema.properties["#{property}"] =
-        $ref: "module://@nikitajs/engine/lib/actions/execute#/properties/#{property}"
+        $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
     ) for property in [
       'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
       'stdout', 'stdout_return', 'stdout_log',
@@ -129,7 +129,7 @@ Execute a docker command.
     module.exports =
       handler: handler
       hooks:
-        on_action: require('@nikitajs/engine/lib/actions/execute').hooks.on_action
+        on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
       metadata:
         schema: schema
 

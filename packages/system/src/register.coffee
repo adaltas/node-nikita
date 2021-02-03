@@ -2,7 +2,7 @@
 # Registration of `nikita.system` actions
 
 require '@nikitajs/file/lib/register'
-registry = require '@nikitajs/engine/lib/registry'
+registry = require '@nikitajs/core/lib/registry'
 
 module.exports =
   system:

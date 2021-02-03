@@ -34,7 +34,7 @@
   "dependencies": {
     "@nikitajs/db": "^0.9.7",
     "@nikitajs/docker": "^0.9.7",
-    "@nikitajs/engine": "^0.9.7",
+    "@nikitajs/core": "^0.9.7",
     "@nikitajs/file": "^0.9.7",
     "@nikitajs/ipa": "^0.9.7",
     "@nikitajs/java": "^0.9.7",

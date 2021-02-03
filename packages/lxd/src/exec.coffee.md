@@ -38,9 +38,9 @@ console.info(stdout)
           `zsh`.
           '''
         'trim':
-          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trim'
+          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trim'
         'trap':
-          $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/trap'
+          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trap'
       required: ['container', 'command']
 
 ## Handler

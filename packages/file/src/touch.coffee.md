@@ -35,9 +35,9 @@ console.info(`File was touched: ${status}`)
       type: 'object'
       properties:
         'gid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'mode':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
           description: """
@@ -45,7 +45,7 @@ console.info(`File was touched: ${status}`)
           path.
           """
         'uid':
-          $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
       required: ['target']
 
 ## Handler

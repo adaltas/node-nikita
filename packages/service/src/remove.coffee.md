@@ -120,4 +120,4 @@ console.info(`Package or service was removed: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'

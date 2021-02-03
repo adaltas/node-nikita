@@ -29,7 +29,7 @@ schema = {
   properties: {
     'algo': {
       default: 'md5',
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/hash#/properties/algo'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/hash#/properties/algo'
     },
     'container': {
       $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'

@@ -35,7 +35,7 @@ schema = {
   type: 'object',
   properties: {
     'cwd': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/cwd'
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
     },
     'global': {
       type: 'boolean',
@@ -51,7 +51,7 @@ schema = {
 "true".`
     },
     'sudo': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/sudo'
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
     },
     'upgrade': {
       default: false,

@@ -34,7 +34,7 @@ schema = {
   type: 'object',
   properties: {
     'cwd': {
-      $ref: 'module://@nikitajs/engine/lib/actions/execute#/properties/cwd'
+      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
     },
     'name': {
       type: 'array',

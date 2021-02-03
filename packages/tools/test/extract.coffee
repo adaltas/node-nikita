@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 {tags, config} = require './test'
 they = require('mocha-they')(config)
 
@@ -48,19 +48,23 @@ describe 'tools.extract', ->
         target: tmpdir
       status.should.be.true()
 
-  they 'should validate a created file', ({ssh}) ->
+  they 'with a created file and an invalid creates option', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      # Test with invalid creates option
       @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"
         target: tmpdir
         creates: "#{tmpdir}/oh_no"
       .should.be.rejectedWith
         code: 'NIKITA_FS_ASSERT_FILE_MISSING'
-      # Test with valid creates option
+
+  they 'with a created file and a valid creates option', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
       {status} = await @tools.extract
         source: "#{__dirname}/resources/a_dir.tgz"
         target: tmpdir

@@ -1,7 +1,7 @@
 
 http = require 'http'
 {merge} = require 'mixme'
-nikita = require '@nikitajs/engine/lib'
+nikita = require '@nikitajs/core/lib'
 {tags, config} = require '../test'
 they = require('mocha-they')(config)
 

@@ -4,7 +4,7 @@ var registry;
 
 require('@nikitajs/file/lib/register');
 
-registry = require('@nikitajs/engine/lib/registry');
+registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
   java: {

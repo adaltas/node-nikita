@@ -27,22 +27,21 @@ schema = {
 disabled if no context is provided.`
     },
     'engine': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/engine',
-      default: 'nunjunks'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
     },
     'filters': {
       typeof: 'function',
       description: `Filter function to extend the nunjucks engine.`
     },
     'gid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/gid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
     },
     'local': {
       $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'mode': {
       default: '0o755',
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
     },
     'name': {
       type: 'string',
@@ -65,7 +64,7 @@ nikita put it on the default folder based on the service daemon
 provider,the OS and use the source filename as the name.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/engine/lib/actions/fs/chown#/properties/uid'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
     }
   },
   required: ['source']

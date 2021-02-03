@@ -80,7 +80,7 @@ schema = {
       $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/server'
     },
     'not': {
-      $ref: 'module://@nikitajs/engine/lib/actions/assert#/properties/not'
+      $ref: 'module://@nikitajs/core/lib/actions/assert#/properties/not'
     }
   }
 };
@@ -127,4 +127,4 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('@nikitajs/engine/lib/utils');
+utils = require('@nikitajs/core/lib/utils');

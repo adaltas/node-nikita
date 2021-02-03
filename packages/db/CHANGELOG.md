@@ -10,7 +10,7 @@ Categories include:
 ## Trunk
 
 Breaking changes
-* engine migration
+* core migration
 
 New feature:
 * query: new action

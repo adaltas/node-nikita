@@ -99,5 +99,5 @@ console.info(`Principal was created or modified: ${status}`)
 
 ## Dependencies
 
-    utils = require '@nikitajs/engine/lib/utils'
+    utils = require '@nikitajs/core/lib/utils'
     {mutate} = require 'mixme'
