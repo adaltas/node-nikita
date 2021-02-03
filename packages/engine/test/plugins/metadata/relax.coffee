@@ -10,6 +10,14 @@ describe 'plugins.metadata.relax', ->
     {error} = await nikita.call metadata: relax: true, ->
       throw Error 'Dont worry, be happy'
     error.message.should.eql 'Dont worry, be happy'
+    
+  it 'handler throw error before subling', ->
+    try
+      await nikita metadata: relax: true, ->
+        @call -> throw Error 'catchme'
+        @call -> true
+    catch error
+      throw error
 
   it 'handler return rejected promise', ->
     {error} = await nikita.call metadata: relax: true, ->
