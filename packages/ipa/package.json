@@ -32,6 +32,10 @@
     {
       "name": "David Worms",
       "email": "david@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
     }
   ],
   "dependencies": {
