@@ -54,6 +54,10 @@
     {
       "name": "Alexander Hoffmann",
       "email": "alexander@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
     }
   ],
   "dependencies": {

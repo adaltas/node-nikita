@@ -3,6 +3,16 @@
   "description": "Nikita Official Documentation",
   "version": "1.0.0",
   "author": "David Worms <david@adaltas.com>",
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
+    }
+  ],
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",

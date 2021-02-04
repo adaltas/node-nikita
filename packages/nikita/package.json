@@ -29,6 +29,10 @@
     {
       "name": "Lucas Bakalian",
       "email": "lucas@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
     }
   ],
   "dependencies": {
