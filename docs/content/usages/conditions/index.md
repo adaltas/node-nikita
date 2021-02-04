@@ -10,73 +10,77 @@ Conditions are executed before a handler and all conditions must pass for the ha
 
 ## Example
 
-Updating the content of a file if it exists and if we are the owner.
+Condition updating the content of a file if it exists and if the user is the owner.
 
 `embed:usages/conditions/samples/example.js`
 
-## Condition `if`
+## `if`
 
 Condition the execution of an action to a user defined condition interpreted as `true`. 
 
-When `if` is a boolean, a string, a number, `null` or `undefined`, its value determines the handler execution.
+When the `if` value is:
 
-If it's a function, the argument is a context object including the `config` object and the handler is run synchronously.
+- a **boolean**, a **string**, a **number**, `null` or `undefined`, its value determines the handler execution.
 
-If it's an array, all its element must positively resolve for the condition to pass.
+- a **function**, the argument is a context object including the `config` object and the handler is run synchronously.
+
+- an **array**, all its elements must positively resolve for the condition to pass.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated because all the conditions succeed:
 
 `embed:usages/conditions/samples/if.js`
 
-## Condition `unless`
+## `unless`
 
-Condition the execution of an action to a user defined condition interpreted as `false`.
+Condition the execution of an action to a user defined condition interpreted as `false`. It is a negation of the `if` property.
 
-When `unless` is a boolean, a string, a number, `null` or `undefined`, its value determine the handler execution.
+When the `unless` value is:
+ 
+- a **boolean**, a **string**, a **number**, `null` or `undefined`, its value determine the handler execution.
 
-If it's a function, the argument is a context object including the `config` object and the handler is run synchronously.
+- a **function**, the argument is a context object including the `config` object and the handler is run synchronously.
 
-If it's an array, all its element must negatively resolve for the condition to pass.
+- an **array**, all its elements must negatively resolve for the condition to pass.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated because all the conditions failed:
 
 `embed:usages/conditions/samples/unless.js`
   
-## Condition `if_execute`
+## `if_execute`
 
-Run an action if a shell command succeed.
+Conditions the execution of an action if a shell command succeeds.
 
-The value may be a single shell command or an array of commands.   
+The `if_execute` value could be a **string** a an **array of strings**. It is evaluated as a single shell command or a list of commands.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if "/tmp/flag" is an existing file:
 
 `embed:usages/conditions/samples/if_execute.js`
   
-## Condition `unless_execute`
+## `unless_execute`
 
-Run an action unless a command succeed.
+Conditions the execution of an action unless a shell command succeeds. It is a negation of the `if_execute` property.
 
-The value may be a single shell command or an array of commands.
+The `unless_execute` value could be a **string** a an **array of strings**. It is evaluated as a single shell command or a list of commands.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if "/tmp/flag" is not an existing file:
 
 `embed:usages/conditions/samples/unless_execute.js`
 
-## Condition `if_exists`
+## `if_exists`
 
-Run an action execution if a file exists.
+Conditions the execution of an action if a file or a directory exists.
 
-The value may be a file path or an array of file paths.
+The `if_exists` value could be a **string** a an **array of strings**. It is evaluated as paths to files or directories to check for existence.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if the file exists and if "/tmp/flag" exists as well:
 
 `embed:usages/conditions/samples/if_exists.js`
 
-## Condition `unless_exists`
+## `unless_exists`
 
-Skip an action execution if a file exists.
+Conditions the execution of an action unless a file or a directory exists. It is a negation of the `if_exists` property.
 
-The value may be a file path or an array of file paths.
+The `unless_exists` value could be a **string** a an **array of strings**. It is evaluated as paths to files or directories to check for existence.
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if the file "/tmp/flag" doesn't exist:
 
