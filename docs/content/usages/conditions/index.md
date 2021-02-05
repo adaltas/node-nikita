@@ -4,19 +4,17 @@ sort: 5
 
 # Conditions
 
-Conditions are a set of action properties available to every [handler](/current/action/handler) to control and guarantee its execution.
+Conditions are executed before the [actions' handler](/current/action/handler) to control and guarantee its execution.
 
-Conditions are executed before a handler and all conditions must pass for the handler to be executed. The name of the property is prefixed with `if_` and `unless_` for their negation.
+Conditions `if` and `unless` determine the execution of the handler by their values or the result of its resolving in case of function. Other conditions exist and are prefixed with `if_` or `unless_` for their negation. Multiple conditions can be combined, in which case, all of them must pass. 
 
-## Example
-
-Condition updating the content of a file if it exists and if the user is the owner.
+The following example represents updating a file. It contains 2 conditions applied to `nikita.file` action that writes to a file. The first condition, `if_exists`, passes if the file exists. The second one, `if`, verifies the owner of the file is the same user who is running the Node.js process. Note, the `fs.base.stat` action returning information about a file is called with the enabled ["relax" behavior](/current/metadata/relax/) to make it tolerant to an error in case of lack of the file:
 
 `embed:usages/conditions/samples/example.js`
 
 ## `if`
 
-Condition the execution of an action to a user defined condition interpreted as `true`. 
+Condition the execution of the [actions' handler](/current/action/handler) to a user defined condition interpreted as `true`. 
 
 When the `if` value is:
 

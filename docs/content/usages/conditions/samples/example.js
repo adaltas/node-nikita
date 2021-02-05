@@ -9,18 +9,16 @@ const nikita = require('nikita');
     // highlight-range{1-15}
     if_exists: '/tmp/nikita/a_file',
     if: async function({config}) {
-      // Get file stats
-      const {error, stats} = await this.fs.base.stat({
+      // Get the file information
+      const {stats} = await this.fs.base.stat({
         metadata: {
-          // Don't throw error when file not exists
+          // Don't throw an error in case of lack of the file
           relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
         },
         target: config.target
       })
-      // Return when file not exists
-      if(error) return false
-      // Render the file if we own it
-      return stats.uid === process.getuid()
+      // Pass the condition if the user is the owner
+      return stats && stats.uid == process.getuid() ? true : false
     }
   })
   console.info('File is updated:', status)
