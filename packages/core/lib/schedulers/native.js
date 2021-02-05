@@ -129,9 +129,13 @@ module.exports = function(handlers) {
       }
     };
     if (handlers) {
-      return scheduler.push(handlers, {
-        output: true
-      });
+      if (handlers.length) {
+        return scheduler.push(handlers, {
+          output: true
+        });
+      } else {
+        return resolve([]);
+      }
     }
   });
   promise.catch((function() {})); // Handle strict unhandled rejections

@@ -70,7 +70,11 @@ module.exports = (handlers) ->
             ).then resolve, reject
         prom.catch (->) # Handle strict unhandled rejections
         prom
-    scheduler.push handlers, output: true if handlers
+    if handlers
+      if handlers.length
+        scheduler.push handlers, output: true
+      else
+        resolve []
   promise.catch (->) # Handle strict unhandled rejections
   new Proxy promise, get: (target, name) ->
     if target[name]?

@@ -14,6 +14,10 @@ describe 'scheduler.instance', ->
     ])
     .should.be.resolvedWith [1, 2]
       
+  it 'accept empty handlers array', ->
+    schedule([])
+    .should.be.resolvedWith []
+      
   it 'catch error', ->
     # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
     # It rejects immediately upon any of the input promises rejecting or

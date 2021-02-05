@@ -85,6 +85,14 @@ describe 'scheduler.push', ->
         ]
       .should.be.resolvedWith [[1, 2], [3, 4]]
 
+    it 'an empty array', ->
+      scheduler = schedule()
+      Promise.all [
+          scheduler.push []
+          scheduler.push []
+        ]
+      .should.be.resolvedWith [[], []]
+
   describe 'push parallel async', ->
 
     it 'function', ->

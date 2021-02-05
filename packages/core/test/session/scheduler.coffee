@@ -18,6 +18,10 @@ describe 'action.scheduler', ->
       ])
       .should.eql [1, 2]
 
+    it 'array', ->
+      (await nikita.call [])
+      .should.eql []
+
   describe 'flow', ->
 
     it 'executed 1 args with 2 actions sequentially', ->
