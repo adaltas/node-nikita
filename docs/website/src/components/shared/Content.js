@@ -33,6 +33,12 @@ const styles = theme => ({
     '& h1': {
       color: '#777777',
       fontWeight: 'normal',
+      '& code': {
+        color: '#000',
+        padding: '.2em .3em 0 .3em',
+        background: '#E6E6E6',
+        borderRadius: '.3em'
+      },
     },
     '& h2': {
       color: '#777777',
@@ -122,7 +128,7 @@ class Content extends Component {
       <main ref="content" className={classes.content}>
         {page && (
           <>
-            <h1>{page.title}</h1>
+            <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
             <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
               <IconButton
                 color="inherit"
