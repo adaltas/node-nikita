@@ -47,12 +47,24 @@ module.exports =
                 {protocol, pathname} = parse uri
                 switch protocol
                   when 'module:'
-                    action = require.main.require pathname
-                    accept action.metadata.schema
+                    try
+                      action = require.main.require pathname
+                      accept action.metadata.schema
+                    catch err
+                      reject error 'NIKITA_SCHEMA_INVALID_MODULE', [
+                        'the module location is not resolvable,'
+                        "module name is #{JSON.stringify pathname}."
+                      ]
                   when 'registry:'
                     module = pathname.split '/'
                     action = await action.registry.get module
-                    accept action.metadata.schema
+                    if action
+                      accept action.metadata.schema
+                    else
+                      reject error 'NIKITA_SCHEMA_UNREGISTERED_ACTION', [
+                        'the action is not registered inside the Nikita registry,'
+                        "action namespace is #{JSON.stringify module.join '.'}."
+                      ]
           ajv_keywords ajv
           ajv_formats ajv
           action.tools.schema =

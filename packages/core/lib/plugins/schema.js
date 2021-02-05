@@ -60,12 +60,22 @@ module.exports = {
                 ({protocol, pathname} = parse(uri));
                 switch (protocol) {
                   case 'module:':
-                    action = require.main.require(pathname);
-                    return accept(action.metadata.schema);
+                    try {
+                      action = require.main.require(pathname);
+                      return accept(action.metadata.schema);
+                    } catch (error1) {
+                      err = error1;
+                      return reject(error('NIKITA_SCHEMA_INVALID_MODULE', ['the module location is not resolvable,', `module name is ${JSON.stringify(pathname)}.`]));
+                    }
+                    break;
                   case 'registry:':
                     module = pathname.split('/');
                     action = (await action.registry.get(module));
-                    return accept(action.metadata.schema);
+                    if (action) {
+                      return accept(action.metadata.schema);
+                    } else {
+                      return reject(error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
+                    }
                 }
               });
             }

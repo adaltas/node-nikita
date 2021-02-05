@@ -155,7 +155,25 @@ describe 'plugins.schema', ->
         'got true in root action.'
       ].join ' '
   
-  describe '$ref', ->
+  describe '$ref module', ->
+
+    it 'invalid ref location', ->
+      nikita.call
+        an_object: an_integer: 'abc'
+        metadata: schema:
+          type: 'object'
+          properties:
+            'an_object': $ref: 'registry://invalid/action'
+      , (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
+        message: [
+          'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
+          'the action is not registered inside the Nikita registry,'
+          'action namespace is "invalid.action".'
+        ].join ' '
+  
+  describe '$ref registry', ->
 
     it 'valid', ->
       nikita
@@ -174,7 +192,23 @@ describe 'plugins.schema', ->
             'an_object': $ref: 'registry://test/schema'
         handler: (->)
 
-    it 'invalid', ->
+    it 'invalid ref location', ->
+      nikita.call
+        an_object: an_integer: 'abc'
+        metadata: schema:
+          type: 'object'
+          properties:
+            'an_object': $ref: 'registry://invalid/action'
+      , (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
+        message: [
+          'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
+          'the action is not registered inside the Nikita registry,'
+          'action namespace is "invalid.action".'
+        ].join ' '
+
+    it 'invalid ref definition', ->
       nikita
       .registry.register ['test', 'schema'],
         metadata: schema:
