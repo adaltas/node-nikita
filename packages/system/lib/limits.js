@@ -267,23 +267,19 @@ name.`
   ],
   definitions: {
     'limits': {
-      oneOf: [
+      anyOf: [
         {
-          type: 'integer'
-        },
-        {
-          type: 'boolean'
+          type: ['boolean',
+        'integer']
         },
         {
           type: 'object',
           patternProperties: {
             '^-|soft|hard$': {
-              oneOf: [
+              anyOf: [
                 {
-                  type: 'integer'
-                },
-                {
-                  type: 'boolean'
+                  type: ['boolean',
+                'integer']
                 },
                 {
                   type: 'string',

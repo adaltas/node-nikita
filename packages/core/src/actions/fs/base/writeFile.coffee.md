@@ -54,11 +54,7 @@ console.info(`File was written: ${status}`)
           "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"
           """
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          # default: 0o644
-          description: """
-          Permission mode, a bit-field describing the file type and mode.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/createWriteStream#/properties/mode'
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """

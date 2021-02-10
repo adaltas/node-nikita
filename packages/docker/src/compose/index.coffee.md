@@ -32,10 +32,7 @@ Create and start containers according to a docker-compose file
           Inherited from nikita.file use when writing docker-compose.yml file.
           """
         'backup':
-          oneOf: [
-            {type: 'string'}
-            {type: 'boolean'}
-          ]
+          type: ['string', 'boolean']
           default: false
           description: """
           Create a backup, append a provided string to the filename extension or
@@ -56,10 +53,8 @@ Create and start containers according to a docker-compose file
           changed.
           """
         'services':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array', items: type: 'string'}
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           Specify specific services to create.
           """

@@ -6,22 +6,9 @@
 // ## Hooks
 var command, connection_config, escape, handler, jdbc, on_action, schema, utils;
 
-on_action = function({
-    config,
-    tools: {find}
-  }) {
+on_action = function({config}) {
   var ref;
-  if (config.egrep != null) {
-    throw Error('Deprecated config `egrep`');
-  }
-  config.engine = (ref = config.engine) != null ? ref.toLowerCase() : void 0;
-  if (typeof config.port === 'string' && /^\d+$/.test(config.port)) {
-    config.port = parseInt(config.port);
-  }
-  if (config.engine === 'postgres') {
-    console.warn('Deprecated Value: config "postgres" is deprecated in favor of "postgresql"');
-    return config.engine = 'postgresql';
-  }
+  return config.engine = (ref = config.engine) != null ? ref.toLowerCase() : void 0;
 };
 
 // ## Schema

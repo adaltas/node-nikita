@@ -30,7 +30,7 @@ console.info(`File was merged: ${status}`)
       type: 'object'
       properties:
         'backup':
-          oneOf: [{type: 'string'}, {type: 'boolean'}]
+          type: ['boolean', 'string']
           default: false
           description: """
           Create a backup, append a provided string to the filename extension or
@@ -50,7 +50,7 @@ console.info(`File was merged: ${status}`)
           exists.
           """
         'pretty':
-          oneOf: [{type: 'integer'}, {type: 'boolean'}]
+          type: ['boolean', 'integer']
           default: false
           description: """
           Prettify the JSON output, accept the number of spaces as an integer,

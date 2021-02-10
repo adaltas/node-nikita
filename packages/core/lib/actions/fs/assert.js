@@ -35,15 +35,8 @@ var errors, fs, handler, on_action, pad, schema, utils,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
-  var ref, ref1;
   if (metadata.argument != null) {
     config.target = metadata.argument;
-  }
-  if ((ref = typeof config.filetype) === 'number' || ref === 'string') {
-    config.filetype = [config.filetype];
-  }
-  if ((ref1 = typeof config.mode) === 'number' || ref1 === 'string') {
-    config.mode = [config.mode];
   }
   if (config.filter instanceof RegExp) {
     return config.filter = [config.filter];
@@ -76,14 +69,7 @@ schema = {
     'filetype': {
       type: 'array',
       items: {
-        oneOf: [
-          {
-            type: 'integer'
-          },
-          {
-            type: 'string'
-          }
-        ]
+        type: ['integer', 'string']
       },
       description: `Validate the file, could be any [file type
 constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
@@ -99,14 +85,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
       description: `Text to filter in actual content before matching.`
     },
     'gid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['integer', 'string'],
       description: `Group ID to assert.`
     },
     'md5': {
@@ -116,14 +95,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
     'mode': {
       type: 'array',
       items: {
-        oneOf: [
-          {
-            type: 'integer'
-          },
-          {
-            type: 'string'
-          }
-        ]
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
       },
       description: `Validate file permissions.`
     },
@@ -148,14 +120,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
       description: `Trim the actual and expected content before matching.`
     },
     'uid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['integer', 'string'],
       description: `User ID to assert.`
     }
   },

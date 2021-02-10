@@ -36,6 +36,8 @@ console.info(`Directory was created: ${status}`)
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
+      config.parent ?= {}
+      config.parent = {} if config.parent is true
 
 ## Schema
 
@@ -43,7 +45,7 @@ console.info(`Directory was created: ${status}`)
       type: 'object'
       properties:
         'cwd':
-          oneOf: [{type: 'boolean'}, {type: 'string'}]
+          type: ['boolean', 'string']
           description: """
           Current working directory for relative paths. A boolean value only
           apply without an SSH connection and default to `process.cwd()`.
@@ -56,27 +58,22 @@ console.info(`Directory was created: ${status}`)
           containing a variables and only apply to `./var/cache/`.
           """
         'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix group name or id who owns the target directory.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/gid'
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          # default: 0o755
-          description: """
-          Directory mode. Modes may be absolute or symbolic. An absolute mode is
-          an octal number. A symbolic mode is a string with a particular syntax
-          describing `who`, `op` and `perm` symbols.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/properties/mode'
         'parent':
-          oneOf: [{
+          oneOf: [
             type: 'boolean'
-          }, {
+          ,
             type: 'object'
             properties:
+              'gid':
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/gid'
               'mode':
-                $ref: '#/properties/mode'
-          }]
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/mode'
+              'uid':
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
+          ]
           description: """
           Create parent directory with provided attributes if an object or
           default system options if "true", supported attributes include 'mode',
@@ -85,13 +82,10 @@ console.info(`Directory was created: ${status}`)
         'target':
           type: 'string'
           description: """
-          Location of the directory to be created.
+          Location of the directory to create.
           """
         'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix user name or id who owns the target directory.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'
       required: ['target']
         
 ## Handler

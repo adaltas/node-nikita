@@ -24,16 +24,20 @@ schema = {
   type: 'object',
   allOf: [
     {
-      $ref: 'module://@nikitajs/ldap/lib/search#/properties'
-    },
-    {
       properties: {
+        'base': {
+          const: 'cn=config',
+          default: 'cn=config'
+        },
         'suffix': {
           type: 'string',
           description: `The suffix associated with the database.`
         }
       },
       required: ['suffix']
+    },
+    {
+      $ref: 'module://@nikitajs/ldap/lib/search'
     }
   ]
 };
@@ -42,7 +46,7 @@ schema = {
 handler = async function({config}) {
   var _, database, dn, stdout;
   ({stdout} = (await this.ldap.search(config, {
-    base: 'cn=config',
+    base: config.base,
     filter: `(olcSuffix= ${config.suffix})`,
     attributes: ['dn']
   })));

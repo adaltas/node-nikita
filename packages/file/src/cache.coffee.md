@@ -33,7 +33,7 @@ console.info(`File downloaded: ${status}`)
           Path of the cache directory.
           """
         'cache_file':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type:[ 'boolean', 'string']
           description: """
           Alias for 'target'.
           """
@@ -44,7 +44,8 @@ console.info(`File downloaded: ${status}`)
           where the command is used instead of over SSH.
           """
         'cookies':
-          type: 'array', items: type: 'string'
+          type: 'array'
+          items: type: 'string'
           default: []
           description: """
           Extra cookies  to include in the request when sending HTTP to a
@@ -62,7 +63,8 @@ console.info(`File downloaded: ${status}`)
           Overwrite the target file if it exists, bypass md5 verification.
           """
         'http_headers':
-          type: 'array', items: type: 'string'
+          type: 'array'
+          items: type: 'string'
           default: []
           description: """
           Extra header to include in the request when sending HTTP to a server.
@@ -75,7 +77,7 @@ console.info(`File downloaded: ${status}`)
           this option will make curl redo the request on the new place.
           """
         'md5':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           default: false
           description: """
           Validate file with md5 checksum (only for binary upload for now),
@@ -89,14 +91,14 @@ console.info(`File downloaded: ${status}`)
           """
         'sha1':
           default: false
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Validate file with sha1 checksum (only for binary upload for now),
           may be the string checksum or will be deduced from source if "true".
           """
         'sha256':
           default: false
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Validate file with sha256 checksum (only for binary upload for now),
           may be the string checksum or will be deduced from source if "true".
@@ -108,7 +110,7 @@ console.info(`File downloaded: ${status}`)
           source is provided without any.
           """
         'target':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Cache the file on the executing machine, equivalent to cache unless an
           ssh connection is provided. If a string is provided, it will be the

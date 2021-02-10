@@ -19,14 +19,7 @@ schema = {
       $ref: '#/properties/docker/properties/machine'
     },
     'bash': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Serialize the command into a file and execute it with bash.`
     },
     'rootdir': {
@@ -75,6 +68,7 @@ to 0.`
         },
         'machine': {
           type: 'string',
+          format: 'hostname',
           description: `Name of the docker-machine, required if using docker-machine.`
         }
       },

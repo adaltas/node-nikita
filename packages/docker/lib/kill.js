@@ -37,14 +37,7 @@ schema = {
       $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
     },
     'signal': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['integer', 'string'],
       description: `Use a specified signal. SIGKILL by default.`
     }
   },

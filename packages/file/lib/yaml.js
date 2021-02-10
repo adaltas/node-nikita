@@ -46,14 +46,7 @@ it will append the \`replace\` value at the end of the file if no match
 if found and if the value is a string.`
     },
     'backup': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       default: false,
       description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
@@ -71,6 +64,9 @@ exists and is modified.`
     'from': {
       type: 'string',
       description: `Replace from after this marker, a string or a regular expression.`
+    },
+    'gid': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'indent': {
       type: 'integer',
@@ -104,18 +100,14 @@ option.`
       default: false,
       description: `Read the target if it exists and merge its content.`
     },
+    'mode': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
+    },
     'replace': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `The content to be inserted, used conjointly with the from, to or match
 options.`
     },
@@ -160,6 +152,9 @@ command will be piped.`
         }
       ],
       description: `Replace to before this marker, a string or a regular expression.`
+    },
+    'uid': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   required: ['content', 'target']

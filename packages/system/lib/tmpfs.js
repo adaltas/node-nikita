@@ -32,14 +32,7 @@ schema = {
       description: `The destination path of the symlink if type is \`L\`.`
     },
     'backup': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['boolean', 'string'],
       default: true,
       description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file

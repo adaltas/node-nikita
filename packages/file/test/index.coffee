@@ -577,20 +577,6 @@ describe 'file', ->
 
   describe 'config `place_before`', ->
 
-    they 'append content to missing file', ({ssh}) ->
-      # File does not exist, it create it with the content
-      nikita
-        ssh: ssh
-        metadata: tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        @file
-          target: "#{tmpdir}/a_file"
-          content: 'hello'
-          append: true
-        @fs.assert
-          target: "#{tmpdir}/a_file"
-          content: 'hello'
-
     they 'is true, prepend the content', ({ssh}) ->
       # File doesnt exists, creates one
       nikita
@@ -612,7 +598,7 @@ describe 'file', ->
   describe 'config `append`', ->
 
     they 'append content to missing file', ({ssh}) ->
-      # File does not exist, it create it with the content
+      # File does not exist, it creates it with the content
       nikita
         ssh: ssh
         metadata: tmpdir: true

@@ -24,7 +24,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\ncolor = rouge\n'
 
-  they 'merge an object', ({ssh}) ->
+  they 'option `merge`', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true

@@ -58,7 +58,7 @@ console.info(`Package or service was removed: ${status}`)
         installed = state['nikita:execute:installed']
       unless installed?
         try
-          {status, stdout} = await @execute
+          {stdout} = await @execute
             command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n"
@@ -74,11 +74,11 @@ console.info(`Package or service was removed: ${status}`)
             code_skipped: 1
             stdout_log: false
             metadata: shy: true
-          if status
-            log message: "Installed packages retrieved", level: 'INFO'
-            installed = for pkg in utils.string.lines(stdout) then pkg
+          log message: "Installed packages retrieved", level: 'INFO'
+          installed = for pkg in utils.string.lines(stdout) then pkg
         catch err
           throw Error "Unsupported Package Manager" if err.exit_code is 2
+          throw err
       if installed.indexOf(config.name) isnt -1
         try
           {status} = await @execute
@@ -103,6 +103,7 @@ console.info(`Package or service was removed: ${status}`)
           else message: "Service already removed", level: 'INFO', module: 'nikita/lib/service/remove'
         catch err
           throw Error "Invalid Service Name: #{config.name}" if err
+          throw err
       if config.cache
         await @call
           handler: ->

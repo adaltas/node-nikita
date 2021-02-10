@@ -10,7 +10,7 @@ for engine, _ of db
 
   describe "db.user #{engine}", ->
 
-    they 'validate options', ({ssh}) ->
+    they 'requires host, hostname, username', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
@@ -27,6 +27,11 @@ for engine, _ of db
             '#/required config should have required property \'password\';'
             '#/required config should have required property \'username\'.'
           ].join ' '
+    
+    they 'requires admin_username, password, username', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
         @db.user
           host: 'localhost'
           port: 5432

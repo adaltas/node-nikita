@@ -13,11 +13,17 @@ nikita
     'nikita-tools-npm':
       image: 'images:centos/7'
       properties:
-        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
+        'environment.NIKITA_TEST_MODULE': "/nikita/packages/tools/env/npm/test.coffee"
+        # files in "/nikita" with vagrant user 1000 on host are mapped to root
+        'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
+        then 'both 1000 0'
+        else "both #{process.getuid()} 0"
       disk:
         nikitadir:
           path: '/nikita'
-          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
+          source: if process.env['NIKITA_LXD_IN_VAGRANT']
+          then '/nikita'
+          else path.join(__dirname, '../../../../')
       ssh: enabled: true
   provision_container: ({config}) ->
     await @lxd.exec
@@ -25,13 +31,9 @@ nikita
       container: config.container
       command: """
       command -v node && exit 42
-      NODE_VERSION=12.13.1
-      yum install -y xz
-      curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
-      tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
-      rm -f "/tmp/node.tar.xz"
-      ln -s /usr/local/bin/node /usr/bin/node
-      ln -s /usr/local/bin/npm /usr/bin/npm
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+      . ~/.bashrc
+      nvm install node
       """
       trap: true
       code_skipped: 42

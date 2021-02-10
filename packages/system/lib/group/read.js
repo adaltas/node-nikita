@@ -51,19 +51,12 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      default: false,
-      description: `Retrieve the information for a specific group name or guid.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid',
+      description: `Retrieve the information for a specific group name or gid.`
     },
     'target': {
       type: 'string',
+      default: '/etc/group',
       description: `Path to the group definition file, default to "/etc/group".`
     }
   }
@@ -75,53 +68,70 @@ handler = async function({
     state,
     tools: {log}
   }) {
-  var data, group, groups, i, len, line, ref;
-  if (config.target == null) {
-    config.target = '/etc/group';
-  }
-  // Read system groups
-  ({data} = (await this.fs.base.readFile({
-    target: config.target,
-    encoding: 'ascii'
-  })));
-  groups = {};
-  ref = utils.string.lines(data);
-  for (i = 0, len = ref.length; i < len; i++) {
-    line = ref[i];
-    line = /(.*)\:(.*)\:(.*)\:(.*)/.exec(line);
-    if (!line) {
-      continue;
-    }
-    groups[line[1]] = {
-      group: line[1],
-      password: line[2],
-      gid: parseInt(line[3]),
-      users: line[4] ? line[4].split(',') : []
-    };
-  }
-  if (!config.gid) {
-    return {
-      // Pass the group information
-      groups: groups
-    };
-  }
-  if (groups[config.gid] != null) {
-    return {
-      group: groups[config.gid]
-    };
-  }
+  var data, group, groups, stdout, str2groups;
   if (typeof config.gid === 'string' && /\d+/.test(config.gid)) {
     config.gid = parseInt(config.gid, 10);
   }
-  group = Object.values(groups).filter(function(group) {
-    return group.gid === config.gid;
-  })[0];
-  if (!group) {
-    throw Error(`Invalid Option: no gid matching ${JSON.stringify(config.gid)}`);
-  }
-  return {
-    group: group
+  // Parse the groups output
+  str2groups = function(data) {
+    var groups, i, len, line, ref;
+    groups = {};
+    ref = utils.string.lines(data);
+    for (i = 0, len = ref.length; i < len; i++) {
+      line = ref[i];
+      line = /(.*)\:(.*)\:(.*)\:(.*)/.exec(line);
+      if (!line) {
+        continue;
+      }
+      groups[line[1]] = {
+        group: line[1],
+        password: line[2],
+        gid: parseInt(line[3]),
+        users: line[4] ? line[4].split(',') : []
+      };
+    }
+    return groups;
   };
+  // Fetch the groups information
+  if (!config.target) {
+    ({stdout} = (await this.execute({
+      command: 'getent group'
+    })));
+    groups = str2groups(stdout);
+  } else {
+    ({data} = (await this.fs.base.readFile({
+      target: config.target,
+      encoding: 'ascii'
+    })));
+    groups = str2groups(data);
+  }
+  if (!config.gid) {
+    return {
+      // Return all the groups
+      groups: groups
+    };
+  }
+  // Return a group by name
+  if (typeof config.gid === 'string') {
+    group = groups[config.gid];
+    if (!group) {
+      throw Error(`Invalid Option: no gid matching ${JSON.stringify(config.gid)}`);
+    }
+    return {
+      group: group
+    };
+  } else {
+    // Return a group by gid
+    group = Object.values(groups).filter(function(group) {
+      return group.gid === config.gid;
+    })[0];
+    if (!group) {
+      throw Error(`Invalid Option: no gid matching ${JSON.stringify(config.gid)}`);
+    }
+    return {
+      group: group
+    };
+  }
 };
 
 // ## Exports

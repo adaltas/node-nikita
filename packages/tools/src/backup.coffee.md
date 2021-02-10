@@ -73,11 +73,7 @@ console.info(`File was backed up: ${status}`)
           a directory otherwise no compression.
           """
         source:
-          oneOf: [
-            type: 'boolean'
-          ,
-            type: 'string'
-          ]
+          type: ['string', 'boolean']
           description: """
           Path to a file or a directory to backup.
           """

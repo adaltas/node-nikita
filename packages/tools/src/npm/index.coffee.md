@@ -17,12 +17,6 @@ const {status} = await nikita.tools.npm({
 console.info(`Package was installed: ${status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-      config.name = [config.name] if typeof config.name is 'string'
-
 ## Schema
 
     schema =
@@ -57,49 +51,36 @@ console.info(`Package was installed: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      global = if config.global then '-g' else ''
-      # Get outdated packages
-      outdated = []
-      {stdout} = await @execute
-        command: "npm outdated --json #{global}"
-        code: [0, 1]
+      # names = config.name.map (name) -> name.split('@')[0]
+      # Upgrade
+      {status} = await @tools.npm.upgrade
         cwd: config.cwd
-        stdout_log: false
-        metadata: shy: true
-      pkgs = JSON.parse stdout
-      outdated = Object.keys pkgs if Object.keys(pkgs).length
-      # Upgrade outdated packages
-      upgrade = config.name.filter (pkg) -> pkg in outdated
-      if config.upgrade and upgrade.length
-        await @execute
-          command: "npm update #{global} #{upgrade.join ' '}"
-          cwd: config.cwd
-          sudo: config.sudo
-        log message: "NPM Updated Packages: #{upgrade.join ', '}"
+        global: config.global
+        if: config.upgrade
+        name: config.name
       # Get installed packages
-      installed = []
-      {stdout} = await @execute
-        command: "npm list --json #{global}"
-        code: [0, 1]
+      {packages} = await @tools.npm.list
         cwd: config.cwd
-        stdout_log: false
-        metadata: shy: true
-      pkgs = JSON.parse stdout
-      installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
+        global: config.global
       # Install packages
-      install = config.name.filter (pkg) -> pkg not in installed
+      installed = Object.keys packages
+      install = for name in config.name
+        continue if installed.includes name.split('@')[0]
+        name
       return unless install.length
       await @execute
-        command: "npm install #{global} #{install.join ' '}"
+        command: [
+          'npm install'
+          '--global' if config.global
+          ...install
+        ].join ' '
         cwd: config.cwd
-        sudo: config.sudo
       log message: "NPM Installed Packages: #{install.join ', '}"
 
 ## Export
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

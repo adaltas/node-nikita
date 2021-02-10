@@ -31,11 +31,13 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Schema
 
     schema =
-      name:
-        type: 'string'
-        description: '''
-        Name of the group to remove.
-        '''
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+          description: '''
+          Name of the group to remove.
+          '''
       required: ['name']
 
 * `arch_chroot` (boolean|string)   

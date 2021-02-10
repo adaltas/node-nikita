@@ -57,10 +57,7 @@ returned values.
           type: 'object'
           properties:
             'mode':
-              type: 'integer'
-              description: """
-              A bit-field describing the file type and mode.
-              """
+              $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
             'uid':
               type: 'integer'
               description: """

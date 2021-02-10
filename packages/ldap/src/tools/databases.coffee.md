@@ -20,13 +20,21 @@ databases.map( database => {
 ## Schema
 
     schema =
-      $ref: 'module://@nikitajs/ldap/src/search#/properties'
+      type: 'object'
+      allOf: [
+        properties:
+          'base':
+            const: 'cn=config'
+            default: 'cn=config'
+      ,
+        $ref: 'module://@nikitajs/ldap/src/search'
+      ]
 
 ## Handler
 
     handler = ({config}) ->
       {stdout} = await @ldap.search config,
-        base: 'cn=config'
+        base: config.base
         filter: '(objectClass=olcDatabaseConfig)'
         attributes: ['olcDatabase']
       databases = utils.string

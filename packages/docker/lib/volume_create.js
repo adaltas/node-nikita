@@ -33,17 +33,10 @@ schema = {
       description: `Specify volume driver name.`
     },
     'label': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Set metadata for a volume.`
     },
     'name': {
@@ -51,17 +44,10 @@ schema = {
       description: `Specify volume name.`
     },
     'opt': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Set driver specific options.`
     }
   }

@@ -31,7 +31,7 @@ module.exports = function(config, log) {
         opts.match = RegExp(`${utils.regexp.quote(opts.match)}`, "mg");
       }
       if (!(opts.match instanceof RegExp)) {
-        throw Error("Invalid match option");
+        throw Error(`Invalid match option, got ${JSON.stringify(opts.match)} instead of a RegExp`);
       }
       if (opts.match.test(config.content)) {
         config.content = config.content.replace(opts.match, opts.replace);

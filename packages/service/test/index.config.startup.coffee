@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.service_startup or tags.service_systemctl
 
-describe 'service config startup', ->
+describe 'service#config.startup', ->
 
   describe 'schema', ->
 

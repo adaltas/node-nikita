@@ -55,19 +55,12 @@ schema = {
   properties: {
     'target': {
       type: 'string',
-      description: `Path to the passwd definition file, use the \`getent passwd\` by default
-which use to "/etc/passwd".`
+      description: `Path to the passwd definition file, use the \`getent passwd\` command by
+default which use to "/etc/passwd".`
     },
     'uid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Retrieve the information for a specific user name or uid.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid',
+      description: `Retrieve the information for a specific username or uid.`
     }
   }
 };
@@ -78,7 +71,7 @@ handler = async function({config}) {
   if (typeof config.uid === 'string' && /\d+/.test(config.uid)) {
     config.uid = parseInt(config.uid, 10);
   }
-  // Read system passwd
+  // Parse the passwd output
   str2passwd = function(data) {
     var i, len, line, passwd, ref;
     passwd = {};
@@ -100,6 +93,7 @@ handler = async function({config}) {
     }
     return passwd;
   };
+  // Fetch the users information
   if (!config.target) {
     ({stdout} = (await this.execute({
       command: 'getent passwd'
@@ -110,15 +104,15 @@ handler = async function({config}) {
       target: config.target,
       encoding: 'ascii'
     })));
-    // return unless data?
     passwd = str2passwd(data);
   }
   if (!config.uid) {
     return {
-      // Pass the passwd information
+      // Return all the users
       users: passwd
     };
   }
+  // Return a user by username
   if (typeof config.uid === 'string') {
     user = passwd[config.uid];
     if (!user) {
@@ -128,6 +122,7 @@ handler = async function({config}) {
       user: user
     };
   } else {
+    // Return a user by uid
     user = Object.values(passwd).filter(function(user) {
       return user.uid === config.uid;
     })[0];

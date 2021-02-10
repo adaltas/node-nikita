@@ -55,8 +55,12 @@ console.info(`File was pushed: ${status}`)
           """
         'mode':
           type: ['integer', 'string']
+          pattern: "^\\d+$"
+          filemode: true
           description: """
-            Set the file's perms on push.
+          Set the file's perms on push. LXD only support the absolute
+          representation. When passing a string, an integer is casted to its
+          octal value and passing a symbolic value will throw an error.
           """
         'source':
           type: 'string'

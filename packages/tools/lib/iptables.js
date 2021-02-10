@@ -78,6 +78,7 @@ schema = {
           $ref: '#/definitions/rule-config'
         },
         {
+          type: 'object',
           properties: {
             'after': {
               $ref: '#/definitions/rule-config'

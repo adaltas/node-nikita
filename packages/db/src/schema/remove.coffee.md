@@ -17,8 +17,8 @@ Remove a schema from a database.
           description: """
           The database name where the schema is registered.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

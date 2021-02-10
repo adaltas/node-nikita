@@ -115,17 +115,10 @@ schema = {
   type: 'object',
   properties: {
     'host': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `One or multiple hosts, used to build or enrich the 'server' option.`
     },
     'interval': {
@@ -133,38 +126,14 @@ schema = {
       description: `Time in millisecond between each connection attempt.`
     },
     'quorum': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'integer'
-        }
-      ],
+      type: ['boolean', 'integer'],
       description: `Number of minimal successful connection, 50%+1 if "true".`
     },
     'port': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            oneOf: [
-              {
-                type: 'integer'
-              },
-              {
-                type: 'string'
-              }
-            ]
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'integer'
+      },
       description: `One or multiple ports, used to build or enrich the 'server' option.`
     },
     'randdir': {

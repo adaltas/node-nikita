@@ -70,12 +70,12 @@ describe 'service.assert', ->
           name: service.srv_name
         @service.assert
           name: service.srv_name
+          started: false
+        @service.assert
+          name: service.srv_name
           started: true
         .should.be.rejectedWith
           message: "Service Not Started: #{service.srv_name}"
-        @service.assert
-          name: service.srv_name
-          started: false
 
   describe 'stopped', ->
     
@@ -113,9 +113,9 @@ describe 'service.assert', ->
           name: service.srv_name
         @service.assert
           name: service.srv_name
+          stopped: false
+        @service.assert
+          name: service.srv_name
           stopped: true
         .should.be.rejectedWith
           message: "Service Not Stopped: #{service.srv_name}"
-        @service.assert
-          name: service.srv_name
-          stopped: false

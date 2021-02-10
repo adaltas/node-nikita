@@ -71,6 +71,7 @@ console.info(`Iptables was updated: ${status}`)
           allOf: [
             $ref: '#/definitions/rule-config'
           ,
+            type: 'object'
             properties:
               'after':
                 $ref: '#/definitions/rule-config'

@@ -29,16 +29,13 @@ console.info(`Database created or modified: ${status}`)
           The name of the database to create.
           """
         'user':
-          oneOf: [
-            type: 'string'
-          ,
-            type: 'array', items: type: 'string'
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           This users who will be granted superuser permissions.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':
@@ -113,4 +110,4 @@ console.info(`Database created or modified: ${status}`)
 
 ## Dependencies
 
-    {command, connection_config} = require '../query'
+    {command} = require '../query'

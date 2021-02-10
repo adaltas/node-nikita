@@ -118,5 +118,5 @@ describe 'actions.fs.move', ->
       @fs.move
         source: "#{tmpdir}/src.txt"
         target: "#{tmpdir}/dest.txt"
-        force: 1
+        force: true
       .should.be.finally.containEql status: true

@@ -15,7 +15,7 @@ Execute a docker command.
         'machine':
           $ref: '#/properties/docker/properties/machine'
         'bash':
-          oneOf: [{type: 'boolean'}, {type: 'string'}]
+          type: ['boolean', 'string']
           description: """
           Serialize the command into a file and execute it with bash.
           """
@@ -26,7 +26,11 @@ Execute a docker command.
           if the "arch_chroot" option is activated.
           """
         'command':
-          oneOf: [{type: 'string'}, typeof: 'function']
+          oneOf: [
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           String, Object or array; Command to execute. A value provided as a
           function is interpreted as an action and will be called by forwarding
@@ -63,6 +67,7 @@ Execute a docker command.
               """
             'machine':
               type: 'string'
+              format: 'hostname'
               description: """
               Name of the docker-machine, required if using docker-machine.
               """

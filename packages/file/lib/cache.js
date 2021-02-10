@@ -34,14 +34,7 @@ schema = {
       description: `Path of the cache directory.`
     },
     'cache_file': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Alias for 'target'.`
     },
     'cache_local': {
@@ -82,14 +75,7 @@ location (indicated with a Location: header and a 3XX response code),
 this option will make curl redo the request on the new place.`
     },
     'md5': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       default: false,
       description: `Validate file with md5 checksum (only for binary upload for now),
 may be the string checksum or will be deduced from source if "true".`
@@ -101,27 +87,13 @@ is assumed at port 1080. See curl(1) man page.`
     },
     'sha1': {
       default: false,
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Validate file with sha1 checksum (only for binary upload for now),
 may be the string checksum or will be deduced from source if "true".`
     },
     'sha256': {
       default: false,
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Validate file with sha256 checksum (only for binary upload for now),
 may be the string checksum or will be deduced from source if "true".`
     },
@@ -131,14 +103,7 @@ may be the string checksum or will be deduced from source if "true".`
 source is provided without any.`
     },
     'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Cache the file on the executing machine, equivalent to cache unless an
 ssh connection is provided. If a string is provided, it will be the
 cache path. Default to the basename of source.`

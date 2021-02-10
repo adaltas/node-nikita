@@ -25,14 +25,7 @@ schema = {
   type: 'object',
   properties: {
     'bits': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'number'
-        }
-      ],
+      type: 'number',
       default: 4096,
       description: `Specifies the number of bits in the key to create.`
     },

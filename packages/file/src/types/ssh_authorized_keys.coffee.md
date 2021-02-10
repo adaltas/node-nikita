@@ -26,11 +26,7 @@ throw an Error if it does not exists.
           Read the target if it exists and merge its content.
           """
         'mode':
-          type: 'string'
-          description: """
-          File mode (permission and sticky bits), default to `0o0644`, in the
-          form of `{mode: 0o0744}` or `{mode: "0744"}`.
-          """
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'target':
           type: 'string'
           description: """

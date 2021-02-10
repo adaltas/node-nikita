@@ -38,10 +38,10 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'mode': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
     },
     'target': {
       oneOf: [
@@ -56,7 +56,7 @@ schema = {
 path.`
     },
     'uid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   required: ['target']
@@ -68,7 +68,6 @@ handler = async function({
     tools: {log}
   }) {
   var status;
-  // status is false if the file doesn't exist and true otherwise
   ({status} = (await this.call(async function() {
     var exists;
     log({

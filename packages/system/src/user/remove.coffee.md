@@ -31,11 +31,13 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Schema
 
     schema =
-      name:
-        type: 'string'
-        description: '''
-        Name of the user to removed.
-        '''
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+          description: '''
+          Name of the user to removed.
+          '''
       required: ['name']
 
 * `arch_chroot` (boolean|string)   

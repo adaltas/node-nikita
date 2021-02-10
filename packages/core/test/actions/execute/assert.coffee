@@ -7,6 +7,15 @@ return unless tags.posix
 
 describe 'actions.execute.assert', ->
   
+  describe 'schema', ->
+    
+    it 'coercion', ->
+      nikita.execute.assert
+        command: 'exit 1'
+        code: 1
+        handler: ({config}) ->
+          config.code.should.eql [1]
+  
   describe 'exit code', ->
 
     they 'assert command succeed', ({ssh}) ->

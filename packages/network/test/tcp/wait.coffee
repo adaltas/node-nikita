@@ -26,7 +26,17 @@ describe 'network.tcp.wait', ->
         new Promise (resolve) ->
           srv.app.close resolve
 
-  describe 'validation', ->
+  describe 'Schema and validation', ->
+
+    it 'coercion port from integer', ->
+      nikita.network.tcp.wait
+        host: 'localhost'
+        port: '80'
+      , ({config}) ->
+        config.server.should.eql [
+          host: ['localhost']
+          port: [80]
+        ]
 
     it 'option server', ->
       {logs} = await nikita.network.tcp.wait
@@ -35,7 +45,7 @@ describe 'network.tcp.wait', ->
       logs.map ({message}) -> message
       .should.containEql 'No connection to wait for'
 
-    it 'option server[host]', ->
+    it 'option server.host undefined', ->
       {logs} = await nikita.network.tcp.wait
         server: [
           { host: undefined, port: 80 }
@@ -43,7 +53,7 @@ describe 'network.tcp.wait', ->
       logs.map ({message}) -> message
       .should.containEql 'No connection to wait for'
 
-    it 'option port', ->
+    it 'option server.port undefined', ->
       {logs} = await nikita.network.tcp.wait
         server: [
           { host: 'localhost', port: undefined }

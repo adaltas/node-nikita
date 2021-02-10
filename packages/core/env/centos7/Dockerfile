@@ -32,4 +32,4 @@ WORKDIR /nikita/packages/core
 # Enable color output in TTY
 ENV TERM xterm
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

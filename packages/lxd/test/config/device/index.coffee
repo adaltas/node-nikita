@@ -57,8 +57,8 @@ describe 'lxd.config.device', ->
         device: 'test'
         type: 'disk'
         properties:
-          source: 1
-          path: 1
+          source: key: 'value'
+          path: key: 'value'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
 

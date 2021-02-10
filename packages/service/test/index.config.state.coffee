@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.service_systemctl
 
-describe 'service config state', ->
+describe 'service#config.state', ->
 
   describe 'schema', ->
 
@@ -21,7 +21,7 @@ describe 'service config state', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `service`:'
-          '#/properties/state/items/enum config.state[0] should be equal to one of the allowed values,'
+          '#/properties/state/items/enum config/state/0 should be equal to one of the allowed values,'
           'allowedValues is ["started","stopped","restarted"].'
         ].join ' '
     

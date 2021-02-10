@@ -34,8 +34,6 @@ console.info(`File exists: ${status}`)
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
-      config.filetype = [config.filetype] if typeof config.filetype in ['number', 'string']
-      config.mode = [config.mode] if typeof config.mode in ['number', 'string']
       config.filter = [config.filter] if config.filter instanceof RegExp
 
 ## Schema
@@ -57,7 +55,7 @@ console.info(`File exists: ${status}`)
         'filetype':
           type: 'array'
           items:
-            oneOf: [{type: 'integer'}, {type: 'string'}]
+            type: ['integer', 'string']
           description: """
           Validate the file, could be any [file type
           constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
@@ -73,7 +71,7 @@ console.info(`File exists: ${status}`)
           Text to filter in actual content before matching.
           """
         'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: ['integer', 'string']
           description: """
           Group ID to assert.
           """
@@ -85,7 +83,7 @@ console.info(`File exists: ${status}`)
         'mode':
           type: 'array'
           items:
-            oneOf: [{type: 'integer'}, {type: 'string'}]
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
           description: """
           Validate file permissions.
           """
@@ -113,7 +111,7 @@ console.info(`File exists: ${status}`)
           Trim the actual and expected content before matching.
           """
         'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: ['integer', 'string']
           description: """
           User ID to assert.
           """

@@ -47,6 +47,9 @@ console.info(`Cron entry created or modified: ${status}`)
           """
         'when':
           type: 'string'
+          pattern: '^(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})$'
+          # noBooleanCoercion: true
+          # noNumberCoercion: true
           description: """
           Cron-styled time string. Defines the frequency of the cron job.
           """
@@ -62,10 +65,9 @@ console.info(`Cron entry created or modified: ${status}`)
         log message: "Using default user", level: 'DEBUG'
         crontab = "crontab"
       jobs = []
-      {stdout, stderr} = await @execute
+      {stdout} = await @execute
         command: "#{crontab} -l"
         code: [0, 1]
-      # throw Error 'User crontab not found' if /^no crontab for/.test stderr
       new_job = "#{config.when} #{config.command}"
       # remove useless last element
       regex =

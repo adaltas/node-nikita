@@ -17,7 +17,7 @@ describe 'docker.start', ->
         force: true
       @docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_start'
+        container: 'nikita_test_start'
       @docker.stop
         container: 'nikita_test_start'
       {status} = await @docker.start
@@ -37,7 +37,7 @@ describe 'docker.start', ->
         force: true
       @docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_start'
+        container: 'nikita_test_start'
       @docker.stop
         container: 'nikita_test_start'
       @docker.start

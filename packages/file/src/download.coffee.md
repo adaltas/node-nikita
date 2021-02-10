@@ -84,7 +84,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           Path of the cache directory.
           """
         'cache_file':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Cache the file on the executing machine, equivalent to cache unless an
           ssh connection is provided. If a string is provided, it will be the
@@ -121,8 +121,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           this option will make curl redo the request on the new place.
           """
         'md5':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
           default: false
+          type: ['boolean', 'string']
           description: """
           Validate uploaded file with md5 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
@@ -138,7 +138,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           """
         'sha1':
           default: false
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Validate uploaded file with sha1 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
@@ -146,7 +146,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           """
         'sha256':
           default: false
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Validate uploaded file with sha1 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
@@ -159,7 +159,11 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           is provided without any.
           """
         'target':
-          oneOf: [{type: 'string'}, {typeof: 'function'}]
+          oneOf:[
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           File path where to write content to. Pass the content.
           """

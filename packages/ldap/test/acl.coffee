@@ -20,7 +20,7 @@ describe 'ldap.acl', ->
       binddn: ldap.config.binddn
       passwd: ldap.config.passwd
       base: "olcDatabase=#{olcDatabase},cn=config"
-      attributes:['olcAccess']
+      attributes: ['olcAccess']
       scope: 'base'
     olcAccesses = utils.string.lines(stdout)
     .filter (l) -> /^olcAccess: /.test l

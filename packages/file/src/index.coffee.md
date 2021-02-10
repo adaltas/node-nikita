@@ -26,7 +26,7 @@ information is provided in two ways:
 
 ## More about the `append` option
 
-The `append` option allows more advanced usages. If `append` is "null", it will
+The `append` option allows more advanced usages. If `append` is `null`, it will
 add the value of the "replace" option at the end of the file when no match
 is found and when the value is a string.
 
@@ -153,18 +153,14 @@ console.info(data)
 
     on_action = ({config}) ->
       # Validate parameters
+      # TODO: try to express this in JSON schema
       throw Error 'Missing source or content or replace or write' unless (config.source or config.content?) or config.replace? or config.write?
       throw Error 'Define either source or content' if config.source and config.content?
-      throw Error 'Missing target' unless config.target
       if config.content
         if typeof config.content is 'number'
           config.content = "#{config.content}"
         else if Buffer.isBuffer config.content
           config.content = config.content.toString()
-      if typeof config.backup_mode is 'string'
-        config.backup_mode = parseInt(config.backup_mode, 8)
-      if typeof config.mode is 'string'
-        config.mode = parseInt(config.mode, 8)
 
 ## Schema
 
@@ -172,27 +168,37 @@ console.info(data)
       type: 'object'
       properties:
         'append':
-          oneOf: [{type: 'string'}, {type: 'boolean'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            typeof: 'boolean'
+          ,
+            typeof: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           default: false
           description: """
           Append the content to the target file. If target does not exist, the
           file will be created.
           """
         'backup':
-          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
           """
         'backup_mode':
-          type: 'integer', default: 0o0400
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
           description: """
           Backup file mode (permission and sticky bits), defaults to `0o0400`,
           in the  form of `{mode: 0o0400}` or `{mode: "0400"}`.
           """
         'content':
-          oneOf:[{type: 'string'}, {typeof: 'function'}]
+          oneOf:[
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           Text to be written, an alternative to source which reference a file.
           """
@@ -209,7 +215,7 @@ console.info(data)
           true.
           """
         'eof':
-          oneOf:[{type: 'string'}, {type: 'boolean'}]
+          type: ['boolean', 'string']
           description: """
           Ensure the file ends with this charactere sequence, special values are
           'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r",
@@ -229,27 +235,42 @@ console.info(data)
           Template engine being used.
           """
         'from':
-          oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            type: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Name of the marker from where the content will be replaced.
           """
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'local':
-          type: 'boolean', default: false
+          type: 'boolean'
+          default: false
           description: """
           Treat the source as local instead of remote, only apply with "ssh"
           option.
           """
         'match':
-          oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            type: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Replace this marker, default to the replaced string if missing.
           """
         'mode':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'place_before':
-          oneOf: [{type: 'string'}, {type: 'boolean'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            typeof: 'boolean'
+          ,
+            typeof: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Place the content before the match.
           """
@@ -259,7 +280,8 @@ console.info(data)
           Remove empty lines from content
           """
         'replace':
-          oneOf: [{type: 'string'}, {type: 'array', items: type: 'string'}]
+          type: ['array', 'string']
+          items: type: 'string'
           description: """
           The content to be inserted, used conjointly with the from, to or match
           options.
@@ -271,19 +293,28 @@ console.info(data)
           with content.
           """
         'target':
-          oneOf: [{type: 'string'}, {typeof: 'function'}]
+          oneOf: [
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           File path where to write content to. Pass the content.
           """
         'to':
-          oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            type: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Name of the marker until where the content will be replaced.
           """
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
         'unlink':
-          type: 'boolean', default: false
+          type: 'boolean'
+          default: false
           description: """
           Replace the existing link, leaving the refered file untouched.
           """
@@ -297,18 +328,30 @@ console.info(data)
             type: 'object'
             properties:
               'from':
-                oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+                oneOf: [
+                  type: 'string'
+                ,
+                  instanceof: 'RegExp'
+                ]
                 description: """
                 File path from where to extract the content, do not use
                 conjointly with content.
                 """
               'to':
-                oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+                oneOf: [
+                  type: 'string'
+                ,
+                  instanceof: 'RegExp'
+                ]
                 description: """
                 Name of the marker until where the content will be replaced.
                 """
               'match':
-                oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+                oneOf: [
+                  type: 'string'
+                ,
+                  instanceof: 'RegExp'
+                ]
                 description: """
                 Replace this marker, default to the replaced string if missing.
                 """
@@ -318,6 +361,7 @@ console.info(data)
                 The content to be inserted, used conjointly with the from, to or
                 match options.
                 """
+      required: ['target']
 
 ## Handler
 

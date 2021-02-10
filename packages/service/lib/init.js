@@ -40,8 +40,8 @@ disabled if no context is provided.`
       $ref: 'module://@nikitajs/file/lib/index#/properties/local'
     },
     'mode': {
-      default: '0o755',
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode',
+      default: '755'
     },
     'name': {
       type: 'string',

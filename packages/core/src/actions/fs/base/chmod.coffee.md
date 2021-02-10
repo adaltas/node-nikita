@@ -14,8 +14,8 @@ Change permissions of a file.
       type: 'object'
       properties:
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          default: 0o644
+          type: ['string', 'integer']
+          filemode: true
           description: """
           File mode. Modes may be absolute or symbolic. An absolute mode is
           an octal number. A symbolic mode is a string with a particular syntax
@@ -31,9 +31,10 @@ Change permissions of a file.
 ## Handler
 
     handler = ({config}) ->
-      config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
-      await @execute
-        command: "chmod #{config.mode} #{config.target}"
+      mode = if typeof config.mode is 'number'
+      then config.mode.toString(8).substr(-4)
+      else config.mode
+      @execute "chmod #{mode} #{config.target}"
 
 ## Exports
 

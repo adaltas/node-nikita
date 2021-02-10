@@ -17,8 +17,8 @@ Check if a database exists.
           description: """
           The database name to check for existance.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

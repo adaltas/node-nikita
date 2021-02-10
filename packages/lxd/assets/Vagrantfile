@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
     mem = 4096
   end
   
-  config.vm.box = "ubuntu/groovy64"
+  config.vm.box = "ubuntu/groovy64" # 20.10
   config.ssh.insert_key = true
   config.vm.box_check_update = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     vb.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
     # Half the number of CPUs
     vb.cpus = cpus
-    # Hafl the memory
+    # Half the memory
     vb.memory = mem
     vagrant_root = File.dirname(File.expand_path(__FILE__))
     file_to_disk = File.join(vagrant_root, 'lxd_zpool.vdi')
@@ -70,10 +70,10 @@ Vagrant.configure("2") do |config|
     # lxc launch -e images:ubuntu/xenial preload
     # lxc delete --force preload
     # Install Node.js to run the tests
-    apt-get install -y make
-    curl -L https://git.io/n-install | bash -s -- -y
+    # apt-get install -y make
+    # curl -L https://git.io/n-install | bash -s -- -y
     # Append lxd group to vagrant user
-    usermod --append --groups lxd vagrant
+    # usermod --append --groups lxd vagrant
     # For FreeIPA, host must have fs.protected_regular set to 0,
     # check with `sysctl -a | grep protected`
     echo '0' > /proc/sys/fs/protected_regular && sysctl -p

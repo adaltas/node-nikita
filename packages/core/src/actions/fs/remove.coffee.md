@@ -66,7 +66,7 @@ console.info(`Directories was removed: ${status}`)
           Alias for "target".
           """
         'target':
-          oneOf:[{type: 'string'}, {type: 'array'}]
+          type: 'string'
           description: """
           File, directory or glob (pattern matching based on wildcard
           characters).

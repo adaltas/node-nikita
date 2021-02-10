@@ -32,10 +32,8 @@ console.info(`Volume was created: ${status}`)
           Specify volume driver name.
           """
         'label':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array', items: type: 'string'}
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           Set metadata for a volume.
           """
@@ -45,10 +43,8 @@ console.info(`Volume was created: ${status}`)
           Specify volume name.
           """
         'opt':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array', items: type: 'string'}
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           Set driver specific options.
           """

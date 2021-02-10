@@ -72,7 +72,7 @@ handler = async function({
   }
   if (installed == null) {
     try {
-      ({status, stdout} = (await this.execute({
+      ({stdout} = (await this.execute({
         command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n"
 elif command -v pacman >/dev/null 2>&1; then
@@ -89,27 +89,26 @@ fi`,
           shy: true
         }
       })));
-      if (status) {
-        log({
-          message: "Installed packages retrieved",
-          level: 'INFO'
-        });
-        installed = (function() {
-          var i, len, ref, results;
-          ref = utils.string.lines(stdout);
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            pkg = ref[i];
-            results.push(pkg);
-          }
-          return results;
-        })();
-      }
+      log({
+        message: "Installed packages retrieved",
+        level: 'INFO'
+      });
+      installed = (function() {
+        var i, len, ref, results;
+        ref = utils.string.lines(stdout);
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          pkg = ref[i];
+          results.push(pkg);
+        }
+        return results;
+      })();
     } catch (error) {
       err = error;
       if (err.exit_code === 2) {
         throw Error("Unsupported Package Manager");
       }
+      throw err;
     }
   }
   if (installed.indexOf(config.name) !== -1) {
@@ -144,6 +143,7 @@ fi`,
       if (err) {
         throw Error(`Invalid Service Name: ${config.name}`);
       }
+      throw err;
     }
   }
   if (config.cache) {

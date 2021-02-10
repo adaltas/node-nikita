@@ -8,6 +8,15 @@ return unless tags.posix
 
 describe 'actions.fs.assert', ->
   
+  describe 'schema', ->
+    
+    it 'coersion', ->
+      nikita.fs.assert
+        mode: '744',
+        target: '/tmp/fake'
+      , ({config}) ->
+        config.mode.should.eql [ 0o0744 ]
+  
   describe 'exists', ->
 
     they 'file doesnt not exist', ({ssh}) ->

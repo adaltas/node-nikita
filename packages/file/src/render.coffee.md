@@ -54,9 +54,9 @@ console.info(`File was rendered: ${status}`)
         'engine':
           $ref: 'module://@nikitajs/file/src/index#/properties/engine'
         'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'mode':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'local':
           $ref: 'module://@nikitajs/file/src/index#/properties/local'
         'remove_empty_lines':
@@ -66,7 +66,7 @@ console.info(`File was rendered: ${status}`)
         'target':
           $ref: 'module://@nikitajs/file/src/index#/properties/target'
         'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['target', 'context']
 
 ## Handler

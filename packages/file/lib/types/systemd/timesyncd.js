@@ -39,16 +39,23 @@ var handler, path, schema;
 schema = {
   type: 'object',
   properties: {
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, optional.`
+    'content': {
+      type: 'object',
+      description: `The configuration object`
+    },
+    'merge': {
+      type: 'boolean',
+      description: `Merge the original content with the provided content.`
     },
     'reload': {
       type: 'boolean',
-      default: null,
       description: `Defaults to true. If set to true the following command will be
 executed \`systemctl daemon-reload && systemctl restart
 systemd-timesyncd\` after having wrote the configuration file.`
+    },
+    'rootdir': {
+      type: 'string',
+      description: `Path to the mount point corresponding to the root directory, optional.`
     },
     'target': {
       type: 'string',

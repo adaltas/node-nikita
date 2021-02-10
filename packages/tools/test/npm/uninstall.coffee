@@ -24,23 +24,22 @@ describe 'tools.npm.uninstall', ->
           ].join ' '
 
     it 'cwd or global is true are required', ->
-      nikita {}
-      , ->
-        @tools.npm.uninstall
-          name: 'coffeescript'
-        .should.be.rejectedWith
-          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-          message: [
-            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `tools.npm.uninstall`:'
-            '#/if config should match "then" schema, failingKeyword is "then";'
-            '#/then/required config should have required property \'cwd\'.'
-          ].join ' '
-        @tools.npm.uninstall
-          config:
-            name: 'coffeescript'
-            global: true
-        .should.eventually.not.be.rejected
+      nikita.tools.npm.uninstall
+        name: 'csv-parse'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'multiple errors where found in the configuration of action `tools.npm.uninstall`:'
+          '#/if config should match "then" schema, failingKeyword is "then";'
+          '#/then/required config should have required property \'cwd\'.'
+        ].join ' '
+
+    it 'global is `true`', ->
+      nikita.tools.npm.uninstall
+        name: 'csv-parse'
+        global: true
+      , (->)
 
   describe 'action', ->
 
@@ -51,14 +50,14 @@ describe 'tools.npm.uninstall', ->
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
         {status} = await @tools.npm.uninstall
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.true()
         {status} = await @tools.npm.uninstall
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.false()
 
     they 'uninstall locally in a current working directory', ({ssh}) ->
@@ -69,18 +68,18 @@ describe 'tools.npm.uninstall', ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
         @tools.npm
-          name: 'coffeescript'
+          name: 'csv-parse'
           cwd: "#{tmpdir}/1_dir"
         @tools.npm
-          name: 'coffeescript'
+          name: 'csv-parse'
           cwd: "#{tmpdir}/2_dir"
         {status} = await @tools.npm.uninstall
           cwd: "#{tmpdir}/1_dir"
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.true()
         {status} = await @tools.npm.uninstall
           cwd: "#{tmpdir}/2_dir"
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.true()
 
     they 'uninstall globally', ({ssh}) ->
@@ -89,18 +88,18 @@ describe 'tools.npm.uninstall', ->
       , ->
         await @tools.npm
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         {status} = await @tools.npm.uninstall
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         status.should.be.true()
         {status} = await @tools.npm.uninstall
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         status.should.be.false()
@@ -112,10 +111,10 @@ describe 'tools.npm.uninstall', ->
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
-          name: ['coffeescript', 'csv']
+          name: ['csv-parse', 'csv']
         {status} = await @tools.npm.uninstall
           cwd: tmpdir
-          name: ['coffeescript', 'csv']
+          name: ['csv-parse', 'csv']
         status.should.be.true()
     
     they 'name as argument', ({ssh}) ->
@@ -125,7 +124,7 @@ describe 'tools.npm.uninstall', ->
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
-        {status} = await @tools.npm.uninstall 'coffeescript',
+          name: 'csv-parse'
+        {status} = await @tools.npm.uninstall 'csv-parse',
           cwd: tmpdir
         status.should.be.true()

@@ -46,17 +46,10 @@ schema = {
   type: 'object',
   properties: {
     'add_host': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Add a custom host-to-IP mapping (host:ip) in the form of \`host:ip\`.`
     },
     'blkio_weight': {
@@ -64,31 +57,17 @@ schema = {
       description: `Block IO (relative weight), between 10 and 1000.`
     },
     'cap_add': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Add Linux Capabilities.`
     },
     'cap_drop': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Drop Linux Capabilities.`
     },
     'cgroup_parent': {
@@ -116,45 +95,24 @@ schema = {
       description: `if true, run container in background.`
     },
     'device': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Send host device(s) to container.`
     },
     'dns': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Set custom DNS server(s).`
     },
     'dns_search': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Set custom DNS search domain(s).`
     },
     'docker': {
@@ -166,45 +124,24 @@ schema = {
 \`--entrypoint docker parameter\``
     },
     'env': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Environment variables for the container in the form of \`VAR=value\`.`
     },
     'env_file': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Read in a file of environment variables.`
     },
     'expose': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Export port(s).`
     },
     'hostname': {
@@ -220,17 +157,10 @@ schema = {
       description: `IPC namespace to use.`
     },
     'label': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Set meta data on a container.`
     },
     'label_file': {
@@ -238,17 +168,10 @@ schema = {
       description: `Path to read in a line delimited file of labels.`
     },
     'link': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Link to other container(s) in the form of a container name or a
 container ID.`
     },
@@ -261,17 +184,10 @@ container ID.`
       description: `Set the Network mode for the container.`
     },
     'port': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Port mapping in the form of \`int:int\`.`
     },
     'pid': {
@@ -288,55 +204,24 @@ container ID.`
       description: `Delete the container when it ends. True by default.`
     },
     'ulimit': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'integer'
-        },
-        {
-          type: 'array',
-          items: {
-            oneOf: [
-              {
-                type: 'string'
-              },
-              {
-                type: 'integer'
-              }
-            ]
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: ['integer', 'string']
+      },
       description: `Ulimit options.`
     },
     'volume': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Volume mapping, in the form of \`path:path\`.`
     },
     'volumes_from': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Mount volumes from the specified container(s).`
     }
   },

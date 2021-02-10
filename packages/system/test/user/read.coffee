@@ -5,34 +5,8 @@ they = require('mocha-they')(config)
 
 
 describe 'system.user.read', ->
-
-  describe 'option "getent"', ->
-    return unless tags.system_user
-
-    they 'use getent command if target not defined', ({ssh}) ->
-      nikita
-        ssh: ssh
-      , ->
-        await @system.user.remove 'toto'
-        await @system.group.remove 'toto'
-        {status} = await @system.user
-          name: 'toto'
-          system: true
-          uid: 1000
-        status.should.be.true()
-        {user} = await @system.user.read
-          getent: true
-          uid: 'toto'
-        user.should.match
-          user: 'toto'
-          uid: 1000
-          comment: ''
-          home: '/home/toto'
-          shell: '/bin/sh'
-        await @system.user.remove 'toto'
-        await @system.group.remove 'toto'
   
-  describe 'usage', ->
+  describe 'with option `target`', ->
     return unless tags.posix
 
     they 'shy doesnt modify the status', ({ssh}) ->
@@ -50,7 +24,7 @@ describe 'system.user.read', ->
           target: "#{tmpdir}/etc/passwd"
         status.should.be.false()
 
-    they 'activate locales', ({ssh}) ->
+    they 'return all users', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -66,6 +40,30 @@ describe 'system.user.read', ->
         users.should.eql
           root: user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash'
           bin: user: 'bin', uid: 1, gid: 1, comment: 'bin', home: '/bin', shell: '/usr/bin/nologin'
+
+  describe 'without option `target`', ->
+    return unless tags.system_user
+
+    they 'use `getent` without target', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        @system.user.remove 'toto'
+        @system.group.remove 'toto'
+        @system.user
+          name: 'toto'
+          system: true
+          uid: 1000
+        {user} = await @system.user.read
+          uid: 'toto'
+        user.should.match
+          user: 'toto'
+          uid: 1000
+          comment: ''
+          home: '/home/toto'
+          shell: '/bin/sh'
+        @system.user.remove 'toto'
+        @system.group.remove 'toto'
 
   describe 'option "uid"', ->
     return unless tags.posix

@@ -33,16 +33,19 @@ describe 'db.schema postgres', ->
       ssh: ssh
       db: db.postgresql
     , ->
-      @db.database.remove 'postgres_db_1'
-      @db.database 'postgres_db_1'
-      @db.schema
-        config:
-          schema: 'postgres_schema_1'
-          database: 'postgres_db_1'
-          owner: 'Johny'
-      .should.be.rejectedWith
-        message: 'Owner Johny does not exists'
-      @db.database.remove 'postgres_db_1'
+      try
+        @db.database.remove 'postgres_db_1'
+        @db.database 'postgres_db_1'
+        await @db.schema
+          config:
+            schema: 'postgres_schema_1'
+            database: 'postgres_db_1'
+            owner: 'Johny'
+        throw Error 'Oh no'
+      catch err
+        err.message.should.eql 'Owner Johny does not exists'
+      finally
+        @db.database.remove 'postgres_db_1'
 
   they 'add new schema with existing owner (existing db)', ({ssh}) ->
     nikita

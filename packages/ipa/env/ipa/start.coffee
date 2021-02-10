@@ -5,7 +5,7 @@ require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
 
 # Note:
-# Jan 20th, 2020: upgrading ubuntu to 19.10
+# Jan 20th, 2020: upgrading ubuntu to 19.10 on the host vm
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
 # solution involve to run on the host machine

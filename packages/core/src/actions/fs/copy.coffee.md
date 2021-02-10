@@ -35,8 +35,6 @@ console.info(`File was copied: ${status}`)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
-      config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
       config.parent ?= {}
       config.parent = {} if config.parent is true
 
@@ -46,28 +44,22 @@ console.info(`File was copied: ${status}`)
       type: 'object'
       properties:
         'gid':
-          type: 'integer'
-          description: """
-          Unix group name or id who owns the target file.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/gid'
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          # default: 0o755
-          description: """
-          Permissions of the file or the parent directory.. Modes may be
-          absolute or symbolic. An absolute mode is an octal number. A symbolic
-          mode is a string with a particular syntax describing `who`, `op` and
-          `perm` symbols.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/properties/mode'
         'parent':
-          oneOf: [{
+          oneOf: [
             type: 'boolean'
-          }, {
+          ,
             type: 'object'
             properties:
+              'gid':
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/gid'
               'mode':
-                $ref: '#/properties/mode'
-          }]
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/mode'
+              'uid':
+                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
+          ]
           description: """
           Create parent directory with provided attributes if an object or
           default system config if "true", supported attributes include 'mode',
@@ -104,10 +96,7 @@ console.info(`File was copied: ${status}`)
           """
           properties: require('./base/stat').schema_output.properties.stats.properties
         'uid':
-          type: 'integer'
-          description: """
-          Unix user name or id who owns the target file.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'
       required: ['source', 'target']
 
 ## Handler

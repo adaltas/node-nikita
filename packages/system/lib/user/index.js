@@ -127,13 +127,6 @@ default, set the "home" option if we it to be created.`
   required: ['name']
 };
 
-//   * `arch_chroot` (boolean|string)   
-//     Run this command inside a root directory with the arc-chroot command or any
-//     provided string, require the "rootdir" option if activated.
-//   * `rootdir` (string)   
-//     Path to the mount point corresponding to the root directory, required if
-//     the "arch_chroot" option is activated.
-
 // ## Handler
 handler = async function({
     metadata,
@@ -161,9 +154,7 @@ handler = async function({
     throw Error(`Invalid option 'shell': ${JSON.strinfigy(config.shell)}`);
   }
   user_info = groups_info = null;
-  ({users} = (await this.system.user.read({
-    cache: config.cache
-  })));
+  ({users} = (await this.system.user.read()));
   user_info = users[config.name];
   log(user_info ? {
     message: `Got user information for ${JSON.stringify(config.name)}`,
@@ -178,8 +169,7 @@ handler = async function({
   // * user already exists
   // * we need to compare groups membership
   ({groups} = (await this.system.group.read({
-    if: user_info && config.groups,
-    cache: config.cache
+    if: user_info && config.groups
   })));
   groups_info = groups;
   if (groups_info) {
@@ -189,7 +179,7 @@ handler = async function({
     });
   }
   if (config.home) {
-    this.system.mkdir({
+    this.fs.mkdir({
       unless_exists: path.dirname(config.home),
       target: path.dirname(config.home),
       uid: 0,
@@ -286,12 +276,12 @@ handler = async function({
   if (config.password_sync && config.password) {
     ({status} = (await this.execute({
       command: `hash=$(echo ${config.password} | openssl passwd -1 -stdin)
-usermod --pass="$hash" ${config.name}`,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir,
-      sudo: config.sudo
+usermod --pass="$hash" ${config.name}`
     })));
     if (status) {
+      // arch_chroot: config.arch_chroot
+      // rootdir: config.rootdir
+      // sudo: config.sudo
       return log({
         message: "Password modified",
         level: 'WARN'

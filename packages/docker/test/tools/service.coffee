@@ -15,8 +15,8 @@ describe 'docker.tools.service', ->
         docker: docker
       .docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_unique'
-        pid: [true] # docker.run action define type string
+        container: 'nikita_test_unique'
+        pid: [key: true] # docker.run action define type string
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
           
@@ -26,37 +26,33 @@ describe 'docker.tools.service', ->
         docker: docker
       .docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_unique'
+        container: 'nikita_test_unique'
         port: '499:80'
         handler: ({config}) ->
           config.detach.should.be.true()
           config.rm.should.be.false()
 
-  they 'simple service', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    , ->
-      @docker.rm
-        force: true
-        container: 'nikita_test_unique'
-      @docker.tools.service
-        image: 'httpd'
-        name: 'nikita_test_unique'
-        port: '499:80'
-      # .wait_connect
-      #   port: 499
-      #   host: ipadress of docker, docker-machine...
-      @docker.rm
-        force: true
-        container: 'nikita_test_unique'
+    they 'simple service', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      , ->
+        @docker.rm
+          force: true
+          container: 'nikita_test_unique'
+        @docker.tools.service
+          image: 'httpd'
+          container: 'nikita_test_unique'
+          port: '499:80'
+        # .wait_connect
+        #   port: 499
+        #   host: ipadress of docker, docker-machine...
+        @docker.rm
+          force: true
+          container: 'nikita_test_unique'
 
-  they 'invalid options', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    , ->
-      @docker.tools.service
+    it 'config.container required', ->
+      nikita.docker.tools.service
         image: 'httpd'
         port: '499:80'
       .should.be.rejectedWith
@@ -65,8 +61,10 @@ describe 'docker.tools.service', ->
           'one error was found in the configuration of action `docker.tools.service`:'
           '#/required config should have required property \'container\'.'
         ].join ' '
-      @docker.tools.service
-        name: 'toto'
+
+    it 'config.image required', ->
+      nikita.docker.tools.service
+        container: 'toto'
         port: '499:80'
       .should.be.rejectedWith
         message: [
@@ -85,11 +83,11 @@ describe 'docker.tools.service', ->
         force: true
         container: 'nikita_test'
       @docker.tools.service
-        name: 'nikita_test'
+        container: 'nikita_test'
         image: 'httpd'
         port: '499:80'
       {status} = await @docker.tools.service
-        name: 'nikita_test'
+        container: 'nikita_test'
         image: 'httpd'
         port: '499:80'
       status.should.be.false()

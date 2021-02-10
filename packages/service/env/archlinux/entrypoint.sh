@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# mount --bind /var/tmp/root.x86_64 /mnt
-
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Run supervisord detached...

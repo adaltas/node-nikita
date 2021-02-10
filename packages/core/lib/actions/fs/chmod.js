@@ -34,18 +34,7 @@ schema = {
   type: 'object',
   properties: {
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      // default: 0o644
-      description: `File mode. Modes may be absolute or symbolic. An absolute mode is
-an octal number. A symbolic mode is a string with a particular syntax
-describing \`who\`, \`op\` and \`perm\` symbols.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
     },
     'stats': {
       typeof: 'object',

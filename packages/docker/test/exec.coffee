@@ -32,21 +32,25 @@ describe 'docker.exec', ->
       ssh: ssh
       docker: docker
     , ->
-      @docker.rm
-        container: 'nikita_test_exec'
-        force: true
-      @docker.tools.service
-        image: 'httpd'
-        container: 'nikita_test_exec'
-      @docker.stop
-        container: 'nikita_test_exec'
-      @docker.exec
-        container: 'nikita_test_exec'
-        command: 'echo toto'
-      .should.be.rejectedWith  /Container [a-z0-9]+ is not running/
-      @docker.rm
-        container: 'nikita_test_exec'
-        force: true
+      try
+        @docker.rm
+          container: 'nikita_test_exec'
+          force: true
+        @docker.tools.service
+          image: 'httpd'
+          container: 'nikita_test_exec'
+        @docker.stop
+          container: 'nikita_test_exec'
+        await @docker.exec
+          container: 'nikita_test_exec'
+          command: 'echo toto'
+        throw Error 'Oh no'
+      catch err
+        err.message.should.match /Container [a-z0-9]+ is not running/
+      finally
+        @docker.rm
+          container: 'nikita_test_exec'
+          force: true
 
   they 'on non existing container', ({ssh}) ->
     nikita

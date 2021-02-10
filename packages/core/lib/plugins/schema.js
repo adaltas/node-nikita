@@ -53,10 +53,10 @@ module.exports = {
             allowUnionTypes: true, // eg type: ['boolean', 'integer']
             strict: true,
             // extendRefs: true
-            // coerceTypes: true
+            coerceTypes: 'array',
             loadSchema: function(uri) {
               return new Promise(async function(accept, reject) {
-                var module, pathname, protocol;
+                var err, module, pathname, protocol;
                 ({protocol, pathname} = parse(uri));
                 switch (protocol) {
                   case 'module:':
@@ -82,6 +82,22 @@ module.exports = {
           });
           ajv_keywords(ajv);
           ajv_formats(ajv);
+          ajv.addKeyword({
+            keyword: "filemode",
+            type: ['integer', 'string'],
+            compile: function(value) {
+              return function(data, schema, parentData) {
+                if (typeof data === 'string' && /^\d+$/.test(data)) {
+                  schema.parentData[schema.parentDataProperty] = parseInt(data, 8);
+                }
+                return true;
+              };
+            },
+            metaSchema: {
+              type: 'boolean',
+              enum: [true]
+            }
+          });
           action.tools.schema = {
             ajv: ajv,
             add: function(schema, name) {
@@ -91,8 +107,17 @@ module.exports = {
               return ajv.addSchema(schema, name);
             },
             validate: async function(action) {
-              var validate;
-              validate = (await ajv.compileAsync(action.metadata.schema));
+              var err, validate;
+              try {
+                validate = (await ajv.compileAsync(action.metadata.schema));
+              } catch (error1) {
+                err = error1;
+                if (!err.code) {
+                  err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION';
+                  err.message = `${err.code}: ${err.message}`;
+                }
+                throw err;
+              }
               if (validate(action.config)) {
                 return;
               }

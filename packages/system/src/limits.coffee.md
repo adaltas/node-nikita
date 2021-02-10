@@ -272,17 +272,13 @@ page for further information.
       ]
       definitions:
         'limits':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'boolean'
+          anyOf: [
+            type: ['boolean', 'integer']
           ,
             type: 'object'
             patternProperties:
-              '^-|soft|hard$': oneOf: [
-                type: 'integer'
-              ,
-                type: 'boolean'
+              '^-|soft|hard$': anyOf: [
+                type: ['boolean', 'integer']
               ,
                 type: 'string'
                 enum: ['unlimited']

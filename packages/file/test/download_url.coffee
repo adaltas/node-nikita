@@ -158,37 +158,36 @@ describe 'file.download url', ->
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
+          md5: '2f74dbbee4142b7366c93b115f914fff'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
-          md5: '2f74dbbee4142b7366c93b115f914fff'
         .should.be.rejectedWith message: "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
 
     they 'count 1 if new file has correct checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
         metadata: tmpdir: true
+        ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
-          ssh: ssh
+          md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-          md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql status: true
 
     they 'count 0 if a file exist with same checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        ssh: ssh
         metadata: tmpdir: true
+        ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-        .should.be.finally.containEql status: true
         @file.download
+          md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-          md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql status: false
       
   describe 'error', ->
@@ -196,8 +195,8 @@ describe 'file.download url', ->
     they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
-        ssh: ssh
         metadata: tmpdir: true
+        ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "http://localhost/sth"

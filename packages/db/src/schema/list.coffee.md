@@ -30,8 +30,8 @@ schemas.map( ({name, owner}) => {
           description: """
           The database name storing the schemas.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

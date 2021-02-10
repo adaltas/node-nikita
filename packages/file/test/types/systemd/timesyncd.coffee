@@ -47,7 +47,7 @@ describe 'file.types.systemd.timesyncd', ->
         """
         trim: true
 
-  they 'merge values', ({ssh}) ->
+  they 'option `merge`', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true

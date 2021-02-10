@@ -8,14 +8,9 @@
 // Indeed, in a service mode, the container must be detached and NOT removed by default
 // after execution. 
 
-// ## Hooks
-var handler, on_action, schema;
-
-on_action = function({config}) {
-  return config.container != null ? config.container : config.container = config.name;
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   allOf: [
@@ -69,9 +64,6 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
     schema: schema
   }

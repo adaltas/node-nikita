@@ -28,8 +28,8 @@ console.info(`Did database existed initially: ${!status}`)
           description: """
           The database name to wait for.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

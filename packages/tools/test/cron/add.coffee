@@ -21,7 +21,6 @@ describe 'tools.cron.add', ->
 
     it 'invalid job: no time', ->
       nikita
-      .service 'cronie'
       .tools.cron.add
         command: '/remove/me'
       .should.be.rejectedWith
@@ -34,17 +33,12 @@ describe 'tools.cron.add', ->
 
     it 'invalid job: invalid time', ->
       nikita
-      .service 'cronie'
       .tools.cron.add
         command: '/remove/me'
         when: true
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: [
-          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action `tools.cron.add`:'
-          '#/properties/when/type config/when should be string, type is "string".'
-        ].join ' '
+        message: /#\/properties\/when\/pattern config\/when should match pattern/
 
     it 'invalid job: no command', ->
       nikita
@@ -53,11 +47,7 @@ describe 'tools.cron.add', ->
         when: '1 2 3 4 5'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: [
-          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action `tools.cron.add`:'
-          '#/required config should have required property \'command\'.'
-        ].join ' '
+        message: /#\/required config should have required property 'command'/
 
     it 'invalid job: invalid command', ->
       nikita

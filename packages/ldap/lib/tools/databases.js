@@ -21,14 +21,27 @@
 var handler, schema, utils;
 
 schema = {
-  $ref: 'module://@nikitajs/ldap/lib/search#/properties'
+  type: 'object',
+  allOf: [
+    {
+      properties: {
+        'base': {
+          const: 'cn=config',
+          default: 'cn=config'
+        }
+      }
+    },
+    {
+      $ref: 'module://@nikitajs/ldap/lib/search'
+    }
+  ]
 };
 
 // ## Handler
 handler = async function({config}) {
   var databases, stdout;
   ({stdout} = (await this.ldap.search(config, {
-    base: 'cn=config',
+    base: config.base,
     filter: '(objectClass=olcDatabaseConfig)',
     attributes: ['olcDatabase']
   })));

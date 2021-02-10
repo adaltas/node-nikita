@@ -25,9 +25,6 @@ var handler, schema;
 schema = {
   type: 'object',
   properties: {
-    'boot2docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
-    },
     'container': {
       type: 'string',
       description: `Name/ID of the container`
@@ -40,17 +37,10 @@ schema = {
 };
 
 // ## Handler
-handler = async function({
-    config,
-    tools: {log}
-  }) {
-  if (config.container == null) {
-    // Validation
-    throw Error('Missing container parameter');
-  }
-  return (await this.docker.tools.execute({
+handler = function({config}) {
+  return this.docker.tools.execute({
     command: `unpause ${config.container}`
-  }));
+  });
 };
 
 // ## Exports

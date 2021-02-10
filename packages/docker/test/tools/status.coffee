@@ -38,7 +38,7 @@ describe 'docker.tools.status', ->
       @docker.tools.service
         image: 'httpd'
         port: [ '500:80' ]
-        name: 'nikita_status'
+        container: 'nikita_status'
       {status} = await @docker.tools.status
         container: 'nikita_status'
       status.should.be.true()

@@ -57,10 +57,10 @@ describe 'actions.fs.remove', ->
         target: "#{tmpdir}/a_file"
         content: ''
       @fs.remove
-        source: "#{tmpdir}/a_file"
+        target: "#{tmpdir}/a_file"
       .should.be.finally.containEql status: true
       @fs.remove
-        source: "#{tmpdir}/a_file"
+        target: "#{tmpdir}/a_file"
       .should.be.finally.containEql status: false
 
   they 'a link', ({ssh}) ->
@@ -73,7 +73,7 @@ describe 'actions.fs.remove', ->
         content: ''
       @fs.base.symlink source: "#{tmpdir}/a_file", target: "#{tmpdir}/a_link"
       @fs.remove
-        source: "#{tmpdir}/a_link"
+        target: "#{tmpdir}/a_link"
       .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/a_link"
@@ -99,7 +99,7 @@ describe 'actions.fs.remove', ->
         target: "#{tmpdir}/a_dir.zip"
         content: ''
       @fs.remove
-        source: "#{tmpdir}/*gz"
+        target: "#{tmpdir}/*gz"
       .should.be.finally.containEql status: true
       @fs.assert "#{tmpdir}/a_dir.tar.gz", not: true
       @fs.assert "#{tmpdir}/a_dir.tgz", not: true

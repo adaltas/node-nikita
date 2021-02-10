@@ -46,7 +46,7 @@ console.info(`Content was written: ${status}`)
           if found and if the value is a string.
           """
         'backup':
-          oneOf: [{type: 'string'}, {type: 'boolean'}]
+          type: ['boolean', 'string']
           default: false
           description: """
           Create a backup, append a provided string to the filename extension or
@@ -69,6 +69,8 @@ console.info(`Content was written: ${status}`)
           description: """
           Replace from after this marker, a string or a regular expression.
           """
+        'gid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'indent':
           type: 'integer'
           default: 2
@@ -89,7 +91,11 @@ console.info(`Content was written: ${status}`)
           option.
           """
         'match':
-          oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+          oneOf: [
+            type: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Replace this marker, default to the replaced string if missing.
           """
@@ -99,8 +105,11 @@ console.info(`Content was written: ${status}`)
           description: """
           Read the target if it exists and merge its content.
           """
+        'mode':
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'replace':
-          oneOf: [{type: 'string'}, {type: 'array', items: type: 'string'}]
+          type: 'array'
+          items: type: 'string'
           description: """
           The content to be inserted, used conjointly with the from, to or match
           options.
@@ -130,15 +139,25 @@ console.info(`Content was written: ${status}`)
           command will be piped.
           """
         'target':
-          oneOf: [{type: 'string'}, {typeof: 'function'}]
+          oneOf:[
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           File path where to write content to. Pass the content.
           """
         'to':
-          oneOf: [{type: 'string'}, {instanceof: 'RegExp'}]
+          oneOf:[
+            type: 'string'
+          ,
+            instanceof: 'RegExp'
+          ]
           description: """
           Replace to before this marker, a string or a regular expression.
           """
+        'uid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['content', 'target']
 
 ## Handler

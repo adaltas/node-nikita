@@ -33,14 +33,7 @@ schema = {
   type: 'object',
   properties: {
     'backup': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       default: false,
       description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
@@ -57,14 +50,7 @@ exists and is modified.`
 exists.`
     },
     'pretty': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'boolean'
-        }
-      ],
+      type: ['boolean', 'integer'],
       default: false,
       description: `Prettify the JSON output, accept the number of spaces as an integer,
 default to none if false or to 2 spaces indentation if true.`

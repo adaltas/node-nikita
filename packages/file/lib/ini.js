@@ -90,9 +90,15 @@ windows",  "\n" otherwise). The name stands for End Of Line.`
       description: `Escape the section's header title replace '.' by '\.'; "true" by
 default.`
     },
+    'gid': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
+    },
     'merge': {
       type: 'boolean',
       description: `Read the target if it exists and merge its content.`
+    },
+    'mode': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
     },
     'parse': {
       typeof: 'function',
@@ -116,6 +122,9 @@ optional, use should_exists to enforce its presence.`
     'target': {
       type: 'string',
       description: `File path where to write content to or a callback.`
+    },
+    'uid': {
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   required: ['content', 'target']

@@ -30,8 +30,8 @@ schema = {
       type: 'string',
       description: `The database name to wait for.`
     },
-    'core': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/core'
+    'engine': {
+      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
     },
     'host': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/host'

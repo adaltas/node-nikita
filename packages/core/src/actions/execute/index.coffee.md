@@ -73,8 +73,6 @@ console.info(stdout)
     on_action =
       after: [
         '@nikitajs/core/src/plugins/ssh'
-        # '@nikitajs/core/src/plugins/tools_find'
-        # '@nikitajs/core/src/plugins/tools_walk'
       ]
       before: [
         '@nikitajs/core/src/plugins/schema'
@@ -88,8 +86,6 @@ console.info(stdout)
         if sudo or config.bash or config.arch_chroot or (Object.keys(env).length and env_export)
           metadata.tmpdir = true
         config.command = metadata.argument if metadata.argument?
-        config.code = [config.code] if config.code? and not Array.isArray config.code
-        config.code_skipped = [config.code_skipped] if config.code_skipped? and not Array.isArray config.code_skipped
         
 ## Schema
 
@@ -97,13 +93,13 @@ console.info(stdout)
       type: 'object'
       properties:
         'arch_chroot':
-          oneOf: [{type: 'boolean'}, {type: 'string'}]
+          type: ['boolean', 'string']
           description: """
           Run this command inside a root directory with the arc-chroot command
           or any provided string, require the "rootdir" option if activated.
           """
         'bash':
-          oneOf: [{type: 'boolean'}, {type: 'string'}]
+          type: ['boolean', 'string']
           description: """
           Serialize the command into a file and execute it with bash.
           """
@@ -114,7 +110,11 @@ console.info(stdout)
           if the "arch_chroot" option is activated.
           """
         'command':
-          oneOf: [{type: 'string'}, typeof: 'function']
+          oneOf: [
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           String, Object or array; Command to execute. A value provided as a
           function is interpreted as an action and will be called by forwarding
@@ -127,24 +127,16 @@ console.info(stdout)
           Current working directory from where to execute the command.
           """
         'code':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'array'
-            items: type: 'integer'
-          ]
+          type: 'array'
+          items: type: 'integer'
           default: [0]
           description: """
           Expected code(s) returned by the command, int or array of int, default
           to 0.
           """
         'code_skipped':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'array'
-            items: type: 'integer'
-          ]
+          type: 'array'
+          items: type: 'integer'
           default: []
           description: """
           Expected code(s) returned by the command if it has no effect, executed

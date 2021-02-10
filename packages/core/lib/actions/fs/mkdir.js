@@ -37,7 +37,13 @@ var errors, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
-    return config.target = metadata.argument;
+    config.target = metadata.argument;
+  }
+  if (config.parent == null) {
+    config.parent = {};
+  }
+  if (config.parent === true) {
+    return config.parent = {};
   }
 };
 
@@ -46,14 +52,7 @@ schema = {
   type: 'object',
   properties: {
     'cwd': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Current working directory for relative paths. A boolean value only
 apply without an SSH connection and default to \`process.cwd()\`.`
     },
@@ -64,29 +63,10 @@ expression \`/\${/\` on './var/cache/\${user}' exclude the directories
 containing a variables and only apply to \`./var/cache/\`.`
     },
     'gid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix group name or id who owns the target directory.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      // default: 0o755
-      description: `Directory mode. Modes may be absolute or symbolic. An absolute mode is
-an octal number. A symbolic mode is a string with a particular syntax
-describing \`who\`, \`op\` and \`perm\` symbols.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
     },
     'parent': {
       oneOf: [
@@ -96,8 +76,14 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
         {
           type: 'object',
           properties: {
+            'gid': {
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/gid'
+            },
             'mode': {
-              $ref: '#/properties/mode'
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/mode'
+            },
+            'uid': {
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/uid'
             }
           }
         }
@@ -108,18 +94,10 @@ default system options if "true", supported attributes include 'mode',
     },
     'target': {
       type: 'string',
-      description: `Location of the directory to be created.`
+      description: `Location of the directory to create.`
     },
     'uid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix user name or id who owns the target directory.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
     }
   },
   required: ['target']

@@ -26,7 +26,7 @@
 
 // ## More about the `append` option
 
-// The `append` option allows more advanced usages. If `append` is "null", it will
+// The `append` option allows more advanced usages. If `append` is `null`, it will
 // add the value of the "replace" option at the end of the file when no match
 // is found and when the value is a string.
 
@@ -155,26 +155,18 @@ var handler, on_action, path, schema, utils;
 on_action = function({config}) {
   if (!((config.source || (config.content != null)) || (config.replace != null) || (config.write != null))) {
     // Validate parameters
+    // TODO: try to express this in JSON schema
     throw Error('Missing source or content or replace or write');
   }
   if (config.source && (config.content != null)) {
     throw Error('Define either source or content');
   }
-  if (!config.target) {
-    throw Error('Missing target');
-  }
   if (config.content) {
     if (typeof config.content === 'number') {
-      config.content = `${config.content}`;
+      return config.content = `${config.content}`;
     } else if (Buffer.isBuffer(config.content)) {
-      config.content = config.content.toString();
+      return config.content = config.content.toString();
     }
-  }
-  if (typeof config.backup_mode === 'string') {
-    config.backup_mode = parseInt(config.backup_mode, 8);
-  }
-  if (typeof config.mode === 'string') {
-    return config.mode = parseInt(config.mode, 8);
   }
 };
 
@@ -185,10 +177,10 @@ schema = {
     'append': {
       oneOf: [
         {
-          type: 'string'
+          typeof: 'boolean'
         },
         {
-          type: 'boolean'
+          typeof: 'string'
         },
         {
           instanceof: 'RegExp'
@@ -199,21 +191,13 @@ schema = {
 file will be created.`
     },
     'backup': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
 exists and is modified.`
     },
     'backup_mode': {
-      type: 'integer',
-      default: 0o0400,
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode',
       description: `Backup file mode (permission and sticky bits), defaults to \`0o0400\`,
 in the  form of \`{mode: 0o0400}\` or \`{mode: "0400"}\`.`
     },
@@ -239,14 +223,7 @@ in the  form of \`{mode: 0o0400}\` or \`{mode: "0400"}\`.`
 true.`
     },
     'eof': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'boolean'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Ensure the file ends with this charactere sequence, special values are
 'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r",
 "\n", "\u2028"), will be auto-detected if "true", default to false or
@@ -299,10 +276,10 @@ option.`
     'place_before': {
       oneOf: [
         {
-          type: 'string'
+          typeof: 'boolean'
         },
         {
-          type: 'boolean'
+          typeof: 'string'
         },
         {
           instanceof: 'RegExp'
@@ -315,17 +292,10 @@ option.`
       description: `Remove empty lines from content`
     },
     'replace': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: ['array', 'string'],
+      items: {
+        type: 'string'
+      },
       description: `The content to be inserted, used conjointly with the from, to or match
 options.`
     },
@@ -413,7 +383,8 @@ match options.`
         }
       }
     }
-  }
+  },
+  required: ['target']
 };
 
 // ## Handler

@@ -2,7 +2,6 @@
 # Registration of `nikita.docker` actions
 
 require '@nikitajs/file/lib/register'
-# require '@nikitajs/network/lib/register'
 registry = require '@nikitajs/core/lib/registry'
 
 module.exports =
@@ -23,7 +22,6 @@ module.exports =
     rmi: '@nikitajs/docker/src/rmi'
     run: '@nikitajs/docker/src/run'
     save: '@nikitajs/docker/src/save'
-    # service: '@nikitajs/docker/src/service'
     start: '@nikitajs/docker/src/start'
     stop: '@nikitajs/docker/src/stop'
     tools:

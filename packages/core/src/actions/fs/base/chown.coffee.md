@@ -17,7 +17,7 @@ Change ownership of a file.
       type: 'object'
       properties:
         'gid':
-          type: 'integer'
+          type: ['integer', 'string']
           description: """
           Unix group name or id who owns the target file.
           """
@@ -27,7 +27,7 @@ Change ownership of a file.
           Location of the file which permissions will change.
           """
         'uid':
-          type: 'integer'
+          type: ['integer', 'string']
           description: """
           Unix user name or id who owns the target file.
           """

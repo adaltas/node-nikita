@@ -54,7 +54,11 @@ overwrite the \`target\` option.`
     },
     'mode': {
       type: ['integer', 'string'],
-      description: `Set the file's perms on push.`
+      pattern: "^\\d+$",
+      filemode: true,
+      description: `Set the file's perms on push. LXD only support the absolute
+representation. When passing a string, an integer is casted to its
+octal value and passing a symbolic value will throw an error.`
     },
     'source': {
       type: 'string',

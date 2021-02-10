@@ -18,7 +18,7 @@ describe 'docker.kill', ->
       @docker.tools.service
         image: 'httpd'
         port: '499:80'
-        name: 'nikita_test_kill'
+        container: 'nikita_test_kill'
       {status} = await @docker.kill
         container: 'nikita_test_kill'
       status.should.be.true()
@@ -35,7 +35,7 @@ describe 'docker.kill', ->
       @docker.tools.service
         image: 'httpd'
         port: '499:80'
-        name: 'nikita_test_kill'
+        container: 'nikita_test_kill'
       @docker.kill
         container: 'nikita_test_kill'
       {status} = await @docker.kill

@@ -34,21 +34,24 @@ describe 'docker.rm', ->
       ssh: ssh
       docker: docker
     , ->
-      @docker.rm
-        container: 'nikita_rm'
-        force: true
-      @docker.tools.service
-        image: 'httpd'
-        port: '499:80'
-        name: 'nikita_rm'
-      @docker.rm
-        container: 'nikita_rm'
-      .should.be.rejectedWith
-        message: 'Container must be stopped to be removed without force'
-      @docker.stop
-        container: 'nikita_rm'
-      @docker.rm
-        container: 'nikita_rm'
+      try
+        @docker.rm
+          container: 'nikita_rm'
+          force: true
+        @docker.tools.service
+          image: 'httpd'
+          port: '499:80'
+          container: 'nikita_rm'
+        await @docker.rm
+          container: 'nikita_rm'
+        throw Error 'Oh no'
+      catch err
+        err.message.should.eql 'Container must be stopped to be removed without force'
+      finally
+        @docker.stop
+          container: 'nikita_rm'
+        @docker.rm
+          container: 'nikita_rm'
 
   they 'remove live container (with force)', ({ssh}) ->
     @timeout 30000
@@ -62,7 +65,7 @@ describe 'docker.rm', ->
       await @docker.tools.service
         image: 'httpd'
         port: '499:80'
-        name: 'nikita_rm'
+        container: 'nikita_rm'
       {status} = await @docker.rm
         container: 'nikita_rm'
         force: true

@@ -82,13 +82,9 @@ console.info(`Servers listening: ${status}`)
       type: 'object'
       properties:
         'host':
-          oneOf: [
+          type: 'array'
+          items:
             type: 'string'
-          ,
-            type: 'array'
-            items:
-              type: 'string'
-          ]
           description: """
           One or multiple hosts, used to build or enrich the 'server' option.
           """
@@ -98,27 +94,14 @@ console.info(`Servers listening: ${status}`)
           Time in millisecond between each connection attempt.
           """
         'quorum':
-          oneOf: [
-            { type: 'boolean' }
-            { type: 'integer' }
-          ]
+          type: ['boolean', 'integer']
           description: """
           Number of minimal successful connection, 50%+1 if "true".
           """
         'port':
-          oneOf: [
+          type: 'array'
+          items:
             type: 'integer'
-          ,
-            type: 'string'
-          ,
-            type: 'array'
-            items:
-              oneOf: [
-                type: 'integer'
-              ,
-                type: 'string'
-              ]
-          ]
           description: """
           One or multiple ports, used to build or enrich the 'server' option.
           """

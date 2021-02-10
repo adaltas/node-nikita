@@ -25,14 +25,14 @@ on_action = {
       tools: {find}
     }) {
     var ref, sudo;
+    if (metadata.argument != null) {
+      config.target = metadata.argument;
+    }
     sudo = (await find(function({
         config: {sudo}
       }) {
       return sudo;
     }));
-    if (metadata.argument != null) {
-      config.target = metadata.argument;
-    }
     if (sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
       return metadata.tmpdir = true;
     }
@@ -57,16 +57,7 @@ copied into its final destination, default to
 "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"`
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      default: 0o644,
-      description: `Permission mode, a bit-field describing the file type and mode.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
     },
     'stream': {
       typeof: 'function',

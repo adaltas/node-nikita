@@ -83,12 +83,15 @@ for engine, _ of db then do (engine) ->
           ssh: ssh
           db: db[engine]
         , ->
-          @db.database.remove 'db_create_4'
-          @db.user.remove 'db_create_user_4'
-          @db.database
-            database: 'db_create_4'
-            user: 'db_create_user_4'
-          .should.be.rejectedWith
-            message: 'DB user does not exists: db_create_user_4'
-          @db.database.remove 'db_create_4'
-          @db.user.remove 'db_create_user_4'
+          try
+            @db.database.remove 'db_create_4'
+            @db.user.remove 'db_create_user_4'
+            await @db.database
+              database: 'db_create_4'
+              user: 'db_create_user_4'
+            throw Error 'Oh no'
+          catch err
+              err.message.should.eql 'DB user does not exists: db_create_user_4'
+          finally
+            @db.database.remove 'db_create_4'
+            @db.user.remove 'db_create_user_4'

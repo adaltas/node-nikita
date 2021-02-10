@@ -33,11 +33,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           The destination path of the symlink if type is `L`.
           '''
         'backup':
-          oneOf: [
-            type: 'boolean'
-          ,
-            type: 'string'
-          ]
+          type: ['boolean', 'string']
           default: true
           description: '''
           Create a backup, append a provided string to the filename extension or

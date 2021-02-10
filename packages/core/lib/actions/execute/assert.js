@@ -33,12 +33,7 @@ var handler, on_action, schema, utils,
 on_action = function({config, metadata}) {
   if (!config.content) {
     // config.command = metadata.argument if metadata.argument?
-    if (config.code == null) {
-      config.code = [0];
-    }
-  }
-  if ((config.code != null) && !Array.isArray(config.code)) {
-    return config.code = [config.code];
+    return config.code != null ? config.code : config.code = [0];
   }
 };
 
@@ -48,7 +43,6 @@ schema = {
   properties: {
     'code': {
       type: 'array',
-      // default: [0]
       items: {
         type: 'integer'
       },

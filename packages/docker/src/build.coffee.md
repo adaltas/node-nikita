@@ -86,12 +86,12 @@ console.info(`Container was built: ${status}`)
       type: 'object'
       properties:
         'build_arg':
-          oneOf: [{
+          oneOf: [
             type: 'string'
-          }, {
+          ,
             type: 'object',
             patternProperties: '.*': typeof: 'string'
-          }]
+          ]
           description: """
           Send arguments to the build, match the Docker native ARG command.
           """

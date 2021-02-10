@@ -25,17 +25,10 @@ schema = {
       description: `Number of minimal successful connection, 50%+1 if "true".`
     },
     'command': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `The commands to be executed.`
     },
     'interval': {
@@ -45,33 +38,19 @@ schema = {
 command, default to 2s.`
     },
     'code': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'integer'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'integer'
+      },
       description: `Expected exit code to recieve to exit and call the user callback,
 default to "0".`
     },
     'code_skipped': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'integer'
-          }
-        }
-      ],
-      default: 1,
+      type: 'array',
+      items: {
+        type: 'integer'
+      },
+      default: [1],
       description: `Expected code to be returned when the command failed and should be
 scheduled for later execution, default to "1".`
     },
@@ -94,10 +73,8 @@ handler = async function({
     tools: {log}
   }) {
   var command, count, i, len, modified, quorum_current, ref, run;
-  if (!Array.isArray(config.command)) {
-    // Validate parameters
-    config.command = [config.command];
-  }
+  // Validate parameters
+  // config.command = [config.command] unless Array.isArray config.command
   if (config.quorum && config.quorum === true) {
     config.quorum = Math.ceil(config.command.length / 2);
   } else if (config.quorum == null) {

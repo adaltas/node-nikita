@@ -25,8 +25,8 @@ admin_password is provided.`
     'admin_password': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/admin_password'
     },
-    'core': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/core'
+    'engine': {
+      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
     },
     'host': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/host'

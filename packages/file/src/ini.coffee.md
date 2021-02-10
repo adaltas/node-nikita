@@ -50,8 +50,9 @@ console.info(`Content was updated: ${status}`)
       properties:
         'backup':
           oneOf: [
-            {type: 'string'}
-            {typeof: 'function'}
+            type: 'string'
+          ,
+            typeof: 'function'
           ]
           description: """
           Create a backup, append a provided string to the filename extension or
@@ -91,11 +92,15 @@ console.info(`Content was updated: ${status}`)
           Escape the section's header title replace '.' by '\.'; "true" by
           default.
           """
+        'gid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'merge':
           type: 'boolean'
           description: """
           Read the target if it exists and merge its content.
           """
+        'mode':
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'parse':
           typeof: 'function'
           description: """
@@ -122,6 +127,8 @@ console.info(`Content was updated: ${status}`)
           description: """
           File path where to write content to or a callback.
           """
+        'uid':
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['content', 'target']
 
 ## Handler

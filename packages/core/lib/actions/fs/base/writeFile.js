@@ -60,16 +60,7 @@ copied into its final destination, default to
 "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"`
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      // default: 0o644
-      description: `Permission mode, a bit-field describing the file type and mode.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/createWriteStream#/properties/mode'
     },
     'target': {
       oneOf: [

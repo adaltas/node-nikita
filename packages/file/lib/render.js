@@ -67,10 +67,10 @@ schema = {
       $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
     },
     'gid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
     },
     'mode': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
     },
     'local': {
       $ref: 'module://@nikitajs/file/lib/index#/properties/local'
@@ -85,7 +85,7 @@ schema = {
       $ref: 'module://@nikitajs/file/lib/index#/properties/target'
     },
     'uid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
+      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
     }
   },
   required: ['target', 'context']

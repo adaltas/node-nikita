@@ -28,8 +28,20 @@ schema = {
       default: false,
       description: `Upgrades global packages.`
     },
-    'sudo': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
+    'major': {
+      type: 'boolean',
+      default: false,
+      description: `Upgrade global package to major, simply global to be \`true\`. By
+default, globally installed packages are treated as if they are
+installed with a caret semver range specified. Internal, we use \`npm
+install -g [pkg...]\` instead of \`npm update -g\`.`
+    },
+    'name': {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      description: `Name of the package(s) to upgrade.`
     }
   },
   if: {
@@ -49,31 +61,40 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var global, outdated, pkgs, stdout;
-  global = config.global ? '-g' : '';
+  var info, name, names, outdated, packages;
   // Get outdated packages
-  outdated = [];
-  ({stdout} = (await this.execute({
-    command: `npm outdated --json ${global}`,
-    code: [0, 1],
+  ({packages} = (await this.tools.npm.outdated({
     cwd: config.cwd,
-    stdout_log: false,
-    metadata: {
-      shy: true
-    }
+    global: config.global
   })));
-  pkgs = JSON.parse(stdout);
-  if (Object.keys(pkgs).length) {
-    outdated = Object.keys(pkgs);
+  outdated = (function() {
+    var results;
+    results = [];
+    for (name in packages) {
+      info = packages[name];
+      if (info.current === info.wanted) {
+        continue;
+      }
+      results.push(name);
+    }
+    return results;
+  })();
+  if (config.name) {
+    names = config.name.map(function(name) {
+      return name.split('@')[0];
+    });
+    outdated = outdated.filter(function(name) {
+      return names.includes(name);
+    });
   }
-  // Upgrade outdated packages
+  // No package to upgrade
   if (!outdated.length) {
     return;
   }
+  // Upgrade outdated packages
   await this.execute({
-    command: `npm update ${global}`,
-    cwd: config.cwd,
-    sudo: config.sudo
+    command: ['npm', 'update', config.global ? '--global' : void 0].join(' '),
+    cwd: config.cwd
   });
   return log({
     message: `NPM upgraded packages: ${outdated.join(', ')}`
@@ -87,3 +108,19 @@ module.exports = {
     schema: schema
   }
 };
+
+// ## Note
+
+// From the NPM documentation:
+
+// > https://docs.npmjs.com/cli/v6/commands/npm-update#updating-globally-installed-packages
+// Globally installed packages are treated as if they are installed
+// with a caret semver range specified.
+
+// However, we didn't saw this with npm@7.5.3:
+
+// ```
+// npm install -g csv-parse@3.0.0
+// npm update -g
+// npm ls -g csv-parse # print 4.15.1
+// ```

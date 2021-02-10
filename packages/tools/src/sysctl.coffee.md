@@ -43,11 +43,7 @@ console.info(`Systcl was reloaded: ${status}`)
       type: 'object'
       properties:
         'backup':
-          oneOf: [
-            type: 'string'
-          ,
-            type: 'boolean'
-          ]
+          type: ['string', 'boolean']
           description: """
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file

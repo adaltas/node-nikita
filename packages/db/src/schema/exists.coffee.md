@@ -28,8 +28,8 @@ console.info(`Schema exists: ${exists}`)
           description: """
           The database name where the schema is created.
           """
-        'core':
-          $ref: 'module://@nikitajs/db/src/query#/properties/core'
+        'engine':
+          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
           $ref: 'module://@nikitajs/db/src/query#/properties/host'
         'port':

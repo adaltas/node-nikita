@@ -35,25 +35,19 @@ schema = {
   type: 'object',
   properties: {
     'name': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array'
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      default: [],
       description: `Alias of the key and the certificate.`
     },
     'caname': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array'
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      default: [],
       description: `Alias of the certificate authority (CA).`
     },
     'keytool': {
@@ -84,12 +78,8 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var aliases;
-  if (!Array.isArray(config.caname)) {
-    config.caname = [config.caname];
-  }
-  if (!Array.isArray(config.name)) {
-    config.name = [config.name];
-  }
+  // config.caname = [config.caname] unless Array.isArray config.caname
+  // config.name = [config.name] unless Array.isArray config.name
   aliases = [...config.caname, ...config.name].join(' ').trim();
   if (config.keytool == null) {
     config.keytool = 'keytool';

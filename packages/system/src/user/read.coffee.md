@@ -55,24 +55,20 @@ targeted file.
         'target':
           type: 'string'
           description: '''
-          Path to the passwd definition file, use the `getent passwd` by default
-          which use to "/etc/passwd".
+          Path to the passwd definition file, use the `getent passwd` command by
+          default which use to "/etc/passwd".
           '''
         'uid':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'string'
-          ]
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
           description: '''
-          Retrieve the information for a specific user name or uid.
+          Retrieve the information for a specific username or uid.
           '''
 
 ## Handler
 
     handler = ({config}) ->
       config.uid = parseInt config.uid, 10 if typeof config.uid is 'string' and /\d+/.test config.uid
-      # Read system passwd
+      # Parse the passwd output
       str2passwd = (data) ->
         passwd = {}
         for line in utils.string.lines data
@@ -80,6 +76,7 @@ targeted file.
           continue unless line
           passwd[line[1]] = user: line[1], uid: parseInt(line[2]), gid: parseInt(line[3]), comment: line[4], home: line[5], shell: line[6]
         passwd
+      # Fetch the users information
       unless config.target
         {stdout} = await @execute
           command: 'getent passwd'
@@ -88,14 +85,15 @@ targeted file.
         {data} = await @fs.base.readFile
           target: config.target
           encoding: 'ascii'
-        # return unless data?
         passwd = str2passwd data
-      # Pass the passwd information
+      # Return all the users
       return users: passwd unless config.uid
+      # Return a user by username
       if typeof config.uid is 'string'
         user = passwd[config.uid]
         throw Error "Invalid Option: no uid matching #{JSON.stringify config.uid}" unless user
         user: user
+      # Return a user by uid
       else
         user = Object.values(passwd).filter((user) -> user.uid is config.uid)[0]
         throw Error "Invalid Option: no uid matching #{JSON.stringify config.uid}" unless user

@@ -19,10 +19,9 @@ console.info(`Stream was created: ${status}`)
     on_action =
       before: '@nikitajs/core/src/metadata/tmpdir'
       handler: ({config, metadata, tools: {find}}) ->
-        sudo = await find ({config: {sudo}}) -> sudo
         config.target = metadata.argument if metadata.argument?
-        if sudo or config.flags?[0] is 'a'
-          metadata.tmpdir = true
+        sudo = await find ({config: {sudo}}) -> sudo
+        metadata.tmpdir = true if sudo or config.flags?[0] is 'a'
 
 ## Schema
 
@@ -45,11 +44,7 @@ console.info(`Stream was created: ${status}`)
           "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"
           """
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          default: 0o644
-          description: """
-          Permission mode, a bit-field describing the file type and mode.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
         'stream':
           typeof: 'function'
           description: """

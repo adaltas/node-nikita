@@ -17,41 +17,17 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix group id.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/gid'
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Permission mode, a bit-field describing the file type and mode.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
     },
     'target': {
       type: 'string',
-      description: `Location of the file from where to obtain information.`
+      description: `Location of the directory to create.`
     },
     'uid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix user id.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
     }
   },
   required: ['target']

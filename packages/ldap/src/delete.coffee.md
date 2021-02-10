@@ -21,10 +21,8 @@ console.log(`Entry deleted: ${status}`)
       type: 'object'
       properties:
         'dn':
-          oneOf: [
-            { type: 'string' }
-            { type: 'array', items: type: 'string' }
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           One or multiple DN to remove.
           """

@@ -134,13 +134,6 @@ you are a member of the "wheel" group (gid of "10") with the command
           '''
       required: ['name']
 
-  * `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any
-    provided string, require the "rootdir" option if activated.
-  * `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if
-    the "arch_chroot" option is activated.
-
 ## Handler
 
     handler = ({metadata, config, tools: {log}}) ->
@@ -151,8 +144,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       config.groups = config.groups.split ',' if typeof config.groups is 'string'
       throw Error "Invalid option 'shell': #{JSON.strinfigy config.shell}" if config.shell? typeof config.shell isnt 'string'
       user_info = groups_info = null
-      {users} = await @system.user.read
-        cache: config.cache
+      {users} = await @system.user.read()
       user_info = users[config.name]
       log if user_info
       then message: "Got user information for #{JSON.stringify config.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
@@ -162,11 +154,10 @@ you are a member of the "wheel" group (gid of "10") with the command
       # * we need to compare groups membership
       {groups} = await @system.group.read
         if: user_info and config.groups
-        cache: config.cache
       groups_info = groups
       log message: "Got group information for #{JSON.stringify config.name}", level: 'DEBUG' if groups_info
       if config.home
-        @system.mkdir
+        @fs.mkdir
           unless_exists: path.dirname config.home
           target: path.dirname config.home
           uid: 0
@@ -241,9 +232,9 @@ you are a member of the "wheel" group (gid of "10") with the command
           hash=$(echo #{config.password} | openssl passwd -1 -stdin)
           usermod --pass="$hash" #{config.name}
           """
-          arch_chroot: config.arch_chroot
-          rootdir: config.rootdir
-          sudo: config.sudo
+          # arch_chroot: config.arch_chroot
+          # rootdir: config.rootdir
+          # sudo: config.sudo
         log message: "Password modified", level: 'WARN' if status
 
 ## Exports

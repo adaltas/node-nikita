@@ -30,17 +30,10 @@ schema = {
   type: 'object',
   properties: {
     'container': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `Name or Id of the container.`
     },
     'boot2docker': {

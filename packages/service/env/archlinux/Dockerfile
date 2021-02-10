@@ -18,7 +18,7 @@ RUN pacman --noconfirm -S openssh \
  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 # Install Java
-RUN pacman --noconfirm -S jdk8-openjdk
+# RUN pacman --noconfirm -S jdk8-openjdk
 
 # Install Misc dependencies
 RUN pacman --noconfirm -S zip git

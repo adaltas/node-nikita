@@ -40,15 +40,3 @@ describe 'system.group', ->
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
   
-  they 'clean the cache', ({ssh}) ->
-    nikita
-      ssh: ssh
-    , ->
-      @system.group.remove 'toto'
-      @call ->
-        (@store['nikita:etc_group'] is undefined).should.be.true()
-      @system.group.read cache: true, (err) ->
-        @store['nikita:etc_group'].should.be.an.Object() unless err
-      @system.group 'toto', cache: true, (err) ->
-        (@store['nikita:etc_group'] is undefined).should.be.true() unless err
-    

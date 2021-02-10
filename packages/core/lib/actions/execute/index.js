@@ -73,8 +73,6 @@ var exec, handler, merge, on_action, schema, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/ssh'],
-  // '@nikitajs/core/lib/plugins/tools_find'
-  // '@nikitajs/core/lib/plugins/tools_walk'
   before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/metadata/tmpdir'],
   handler: async function({
       config,
@@ -103,13 +101,7 @@ on_action = {
       metadata.tmpdir = true;
     }
     if (metadata.argument != null) {
-      config.command = metadata.argument;
-    }
-    if ((config.code != null) && !Array.isArray(config.code)) {
-      config.code = [config.code];
-    }
-    if ((config.code_skipped != null) && !Array.isArray(config.code_skipped)) {
-      return config.code_skipped = [config.code_skipped];
+      return config.command = metadata.argument;
     }
   }
 };
@@ -120,26 +112,12 @@ schema = {
   type: 'object',
   properties: {
     'arch_chroot': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Run this command inside a root directory with the arc-chroot command
 or any provided string, require the "rootdir" option if activated.`
     },
     'bash': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['boolean', 'string'],
       description: `Serialize the command into a file and execute it with bash.`
     },
     'rootdir': {
@@ -166,33 +144,19 @@ to execute.`
       description: `Current working directory from where to execute the command.`
     },
     'code': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'integer'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'integer'
+      },
       default: [0],
       description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
     },
     'code_skipped': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'integer'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'integer'
+      },
       default: [],
       description: `Expected code(s) returned by the command if it has no effect, executed
 will not be incremented, int or array of int.`

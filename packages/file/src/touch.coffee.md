@@ -35,23 +35,26 @@ console.info(`File was touched: ${status}`)
       type: 'object'
       properties:
         'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
+          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'mode':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
+          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'target':
-          oneOf: [{type: 'string'}, {typeof: 'function'}]
+          oneOf: [
+            type: 'string'
+          ,
+            typeof: 'function'
+          ]
           description: """
           File path where to write file or a function that returns a valid file
           path.
           """
         'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
+          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['target']
 
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # status is false if the file doesn't exist and true otherwise
       {status} = await @call ->
         log message: "Check if target exists \"#{config.target}\"", level: 'DEBUG'
         {exists} = await @fs.base.exists target: config.target

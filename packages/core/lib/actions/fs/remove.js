@@ -71,14 +71,7 @@ schema = {
       description: `Alias for "target".`
     },
     'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array'
-        }
-      ],
+      type: 'string',
       description: `File, directory or glob (pattern matching based on wildcard
 characters).`
     }

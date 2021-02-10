@@ -24,41 +24,49 @@ describe 'tools.npm', ->
           ].join ' '
 
     it 'cwd or global is true are required', ->
-      nikita {}
-      , ->
-        @tools.npm
-          name: 'coffeescript'
-        .should.be.rejectedWith
-          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-          message: [
-            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `tools.npm`:'
-            '#/if config should match "then" schema, failingKeyword is "then";'
-            '#/then/required config should have required property \'cwd\'.'
-          ].join ' '
-        @tools.npm
-          config:
-            name: 'coffeescript'
-            global: true
-        .should.eventually.not.be.rejected
+      nikita.tools.npm
+        name: 'csv-parse'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'multiple errors where found in the configuration of action `tools.npm`:'
+          '#/if config should match "then" schema, failingKeyword is "then";'
+          '#/then/required config should have required property \'cwd\'.'
+        ].join ' '
+
+    it 'global is `true`', ->
+      nikita.tools.npm
+        name: 'csv-parse'
+        global: true
+      , (->)
+
+    it 'global is `false` without `cwd`', ->
+      nikita.tools.npm
+        name: 'csv-parse'
+        global: false
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: /#\/then\/required config should have required property 'cwd'/
 
   describe 'action', ->
 
-    they 'install locally', ({ssh}) ->
+    they 'option `cwd`', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.true()
         {status} = await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
         status.should.be.false()
 
-    they 'install locally in a current working directory', ({ssh}) ->
+    they 'option `cwd` with 2 separate directories', ({ssh}) ->
+      # not sure this is really relevant
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -66,74 +74,74 @@ describe 'tools.npm', ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
         {status} = await @tools.npm
-          name: 'coffeescript'
           cwd: "#{tmpdir}/1_dir"
+          name: 'csv-parse'
         status.should.be.true()
         {status} = await @tools.npm
-          name: 'coffeescript'
           cwd: "#{tmpdir}/2_dir"
+          name: 'csv-parse'
         status.should.be.true()
 
-    they 'install globally', ({ssh}) ->
+    they 'option `global`', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         await @tools.npm.uninstall
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         {status} = await @tools.npm
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         status.should.be.true()
         {status} = await @tools.npm
           config:
-            name: 'coffeescript'
+            name: 'csv-parse'
             global: true
             sudo: true
         status.should.be.false()
 
-    they 'install many packages', ({ssh}) ->
+    they 'option `name` as an array', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {status} = await @tools.npm
           cwd: tmpdir
-          name: ['coffeescript', 'csv']
+          name: ['csv-parse', 'csv']
         status.should.be.true()
         {status} = await @tools.npm
           cwd: tmpdir
-          name: ['coffeescript', 'csv']
+          name: ['csv-parse', 'csv']
         status.should.be.false()
 
-    they 'upgrade a package', ({ssh}) ->
+    they 'option `upgrade`', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @tools.npm
+        @tools.npm
           cwd: tmpdir
-          name: 'coffeescript@2.0'
+          name: 'csv-parse@3.0.0'
         {status} = await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
           upgrade: true
         status.should.be.true()
         {status} = await @tools.npm
           cwd: tmpdir
-          name: 'coffeescript'
+          name: 'csv-parse'
           upgrade: true
         status.should.be.false()
 
-    they 'name as argument', ({ssh}) ->
+    they 'metadata `argument_to_config`', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @tools.npm 'coffeescript',
+        {status} = await @tools.npm 'csv-parse',
           cwd: tmpdir
         status.should.be.true()

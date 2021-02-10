@@ -23,12 +23,6 @@ const {status} = await nikita.fs.link({
 console.info(`Link was created: ${status}`)
 ```
 
-## Hook
-
-    on_action = ({config}) ->
-      throw Error "Missing source, got #{JSON.stringify(config.source)}" unless config.source
-      throw Error "Missing target, got #{JSON.stringify(config.target)}" unless config.target
-
 ## Schema
 
     schema =
@@ -50,13 +44,7 @@ console.info(`Link was created: ${status}`)
           Create an executable file with an `exec` command.
           """
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          default: 0o755
-          description: """
-          Directory mode. Modes may be absolute or symbolic. An absolute mode is
-          an octal number. A symbolic mode is a string with a particular syntax
-          describing `who`, `op` and `perm` symbols.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
       required: ['source', 'target']
 
 ## Handler
@@ -108,7 +96,5 @@ console.info(`Link was created: ${status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
         schema: schema

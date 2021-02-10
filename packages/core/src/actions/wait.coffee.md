@@ -19,7 +19,6 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 
     on_action = ({config, metadata}) ->
       config.time ?= metadata.argument if metadata.argument?
-      config.time = parseInt config.time if typeof config.time is 'string'
 
 ## Schema
 

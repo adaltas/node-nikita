@@ -47,6 +47,9 @@ undefined or null value will match the exact command.`
     },
     'when': {
       type: 'string',
+      pattern: '^(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})$',
+      // noBooleanCoercion: true
+      // noNumberCoercion: true
       description: `Cron-styled time string. Defines the frequency of the cron job.`
     }
   },
@@ -58,7 +61,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var added, crontab, i, job, jobs, modified, new_job, regex, stderr, stdout;
+  var added, crontab, i, job, jobs, modified, new_job, regex, stdout;
   if (config.user != null) {
     log({
       message: `Using user ${config.user}`,
@@ -73,11 +76,10 @@ handler = async function({
     crontab = "crontab";
   }
   jobs = [];
-  ({stdout, stderr} = (await this.execute({
+  ({stdout} = (await this.execute({
     command: `${crontab} -l`,
     code: [0, 1]
   })));
-  // throw Error 'User crontab not found' if /^no crontab for/.test stderr
   new_job = `${config.when} ${config.command}`;
   // remove useless last element
   regex = (function() {

@@ -11,13 +11,25 @@ describe 'actions.fs.link', ->
 
     it 'missing source', ->
       nikita.fs.link
-        target: __filename
-      .should.be.rejectedWith message: 'Missing source, got undefined'
+        target: '/path/to/file'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `fs.link`:'
+          '#/required config should have required property \'source\'.'
+        ].join ' '
     
     it 'missing target', ->
       nikita.fs.link
-        source: __filename
-      .should.be.rejectedWith message: 'Missing target, got undefined'
+        source: '/path/to/file'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `fs.link`:'
+          '#/required config should have required property \'target\'.'
+        ].join ' '
   
   describe 'usage', ->
 

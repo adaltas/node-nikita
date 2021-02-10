@@ -24,8 +24,6 @@ console.info(`Container was unpaused: ${status}`)
     schema =
       type: 'object'
       properties:
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
         'container':
           type: 'string'
           description: """
@@ -37,10 +35,8 @@ console.info(`Container was unpaused: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log}}) ->
-      # Validation
-      throw Error 'Missing container parameter' unless config.container?
-      await @docker.tools.execute
+    handler = ({config}) ->
+      @docker.tools.execute
         command: "unpause #{config.container}"
 
 ## Exports

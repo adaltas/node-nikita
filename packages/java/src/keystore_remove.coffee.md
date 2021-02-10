@@ -34,18 +34,16 @@ console.info(`Certificate authority was removed: ${status}`)
       type: 'object'
       properties:
         'name':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array'}
-          ]
+          type: 'array'
+          items: type: 'string'
+          default: []
           description: """
           Alias of the key and the certificate.
           """
         'caname':
-          oneOf: [
-            {type: 'string'}
-            {type: 'array'}
-          ]
+          type: 'array'
+          items: type: 'string'
+          default: []
           description: """
           Alias of the certificate authority (CA).
           """
@@ -73,8 +71,8 @@ console.info(`Certificate authority was removed: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      config.caname = [config.caname] unless Array.isArray config.caname
-      config.name = [config.name] unless Array.isArray config.name
+      # config.caname = [config.caname] unless Array.isArray config.caname
+      # config.name = [config.name] unless Array.isArray config.name
       aliases = [config.caname..., config.name...].join(' ').trim()
       config.keytool ?= 'keytool'
       await @execute

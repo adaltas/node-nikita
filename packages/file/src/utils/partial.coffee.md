@@ -11,7 +11,7 @@ Replace partial elements in a text.
           opts.match ?= opts.replace
           log message: "Convert match string to regexp", level: 'DEBUG' if typeof opts.match is 'string'
           opts.match = ///#{utils.regexp.quote opts.match}///mg if typeof opts.match is 'string'
-          throw Error "Invalid match option" unless opts.match instanceof RegExp
+          throw Error "Invalid match option, got #{JSON.stringify opts.match} instead of a RegExp" unless opts.match instanceof RegExp
           if opts.match.test config.content
             config.content = config.content.replace opts.match, opts.replace
             log message: "Match existing partial", level: 'INFO'

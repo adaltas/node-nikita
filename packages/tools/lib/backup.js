@@ -72,14 +72,7 @@ to  UTC.`
 a directory otherwise no compression.`
     },
     source: {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      type: ['string', 'boolean'],
       description: `Path to a file or a directory to backup.`
     },
     target: {

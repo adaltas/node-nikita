@@ -27,31 +27,47 @@ console.info(`Packages were upgraded: ${status}`)
           description: """
           Upgrades global packages.
           """
-        'sudo':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
+        'major':
+          type: 'boolean'
+          default: false
+          description: '''
+          Upgrade global package to major, simply global to be `true`. By
+          default, globally installed packages are treated as if they are
+          installed with a caret semver range specified. Internal, we use `npm
+          install -g [pkg...]` instead of `npm update -g`.
+          '''
+        'name':
+          type: 'array', items: type: 'string'
+          description: """
+          Name of the package(s) to upgrade.
+          """
       if: properties: 'global': const: false
       then: required: ['cwd']
 
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      global = if config.global then '-g' else ''
       # Get outdated packages
-      outdated = []
-      {stdout} = await @execute
-        command: "npm outdated --json #{global}"
-        code: [0, 1]
+      {packages} = await @tools.npm.outdated
         cwd: config.cwd
-        stdout_log: false
-        metadata: shy: true
-      pkgs = JSON.parse stdout
-      outdated = Object.keys pkgs if Object.keys(pkgs).length
-      # Upgrade outdated packages
+        global: config.global
+      outdated = for name, info of packages
+        continue if info.current is info.wanted
+        name
+      if config.name
+        names = config.name.map (name) -> name.split('@')[0]
+        outdated = outdated
+        .filter (name) -> names.includes name
+      # No package to upgrade
       return unless outdated.length
+      # Upgrade outdated packages
       await @execute
-        command: "npm update #{global}"
+        command: [
+          'npm'
+          'update'
+          '--global' if config.global
+        ].join ' '
         cwd: config.cwd
-        sudo: config.sudo
       log message: "NPM upgraded packages: #{outdated.join ', '}"
 
 ## Export
@@ -60,3 +76,19 @@ console.info(`Packages were upgraded: ${status}`)
       handler: handler
       metadata:
         schema: schema
+
+## Note
+
+From the NPM documentation:
+
+> https://docs.npmjs.com/cli/v6/commands/npm-update#updating-globally-installed-packages
+Globally installed packages are treated as if they are installed
+with a caret semver range specified.
+
+However, we didn't saw this with npm@7.5.3:
+
+```
+npm install -g csv-parse@3.0.0
+npm update -g
+npm ls -g csv-parse # print 4.15.1
+```

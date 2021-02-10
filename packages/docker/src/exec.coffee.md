@@ -29,21 +29,20 @@ console.info(`Command was executed: ${status}`)
     schema =
       type: 'object'
       properties:
+        'code_skipped':
+          type: 'array', items: type: 'integer'
+          description: """
+          The exit code(s) to skip.
+          """
         'container':
           type: 'string'
           description: """
           Name/ID of the container
           """
-        'code_skipped':
-          oneOf: [
-            {type: 'integer'}
-            {type: 'array', items: type: 'integer'}
-          ]
-          description: """
-          The exit code(s) to skip.
-          """
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+        'gid':
+          $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
         'service':
           type: 'boolean'
           default: false
@@ -52,21 +51,7 @@ console.info(`Command was executed: ${status}`)
           default.
           """
         'uid':
-          oneOf: [
-            {type: 'integer'}
-            {type: 'string'}
-          ]
-          description: """
-          Username or uid.
-          """
-        'gid':
-          oneOf: [
-            {type: 'integer'}
-            {type: 'string'}
-          ]
-          description: """
-          Groupname or gid.
-          """
+          $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
       required: ['container', 'command']
 
 ## Handler

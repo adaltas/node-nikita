@@ -41,7 +41,7 @@ module.exports =
             allowUnionTypes: true # eg type: ['boolean', 'integer']
             strict: true
             # extendRefs: true
-            # coerceTypes: true
+            coerceTypes: 'array'
             loadSchema: (uri) ->
               new Promise (accept, reject) ->
                 {protocol, pathname} = parse uri
@@ -67,13 +67,30 @@ module.exports =
                       ]
           ajv_keywords ajv
           ajv_formats ajv
+          ajv.addKeyword
+            keyword: "filemode"
+            type: ['integer', 'string']
+            compile: (value) ->
+              return (data, schema, parentData) ->
+                if typeof data is 'string' and /^\d+$/.test data
+                  schema.parentData[schema.parentDataProperty] = parseInt data, 8
+                true
+            metaSchema:
+              type: 'boolean'
+              enum: [true]
           action.tools.schema =
             ajv: ajv
             add: (schema, name) ->
               return unless schema
               ajv.addSchema schema, name
             validate: (action) ->
-              validate = await ajv.compileAsync action.metadata.schema
+              try
+                validate = await ajv.compileAsync action.metadata.schema
+              catch err
+                unless err.code
+                  err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION'
+                  err.message = "#{err.code}: #{err.message}"
+                throw err
               return if validate action.config
               error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
                 if validate.errors.length is 1

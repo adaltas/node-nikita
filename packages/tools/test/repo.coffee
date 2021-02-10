@@ -101,34 +101,35 @@ describe 'tools.repo', ->
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
-        target: "#{tmpdir}/hdp-test.repo"
+        target: "#{tmpdir}/linuxtech.repo"
         content: """
-          [HDP-2.6.0.3]
-          name=HDP Version - HDP-2.6.0.3
-          baseurl=http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3
-          gpgcheck=1
-          gpgkey=http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
-          enabled=1
-          priority=1
+        [linuxtech-release]
+        name=LinuxTECH.NET el6 main repo
+        baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
+        mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
+        mirrorlist_expire=7d
+        enabled=1
+        gpgcheck=1
+        gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
         """
       @tools.repo
-        source: "#{tmpdir}/hdp-test.repo"
+        source: "#{tmpdir}/linuxtech.repo"
         gpg_dir: "#{tmpdir}"
         update: false
-      @fs.assert "#{tmpdir}/RPM-GPG-KEY-Jenkins"
+      @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
   
   they 'Download repo from remote location', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
-      @fs.remove '/etc/yum.repos.d/hdp.repo'
+      @fs.remove '/etc/yum.repos.d/linuxtech.repo'
       {status} = await @tools.repo
-        source: "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/hdp.repo"
+        source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
       status.should.be.true()
       {status} = await @tools.repo
-        source: "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/hdp.repo"
+        source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
       status.should.be.false()
-      @fs.assert '/etc/yum.repos.d/hdp.repo'
+      @fs.assert '/etc/yum.repos.d/linuxtech.repo'
 
   they 'Do Not update Package', ({ssh}) ->
     nikita

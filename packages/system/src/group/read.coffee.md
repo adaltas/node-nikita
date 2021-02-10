@@ -50,39 +50,49 @@ require('nikita')
       type: 'object'
       properties:
         'gid':
-          oneOf: [
-            type: 'boolean'
-          ,
-            type: 'string'
-          ]
-          default: false
+          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
           description: '''
-          Retrieve the information for a specific group name or guid.
+          Retrieve the information for a specific group name or gid.
           '''
         'target':
           type: 'string'
+          default: '/etc/group'
           description: '''
           Path to the group definition file, default to "/etc/group".
           '''
 
     handler = ({config, metadata, state, tools: {log}}) ->
-      config.target ?= '/etc/group'
-      # Read system groups
-      {data} = await @fs.base.readFile
-        target: config.target
-        encoding: 'ascii'
-      groups = {}
-      for line in utils.string.lines data
-        line = /(.*)\:(.*)\:(.*)\:(.*)/.exec line
-        continue unless line
-        groups[line[1]] = group: line[1], password: line[2], gid: parseInt(line[3]), users: if line[4] then line[4].split ',' else []
-      # Pass the group information
-      return groups: groups unless config.gid
-      return group: groups[config.gid] if groups[config.gid]?
       config.gid = parseInt config.gid, 10 if typeof config.gid is 'string' and /\d+/.test config.gid
-      group = Object.values(groups).filter((group) -> group.gid is config.gid)[0]
-      throw Error "Invalid Option: no gid matching #{JSON.stringify config.gid}" unless group
-      return group: group
+      # Parse the groups output
+      str2groups = (data) ->
+        groups = {}
+        for line in utils.string.lines data
+          line = /(.*)\:(.*)\:(.*)\:(.*)/.exec line
+          continue unless line
+          groups[line[1]] = group: line[1], password: line[2], gid: parseInt(line[3]), users: if line[4] then line[4].split ',' else []
+        groups
+      # Fetch the groups information
+      unless config.target
+        {stdout} = await @execute
+          command: 'getent group'
+        groups = str2groups stdout
+      else
+        {data} = await @fs.base.readFile
+          target: config.target
+          encoding: 'ascii'
+        groups = str2groups data
+      # Return all the groups
+      return groups: groups unless config.gid
+      # Return a group by name
+      if typeof config.gid is 'string'
+        group = groups[config.gid]
+        throw Error "Invalid Option: no gid matching #{JSON.stringify config.gid}" unless group
+        group: group
+      # Return a group by gid
+      else
+        group = Object.values(groups).filter((group) -> group.gid is config.gid)[0]
+        throw Error "Invalid Option: no gid matching #{JSON.stringify config.gid}" unless group
+        group: group
 
 ## Exports
 

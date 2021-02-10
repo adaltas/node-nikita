@@ -14,7 +14,7 @@ describe 'docker.stop', ->
     , ->
       @docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_stop'
+        container: 'nikita_test_stop'
       {status} = await @docker.stop
         container: 'nikita_test_stop'
       status.should.be.true()
@@ -29,7 +29,7 @@ describe 'docker.stop', ->
     , ->
       @docker.tools.service
         image: 'httpd'
-        name: 'nikita_test_stop'
+        container: 'nikita_test_stop'
       @docker.stop
         container: 'nikita_test_stop'
       {status} = await @docker.stop

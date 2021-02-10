@@ -3,6 +3,19 @@ utils = require '@nikitajs/core/lib/utils'
 jsesc = require 'jsesc'
 {merge} = require 'mixme'
 
+
+equals = (obj1, obj2, keys) ->
+  keys1 = Object.keys obj1
+  keys2 = Object.keys obj2
+  if keys
+    keys1 = keys1.filter (k) -> keys.indexOf(k) isnt -1
+    keys2 = keys2.filter (k) -> keys.indexOf(k) isnt -1
+  else keys = keys1
+  return false if keys1.length isnt keys2.length
+  for k in keys
+    return false if obj1[k] isnt obj2[k]
+  return true
+
 module.exports = iptables =
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'target']
   add_properties: [
@@ -106,7 +119,7 @@ module.exports = iptables =
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
-          if utils.object.equals newrule.after, oldrule, Object.keys newrule.after
+          if equals newrule.after, oldrule, Object.keys newrule.after
             # newrule.rulenum = rulenum + 1
             newrule.rulenum = oldrule.rulenum + 1
             # break
@@ -116,7 +129,7 @@ module.exports = iptables =
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
-          if utils.object.equals newrule.before, oldrule, Object.keys newrule.before
+          if equals newrule.before, oldrule, Object.keys newrule.before
             # newrule.rulenum = rulenum
             newrule.rulenum = oldrule.rulenum
             break
@@ -127,10 +140,10 @@ module.exports = iptables =
       for oldrule in oldrules
         continue if oldrule.chain isnt newrule.chain
         # Add properties are the same
-        if utils.object.equals newrule, oldrule, add_properties
+        if equals newrule, oldrule, add_properties
           create = false
           # Check if we need to update
-          if not utils.object.equals newrule, oldrule, iptables.modify_properties
+          if not equals newrule, oldrule, iptables.modify_properties
             # Remove the command
             baserule = merge oldrule
             for k, v of baserule

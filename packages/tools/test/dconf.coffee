@@ -33,7 +33,8 @@ describe 'tools.dconf', ->
       status.should.be.false()
       await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
-        assert: 'true'
+        content: 'true'
+        trim: true
   
   they 'set multiple configs', ({env, ssh}) ->
     nikita
@@ -61,8 +62,10 @@ describe 'tools.dconf', ->
       status.should.be.false()
       await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
-        assert: 'false'
+        content: 'false'
+        trim: true
       await @execute.assert
         command: 'dconf read /org/gnome/desktop/peripherals/touchpad/click-method'
-        assert: 2
+        content: 2
+        trim: true
   

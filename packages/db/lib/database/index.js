@@ -15,7 +15,7 @@
 // ```
 
 // ## Schema
-var command, connection_config, handler, schema;
+var command, handler, schema;
 
 schema = {
   type: 'object',
@@ -31,21 +31,14 @@ schema = {
       description: `The name of the database to create.`
     },
     'user': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      ],
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `This users who will be granted superuser permissions.`
     },
-    'core': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/core'
+    'engine': {
+      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
     },
     'host': {
       $ref: 'module://@nikitajs/db/lib/query#/properties/host'
@@ -180,4 +173,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command, connection_config} = require('../query'));
+({command} = require('../query'));

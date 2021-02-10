@@ -4,7 +4,6 @@ var registry;
 
 require('@nikitajs/file/lib/register');
 
-// require '@nikitajs/network/lib/register'
 registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
@@ -26,7 +25,6 @@ module.exports = {
     rmi: '@nikitajs/docker/lib/rmi',
     run: '@nikitajs/docker/lib/run',
     save: '@nikitajs/docker/lib/save',
-    // service: '@nikitajs/docker/lib/service'
     start: '@nikitajs/docker/lib/start',
     stop: '@nikitajs/docker/lib/stop',
     tools: {

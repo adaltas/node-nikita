@@ -5,13 +5,8 @@ Check if a user exists in the database.
 
 ## Hooks
 
-    on_action = ({config, tools: {find}}) ->
-      throw Error 'Deprecated config `egrep`' if config.egrep?
+    on_action = ({config}) ->
       config.engine = config.engine?.toLowerCase()
-      config.port = parseInt config.port if typeof config.port is 'string' and /^\d+$/.test config.port
-      if config.engine is 'postgres'
-        console.warn 'Deprecated Value: config "postgres" is deprecated in favor of "postgresql"'
-        config.engine = 'postgresql'
 
 ## Schema
 

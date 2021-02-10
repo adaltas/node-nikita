@@ -22,22 +22,25 @@ databases.map( database => {
     schema =
       type: 'object'
       allOf: [
-        $ref: 'module://@nikitajs/ldap/src/search#/properties'
-      ,
         properties:
+          'base':
+            const: 'cn=config'
+            default: 'cn=config'
           'suffix':
             type: 'string'
             description: """
             The suffix associated with the database.
             """
         required: ['suffix']
+      ,
+        $ref: 'module://@nikitajs/ldap/src/search'
       ]
 
 ## Handler
 
     handler = ({config}) ->
       {stdout} = await @ldap.search config,
-        base: 'cn=config'
+        base: config.base
         filter: "(olcSuffix= #{config.suffix})"
         attributes: ['dn']
       [_, dn] = stdout.split ':'

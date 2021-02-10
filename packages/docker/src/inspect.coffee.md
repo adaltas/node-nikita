@@ -41,12 +41,8 @@ info.map( (container) =>
       type: 'object'
       properties:
         'container':
-          oneOf: [
-            type: 'string'
-          ,
-            type: 'array'
-            items: type: 'string'
-          ]
+          type: ['array', 'string']
+          items: type: 'string'
           description: """
           Name/ID of the container (array of containers not yet implemented).
           """

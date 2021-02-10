@@ -27,7 +27,7 @@ console.info(`Directory was moved: ${status}`)
       type: 'object'
       properties:
         'force':
-          oneOf: [{type: 'integer'}, {type: 'boolean'}]
+          type: 'boolean'
           default: false
           description: """
           Force the replacement of the file without checksum verification, speed

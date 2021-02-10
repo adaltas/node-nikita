@@ -31,7 +31,6 @@ console.info(`Stdout was asserted: ${status}`)
     on_action = ({config, metadata}) ->
       # config.command = metadata.argument if metadata.argument?
       config.code ?= [0] unless config.content
-      config.code = [config.code] if config.code? and not Array.isArray config.code
 
 ## Schema
 
@@ -40,7 +39,6 @@ console.info(`Stdout was asserted: ${status}`)
       properties:
         'code':
           type: 'array'
-          # default: [0]
           items:
             type: 'integer'
           description: """

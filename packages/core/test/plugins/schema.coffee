@@ -9,7 +9,8 @@ describe 'plugins.schema', ->
 
   it.skip 'validate strict mode', ->
     # Despite strict mode activated in AJV,
-    # This generates a log instead of raising an error
+    # This generates a log and execute the handler
+    # instead of raising an error
     nikita
       metadata:
         schema:
@@ -18,7 +19,7 @@ describe 'plugins.schema', ->
             'parent':
               required: ['child']
     , ->
-      console.log 'called by why, the doc say the contrary'
+      console.log 'called but why, the doc say the contrary'
 
   it 'registered inside action', ->
     nikita ({tools: {schema}}) ->
@@ -288,3 +289,34 @@ describe 'plugins.schema', ->
         'one error was found in the configuration of action `call`:'
         '#/properties/a_regexp/instanceof config/a_regexp should pass "instanceof" keyword validation.'
       ].join ' '
+
+  describe 'custom keywords', ->
+
+    it 'filemode true with string casted to octal', ->
+      nikita.call
+        metadata:
+          schema:
+            type: 'object'
+            properties:
+              'mode':
+                type: ['integer', 'string']
+                filemode: true
+        config:
+          mode: '744'
+      , ({config}) ->
+        config.mode.should.eql 0o0744
+
+    it 'filemode false is invalid', ->
+      nikita.call
+        metadata:
+          schema:
+            type: 'object'
+            properties:
+              'mode':
+                type: ['integer', 'string']
+                filemode: false
+        config:
+          mode: '744'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_INVALID_DEFINITION'
+        

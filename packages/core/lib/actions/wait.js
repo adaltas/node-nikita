@@ -20,12 +20,7 @@ var handler, on_action, schema;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
-    if (config.time == null) {
-      config.time = metadata.argument;
-    }
-  }
-  if (typeof config.time === 'string') {
-    return config.time = parseInt(config.time);
+    return config.time != null ? config.time : config.time = metadata.argument;
   }
 };
 

@@ -27,6 +27,8 @@ module.exports = {
     git: '@nikitajs/tools/lib/git',
     npm: {
       '': '@nikitajs/tools/lib/npm',
+      list: '@nikitajs/tools/lib/npm/list',
+      outdated: '@nikitajs/tools/lib/npm/outdated',
       uninstall: '@nikitajs/tools/lib/npm/uninstall',
       upgrade: '@nikitajs/tools/lib/npm/upgrade'
     },

@@ -36,12 +36,6 @@
 var handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
-  if ((typeof config.uid === 'string') && /\d+/.test(config.uid)) {
-    config.uid = parseInt(config.uid);
-  }
-  if ((typeof config.gid === 'string') && /\d+/.test(config.gid)) {
-    config.gid = parseInt(config.gid);
-  }
   if (config.parent == null) {
     config.parent = {};
   }
@@ -55,23 +49,10 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      type: 'integer',
-      description: `Unix group name or id who owns the target file.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      // default: 0o755
-      description: `Permissions of the file or the parent directory.. Modes may be
-absolute or symbolic. An absolute mode is an octal number. A symbolic
-mode is a string with a particular syntax describing \`who\`, \`op\` and
-\`perm\` symbols.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
     },
     'parent': {
       oneOf: [
@@ -81,8 +62,14 @@ mode is a string with a particular syntax describing \`who\`, \`op\` and
         {
           type: 'object',
           properties: {
+            'gid': {
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/gid'
+            },
             'mode': {
-              $ref: '#/properties/mode'
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/mode'
+            },
+            'uid': {
+              $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/uid'
             }
           }
         }
@@ -117,8 +104,7 @@ disposal.`,
       properties: require('./base/stat').schema_output.properties.stats.properties
     },
     'uid': {
-      type: 'integer',
-      description: `Unix user name or id who owns the target file.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
     }
   },
   required: ['source', 'target']

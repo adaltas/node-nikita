@@ -32,9 +32,12 @@
 var handler, schema;
 
 schema = {
-  name: {
-    type: 'string',
-    description: `Name of the group to remove.`
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      description: `Name of the group to remove.`
+    }
   },
   required: ['name']
 };

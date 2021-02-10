@@ -8,11 +8,6 @@ properties `detach` and `rm` which respectively default to `true` and `false`.
 Indeed, in a service mode, the container must be detached and NOT removed by default
 after execution. 
 
-## Hooks
-
-    on_action = ({config}) ->
-      config.container ?= config.name
-
 ## Schema
 
     schema =
@@ -44,7 +39,5 @@ after execution.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
         schema: schema

@@ -14,25 +14,16 @@ Create a directory. Missing parent directories are created as required.
       type: 'object'
       properties:
         'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix group id.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/gid'
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Permission mode, a bit-field describing the file type and mode.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
         'target':
           type: 'string'
           description: """
-          Location of the file from where to obtain information.
+          Location of the directory to create.
           """
         'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix user id.
-          """
+          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/uid'
       required: ['target']
 
 ## Handler

@@ -25,12 +25,8 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
           Number of minimal successful connection, 50%+1 if "true".
           """
         'command':
-          oneOf: [
-            type: 'string'
-          ,
-            type: 'array'
-            items: type: 'string'
-          ]
+          type: 'array'
+          items: type: 'string'
           description: """
           The commands to be executed.
           """
@@ -42,24 +38,16 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
           command, default to 2s.
           """
         'code':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'array'
-            items: type: 'integer'
-          ]
+          type: 'array'
+          items: type: 'integer'
           description: """
           Expected exit code to recieve to exit and call the user callback,
           default to "0".
           """
         'code_skipped':
-          oneOf: [
-            type: 'integer'
-          ,
-            type: 'array'
-            items: type: 'integer'
-          ]
-          default: 1
+          type: 'array'
+          items: type: 'integer'
+          default: [1]
           description: """
           Expected code to be returned when the command failed and should be
           scheduled for later execution, default to "1".
@@ -76,7 +64,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # Validate parameters
-      config.command = [config.command] unless Array.isArray config.command
+      # config.command = [config.command] unless Array.isArray config.command
       if config.quorum and config.quorum is true
         config.quorum = Math.ceil config.command.length / 2
       else unless config.quorum?

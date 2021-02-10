@@ -60,8 +60,7 @@ schema_output = {
       type: 'object',
       properties: {
         'mode': {
-          type: 'integer',
-          description: `A bit-field describing the file type and mode.`
+          $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
         },
         'uid': {
           type: 'integer',

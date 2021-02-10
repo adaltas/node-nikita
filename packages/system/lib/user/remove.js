@@ -32,9 +32,12 @@
 var handler, schema;
 
 schema = {
-  name: {
-    type: 'string',
-    description: `Name of the user to removed.`
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      description: `Name of the user to removed.`
+    }
   },
   required: ['name']
 };

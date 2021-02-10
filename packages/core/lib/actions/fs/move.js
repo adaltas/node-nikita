@@ -28,14 +28,7 @@ schema = {
   type: 'object',
   properties: {
     'force': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'boolean'
-        }
-      ],
+      type: 'boolean',
       default: false,
       description: `Force the replacement of the file without checksum verification, speed
 up the action and disable the \`moved\` indicator in the callback.`

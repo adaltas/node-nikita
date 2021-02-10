@@ -36,14 +36,7 @@ var handler, on_action, schema;
 
 on_action = function({config, metadata}) {
   if (metadata.argument != null) {
-    config.target = metadata.argument;
-  }
-  if ((typeof config.uid === 'string') && /\d+/.test(config.uid)) {
-    // String to integer coercion
-    config.uid = parseInt(config.uid);
-  }
-  if ((typeof config.gid === 'string') && /\d+/.test(config.gid)) {
-    return config.gid = parseInt(config.gid);
+    return config.target = metadata.argument;
   }
 };
 
@@ -52,15 +45,7 @@ schema = {
   type: 'object',
   properties: {
     'gid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix group name or id who owns the target file.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/gid'
     },
     'stats': {
       typeof: 'object',
@@ -72,15 +57,7 @@ stat object associated with the target if one is already available.`
       description: `Location of the file which permissions will change.`
     },
     'uid': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      description: `Unix user name or id who owns the target file.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
     }
   },
   required: ['target']
@@ -91,7 +68,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var changes, err, gid, stats, stdout, uid;
+  var changes, gid, stats, stdout, uid;
   if (!((config.uid != null) || (config.gid != null))) {
     throw Error("Missing one of uid or gid option");
   }
@@ -123,17 +100,12 @@ handler = async function({
     });
     return false;
   }
-  try {
-    // Apply changes
-    await this.fs.base.chown({
-      target: config.target,
-      uid: uid,
-      gid: gid
-    });
-  } catch (error) {
-    err = error;
-    console.log(err);
-  }
+  // Apply changes
+  await this.fs.base.chown({
+    target: config.target,
+    uid: uid,
+    gid: gid
+  });
   if (changes.uid) {
     log({
       message: `change uid from ${stats.uid} to ${uid}`,

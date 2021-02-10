@@ -17,15 +17,8 @@ schema = {
   type: 'object',
   properties: {
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      default: 0o644,
+      type: ['string', 'integer'],
+      filemode: true,
       description: `File mode. Modes may be absolute or symbolic. An absolute mode is
 an octal number. A symbolic mode is a string with a particular syntax
 describing \`who\`, \`op\` and \`perm\` symbols.`
@@ -39,13 +32,10 @@ describing \`who\`, \`op\` and \`perm\` symbols.`
 };
 
 // ## Handler
-handler = async function({config}) {
-  if (typeof config.mode === 'number') {
-    config.mode = config.mode.toString(8).substr(-4);
-  }
-  return (await this.execute({
-    command: `chmod ${config.mode} ${config.target}`
-  }));
+handler = function({config}) {
+  var mode;
+  mode = typeof config.mode === 'number' ? config.mode.toString(8).substr(-4) : config.mode;
+  return this.execute(`chmod ${mode} ${config.target}`);
 };
 
 // ## Exports

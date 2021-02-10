@@ -23,19 +23,9 @@
 // console.info(`Link was created: ${status}`)
 // ```
 
-// ## Hook
-var handler, on_action, schema;
-
-on_action = function({config}) {
-  if (!config.source) {
-    throw Error(`Missing source, got ${JSON.stringify(config.source)}`);
-  }
-  if (!config.target) {
-    throw Error(`Missing target, got ${JSON.stringify(config.target)}`);
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -52,18 +42,7 @@ schema = {
       description: `Create an executable file with an \`exec\` command.`
     },
     'mode': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'string'
-        }
-      ],
-      default: 0o755,
-      description: `Directory mode. Modes may be absolute or symbolic. An absolute mode is
-an octal number. A symbolic mode is a string with a particular syntax
-describing \`who\`, \`op\` and \`perm\` symbols.`
+      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
     }
   },
   required: ['source', 'target']
@@ -157,9 +136,6 @@ exec ${config.source} $@`;
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
     schema: schema
   }
