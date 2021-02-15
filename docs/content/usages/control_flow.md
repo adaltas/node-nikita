@@ -4,15 +4,17 @@ sort: 7
 
 # Control Flow
 
-Nikita run every actions sequentially. This behavior ensures there are no conflict between two commands executed simultaneously. Moreover, this sequential nature is aligned with SSH which execute one command at a time over a given connection.
+Nikita runs every action sequentially. This behavior ensures there are no conflicts between two commands executed simultaneously. Moreover, this sequential nature is aligned with SSH which executes one command at a time over a given connection.
 
 ## Sequential execution
 
-Since an action may contain child actions, the way Nikita run is similar to how you might want to traverse a file system. For every action scheduled, Nikita will run its children recursivelly before passing to the next schedules action. Let's imaging we want to install 2 packages "my_pkg_1" and "my_pkg_2" before modify a configuration file:
+Since an action may contain child actions, the way Nikita run is similar to how you might want to traverse a file system. For every action scheduled, Nikita will run its children recursively before passing to the next scheduled action. 
+
+Let's imaging we want to install 2 packages `my_pkg_1` and `my_pkg_2` before modifying a configuration file:
 
 ```js
-require('nikita')
-.call(function{
+nikita
+.call(function() {
   this.service('my_pkg_1')
   this.service('my_pkg_2')
 })
@@ -24,165 +26,128 @@ require('nikita')
 
 The actions will be executed in this sequence:
 
-* "call"
-* "service" for "my_pkg_1"
-* "service" for "my_pkg_2"
-* "file.yaml"
+* `call`
+* `service` for `my_pkg_1`
+* `service` for `my_pkg_2`
+* `file.yaml`
 
-This tree-like traversal is leverage by the "header" metadata and the "log.cli" action to display a report to the therminal.
+This tree-like traversal is leverage by the [`header` metadata](/current/metadata/header) and the `log.cli` action to display a report to the terminal.
 
 ```js
-require('nikita')
+nikita
 .log.cli({pad: {header: 20}})
-.call({header: 'Packages'}, function(){
-  this.service({header: 'My PKG 1'}, 'my_pkg_1')
-  this.service({header: 'My PKG 2'}, 'my_pkg_2')
+.call({
+  // highlight-next-line
+  metadata: { header: 'Packages' }
+}, function() {
+  this.service({
+    // highlight-next-line
+    metadata: { header: 'My PKG 1' }
+  }, 'my_pkg_1')
+  this.service({
+    // highlight-next-line
+    metadata: { header: 'My PKG 2' }
+  }, 'my_pkg_2')
 })
 .file.yaml({
-  header: 'Config',
+  // highlight-next-line
+  metadata: { header: 'Config' },
   target: '/etc/my_pkg/config.yaml',
   content: { my_property: 'my value' }
 })
 ```
 
-Will output:
+Will output like this:
 
 ```
-localhost   Packages : My PKG 1  -  1ms
-localhost   Packages : My PKG 2  -  1ms
-localhost   Packages             -  3ms
-localhost   Config               -  10ms
+localhost   Packages : My PKG 1  ✔  1ms
+localhost   Packages : My PKG 2  ✔  1ms
+localhost   Packages             ✔  3ms
+localhost   Config               ✔  10ms
 ```
 
-## End of the execution
-
-The `next` function can be provided as a way to be notified once a list of actions has terminated or if any error occurred before. When called, it expect a function with two arguments:
-
-- `err`
-  The error object if any error occurred.
-- `status`
-  The final status of the previously executed actions.
-
-It can be called at the root of a workflow:
-
-```js
-require('nikita')
-.file({
-  target: '/tmp/hello-'+Date.now(),
-  content: 'hello'
-})
-.system.execute('rm /tmp/hello-*')
-.next(function(err, {status}){
-  assert(status, true)
-})
-```
-
-It can also be called inside a handler:
-
-```js
-require('nikita')
-.call(function(){
-  this
-  .file({
-    target: '/tmp/hello-'+Date.now(),
-    content: 'hello'
-  })
-  .system.execute('rm /tmp/hello-*')
-  .next(function(err, {status}){
-    asset(status, true)
-  })
-})
-.next(function(err){
-  console.info('We are done')
-})
-```
-
-More actions may be registered after `next`:
-
-```js
-require('nikita')
-.file({
-  target: '/tmp/hello-'+Date.now(),
-  content: 'hello'
-})
-.next(function(err, {status}){
-  console.info('Step 1:', err || status)
-})
-.system.execute('rm /tmp/hello-*')
-.next(function(err, {status}){
-  console.info('Step 2:', err || status)
-})
-```
+> Note, to make this example working, you have to change package names to real packages supported by your OS.
 
 ## Interrupting the execution
 
-At any point in time, it is possible to interrupt the execution of the current action by calling `end`. If executed on a parent action, the context will simply exit. It is common to call `end` from inside a callback, for example after executing a shell command:
+The native Nikita scheduler interrupts the global Nikita session in case of failure of any action. This behavior prevents error propagation to the next actions. In the following example, the second action will not be executed because the first one throws an exception:
 
 ```js
-require('nikita')
-.execute({
-  cmd: "node -v"
-}, function(err, {stdout}){
-  if(stdout.split('.')[0] != 'v1'){
-    console.info('That was a century ago');
-    @end()
-  }
+nikita
+// Throws an exception
+.call(() => {
+  throw Error('Oh my God!')
 })
-.call(function(){
-  console.info('This will not be executed if version is 1')
+// Is not executed
+.call(() => {
+  console.info('I am not executed.')
 })
-.next(function(){
-  console.info('Done');
-});
 ```
 
-Note, the function `end` may receive condition config. For example, the callback function from the previous example could be rewritten as:
+However, the session can be preserved by catching the exception thrown by action's [Promise](https://nodejs.dev/learn/understanding-javascript-promises). The example below uses the `try...catch` statement to handle the exception:
 
 ```js
-function(err, {stdout}){
-  @end({if: stdout.split('.')[0] != 'v1'})
-}
+nikita
+.call(async function() {
+  // highlight-range{1-8}
+  try {
+    // Throws an exception
+    await this.call(() => {
+      throw Error('Oh my God!')
+    })
+  } catch(err) {
+    console.info(err.message)
+  }
+  // Is executed
+  this.call(() => {
+    console.info('I am executed the error is catched.')
+  })
+})
 ```
 
 ## Condition and status
 
-One way of controlling your flow is to mix [conditions](/usages/conditions/) and [status](/usages/status/).
-Nikita expose the [status](/usages/status/) function
+The execution flow can be controlled by mixing [conditions](/current/usages/conditions/) and [output](/current/action/output) such as [`status`](/current/usages/status/) and [`error`](/current/usages/error/) returned with Promise.
 
-When called without any parameter, it returns the status of all the previous sibling actions:
+> Note, Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action's output, you have to call an asynchronous function and "await" for the result of Promise.
 
-```js
-require('nikita')
-.system.execute({
-  code_skipped: 1,
-  cmd: 'cat catchme | grep missyou' // Generate status false
-})
-.system.execute({
-  cmd: 'cat catchme | grep catchme' // Generate status true
-})
-.call({
-  if: function(){ this.status() }
-}, function(){
-  console.info('The condition passed because the second sibling action activate the status')
-})
-```
-  
-When called with one negative number, it returns the status of the `current-n` sibling action:
+The example below demonstrates the combination of the `status` output variable and the [`if` condition](/current/usages/conditions/). The second action is executed if the status is `true`:
 
 ```js
-require('nikita')
-.system.execute({
-  code_skipped: 1,
-  cmd: 'cat catchme | grep missyou' // Generate status false
-})
-.system.execute({
-  cmd: 'cat catchme | grep catchme' // Generate status true
-})
-.call({
-  if: function{ this.status(-1) }
-}, function(){
-  console.info('The condition passed because it references a sibling action which activates the status')
+nikita
+.call(async function() {
+  // Get status of the 1st action
+  // highlight-next-line
+  const {status} = await this.execute({
+    command: 'echo catchme | grep catchme' // Returns status true
+  })
+  // Run the 2nd action if status is true
+  this.call({
+    // highlight-next-line
+    if: status
+  }, function(){
+    console.info('The condition passed, because the status is true')
+  })
 })
 ```
 
-Note: As mentioned in [conditions](/usages/conditions/), the status function in the examples above is wrapped in a function because the status is evaluated at runtime.
+In the following example, the second action is executed if the first one is failed. To prevent throwing an exception the [relax behavior](/current/metadata/relax/) is enabled:
+
+```js
+nikita
+.call(async function() {
+  // Get error of the 1st action
+  // highlight-next-line
+  const {error} = await this.execute({
+    metadata: {relax: true},  // Don't throw an error if occured
+    command: 'echo missyou | grep catchme' // fails
+  })
+  // Run the 2nd action if error
+  this.call({
+    // highlight-next-line
+    if: error
+  }, function(){
+    console.info('The condition passed because an error occured')
+  })
+})
+```
