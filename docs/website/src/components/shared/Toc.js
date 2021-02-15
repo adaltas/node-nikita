@@ -27,14 +27,14 @@ export default ({
 }) => {
   const renderToc = (level, startLevel, items) => (
     items.map((item) => (
-      <>
+      <React.Fragment key={item.url}>
         {(level >= startLevel) && (
-          <li key={item.url}>
-            <a href={`${item.url}`}>{item.title}</a>
+          <li>
+            <a href={item.url}>{item.title}</a>
           </li>
         )}
         {item.items && renderToc(++level, startLevel, item.items)}
-      </>
+      </React.Fragment>
     ))
   )
   return (

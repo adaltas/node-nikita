@@ -139,7 +139,8 @@ class Content extends Component {
                 <EditIcon />
               </IconButton>
             </Tooltip>
-            {page.tableOfContents.items
+            {page.tableOfContents
+              && page.tableOfContents.items
               && (
               <>
                 <Tooltip
