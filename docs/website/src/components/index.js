@@ -16,14 +16,11 @@ import Menu from './shared/Menu'
 import Nav from './shared/Nav'
 import Intro from './home/Intro'
 
-const styles = theme => ({
-  root: {
-  },
+const styles = {
   content: {
     backgroundColor: 'rgb(242,242,242)',
-    // marginLeft: 0,
   },
-})
+}
 
 class Layout extends React.Component {
   state = {
@@ -31,7 +28,7 @@ class Layout extends React.Component {
     breakpoint: 960,
   }
   render() {
-    const { children, classes, data, page } = this.props
+    const { children, data, page } = this.props
     const site = data.site.siteMetadata
     const onToggle = () => {
       this.setState({ open: !this.state.open })
@@ -59,7 +56,7 @@ class Layout extends React.Component {
       }
     })
     return (
-      <div className={classes.root}>
+      <div>
         <Helmet
           title={'NIKITA - ' + page.title || site.title}
           meta={[
@@ -82,7 +79,7 @@ class Layout extends React.Component {
                 site={site}
                 opacity={0.3}
               />
-              <div className={classes.content}>
+              <div css={styles.content}>
                 <Intro />
                 <Content>{children}</Content>
                 <Footer site={site} />

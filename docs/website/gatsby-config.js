@@ -72,7 +72,7 @@ module.exports = {
     `gatsby-plugin-material-ui`,
     `gatsby-plugin-react-helmet`,
     {
-      resolve: `gatsby-plugin-glamor`,
+      resolve: `gatsby-plugin-emotion`,
     },
     {
       resolve: `gatsby-source-filesystem`,
