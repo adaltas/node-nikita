@@ -9,7 +9,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     slug = createFilePath({ node, getNode })
     edit_url =
       "https://github.com/adaltas/node-nikita/edit/master/" +
-      path.relative(__dirname, node.fileAbsolutePath)
+      path.relative(`${__dirname}/../../`, node.fileAbsolutePath)
     createNodeField({
       node,
       name: 'slug',
