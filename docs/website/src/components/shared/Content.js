@@ -141,7 +141,7 @@ const Content = ({
               <EditIcon />
             </IconButton>
           </Tooltip>
-          {page.tableOfContents.items
+          {page.tableOfContents && page.tableOfContents.items
             && (
             <Fragment>
               <Tooltip

@@ -104,7 +104,6 @@ const Drawer = ({
     <Fragment>
       <div
         ref={mainEl}
-        id='toto'
         css={[
           styles.main,
           userStyles.main,

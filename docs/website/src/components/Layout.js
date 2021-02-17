@@ -16,10 +16,10 @@ import Menu from './shared/Menu'
 import Nav from './shared/Nav'
 
 const styles = {
-  root: {
-  },
   content: {
     backgroundColor: 'rgb(242,242,242)',
+  },
+  contentNoIntro: {
     paddingTop: 60,
   },
 }
@@ -27,9 +27,11 @@ const styles = {
 const Layout = ({
   children,
   data,
-  page
+  intro,
+  home = false,
+  page,
 }) => {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(home ? false : true)
   const [breakpoint] = useState(960)
   useEffect( () => {
     if (window.innerWidth < breakpoint) {
@@ -62,12 +64,13 @@ const Layout = ({
     }
   })
   return (
-    <div css={styles.root}>
+    <div>
       <Helmet
         title={'NIKITA - ' + page.title}
         meta={[
           { name: 'description', content: page.description },
           { name: 'keywords', content: page.keywords },
+          { name: 'google-site-verification', content: 'ukvG8Ae6z6Ly-ABtoUMWzRAPMmn07QWlbRnot0AC5FA'}
         ]}
       >
         <html lang="en" />
@@ -82,8 +85,10 @@ const Layout = ({
               onMenuClick={onToggle}
               site={data.site.siteMetadata}
               open={isOpen}
+              opacity={home ? 0.3 : 1}
             />
-            <div css={styles.content}>
+            <div css={[styles.content, intro ? null : styles.contentNoIntro]}>
+              { intro }
               <Content page={page}>{children}</Content>
               <Footer site={data.site.siteMetadata} />
             </div>
@@ -114,6 +119,7 @@ const WrappedLayout = props => (
         site: site {
           siteMetadata {
             title
+            description
             github {
               url
               title

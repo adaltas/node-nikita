@@ -1,162 +1,179 @@
 import React from 'react'
-// Material UI
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import SvgIcon from '@material-ui/core/SvgIcon'
-import { useTheme } from '@material-ui/core/styles';
-import { css } from "@emotion/react"
-// Gatsby
-import { Link } from 'gatsby'
-// Particles
-import Particles from 'react-particles-js'
-import particles from './particles'
-import mw_low from './milky-way-low.jpg'
-import mw_high from './milky-way-high.jpg'
-// Scroll
-import { animateScroll as scroll } from 'react-scroll'
 
-const useStyles = (theme) => ({
-  root: {
-    // backgroundColor: '#42456C !important',
-    background: `no-repeat url(${mw_low})`,
-    backgroundSize: `cover`,
-    position: 'relative',
-    height: '100vh',
-    // A test to fix mobile viewport, can be removed if not working
-    minHeight: 'calc(100% - 0)',
-    '& h1': {
-      fontSize: '6rem',
-      margin: '0 0 1rem',
-    },
-    '& p': {
-      fontSize: '2rem',
-      margin: '0 0 .5rem',
-    },
-    // Mobile portrait
-    '@media (max-width: 600px)': {
-      '& h1': {
-        fontSize: '3rem !important',
-      },
-      '& p': {
-        fontSize: '1rem !important',
-        margin: '0 0 .5rem !important',
-      },
-    },
-    // Mobile landscape
-    '@media (max-height: 400px)': {
-      '& h1': {
-        fontSize: '3rem !important',
-      },
-      '& p': {
-        fontSize: '1rem !important',
-        margin: '0 0 .5rem !important',
-      },
-    },
-  },
-  bck: {
-    background: `no-repeat url(${mw_high})`,
-    backgroundSize: `cover`,
-    height: '100%',
-  },
-  content: {
-    ...theme.typography,
-    bottom: '0%',
-    width: '100%',
-    position: 'absolute',
-    textAlign: 'center',
-    color: '#ffffff',
-    '@media (max-width: 600px)': {
-      bottom: '10%',
-    },
-  },
-  button: {
-    margin: theme.spacing(),
-  },
-  headlines: {
-    margin: '0 0 2rem',
-  },
-  outlined: {
-    borderColor: '#fff',
-    color: '#fff',
-    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    },
-  },
-  scrollDown: {
-    color: 'rgba(255, 255, 255, 0.6)',
-    fontSize: 32,
-    // display: 'block',
-    textAlign: 'center',
-    '&:hover': {
-      color: 'rgba(255, 255, 255, 1)',
-      // backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    },
-  },
-})
+import { css, Global, keyframes } from '@emotion/react'
+import href from './anim.svg'
+
+const dash = keyframes`
+  to {
+    stroke-dashoffset: 0;
+  }
+`
+const opacity = keyframes`
+  to {
+    opacity: 1;
+  }
+`
+const red = keyframes`
+  40% {
+    fill: #FF0000;
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    fill: #FF0000;
+    opacity: 1;
+  }
+`
+const green = keyframes`
+  40% {
+    fill: #37E37C;
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    fill: #37E37C;
+    opacity: 1;
+  }
+`
 
 const Intro = () => {
-  const styles = useStyles(useTheme())
-  const scrollDown = e => {
-    const offset = window.innerHeight - (window.innerHeight < 600 ? 48 : 64)
-    scroll.scrollTo(offset, {
-      duration: 400,
-      delay: 0,
-      smooth: 'easeInOutQuart',
-    })
-  }
   return (
-    <div css={styles.root}>
-      <Particles params={particles} css={styles.bck} />
-      <div css={styles.content}>
-        <h1>Nikita</h1>
-        <div css={styles.headlines}>
-          <p>{'Automation and deployment solution'}</p>
-          <p>{'Built for Node.js, MIT License'}</p>
-          <p>{'Deploy apps and infrastructures'}</p>
-        </div>
-        <Button
-          component={Link}
-          to="/about/tutorial/"
-          size="large"
-          variant="outlined"
-          css={styles.button}
-          classes={{ outlined: css(styles.outlined) }}
-        >
-          {'Get started'}
-        </Button>
-        <Button
-          component={Link}
-          to="/about/changelog/"
-          size="large"
-          variant="outlined"
-          css={styles.button}
-          classes={{ outlined: css(styles.outlined) }}
-        >
-          {'Changelog'}
-        </Button>
-        <div>
-          <IconButton
-            aria-label="Learn more"
-            css={styles.scrollDown}
-            onClick={scrollDown}
-          >
-            <SvgIcon>
-              <g>
-                <g>
-                  <path d=" M 1.649 1.861 C 1.271 1.488 0.66 1.488 0.283 1.861 C -0.094 2.234 -0.095 2.84 0.283 3.213 L 11.317 14.139 C 11.694 14.512 12.306 14.512 12.683 14.139 L 23.717 3.213 C 24.094 2.84 24.094 2.235 23.717 1.861 C 23.34 1.488 22.729 1.488 22.351 1.861 L 12 11.825 L 1.649 1.861 Z " />
-                </g>
-                <g>
-                  <path d=" M 1.649 9.861 C 1.271 9.488 0.66 9.488 0.283 9.861 C -0.094 10.234 -0.095 10.84 0.283 11.213 L 11.317 22.139 C 11.694 22.512 12.306 22.512 12.683 22.139 L 23.717 11.213 C 24.094 10.84 24.094 10.235 23.717 9.861 C 23.34 9.488 22.729 9.488 22.351 9.861 L 12 19.825 L 1.649 9.861 Z " />
-                </g>
-              </g>
-            </SvgIcon>
-          </IconButton>
-        </div>
-      </div>
+    <div>
+      <Global
+        styles={css`
+          #bird_1 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 10s linear forwards !important;
+            stroke-dashoffset: 1000;
+          }
+          #bird_2 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 10s linear forwards !important;
+            animation-delay: .7s !important;
+            stroke-dashoffset: 1000;
+          }
+          #bird_3 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 5s linear forwards !important;
+            animation-delay: 2s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_1 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_2 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_3 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_4 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_5 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_6 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sun_7 {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 30s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #sunshine {
+            stroke-dasharray: 1000 !important;
+            animation: ${dash} 20s linear forwards !important;
+            animation-delay: 6s !important;
+            stroke-dashoffset: 1000;
+          }
+          #cloud {
+            stroke-dasharray: 5000 !important;
+            animation: ${dash} 20s linear forwards !important;
+            animation-delay: 3s !important;
+            stroke-dashoffset: 5000;
+          }
+          #servers {
+            stroke-dasharray: 5000 !important;
+            animation: ${dash} 20s linear forwards !important;
+            animation-delay: 0s !important;
+            stroke-dashoffset: 5000;
+          }
+          #lights {
+            animation: ${opacity} 10s ease-in forwards !important;
+            animation-delay: 0s !important;
+            opacity: 0;
+          }
+          #light_1 {
+            animation: ${red} 1s ease-out forwards !important;
+            animation-delay: 4s !important;
+          }
+          #light_2 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 4.5s !important;
+          }
+          #light_3 {
+            animation: ${red} 1s ease-out forwards !important;
+            animation-delay: 5s !important;
+          }
+          #light_4 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 5.5s !important;
+          }
+          #light_5 {
+            animation: ${red} 1s ease-out forwards !important;
+            animation-delay: 6s !important;
+          }
+          #light_6 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 6.5s !important;
+          }
+          #light_7 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 7s !important;
+          }
+          #light_8 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 7.5s !important;
+          }
+          #light_9 {
+            animation: ${green} 1s ease-out forwards !important;
+            animation-delay: 8s !important;
+          }
+        `}
+      />
+      <svg
+        role="img"
+        viewBox={`0 0 800 400`}
+      >
+        <title>Nikita</title>
+        <use xlinkHref={`${href}#anim`} />
+      </svg>
     </div>
   )
 }
 
-export default Intro;
+export default Intro

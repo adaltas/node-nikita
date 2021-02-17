@@ -1,5 +1,6 @@
 import React from 'react'
-import Layout from '../components/index'
+import Layout from '../components/Layout'
+import Intro from '../components/home/Intro'
 
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -98,6 +99,8 @@ const Index = ({
 }) => {
   return (
     <Layout
+      intro={<Intro/>}
+      home={true}
       page={{
         title: 'Automation and deployment solution for Node.js',
         description: 'Automation and deployment solution of applications and infrastructures for Node.js.',
