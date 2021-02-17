@@ -1,5 +1,5 @@
 // React
-import React from 'react'
+import React, {Fragment, useState} from 'react'
 import Helmet from 'react-helmet'
 // Material UI
 import { withStyles } from '@material-ui/core/styles'
@@ -22,88 +22,85 @@ const styles = {
   },
 }
 
-class Layout extends React.Component {
-  state = {
-    open: false,
-    breakpoint: 960,
+const Layout = ({
+  children,
+  data,
+  page
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [breakpoint] = useState(960)
+  const onToggle = () => {
+    setIsOpen(!isOpen)
   }
-  render() {
-    const { children, data, page } = this.props
-    const site = data.site.siteMetadata
-    const onToggle = () => {
-      this.setState({ open: !this.state.open })
+  const handleClickLink = () => {
+    if(window.innerWidth < breakpoint){
+      setIsOpen(false)
     }
-    const handleClickLink = () => {
-      if(window.innerWidth < this.state.breakpoint){
-        this.setState({ open: false })
-      }
-    }
-    const menu = { children: {} }
-    data.menu.edges.forEach(edge => {
-      const slugs = edge.node.fields.slug.split('/').filter(part => part)
-      let parentMenu = menu
-      slugs.forEach(slug => {
-        if (!parentMenu.children[slug])
-          parentMenu.children[slug] = { data: {}, children: {} }
-        parentMenu = parentMenu.children[slug]
-      })
-      parentMenu.data = {
-        id: slugs.join('/'),
-        navtitle: edge.node.frontmatter.navtitle,
-        title: edge.node.frontmatter.title,
-        slug: edge.node.fields.slug,
-        sort: edge.node.frontmatter.sort || 99,
-      }
+  }
+  const menu = { children: {} }
+  data.menu.edges.forEach(edge => {
+    const slugs = edge.node.fields.slug.split('/').filter(part => part)
+    let parentMenu = menu
+    slugs.forEach(slug => {
+      if (!parentMenu.children[slug])
+        parentMenu.children[slug] = { data: {}, children: {} }
+      parentMenu = parentMenu.children[slug]
     })
-    return (
-      <div>
-        <Helmet
-          title={'NIKITA - ' + page.title || site.title}
-          meta={[
-            { name: 'description', content: page.description || site.description },
-            { name: 'keywords', content: page.keywords || site.keywords },
-            { name: 'google-site-verification', content: 'ukvG8Ae6z6Ly-ABtoUMWzRAPMmn07QWlbRnot0AC5FA'}
-          ]}
-        >
-          <html lang="en" />
-        </Helmet>
-        <Drawer
-          breakpoint={this.state.breakpoint}
-          open={this.state.open}
-          onClickModal={onToggle}
-          main={
-            <>
-              <AppBar
-                open={this.state.open}
-                onMenuClick={onToggle}
-                site={site}
-                opacity={0.3}
+    parentMenu.data = {
+      id: slugs.join('/'),
+      navtitle: edge.node.frontmatter.navtitle,
+      title: edge.node.frontmatter.title,
+      slug: edge.node.fields.slug,
+      sort: edge.node.frontmatter.sort || 99,
+    }
+  })
+  return (
+    <div>
+      <Helmet
+        title={'NIKITA - ' + page.title}
+        meta={[
+          { name: 'description', content: page.description },
+          { name: 'keywords', content: page.keywords },
+          { name: 'google-site-verification', content: 'ukvG8Ae6z6Ly-ABtoUMWzRAPMmn07QWlbRnot0AC5FA'}
+        ]}
+      >
+        <html lang="en" />
+      </Helmet>
+      <Drawer
+        breakpoint={breakpoint}
+        open={isOpen}
+        onClickModal={onToggle}
+        main={
+          <Fragment>
+            <AppBar
+              open={isOpen}
+              onMenuClick={onToggle}
+              site={data.site.siteMetadata}
+              opacity={0.3}
+            />
+            <div css={styles.content}>
+              <Intro />
+              <Content>{children}</Content>
+              <Footer site={data.site.siteMetadata} />
+            </div>
+          </Fragment>
+        }
+        drawer={
+          <Menu>
+            {Object.values(menu.children.current.children)
+            .sort((p1, p2) => p1.data.sort > p2.data.sort)
+            .map(page => (
+              <Nav
+                key={page.data.slug}
+                menu={page}
+                onClickLink={handleClickLink}
               />
-              <div css={styles.content}>
-                <Intro />
-                <Content>{children}</Content>
-                <Footer site={site} />
-              </div>
-            </>
-          }
-          drawer={
-            <Menu>
-              {Object.values(menu.children.current.children)
-              .sort((p1, p2) => p1.data.sort > p2.data.sort)
-              .map(page => (
-                <Nav
-                  key={page.data.slug}
-                  menu={page}
-                  path={this.state.path}
-                  onClickLink={handleClickLink}
-                />
-              ))}
-            </Menu>
-          }
-        />
-      </div>
-    )
-  }
+            ))}
+          </Menu>
+        }
+      />
+    </div>
+  )
 }
 
 const WrappedLayout = props => (

@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, {Fragment} from 'react'
 
 const styles = {
   toc: {
@@ -27,14 +27,14 @@ export default ({
 }) => {
   const renderToc = (level, startLevel, items) => (
     items.map((item) => (
-      <>
+      <Fragment key={item.url}>
         {(level >= startLevel) && (
-          <li key={item.url}>
+          <li>
             <a href={`${item.url}`}>{item.title}</a>
           </li>
         )}
         {item.items && renderToc(++level, startLevel, item.items)}
-      </>
+      </Fragment>
     ))
   )
   return (

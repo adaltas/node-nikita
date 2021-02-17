@@ -1,5 +1,5 @@
 // React
-import React, { Component } from 'react'
+import React from 'react'
 // Material UI
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -62,53 +62,48 @@ const styles = theme => ({
   },
 })
 
-class Footer extends Component {
-  render() {
-    const { classes, site } = this.props
-    const footer = site.footer.map((footer, i) => {
-      const list = footer.links && (
-        <ul className={classes.ul}>
-          {footer.links.map((link, j) => (
-            <li key={'footer' + i + '-' + j}>
-              {/^http/.test(link.url) ? (
-                <a href={link.url}>
-                  {link.label}
-                </a>
-              ) : (
-                <Link to={link.url}>{link.label}</Link>
-              )}
-            </li>
+const Footer = ({
+  classes,
+  site
+}) => {
+  return (
+    <footer className={classes.root}>
+      <div className={classes.rootInner}>
+        <Grid container spacing={0}>
+          {site.footer.map((footer, i) =>  (
+            <Grid key={'footer' + i} item xs={footer.xs || 4} sm={footer.sm || 4}>
+              <div className={classes.paper}>
+                <Typography variant="subtitle1" className={classes.subheading}>
+                  {footer.title}
+                </Typography>
+                {footer.links && (
+                  <ul className={classes.ul}>
+                    {footer.links.map((link, j) => (
+                      <li key={'footer' + i + '-' + j}>
+                        {/^http/.test(link.url) ? (
+                          <a href={link.url}>
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link to={link.url}>{link.label}</Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {footer.content && (
+                  <Typography
+                    className={classes.content}
+                    dangerouslySetInnerHTML={{ __html: footer.content }}
+                  />
+                )}
+              </div>
+            </Grid>
           ))}
-        </ul>
-      )
-      const content = footer.content && (
-        <Typography
-          className={classes.content}
-          dangerouslySetInnerHTML={{ __html: footer.content }}
-        />
-      )
-      return (
-        <Grid key={'footer' + i} item xs={footer.xs || 4} sm={footer.sm || 4}>
-          <div className={classes.paper}>
-            <Typography variant="subtitle1" className={classes.subheading}>
-              {footer.title}
-            </Typography>
-            {list}
-            {content}
-          </div>
         </Grid>
-      )
-    })
-    return (
-      <footer className={classes.root}>
-        <div className={classes.rootInner}>
-          <Grid container spacing={0}>
-            {footer}
-          </Grid>
-        </div>
-      </footer>
-    )
-  }
+      </div>
+    </footer>
+  )
 }
 
 export default withStyles(styles, { withTheme: true })(Footer)

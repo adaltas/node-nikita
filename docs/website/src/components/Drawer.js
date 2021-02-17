@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
-import { css } from "@emotion/react"
+import { css } from '@emotion/css'
 
 /*
 
@@ -74,82 +74,83 @@ const styles = {
   },
 }
 
-class Drawer extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { isMobile: false }
-    this.main = React.createRef()
-  }
-  componentDidMount() {
-    if (window.innerWidth < this.props.breakpoint) {
-      this.setState({ isMobile: true })
+const Drawer = ({
+  breakpoint,
+  drawer,
+  main,
+  onClickModal,
+  open,
+  width,
+  styles: userStyles = {},
+}) => {
+  const [isMobile, setIsMobile] = useState(false)
+  const mainEl = useRef(null)
+  useEffect(() => {
+    if (window.innerWidth < breakpoint) {
+      setIsMobile(true)
     }
-  }
-  render() {
-    const { drawer, main, open, width } = this.props
-    const userStyles = this.props.styles || {}
-    const w = width ? (typeof width === 'number' ? width + 'px' : width) : 250
-    styles.main.paddingLeft = open ? w + 'px' : 0
-    styles.mainOpen['@media (min-width: 980px)'].paddingLeft = w
-    styles.mainOpen['@media (max-width: 980px)'].left = w
-    styles.drawer.left = open ? 0 : '-' + w + 'px'
-    styles.drawer.width = w + 'px'
-    styles.drawer['@media (max-width: 980px)'].left = '-' + w
-    styles.drawerClose.left = '-' + w + 'px'
-    const { isMobile } = this.state
-    const isWindow = typeof window !== `undefined`
-    return (
-      <Fragment>
-        <div
-          ref={this.main}
-          id='toto'
+  }, [breakpoint])
+  // const userStyles = this.props.styles || {}
+  const w = width ? (typeof width === 'number' ? width + 'px' : width) : 250
+  styles.main.paddingLeft = open ? w + 'px' : 0
+  styles.mainOpen['@media (min-width: 980px)'].paddingLeft = w
+  styles.mainOpen['@media (max-width: 980px)'].left = w
+  styles.drawer.left = open ? 0 : '-' + w + 'px'
+  styles.drawer.width = w + 'px'
+  styles.drawer['@media (max-width: 980px)'].left = '-' + w
+  styles.drawerClose.left = '-' + w + 'px'
+  const isWindow = typeof window !== `undefined`
+  return (
+    <Fragment>
+      <div
+        ref={mainEl}
+        id='toto'
+        css={[
+          styles.main,
+          userStyles.main,
+          isWindow && open ? styles.mainOpen : {},
+          isWindow && !open ? styles.mainClose : {},
+        ]}
+      >
+        {main}
+      </div>
+      {isWindow && isMobile ? (
+        <Modal
+          isOpen={open}
+          onRequestClose={onClickModal}
+          aria={{
+            labelledby: 'Menu',
+            describedby: 'Navigate through the site',
+          }}
+          appElement={mainEl.current}
           css={[
-            styles.main,
-            userStyles.main,
-            isWindow && open ? styles.mainOpen : {},
-            isWindow && !open ? styles.mainClose : {},
+            styles.drawer,
+            userStyles.drawer,
+            isWindow && open && styles.drawerOpen,
+            isWindow && !open && styles.drawerClose,
+          ]}
+          overlayClassName={css([
+            styles.overlay,
+            userStyles.overlay,
+          ])}
+          bodyOpenClassName={css([styles.body, userStyles.body])}
+        >
+          {drawer}
+        </Modal>
+      ) : (
+        <div
+          id="drawer"
+          css={[
+            styles.drawer,
+            isWindow && open ? styles.drawerOpen : {},
+            isWindow && !open ? styles.drawerClose : {},
           ]}
         >
-          {main}
+          {drawer}
         </div>
-        {isWindow && isMobile ? (
-          <Modal
-            isOpen={open}
-            onRequestClose={this.props.onClickModal}
-            aria={{
-              labelledby: 'Menu',
-              describedby: 'Navigate through the site',
-            }}
-            appElement={this.main.current}
-            className={css([
-              styles.drawer,
-              userStyles.drawer,
-              isWindow && open && styles.drawerOpen,
-              isWindow && !open && styles.drawerClose,
-            ])}
-            overlayClassName={css([
-              styles.overlay,
-              userStyles.overlay,
-            ])}
-            bodyOpenClassName={css([styles.body, userStyles.body])}
-          >
-            {drawer}
-          </Modal>
-        ) : (
-          <div
-            id="drawer"
-            css={[
-              styles.drawer,
-              isWindow && open ? styles.drawerOpen : {},
-              isWindow && !open ? styles.drawerClose : {},
-            ]}
-          >
-            {drawer}
-          </div>
-        )}
-      </Fragment>
-    )
-  }
+      )}
+    </Fragment>
+  )
 }
 
 export default Drawer

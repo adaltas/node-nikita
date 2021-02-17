@@ -1,5 +1,5 @@
 // React
-import React from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import Helmet from 'react-helmet'
 // Material UI
 import { withStyles } from '@material-ui/core/styles'
@@ -24,90 +24,87 @@ const styles = {
   },
 }
 
-class Layout extends React.Component {
-  state = {
-    open: true,
-    breakpoint: 960,
+const Layout = ({
+  children,
+  data,
+  page
+}) => {
+  const [isOpen, setIsOpen] = useState(true)
+  const [breakpoint] = useState(960)
+  useEffect( () => {
+    if (window.innerWidth < breakpoint) {
+      setIsOpen(false)
+    }
+  }, [breakpoint])
+  const onToggle = () => {
+    setIsOpen(!isOpen)
   }
-  componentDidMount() {
-    if (window.innerWidth < this.state.breakpoint) {
-      this.setState({ open: false })
+  const handleClickLink = () => {
+    if(window.innerWidth < breakpoint){
+      setIsOpen(false)
     }
   }
-  render() {
-    const { children, data, page } = this.props
-    const site = data.site.siteMetadata
-    const onToggle = () => {
-      this.setState({ open: !this.state.open })
-    }
-    const handleClickLink = () => {
-      if(window.innerWidth < this.state.breakpoint){
-        this.setState({ open: false })
-      }
-    }
-    const menu = { children: {} }
-    data.menu.edges.forEach(edge => {
-      const slugs = edge.node.fields.slug.split('/').filter(part => part)
-      let parentMenu = menu
-      slugs.forEach(slug => {
-        if (!parentMenu.children[slug])
-          parentMenu.children[slug] = { data: {}, children: {} }
-        parentMenu = parentMenu.children[slug]
-      })
-      parentMenu.data = {
-        id: slugs.join('/'),
-        navtitle: edge.node.frontmatter.navtitle,
-        title: edge.node.frontmatter.title,
-        slug: edge.node.fields.slug,
-        sort: edge.node.frontmatter.sort || 99,
-      }
+  const menu = { children: {} }
+  data.menu.edges.forEach(edge => {
+    const slugs = edge.node.fields.slug.split('/').filter(part => part)
+    let parentMenu = menu
+    slugs.forEach(slug => {
+      if (!parentMenu.children[slug])
+        parentMenu.children[slug] = { data: {}, children: {} }
+      parentMenu = parentMenu.children[slug]
     })
-    return (
-      <div css={styles.root}>
-        <Helmet
-          title={'NIKITA - ' + page.title}
-          meta={[
-            { name: 'description', content: page.description },
-            { name: 'keywords', content: page.keywords },
-          ]}
-        >
-          <html lang="en" />
-        </Helmet>
-        <Drawer
-          breakpoint={this.state.breakpoint}
-          open={this.state.open}
-          onClickModal={onToggle}
-          main={
-            <>
-              <AppBar
-                onMenuClick={onToggle}
-                site={site}
-                open={this.state.open}
-              />
+    parentMenu.data = {
+      id: slugs.join('/'),
+      navtitle: edge.node.frontmatter.navtitle,
+      title: edge.node.frontmatter.title,
+      slug: edge.node.fields.slug,
+      sort: edge.node.frontmatter.sort || 99,
+    }
+  })
+  return (
+    <div css={styles.root}>
+      <Helmet
+        title={'NIKITA - ' + page.title}
+        meta={[
+          { name: 'description', content: page.description },
+          { name: 'keywords', content: page.keywords },
+        ]}
+      >
+        <html lang="en" />
+      </Helmet>
+      <Drawer
+        breakpoint={breakpoint}
+        open={isOpen}
+        onClickModal={onToggle}
+        main={
+          <Fragment>
+            <AppBar
+              onMenuClick={onToggle}
+              site={data.site.siteMetadata}
+              open={isOpen}
+            />
             <div css={styles.content}>
-                <Content page={page}>{children}</Content>
-                <Footer site={site} />
-              </div>
-            </>
-          }
-          drawer={
-            <Menu>
-              {Object.values(menu.children.current.children)
-              .sort((p1, p2) => p1.data.sort > p2.data.sort)
-              .map(page => (
-                <Nav
-                  key={page.data.slug}
-                  menu={page}
-                  path={this.state.path}
-                  onClickLink={handleClickLink}
-                />
-              ))}
-            </Menu>
-          }
-        />
-      </div>
-    )
-  }
+              <Content page={page}>{children}</Content>
+              <Footer site={data.site.siteMetadata} />
+            </div>
+          </Fragment>
+        }
+        drawer={
+          <Menu>
+            {Object.values(menu.children.current.children)
+            .sort((p1, p2) => p1.data.sort > p2.data.sort)
+            .map(page => (
+              <Nav
+                key={page.data.slug}
+                menu={page}
+                onClickLink={handleClickLink}
+              />
+            ))}
+          </Menu>
+        }
+      />
+    </div>
+  )
 }
 
 const WrappedLayout = props => (

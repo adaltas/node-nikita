@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Divider from '@material-ui/core/Divider'
 import Typography from '@material-ui/core/Typography'
 // Gatsby
-import { Link, push } from 'gatsby'
+import { Link } from 'gatsby'
 
 const styles = theme => ({
   root: {
@@ -42,49 +42,36 @@ const styles = theme => ({
   },
 })
 
-class Menu extends React.Component {
-  state = { open: true }
-  handleClick = e => {
-    // e.stopPropagation()
-    this.setState({ open: !this.state.open })
-  }
-  navigate = to => {
-    const { menu } = this.props
-    push({
-      pathname: menu.data.slug,
-      state: {
-        // showPage: true,
-      },
-    })
-  }
-  render() {
-    const { classes, children } = this.props
-    return (
-      <div className={classes.root}>
-        <div>
-          <div className={classes.toolbar}>
-            <Link to="/">
-              Documentation
-            </Link>
-            <Typography variant="caption">{'version 0.8'}</Typography>
-          </div>
-          <Divider />
+const Menu = ({
+  classes,
+  children
+}) => {
+  return (
+    <div className={classes.root}>
+      <div>
+        <div className={classes.toolbar}>
+          <Link to="/">
+            Documentation
+          </Link>
+          <Typography variant="caption">{'version 0.8'}</Typography>
         </div>
-        {children}
-        <div className={classes.footer}>
-          <Typography variant="caption">
-            Help us{' '}
-            <a
-              href="https://github.com/adaltas/node-nikita-docs/issues"
-            >
-              improve the docs
-            </a>{' '}
-            by fixing typos and proposing enhancements.
-          </Typography>
-        </div>
+        <Divider />
       </div>
-    )
-  }
+      {children}
+      <div className={classes.footer}>
+        <Typography variant="caption">
+          Help us
+          {' '}
+          <a
+            href="https://github.com/adaltas/node-nikita/issues"
+          >
+            improve the docs
+          </a>{' '}
+          by fixing typos and proposing enhancements.
+        </Typography>
+      </div>
+    </div>
+  )
 }
 
 export default withStyles(styles, { withTheme: true })(Menu)

@@ -1,5 +1,5 @@
 // React
-import React, { Component } from 'react'
+import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 // Material UI
 import IconButton from '@material-ui/core/IconButton'
@@ -117,58 +117,59 @@ const styles = theme => ({
   },
 })
 
-class Content extends Component {
-  state = { isOpen: false }
-  render() {
-    const onToggle = () => {
-      this.setState({ isOpen: !this.state.isOpen })
-    }
-    const { classes, children, page } = this.props
-    return (
-      <main ref="content" className={classes.content}>
-        {page && (
-          <>
-            <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
-            <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
-              <IconButton
-                color="inherit"
-                href={page.edit_url}
-                aria-labelledby="content-edit"
-                className={classes.icons}
-              >
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-            {page.tableOfContents.items
-              && (
-              <>
-                <Tooltip
-                  id="content-toc"
-                  title="Toggle table of content"
-                  enterDelay={300}
-                >
-                  <IconButton
-                    color="inherit"
-                    aria-labelledby="content-toc"
-                    className={classes.icons}
-                    onClick={onToggle}
-                  >
-                    <ListIcon />
-                  </IconButton>
-                </Tooltip>
-                <Toc
-                  startLevel={1}
-                  isOpen={this.state.isOpen}
-                  items={page.tableOfContents.items}
-                />
-              </>
-            )}
-          </>
-        )}
-        {children}
-      </main>
-    )
+const Content = ({
+  classes,
+  children,
+  page
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const onToggle = () => {
+    setIsOpen(!isOpen)
   }
+  return (
+    <main className={classes.content}>
+      {page && (
+        <Fragment>
+          <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
+          <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
+            <IconButton
+              color="inherit"
+              href={page.edit_url}
+              aria-labelledby="content-edit"
+              className={classes.icons}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          {page.tableOfContents.items
+            && (
+            <Fragment>
+              <Tooltip
+                id="content-toc"
+                title="Toggle table of content"
+                enterDelay={300}
+              >
+                <IconButton
+                  color="inherit"
+                  aria-labelledby="content-toc"
+                  className={classes.icons}
+                  onClick={onToggle}
+                >
+                  <ListIcon />
+                </IconButton>
+              </Tooltip>
+              <Toc
+                startLevel={1}
+                isOpen={isOpen}
+                items={page.tableOfContents.items}
+              />
+            </Fragment>
+          )}
+        </Fragment>
+      )}
+      {children}
+    </main>
+  )
 }
 
 Content.propTypes = {
