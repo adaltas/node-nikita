@@ -1,10 +1,6 @@
 // React
 import React, {Fragment, useEffect, useState} from 'react'
 import Helmet from 'react-helmet'
-// Material UI
-import { withStyles } from '@material-ui/core/styles'
-import withRoot from './mui/withRoot'
-import 'typeface-roboto'
 // Gatsby
 import { StaticQuery, graphql } from 'gatsby'
 // Local
@@ -168,4 +164,4 @@ const WrappedLayout = props => (
   />
 )
 
-export default withRoot(withStyles(styles, { withTheme: true })(WrappedLayout))
+export default WrappedLayout

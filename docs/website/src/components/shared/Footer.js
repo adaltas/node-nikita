@@ -1,13 +1,13 @@
 // React
 import React from 'react'
 // Material UI
-import { withStyles } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 // Gatsby
 import { Link } from 'gatsby'
 
-const styles = theme => ({
+const useStyles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: 'rgba(18, 24, 47, 1)',
@@ -63,21 +63,21 @@ const styles = theme => ({
 })
 
 const Footer = ({
-  classes,
   site
 }) => {
+  const styles = useStyles(useTheme())
   return (
-    <footer className={classes.root}>
-      <div className={classes.rootInner}>
+    <footer css={styles.root}>
+      <div css={styles.rootInner}>
         <Grid container spacing={0}>
           {site.footer.map((footer, i) =>  (
             <Grid key={'footer' + i} item xs={footer.xs || 4} sm={footer.sm || 4}>
-              <div className={classes.paper}>
-                <Typography variant="subtitle1" className={classes.subheading}>
+              <div css={styles.paper}>
+                <Typography variant="subtitle1" css={styles.subheading}>
                   {footer.title}
                 </Typography>
                 {footer.links && (
-                  <ul className={classes.ul}>
+                  <ul css={styles.ul}>
                     {footer.links.map((link, j) => (
                       <li key={'footer' + i + '-' + j}>
                         {/^http/.test(link.url) ? (
@@ -93,7 +93,7 @@ const Footer = ({
                 )}
                 {footer.content && (
                   <Typography
-                    className={classes.content}
+                    css={styles.content}
                     dangerouslySetInnerHTML={{ __html: footer.content }}
                   />
                 )}
@@ -106,4 +106,4 @@ const Footer = ({
   )
 }
 
-export default withStyles(styles, { withTheme: true })(Footer)
+export default Footer

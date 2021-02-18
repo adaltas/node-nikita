@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import classNames from 'classnames'
 // Material UI
+import { useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
@@ -17,7 +18,7 @@ import { Link } from 'gatsby'
 // Local
 // import header from './header.png'
 
-const styles = theme => ({
+const useStyles = theme => ({
   appBar: {
     left: 0,
     right: 0,
@@ -74,13 +75,13 @@ const styles = theme => ({
 })
 
 const MyAppBar = ({
-  classes,
   opacity = 1,
   open,
   onMenuClick,
   site
 }) => {
   const appbarEl = useRef()
+  const styles = useStyles(useTheme())
   useEffect(() => {
     if(opacity === 1){
       return
@@ -103,21 +104,21 @@ const MyAppBar = ({
   return (
     <AppBar
       ref={appbarEl}
-      className={classNames(classes.appBar, { [classes.appBarShift]: open })}
+      css={[styles.appBar, open && styles.appBarShift]}
     >
       <Toolbar>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={onMenuClick}
-          className={classes.icon}
+          css={styles.icon}
         >
           <MenuIcon />
         </IconButton>
         <Link to="/">
-          <Typography className={classes.title} color="inherit" noWrap>
+          <Typography css={styles.title} color="inherit" noWrap>
             {site.title}
-            <SvgIcon className={classes.logo}>
+            <SvgIcon css={styles.logo}>
               <g>
                 <path d=" M 7.307 6.867 L 10.46 6.867 C 10.703 6.867 10.9 7.064 10.9 7.307 L 10.9 12.293 C 10.9 12.536 11.097 12.733 11.34 12.733 L 14.86 12.733 C 15.103 12.733 15.3 12.93 15.3 13.173 L 15.3 18.16 C 15.3 18.403 15.103 18.6 14.86 18.6 L 7.307 18.6 C 7.064 18.6 6.867 18.403 6.867 18.16 L 6.867 7.307 C 6.867 7.064 7.064 6.867 7.307 6.867 Z " />
                 <path d=" M 12.367 4.373 L 12.367 10.827 C 12.367 11.07 12.564 11.267 12.807 11.267 L 18.16 11.267 C 18.403 11.267 18.6 11.07 18.6 10.827 L 18.6 4.373 C 18.6 4.13 18.403 3.933 18.16 3.933 L 12.807 3.933 C 12.564 3.933 12.367 4.13 12.367 4.373 Z " />
@@ -130,13 +131,13 @@ const MyAppBar = ({
             </SvgIcon>
           </Typography>
         </Link>
-        <div className={classes.grow} />
+        <div css={styles.grow} />
         <Tooltip id="appbar-bug" title={site.issues.title} enterDelay={300}>
           <IconButton
             color="inherit"
             href={site.issues.url}
             aria-labelledby="appbar-bug"
-            className={classes.icon}
+            css={styles.icon}
           >
             <BugReportOutlined />
           </IconButton>
@@ -150,7 +151,7 @@ const MyAppBar = ({
             color="inherit"
             href={site.github.url}
             aria-labelledby="appbar-github"
-            className={classes.icon}
+            css={styles.icon}
           >
             <FaGithub />
           </IconButton>
@@ -160,4 +161,4 @@ const MyAppBar = ({
   )
 }
 
-export default withStyles(styles, { withTheme: true })(MyAppBar)
+export default MyAppBar

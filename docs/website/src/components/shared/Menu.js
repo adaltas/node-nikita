@@ -1,13 +1,13 @@
 // React
 import React from 'react'
 // Material UI
-import { withStyles } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
 import Divider from '@material-ui/core/Divider'
 import Typography from '@material-ui/core/Typography'
 // Gatsby
 import { Link } from 'gatsby'
 
-const styles = theme => ({
+const useStyles = theme => ({
   root: {
     // position: 'relative',
     backgroundColor: 'rgb(245, 245, 245)',
@@ -43,13 +43,13 @@ const styles = theme => ({
 })
 
 const Menu = ({
-  classes,
   children
 }) => {
+  const styles = useStyles(useTheme())
   return (
-    <div className={classes.root}>
+    <div css={styles.root}>
       <div>
-        <div className={classes.toolbar}>
+        <div css={styles.toolbar}>
           <Link to="/">
             Documentation
           </Link>
@@ -58,7 +58,7 @@ const Menu = ({
         <Divider />
       </div>
       {children}
-      <div className={classes.footer}>
+      <div css={styles.footer}>
         <Typography variant="caption">
           Help us
           {' '}
@@ -74,4 +74,4 @@ const Menu = ({
   )
 }
 
-export default withStyles(styles, { withTheme: true })(Menu)
+export default Menu

@@ -1,28 +1,8 @@
-// /* eslint-disable react/no-danger */
-// 
-// const React = require('react');
-// const { renderToString } = require('react-dom/server');
-// const { JssProvider } = require('react-jss');
-// const getPageContext = require('./src/components/mui/getPageContext');
-// 
-// function replaceRenderer({ bodyComponent, replaceBodyHTMLString, setHeadComponents }) {
-//   // Get the context of the page to collected side effects.
-//   // Ternary to support Gatsby@1 and Gatsby@2 at the same time.
-//   const muiPageContext = getPageContext.default ? getPageContext.default() : getPageContext();
-// 
-//   const bodyHTML = renderToString(
-//     <JssProvider registry={muiPageContext.sheetsRegistry}>{bodyComponent}</JssProvider>,
-//   );
-// 
-//   replaceBodyHTMLString(bodyHTML);
-//   setHeadComponents([
-//     <style
-//       type="text/css"
-//       id="server-side-jss"
-//       key="server-side-jss"
-//       dangerouslySetInnerHTML={{ __html: muiPageContext.sheetsRegistry.toString() }}
-//     />,
-//   ]);
-// }
-// 
-// exports.replaceRenderer = replaceRenderer;
+/* eslint-disable import/prefer-default-export, react/prop-types */
+// see https://github.com/mui-org/material-ui/blob/master/examples/gatsby/plugins/gatsby-plugin-top-layout/gatsby-ssr.js
+import React from 'react';
+import Root from './src/layout/Root';
+
+export const wrapRootElement = ({ element }) => {
+  return <Root>{element}</Root>;
+};

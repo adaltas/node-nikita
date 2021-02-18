@@ -2,18 +2,18 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 // Material UI
+import { useTheme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import EditIcon from '@material-ui/icons/EditOutlined'
 import ListIcon from '@material-ui/icons/ListOutlined'
-import { withStyles } from '@material-ui/core/styles'
 import Toc from "./Toc"
 
 require('prismjs/themes/prism-tomorrow.css')
 
-const styles = theme => ({
+const useStyles = theme => ({
   content: theme.mixins.gutters({
-    ...theme.typography,
+    // ...theme.typography,
     paddingTop: 40,
     flex: '1 1 100%',
     maxWidth: '100%',
@@ -96,12 +96,10 @@ const styles = theme => ({
       borderLeft: '0.25rem solid rgba(255,255,255, .75)',
       display: 'block',
     },
-  }),
-  [theme.breakpoints.up(900 + theme.spacing(6))]: {
-    content: {
+    [theme.breakpoints.up(900 + theme.spacing(6))]: {
       maxWidth: 900,
     },
-  },
+  }),
   icons: {
     float: 'right',
     color: '#cccccc',
@@ -118,16 +116,16 @@ const styles = theme => ({
 })
 
 const Content = ({
-  classes,
   children,
   page
 }) => {
+  const styles = useStyles(useTheme())
   const [isOpen, setIsOpen] = useState(false)
   const onToggle = () => {
     setIsOpen(!isOpen)
   }
   return (
-    <main className={classes.content}>
+    <main css={styles.content}>
       {page && (
         <Fragment>
           <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
@@ -136,7 +134,7 @@ const Content = ({
               color="inherit"
               href={page.edit_url}
               aria-labelledby="content-edit"
-              className={classes.icons}
+              css={styles.icons}
             >
               <EditIcon />
             </IconButton>
@@ -152,7 +150,7 @@ const Content = ({
                 <IconButton
                   color="inherit"
                   aria-labelledby="content-toc"
-                  className={classes.icons}
+                  css={styles.icons}
                   onClick={onToggle}
                 >
                   <ListIcon />
@@ -176,4 +174,4 @@ Content.propTypes = {
   children: PropTypes.node.isRequired,
 }
 
-export default withStyles(styles, { withTheme: true })(Content)
+export default Content

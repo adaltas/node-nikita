@@ -13,7 +13,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore'
 // Gatsby
 import { Link } from 'gatsby'
 
-const useStyle = theme => ({
+const useStyles = theme => ({
   root: {
     backgroundColor: '#FFF',
   },
@@ -23,11 +23,9 @@ const useStyle = theme => ({
     paddingBottom: theme.spacing(.33),
   },
   link: {
-    ...theme.typography.caption,
+    // ...theme.typography.caption,
     textDecoration: 'none',
     color: theme.palette.grey[600],
-    // paddingTop: 0,
-    // paddingBottom: 0,
     minHeight: 'auto',
     '&:hover': {
       textDecoration: 'none',
@@ -46,7 +44,7 @@ const Nav = ({
   const handleClick = (e) => {
     setIsOpen(!isOpen)
   }
-  const styles = useStyle(useTheme())
+  const styles = useStyles(useTheme())
   const pages = Object.values(menu.children)
     .sort((p1, p2) => p1.data.sort > p2.data.sort)
     .map(page => (

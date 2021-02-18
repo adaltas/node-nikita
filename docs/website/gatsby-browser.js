@@ -1,7 +1,8 @@
-/**
- * Implement Gatsby's Browser APIs in this file.
- *
- * See: https://www.gatsbyjs.org/docs/browser-apis/
- */
+/* eslint-disable import/prefer-default-export, react/prop-types */
+// see https://github.com/mui-org/material-ui/blob/master/examples/gatsby/plugins/gatsby-plugin-top-layout/gatsby-browser.js
+import React from 'react';
+import Root from './src/layout/Root';
 
-// You can delete this file if you're not using it
+export const wrapRootElement = ({ element }) => {
+  return <Root>{element}</Root>;
+};
