@@ -8,29 +8,74 @@ Nikita provides multiple mechanisms to report, dive into the logs and intercept 
 
 ## Quick debugging
 
-While developing, you can use the ["debug" metadata](/metadata/debug/) to get visual and detailed information. This config [cascaded](/action/cascade/) and, as such, will be passed to every child actions.
+While developing, the [`debug` metadata](/current/metadata/debug/) can be used to get visual and detailed information in the standart output (stdout). This behavior can be propagated to the global Nikita session, to all child actions, or to the specific action:
 
-The metadata can be provided directly to the action in trouble:
+The following example demonstrates global definition:
 
-```javascript
-require('nikita')
-// Pass debug as metadata
-.system.execute({
-  cmd: 'whoami',
-  metadata: debug: true
+```js
+// Activate debugging to the global session
+nikita({
+  metadata: {
+    // highlight-next-line
+    debug: true
+  }
+})
+.execute({
+  command: 'echo "Hello!"'
+})
+.execute({
+  command: 'echo "It is me!"'
 })
 ```
 
-Alternatively, the "debug" metadata can be defined globally when initializing the session:
+It outputs lines with debugging information prefixed with the level of the action in the tree of the session:
 
-```javascript
-nikita = require('nikita')
-// Pass debug globally
-nikita({metadata: debug: true})
-// Action has debugging activated
-.system.execute({
-  cmd: 'whoami'
+```
+[1.1.INFO execute] echo "Hello!"
+[1.1.INFO execute] Hello!
+[1.2.INFO execute] echo "It is me!"
+[1.2.INFO execute] It is me!
+```
+
+To propagate for all child actions, the metadata is defined to the specific parent: 
+
+```js
+nikita
+// Activate debugging to all child actions
+.call({
+  metadata: {
+    // highlight-next-line
+    debug: true
+  }
+}, function() {
+  this.execute({
+    command: 'echo "Hello!"'
+  })
+  this.execute({
+    command: 'echo "It is me!"'
+  })
 })
+.execute({
+  command: 'echo "But not me."'
+})
+```
+
+Or to the specific action in trouble:
+
+```js
+nikita
+// Activate debugging to the specific action
+.execute({
+  metadata: {
+    // highlight-next-line
+    debug: true
+  },
+  command: 'echo "I am in trouble!"'
+})
+.execute({
+  command: 'echo "I am not."'
+})
+
 ```
 
 ## Getting started with logging
@@ -38,121 +83,142 @@ nikita({metadata: debug: true})
 In case you wish to activate standard logging, here is a quick and easy way to get you started.
 
 ```js
-node = {ip: '10.10.10.10', hostname: 'my_host'}
-// Create a session
-require('nikita')
+nikita
 // Activate CLI reporting
-.log.cli({host: node.fqdn, pad:{host: 20}, header: 60})
+// highlight-next-line
+.log.cli()
 // Activate log information written in Markdown
-.log.md({basename: node.hostname, basedir: log.basedir, archive: false})
+// highlight-next-line
+.log.md()
 // Now start the real job
-.ssh.open{header: 'SSH Open', host: node.ip}
+.execute({
+  command: 'echo "Hello world!"'
+})
 ```
 
-It will print short messages to the standart output (`stdout`) and detailed information inside the "./log" folder which will be created in case it does not yet exist.
+It prints short messages to stdout indicating the status of the actions' execution and detailed information into a Markdown file inside the "./log" folder. This folder is created in the current working directory in case it doesn't yet exist.
 
 ## Deep dive into logging
 
 Nikita provide a flexible architecture to intercept information. Users can write logs to custom destinations in any format. To write your own logging actions, once you register it, you can choose among the following options:
 
-- Listen to events   
-  It is a flexible solution in which you listen to every events emitted by Nikita. However, it requires you to fully implemented what you wish to do with the data.
-- Extending `nikita.log.stream`   
+- [Listen to events](#listening-to-events)   
+  It is a flexible solution in which you listen to every [events](/current/usages/events/) emitted by Nikita. However, it requires you to fully implemented what you wish to do with the data.
+- [Extending `nikita.log.stream`](#extending-nikitalogstream)   
   It is an action which simplify the integration of new logging appender by expecting a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
-- Extending `nikita.log.fs`   
-  Built upon the `nikita.log.stream` action, it provides basic fonctionnality to write information to the filesystem. You are only responsible for serializing the data. The `nikita.log.csv` and `nikita.log.md` actions are such examples.
+- [Extending `nikita.log.fs`](#extending-nikitalogfs)   
+  Built upon the `nikita.log.stream` action, it provides basic functionality to write information to the filesystem. You are only responsible for serializing the data. The `nikita.log.csv` and `nikita.log.md` actions are such examples.
 
 ### Listening to events
 
-At the heart of this architecture is the [Nikita Events API](/usages/events/). A Nikita session extends the [native Node.js Events API](https://nodejs.org/api/events.html). All other mechanisms presented below rely on the events emitted inside the Nikita session. You may use the `on(event, handler)` function to catch event but extending the `nikita.log.stream` action is probably a bit easier, expecting a string writer and a serializer function.
+At the heart of this architecture is the [Nikita Events API](/current/usages/events/). A Nikita session extends the [native Node.js Events API](https://nodejs.org/api/events.html). All other mechanisms presented below rely on the events emitted inside the Nikita session. You may use the `on(event, handler)` function to catch the event but extending the `nikita.log.stream` action is probably a bit easier, expecting a string writer and a serializer function.
 
 ### Extending `nikita.log.stream`
 
 It is a low level action which is meant to be extended and not to be called directly. More specific actions could used the `nikita.log.stream` action by providing a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
 
-The serializer is an object which must be implemented by the user. Keys correspond to the event types and their associated value is a function which must be implemented to serialize the information.
+The serializer is an object which must be implemented by the user. Keys correspond to the event types and their associated value is a function that must be implemented to serialize the information.
 
 ### Extending `nikita.log.fs`
 
-The `nikita.log.fs` action provide an easy and quick way to write your own logging actions. For example, both the `nikita.log.csv` and the `nikita.log.md` described below rely upon it. This way, you can leverage existing config:
-
-* `archive` (boolean)   
-  Save a copy of the previous logs inside a dedicated directory, default is
-  "false".
-* `basedir` (string)    
-  Directory where to store logs relative to the process working directory.
-  Default to the "log" directory. Note, if the "archive" config is activated
-  log file will be stored accessible from "./log/latest".
-* `filename` (string)   
-  Name of the log file, contextually rendered with all options passed to
-  the mustache templating engine. Default to "{{shortname}}.log", where 
-  "shortname" is the ssh host or localhost.
+The `nikita.log.fs` action provides an easy and quick way to write your own logging actions. For example, both `nikita.log.csv` and `nikita.log.md` described below rely upon it. This way, you can leverage the [existing configuration properties](/current/actions/log/fs/#schema).
 
 For example, below is a lightly modify version of the `nikita.log.csv` action:
 
 ```js
-module.exports = { ssh: false, handler: function({config}){
-  this.log.fs({ serializer: {
-    diff: function(log){
-      return "${log.type},${log.level},${JSON.stringify log.message},\n"
-    },
-    end: function(){
-      return "lifecycle,INFO,Finished with success,\n"
-    },
-    error: function(err){
-      return "lifecycle,ERROR,${JSON.stringify err.message},\n"
-    },
-    header: function(log){
-      return "${log.type},,,${log.header}\n"
-    },
-    text: function(log){
-      return "${log.type},${log.level},${JSON.stringify log.message}\n"
-    },
-  }})
-}}
+module.exports = {ssh: false, handler: async function({config}) {
+  return (await this.log.fs({
+    config: config,
+    serializer: {
+      'nikita:action:start': function(action) {
+        const header = action.metadata.header ? action.metadata.header : action.metadata.position
+        return `"${header}",,\n`
+      },
+      'text': function(log){
+        return `${log.type},${log.level},${JSON.stringify(log.message)}\n`
+      },
+    }
+  }))}
+}
 ```
 
 ## CLI reporting
 
-The CLI reporting is build on top of the log events. It print pretty and colorful information to the standard output of your terminal. In case no tty is detected, no color formatting will be written by default unless the `color` config is "true" or made of an object.
+The CLI reporting is build on top of the log events. It prints pretty and colorful information to the stdout of the terminal. In case no [TTY](https://en.wikipedia.org/wiki/Tty_(unix)) is detected, no color formatting will be written by default unless the `color` configuration property is `true` or made of an object.
 
-The action will only report if the "header" metadata is found.
-
-No argument is required by default:
+The action only reports if the [`header` metadata](/current/metadata/header/) is defined. No argument is required by default:
 
 ```js
-require('nikita')
+nikita
+// highlight-next-line
 .log.cli()
 // No header, no report
-.file.remove({
-  target: '/tmp/a_file_exists'
+.fs.remove({
+  target: '/tmp/nikita/a_file_exists'
 })
 // Header with status as true
 .file.touch({
-  header: 'A file exists, 1st try',
-  target: '/tmp/a_file_exists'
+  metadata: {
+    // highlight-next-line
+    header: 'A file exists, 1st try',
+  },
+  target: '/tmp/nikita/a_file_exists'
 })
 // Header with status as false
 .file.touch({
-  header: 'A file exists, 2nd try',
-  target: '/tmp/a_file_exists'
+  metadata: {
+    // highlight-next-line
+    header: 'A file exists, 2nd try',
+  },
+  target: '/tmp/nikita/a_file_exists'
 })
-// Will output
-// localhost   A file exists, 1st try   -  2ms\n
-// localhost   A file exists, 2nd try   ✔  1ms\n
 ```
 
-An action marked as disabled and which doesn't pass a condition is not reported to the CLI.
+It outputs like this:
+
+```
+localhost   A file exists, 1st try   ✔  192ms
+localhost   A file exists, 2nd try   -  65ms
+localhost      ♥  
+```
+
+An action marked as [disabled](/current/metadata/disabled/) or which doesn't pass a [condition](/current/usages/conditions/) is not reported to stdout:
 
 ```js
-require('nikita')
+nikita
+// highlight-next-line
+.log.cli()
+// Disabled action
+.call({
+  metadata: {
+    // highlight-next-line
+    disabled: true,
+    header: 'I am not printed',
+  },
+})
+// Condition is not passed
+.call({
+  if: false,
+  metadata: {
+    // highlight-next-line
+    header: 'Me neather',
+  },
+})
+```
+
+Output to CLI can be customized using [available configuration properties](/current/actions/log/cli/#schema). For example, this configuration changes the spacing between host and header messages:
+
+```js
+nikita
 .log.cli({
-  host: node.fqdn,
-  pad: host: 20,
-  header: 60
+  // highlight-range{1-4}
+  pad: {
+    host: 20,
+    header: 40
+  },
 })
 ```
 
 ## CSV and Markdown logs
 
-The `nikita.log.csv` and `nikita.log.md` actions both use the `nikita.log.fs` with a custom serializer. Thus, they support all the config from the `nikita.log.fs` action.
+Both `nikita.log.csv` and `nikita.log.md` actions use the `nikita.log.fs` with a custom serializer. Thus, they support all the [configuration properties](/current/actions/log/fs/#schema) of the `nikita.log.fs` action.
