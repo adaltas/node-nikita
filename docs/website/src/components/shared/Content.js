@@ -129,16 +129,18 @@ const Content = ({
       {page && (
         <Fragment>
           <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
-          <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
-            <IconButton
-              color="inherit"
-              href={page.edit_url}
-              aria-labelledby="content-edit"
-              css={styles.icons}
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+          {page.edit_url && (
+            <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
+              <IconButton
+                color="inherit"
+                href={page.edit_url}
+                aria-labelledby="content-edit"
+                css={styles.icons}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           {page.tableOfContents && page.tableOfContents.items
             && (
             <Fragment>

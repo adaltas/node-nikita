@@ -13,16 +13,14 @@ const useStyles = theme => ({
     backgroundColor: 'rgba(18, 24, 47, 1)',
   },
   rootInner: theme.mixins.gutters({
-    ...theme.typography,
+    // ...theme.typography,
     flex: '1 1 100%',
     maxWidth: '100%',
     margin: '0 auto',
-  }),
-  [theme.breakpoints.up(900 + theme.spacing(6))]: {
-    rootInner: {
+    [theme.breakpoints.up(900 + theme.spacing(6))]: {
       maxWidth: 900,
     },
-  },
+  }),
   subheading: {
     color: '#CCC8C7',
   },
