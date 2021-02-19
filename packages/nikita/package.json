@@ -47,6 +47,7 @@
     "@nikitajs/lxd": "^1.0.0-alpha.0",
     "@nikitajs/network": "^1.0.0-alpha.0",
     "@nikitajs/service": "^1.0.0-alpha.0",
+    "@nikitajs/system": "^1.0.0-alpha.0",
     "@nikitajs/tools": "^1.0.0-alpha.0"
   },
   "devDependencies": {
