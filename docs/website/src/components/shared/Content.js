@@ -14,11 +14,12 @@ require('prismjs/themes/prism-tomorrow.css')
 const useStyles = theme => ({
   content: theme.mixins.gutters({
     // ...theme.typography,
+    ...theme.typography.body1,
     paddingTop: 40,
     flex: '1 1 100%',
     maxWidth: '100%',
     margin: '0 auto 3rem',
-    fontSize: '1rem',
+    // fontSize: '1rem',
     lineHeight: '1.6rem',
     '& a': {
       textDecoration: 'none',
@@ -31,24 +32,33 @@ const useStyles = theme => ({
       },
     },
     '& h1': {
+      ...theme.typography.root,
+      ...theme.typography.h1,
+      ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
       '& code': {
-        color: '#000',
-        padding: '.2em .3em 0 .3em',
-        background: '#E6E6E6',
+        // color: '#000',
+        padding: '.2em .3em .1em .3em',
+        background: '#DFDEDE',
         borderRadius: '.3em'
       },
     },
     '& h2': {
+      ...theme.typography.root,
+      ...theme.typography.h2,
+      ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
-      marginTop: '3.5rem',
+      // marginTop: '3.5rem',
     },
     '& h3': {
+      ...theme.typography.root,
+      ...theme.typography.h3,
+      ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
-      marginTop: '2.5rem',
+      // marginTop: '2.5rem',
     },
     // '& em': {
     //   color: '#2D2D2D',
@@ -65,11 +75,12 @@ const useStyles = theme => ({
       color: '#646464',
     },
     '& p': {
-      color: '#000',
-      textAlign: 'justify',
+      // ...theme.typography.body1,
+      // color: '#000',
+      // textAlign: 'justify',
     },
     '& ul p': {
-      margin: 0,
+      // margin: 0,
     },
     '& ul': {
       paddingLeft: 20,
@@ -77,14 +88,14 @@ const useStyles = theme => ({
     },
     '& li': {
       // color: '#2D2D2D',
-      textAlign: 'justify',
+      // textAlign: 'justify',
     },
     '& pre > code[class*="language-"]': {
-      fontSize: '1rem',
+      // fontSize: '1rem',
     },
     '& :not(pre) > code[class*="language-"]': {
-      padding: '.2em .3em 0 .3em',
-      background: '#E6E6E6',
+      padding: '.2em .3em .1em .3em',
+      background: '#DFDEDE',
       color: '#000',
     },
     '& .gatsby-highlight-code-line': {

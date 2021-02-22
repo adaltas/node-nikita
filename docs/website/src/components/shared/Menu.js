@@ -12,6 +12,7 @@ const useStyles = theme => ({
     // position: 'relative',
     backgroundColor: 'rgb(245, 245, 245)',
     // height: '100%',
+    borderRight: '1px solid rgb(200, 200, 200)',
   },
   toolbar: {
     ...theme.mixins.toolbar,
@@ -23,15 +24,14 @@ const useStyles = theme => ({
     justifyContent: 'center',
     color: theme.palette.grey[600],
     '& a': {
+      ...theme.typography.body1,
       textDecoration: 'none',
       color: theme.palette.text.primary,
     },
   },
   footer: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(2),
     borderTop: '1px solid rgb(200, 200, 200)',
-    padding: '20px 0',
     backgroundColor: 'rgb(245, 245, 245)',
     // textAlign: 'justify',
     color: theme.palette.grey[600],

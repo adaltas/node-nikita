@@ -1,6 +1,5 @@
 // React
 import React, { useEffect, useRef } from 'react'
-import classNames from 'classnames'
 // Material UI
 import { useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar'
@@ -10,7 +9,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import MenuIcon from '@material-ui/icons/Menu'
 import BugReportOutlined from '@material-ui/icons/BugReportOutlined'
 import { FaGithub } from 'react-icons/fa';
-import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import SvgIcon from '@material-ui/core/SvgIcon'
 // Gatsby
