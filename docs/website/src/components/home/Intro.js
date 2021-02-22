@@ -1,7 +1,12 @@
 import React from 'react'
-
-import { useTheme } from '@material-ui/core/styles';
-import { css, Global, keyframes } from '@emotion/react'
+// Material UI
+import { useTheme } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import { css } from '@emotion/css'
+import { css as cssReact, Global, keyframes } from '@emotion/react'
+// Gatsby
+import { Link } from 'gatsby'
+// Local
 import href from './anim.svg'
 // import mw_high from './milky-way-high.jpg'
 
@@ -46,12 +51,57 @@ const useStyles = theme => ({
   root: {
     backgroundColor: '#181824',
     // background: `no-repeat url(${mw_high})`,
-    '&>div': {
+    color: '#ffffff',
+    textAlign: 'center',
+    '> div': {
       margin: '0 auto',
       [theme.breakpoints.up(900 + theme.spacing(6))]: {
         maxWidth: 900,
       },
-    }
+    },
+  },
+  svg: {
+    paddingTop: '4rem',
+  },
+  info: {
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      justifyContent: 'space-around',
+    },
+  },
+  buttons: {
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    paddingBottom: '2rem',
+  },
+  headlines: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '1.2rem',
+    },
+    [theme.breakpoints.up('sm')]: {
+      fontSize: '1.6rem',
+    },
+    [theme.breakpoints.up('md')]: {
+      fontSize: '2rem',
+    },
+    '> p:first-of-type': {
+      // paddingTop: '5rem',
+    },
+    '> p': {
+      margin: '0rem',
+    },
+  },
+  outlined: {
+    margin: '1rem',
+    borderColor: '#fff',
+    color: '#fff',
+    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    },
   }
 })
 
@@ -61,7 +111,7 @@ const Intro = () => {
     <div css={styles.root}>
       <div>
         <Global
-          styles={css`
+          styles={cssReact`
             #bird_1 {
               stroke-dasharray: 1000 !important;
               animation: ${dash} 10s linear forwards !important;
@@ -185,10 +235,40 @@ const Intro = () => {
         <svg
           role="img"
           viewBox={`0 0 800 400`}
+          css={styles.svg}
         >
           <title>Nikita</title>
           <use xlinkHref={`${href}#anim`} />
         </svg>
+        <div css={styles.info}>
+          <div css={styles.headlines}>
+            <p>{'Automation and deployment solution'}</p>
+            <p>{'Built for Node.js, MIT License'}</p>
+            <p>{'Deploy apps and infrastructures'}</p>
+          </div>
+          <div css={styles.buttons}>
+            <Button
+              component={Link}
+              to="/about/tutorial/"
+              size="large"
+              variant="outlined"
+              css={styles.button}
+              classes={{ outlined: css(styles.outlined) }}
+            >
+              {'Get started'}
+            </Button>
+            <Button
+              component={Link}
+              to="/about/changelog/"
+              size="large"
+              variant="outlined"
+              css={styles.button}
+              classes={{ outlined: css(styles.outlined) }}
+            >
+              {'Changelog'}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

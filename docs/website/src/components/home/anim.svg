@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="800"
@@ -13,20 +14,30 @@
    version="1.1"
    id="anim"
    inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
-   sodipodi:docname="test.svg">
+   sodipodi:docname="anim.svg">
   <defs
      id="defs1080">
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1008">
-      <ellipse
-         style="opacity:1;fill:#182340;fill-opacity:1;stroke:none;stroke-width:2.02009;stroke-linecap:round;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1"
-         id="ellipse1010"
-         ry="213.24883"
-         rx="382.72363"
-         cy="200"
-         cx="400" />
-    </clipPath>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient912">
+      <stop
+         style="stop-color:#1f2d52;stop-opacity:1"
+         offset="0"
+         id="stop908" />
+      <stop
+         style="stop-color:#182340;stop-opacity:0;"
+         offset="1"
+         id="stop910" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient912"
+       id="linearGradient914"
+       x1="435.62122"
+       y1="280.45862"
+       x2="435.62122"
+       y2="2.510689"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -35,11 +46,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.1233099"
-     inkscape:cx="384.86766"
-     inkscape:cy="239.02586"
+     inkscape:zoom="1.5038789"
+     inkscape:cx="404.19769"
+     inkscape:cy="202.55189"
      inkscape:document-units="px"
-     inkscape:current-layer="bck"
+     inkscape:current-layer="relax"
      inkscape:document-rotation="0"
      showgrid="true"
      inkscape:window-width="1773"
@@ -79,14 +90,13 @@
        height="400"
        x="0"
        y="0" />
-    <rect
-       style="display:inline;mix-blend-mode:normal;fill:#182340;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect900-1"
-       width="800"
-       height="400"
-       x="0"
-       y="0"
-       clip-path="url(#clipPath1008)" />
+    <ellipse
+       style="opacity:1;fill:url(#linearGradient914);fill-opacity:1;stroke:none;stroke-width:1.9463;stroke-linecap:round;stroke-miterlimit:3;stroke-dasharray:none;stroke-opacity:1"
+       id="ellipse1010"
+       ry="197.95505"
+       rx="382.72363"
+       cy="200"
+       cx="400" />
   </g>
   <g
      inkscape:label="servers"
@@ -177,7 +187,7 @@
        ry="12.345654"
        fill="#e6e6e6"
        id="ellipse1323"
-       style="stroke-width:0.437708" />
+       style="stroke-width:0.437708;fill:#181824;fill-opacity:1" />
     <path
        d="m 506.68269,379.99459 c -28.34385,-5.04476 -59.33896,-4.20615 -91.85165,0 14.8188,-12.51026 27.60827,-25.02051 12.78947,-37.53078 28.90593,5.96334 32.95469,5.35977 65.11003,0 -7.45824,12.51027 6.4939,25.02052 13.95215,37.53078 z"
        fill="#6c63ff"
