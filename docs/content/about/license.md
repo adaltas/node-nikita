@@ -6,7 +6,7 @@ sort: 6
 
 # Software License Agreement - MIT License
 
-Copyright (c) 2012 SARL Adaltas
+Copyright (c) 2012 SAS Adaltas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
