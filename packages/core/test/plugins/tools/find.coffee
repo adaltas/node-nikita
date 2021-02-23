@@ -32,7 +32,7 @@ describe 'plugins.tools.find', ->
             a_key: action.config.a_key, depth: action.metadata.depth
           .should.be.resolvedWith a_key: 'a value', depth: 1
           .then -> count.should.eql 2
-            
+    
   describe 'function', ->
 
     it 'start in current action', ->
@@ -40,5 +40,26 @@ describe 'plugins.tools.find', ->
         tools.find (action) ->
           action.config.a_key
         .should.be.resolvedWith 'a value'
+          
+  describe 'usage', ->
+    
+    it 'return the first value found', ->
+      nikita
+      .call key: '1', stop: true, ->
+        @call key: '1.1', stop: true, ->
+          @call key: '1.1.1', ({tools: {find}}) ->
+            find ({config}) ->
+              config.key if config.stop
+            .should.be.resolvedWith '1.1'
+    
+    it 'null is interpreted as a value', ->
+      nikita
+      .call key: '1', stop: true, ->
+        @call key: null, stop: true, ->
+          @call key: '1.1.1', ({tools: {find}}) ->
+            find ({config}) ->
+              config.key if config.stop
+            .should.be.resolvedWith null
+      
     
     

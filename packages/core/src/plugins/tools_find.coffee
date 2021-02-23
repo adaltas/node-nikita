@@ -1,13 +1,15 @@
 
 ###
-Traverse the parent hierarchy until it find a value.
+Traverse the parent hierarchy until it find a value. The traversal will only
+stop if the user function return anything else than `undefined`, including
+`null` or `false`.
 ###
 
 utils = require '../utils'
 
 find = (action, finder) ->
   precious = await finder action, finder
-  return precious if precious?
+  return precious unless precious is undefined
   return undefined unless action.parent
   find action.parent, finder
 
