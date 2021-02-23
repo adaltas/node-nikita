@@ -6,6 +6,9 @@ module.exports = {
       return async function() {
         action = (await handler.call(null, ...arguments));
         action.children = [];
+        if (action.siblings == null) {
+          action.siblings = [];
+        }
         if (action.parent) {
           action.siblings = action.parent.children;
         }

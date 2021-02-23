@@ -20,6 +20,10 @@ describe 'plugins.history', ->
       .should.be.resolvedWith 'mayday'
               
   describe 'siblings', ->
+    
+    it 'start with empty array', ->
+      nikita ({siblings}) ->
+        siblings.should.eql []
 
     it 'get previous action', ->
       nikita.call ({context}) ->

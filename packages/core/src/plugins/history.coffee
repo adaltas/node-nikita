@@ -7,6 +7,7 @@ module.exports =
       ->
         action = await handler.call null, ...arguments
         action.children = []
+        action.siblings ?= []
         action.siblings = action.parent.children if action.parent
         action.sibling = action.siblings.slice(-1)[0] if action.parent
         action
