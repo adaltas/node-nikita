@@ -7,6 +7,7 @@ utils = require '../../src/utils'
 they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
 
 describe 'utils.ssh', ->
+  return unless tags.api
 
   it 'immutable', ->
     config1 = config2 =

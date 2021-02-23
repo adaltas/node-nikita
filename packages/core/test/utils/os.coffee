@@ -1,4 +1,5 @@
 
+{tags} = require '../test'
 {merge} = require 'mixme'
 {whoami} = require '../../src/utils/os'
 cleanup = (property, value) ->
@@ -9,6 +10,7 @@ cleanup = (property, value) ->
 
 
 describe 'utils.os', ->
+  return unless tags.api
 
   describe 'whoami', ->
   

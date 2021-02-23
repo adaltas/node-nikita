@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 tilde = require '../../src/utils/tilde'
 
 describe 'utils.tilde', ->
+  return unless tags.api
 
   describe 'normalize', ->
 

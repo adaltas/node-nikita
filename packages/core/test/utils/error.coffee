@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 error = require '../../src/utils/error'
 
 describe 'utils.error', ->
+  return unless tags.api
   
   it 'accept a code and an array message', ->
     (->

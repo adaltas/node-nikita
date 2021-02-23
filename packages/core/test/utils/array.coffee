@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 {intersect, flatten, merge, multiply, shuffle, unique} = require '../../src/utils/array'
 
 describe 'utils.array', ->
+  return unless tags.api
 
   # it 'compare', ->
   #   array.compare(['a'], ['a']).should.be.true()
