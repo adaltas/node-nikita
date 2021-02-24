@@ -39,9 +39,6 @@ session = (action={}) ->
       unless Array.isArray actions
         session actions
       else
-        # schl = schedule()
-        # Promise.all actions.map (action) ->
-        #   schl.push -> session action
         schedule actions.map (action) -> -> session action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
@@ -128,7 +125,7 @@ session = (action={}) ->
       name: 'nikita:rejected'
       args: action: action, error: err
   # Returning a proxified promise:
-  # - news action can be registered to it as long as the promised has not fulfilled
+  # - new actions can be registered to it as long as the promised has not fulfilled
   # - resolve when all registered actions are fulfilled
   # - resolved with the result of handler
   new Proxy result, get: on_get
@@ -137,5 +134,5 @@ module.exports = run = (...args) ->
   actions = contextualize args
   # Are we scheduling one or multiple actions
   if Array.isArray actions
-  then Promise.all actions.map (action) -> session action
+  then schedule actions.map (action) -> -> session action
   else session actions

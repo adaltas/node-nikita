@@ -75,9 +75,6 @@ session = function(action = {}) {
       if (!Array.isArray(actions)) {
         return session(actions);
       } else {
-        // schl = schedule()
-        // Promise.all actions.map (action) ->
-        //   schl.push -> session action
         return schedule(actions.map(function(action) {
           return function() {
             return session(action);
@@ -230,7 +227,7 @@ session = function(action = {}) {
     });
   });
   // Returning a proxified promise:
-  // - news action can be registered to it as long as the promised has not fulfilled
+  // - new actions can be registered to it as long as the promised has not fulfilled
   // - resolve when all registered actions are fulfilled
   // - resolved with the result of handler
   return new Proxy(result, {
@@ -243,8 +240,10 @@ module.exports = run = function(...args) {
   actions = contextualize(args);
   // Are we scheduling one or multiple actions
   if (Array.isArray(actions)) {
-    return Promise.all(actions.map(function(action) {
-      return session(action);
+    return schedule(actions.map(function(action) {
+      return function() {
+        return session(action);
+      };
     }));
   } else {
     return session(actions);
