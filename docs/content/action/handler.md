@@ -5,77 +5,113 @@ sort: 2
 
 # Metadata "handler" (function, required)
 
-The "handler" property define the function that an action implements to get things done. It is fundamental to each action.
+The `handler` property defines the function that an action implements to get things done. It is fundamental to each action.
 
-The property is required but most of the time, you don't have to write an handler function on your own. Instead, you will use an existing action which was previously [registered](/usages/registry/).
+The property is required but most of the time, you don't have to write a handler function on your own. Instead, you can use an existing action which was previously [registered](/current/usages/registry/).
 
-However, you should not be afraid to write your own handler, it is as easy as writing a plain vanilla JavaScript function and using the Nikita `call` action to schedule its execution. Functions can run [synchronously or asynchronously](/usages/sync_async/).
+However, you should not be afraid to write your own handler, it is as easy as writing a plain vanilla JavaScript function and using the Nikita `call` action to schedule its execution. 
 
-## Synchronous handlers
+## Basic example
 
-Synchronous handlers expect one arguments, the config passed to the action:
-
-```js
-require('nikita')
-.call({
-  key: 'value',
-  handler: function({config}){
-    // do something
-    assert(config.key, 'value')
-  }
-})
-```
-
-## Asynchronous handlers
-
-Asynchronous handlers expect two arguments, the config and a callback function to be called when the action has terminated:
+The [configuration properties](/current/action/config) passed to the `call` action are available in the `config` property of the first argument of the handler:
 
 ```js
-require('nikita')
+nikita
 .call({
   key: 'value',
-  handler: function({config}, callback){
-    setImmediate(function(){
-      // do something
-      assert(config.key, 'value')
-    })
+  handler: ({config}) => {
+    // Do something
+    console.info(config.key)
   }
 })
 ```
 
 ## Style
 
-You will probably never see an handler function being defined by the "handler" config key. Instead, we define it with an alternative syntax by passing the handler function as an independent argument. The example above is preferably rewritten as:
+You will probably never see a handler function defined by the `handler` property. Instead, we define it with an alternative syntax by providing the handler function as an independent argument. The example above is preferably rewritten as:
 
 ```js
-require('nikita')
+nikita
 .call({
   key: 'value'
-}, function({config}, callback){
-  setImmediate(function(){
-    // do something
-    assert(config.key, 'value')
-  })
+}, ({config}) => {
+  // Do something
+  console.info(config.key)
 })
 ```
 
-The rule to interpret function arguments is as follow: the first encountered function is the handler unless the action is registered with an existing handler function; the second encountered function is the callback.
+## Return
 
-## Asynchronous handlers inside synchronous handlers
+The value returned by the handler is a value sent to the [action's output](/current/action/output). It can be of any type either not present, but it is interpreted differently in the output. When the value is:
 
-Synchronous functions may call child action which are executed asynchronously. The next sibling action will not be schedule for execution before all the child actions have been executed.
+- a **boolean**, it is interpreted as the [`status` property](/current/usages/status) of the output object.
+  ```js
+  const assert = require('assert');
+  (async () => {
+    const {status} = await nikita
+    .call(() => {
+      // highlight-next-line
+      return true
+    })
+    assert.equal(status, true)
+  })()
+  ```
+
+- an **object**, it is merged with the default action's output.
+  ```js
+  const assert = require('assert');
+  (async () => {
+    const {status, key} = await nikita
+    .call(() => {
+      // highlight-next-line
+      return {key: 'value'}
+    })
+    assert.equal(status, false)
+    assert.equal(key, 'value')
+  })()
+  ```
+
+- `null`, `undefined` or `void`, it doesn't have an impact.
+  ```js
+  const assert = require('assert');
+  (async () => {
+    const {status} = await nikita
+    .call(() => {
+      // highlight-next-line
+      return null
+    })
+    assert.equal(status, false)
+  })()
+  ```
+
+- a **string**, a **number** or an **array** are interpreted as-is.
+  ```js
+  const assert = require('assert');
+  (async () => {
+    const output = await nikita
+    .call(() => {
+      // highlight-next-line
+      return 'value'
+    })
+    assert.equal(output, 'value')
+  })()
+  ```
+
+You can use the [`raw_output` metadata](/current/metadata/raw_output) to disable different interpretation. In such a case, the output will be the same as the handler returns:
 
 ```js
-require('nikita')
-.call(function({config}){
-  console.info('1')
-  this.call(function({config}, callback){
-    setImmediate(function(){
-      console.info('2')
-    })
+const assert = require('assert');
+(async () => {
+  const output = await nikita
+  .call({
+    metadata: {
+      // highlight-next-line
+      raw_output: true
+    },
+  }, () => {
+    // highlight-next-line
+    return {key: 'value'}
   })
-})
-.call(function({config}){
-  console.info('3')
-})
+  assert.deepEqual(output, {key: 'value'})
+})()
 ```
