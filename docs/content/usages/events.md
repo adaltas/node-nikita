@@ -1,40 +1,55 @@
 ---
-sort: 6
+navtitle: events
 ---
 
-# Events API
+# Tool "events"
 
-A Nikita session extends the [native Node.js Events API](https://nodejs.org/api/events.html). It provides a facility to listen to internal notification and know the current state of the program.
+Nikita provides a facility to publish and listen to events. It creates an instance of the [EventEmitter](https://nodejs.org/api/events.html) class of the [Node.js events](https://nodejs.org/api/events.html) module. The instance is available inside the Nikita action handler as the `tools.events` property. 
 
 ## Usage
 
-Listening to events with the Node.js API is quite simple with the `on(event, handler)`. The "handler" argument is the function provided by the user to catch events. 
+You can publish events by calling the `tools.events.emit(eventName[, ...args])` function and subscribe to those events by registering listeners with the `tools.events.on(eventName, listener)` function. The following example demonstrates it:
 
-It is not recommended to call the `emit` function directly but instead your are encouraged to call the `nikita.log` function which will associate the "type" property with the event of the same name.
+```js
+nikita(({tools}) => {
+  // Register a listener
+  tools.events.on('my_event', (name) => {
+    console.info(`I am ${name}`)
+  })
+  // Emit an event
+  tools.events.emit('my_event', 'Nikita')
+})
+// Outputs with "I am Nikita"
+```
+
+Most of the time when writing your custom action handlers, you want to provide context information to the event listener such as the module name where the event occurred, the logging level, etc. Instead of calling `tools.events.emit`, you are encouraged to use the [`tools.log`](/current/action/tools/log) function which validates and enriches the context object, and uses native Node.js `emit` internally.
 
 ## Available events
 
-The existing events provide you with multiple entry points to catch information across the entire session life cycle:
+Certain events are automatically emitted. They correspond to the action lifecycle and provide notifications on the internal state of the Nikita session:
 
-- `lifecycle`   
-  It indicates execution directives which may occur at different steps of the action life cycle. it uses the "message" property as a code to define what is happening. The following values exists: `disabled_false`, `disabled_true`, `conditions_passed`, `conditions_failed`. The handler function is called with a `log` argument.
-- `text`   
-  It is the default event when the function `log` is called. The handler function is called with a `log` argument.
-- `header`   
-  It is throw before an action is called if it contains the `header` metadata.
-- `stdin`   
-  It represents some stdin content, used for example by the `system.execute` action to provide the script being executed.
+- `nikita:action:start`   
+  It is emitted right before an action's handler execution.
+- `nikita:action:end`   
+  It is emitted after the action handler has completed, whether it failed or was successful.
+- `nikita:resolved`   
+  It is emitted once at a Nikita session when all action handlers have completed successfully.
+- `nikita:rejected`   
+  It is emitted once at a Nikita session when an action's handler has failed.
+
+Some functionality like [logging and debugging](/current/usage/logging_debugging) also relies on the event facility and emits following events:
+
 - `diff`   
-  It represents content modification, used for example by the `file` action.
-- `handled`   
-  It is emitted once an handler has completed, whether it failed or was successful, and before calling the callback.
-- `stdout_stream`   
-  It is a stream input reader receiving stdout content, used for example by the `system.execute` action to send stdout output from the executed command.
+  It represents content modification. Used for example by the `file` action.
+- `stderr`   
+  It is an input reader receiving stderr content. Used for example by the `nikita.execute` action to send stderr output from the executed command.
 - `stderr_stream`   
-  It is a stream input reader receiving stderr content, used for example by the `system.execute` action to send stderr output from the executed command.
-- `end`   
-  It is throw if no error occured when no more action are scheduled for execution.
-- `error`   
-  It is thrown when an error occurred.
-
-The majority of the user handler is called with a single `log` argument. It is an object with the following keys:
+  It is a stream input reader receiving stderr content. Used for example by the `nikita.execute` action to send stderr output from the executed command.
+- `stdin`   
+  It represents some stdin content. Used for example by the `nikita.execute` action to provide the script being executed.
+- `stdout`   
+  It is an input reader receiving stdout content. Used for example by the `nikita.execute` action to send stdout output from the executed command.
+- `stdout_stream`   
+  It is a stream input reader receiving stdout content. Used for example by the `nikita.execute` action to send stdout output from the executed command.
+- `text`   
+  It is the default event when the `tools.log()` function is called.
