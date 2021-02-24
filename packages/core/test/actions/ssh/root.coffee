@@ -26,5 +26,5 @@ describe 'actions.ssh.root', ->
           
     they 'config.selinux is valid', ({ssh}) ->
       nikita
-      .ssh.root {...ssh, selinux: 'permissive', debug: undefined}, metadata: dry: true
+      .ssh.root {...ssh, selinux: 'permissive'}, metadata: dry: true
       .should.be.finally.containEql status: false

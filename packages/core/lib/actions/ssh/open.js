@@ -75,10 +75,6 @@ var connect, fs, handler, on_action, schema, utils;
 
 on_action = function({config}) {
   var base, base1;
-  // Merge SSH config namespace
-  // if config.ssh and not ssh.is config.ssh
-  //   config[k] ?= v for k, v of config.ssh or {}
-  //   delete config.ssh
   if (config.private_key == null) {
     config.private_key = config.privateKey;
   }
@@ -151,11 +147,6 @@ and create the SSH connection. It is only used if \`password\` and
       description: `Configuration passed to \`nikita.ssh.root\` to enable password-less root
 login.`
     },
-    'ssh': {
-      instanceof: 'Object',
-      description: `Associate an existing SSH connection to the current action and its
-siblings.`
-    },
     'username': {
       type: 'string',
       default: 'root',
@@ -172,35 +163,6 @@ handler = async function({
     tools: {log}
   }) {
   var conn, err, location;
-  // No need to connect if ssh is a connection
-  if (utils.ssh.is(config.ssh)) {
-    if (!state['nikita:ssh:connection']) {
-      state['nikita:ssh:connection'] = config.ssh;
-      return {
-        status: true,
-        ssh: state['nikita:ssh:connection']
-      };
-    } else if (utils.ssh.compare(state['nikita:ssh:connection'], config.ssh)) {
-      return {
-        status: false,
-        ssh: state['nikita:ssh:connection']
-      };
-    } else {
-      throw utils.error('NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ['attempting to set an SSH connection', 'while an instance is already registered with a different configuration', `got ${JSON.stringify(utils.object.copy(config.ssh.config, ['host', 'port', 'username']))}`]);
-    }
-  }
-  // Get from cache
-  if (state['nikita:ssh:connection']) {
-    // The new connection refer to the same target and the current one
-    if (utils.ssh.compare(state['nikita:ssh:connection'], config)) {
-      return {
-        status: false,
-        ssh: state['nikita:ssh:connection']
-      };
-    } else {
-      throw utils.error('NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ['attempting to retrieve an SSH connection', 'with user SSH configuration not matching', 'the current SSH connection stored in state,', 'one possible solution is to close the current connection', 'with `nikita.ssh.close` before attempting to open a new one', `got ${JSON.stringify(utils.object.copy(config, ['host', 'port', 'username']))}`]);
-    }
-  }
   if (!(config.private_key || config.password || config.private_key_path)) {
     // Validate authentication
     throw utils.error('NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', ['unable to authenticate the SSH connection,', 'one of the "private_key", "password", "private_key_path"', 'configuration properties must be provided']);
@@ -231,13 +193,12 @@ handler = async function({
       level: 'DEBUG'
     });
     conn = (await connect(config));
-    state['nikita:ssh:connection'] = conn;
+    // state['nikita:ssh:connection'] = conn
     log({
       message: "Connection is established",
       level: 'INFO'
     });
     return {
-      status: true,
       ssh: conn
     };
   } catch (error) {
@@ -265,9 +226,8 @@ handler = async function({
     }
   }, async function() {
     conn = (await connect(config));
-    state['nikita:ssh:connection'] = conn;
     return {
-      status: true,
+      // state['nikita:ssh:connection'] = conn
       ssh: conn
     };
   }));

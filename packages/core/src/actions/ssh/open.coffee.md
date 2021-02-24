@@ -73,11 +73,6 @@ require('nikita')({
 ## Hooks
 
     on_action = ({config}) ->
-      # Merge SSH config namespace
-      # if config.ssh and not ssh.is config.ssh
-      #   config[k] ?= v for k, v of config.ssh or {}
-      #   delete config.ssh
-      
       config.private_key ?= config.privateKey
       # Define host from ip
       if config.ip and not config.host
@@ -142,12 +137,6 @@ pass all the properties through the `ssh` property.
           Configuration passed to `nikita.ssh.root` to enable password-less root
           login.
           """
-        'ssh':
-          instanceof: 'Object'
-          description: """
-          Associate an existing SSH connection to the current action and its
-          siblings.
-          """
         'username':
           type: 'string'
           default: 'root'
@@ -159,33 +148,6 @@ pass all the properties through the `ssh` property.
 ## Handler
 
     handler = ({config, parent: {state}, tools: {log}}) ->
-      # No need to connect if ssh is a connection
-      if utils.ssh.is config.ssh
-        if not state['nikita:ssh:connection']
-          state['nikita:ssh:connection'] = config.ssh
-          return status: true, ssh: state['nikita:ssh:connection']
-        else if utils.ssh.compare state['nikita:ssh:connection'], config.ssh
-          return status: false, ssh: state['nikita:ssh:connection']
-        else
-          throw utils.error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', [
-            'attempting to set an SSH connection'
-            'while an instance is already registered with a different configuration'
-            "got #{JSON.stringify utils.object.copy config.ssh.config, ['host', 'port', 'username']}"
-          ]
-      # Get from cache
-      if state['nikita:ssh:connection']
-        # The new connection refer to the same target and the current one
-        if utils.ssh.compare state['nikita:ssh:connection'], config
-          return status: false, ssh: state['nikita:ssh:connection']
-        else
-          throw utils.error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', [
-            'attempting to retrieve an SSH connection'
-            'with user SSH configuration not matching'
-            'the current SSH connection stored in state,'
-            'one possible solution is to close the current connection'
-            'with `nikita.ssh.close` before attempting to open a new one'
-            "got #{JSON.stringify utils.object.copy config, ['host', 'port', 'username']}"
-          ]
       # Validate authentication
       throw utils.error 'NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', [
         'unable to authenticate the SSH connection,'
@@ -205,9 +167,9 @@ pass all the properties through the `ssh` property.
       try
         log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG'
         conn = await connect config
-        state['nikita:ssh:connection'] = conn
+        # state['nikita:ssh:connection'] = conn
         log message: "Connection is established", level: 'INFO'
-        return status: true, ssh: conn
+        return ssh: conn
       catch err
         log message: "Connection failed", level: 'WARN'
       # Enable root access
@@ -217,8 +179,8 @@ pass all the properties through the `ssh` property.
       log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG'
       await @call metadata: retry: 3, ->
         conn = await connect config
-        state['nikita:ssh:connection'] = conn
-        status: true, ssh: conn
+        # state['nikita:ssh:connection'] = conn
+        ssh: conn
 
 ## Export
 

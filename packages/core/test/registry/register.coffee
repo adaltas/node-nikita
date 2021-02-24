@@ -76,11 +76,11 @@ describe 'registry.register', ->
     it 'is a string', ->
       # Room for improvement in the future
       nikita ({registry}) ->
-        await registry.register 'an_action', '@nikitajs/core/src/actions/ssh'
+        await registry.register 'an_action', '@nikitajs/core/src/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/src/actions/ssh'
+        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
         config.should.eql {}
 
     it 'is a string', ->
@@ -88,17 +88,17 @@ describe 'registry.register', ->
       nikita ({registry}) ->
         await registry.register
           'an_action':
-            '': '@nikitajs/core/src/actions/ssh'
-            'child': '@nikitajs/core/src/actions/ssh'
+            '': '@nikitajs/core/src/actions/execute'
+            'child': '@nikitajs/core/src/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         result = await @registry.registered ['an_action', 'child']
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/src/actions/ssh'
+        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
         config.should.eql {}
         {metadata, config} = await @registry.get ['an_action', 'child']
-        metadata.module.should.eql '@nikitajs/core/src/actions/ssh'
+        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
         config.should.eql {}
 
     it.skip 'receive config', ->

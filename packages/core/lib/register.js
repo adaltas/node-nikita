@@ -106,7 +106,6 @@ module.exports = {
     }
   },
   'ssh': {
-    '': '@nikitajs/core/lib/actions/ssh',
     'open': '@nikitajs/core/lib/actions/ssh/open',
     'close': '@nikitajs/core/lib/actions/ssh/close',
     'root': '@nikitajs/core/lib/actions/ssh/root'

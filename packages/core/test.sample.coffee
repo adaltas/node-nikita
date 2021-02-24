@@ -4,6 +4,7 @@ module.exports =
     api: true
     conditions_if_os: false
     chown: false
+    ssh: false
     sudo: false
     posix: true
     system_execute_arc_chroot: false

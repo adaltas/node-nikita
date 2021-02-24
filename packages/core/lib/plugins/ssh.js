@@ -38,7 +38,10 @@ module.exports = {
         if (action.ssh === void 0) {
           return void 0;
         }
-        return action.ssh || false;
+        if (action.ssh === false) {
+          action.ssh = null;
+        }
+        return action.ssh;
       }));
       if (ssh && !utils.ssh.is(ssh)) {
         ({ssh} = (await session({
@@ -47,10 +50,10 @@ module.exports = {
           config: ssh
         })));
         action.metadata.ssh_dispose = true;
-      } else if (ssh === false) {
-        ssh = null;
+        return action.ssh = ssh;
+      } else if (ssh) {
+        return action.ssh = ssh;
       }
-      return action.ssh = ssh;
     },
     'nikita:result': async function({action}) {
       if (action.metadata.ssh_dispose) {

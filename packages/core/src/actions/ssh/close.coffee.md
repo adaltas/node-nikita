@@ -19,24 +19,18 @@ Close the existing connection if any.
           The SSH connection to close, default to currently active SSH
           connection avaible to the action.
           """
+      required: ['ssh']
 
 ## Handler
 
-    handler = ({config, parent: {state}}) ->
-      # Retrieve connection from parameters or state
-      conn = if config.ssh
-      then config.ssh
-      else state['nikita:ssh:connection']
-      # Exit unless their is a connection to close
-      return false unless conn
+    handler = ({config}) ->
       # Exit if the connection is already close
-      return false unless conn._sshstream?.writable and conn._sock?.writable
+      return false unless config.ssh._sshstream?.writable and config.ssh._sock?.writable
       # Terminate the connection
       new Promise (resolve, reject) ->
-        conn.end()
-        conn.on 'error', reject
-        conn.on 'end', ->
-          delete state['nikita:ssh:connection']
+        config.ssh.end()
+        config.ssh.on 'error', reject
+        config.ssh.on 'end', ->
           resolve true
 
 ## Exports

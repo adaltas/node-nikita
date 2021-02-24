@@ -28,7 +28,8 @@ module.exports =
       # return handler if action.metadata.namespace[0] is 'ssh'
       ssh = await action.tools.find (action) ->
         return undefined if action.ssh is undefined
-        action.ssh or false
+        action.ssh = null if action.ssh is false
+        action.ssh
       if ssh and not utils.ssh.is ssh
         {ssh} = await session
           plugins: [ # Need to inject `tools.log`
@@ -39,9 +40,9 @@ module.exports =
           ]
         .ssh.open config: ssh
         action.metadata.ssh_dispose = true
-      else if ssh is false
-        ssh = null
-      action.ssh = ssh
+        action.ssh = ssh
+      else if ssh
+        action.ssh = ssh
     'nikita:result': ({action}) ->
       if action.metadata.ssh_dispose
         await session

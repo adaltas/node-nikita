@@ -65,7 +65,6 @@ module.exports =
       handler: ({parent, args: [namespace]}) ->
         parent.registry.unregister namespace
   'ssh':
-    '': '@nikitajs/core/src/actions/ssh'
     'open': '@nikitajs/core/src/actions/ssh/open'
     'close': '@nikitajs/core/src/actions/ssh/close'
     'root': '@nikitajs/core/src/actions/ssh/root'

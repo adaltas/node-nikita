@@ -19,31 +19,22 @@ schema = {
       description: `The SSH connection to close, default to currently active SSH
 connection avaible to the action.`
     }
-  }
+  },
+  required: ['ssh']
 };
 
 // ## Handler
-handler = function({
-    config,
-    parent: {state}
-  }) {
-  var conn, ref, ref1;
-  // Retrieve connection from parameters or state
-  conn = config.ssh ? config.ssh : state['nikita:ssh:connection'];
-  if (!conn) {
-    // Exit unless their is a connection to close
-    return false;
-  }
-  if (!(((ref = conn._sshstream) != null ? ref.writable : void 0) && ((ref1 = conn._sock) != null ? ref1.writable : void 0))) {
+handler = function({config}) {
+  var ref, ref1;
+  if (!(((ref = config.ssh._sshstream) != null ? ref.writable : void 0) && ((ref1 = config.ssh._sock) != null ? ref1.writable : void 0))) {
     // Exit if the connection is already close
     return false;
   }
   // Terminate the connection
   return new Promise(function(resolve, reject) {
-    conn.end();
-    conn.on('error', reject);
-    return conn.on('end', function() {
-      delete state['nikita:ssh:connection'];
+    config.ssh.end();
+    config.ssh.on('error', reject);
+    return config.ssh.on('end', function() {
       return resolve(true);
     });
   });
