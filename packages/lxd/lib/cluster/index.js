@@ -324,8 +324,13 @@ PEERDNS=no`
           sleep: 5000
         },
         container: containerName,
-        command: `#yum update -y
-yum install -y openssl
+        command: `if command -v yum >/dev/null 2>&1; then
+  yum -y install openssl
+elif command -v apt-get >/dev/null 2>&1; then
+  apt-get -y install openssl
+else
+  echo "Unsupported Package Manager" >&2 && exit 2
+fi
 command -v openssl`,
         trap: true
       });
