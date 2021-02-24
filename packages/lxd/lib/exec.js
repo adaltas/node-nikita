@@ -19,7 +19,7 @@
 // * Support `env` option
 
 // ## Schema
-var handler, schema;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
@@ -30,6 +30,11 @@ schema = {
     'command': {
       type: 'string',
       description: `The command to execute.`
+    },
+    'env': {
+      type: 'object',
+      default: {},
+      description: `Environment variable to set (e.g. HOME=/home/foo)`
     },
     'shell': {
       type: 'string',
@@ -49,10 +54,26 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
+  var k, opt, v;
+  opt = [
+    ...((function() {
+      var ref,
+    results;
+      ref = config.env;
+      results = [];
+      for (k in ref) {
+        v = ref[k];
+        results.push('--env ' + utils.string.escapeshellarg(`${k}=${v}`));
+      }
+      return results;
+    })())
+  ].join(' ');
+  // console.log config, opt
   return (await this.execute(config, {
     trap: false
   }, {
-    command: [`cat <<'NIKITALXDEXEC' | lxc exec ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
+    // metadata: debug: true
+    command: [`cat <<'NIKITALXDEXEC' | lxc exec ${opt} ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
   }));
 };
 
@@ -63,3 +84,6 @@ module.exports = {
     schema: schema
   }
 };
+
+// ## Dependencies
+utils = require('./utils');

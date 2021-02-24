@@ -27,7 +27,7 @@ describe 'lxd.exec', ->
       stdout.trim().should.eql 'ID=alpine'
       status.should.be.true()
 
-  describe 'option shell', ->
+  describe 'option `shell`', ->
     
     they 'default to shell', ({ssh}) ->
       nikita
@@ -72,7 +72,7 @@ describe 'lxd.exec', ->
           trim: true
         stdout.should.eql 'bash'
 
-  describe 'option trap', ->
+  describe 'option `trap`', ->
 
     they 'is enabled', ({ssh}) ->
       nikita
@@ -117,3 +117,30 @@ describe 'lxd.exec', ->
           """
         status.should.be.true()
         code.should.eql 0
+
+  describe 'option `env`', ->
+
+    they 'pass multiple variables', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.init
+          image: "images:#{images.alpine}"
+          container: 'c1'
+        await @lxd.start
+          container: 'c1'
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          env:
+            'ENV_VAR_1': 'value 1'
+            'ENV_VAR_2': 'value 1'
+          command: 'env'
+        stdout
+        .split('\n')
+        .filter (line) -> /^ENV_VAR_/.test line
+        .should.eql [ 'ENV_VAR_1=value 1', 'ENV_VAR_2=value 1' ]
+        
+        

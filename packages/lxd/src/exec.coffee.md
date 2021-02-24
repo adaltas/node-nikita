@@ -30,6 +30,12 @@ console.info(stdout)
           description: '''
           The command to execute.
           '''
+        'env':
+          type: 'object'
+          default: {}
+          description: '''
+          Environment variable to set (e.g. HOME=/home/foo)
+          '''
         'shell':
           type: 'string'
           default: 'sh'
@@ -46,9 +52,14 @@ console.info(stdout)
 ## Handler
 
     handler =  ({config}) ->
+      opt = [
+        ...('--env ' + utils.string.escapeshellarg "#{k}=#{v}" for k, v of config.env)
+      ].join ' '
+      # console.log config, opt
       await @execute config, trap: false,
+        # metadata: debug: true
         command: [
-          "cat <<'NIKITALXDEXEC' | lxc exec #{config.container} -- #{config.shell}"
+          "cat <<'NIKITALXDEXEC' | lxc exec #{opt} #{config.container} -- #{config.shell}"
           'set -e' if config.trap
           config.command
           'NIKITALXDEXEC'
@@ -60,3 +71,7 @@ console.info(stdout)
       handler: handler
       metadata:
         schema: schema
+
+## Dependencies
+
+    utils = require './utils'
