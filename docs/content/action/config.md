@@ -3,72 +3,80 @@ title: Config
 sort: 1
 ---
 
-# Metadata "config"
+# Configuration properties
 
-Config are used to contextualise the handler function.
+Configuration properties are used to contextualize the [action handler](/current/action/handler) and they are specific to every action.
 
 ## Usage
 
-They are usually provided as an object when calling an action. For example, the `system.execute` action can receive on object with a "cmd" property:
+They are usually provided as an object when calling an action. For example, the `nikita.execute` action can receive an object with the `command` property:
 
 ```js
 nikita
-// Object with "cmd" config
-.system.execute({cmd: 'whoami'})
+// Pass an object with the "command" configuration property
+.execute({command: 'whoami'})
+```
+
+The action handler receives the configuration properties in the `config` property of the first argument:
+
+```js
+nikita
+// Call an action with a configuration property and a custom handler
+.call({key: 'value'}, ({config}) => {
+  // Configuration properties are passed to the handler
+  console.info(config.key)
+})
 ```
 
 ## Short declaration
 
-The `system.execute` action can also receive the command as a string. This declaration achieve the same result as the previous example:
+Some actions can also receive the configuration property as a string. For example, the following declaration of the `nikita.execute` action achieves the same result as at the example above:
 
 ```js
 nikita
-// Command as a string
-.system.execute('whoami');
+// Pass the command as a string
+.execute('whoami')
 ```
 
-The string config in the previous example is here for conveniency. Internally, the execute handler receives config as an object and search for the "argument" config. Here's an example:
+The string configuration is here for convenience. Internally, the handler of the `nikita.execute` action receives the configuration as an object and search for the `argument` metadata property. Here's an example of how it can be implemented into an action:
 
 ```js
 nikita
-.register('execute', function({config}, callback){
-  config.cmd = config.argument if typeof config.argument is 'string'
+// Register the action
+.registry.register('my_action', ({config, metadata}) => {
+  // Define the "key" configuration property 
+  if (metadata.argument != null)
+    config.key = metadata.argument
   // More code goes here
-});
-.execute('whoami', function(err, {stdout}){
-  console.info('I am ' + stdout.trim());
 })
 ```
 
-## Merging
+To make it more generic, Nikita provides the [`argument_to_config` metadata](/current/metadata/argument_to_config) property which maps an argument into a configuration property with the desired name.
 
-When multiple configs are passed, they will be merged with the last keys taking precedence over previously defined keys:
+## Merging properties
+
+When multiple configuration properties are passed, they are merged. The last keys take precedence over previously defined keys. The example below asserts this behavior:
 
 ```js
-nikita
-.call({key: 'old value'}, {key: 'new value'}, function({config}){
-  assert(config.key, 'mew value')
-})
+const assert = require('assert');
+(async () => {
+  await nikita
+  // highlight-range{1-3}
+  .call({key: 'old value'}, {key: 'new value'}, ({config}) => {
+    assert.equal(config.key, 'new value')
+  })
+})()
 ```
 
-Values set as `undefined` are passed but they will not overwrite previously defined config:
+Note, the values set as `undefined` will not overwrite previously defined properties:
 
 ```js
-nikita
-.call({key: 'value'}, {key: undefined}, function({config}){
-  assert(config.key, 'value')
-})
-```
-
-## Global definition
-
-Config passed to the Nikita session on instantiation are available globally to every handlers.
-
-```js
-nikita({
-  my_config: 'my value'
-})
-.call(function({config}){
-  console.info(`Value of "my_config" is ${config.my_config}`);
-});
+const assert = require('assert');
+(async () => {
+  await nikita
+  // highlight-range{1-3}
+  .call({key: 'old value'}, {key: undefined}, ({config}) => {
+    assert.equal(config.key, 'old value')
+  })
+})()
 ```
