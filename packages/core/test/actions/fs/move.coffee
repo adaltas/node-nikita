@@ -41,10 +41,11 @@ describe 'actions.fs.move', ->
       @fs.base.writeFile
         target: "#{tmpdir}/org_file"
         content: ''
-      @fs.move
+      {status} = await @fs.move
         target: "#{tmpdir}/new_name"
         source: "#{tmpdir}/org_file"
-      .should.be.finally.containEql status: true
+      # .should.be.finally.containEql status: true
+      status.should.be.true()
       # The target file should exists
       @fs.assert
         target: "#{tmpdir}/new_name"

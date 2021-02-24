@@ -57,16 +57,9 @@ up the action and disable the \`moved\` indicator in the callback.`
 handler = async function({
     config,
     metadata,
-    tools: {log, path},
-    ssh
+    tools: {log, path}
   }) {
   var exists, hash;
-  // SSH connection
-  ssh = (await this.ssh(config.ssh));
-  log({
-    message: "Stat target",
-    level: 'DEBUG'
-  });
   ({exists} = (await this.fs.base.exists(config.target)));
   if (!exists) {
     log({

@@ -57,10 +57,7 @@ console.info(`Directory was moved: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {log, path}, ssh}) ->
-      # SSH connection
-      ssh = await @ssh config.ssh
-      log message: "Stat target", level: 'DEBUG'
+    handler = ({config, metadata, tools: {log, path}}) ->
       {exists} = await @fs.base.exists config.target
       if not exists
         log message: "Rename #{config.source} to #{config.target}", level: 'WARN'
