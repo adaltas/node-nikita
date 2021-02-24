@@ -166,5 +166,26 @@ describe 'lxd.exec', ->
           command: 'whoami'
           trim: true
         stdout.should.eql 'nikita'
+
+  describe 'option `cwd`', ->
+
+    they 'change directory', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.init
+          image: "images:#{images.alpine}"
+          container: 'c1'
+        await @lxd.start
+          container: 'c1'
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          cwd: '/bin'
+          command: 'pwd'
+          trim: true
+        stdout.should.eql '/bin'
         
         

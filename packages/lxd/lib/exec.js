@@ -31,6 +31,10 @@ schema = {
       type: 'string',
       description: `The command to execute.`
     },
+    'cwd': {
+      type: 'string',
+      description: `Directory to run the command in (default /root).`
+    },
     'env': {
       type: 'object',
       default: {},
@@ -61,6 +65,7 @@ handler = async function({config}) {
   var k, opt, v;
   opt = [
     config.user ? `--user ${config.user}` : void 0,
+    config.cwd ? `--cwd ${utils.string.escapeshellarg(config.cwd)}` : void 0,
     ...((function() {
       var ref,
     results;

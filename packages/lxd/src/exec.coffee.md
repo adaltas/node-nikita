@@ -30,6 +30,11 @@ console.info(stdout)
           description: '''
           The command to execute.
           '''
+        'cwd':
+          type: 'string'
+          description: '''
+          Directory to run the command in (default /root).
+          '''
         'env':
           type: 'object'
           default: {}
@@ -59,6 +64,7 @@ console.info(stdout)
     handler =  ({config}) ->
       opt = [
         "--user #{config.user}" if config.user
+        "--cwd #{utils.string.escapeshellarg config.cwd}" if config.cwd
         ...('--env ' + utils.string.escapeshellarg "#{k}=#{v}" for k, v of config.env)
       ].join ' '
       # console.log config, opt
