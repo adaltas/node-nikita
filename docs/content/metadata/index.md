@@ -4,9 +4,15 @@ sort: 4
 
 # Metadata
 
-Metadata is a plain JavaScript object used to contextualise the execution of an action.
+Metadata is a plain JavaScript object with properties used to contextualise or modify the execution of an action. The metadata properties are common to all Nikita actions.
 
-## Available properties
+## Usage
+
+Using metadata is as easy as passing one or multiple properties when calling an action:
+
+`embed:metadata/samples/index.js`
+
+## Available metadata properties
 
 * [`attempt`](/current/metadata/attempt/) (number, readonly, 0)
   Indicates the number of times an action has been rescheduled for execution when an error occurred.
@@ -26,9 +32,3 @@ Metadata is a plain JavaScript object used to contextualise the execution of an 
   Time lapse when a failed action is rescheduled.
 * [`sudo`](/metadata/sudo/) (boolean, false)   
   Escalates the right of the current user with `root` privileges.
-
-## Usage
-
-Using metadata is as easy as passing one or multiple metadata when calling an action:
-
-`embed:metadata/samples/index.js`
