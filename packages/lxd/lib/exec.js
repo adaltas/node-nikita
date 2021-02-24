@@ -34,7 +34,7 @@ schema = {
     'env': {
       type: 'object',
       default: {},
-      description: `Environment variable to set (e.g. HOME=/home/foo)`
+      description: `Environment variable to set (e.g. HOME=/home/foo).`
     },
     'shell': {
       type: 'string',
@@ -47,6 +47,10 @@ schema = {
     },
     'trap': {
       $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trap'
+    },
+    'user': {
+      type: 'integer',
+      description: `User ID to run the command as (default 0).`
     }
   },
   required: ['container', 'command']
@@ -56,6 +60,7 @@ schema = {
 handler = async function({config}) {
   var k, opt, v;
   opt = [
+    config.user ? `--user ${config.user}` : void 0,
     ...((function() {
       var ref,
     results;

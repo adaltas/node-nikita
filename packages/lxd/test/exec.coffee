@@ -142,5 +142,29 @@ describe 'lxd.exec', ->
         .split('\n')
         .filter (line) -> /^ENV_VAR_/.test line
         .should.eql [ 'ENV_VAR_1=value 1', 'ENV_VAR_2=value 1' ]
+
+  describe 'option `user`', ->
+
+    they 'non root user', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        await @lxd.delete
+          container: 'c1'
+          force: true
+        await @lxd.init
+          image: "images:#{images.alpine}"
+          container: 'c1'
+        await @lxd.start
+          container: 'c1'
+        @lxd.exec
+          container: 'c1'
+          command: 'adduser --uid 1234 --disabled-password nikita'
+        {stdout} = await @lxd.exec
+          container: 'c1'
+          user: 1234
+          command: 'whoami'
+          trim: true
+        stdout.should.eql 'nikita'
         
         

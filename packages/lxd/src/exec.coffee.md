@@ -34,7 +34,7 @@ console.info(stdout)
           type: 'object'
           default: {}
           description: '''
-          Environment variable to set (e.g. HOME=/home/foo)
+          Environment variable to set (e.g. HOME=/home/foo).
           '''
         'shell':
           type: 'string'
@@ -47,12 +47,18 @@ console.info(stdout)
           $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trim'
         'trap':
           $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trap'
+        'user':
+          type: 'integer'
+          description: '''
+          User ID to run the command as (default 0).
+          '''
       required: ['container', 'command']
 
 ## Handler
 
     handler =  ({config}) ->
       opt = [
+        "--user #{config.user}" if config.user
         ...('--env ' + utils.string.escapeshellarg "#{k}=#{v}" for k, v of config.env)
       ].join ' '
       # console.log config, opt
