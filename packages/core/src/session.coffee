@@ -66,9 +66,6 @@ session = (action={}) ->
       await action.plugins.call
         name: 'nikita:register'
         args: name: name, action: act
-  # Register run helper
-  action.run = ->
-    run parent: action, ...arguments
   # Local scheduler to execute children and be notified on finish
   action.scheduler = schedule()
   # Expose the action context

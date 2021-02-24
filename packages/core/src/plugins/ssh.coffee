@@ -31,17 +31,13 @@ module.exports =
         action.ssh or false
       if ssh and not utils.ssh.is ssh
         {ssh} = await session
-          # Need to inject `tools.log`
-          plugins: [
+          plugins: [ # Need to inject `tools.log`
             require '../plugins/tools_events'
             require '../plugins/tools_log'
             require '../metadata/status'
             require '../plugins/history'
           ]
-        , ({run}) -> run
-          metadata:
-            namespace: ['ssh', 'open']
-          config: ssh
+        .ssh.open config: ssh
         action.metadata.ssh_dispose = true
       else if ssh is false
         ssh = null
@@ -49,14 +45,10 @@ module.exports =
     'nikita:result': ({action}) ->
       if action.metadata.ssh_dispose
         await session
-          # Need to inject `tools.log`
-          plugins: [
+          plugins: [ # Need to inject `tools.log`
             require '../plugins/tools_events'
             require '../plugins/tools_log'
             require '../metadata/status'
             require '../plugins/history'
           ]
-        , ({run}) -> run
-          metadata:
-            namespace: ['ssh', 'close']
-          config: ssh: action.ssh
+        .ssh.close ssh: action.ssh

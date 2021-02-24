@@ -42,15 +42,9 @@ module.exports = {
       }));
       if (ssh && !utils.ssh.is(ssh)) {
         ({ssh} = (await session({
-          // Need to inject `tools.log`
-          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')]
-        }, function({run}) {
-          return run({
-            metadata: {
-              namespace: ['ssh', 'open']
-            },
-            config: ssh
-          });
+          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
+        }).ssh.open({
+          config: ssh
         })));
         action.metadata.ssh_dispose = true;
       } else if (ssh === false) {
@@ -61,17 +55,9 @@ module.exports = {
     'nikita:result': async function({action}) {
       if (action.metadata.ssh_dispose) {
         return (await session({
-          // Need to inject `tools.log`
-          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')]
-        }, function({run}) {
-          return run({
-            metadata: {
-              namespace: ['ssh', 'close']
-            },
-            config: {
-              ssh: action.ssh
-            }
-          });
+          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
+        }).ssh.close({
+          ssh: action.ssh
         }));
       }
     }

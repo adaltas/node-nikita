@@ -128,12 +128,6 @@ session = function(action = {}) {
       }));
     }
   });
-  // Register run helper
-  action.run = function() {
-    return run({
-      parent: action
-    }, ...arguments);
-  };
   // Local scheduler to execute children and be notified on finish
   action.scheduler = schedule();
   if (action.context) {
