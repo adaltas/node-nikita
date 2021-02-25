@@ -6,178 +6,187 @@ sort: 3
 
 # Action Registration
 
-The registration API allows actions to be registered and access by names. To write an action commonly involves writing a function and schedule it for execution by using the `call` action:
+The registration API allows actions to be registered and accessed by names.
+
+To write an action commonly involves writing a function and schedule it for execution by using the `call` action:
 
 ```js
-require('nikita')
+nikita
+// Call an action
 .call(function(){
-  @service('redis');
-  @file.ini({
+  // Handler implementation
+  this.service('redis')
+  this.file.properties({
     target: '/etc/redis.conf',
-    properties: { port: 6379 },
-    delimiter: ' ',
-    merge: true
-  });
-});
+    content: { port: 6379 },
+    separator: ' '
+  })
+})
 ```
 
-This is appropriate for specific usages. However, it is sometime better to encapsulate the code and make it available to everyone. In such cases, you can register a Nikita action by it name. Action can be registered to globally to every Nikita instances and locally to a single instance.
+This is appropriate for specific usages. However, it is sometimes better to encapsulate the code and make it available to everyone by its name. In such cases, you can register a Nikita action. It can be registered globally to every Nikita instance or locally to a single instance.
 
 ## Global registration
 
-When registered globally, an action will be made available to every Nikita instance.
+When registered globally, the action will be made available to every Nikita instance.
 
-For example, the above example could be registered and accessed by the name `nikita.redis.install()` :
+For example, the action above can be registered and accessed by the name `nikita.redis.install`. Additionally, it is isolated in a separate file "./redis/install.js":
 
 ```js
-require('nikita')
-.register(['redis', 'install'], function({config}){
-  if( !config.conf_file ){
+// Import the registry module
+const registry = require('@nikitajs/core/lib/registry');
+// Registering
+registry.register(['redis', 'install'], function({config}){
+  // Handler implementation
+  if(!config.conf_file){
     config.conf_file = '/etc/redis.conf'
   }
-  if( !config.properties ){
+  if(!config.properties){
     config.properties = {}
   }
-  if( !config.properties.port ){
+  if(!config.properties.port){
     config.properties.port = 6379
   }
-  @service('redis');
-  @file.ini({
-    target: '/etc/redis.conf',
-    properties: config.properties
-    delimiter: ' ',
-    merge: true
-  });
-});
+  this.service('redis')
+  this.file.properties({
+    target: config.conf_file,
+    content: config.properties,
+    separator: ' '
+  })
+})
 ```
 
-Now, anyone could require the above module, let's call it "redis/install.js" and use it:
+Now, anyone can require the above module and call the action:
 
 ```js
 require('./redis/install');
-require('nikita')
-.redis.install({port: 6379})
-.then(function(err, {status}){
-  console.info(err || 'Redis Installation '+(status?'+':'-'));
-})
+// Call the globally registered action
+nikita.redis.install()
 ```
 
 ## Local registration
 
-When registered locally, the action is only available to from one Nikita instance, without modifying the global scope.
+When registered locally, the action is only available from one Nikita instance, without modifying the global scope.
 
-For example, our Redis example could be re-written :
+For example, the action above which is isolated in the file "./redis/install.js" can be re-written as:
 
 ```js
-moodule.exorts = function(nikita){
-  nikita
-  .register(['redis', 'install'], function({config}){
-     if( !config.conf_file ){
-       config.conf_file = '/etc/redis.conf'
-     }
-     if( !config.properties ){
-       config.properties = {}
-     }
-     if( !config.properties.port ){
-       config.properties.port = 6379
-     }
-     @service('redis');
-     @file.ini({
-       target: '/etc/redis.conf',
-       properties: config.properties
-       delimiter: ' ',
-       merge: true
-     });
-   });
+module.exports = function({config}){
+  // Handler implementation
+  if(!config.conf_file){
+    config.conf_file = '/etc/redis.conf'
+  }
+  if(!config.properties){
+    config.properties = {}
+  }
+  if(!config.properties.port){
+    config.properties.port = 6379
+  }
+  this.service('redis')
+  this.file.properties({
+    target: config.conf_file,
+    content: config.properties,
+    separator: ' '
+  })
 }
 ```
 
-Now, a new Nikita instance can be created from which a new action will be registered :
+Now, a new Nikita instance can be created from which a new action will be registered:
 
 ```js
-nikita = require('nikita');
-// Initialize
-n = nikita();
-require('./redis/install')(n);
-// Execute
-n
-.redis.install({port: 6379})
-.then(function(err, {status}){
-  console.info(err || 'Redis Installation '+(status?'+':'-'));
-})
+nikita
+// Registering
+.registry.register(['redis', 'install'], './redis/install')
+// Call the locally registered action
+.redis.install()
 ```
 
 ## API
 
 The following methods are available:
 
-* `nikita.get(name)`   
+* `nikita.registry.create(options)`   
+  Create a new registry.
+* `nikita.registry.get(name, options)`   
   Retrieve an action by name.
-* `nikita.register(name, action)`   
-  `nikita.register(actions)`   
+* `nikita.registry.register(name, handler)`   
+  `nikita.registry.register(actions)`   
   Register new actions.
-* `nikita.deprecate(old_function, [new_function], action)`   
-  Deprecate an old or renamed action. Internally, it leverages 
-  [Node.js `util.deprecate`][deprecate].
-* `nikita.registered(name)`   
+* `nikita.registry.registered(name)`   
   Test if a function is registered or not.
-* `nikita.unregister(name)`
+* `nikita.registry.unregister(name)`
   Remove an action from registry.
-* `nikital.registry()`   
-  Return all the action registry.
 
-All the above function are also available both globally and locally. For example `require('nikita').register('action', '/path/to/action')` register an action globally while the same action will be attache locally to a single Nikita instance instance with `require('nikita')(config).register('action', '/path/to/action')`.
-
-## Registration
+## Registration examples
 
 It is possible to register one action or multiple actions at once. Also, as illustrated from the above example, the name referencing an action can be composed of one or multiple properties.
 
 With an action path:
 
-```javascript
-nikita.register('first_action', 'path/to/action')
-nikita.first_action(config);
+```js
+nikita
+// Register
+.registry.register('first_action', 'path/to/action')
+// Call
+.first_action()
 ```
 
 With a namespace and an action path:
 
-```javascript
-nikita.register(['second', 'action'], 'path/to/action')
-nikita.second.action(config);
+```js
+nikita
+// Register
+.registry.register(['second', 'action'], 'path/to/action')
+// Call
+.second.action()
 ```
 
 With an action object:
 
-```javascript
-nikita.register('third_action', {
-  metadata: {relax: true},
-  handler: function({metadata}){ console.info(metadata.relax) }
+```js
+nikita
+// Register
+.registry.register('third_action', {
+  handler: ({config}) => {
+    // Handler implementation
+    console.info(config)
+  }
 })
-nikita.third_action(config);
+// Call
+.third_action(config)
 ```
 
 With a namespace and an action object:
 
-```javascript
-nikita.register(['fourth', 'action'], {
-  relax: true,
-  handler: function({metadata}){ console.info(metadata.relax) }
+```js
+nikita
+// Register
+.registry.register(['fourth', 'action'], {
+  handler: ({config}) => {
+    // Handler implementation
+    console.info(config)
+  }
 })
-nikita.fourth.action(config);
+// Call
+.fourth.action(config)
 ```
 
 Multiple actions:
 
-```javascript
-nikita.register({
+```js
+nikita
+// Register
+.registry.register({
   'fifth_action': 'path/to/action'
   'sixth': {
     '': 'path/to/sixth',
-    'action': : 'path/to/sixth/actkon'
+    'action': : 'path/to/sixth/action'
   }
 })
-nikita
-.fifth_action(config);
-.sixth(config);
-.sixth.action(config);
+// Call
+.fifth_action()
+// Call
+.sixth()
+// Call
+.sixth.action()
 ```
