@@ -16,7 +16,7 @@ normalize = require('./session/normalize');
 utils = require('./utils');
 
 session = function(action = {}) {
-  var base, base1, on_call, on_get, result;
+  var base, base1, on_call, on_get, result, schedulers;
   if (action.metadata == null) {
     action.metadata = {};
   }
@@ -129,7 +129,14 @@ session = function(action = {}) {
     }
   });
   // Local scheduler to execute children and be notified on finish
-  action.scheduler = schedule();
+  schedulers = {
+    in: schedule(),
+    out: schedule(null, {
+      pause: true
+    })
+  };
+  // Start with a paused scheduler to register actions out of the handler
+  action.scheduler = schedulers.out;
   if (action.context) {
     // Expose the action context
     action.config.context = action.context;
@@ -156,6 +163,8 @@ session = function(action = {}) {
         action[k] = merge(action_from_registry[k], action[k]);
       }
     }
+    // Switch the scheduler to register actions inside the handler
+    action.scheduler = schedulers.in;
     // Hook attended to alter the execution of an action handler
     output = action.plugins.call({
       name: 'nikita:action',
@@ -168,6 +177,12 @@ session = function(action = {}) {
     });
     // Ensure child actions are executed
     pump = function() {
+      var child;
+      while (child = schedulers.out.state.stack.shift()) {
+        // Now that the handler has been executed,
+        // import all the actions registered outside of it
+        action.scheduler.state.stack.push(child);
+      }
       return action.scheduler.pump();
     };
     output.then(pump, pump);

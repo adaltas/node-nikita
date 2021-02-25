@@ -67,7 +67,11 @@ session = (action={}) ->
         name: 'nikita:register'
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
-  action.scheduler = schedule()
+  schedulers = 
+    in: schedule()
+    out: schedule null, pause: true
+  # Start with a paused scheduler to register actions out of the handler
+  action.scheduler = schedulers.out
   # Expose the action context
   action.config.context = action.context if action.context
   action.context = new Proxy on_call, get: on_get
@@ -85,6 +89,8 @@ session = (action={}) ->
       # Merge the registry action with the user action properties
       for k, v of action_from_registry
         action[k] = merge action_from_registry[k], action[k]
+    # Switch the scheduler to register actions inside the handler
+    action.scheduler = schedulers.in
     # Hook attended to alter the execution of an action handler
     output = action.plugins.call
       name: 'nikita:action'
@@ -94,7 +100,11 @@ session = (action={}) ->
         # Execution of an action handler
         action.handler.call action.context, action
     # Ensure child actions are executed
-    pump = -> action.scheduler.pump()
+    pump = ->
+      # Now that the handler has been executed,
+      # import all the actions registered outside of it
+      action.scheduler.state.stack.push child while child = schedulers.out.state.stack.shift()
+      action.scheduler.pump()
     output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
     Promise.all [output, action.scheduler]

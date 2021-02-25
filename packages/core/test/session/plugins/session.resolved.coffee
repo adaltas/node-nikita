@@ -20,11 +20,11 @@ describe 'session.plugins.session.resolved', ->
     n.call ->
       stack.push '3'
     await n
-    # Not sure if we really expect 3 to be called before 1 and 2, what's
-    # important in the context of this test is how 'end' is called last
+    # what's important in the context of this test is how 'end' is called last
+    # however, we also indirectly test action in handler being called after external actions
     stack.should.eql [
-      '3'
       '1'
       '2'
+      '3'
       'end'
     ]

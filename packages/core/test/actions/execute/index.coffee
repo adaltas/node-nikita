@@ -64,7 +64,7 @@ describe 'actions.execute', ->
         false.should.be.true()
       await nikita
         ssh: ssh
-      , ->
+      , (->)
       .execute
         command: "cat #{__filename} | grep #{search1}"
         stdout: out
