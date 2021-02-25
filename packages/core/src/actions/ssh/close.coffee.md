@@ -15,15 +15,22 @@ Close the existing connection if any.
       properties:
         'ssh':
           instanceof: 'Object'
-          description: """
+          description: '''
           The SSH connection to close, default to currently active SSH
           connection avaible to the action.
-          """
-      required: ['ssh']
+          '''
 
 ## Handler
 
-    handler = ({config}) ->
+    handler = ({config, siblings}) ->
+      config.ssh ?= siblings
+        .map( ({output}) -> output?.ssh )
+        .find (ssh) -> !!ssh
+      throw utils.error 'NIKITA_SSH_CLOSE_NO_CONN', [
+        'There is no connection to close,'
+        'either pass the connection in the `ssh` configuation'
+        'or ensure a connection was open in a sibling action'
+      ] unless config.ssh
       # Exit if the connection is already close
       return false unless config.ssh._sshstream?.writable and config.ssh._sock?.writable
       # Terminate the connection

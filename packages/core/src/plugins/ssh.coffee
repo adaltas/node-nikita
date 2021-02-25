@@ -25,12 +25,8 @@ module.exports =
         action.ssh = ssh
         action
     'nikita:action': (action) ->
-      # return handler if action.metadata.namespace[0] is 'ssh'
-      ssh = await action.tools.find (action) ->
-        return undefined if action.ssh is undefined
-        action.ssh = null if action.ssh is false
-        action.ssh
-      if ssh and not utils.ssh.is ssh
+      # Is there a connection to open
+      if action.ssh and not utils.ssh.is action.ssh
         {ssh} = await session
           plugins: [ # Need to inject `tools.log`
             require '../plugins/tools_events'
@@ -38,10 +34,37 @@ module.exports =
             require '../metadata/status'
             require '../plugins/history'
           ]
-        .ssh.open config: ssh
+        .ssh.open config: action.ssh
         action.metadata.ssh_dispose = true
         action.ssh = ssh
-      else if ssh
+        return
+      # Find SSH connection in parent actions
+      ssh = await action.tools.find (action) ->
+        action.ssh
+      if ssh
+        throw utils.error 'NIKITA_SSH_INVALID_STATE', [
+          'the `ssh` property is not a connection',
+          "got #{JSON.stringify ssh}"
+        ] unless utils.ssh.is ssh
+        action.ssh = ssh
+        return
+      else if ssh is null or ssh is false
+        action.ssh = null unless action.ssh is undefined
+        return
+      else unless ssh is undefined
+        throw utils.error 'NIKITA_SSH_INVALID_VALUE', [
+          'when disabled, the `ssh` property must be `null` or `false`,'
+          'when enable, the `ssh` property must be a connection or a configuration object',
+          "got #{JSON.stringify ssh}"
+        ]
+      # Find SSH open in previous siblings
+      for sibling in action.siblings
+        continue unless sibling.metadata.namespace.join('.') is 'ssh.open'
+        if sibling.output.ssh
+          ssh = sibling.output.ssh
+          break
+      # Then only set the connection if still open
+      if ssh and (ssh._sshstream?.writable or ssh._sock?.writable)
         action.ssh = ssh
     'nikita:result': ({action}) ->
       if action.metadata.ssh_dispose

@@ -19,13 +19,22 @@ schema = {
       description: `The SSH connection to close, default to currently active SSH
 connection avaible to the action.`
     }
-  },
-  required: ['ssh']
+  }
 };
 
 // ## Handler
-handler = function({config}) {
+handler = function({config, siblings}) {
   var ref, ref1;
+  if (config.ssh == null) {
+    config.ssh = siblings.map(function({output}) {
+      return output != null ? output.ssh : void 0;
+    }).find(function(ssh) {
+      return !!ssh;
+    });
+  }
+  if (!config.ssh) {
+    throw utils.error('NIKITA_SSH_CLOSE_NO_CONN', ['There is no connection to close,', 'either pass the connection in the `ssh` configuation', 'or ensure a connection was open in a sibling action']);
+  }
   if (!(((ref = config.ssh._sshstream) != null ? ref.writable : void 0) && ((ref1 = config.ssh._sock) != null ? ref1.writable : void 0))) {
     // Exit if the connection is already close
     return false;

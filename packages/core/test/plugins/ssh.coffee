@@ -45,11 +45,11 @@ describe '`plugins.ssh`', ->
               
   describe 'from siblings (open/close)', ->
     
-    they.skip 'ssh.open', ({ssh}) ->
+    they 'ssh.open', ({ssh}) ->
       nikita ->
-        @ssh.open ssh: ssh
+        @ssh.open ssh
         {stdout: whoami} = await @execute
           command: 'whoami'
           trim: true
         whoami.should.eql ssh.username
-        @ssh.close
+        @ssh.close()

@@ -32,26 +32,50 @@ module.exports = {
       };
     },
     'nikita:action': async function(action) {
-      var ssh;
-      // return handler if action.metadata.namespace[0] is 'ssh'
-      ssh = (await action.tools.find(function(action) {
-        if (action.ssh === void 0) {
-          return void 0;
-        }
-        if (action.ssh === false) {
-          action.ssh = null;
-        }
-        return action.ssh;
-      }));
-      if (ssh && !utils.ssh.is(ssh)) {
+      var i, len, ref, ref1, ref2, sibling, ssh;
+      // Is there a connection to open
+      if (action.ssh && !utils.ssh.is(action.ssh)) {
         ({ssh} = (await session({
           plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
         }).ssh.open({
-          config: ssh
+          config: action.ssh
         })));
         action.metadata.ssh_dispose = true;
-        return action.ssh = ssh;
-      } else if (ssh) {
+        action.ssh = ssh;
+        return;
+      }
+      // Find SSH connection in parent actions
+      ssh = (await action.tools.find(function(action) {
+        return action.ssh;
+      }));
+      if (ssh) {
+        if (!utils.ssh.is(ssh)) {
+          throw utils.error('NIKITA_SSH_INVALID_STATE', ['the `ssh` property is not a connection', `got ${JSON.stringify(ssh)}`]);
+        }
+        action.ssh = ssh;
+        return;
+      } else if (ssh === null || ssh === false) {
+        if (action.ssh !== void 0) {
+          action.ssh = null;
+        }
+        return;
+      } else if (ssh !== void 0) {
+        throw utils.error('NIKITA_SSH_INVALID_VALUE', ['when disabled, the `ssh` property must be `null` or `false`,', 'when enable, the `ssh` property must be a connection or a configuration object', `got ${JSON.stringify(ssh)}`]);
+      }
+      ref = action.siblings;
+      // Find SSH open in previous siblings
+      for (i = 0, len = ref.length; i < len; i++) {
+        sibling = ref[i];
+        if (sibling.metadata.namespace.join('.') !== 'ssh.open') {
+          continue;
+        }
+        if (sibling.output.ssh) {
+          ssh = sibling.output.ssh;
+          break;
+        }
+      }
+      // Then only set the connection if still open
+      if (ssh && (((ref1 = ssh._sshstream) != null ? ref1.writable : void 0) || ((ref2 = ssh._sock) != null ? ref2.writable : void 0))) {
         return action.ssh = ssh;
       }
     },
