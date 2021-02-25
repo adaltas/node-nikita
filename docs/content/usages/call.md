@@ -3,7 +3,7 @@ navtitle: Call
 sort: 2
 ---
 
-# Call and user defined handlers
+# Call and user-defined handlers
 
 Nikita gives you the choice between calling your own function, which we call handlers, or calling an [registered function](/current/usages/registry) by its name.
 
@@ -79,4 +79,4 @@ nikita
 })
 ```
 
-Internally, module is required with the call `require.main.require`.
+Internally, the module is required with the call `require.main.require`.

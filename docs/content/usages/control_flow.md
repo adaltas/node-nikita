@@ -8,7 +8,7 @@ Nikita runs every action sequentially. This behavior ensures there are no confli
 
 ## Sequential execution
 
-Since an action may contain child actions, the way Nikita run is similar to how you might want to traverse a file system. For every action scheduled, Nikita will run its children recursively before passing to the next scheduled action. 
+Since an action may contain child actions, the way Nikita runs is similar to how you might want to traverse a file system. For every action scheduled, Nikita will run its children recursively before passing to the next scheduled action. 
 
 Let's imaging we want to install 2 packages `my_pkg_1` and `my_pkg_2` before modifying a configuration file:
 
@@ -84,7 +84,7 @@ nikita
 })
 ```
 
-However, the session can be preserved by catching the exception thrown by action's [Promise](https://nodejs.dev/learn/understanding-javascript-promises). The example below uses the `try...catch` statement to handle the exception:
+However, the session can be preserved by catching the exception thrown by action [Promise](https://nodejs.dev/learn/understanding-javascript-promises). The example below uses the `try...catch` statement to handle the exception:
 
 ```js
 nikita
@@ -109,7 +109,7 @@ nikita
 
 The execution flow can be controlled by mixing [conditions](/current/usages/conditions/) and [output](/current/action/output) such as [`status`](/current/usages/status/) and [`error`](/current/usages/error/) returned with Promise.
 
-> Note, Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action's output, you have to call an asynchronous function and "await" for the result of Promise.
+> Note, Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to call an asynchronous function and "await" for the result of Promise.
 
 The example below demonstrates the combination of the `status` output variable and the [`if` condition](/current/usages/conditions/). The second action is executed if the status is `true`:
 

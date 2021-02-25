@@ -42,7 +42,7 @@ nikita
 
 ## Return
 
-The value returned by the handler is a value sent to the [action's output](/current/action/output). It can be of any type either not present, but it is interpreted differently in the output. When the value is:
+The value returned by the handler is a value sent to the [action output](/current/action/output). It can be of any type either not present, but it is interpreted differently in the output. When the value is:
 
 - a **boolean**, it is interpreted as the [`status` property](/current/usages/status) of the output object.
   ```js
@@ -57,7 +57,7 @@ The value returned by the handler is a value sent to the [action's output](/curr
   })()
   ```
 
-- an **object**, it is merged with the default action's output.
+- an **object**, it is merged with the default action output.
   ```js
   const assert = require('assert');
   (async () => {

@@ -10,7 +10,7 @@ The most important and only required property is the [`handler` function](/curre
 
 The handler receives all the properties of the action as an argument. We call those properties [configuration](/current/action/config). They are available as `config` property and can define default values when declaring the action. Also, the user may overwrite any of the configuration properties. Thus, they are used to contextualize the handler.
 
-Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the [action's output](/current/action/output), you have to call an asynchronous function and "await" for the result of Promise.
+Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the [action output](/current/action/output), you have to call an asynchronous function and "await" for the result of Promise.
 
 Remember, in the end, an action is a JavaScript object with the mandatory property `handler`, and some configuration properties. Some properties are common to all Nikita actions, such as the [`shy`](/current/metadata/shy) or the [`relax`](/current/metadata/relax) [metadata properties](/current/metadata), or they can be specific to an action, such as the `target` configuration property of the [`nikita.file` action](/current/actions/file) indicating the path where the content is written.
 

@@ -9,13 +9,13 @@ Setting the `retry` metadata provides control over how many times an action is r
 * Type: `number|boolean`
 * Default: `1`
 
-It is commonly used conjointly with the [`attempt` metadata](/current/metadata/attempt/) which provide an indicator over how many times an action was rescheduled.
+It is commonly used conjointly with the [`attempt` metadata](/current/metadata/attempt/) which provides an indicator over how many times an action was rescheduled.
 
 ## Usage
 
 The default value is `1` which means that actions are not rescheduled on error.
 
-If provided as a number, the value must be superior or equal to `1`. For example, the value `3` means the action will be executed at maximum 3 times. If the third time the action fail, then it will be treated by the Nikita session as a failed action.
+If provided as a number, the value must be superior or equal to `1`. For example, the value `3` means the action will be executed a maximum of 3 times. If the third time the action fails, then it will be treated by the Nikita session as a failed action.
 
 ```js
 const assert = require('assert');
@@ -57,7 +57,7 @@ The value `false` is the same as `1`.
 
 ## With the `relax` metadata
 
-When used with the [`relax`](/current/metadata/relax/) metadata, every attempt will be rescheduled. Said differently, marking an action as relax will not prevent the action to be re-executed on error.
+When used with the [`relax` metadata](/current/metadata/relax/), every attempt will be rescheduled. Said differently, marking an action as relax will not prevent the action to be re-executed on error.
 
 ```js
 const assert = require('assert');

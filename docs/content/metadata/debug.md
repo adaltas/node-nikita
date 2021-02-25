@@ -4,7 +4,7 @@ navtitle: debug
 
 # Metadata "debug"
 
-The `debug` metadata print detailed logs to the standard error output (`stderr`). It provides a quick and convenient solution to understand the various actions called, what they do and in which order.
+The `debug` metadata print detailed logs to the standard error output (`stderr`). It provides a quick and convenient solution to understand the various actions called, what they do, and in which order.
 
 * Type: `boolean`
 * Default: `false`
@@ -44,7 +44,7 @@ nikita({
 
 ### Redirecting output to stdout
 
-Set the value to `stdout` if you wish to print debugging information to the standard output (`stdout`):
+Set the value to `stdout` if you wish to print debugging information to the standard output (stdout):
 
 ```js
 nikita

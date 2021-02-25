@@ -9,7 +9,7 @@ The `shy` metadata disables modification of the parent action [status](/current/
 * Type: `boolean`
 * Default: `false`
 
-By default, the status of an action will be `true` if at least one of the child action has a status of `true`. 
+By default, the status of an action will be `true` if at least one of the child actions has a status of `true`. 
 
 Sometimes, some child actions are not relevant to indicate a change of the parent action status. There are multiple reasons for this. For example, a child action has no impact, like checking prerequisites, or the change of the parent status is assumed by another sibling action.
 
@@ -37,9 +37,9 @@ const assert = require('assert');
 })()
 ```
 
-### Status in action's output
+### Status in the action output
 
-The action's output contains the status of the execution no matter if the `shy` metadata is activated or not.
+The action output contains the status of the execution no matter if the `shy` metadata is activated or not.
 
 ```js
 const assert = require('assert');
