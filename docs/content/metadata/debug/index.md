@@ -2,7 +2,7 @@
 navtitle: debug
 ---
 
-# Metadata `debug`
+# Metadata "debug"
 
 The `debug` metadata print detailed logs to the standard error output (`stderr`). It provides a quick and convenient solution to understand the various actions called, what they do and in which order.
 

@@ -2,7 +2,7 @@
 navtitle: sleep
 ---
 
-# Metadata `sleep`
+# Metadata "sleep"
 
 The `sleep` metadata indicates the time lapse when a failed action is rescheduled. It only has effect if the [`retry` metadata](/current/metadata/retry/) is set to a value greater than `1` and when the action failed and is rescheduled.
 

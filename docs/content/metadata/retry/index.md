@@ -2,7 +2,7 @@
 navtitle: retry
 ---
 
-# Metadata `retry`
+# Metadata "retry"
 
 Setting the `retry` metadata provides control over how many times an action is re-scheduled on error before it is finally treated as a failure.
 
