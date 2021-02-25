@@ -17,10 +17,52 @@ Sometimes, some child actions are not relevant to indicate a change of the paren
 
 The `shy` metadata is a boolean. The value is `false` by default. Set the value to `true` if you wish to activate the metadata.
 
-`embed:metadata/shy/samples/usage.js`
+```js
+const assert = require('assert');
+(async () => {
+  var {status} = await nikita
+  .call(async function() {
+    var {status} = await this.execute({
+      metadata: {
+        // highlight-next-line
+        shy: true
+      },
+      command: 'exit 0'
+    })
+    // Status of the child
+    assert.equal(status, true)
+  })
+  // Status of the parent is not affected by the child
+  assert.equal(status, false)
+})()
+```
 
 ### Status in action's output
 
 The action's output contains the status of the execution no matter if the `shy` metadata is activated or not.
 
-`embed:metadata/shy/samples/output.js`
+```js
+const assert = require('assert');
+(async () => {
+  // Status is set when shy is deactivated (default behavior)
+  var {status} = await nikita
+  .execute({
+    metadata: {
+      // highlight-next-line
+      shy: false
+    },
+    command: 'exit 0'
+  })
+  assert.equal(status, true)
+  // Status is set when shy is activated
+  var {status} = await nikita
+  .call({
+    metadata: {
+      // highlight-next-line
+      shy: true
+    },
+    command: 'exit 0'
+  })
+  assert.equal(status, true)
+})()
+```

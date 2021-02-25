@@ -10,7 +10,17 @@ Metadata is a plain JavaScript object with properties used to contextualise or m
 
 Using metadata is as easy as passing one or multiple properties when calling an action:
 
-`embed:metadata/samples/index.js`
+```js
+nikita
+// Call an action with the `header` metadata
+.execute({
+  // highlight-range{1-3}
+  metadata: {
+    header: 'Check user'
+  },
+  command: 'whoami'
+})
+```
 
 ## Available metadata properties
 

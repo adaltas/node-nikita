@@ -17,13 +17,34 @@ The value is a boolean with value `false` as default. Simply set the action to a
 
 In the example below, we start the MariaDB service with the `systemctl` command. If the service is not installed or already started, the result is a non-zero code, resulting with an error unless the `relax` metadata is activated, but we don't want to deal with it:
 
-`embed:metadata/relax/samples/usage.js`
+```js
+nikita
+.execute({
+  metadata: {
+    // highlight-next-line
+    relax: true
+  },
+  command: 'systemctl start mariadb'
+})
+```
 
 ## Error output
 
 The `relax` metadata doesn't throw an error. Any error sent by the "handler" function is available as the `error` property of the action's output object:
 
-`embed:metadata/relax/samples/output.js`
+```js
+(async () => {
+  const {error} = await nikita
+  .execute({
+    metadata: {
+      // highlight-next-line
+      relax: true
+    },
+    command: 'invalid command'
+  })
+  console.log(error)
+})()
+```
 
 The `error` is an extended `Error` object that provides a context of the action execution with a specific Nikita error `code`:
 
@@ -45,16 +66,43 @@ NikitaError: NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encou
 
 When a string is passed as `relax` metadata value, it is interpreted as a `code` of returning error. Thus, you can enable the relax behavior only for specific errors. For example, if a command is not found, Nikita trows an error with `NIKITA_EXECUTE_EXIT_CODE_INVALID` code that you can skip:
 
-`embed:metadata/relax/samples/string.js`
+```js
+nikita
+.execute({
+  metadata: {
+    // highlight-next-line
+    relax: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+  },
+  command: 'invalid command'
+})
+```
 
 ### Array's values
 
 Array's values are similar to string value enabling relax behavior for multiple error codes:
 
-`embed:metadata/relax/samples/array.js`
+```js
+nikita
+.execute({
+  metadata: {
+    // highlight-next-line
+    relax: ['NIKITA_EXECUTE_EXIT_CODE_INVALID', 'ANOTHER_CODE']
+  },
+  command: 'invalid command'
+})
+```
 
 ### Regular expression value
 
 The `relax` metadata accepts a regular expression as a value. It matches an error code against a regular expression:
 
-`embed:metadata/relax/samples/regexp.js`
+```js
+nikita
+.execute({
+  metadata: {
+    // highlight-next-line
+    relax: /^NIKITA_/
+  },
+  command: 'invalid command'
+})
+```

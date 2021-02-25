@@ -159,21 +159,80 @@ As you can see, `config` is made available as a destructure property of the argu
 
 To execute an action, you must create a Nikita session and execute the `call` function:
 
-`embed:about/tutorial/samples/call.js`
+```js
+nikita.call({
+  who: 'leon',
+  handler: ({config}) => {
+    console.info(config.who)
+  }
+})
+```
 
 The function `nikita.call` is very flexible in how arguments are passed. It receives zero to multiple objects which will be merged together. Also, a function is interpreted as the action handler, being converted to an object with the `handler` property. It means the previous example could be rewritten as:
 
-`embed:about/tutorial/samples/call.converted.js`
+```js
+nikita.call({
+  who: 'leon'
+}, ({config}) => {
+  console.info(config.who)
+})
+```
 
 ### Actions promise
 
 Nikita actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action's output, you have to call an asynchronous function and await for the result from Promise.
 
-`embed:about/tutorial/samples/promise.js`
+```js
+// Call asynchronous function
+(async () => {
+  // Await result from Promise
+  var result = await nikita.call({
+    who: 'leon',
+    handler: ({config}) => {
+      return {who: config.who}
+    }
+  })
+  // Run the next function
+  console.log(result.who)
+})()
+```
 
 Nikita also provides you the guarantee that your actions are executed sequentially:
 
-`embed:about/tutorial/samples/promise_sequence.js`
+```js
+// Dependencies
+const assert = require('assert');
+(async () => {
+  var history = []
+  // Await result from Promise
+  var result = await nikita
+  // Call 1st action
+  .call(() => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        history.push('first')
+        resolve()
+      }, 200)
+    })
+  })
+  // Call 2nd action
+  .call(() => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        history.push('second')
+        resolve()
+      }, 100)
+    })
+  })
+  // Call 3rd action
+  .call(() => {
+    return 'done'
+  })
+  // Verify
+  assert.equal(result, 'done')
+  assert.deepEqual(history, ['first','second'])
+})()
+```
 
 ### Idempotence and status
 
@@ -183,7 +242,31 @@ The status is used and interpreted with different meanings but in most cases it 
 
 > Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to `true` instead of `false`. Simply remove the file with `rm /tmp/a_file` to overcome this issue.
 
-`embed:about/tutorial/samples/idempotence.js`
+```js
+// Dependencies
+const assert = require('assert');
+const fs = require('fs').promises;
+// Touch implementation
+const touch = async ({config}) => {
+  try { 
+    const stats = await fs.stat('/tmp/a_file')
+    return false
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err
+    await fs.writeFile('/tmp/a_file', '')
+    return true
+  } 
+}
+// Calling actions
+(async () => {
+  // First time calling touch
+  var {status} = await nikita.call(touch)
+  assert.equal(status, true)
+  // Second time calling touch
+  var {status} = await nikita.call(touch)
+  assert.equal(status, false)
+})()
+```
 
 Note, there is an existing `nikita.file.touch` action which does just that with additional functionalities such as detecting and applying changes of ownerships and permissions.
 
@@ -193,11 +276,33 @@ In order to reuse our new `touch` action, we could isolate it into a separate fi
 
 File "./lib/touch.js":
 
-`embed:about/tutorial/samples/external/lib/touch.js`
+```js
+// Dependencies
+const fs = require('fs').promises;
+// Touch implementation
+module.exports = async ({config}) => {
+  try { 
+    const stats = await fs.stat('/tmp/a_file')
+    return false
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err
+    await fs.writeFile('/tmp/a_file', '')
+    return true
+  } 
+}
+```
 
 File "./app.js":
 
-`embed:about/tutorial/samples/external/app.js`
+```js
+// Dependencies
+const assert = require('assert');
+(async () => {
+  // New Nikita session
+  var {status} = await nikita.call('./lib/touch')
+  assert.equal(status, true)
+})()
+```
 
 ### Passing `config`
 
@@ -205,11 +310,33 @@ The `touch` action is now a separate Node.js module. It is a vanilla JavaScript 
 
 File "./lib/touch.js":
 
-`embed:about/tutorial/samples/config/lib/touch.js`
+```js
+// Dependencies
+const fs = require('fs').promises;
+// Touch implementation
+module.exports = async ({config}) => {
+  try { 
+    const stats = await fs.stat(config.target)
+    return false
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err
+    await fs.writeFile(config.target, '')
+    return true
+  } 
+}
+```
 
 File "./app.js": 
 
-`embed:about/tutorial/samples/config/app.js`
+```js
+// Dependencies
+const assert = require('assert');
+(async () => {
+  // New Nikita session
+  var {status} = await nikita.call('./lib/touch', {target: '/tmp/a_file'})
+  assert.equal(status, true)
+})()
+```
 
 ### Passing `metadata`
 
@@ -219,7 +346,19 @@ There are several properties which are generic and globally available to every a
 
 Instead of using the `call` action, it might be more comfortable to call our `touch` action by its name. To do so, we will register it. Actions can be registered in the current Nikita session or globally. In the example below, we will register it in the session:
 
-`embed:about/tutorial/samples/config/register.js`
+```js
+// Dependencies
+const assert = require('assert');
+(async () => {
+  // New Nikita session
+  var {status} = await nikita
+  // Register the touch action
+  .registry.register({touch: './lib/touch'})
+  // Calling the registered action
+  .touch({target: '/tmp/a_file'})
+  assert.equal(status, true)
+})()
+```
 
 ## Real-life example
 
@@ -248,17 +387,50 @@ Following the [Redis quickstart guide](https://redis.io/topics/quickstart), gett
 
 To download Redis, we will use the existing `nikita.file.download` action.
 
-`embed:about/tutorial/samples/redis/1.download.js`
+```js
+(async () => {
+  var {status} = await nikita.file.download({
+    source: 'http://download.redis.io/redis-stable.tar.gz',
+    target: '/tmp/nikita-tutorial/cache/redis-stable.tar.gz'
+  })
+  console.info('Redis downloaded:', status ? '✔' : '-')
+})()
+```
 
 The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" config.
 
 To extract and compile Redis, we will write a shell script which will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". There is the `nikita.execute` action to execute shell scripts:
 
-`embed:about/tutorial/samples/redis/1.compile.js`
+```js
+(async () => {
+  var {status} = await nikita.execute({
+    unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
+    command: `
+    tar xzf /tmp/nikita-tutorial/cache/redis-stable.tar.gz -C /tmp/nikita-tutorial
+    cd /tmp/nikita-tutorial/redis-stable
+    make
+    `
+  })
+  console.info('Redis compiled:', status ? '✔' : '-')
+})()
+```
 
 It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to shell commands each time we want to control it. That's why `nikita.execute` actions comes with the `cwd` configuration property standing for "current working directory". This is way a lot prettier:
 
-`embed:about/tutorial/samples/redis/1.compile_cwd.js`
+```js
+(async () => {
+  var {status} = await nikita.execute({
+    unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
+    cwd: '/tmp/nikita-tutorial',  // Define current working directory
+    command: `
+    tar xzf cache/redis-stable.tar.gz
+    cd redis-stable
+    make
+    `
+  })
+  console.info('Redis compiled:', status ? '✔' : '-')
+})()
+```
 
 ### 2. Redis configuration file
 
@@ -266,7 +438,21 @@ It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to 
 
 Before starting the server, we will write a configuration file. The Redis format is made of key value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
 
-`embed:about/tutorial/samples/redis/2.config.js`
+```js
+(async () => {
+  var {status} = await nikita.file.properties({
+    target: '/tmp/nikita-tutorial/conf/redis.conf',
+    separator: ' ',
+    content: {
+      'bind': '127.0.0.1',
+      'daemonize': 'yes',
+      'protected-mode': 'yes',
+      'port': 6379
+    }
+  })
+  console.info('Redis configuration set:', status ? '✔' : '-')
+})()
+```
 
 ### 3. CLI reporting and logs
 
@@ -274,7 +460,26 @@ Before starting the server, we will write a configuration file. The Redis format
 
 So far, we retrieved the action output to manually print a message for the user with the `console.info` JavaScript function signalling a status of execution. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
-`embed:about/tutorial/samples/redis/3.log_cli.js`
+```js
+nikita
+// Activate CLI reporting
+.log.cli()
+// Call any action
+.file.properties({
+  metadata: {
+    // The CLI message
+    header: 'Redis configuration',
+  },
+  target: '/tmp/nikita-tutorial/conf/redis.conf',
+  separator: ' ',
+  content: {
+    'bind': '127.0.0.1',
+    'daemonize': 'yes',
+    'protected-mode': 'yes',
+    'port': 6379
+  }
+})
+```
 
 The message contains information such as the hostname or the ip address where the action is executed, the custom header, the status symbol and time of execution. It ends with `♥` to indicate termination of the Nikita session:
 
@@ -285,7 +490,28 @@ localhost      ♥
 
 What if an action failed and the error message is not explicit enough? What if a system command failed and we need to dig and get detailed information? Nikita doesn't have to run as a black box. Multiple error reporting actions are made available such as the `nikita.log.md` which writes logs in the Markdown format:
 
-`embed:about/tutorial/samples/redis/3.log_md.js`
+```js
+nikita
+// Activate Markdown reporting
+.log.md({
+  basedir: '/tmp/nikita-tutorial/log'
+})
+// Call any action
+.file.properties({
+  metadata: {
+    // The Markdown header
+    header: 'Redis configuration',
+  },
+  target: '/tmp/nikita-tutorial/conf/redis.conf',
+  separator: ' ',
+  content: {
+    'bind': '127.0.0.1',
+    'daemonize': 'yes',
+    'protected-mode': 'yes',
+    'port': 6379
+  }
+})
+```
 
 Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://nodejs.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/current/usages/logging_debugging/) documentation.
 
@@ -295,7 +521,24 @@ Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions levera
 
 The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value "0" will indicate that the server was started, the value "3" will indicate that it was already running and any other exit code will be treated as an error.
 
-`embed:about/tutorial/samples/redis/4.start.js`
+```js
+nikita
+.log.cli()
+// Start Redis
+.execute({
+  metadata: {
+    header: 'Startup',
+  },
+  cwd: '/tmp/nikita-tutorial',
+  code_skipped: 3,
+  command: `
+  # Exit code 3 if ping is successful
+  redis-stable/src/redis-cli ping && exit 3
+  # Otherwise start the server
+  nohup redis-stable/src/redis-server conf/redis.conf &
+  `
+})
+```
 
 ### 5. Checking the service health
 
@@ -307,7 +550,26 @@ The `relax` metadata sends the error to the result output without throwing an ex
 
 Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of parent `nikita.call` action, because it is not considered as a change of its state.
 
-`embed:about/tutorial/samples/redis/5.health.js`
+```js
+nikita
+.log.cli()
+.call({
+  metadata: {
+    header: 'Redis Check',
+  },
+  handler: function() {
+    this.execute({
+      metadata: {
+        header: "Check",
+        relax: true,
+        shy: true
+      },
+      cwd: '/tmp/nikita-tutorial',
+      command: 'redis-stable/src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
+    })
+  }
+})
+```
 
 When Redis server is started, it prints:
 
@@ -343,7 +605,30 @@ Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita curre
 
 > Note: both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
 
-`embed:about/tutorial/samples/redis/6.ssh.js`
+```js
+nikita
+.log.cli()
+// Open the SSH Connection
+.ssh.open({
+  metadata: {
+    header: 'SSH open',
+  },
+  host: '127.0.0.1',
+  port: 22,
+  private_key_path: '~/.ssh/id_rsa',
+  username: process.env.USER
+})
+// Call one or multiple actions
+.call(() => {
+  console.info('Business as usual')
+})
+// Close the SSH Connection
+.ssh.close({
+  metadata: {
+    header: 'SSH close',
+  },
+})
+```
 
 The above example assumes that you can self connect with SSH locally. If this is not the case, SSH must be installed and listening on port 22 and you must follow the instruction targeting your operating system to get it up and running. A pair of SSH private and public keys, respectively installed at "~/.ssh/id_rsa" and "~/.ssh/id_rsa.pub", must be present and your public key must be registered inside "~/.ssh/authorized_keys". If this isn't already the case, you can run the following commands:
 
@@ -370,18 +655,197 @@ It is time to finalize our script and run all these actions sequentially. Every 
 
 It is also possible to group multiple actions into one action, creating a hierarchical representation and enabling composition. In our example, we will regroup all Redis actions related to installation into a single action.
 
-`embed:about/tutorial/samples/redis/7.composition/index.js`
+```js
+const nikita = require('nikita');
+const cwd = '/tmp/nikita-tutorial';
+nikita
+.log.cli()
+.log.md({
+  basedir: `${cwd}/log`
+})
+.ssh.open({
+  metadata: {
+    header: 'SSH Open'
+  },
+  host: '127.0.0.1',
+  port: 22,
+  username: process.env.USER,
+  private_key_path: '~/.ssh/id_rsa'
+})
+.call({
+  metadata: {
+    header: 'Redis installation',
+  },
+  handler: function(){
+    this.file.download({
+      metadata: {
+        header: 'Downloading',
+      },
+      source: 'http://download.redis.io/redis-stable.tar.gz',
+      target: `${cwd}/cache/redis-stable.tar.gz`
+    })
+    this.execute({
+      metadata: {
+        header: 'Compilation',
+      },
+      unless_exists: `${cwd}/redis-stable/src/redis-server`,
+      cwd: cwd,
+      command: `
+      tar xzf cache/redis-stable.tar.gz
+      cd redis-stable
+      make
+      `
+    })
+    this.file.properties({
+      metadata: {
+        header: 'Configuration',
+      },
+      target: `${cwd}/conf/redis.conf`,
+      separator: ' ',
+      content: {
+        'bind': '127.0.0.1',
+        'daemonize': 'yes',
+        'protected-mode': 'yes',
+        'port': 6379
+      }
+    })
+    this.execute({
+      metadata: {
+        header: 'Startup',
+      },
+      cwd: cwd,
+      code_skipped: 3,
+      command: `
+      redis-stable/src/redis-cli ping && exit 3
+      nohup redis-stable/src/redis-server conf/redis.conf &
+      `
+    })
+  }
+})
+.execute({
+  metadata: {
+    header: 'Redis Check',
+    relax: true,
+    shy: true,
+  },
+  cwd: cwd,
+  command: 'redis-stable/src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
+})
+.ssh.close({
+  metadata: {
+    header: 'SSH Close'
+  },
+})
+```
 
 Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible configuration:
 
 File "app.js":
 
-`embed:about/tutorial/samples/redis/7.composition/app.js`
+```js
+// Dependencies
+const nikita = require('nikita');
+const install = require('./lib/install');
+const check = require('./lib/check');
+// Configuration
+config = {
+  ssh: {
+    host: '127.0.0.1',
+    port: 22,
+    private_key_path: '~/.ssh/id_rsa',
+    username: process.env.USER
+  },
+  redis: {
+    cwd: '/tmp/nikita-tutorial',
+    config: {}
+  }
+}
+// Run the application
+nikita
+.log.cli()
+.log.md({basedir: '/tmp/nikita-tutorial/log'})
+.ssh.open({metadata: {header: 'SSH Open'}}, config.ssh)
+.call({metadata: {header: 'Redis Install'}}, config.redis, install)
+.call({metadata: {header: 'Redis Check'}}, config.redis, check)
+.ssh.close({metadata: {header: 'SSH Close'}})
+```
 
 File "./lib/install.js":
 
-`embed:about/tutorial/samples/redis/7.composition/lib/install.js`
+```js
+module.exports = function({config}){
+  // Default configs
+  if(!config.url){ config.url = 'http://download.redis.io/redis-stable.tar.gz' }
+  if(!config.config){ config.config = {} }
+  if(!config.config['bind']){ config.config['bind'] = '127.0.0.1' }
+  if(!config.config['daemonize']){ config.config['daemonize'] = 'yes' }
+  if(!config.config['protected-mode']){ config.config['protected-mode'] = 'yes' }
+  if(!config.config['port']){ config.config['port'] = 6379 }
+  // Do the job
+  this
+  .file.download({
+    metadata: {
+      header: 'Download'
+    },
+    source: config.url,
+    target: `${config.cwd}/cache/redis-stable.tar.gz`
+  })
+  .execute({
+    metadata: {
+      header: 'Compilation'
+    },
+    unless_exists: `${config.cwd}/redis-stable/src/redis-server`,
+    cwd: config.cwd,
+    command: `
+    tar xzf cache/redis-stable.tar.gz
+    cd redis-stable
+    make
+    `
+  })
+  .file.properties({
+    metadata: {
+      header: 'Configuration'
+    },
+    target: `${config.cwd}/conf/redis.conf`,
+    separator: ' ',
+    content: config.config
+  })
+  .execute({
+    metadata: {
+      header: 'Startup'
+    },
+    cwd: config.cwd,
+    code_skipped: 3,
+    command: `
+    redis-stable/src/redis-cli ping && exit 3
+    nohup redis-stable/src/redis-server conf/redis.conf &
+    `
+  })
+}
+```
 
 File "./lib/check.js":
 
-`embed:about/tutorial/samples/redis/7.composition/lib/check.js`
+```js
+module.exports = function({config}){
+  // Get option from config if present
+  if(config.config){
+    if(config.config.host){ config.host = config.config.host }
+    if(config.config.port){ config.port = config.config.port }
+  }
+  // Default configs
+  if(!config.host){ config.host = '127.0.0.1' }
+  if(!config.port){ config.port = 6379 }
+  // Do the job
+  this
+  .execute({
+    metadata: {
+      header: 'Check',
+      relax: true,
+      shy: true
+    },
+    cwd: config.cwd,
+    command: `redis-stable/src/redis-cli -h ${config.host} -p ${config.port} ping`
+  })
+}
+```

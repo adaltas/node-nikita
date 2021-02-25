@@ -13,7 +13,21 @@ The `sleep` metadata indicates the time lapse when a failed action is reschedule
 
 The sleep value is an integer and is interpreted in millisecond. The default value is `3000`. Here is an example raising the sleep period to 5 seconds.
 
-`embed:metadata/sleep/samples/usage.js`
+```js
+const assert = require('assert');
+nikita
+.call({
+  metadata: {
+    // highlight-range{1-2}
+    retry: 3,
+    sleep: 5000
+  }
+}, ({metadata}) => {
+  // First 2 attempts fail with an assertion error,
+  // the 3rd attempt succeeds in about 10 seconds
+  assert.equal(metadata.attempt, 2)
+})
+```
 
 Any value not superior or equal to zero will generate an error.
 
@@ -21,4 +35,31 @@ Any value not superior or equal to zero will generate an error.
 
 While you can set this metadata on selected actions, it is safe to declare it at the session level. In such case, it will act as the default value and can still be overwritten on a per action basis.
 
-`embed:metadata/sleep/samples/session.js`
+```js
+const assert = require('assert');
+nikita({
+  metadata: {
+    // highlight-next-line
+    sleep: 5000
+  }
+})
+// Use the global sleep value of 5s
+.call({
+  metadata: {
+    // highlight-next-line
+    retry: 3,
+  }
+}, ({metadata}) => {
+  assert.equal(metadata.attempt, 2)
+})
+// Overwrite the global value of 5s and use 1s
+.call({
+  metadata: {
+    // highlight-range{1-2}
+    retry: 3,
+    sleep: 1000
+  }
+}, ({metadata}) => {
+  assert.equal(metadata.attempt, 2)
+})
+```

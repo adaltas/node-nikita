@@ -19,7 +19,26 @@ By default, defining a "header" to your action won't have any consequences. To s
 
 The CLI reporting leverages the metadata to print the name of executed action to the user console. The following code:
 
- `embed:metadata/header/samples/cli.js`
+ ```js
+ nikita
+ // highlight-next-line
+ .log.cli()
+ .call({
+   metadata: {
+     // highlight-next-line
+     header: 'My App'
+   }
+ }, function(){
+   this.file.yaml({
+     metadata: {
+       // highlight-next-line
+       header: 'Configuration'
+     },
+     target: '/tmp/my_app/config.yaml',
+     content: { http_port: 8000 }
+   })
+ })
+ ```
 
 Will generate a similar output to the console:
 
@@ -32,7 +51,25 @@ localhost   My App   ✔  95ms
 
 In a similar fashion, the Markdown reporting will print Markdown style header to a file. The following code:
 
- `embed:metadata/header/samples/md.js`
+```js
+nikita
+.log.md({
+  basedir: '/tmp/my_app/log'
+})
+.call({
+  metadata: {
+    header: 'My App'
+  }
+}, function(){
+  this.file.yaml({
+    metadata: {
+      header: 'Configuration'
+    },
+    target: '/tmp/my_app/config.yaml',
+    content: { http_port: 8000 }
+  })
+})
+```
 
 Will write a similar output:
 

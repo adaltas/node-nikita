@@ -10,7 +10,31 @@ Conditions `if` and `unless` determine the execution of the handler by their val
 
 The following example represents updating a file. It contains 2 conditions applied to `nikita.file` action that writes to a file. The first condition, `if_exists`, passes if the file exists. The second one, `if`, verifies the owner of the file is the same user who is running the Node.js process. Note, the `fs.base.stat` action returning information about a file is called with the enabled ["relax" behavior](/current/metadata/relax/) to make it tolerant to an error in case of lack of the file:
 
-`embed:usages/conditions/samples/example.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-range{1-15}
+    if_exists: '/tmp/nikita/a_file',
+    if: async function({config}) {
+      // Get the file information
+      const {stats} = await this.fs.base.stat({
+        metadata: {
+          // Don't throw an error in case of lack of the file
+          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+        },
+        target: config.target
+      })
+      // Pass the condition if the user is the owner
+      return stats && stats.uid == process.getuid() ? true : false
+    }
+  })
+  console.info('File is updated:', status)
+})()
+```
 
 ## `if`
 
@@ -26,7 +50,24 @@ When the `if` value is:
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated because all the conditions succeed:
 
-`embed:usages/conditions/samples/if.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-range{1-6}
+    if: [
+      'ok',
+      1,
+      true,
+      ({config}) => { return config.content === 'hello' }
+    ]
+  })
+  console.info('File is updated:', status)
+})()
+```
 
 ## `unless`
 
@@ -42,7 +83,26 @@ When the `unless` value is:
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated because all the conditions failed:
 
-`embed:usages/conditions/samples/unless.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-range{1-8}
+    unless: [
+      '',
+      0,
+      false,
+      null,
+      undefined,
+      function({config}){ return config.content !== 'hello' },
+    ]
+  })
+  console.info('File is updated:', status)
+})()
+```
   
 ## `if_execute`
 
@@ -52,7 +112,19 @@ The `if_execute` value could be a **string** a an **array of strings**. It is ev
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if "/tmp/flag" is an existing file:
 
-`embed:usages/conditions/samples/if_execute.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-next-line
+    if_execute: '[ -f "/tmp/flag" ]'
+  })
+  console.info('File is updated:', status)
+})()
+```
   
 ## `unless_execute`
 
@@ -62,7 +134,19 @@ The `unless_execute` value could be a **string** a an **array of strings**. It i
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if "/tmp/flag" is not an existing file:
 
-`embed:usages/conditions/samples/unless_execute.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-next-line
+    unless_execute: '[ -f "/tmp/flag" ]'
+  })
+  console.info('File is updated:', status)
+})()
+```
 
 ## `if_exists`
 
@@ -72,7 +156,22 @@ The `if_exists` value could be a **string** a an **array of strings**. It is eva
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if the file exists and if "/tmp/flag" exists as well:
 
-`embed:usages/conditions/samples/if_exists.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-range{1-4}
+    if_exists: [
+      '/tmp/nikita/a_file',
+      '/tmp/flag'
+    ]
+  })
+  console.info('File is updated:', status)
+})()
+```
 
 ## `unless_exists`
 
@@ -82,7 +181,19 @@ The `unless_exists` value could be a **string** a an **array of strings**. It is
 
 For example, the content of the file "/tmp/nikita/a_file" will be updated if the file "/tmp/flag" doesn't exist:
 
-`embed:usages/conditions/samples/unless_exists.js`
+```js
+(async () => {
+  var {status} = await nikita
+  // Update file content
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-next-line
+    unless_exists: '/tmp/flag'
+  })
+  console.info('File is updated:', status)
+})()
+```
 
 ## Condition writing
 
@@ -90,8 +201,42 @@ Nikita actions are not evaluated at declaration time. Due to the Node.js async n
 
 For example, the second action executed below will not pass its condition `if: isItTrue` and the file will not be written.
 
-`embed:usages/conditions/samples/async.js`
+```js
+(async () => {
+  var isItTrue = null
+  var {status} = await nikita
+  // Call first action
+  .call(() => {
+    isItTrue = true
+  })
+  // Condition is not passing
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-next-line
+    if: isItTrue
+  })
+  console.info('File is written:', status)
+})()
+```
 
 This is because `isItTrue` is `null` and so the condition is not verified. Indeed, most of the time, the conditions are wrapped in function because they are read when the nikita action is declared, but are only evaluated at runtime:
 
-`embed:usages/conditions/samples/sync.js`
+```js
+(async () => {
+  var isItTrue = null
+  var {status} = await nikita
+  // Call first action
+  .call(() => {
+    isItTrue = true
+  })
+  // Condition is passing
+  .file({
+    target: '/tmp/nikita/a_file',
+    content: 'hello',
+    // highlight-next-line
+    if: () => { return isItTrue }
+  })
+  console.info('File is written:', status)
+})()
+```

@@ -16,4 +16,23 @@ The property is meant to be used conjointly with the [`retry` metadata](/current
 
 The associated value is incremented after each retry starting with the value `0`. The following example will failed on the first attempt before finally succeed on its second attempt.
 
-`embed:metadata/attempt/samples/usage.js`
+```js
+// Dependencies
+const assert = require('assert');
+(async () => {
+  var {attempt} = await nikita({
+    metadata: {
+      // highlight-next-line
+      retry: 2
+    }
+  }, ({metadata}) => {
+    if(metadata.attempt === 0){
+      throw Error('Oups')
+    }
+    return {attempt: metadata.attempt}
+  })
+  // The first attempt failed with an error,
+  // but the second attempt succeed
+  assert.equal(attempt, 1)
+})()
+```

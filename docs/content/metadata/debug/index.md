@@ -17,14 +17,42 @@ The information thrown by the `debug` metadata is similar to the output of the [
 
 Activating debugging is easy, simply pass the `debug` metadata with a value set as `true`:
 
-`embed:metadata/debug/samples/activate.js`
+```js
+nikita
+.file.touch({
+  metadata: {
+    // highlight-next-line
+    debug: true
+  },
+  target: '/tmp/a_file'
+})
+```
 
 Of course, it is possible to activate debugging to the overall Nikita session by passing the metadata globally at session creation:
 
-`embed:metadata/debug/samples/activate_globally.js`
+```js
+nikita({
+  metadata: {
+    // highlight-next-line
+    debug: true
+  }
+})
+.file.touch({
+  target: '/tmp/a_file'
+})
+```
 
 ### Redirecting output to stdout
 
 Set the value to `stdout` if you wish to print debugging information to the standard output (`stdout`):
 
-`embed:metadata/debug/samples/stdout.js`
+```js
+nikita
+.file.touch({
+  metadata: {
+    // highlight-next-line
+    debug: 'stdout'
+  },
+  target: '/tmp/a_file'
+})
+```

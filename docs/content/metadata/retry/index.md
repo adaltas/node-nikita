@@ -17,13 +17,41 @@ The default value is `1` which means that actions are not rescheduled on error.
 
 If provided as a number, the value must be superior or equal to `1`. For example, the value `3` means the action will be executed at maximum 3 times. If the third time the action fail, then it will be treated by the Nikita session as a failed action.
 
-`embed:metadata/retry/samples/usage.js`
+```js
+const assert = require('assert');
+nikita
+// Call an action
+.call({
+  metadata: {
+    // highlight-next-line
+    retry: 3
+  }
+}, ({metadata}) => {
+  // First 2 attempts failed with an assertion error,
+  // but the 3rd one succeeded
+  assert.equal(metadata.attempt, 2)
+})
+```
 
 ### Boolean value
 
 Setting the value as `true` causes unlimited number of retries:
 
-`embed:metadata/retry/samples/boolean.js`
+```js
+const assert = require('assert');
+nikita
+// Call an action
+.call({
+  metadata: {
+    // highlight-next-line
+    retry: true
+  }
+}, function ({metadata}) {
+  // First 9 attempts failed with an assertion error,
+  // but 10th attempt succeeded
+  assert.equal(metadata.attempt, 9)
+})
+```
 
 The value `false` is the same as `1`.
 
@@ -31,4 +59,22 @@ The value `false` is the same as `1`.
 
 When used with the [`relax`](/current/metadata/relax/) metadata, every attempt will be rescheduled. Said differently, marking an action as relax will not prevent the action to be re-executed on error.
 
-`embed:metadata/retry/samples/relax.js`
+```js
+const assert = require('assert');
+(async () => {
+  var {status} = await nikita
+  // Call an action
+  .call({
+    metadata: {
+      // highlight-range{1-2}
+      retry: 2,
+      relax: true
+    }
+  }, () => {
+    // Will fail 2 times
+    throw Error('Oups')
+  })
+  // Will be executed because the action was not fatal
+  assert.equal(status, false)
+})()
+```
