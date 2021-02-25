@@ -5,13 +5,13 @@ sort: 3
 
 # Developer information
 
-You are encouraged to [contribute](/current/about/contribute/) to Nikita. There are multiple way to offer assistance to the project. To fix and write actions, you will have get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
+You are encouraged to [contribute](/current/about/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
 
 ## Project layout
 
-Nikita is organized as one monolithic [GIT](https://github.com/adaltas/node-nikita) repository, for the sake of clarity. It includes the core engine, user actions and utils functions; all of them associated with their unit tests. 
+Nikita is organized as one monolithic [GIT](https://github.com/adaltas/node-nikita) repository, for the sake of clarity. It includes the core engine, user actions, and utils functions; all of them associated with their unit tests. 
 
-[Lerna](https://github.com/lerna/lerna) is used in independent mode. It optimizes the time and space requirements, allowing massive refactoring, updating and feature enrichment without any concern. 
+[Lerna](https://github.com/lerna/lerna) is used in independent mode. It optimizes the time and space requirements, allowing massive refactoring, updating, and feature enrichment without any concern. 
 
 ### Core engine
 
@@ -30,17 +30,17 @@ Core engine modules are at the root of the "packages/core/src" directory. It con
 * "metadata/" and "plugins/"   
   Modules that extend functionality using hooks.
 * "scheduler/"   
-  Modules that schedule the sequence for executing Nikita actions.
+  Modules that schedule the sequence for executing Nikita's actions.
 * "utils/"   
-  Plain JavaScript functions used across Nikita actions. 
+  Plain JavaScript functions are used across Nikita's actions. 
 
 ### Actions
 
-Actions' modules are split across directories at the root of each "./src" package folder. The packages can also contain utils functions in the "./src/utils" folder used in this package. Each of those had been tested to be used in production, take a look at the below section. 
+The action modules are split across directories at the root of each "./src" package folder. The packages can also contain utils functions in the "./src/utils" folder used in this package. Each of those had been tested to be used in production, take a look at the below section. 
 
 ## Tests execution
 
-Nikita targets Unix-like system including Linux and macOS. Windows is not supported as a targeting node where to execute actions. It is however known to work as a Nikita host. This mean you can run Nikita from a Windows host and target Linux nodes over SSH.
+Nikita targets Unix-like systems including Linux and macOS. Windows is not supported as a targeting node where actions are executed. It is however known to work as a Nikita host. This means you can run Nikita from a Windows host and target Linux nodes over SSH.
 
 Tests are executed with [Mocha](https://mochajs.org/) and [Should.js](https://shouldjs.github.io/). They are all located inside the "./test" folder.
 
@@ -123,7 +123,7 @@ To ensure tests are executed in a proper environment, we leverage [Docker](https
 - `docker-compose.yml`   
   The [Docker Compose](https://docs.docker.com/compose/) file declares the Nikita container with its test environment as well as its service dependencies such as databases services.
 - `Dockerfile`   
-  The [Dockerfile](https://docs.docker.com/engine/reference/builder/) declare instructions to build the containers.
+  The [Dockerfile](https://docs.docker.com/engine/reference/builder/) declares instructions to build the containers.
 - `test.coffee`   
   The configuration file is used to activate selected tests and configured the Nikita sessions executed inside.
 
@@ -156,9 +156,9 @@ docker-compose run --rm nodejs
 
 ### LXD
 
-Some tests are executed using [LXD](https://linuxcontainers.org/lxd/introduction/). The tests require a local LXD client. To install it on a Linux host, you can follow the [installation instructions](https://linuxcontainers.org/lxd/getting-started-cli/). On non Linux hosts, you can setup the client to communicate with a remote LXD server hosted on a virtual machine. However, you will have to mount the project directory into the "/nikita" folder of the virtual machine. The provided [Vagrantfile](https://github.com/adaltas/node-nikita/blob/master/packages/lxd/assets/Vagrantfile) definition inside the "packages/lxd/assets" folder will set you up.
+Some tests are executed using [LXD](https://linuxcontainers.org/lxd/introduction/). The tests require a local LXD client. To install it on a Linux host, you can follow the [installation instructions](https://linuxcontainers.org/lxd/getting-started-cli/). On non-Linux hosts, you can set up the client to communicate with a remote LXD server hosted on a virtual machine. However, you will have to mount the project directory into the "/nikita" folder of the virtual machine. The provided [Vagrantfile](https://github.com/adaltas/node-nikita/blob/master/packages/lxd/assets/Vagrantfile) definition inside the "packages/lxd/assets" folder will set you up.
 
-For Windows and MacOS users, the procedure is abstracted inside the `./bin/cluster start` command:
+For Windows and macOS users, the procedure is abstracted inside the `./bin/cluster start` command:
 
 ```bash
 # For Windows and macOS users

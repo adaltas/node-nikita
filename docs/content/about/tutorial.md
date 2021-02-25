@@ -14,7 +14,7 @@ This tutorial covers the basics to get started and to use Nikita. It is organize
 
 Feel free to skip the second section if you are familiar with Node.js and its ecosystem.
 
-For detailed information, navigate the documentation or submit an issue if you don't find the answers to your questions. Also, if you are looking for examples, the source code is well documented and its test coverage quite complete. We highly encourage you to navigate the tests. Tests are self contained and very easy to understand. They also provide you the guaranty of reading a working code.
+For detailed information, navigate the documentation or submit an issue if you don't find the answers to your questions. Also, if you are looking for examples, the source code is well documented and its test coverage quite complete. We highly encourage you to navigate the tests. Tests are self-contained and very easy to understand. They also provide you the guaranty of reading a working code.
 
 ## What is Nikita?
 
@@ -28,15 +28,15 @@ Nikita is written in JavaScript and executed with Node.js. It is available on [N
 
 It serves multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate components' deployments (installations, functional tests, lifecycle management...).
 
-Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to setup and manage Big Data systems.
+Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to set up and manage Big Data systems.
 
 ### Supported platforms
 
-Nikita targets Unix-like system including Linux and macOS. Windows is not supported as a targeting node where to execute actions. It is however known to work as a Nikita host. This mean you can run Nikita from a Windows host and target Linux nodes over SSH.
+Nikita targets Unix-like systems including Linux and macOS. Windows is not supported as a targeting node where actions are executed. It is however known to work as a Nikita host. This means you can run Nikita from a Windows host and target Linux nodes over SSH.
 
 Throughout this tutorial, it is assumed you work on Linux or macOS. To be able to run the same code examples without modifications on Windows, you can install a Linux virtual machine or use Docker.
 
-At the end of the tutorial, you will learn how to use Nikita over SSH. This way, your Windows host is used to create your workflow and you can target a remote host like a server, a virtual machine or a container.
+At the end of the tutorial, you will learn how to use Nikita over SSH. This way, your Windows host is used to create your workflow and you can target a remote host like a server, a virtual machine, or a container.
 
 ### What is inside Nikita
 
@@ -44,7 +44,7 @@ Nikita comes with a set of default functions.
 It is bundled with many handy functions covering a large range of usage:
   - write files
   - execute shell commands
-  - package management
+  - package-management
   - run docker containers
 
 You are encouraged to extend Nikita with your own [actions](/current/action). To write an action is just about writing a plain vanilla JavaScript function.
@@ -56,17 +56,17 @@ You are encouraged to extend Nikita with your own [actions](/current/action). To
 To run your code, you must have Node.js and NPM (or YARN) installed. The procedure depends on your operating system. There are multiple alternatives to install Node.js:
 
 - [Download](https://nodejs.org/en/download/)   
-  The [official download page](https://nodejs.org/en/download/) provides you with the choices of downloading an installer, the binary files and the source code.
+  The [official download page](https://nodejs.org/en/download/) provides you with the choices of downloading an installer, the binary files, and the source code.
 - [Package manager](https://nodejs.org/en/download/package-manager/)   
-  The [package manager](https://nodejs.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depends on your system.
+  The [package manager](https://nodejs.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depend on your system.
 - Node.js version manager
-  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advance users, this is our recommended procedure as we personally use [N](https://github.com/tj/n).
+  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advanced users, this is our recommended procedure as we use [N](https://github.com/tj/n).
 
 Once installed, you should have the `node` and `npm` commands available from your terminal.
 
 ### Initialization
 
-A Nikita project is a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason we will use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track our development. Several tools are available such as [GIT](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [GIT](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
+A Nikita project is a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason, we will use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track our development. Several tools are available such as [GIT](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [GIT](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
 
 ```bash
 # Create a new folder
@@ -86,7 +86,7 @@ MD
 cat > README.md <<MD
 # Nikita tutorial
 
-You will learn how to create a new project as well as the fundamentals on using 
+You will learn how to create a new project as well as the fundamentals of using 
 Nikita to automate the deployment of systems.
 
 Please refer to the [official project documentation](http://nikita.adaltas.com/about/tutorial/)
@@ -98,7 +98,7 @@ git add README.md
 git commit -m "Project description"
 ```
 
-A Nikita project is a Node.js project. Thus, we will use the `npm init` command to create a new project. This is a common way to bootstrap a project with the default package definition file. The project unique required dependency is "nikita". There are no other external dependency to declare unless you need to.
+A Nikita project is a Node.js project. Thus, we will use the `npm init` command to create a new project. This is a common way to bootstrap a project with the default package definition file. The project's unique required dependency is `nikita`. There is no other external dependency to declare unless you need to.
 
 ```bash
 # Initialize a new project
@@ -132,15 +132,15 @@ A [list of possible licenses](https://gist.github.com/robertkowalski/7620849) is
 
 ## Core concepts
 
-Before installing something useful, let's learn a few basics. Nikita is executed by the Node.js engine. It implies some experience in JavaScript. You don't need to be a JS Ninja but some basic knowledges are required.
+Before installing something useful, let's learn a few basics. Nikita is executed by the Node.js engine. It implies some experience in JavaScript. You don't need to be a JS Ninja but some basic knowledge is required.
 
 ### About CoffeeScript
 
-This tutorial is written in JavaScript to get you started quickly. If you navigate the Nikita source code, you'll see it is written in CoffeeScript, a language which transpiles into JavaScript before being executed by the Node.js engine. Run `npm install -g coffeescript` to install CoffeeScript globally. Unless you used a Node.js version manager, you will probably encounter a permission error. Read the NPM chapter about [permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions) to select a solution or install it locally without the `-g` option and use the command `./node_modules/.bin/coffee` instead of `coffee`.
+This tutorial is written in JavaScript to get you started quickly. If you navigate the Nikita source code, you'll see it is written in CoffeeScript, a language that transpiles into JavaScript before being executed by the Node.js engine. Run `npm install -g coffeescript` to install CoffeeScript globally. Unless you used a Node.js version manager, you will probably encounter a permission error. Read the NPM chapter about [permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions) to select a solution or install it locally without the `-g` option and use the command `./node_modules/.bin/coffee` instead of `coffee`.
 
-CoffeeScript has a very clean syntax and is perfectly suited with the declarative aspect of the Nikita API. In the end, the source code looks like one written in YAML while preserving the advantages of a procedural language like JavaScript. A second advantage we found with CoffeeScript is its [literate functionality](http://coffeescript.org/#literate) which let you write Markdown files with CoffeeScript code inside. Your source code looks a bit like a Notebook, it is a markdown document with documentation and code organized in blocks.
+CoffeeScript has a very clean syntax and is perfectly suited to the declarative aspect of the Nikita API. In the end, the source code looks like one written in YAML while preserving the advantages of a procedural language like JavaScript. A second advantage we found with CoffeeScript is its [literate functionality](http://coffeescript.org/#literate) which lets you write Markdown files with CoffeeScript code inside. Your source code looks a bit like a Notebook, it is a markdown document with documentation and code organized in blocks.
 
-### Actions handler
+### Action handler
 
 An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated configuration, called `config`. It is materialized as a JavaScript object, for example:
 
@@ -153,7 +153,7 @@ An action is the basic building block in Nikita. It is basically a function, cal
 }
 ```
 
-As you can see, `config` is made available as a destructure property of the argument that handler receives.
+As you can see, `config` is made available as a destructure property of the argument that the handler receives.
 
 ### Calling actions
 
@@ -178,9 +178,9 @@ nikita.call({
 })
 ```
 
-### Actions promise
+### Action promise
 
-Nikita actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action's output, you have to call an asynchronous function and await for the result from Promise.
+Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to call an asynchronous function and "await" for the result from Promise.
 
 ```js
 // Call asynchronous function
@@ -192,8 +192,8 @@ Nikita actions always return [Javascript Promise](https://nodejs.dev/learn/under
       return {who: config.who}
     }
   })
-  // Run the next function
-  console.log(result.who)
+  // Run next synchronous function
+  console.info(result.who)  // leon
 })()
 ```
 
@@ -238,7 +238,7 @@ const assert = require('assert');
 
 In the context of software deployment, idempotence means that an action with the same parameters can be executed multiple times without changing the final state of the system. It is a fundamental concept and every action in Nikita follows this principle.
 
-The status is used and interpreted with different meanings but in most cases it indicates that a change occurred. Read the action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return `true` on its first run and `false` later on because the file already exists:
+The status is used and interpreted with different meanings but in most cases, it indicates that a change occurred. Read the action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return `true` on its first run and `false` later on because the file already exists:
 
 > Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to `true` instead of `false`. Simply remove the file with `rm /tmp/a_file` to overcome this issue.
 
@@ -340,7 +340,7 @@ const assert = require('assert');
 
 ### Passing `metadata`
 
-There are several properties which are generic and globally available to every action such as `header`, `retry`, `relax`, etc. Those are [`metadata` properties](/current/metadata/) and they are not to be confused with `config` properties which are specific to actions.
+Several properties are generic and globally available to every action such as `header`, `retry`, `relax`, etc. Those are [`metadata` properties](/current/metadata/) and they are not to be confused with `config` properties that are specific to actions.
 
 ### Registering actions
 
@@ -436,7 +436,7 @@ It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to 
 
 *Learn how to merge or overwrite a configuration by serializing a JavaScript vanilla object.*
 
-Before starting the server, we will write a configuration file. The Redis format is made of key value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
+Before starting the server, we will write a configuration file. The Redis format is made of key-value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
 
 ```js
 (async () => {
@@ -481,7 +481,7 @@ nikita
 })
 ```
 
-The message contains information such as the hostname or the ip address where the action is executed, the custom header, the status symbol and time of execution. It ends with `♥` to indicate termination of the Nikita session:
+The message contains information such as the hostname or the IP address where the action is executed, the custom header, the status symbol, and the time of execution. It ends with `♥` to indicate the termination of the Nikita session:
 
 ```bash
 localhost   Redis configuration   ✔  109ms
@@ -546,9 +546,9 @@ nikita
 
 The Redis `PING` command is expected to return `PONG` if the server is healthy. Let's take this use case to illustrate the usage of the `relax` and `shy` metadata properties.
 
-The `relax` metadata sends the error to the result output without throwing an exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
+The `relax` metadata sends the error to the resulting output without throwing an exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
 
-Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of parent `nikita.call` action, because it is not considered as a change of its state.
+Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of the parent `nikita.call` action, because it is not considered as a change of its state.
 
 ```js
 nikita
@@ -571,7 +571,7 @@ nikita
 })
 ```
 
-When Redis server is started, it prints:
+When the Redis server is started, it prints:
 
 ```
 localhost   Redis Check : Check   -  12ms
@@ -587,7 +587,7 @@ localhost   Redis Check   ✔  18ms
 localhost      ♥  
 ```
 
-When Redis server is not started, it prints: 
+When the Redis server is not started, it prints: 
 
 ```
 localhost   Redis Check : Check   ✘  12ms
@@ -601,7 +601,7 @@ localhost      ♥
 
 Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [all the tests](/current/about/developers/#tests-execution) are provided with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
 
-Calling `nikita.ssh.open` and `nikita.ssh.close` will associate the Nikita current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
+Calling `nikita.ssh.open` and `nikita.ssh.close` will associate Nikita's current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
 
 > Note: both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
 
@@ -738,7 +738,7 @@ nikita
 })
 ```
 
-Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with more flexible configuration:
+Finally, we will split this code into one file to pilot our application and two files to encapsulate our install and check actions. We will also enhance our actions with a more flexible configuration:
 
 File "app.js":
 

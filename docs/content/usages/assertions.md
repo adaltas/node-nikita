@@ -4,7 +4,7 @@ sort: 6
 
 # Assertions
 
-Assertions are executed after the [actions' handler](/current/action/handler) to validate the result of its execution.
+Assertions are executed after the [action handler](/current/action/handler) to validate the result of its execution.
 
 Assertions `assert` and `unassert` validate the [output](/current/action/output/) returned by the action. Other assertions exist and are prefixed with `assert_` or `unassert_` for their negation. On failure, an [error](/current/usages/error/) is thrown with the `NIKITA_INVALID_ASSERTION` code. 
 
@@ -40,11 +40,11 @@ Asserts the [output](/current/action/output/) of the action after its execution.
 
 Depending on the value of `assert` the assertion has different behavior. When the `assert` value is:
 
-- a **boolean**, a **string**, a **number**, a regular expression, `null` or `undefined`, it asserts it matches the action's output.
+- a **boolean**, a **string**, a **number**, a regular expression, `null` or `undefined`, it asserts it matches the action output.
 
-> Note, a boolean value returned by the handler is interpreted as a value of the [`status` property](/current/usages/status/) of the output object; when `null`, the `status` value is inherited form child actions or it is `false` in lack of children. You can enable the [`raw_output` metadata](/current/metadata/raw_output/) to disable this behaviour.
+> Note, a boolean value returned by the handler is interpreted as a value of the [`status` property](/current/usages/status/) of the output object; when `null`, the `status` value is inherited from child actions or it is `false` in lack of children. You can enable the [`raw_output` metadata](/current/metadata/raw_output/) to disable this behaviour.
 
-- an **object**, it asserts it partially matches the action's output.
+- an **object**, it asserts it partially matches the action output.
 
 - a **function**, the argument is a context object including the `config` object. It is run synchronously after the handler of the action and must return `true` for the assertion to pass.
 
@@ -122,13 +122,13 @@ Depending on the value of `assert` the assertion has different behavior. When th
 
 ## `unassert`
 
-Negatively asserts [the actions' output](/current/action/output/) after its execution. It is a negation of the `assert` property.
+Negatively asserts [the action output](/current/action/output/) after its execution. It is a negation of the `assert` property.
 
 Depending on the value of `unassert` the assertion has different behavior. When the `unassert` value is:
 
-- a **boolean**, a **string**, a **number**, a regular expression, `null` or `undefined`, it asserts it doesn't match the action's output.
+- a **boolean**, a **string**, a **number**, a regular expression, `null` or `undefined`, it asserts it doesn't match the action output.
 
-- an **object**, it asserts it doesn't partially match the action's output.
+- an **object**, it asserts it doesn't partially match the action output.
 
 - a **function**, the argument is a context object including the `config` object. It is run synchronously after the handler of the action and must return `false` for the assertion to pass.
 

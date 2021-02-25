@@ -4,7 +4,7 @@ sort: 5
 
 # Conditions
 
-Conditions are executed before the [actions' handler](/current/action/handler) to control and guarantee its execution.
+Conditions are executed before the [action handlers](/current/action/handler) to control and guarantee its execution.
 
 Conditions `if` and `unless` determine the execution of the handler by their values or the result of its resolving in case of function. Other conditions exist and are prefixed with `if_` or `unless_` for their negation. Multiple conditions can be combined, in which case, all of them must pass. 
 
@@ -38,7 +38,7 @@ The following example represents updating a file. It contains 2 conditions appli
 
 ## `if`
 
-Condition the execution of the [actions' handler](/current/action/handler) to a user defined condition interpreted as `true`. 
+Condition the execution of the [action handlers](/current/action/handler) to a user defined condition interpreted as `true`. 
 
 When the `if` value is:
 
@@ -71,7 +71,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
 
 ## `unless`
 
-Condition the execution of an action to a user defined condition interpreted as `false`. It is a negation of the `if` property.
+Condition the execution of an action to a user-defined condition interpreted as `false`. It is a negation of the `if` property.
 
 When the `unless` value is:
  
@@ -197,7 +197,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
 
 ## Condition writing
 
-Nikita actions are not evaluated at declaration time. Due to the Node.js async nature, JavaScript functions are not always executed sequentially. A variable declared inside an asynchronous function will not be available in its parent context. It will generate an unexpected behavior and eventually a runtime error.
+Nikita's actions are not evaluated at declaration time. Due to the Node.js async nature, JavaScript functions are not always executed sequentially. A variable declared inside an asynchronous function will not be available in its parent context. It will generate an unexpected behavior and eventually a runtime error.
 
 For example, the second action executed below will not pass its condition `if: isItTrue` and the file will not be written.
 

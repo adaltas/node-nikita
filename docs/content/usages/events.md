@@ -29,15 +29,15 @@ Most of the time when writing your custom action handlers, you want to provide c
 Certain events are automatically emitted. They correspond to the action lifecycle and provide notifications on the internal state of the Nikita session:
 
 - `nikita:action:start`   
-  It is emitted right before an action's handler execution.
+  It is emitted right before an action handler execution.
 - `nikita:action:end`   
   It is emitted after the action handler has completed, whether it failed or was successful.
 - `nikita:resolved`   
   It is emitted once at a Nikita session when all action handlers have completed successfully.
 - `nikita:rejected`   
-  It is emitted once at a Nikita session when an action's handler has failed.
+  It is emitted once at a Nikita session when an action handler has failed.
 
-Some functionality like [logging and debugging](/current/usage/logging_debugging) also relies on the event facility and emits following events:
+Some functionality like [logging and debugging](/current/usage/logging_debugging) also relies on the event facility and emits the following events:
 
 - `diff`   
   It represents content modification. Used for example by the `file` action.

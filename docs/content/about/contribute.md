@@ -11,12 +11,12 @@ Nikita is an open source project hosted on [GitHub](https://github.com/adaltas/n
 Contributions go far beyond pull requests and commits. we are thrilled to receive a variety of other contributions including the following:
 
 - Write and publish your own actions
-- Write articles and blog posts, create tutorial and spread the words
+- Write articles and blog posts, create a tutorial, and spread the words
 - Submit new ideas of features and documentation
 - Submitting documentation updates, enhancements, designs, or bugfixes
 - Submitting spelling or grammar fixes
 - Additional unit or functional tests
-- Help answering questions and issues on GitHub
+- Help to answer questions and issues on GitHub
 
 ## Open Development
 
@@ -36,19 +36,19 @@ Every significant change is documented in the [Changelog](changelog) file.
 
 ## Documentation
 
-Managing an open source project a huge time sink and most of us are non native English speaker. We greatly appreciate any time spent fixing typos or clarifying sections in the documentation.
+Managing an open source project a huge time sink and most of us are non-native English speakers. We greatly appreciate any time spent fixing typos or clarifying sections in the documentation.
 
 ## Discussions
 
-There are currently no channel dedicated to discuss about Nikita. For now, you may simply [open an new issue](https://github.com/adaltas/node-nikita/issues/new).
+There is currently no channel dedicated to discussing Nikita. For now, you may simply [open a new issue](https://github.com/adaltas/node-nikita/issues/new).
 
 ## Proposing a Change
 
 ### Pull requests
 
-If you intend to change the public API, or make any non-trivial changes to the implementation, we recommend [filing an issue](https://github.com/adaltas/node-nikita/issues/new). This lets us reach an agreement on your proposal before you put significant effort into it.
+If you intend to change the public API or make any non-trivial changes to the implementation, we recommend [filing an issue](https://github.com/adaltas/node-nikita/issues/new). This lets us reach an agreement on your proposal before you put significant effort into it.
 
-If you’re only fixing a bug, it’s fine to submit a pull request right away but we still recommend to file an issue detailing what you’re fixing. This is helpful in case we don’t accept that specific fix but want to keep track of the issue.
+If you’re only fixing a bug, it’s fine to submit a pull request right away but we still recommend filing an issue detailing what you’re fixing. This is helpful in case we don’t accept that specific fix but want to keep track of the issue.
 
 ### Conventional Commits
 

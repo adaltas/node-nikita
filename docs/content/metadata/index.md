@@ -4,7 +4,7 @@ sort: 4
 
 # Metadata
 
-Metadata is a plain JavaScript object with properties used to contextualise or modify the execution of an action. The metadata properties are common to all Nikita actions.
+Metadata is a plain JavaScript object with properties used to contextualize or modify the execution of an action. The metadata properties are common to all Nikita actions.
 
 ## Usage
 

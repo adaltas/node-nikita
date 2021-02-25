@@ -8,7 +8,7 @@ Nikita is designed to help developers and operators to deploy infrastructures an
 
 ## Content
 
-You will find across this website resources to get familiar with Nikita's purposes, how to master it and how to contribute to its success.
+You will find across this website resources to get familiar with Nikita's purposes, how to master Nikita and how to contribute to its success.
 
 * [Introduction](/current/about/introduction/)   
   Learn the motivations of software automation and its promises.

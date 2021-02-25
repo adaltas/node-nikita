@@ -14,7 +14,7 @@ The property is meant to be used conjointly with the [`retry` metadata](/current
 
 ## Usage
 
-The associated value is incremented after each retry starting with the value `0`. The following example will failed on the first attempt before finally succeed on its second attempt.
+The associated value is incremented after each retry starting with the value `0`. The following example will be failed on the first attempt before finally succeed on its second attempt.
 
 ```js
 // Dependencies

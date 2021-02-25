@@ -8,7 +8,7 @@ Nikita provides multiple mechanisms to report, dive into the logs and intercept 
 
 ## Quick debugging
 
-While developing, the [`debug` metadata](/current/metadata/debug/) can be used to get visual and detailed information in the standart output (stdout). This behavior can be propagated to the global Nikita session, to all child actions, or to the specific action:
+While developing, the [`debug` metadata](/current/metadata/debug/) can be used to get visual and detailed information in the standard output (stdout). This behavior can be propagated to the global Nikita session, to all child actions, or the specific action:
 
 The following example demonstrates global definition:
 
@@ -100,12 +100,12 @@ It prints short messages to stdout indicating the status of the actions' executi
 
 ## Deep dive into logging
 
-Nikita provide a flexible architecture to intercept information. Users can write logs to custom destinations in any format. To write your own logging actions, once you register it, you can choose among the following options:
+Nikita provides a flexible architecture to intercept the information. Users can write logs to custom destinations in any format. To write your own logging actions, once you register it, you can choose among the following options:
 
 - [Listen to events](#listening-to-events)   
-  It is a flexible solution in which you listen to every [events](/current/usages/events/) emitted by Nikita. However, it requires you to fully implemented what you wish to do with the data.
+  It is a flexible solution in which you listen to every [event](/current/usages/events/) emitted by Nikita. However, it requires you to fully implemented what you wish to do with the data.
 - [Extending `nikita.log.stream`](#extending-nikitalogstream)   
-  It is an action which simplify the integration of new logging appender by expecting a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
+  It is an action that simplifies the integration of a new logging appender by expecting a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
 - [Extending `nikita.log.fs`](#extending-nikitalogfs)   
   Built upon the `nikita.log.stream` action, it provides basic functionality to write information to the filesystem. You are only responsible for serializing the data. The `nikita.log.csv` and `nikita.log.md` actions are such examples.
 
@@ -115,9 +115,9 @@ At the heart of this architecture is the [Nikita Events API](/current/usages/eve
 
 ### Extending `nikita.log.stream`
 
-It is a low level action which is meant to be extended and not to be called directly. More specific actions could used the `nikita.log.stream` action by providing a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
+It is a low-level action that is meant to be extended and not to be called directly. More specific actions could use the `nikita.log.stream` action by providing a [Node.js writable stream](https://nodejs.org/api/stream.html#stream_writable_streams) and a serializer object.
 
-The serializer is an object which must be implemented by the user. Keys correspond to the event types and their associated value is a function that must be implemented to serialize the information.
+A serializer is an object which must be implemented by the user. Keys correspond to the event types and their associated value is a function that must be implemented to serialize the information.
 
 ### Extending `nikita.log.fs`
 
@@ -144,7 +144,7 @@ module.exports = {ssh: false, handler: async function({config}) {
 
 ## CLI reporting
 
-The CLI reporting is build on top of the log events. It prints pretty and colorful information to the stdout of the terminal. In case no [TTY](https://en.wikipedia.org/wiki/Tty_(unix)) is detected, no color formatting will be written by default unless the `color` configuration property is `true` or made of an object.
+The CLI reporting is built on top of the log events. It prints pretty and colorful information to the stdout of the terminal. In case no [TTY](https://en.wikipedia.org/wiki/Tty_(unix)) is detected, no color formatting will be written by default unless the `color` configuration property is `true` or made of an object.
 
 The action only reports if the [`header` metadata](/current/metadata/header/) is defined. No argument is required by default:
 

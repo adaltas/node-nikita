@@ -4,7 +4,7 @@ navtitle: header
 
 # Metadata "header"
 
-The `header` metadata is mostly used as a reporting mechanism and provides a title to a group of actions. It leverages the parent-child nature of Nikita to provided a notion of hierarchical header. In term of semantic, think about Nikita header like you would do with HTML header (`H1`, `H2`, `H3`, ...).
+The `header` metadata is mostly used as a reporting mechanism and provides a title to a group of actions. It leverages the parent-child nature of Nikita to provided a notion of a hierarchical header. In terms of semantic, think about Nikita's header like you would do with an HTML header (`H1`, `H2`, `H3`, ...).
 
 * Type: `string`
 * Default: `""`
@@ -13,7 +13,7 @@ The `header` metadata is mostly used as a reporting mechanism and provides a tit
 
 Its value is a string describing what the action is about.
 
-By default, defining a "header" to your action won't have any consequences. To see it in action, you will need to activate a reporting solution which honors the `header` metadata or create one on your own.
+By default, defining a `header` to your action won't have any consequences. To see it in action, you will need to activate a reporting solution that honors the `header` metadata or create one on your own.
 
 ### CLI reporting
 

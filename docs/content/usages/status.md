@@ -4,7 +4,7 @@ sort: 3
 
 # Status
 
-The status is information indicating whether a Nikita action had any impact or not. It is a central Nikita concept implemented inside every action and formalized as a boolean value returned to the [action output](/current/action/output) as the `status` property.
+The status is information indicating whether Nikita's action had any impact or not. It is a central Nikita concept implemented inside every action and formalized as a boolean value returned to the [action output](/current/action/output) as the `status` property.
 
 The status meaning may differ from one action to another, here are a few examples:
 
@@ -36,7 +36,7 @@ nikita
 
 ## Changing the status value
 
-By default, Nikita actions return the status value of `false`. It can be changed by the [action handler](/current/action/handler) or the child actions. 
+By default, Nikita's actions return the status value of `false`. It can be changed by the [action handler](/current/action/handler) or the child actions. 
 
 The handler modifies the status when it returns a boolean value or an object with the `status` property:
 
