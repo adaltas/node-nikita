@@ -3,11 +3,12 @@ var utils;
 
 utils = require('../utils');
 
-module.exports = function(handlers) {
-  var promise, scheduler, stack, state;
-  stack = [];
+module.exports = function(handlers, options = {}) {
+  var promise, scheduler, state;
   scheduler = null;
   state = {
+    stack: [],
+    pause: options.pause != null ? !!options.pause : false,
     error: void 0,
     output: [],
     resolved: false,
@@ -15,8 +16,12 @@ module.exports = function(handlers) {
   };
   promise = new Promise(function(resolve, reject) {
     scheduler = {
+      state: state,
       pump: function() {
         var item;
+        if (state.pause) {
+          return;
+        }
         if (state.running) {
           return;
         }
@@ -24,16 +29,16 @@ module.exports = function(handlers) {
           if (state.error) {
             state.resolved = true;
             return reject(state.error);
-          } else if (!stack.length) {
+          } else if (!state.stack.length) {
             state.resolved = true;
             return resolve(state.output);
           }
         }
-        if (!stack.length) {
+        if (!state.stack.length) {
           return;
         }
         state.running = true;
-        item = stack.shift();
+        item = state.stack.shift();
         item = item;
         return setImmediate(async function() {
           var error, result;
@@ -51,7 +56,7 @@ module.exports = function(handlers) {
             error = error1;
             state.running = false;
             item.reject.call(null, error);
-            if (stack.length !== 0) {
+            if (state.stack.length !== 0) {
               state.error = error;
             }
             return setImmediate(function() {
@@ -72,7 +77,7 @@ module.exports = function(handlers) {
         return new Promise(function(resolve, reject) {
           var handler;
           if (!isArray) {
-            stack.unshift({
+            state.stack.unshift({
               handler: handlers,
               resolve: resolve,
               reject: reject,
@@ -96,6 +101,18 @@ module.exports = function(handlers) {
           }
         });
       },
+      pause: function() {
+        return state.pause = true;
+      },
+      resume: function() {
+        if (!state.pause) {
+          return;
+        }
+        state.pause = false;
+        if (state.stack.length) {
+          return scheduler.pump();
+        }
+      },
       push: function(handlers, options = {}) {
         var isArray, prom;
         isArray = Array.isArray(handlers);
@@ -105,7 +122,7 @@ module.exports = function(handlers) {
         prom = new Promise(function(resolve, reject) {
           var handler;
           if (!isArray) {
-            stack.push({
+            state.stack.push({
               handler: handlers,
               resolve: resolve,
               reject: reject,

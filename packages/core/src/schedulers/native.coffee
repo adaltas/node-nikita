@@ -1,28 +1,31 @@
 
 utils = require '../utils'
 
-module.exports = (handlers) ->
-  stack = []
+module.exports = (handlers, options = {}) ->
   scheduler = null
   state =
+    stack: []
+    pause: if options.pause? then !!options.pause else false
     error: undefined
     output: []
     resolved: false
     running: false
   promise = new Promise (resolve, reject) ->
     scheduler =
+      state: state
       pump: ->
+        return if state.pause
         return if state.running
         unless state.resolved
           if state.error
             state.resolved = true
             return reject state.error
-          else unless stack.length
+          else unless state.stack.length
             state.resolved = true
             return resolve state.output
-        return unless stack.length
+        return unless state.stack.length
         state.running = true
-        item = stack.shift()
+        item = state.stack.shift()
         item = item
         setImmediate ->
           try
@@ -34,7 +37,7 @@ module.exports = (handlers) ->
           catch error
             state.running = false
             item.reject.call null, error
-            state.error = error unless stack.length is 0
+            state.error = error unless state.stack.length is 0
             setImmediate -> scheduler.pump()
       unshift: (handlers, options={}) ->
         options.pump ?= true
@@ -42,7 +45,7 @@ module.exports = (handlers) ->
         throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
         new Promise (resolve, reject) ->
           unless isArray
-            stack.unshift
+            state.stack.unshift
               handler: handlers
               resolve: resolve
               reject: reject
@@ -53,12 +56,18 @@ module.exports = (handlers) ->
             Promise.all((
               scheduler.unshift handler, pump: false for handler in handlers.reverse()
             ).reverse()).then resolve, reject
+      pause: ->
+        state.pause = true
+      resume: ->
+        return unless state.pause
+        state.pause = false
+        scheduler.pump() if state.stack.length
       push: (handlers, options={}) ->
         isArray = Array.isArray handlers
         throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
         prom = new Promise (resolve, reject) ->
           unless isArray
-            stack.push
+            state.stack.push
               handler: handlers
               resolve: resolve
               reject: reject
