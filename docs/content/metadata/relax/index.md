@@ -2,7 +2,7 @@
 navtitle: relax
 ---
 
-# Metadata `relax`
+# Metadata "relax"
 
 The `relax` metadata makes an action makes an action tolerant to internal errors. It returns an error instead of throwing it.
 

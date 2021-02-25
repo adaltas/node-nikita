@@ -2,7 +2,7 @@
 navtitle: shy
 ---
 
-# Metadata `shy`
+# Metadata "shy"
 
 The `shy` metadata disables modification of the parent action [status](/current/usages/status/) depending on the child action status where `shy` is activated.
 
