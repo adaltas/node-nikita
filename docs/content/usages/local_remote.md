@@ -11,9 +11,9 @@ The `ssh` configuration property must be provided for the action to run remotely
 
 ## Implementation
 
-Behind the scene, the [ssh2] package written by [Brian White](https://github.com/mscdex) is used to assure the SSH transport. This is a pure JavaScript package written for Node.js.
+Behind the scene, the [ssh2] package written by [Brian White](https://github.com/mscdex) is used to assure SSH transport. This is a pure JavaScript package written for Node.js.
 
-To create a connection, we use [ssh2-connect]. The package simplifies creation of a connection and also provides a few additional configurations.
+To create a connection, we use [ssh2-connect]. The package simplifies the creation of a connection and also provides a few additional configurations.
 
 ## Configurations
 
@@ -39,10 +39,10 @@ The [ssh2] configuration properties:
   Username for authentication. Default: (none)
 
 * `password` (string)   
-  Password of the user used to authenticate and create the SSH connection.
+  The password of the user used to authenticate and create the SSH connection.
 
 * `agent` (string)   
-  Path to ssh-agent's UNIX socket for ssh-agent-based user authentication. Windows users: set to 'pageant' for authenticating with Pageant or (actual) path to a cygwin "UNIX socket.". Default: (none)
+  Path to ssh-agent's UNIX socket for ssh-agent-based user authentication. Windows users: set to 'pageant' for authenticating with Pageant or (actual) path to Cygwin "UNIX socket.". Default: (none)
 
 * `privateKey` (mixed)   
   Content of the private key used to authenticate the user and create the SSH connection. It is only used if `password` is not provided.
@@ -51,7 +51,7 @@ The [ssh2] configuration properties:
   For an encrypted private key, this is the passphrase used to decrypt it. Default: (none)
 
 * `tryKeyboard` (boolean)   
-  Try keyboard-interactive user authentication if primary user authentication method fails. Default: `false`
+  Try keyboard-interactive user authentication if the primary user authentication method fails. Default: `false`
 
 * `pingInterval` (integer)   
   How often (in milliseconds) to send SSH-level keepalive packets to the server. Default: `60000`
@@ -73,10 +73,10 @@ The [ssh2-connect] configuration properties:
 - `privateKeyPath` (string)   
   Local file location of the private key used to authenticate the user and create the SSH connection. It is only used if `password` and `private_key` are not provided. Default is `~/.sh/id_rsa`.   
 
-- `retry` (integer)
+- `retry` (integer)   
   Attempt to reconnect multiple times. Default is `1`.   
 
-- `wait` (integer)
+- `wait` (integer)   
   Time to wait in milliseconds between each retry. Default is `500`.  
 
 Additional configuration properties:
@@ -113,7 +113,7 @@ connect({
 })
 ```
 
-### Passing an SSH configuation
+### Passing an SSH configuration
 
 ```js
 (async () => {
@@ -132,9 +132,9 @@ connect({
 
 ## Root access
 
-If root privileges are required and root access is not available because no authorised key has been set, it is possible to let Nikita deploy the public key or execute Nikita with [`sudo`](/current/metadata/sudo/).
+If root privileges are required and root access is not available because no authorized key has been set, it is possible to let Nikita deploy the public key or execute Nikita with [`sudo`](/current/metadata/sudo/).
 
-The `root` option instruct the `ssh.open` action to enable root access through another user. This user must have passwordless sudo enabled.
+The `root` option instructs the `ssh.open` action to enable root access through another user. This user must have passwordless sudo enabled.
 
 ```js
 nikita
