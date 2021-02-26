@@ -14,6 +14,17 @@ const {status} = await nikita.execute.wait({
 console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 ```
 
+## Hooks
+
+    on_action = ({config}) ->
+      return unless config.command
+      # Always normalise quorum as an integer
+      if config.quorum and config.quorum is true
+        config.quorum = Math.ceil (config.command.length + 1) / 2
+      else unless config.quorum?
+        config.command = [config.command] if typeof config.command is 'string'
+        config.quorum = config.command.length
+
 ## Schema
 
     schema =
@@ -47,7 +58,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
         'code_skipped':
           type: 'array'
           items: type: 'integer'
-          default: [1]
+          # default: [1]
           description: """
           Expected code to be returned when the command failed and should be
           scheduled for later execution, default to "1".
@@ -63,43 +74,43 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # Validate parameters
-      if config.quorum and config.quorum is true
-        config.quorum = Math.ceil config.command.length / 2
-      else unless config.quorum?
-        config.quorum = config.command.length
-      quorum_current = 0
+      attempts = 0
       status = false
-      for command, i in config.command
-        count = 0
-        break if quorum_current >= config.quorum
-        run = =>
-          count++
-          log message: "Attempt ##{count}", level: 'INFO'
-          {status: succeed} = await @execute
-            command: command
-            code: config.code or 0
-            code_skipped: config.code_skipped
-            stdin_log: config.stdin_log
-            stdout_log: config.stdout_log
-            stderr_log: config.stderr_log
-          unless succeed
-            return new Promise (resolve, reject) ->
-              setTimeout ->
-                run()
-                .then resolve
-                .catch reject
-              , config.interval
-          log message: "Finish wait for execution", level: 'INFO'
-          quorum_current++
-          status = true if count > 1
-        await run()
-      status: status
+      wait = (timeout) ->
+        return unless timeout
+        new Promise (resolve) ->
+          setTimeout resolve, timeout
+      commands = config.command
+      while true
+        attempts++
+        log message: "Start attempt ##{attempts}", level: 'DEBUG'
+        commands = await await utils.promise.array_filter commands, (command) =>
+            {status: success} = await @execute
+              command: command
+              code: config.code or 0
+              code_skipped: config.code_skipped
+              stdin_log: config.stdin_log
+              stdout_log: config.stdout_log
+              stderr_log: config.stderr_log
+              metadata:
+                relax: config.code_skipped is undefined
+            !success
+        log message: "Attempt ##{attempts} expect #{config.quorum} success, got #{config.command.length - commands.length}", level: 'INFO'
+        break if commands.length <= config.command.length - config.quorum
+        await wait config.interval
+      attempts: attempts
+      status: attempts > 1
 
 ## Exports
 
     module.exports =
       handler: handler
+      hooks:
+        on_action: on_action
       metadata:
         argument_to_config: 'command'
         schema: schema
+
+## Dependencies
+
+    utils = require '../../utils'

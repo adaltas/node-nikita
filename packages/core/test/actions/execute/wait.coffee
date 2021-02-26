@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'actions.execute.wait', ->
+  return unless tags.posix
 
   they 'take a single command', ({ssh}) ->
     nikita
@@ -24,7 +23,7 @@ describe 'actions.execute.wait', ->
         interval: 60
       status.should.be.true()
 
-  they 'take a multiple commands', ({ssh}) ->
+  they 'take multiple commands', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
@@ -37,8 +36,9 @@ describe 'actions.execute.wait', ->
       status.should.be.false()
       @call ->
         setTimeout ->
-          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
-          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
+          nikita(ssh: ssh?.config)
+          .fs.mkdir "#{tmpdir}/file_1"
+          .fs.mkdir "#{tmpdir}/file_2"
         , 100
       {status} = await @execute.wait
         command: [
@@ -48,33 +48,37 @@ describe 'actions.execute.wait', ->
         interval: 40
       status.should.be.true()
   
-  they 'command exit with error in first attempt', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @execute.wait
-        command: "exit 99"
-        interval: 40
-      .should.be.rejectedWith
-        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-        exit_code: 99
+  describe 'code_skipped', ->
   
-  they 'command exit with error in retried attempt', ({ssh}) ->
-    nikita
-      ssh: ssh
-      metadata: tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @call ->
-        setTimeout ->
-          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
-        , 100
-      @execute.wait
-        command: "test -d #{tmpdir}/file && exit 99"
-        interval: 40
-      .should.be.rejectedWith
-        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-        exit_code: 99
+    they 'error if error code not skipped, first attempt', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @execute.wait
+          command: "exit 99"
+          code_skipped: 1
+          interval: 40
+        .should.be.rejectedWith
+          code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+          exit_code: 99
+    
+    they 'error if error code not skipped, retried attempt', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @call ->
+          setTimeout ->
+            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
+          , 200
+        @execute.wait
+          command: "test -d #{tmpdir}/file && exit 99"
+          code_skipped: 1
+          interval: 40
+        .should.be.rejectedWith
+          code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+          exit_code: 99
   
   describe 'log', ->
 
@@ -127,55 +131,65 @@ describe 'actions.execute.wait', ->
           logs.should.eql 0
 
   describe 'quorum', ->
+    
+    it 'boolean `true` is converted to quorum', ->
+      # Odd number
+      quorum = await nikita.execute.wait
+        quorum: true
+        command: ['echo 1', 'echo 2', 'echo 3']
+      , ({config}) -> config.quorum
+      quorum.should.eql 2
+      # Even number
+      quorum = await nikita.execute.wait
+        quorum: true
+        command: ['echo 1', 'echo 2', 'echo 3', 'echo 4']
+      , ({config}) -> config.quorum
+      quorum.should.eql 3
 
-    they 'is not defined', ({ssh}) ->
+    they 'all commands succeed when not defined', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        @call ->
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
-          , 100
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
-          , 200
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
-          , 300
-        {status} = await @execute.wait
+      , ({metadata: {tmpdir, uuid}}) ->
+        @call -> setImmediate ->
+          nikita
+            ssh: ssh?.config
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_1"
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_2"
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_3"
+        {attempts, status} = await @execute.wait
           command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
-          interval: 40
-          # quorum: 1
+          interval: 100
+        attempts.should.be.above 2
         status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n3\n'
 
     they 'is a number', ({ssh}) ->
+      @timeout 20000
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @call ->
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
-          , 100
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
-          , 200
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
-          , 300
+        @call -> setImmediate ->
+          nikita
+            ssh: ssh?.config
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_1"
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_2"
         {status} = await @execute.wait
           command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
-            "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
           interval: 40
           quorum: 2
@@ -184,28 +198,28 @@ describe 'actions.execute.wait', ->
           target: "#{tmpdir}/result"
           content: '1\n2\n'
 
-    they 'is "true"', ({ssh}) ->
+    they 'with failing commands', ({ssh}) ->
+      @timeout 20000
       nikita
         ssh: ssh
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @call ->
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_1"
-          , 100
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_2"
-          , 200
-          setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file_3"
-          , 300
+        @call -> setImmediate ->
+          nikita
+            ssh: ssh?.config
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_1"
+          .wait 200
+          .fs.mkdir "#{tmpdir}/file_2"
         {status} = await @execute.wait
           command: [
+            'exit 99'
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
+            'exit 99'
+            'exit 0' # Reach quorum 3
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
-            "test -d #{tmpdir}/file_3 && echo 3 >> #{tmpdir}/result"
           ]
-          interval: 40
+          interval: 50
           quorum: true
         status.should.be.true()
         @fs.assert

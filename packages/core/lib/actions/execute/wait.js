@@ -14,9 +14,25 @@
 // console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Hooks
+var handler, on_action, schema, utils;
 
+on_action = function({config}) {
+  if (!config.command) {
+    return;
+  }
+  // Always normalise quorum as an integer
+  if (config.quorum && config.quorum === true) {
+    return config.quorum = Math.ceil((config.command.length + 1) / 2);
+  } else if (config.quorum == null) {
+    if (typeof config.command === 'string') {
+      config.command = [config.command];
+    }
+    return config.quorum = config.command.length;
+  }
+};
+
+// ## Schema
 schema = {
   type: 'object',
   properties: {
@@ -50,7 +66,7 @@ default to "0".`
       items: {
         type: 'integer'
       },
-      default: [1],
+      // default: [1]
       description: `Expected code to be returned when the command failed and should be
 scheduled for later execution, default to "1".`
     },
@@ -72,67 +88,67 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, count, i, j, len, quorum_current, ref, run, status;
-  // Validate parameters
-  if (config.quorum && config.quorum === true) {
-    config.quorum = Math.ceil(config.command.length / 2);
-  } else if (config.quorum == null) {
-    config.quorum = config.command.length;
-  }
-  quorum_current = 0;
+  var attempts, commands, status, wait;
+  attempts = 0;
   status = false;
-  ref = config.command;
-  for (i = j = 0, len = ref.length; j < len; i = ++j) {
-    command = ref[i];
-    count = 0;
-    if (quorum_current >= config.quorum) {
-      break;
+  wait = function(timeout) {
+    if (!timeout) {
+      return;
     }
-    run = async() => {
-      var succeed;
-      count++;
-      log({
-        message: `Attempt #${count}`,
-        level: 'INFO'
-      });
+    return new Promise(function(resolve) {
+      return setTimeout(resolve, timeout);
+    });
+  };
+  commands = config.command;
+  while (true) {
+    attempts++;
+    log({
+      message: `Start attempt #${attempts}`,
+      level: 'DEBUG'
+    });
+    commands = (await (await utils.promise.array_filter(commands, async(command) => {
+      var success;
       ({
-        status: succeed
+        status: success
       } = (await this.execute({
         command: command,
         code: config.code || 0,
         code_skipped: config.code_skipped,
         stdin_log: config.stdin_log,
         stdout_log: config.stdout_log,
-        stderr_log: config.stderr_log
+        stderr_log: config.stderr_log,
+        metadata: {
+          relax: config.code_skipped === void 0
+        }
       })));
-      if (!succeed) {
-        return new Promise(function(resolve, reject) {
-          return setTimeout(function() {
-            return run().then(resolve).catch(reject);
-          }, config.interval);
-        });
-      }
-      log({
-        message: "Finish wait for execution",
-        level: 'INFO'
-      });
-      quorum_current++;
-      if (count > 1) {
-        return status = true;
-      }
-    };
-    await run();
+      return !success;
+    })));
+    log({
+      message: `Attempt #${attempts} expect ${config.quorum} success, got ${config.command.length - commands.length}`,
+      level: 'INFO'
+    });
+    if (commands.length <= config.command.length - config.quorum) {
+      break;
+    }
+    await wait(config.interval);
   }
   return {
-    status: status
+    attempts: attempts,
+    status: attempts > 1
   };
 };
 
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     argument_to_config: 'command',
     schema: schema
   }
 };
+
+// ## Dependencies
+utils = require('../../utils');
