@@ -47,7 +47,35 @@ describe 'actions.execute.wait', ->
         ]
         interval: 40
       status.should.be.true()
-
+  
+  they 'command exit with error in first attempt', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @execute.wait
+        command: "exit 99"
+        interval: 40
+      .should.be.rejectedWith
+        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+        exit_code: 99
+  
+  they 'command exit with error in retried attempt', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @call ->
+        setTimeout ->
+          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
+        , 100
+      @execute.wait
+        command: "test -d #{tmpdir}/file && exit 99"
+        interval: 40
+      .should.be.rejectedWith
+        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+        exit_code: 99
+  
   describe 'log', ->
 
     they 'attemps', ({ssh}) ->

@@ -64,37 +64,37 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # Validate parameters
-      # config.command = [config.command] unless Array.isArray config.command
       if config.quorum and config.quorum is true
         config.quorum = Math.ceil config.command.length / 2
       else unless config.quorum?
         config.quorum = config.command.length
       quorum_current = 0
-      modified = false
-      for command in config.command
+      status = false
+      for command, i in config.command
         count = 0
         break if quorum_current >= config.quorum
         run = =>
           count++
           log message: "Attempt ##{count}", level: 'INFO'
-          {status} = await @execute
+          {status: succeed} = await @execute
             command: command
             code: config.code or 0
             code_skipped: config.code_skipped
             stdin_log: config.stdin_log
             stdout_log: config.stdout_log
             stderr_log: config.stderr_log
-          if not status
-            return new Promise (resolve) ->
+          unless succeed
+            return new Promise (resolve, reject) ->
               setTimeout ->
-                await run()
-                resolve()
+                run()
+                .then resolve
+                .catch reject
               , config.interval
           log message: "Finish wait for execution", level: 'INFO'
           quorum_current++
-          modified = true if count > 1
+          status = true if count > 1
         await run()
-      status: modified
+      status: status
 
 ## Exports
 

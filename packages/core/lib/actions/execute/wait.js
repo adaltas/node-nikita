@@ -72,31 +72,32 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, count, i, len, modified, quorum_current, ref, run;
+  var command, count, i, j, len, quorum_current, ref, run, status;
   // Validate parameters
-  // config.command = [config.command] unless Array.isArray config.command
   if (config.quorum && config.quorum === true) {
     config.quorum = Math.ceil(config.command.length / 2);
   } else if (config.quorum == null) {
     config.quorum = config.command.length;
   }
   quorum_current = 0;
-  modified = false;
+  status = false;
   ref = config.command;
-  for (i = 0, len = ref.length; i < len; i++) {
+  for (i = j = 0, len = ref.length; j < len; i = ++j) {
     command = ref[i];
     count = 0;
     if (quorum_current >= config.quorum) {
       break;
     }
     run = async() => {
-      var status;
+      var succeed;
       count++;
       log({
         message: `Attempt #${count}`,
         level: 'INFO'
       });
-      ({status} = (await this.execute({
+      ({
+        status: succeed
+      } = (await this.execute({
         command: command,
         code: config.code || 0,
         code_skipped: config.code_skipped,
@@ -104,11 +105,10 @@ handler = async function({
         stdout_log: config.stdout_log,
         stderr_log: config.stderr_log
       })));
-      if (!status) {
-        return new Promise(function(resolve) {
-          return setTimeout(async function() {
-            await run();
-            return resolve();
+      if (!succeed) {
+        return new Promise(function(resolve, reject) {
+          return setTimeout(function() {
+            return run().then(resolve).catch(reject);
           }, config.interval);
         });
       }
@@ -118,13 +118,13 @@ handler = async function({
       });
       quorum_current++;
       if (count > 1) {
-        return modified = true;
+        return status = true;
       }
     };
     await run();
   }
   return {
-    status: modified
+    status: status
   };
 };
 
