@@ -303,6 +303,9 @@ handler = async function({config}) {
       filter = ref10[j];
       data = filter[Symbol.replace](data, '');
     }
+    if (config.trim) {
+      data = utils.buffer.trim(data, config.encoding);
+    }
     if (!config.not) {
       if (!config.content.test(data)) {
         throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH({

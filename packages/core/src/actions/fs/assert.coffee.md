@@ -186,6 +186,7 @@ console.info(`File exists: ${status}`)
         {data} = await @fs.base.readFile config.target
         for filter in config.filter or []
           data = filter[Symbol.replace] data, ''
+        data = utils.buffer.trim data, config.encoding if config.trim
         unless config.not
           unless config.content.test data
             throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH config: config, expect: data

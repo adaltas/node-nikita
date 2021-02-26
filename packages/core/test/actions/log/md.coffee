@@ -31,7 +31,7 @@ describe 'actions.log.md', ->
           /^Entering.*$/mg
         ]
         target: "#{tmpdir}/localhost.log"
-        content: "ok"
+        content: 'ok'
   
   they 'write message and module', ({ssh}) ->
     nikita
@@ -70,6 +70,7 @@ describe 'actions.log.md', ->
           trim: true
           filter: [
             /^Entering.*$/mg
+            /^\n$/mg
           ]
           target: "#{tmpdir}/localhost.log"
           content: """
@@ -95,6 +96,7 @@ describe 'actions.log.md', ->
           trim: true
           filter: [
             /^Entering.*$/mg
+            /^\n$/mg
           ]
           target: "#{tmpdir}/localhost.log"
           content: """

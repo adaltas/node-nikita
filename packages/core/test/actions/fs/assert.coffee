@@ -533,7 +533,7 @@ describe 'actions.fs.assert', ->
   
   describe 'config `trim`', ->
   
-    they 'trim target', ({ssh}) ->
+    they 'on target against content string', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -543,8 +543,30 @@ describe 'actions.fs.assert', ->
           target: "#{tmpdir}/a_file"
           content: 'ok'
           trim: true
+          
+    they 'on target against content buffer', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
+        @fs.assert
+          target: "#{tmpdir}/a_file"
+          content: Buffer.from 'ok'
+          trim: true
   
-    they 'trim content string', ({ssh}) ->
+    they 'on target against content regexp', ({ssh}) ->
+      nikita
+        ssh: ssh
+        metadata: tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
+        @fs.assert
+          target: "#{tmpdir}/a_file"
+          content: /^ok$/
+          trim: true
+  
+    they 'with content string', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true
@@ -555,7 +577,7 @@ describe 'actions.fs.assert', ->
           content: '\nok\n'
           trim: true
   
-    they 'trim content buffer', ({ssh}) ->
+    they 'with content buffer', ({ssh}) ->
       nikita
         ssh: ssh
         metadata: tmpdir: true

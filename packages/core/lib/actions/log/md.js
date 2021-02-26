@@ -133,7 +133,7 @@ handler = async function({config}) {
         state.last_event_type = 'text';
         content = [];
         content.push(`\n${log.message}`);
-        if (log.module) {
+        if (log.module && log.module !== '@nikitajs/core/lib/actions/call') {
           content.push(` (${log.depth}.${log.level}, written by ${log.module})`);
         }
         content.push("\n");

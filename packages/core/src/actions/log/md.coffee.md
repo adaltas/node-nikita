@@ -96,7 +96,7 @@ Write log to the host filesystem in Markdown.
           state.last_event_type = 'text'
           content = []
           content.push "\n#{log.message}"
-          content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module
+          content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module and log.module isnt '@nikitajs/core/src/actions/call'
           content.push "\n"
           content.join ''
 
