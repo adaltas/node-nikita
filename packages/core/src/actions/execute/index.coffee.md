@@ -72,6 +72,7 @@ console.info(stdout)
 
     on_action =
       after: [
+        '@nikitajs/core/src/plugins/execute'
         '@nikitajs/core/src/plugins/ssh'
       ]
       before: [
@@ -79,11 +80,10 @@ console.info(stdout)
         '@nikitajs/core/src/metadata/tmpdir'
       ]
       handler: ({config, metadata, ssh, tools: {find, walk}}) ->
-        sudo = await find ({config: {sudo}}) -> sudo
-        env = merge {}, ...await walk ({config: {env}}) -> env
-        config.env ?= process.env unless ssh or Object.keys(env).length
+        # sudo = await find ({config: {sudo}}) -> sudo
+        config.env ?= if not ssh and not config.env then process.env else {}
         env_export = if config.env_export? then config.env_export else !!ssh
-        if sudo or config.bash or config.arch_chroot or (Object.keys(env).length and env_export)
+        if config.sudo or config.bash or config.arch_chroot or (env_export and Object.keys(config.env).length)
           metadata.tmpdir = true
         config.command = metadata.argument if metadata.argument?
         
@@ -96,18 +96,18 @@ console.info(stdout)
           type: ['boolean', 'string']
           description: """
           Run this command inside a root directory with the arc-chroot command
-          or any provided string, require the "rootdir" option if activated.
+          or any provided string, require the "arch_chroot_rootdir" option if activated.
+          """
+        'arch_chroot_rootdir':
+          type: 'string'
+          description: """
+          Path to the mount point corresponding to the root directory, required
+          if the "arch_chroot" option is activated.
           """
         'bash':
           type: ['boolean', 'string']
           description: """
           Serialize the command into a file and execute it with bash.
-          """
-        'rootdir':
-          type: 'string'
-          description: """
-          Path to the mount point corresponding to the root directory, required
-          if the "arch_chroot" option is activated.
           """
         'command':
           oneOf: [
@@ -273,7 +273,7 @@ console.info(stdout)
           Unix user id.
           """
       dependencies:
-        arch_chroot: required: ['rootdir']
+        arch_chroot: required: ['arch_chroot_rootdir']
       required: ['command']
           
 ## Handler
@@ -290,14 +290,13 @@ console.info(stdout)
       dry = await find ({config: {dry}}) -> dry
       # TODO move next 2 lines this to schema or on_action ?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
-      # throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
       # Environment variables are merged with parent
-      env = merge {}, ...await walk ({config: {env}}) -> env
+      # env = merge {}, ...await walk ({config: {env}}) -> env
       # Serialize env in a sourced file
       env_export = if config.env_export? then config.env_export else !!ssh
-      if env_export and Object.keys(env).length
+      if env_export and Object.keys(config.env).length
         env_export_content = (
-          "export #{k}=#{utils.string.escapeshellarg v}\n" for k, v of env
+          "export #{k}=#{utils.string.escapeshellarg v}\n" for k, v of config.env
         ).join '\n'
         env_export_hash = utils.string.hash env_export_content
       # Guess current username
@@ -317,7 +316,7 @@ console.info(stdout)
         {stdout} = await @execute "awk -v val=#{config.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, {stdout}) ->
         config.uid = stdout.trim()
         config.bash = 'bash' unless config.bash or config.arch_chroot
-      if env_export and Object.keys(env).length
+      if env_export and Object.keys(config.env).length
         env_export_hash = utils.string.hash env_export_content
         env_export_target = path.join metadata.tmpdir, env_export_hash
         config.command = "source #{env_export_target}\n#{config.command}"
@@ -346,10 +345,10 @@ console.info(stdout)
         command = config.command
         config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
         log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
-        config.command = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
-        config.command += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
+        config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{config.target}"
+        config.command += ";code=`echo $?`; rm '#{path.join config.arch_chroot_rootdir, config.target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
-          target: "#{path.join config.rootdir, config.target}"
+          target: "#{path.join config.arch_chroot_rootdir, config.target}"
           content: "#{command}"
           mode: config.mode
           sudo: false
@@ -368,7 +367,7 @@ console.info(stdout)
         return resolve result if config.dry
         child = exec config,
           ssh: ssh
-          env: env
+          env: config.env
         config.stdin.pipe child.stdin if config.stdin
         child.stdout.pipe config.stdout, end: false if config.stdout
         child.stderr.pipe config.stderr, end: false if config.stderr
@@ -413,9 +412,6 @@ console.info(stdout)
             result.stdout = result.stdout.trim() if config.trim or config.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
             result.stderr = result.stderr.trim() if config.trim or config.stderr_trim
-            # if config.format
-            #   console.log '>>>', config.command_original
-            #   console.log '!!!', result.stdout
             if config.format and config.code.indexOf(code) isnt -1
               result.data = switch config.format
                 when 'json' then JSON.parse result.stdout
@@ -456,4 +452,3 @@ console.info(stdout)
     exec = require 'ssh2-exec'
     yaml = require 'js-yaml'
     utils = require '../../utils'
-    {merge} = require 'mixme'

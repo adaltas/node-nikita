@@ -32,13 +32,13 @@ module.exports =
           action.ssh
         # tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
-        rootdir = if ssh then '/tmp' else os.tmpdir()
+        os_tmpdir = if ssh then '/tmp' else os.tmpdir()
         tmpdir = switch typeof action.metadata.tmpdir
           when 'string'
             action.metadata.tmpdir
           when 'boolean'
             'nikita-'+action.metadata.uuid
-        action.metadata.tmpdir = path.resolve rootdir, tmpdir
+        action.metadata.tmpdir = path.resolve os_tmpdir, tmpdir
         # Temporary directory creation
         try
           await fs.mkdir ssh, action.metadata.tmpdir

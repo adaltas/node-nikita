@@ -21,7 +21,7 @@ module.exports = {
     'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/metadata/uuid'],
       handler: async function(action) {
-        var err, ref, rootdir, ssh, tmpdir;
+        var err, os_tmpdir, ref, ssh, tmpdir;
         if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
           throw utils.error('METADATA_TMPDIR_INVALID', ['the "tmpdir" metadata value must be a boolean or a string,', `got ${JSON.stringify(action.metadata.tmpdir)}`]);
         }
@@ -34,7 +34,7 @@ module.exports = {
         }));
         // tmpdir = if ssh then '/tmp' else os.tmpdir()
         // Generate temporary location
-        rootdir = ssh ? '/tmp' : os.tmpdir();
+        os_tmpdir = ssh ? '/tmp' : os.tmpdir();
         tmpdir = (function() {
           switch (typeof action.metadata.tmpdir) {
             case 'string':
@@ -43,7 +43,7 @@ module.exports = {
               return 'nikita-' + action.metadata.uuid;
           }
         })();
-        action.metadata.tmpdir = path.resolve(rootdir, tmpdir);
+        action.metadata.tmpdir = path.resolve(os_tmpdir, tmpdir);
         try {
           // Temporary directory creation
           await fs.mkdir(ssh, action.metadata.tmpdir);

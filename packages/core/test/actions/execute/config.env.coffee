@@ -36,13 +36,14 @@ describe 'actions.execute.config.env', ->
   they 'from parent', ({ssh}) ->
     nikita
       ssh: ssh
-      env: 'LANG': 'tv'
+      metadata:
+        env: 'LANG': 'tv'
     , ->
       {stdout} = await @execute
         command: 'env'
       stdout.split('\n').includes('LANG=tv').should.be.true()
   
-  they 'default value', ({ssh}) ->
+  they 'process.env only in local', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
@@ -53,5 +54,4 @@ describe 'actions.execute.config.env', ->
         stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.true()
       else # But not in remote mode
         stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
-          
-    
+  

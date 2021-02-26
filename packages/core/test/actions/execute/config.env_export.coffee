@@ -25,7 +25,8 @@ describe 'actions.execute.config.env_export', ->
   they 'env in parent action', ({ssh}) ->
     nikita
       ssh: ssh
-      env: 'MY_KEY': 'MY VALUE'
+      metadata:
+        env: 'MY_KEY': 'MY VALUE'
     ,->
       @call ->
         logs = []
@@ -42,10 +43,12 @@ describe 'actions.execute.config.env_export', ->
   they 'env merged with parent action', ({ssh}) ->
     nikita
       ssh: ssh
-      env: 'MY_KEY_1': 'MY VALUE 1'
+      metadata:
+        env: 'MY_KEY_1': 'MY VALUE 1'
     ,->
       @call
-        env: 'MY_KEY_2': 'MY VALUE 2'
+        metadata:
+          env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout} = await @execute
@@ -64,11 +67,13 @@ describe 'actions.execute.config.env_export', ->
   they.skip 'dont write if someone did it', ({ssh}) ->
     nikita
       ssh: ssh
-      env: 'MY_KEY_1': 'MY VALUE 1'
+      metadata:
+        env: 'MY_KEY_1': 'MY VALUE 1'
       # metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @call
-        env: 'MY_KEY_2': 'MY VALUE 2'
+        metadata:
+          env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute
@@ -77,7 +82,8 @@ describe 'actions.execute.config.env_export', ->
           env_export: true
         console.log '111111env_export_hash', env_export_hash
       @call
-        env: 'MY_KEY_2': 'MY VALUE 2'
+        metadata:
+          env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute

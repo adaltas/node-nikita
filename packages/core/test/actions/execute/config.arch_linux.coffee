@@ -10,7 +10,7 @@ describe 'actions.execute.config.arch_linux', ->
   
   describe 'schema', ->
     
-    it 'arch_chroot require rootdir', ->
+    it 'arch_chroot require arch_chroot_rootdir', ->
       nikita.execute
         config:
           arch_chroot: true
@@ -21,7 +21,7 @@ describe 'actions.execute.config.arch_linux', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `execute`:'
-          '#/dependencies/arch_chroot/required config should have required property \'rootdir\'.'
+          '#/dependencies/arch_chroot/required config should have required property \'arch_chroot_rootdir\'.'
         ].join ' '
   
   describe 'usage', ->
@@ -38,7 +38,7 @@ describe 'actions.execute.config.arch_linux', ->
         try
           {stdout} = await @execute
             arch_chroot: true
-            rootdir: '/mnt'
+            arch_chroot_rootdir: '/mnt'
             # target is written to "/tmp" by default which is a mount point
             # so a file in host isnt visible from jail
             target: '/root/my_script'

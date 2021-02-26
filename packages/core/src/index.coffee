@@ -26,6 +26,7 @@ create = ->
     require './plugins/conditions_execute'
     require './plugins/conditions_exists'
     require './plugins/conditions_os'
+    require './plugins/execute'
     require './plugins/global'
     require './plugins/history'
     require './plugins/pubsub'

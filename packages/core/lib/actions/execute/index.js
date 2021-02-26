@@ -69,35 +69,24 @@
 // ```
 
 // ## Hooks
-var exec, handler, merge, on_action, schema, utils, yaml;
+var exec, handler, on_action, schema, utils, yaml;
 
 on_action = {
-  after: ['@nikitajs/core/lib/plugins/ssh'],
+  after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh'],
   before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/metadata/tmpdir'],
-  handler: async function({
+  handler: function({
       config,
       metadata,
       ssh,
       tools: {find, walk}
     }) {
-    var env, env_export, sudo;
-    sudo = (await find(function({
-        config: {sudo}
-      }) {
-      return sudo;
-    }));
-    env = merge({}, ...(await walk(function({
-        config: {env}
-      }) {
-      return env;
-    })));
-    if (!(ssh || Object.keys(env).length)) {
-      if (config.env == null) {
-        config.env = process.env;
-      }
+    var env_export;
+    // sudo = await find ({config: {sudo}}) -> sudo
+    if (config.env == null) {
+      config.env = !ssh && !config.env ? process.env : {};
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
-    if (sudo || config.bash || config.arch_chroot || (Object.keys(env).length && env_export)) {
+    if (config.sudo || config.bash || config.arch_chroot || (env_export && Object.keys(config.env).length)) {
       metadata.tmpdir = true;
     }
     if (metadata.argument != null) {
@@ -114,16 +103,16 @@ schema = {
     'arch_chroot': {
       type: ['boolean', 'string'],
       description: `Run this command inside a root directory with the arc-chroot command
-or any provided string, require the "rootdir" option if activated.`
+or any provided string, require the "arch_chroot_rootdir" option if activated.`
+    },
+    'arch_chroot_rootdir': {
+      type: 'string',
+      description: `Path to the mount point corresponding to the root directory, required
+if the "arch_chroot" option is activated.`
     },
     'bash': {
       type: ['boolean', 'string'],
       description: `Serialize the command into a file and execute it with bash.`
-    },
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, required
-if the "arch_chroot" option is activated.`
     },
     'command': {
       oneOf: [
@@ -278,7 +267,7 @@ config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
   },
   dependencies: {
     arch_chroot: {
-      required: ['rootdir']
+      required: ['arch_chroot_rootdir']
     }
   },
   required: ['command']
@@ -293,7 +282,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, sudo, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, sudo, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -329,21 +318,17 @@ handler = async function({
     // TODO move next 2 lines this to schema or on_action ?
     throw Error("Incompatible properties: bash, arch_chroot");
   }
-  // throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
   // Environment variables are merged with parent
-  env = merge({}, ...(await walk(function({
-      config: {env}
-    }) {
-    return env;
-  })));
+  // env = merge {}, ...await walk ({config: {env}}) -> env
   // Serialize env in a sourced file
   env_export = config.env_export != null ? config.env_export : !!ssh;
-  if (env_export && Object.keys(env).length) {
+  if (env_export && Object.keys(config.env).length) {
     env_export_content = ((function() {
-      var results;
+      var ref, results;
+      ref = config.env;
       results = [];
-      for (k in env) {
-        v = env[k];
+      for (k in ref) {
+        v = ref[k];
         results.push(`export ${k}=${utils.string.escapeshellarg(v)}\n`);
       }
       return results;
@@ -375,7 +360,7 @@ handler = async function({
       config.bash = 'bash';
     }
   }
-  if (env_export && Object.keys(env).length) {
+  if (env_export && Object.keys(config.env).length) {
     env_export_hash = utils.string.hash(env_export_content);
     env_export_target = path.join(metadata.tmpdir, env_export_hash);
     config.command = `source ${env_export_target}\n${config.command}`;
@@ -425,12 +410,12 @@ handler = async function({
       message: `Writing arch-chroot script to ${JSON.stringify(config.target)}`,
       level: 'INFO'
     });
-    config.command = `${config.arch_chroot} ${config.rootdir} bash ${config.target}`;
+    config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${config.target}`;
     if (!config.dirty) {
-      config.command += `;code=\`echo $?\`; rm '${path.join(config.rootdir, config.target)}'; exit $code`;
+      config.command += `;code=\`echo $?\`; rm '${path.join(config.arch_chroot_rootdir, config.target)}'; exit $code`;
     }
     await this.fs.base.writeFile({
-      target: `${path.join(config.rootdir, config.target)}`,
+      target: `${path.join(config.arch_chroot_rootdir, config.target)}`,
       content: `${command}`,
       mode: config.mode,
       sudo: false
@@ -462,7 +447,7 @@ handler = async function({
     }
     child = exec(config, {
       ssh: ssh,
-      env: env
+      env: config.env
     });
     if (config.stdin) {
       config.stdin.pipe(child.stdin);
@@ -548,9 +533,6 @@ handler = async function({
         if (config.trim || config.stderr_trim) {
           result.stderr = result.stderr.trim();
         }
-        // if config.format
-        //   console.log '>>>', config.command_original
-        //   console.log '!!!', result.stdout
         if (config.format && config.code.indexOf(code) !== -1) {
           result.data = (function() {
             switch (config.format) {
@@ -617,5 +599,3 @@ exec = require('ssh2-exec');
 yaml = require('js-yaml');
 
 utils = require('../../utils');
-
-({merge} = require('mixme'));
