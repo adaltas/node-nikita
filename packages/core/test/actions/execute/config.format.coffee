@@ -4,6 +4,7 @@ nikita = require '../../../src'
 they = require('mocha-they')(config)
 
 describe 'actions.execute.config.format', ->
+  return unless tags.posix
 
   they 'json', ({ssh}) ->
     nikita

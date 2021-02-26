@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.schema', ->
+  return tags.api
 
   it 'expose ajv', ->
     nikita ({tools: {schema}}) ->

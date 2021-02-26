@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'session.plugins.on_normalize', ->
+  return unless tags.api
 
   it 'call action from global registry', ->
     nikita.call

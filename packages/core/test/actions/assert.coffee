@@ -1,8 +1,10 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 registry = require '../../src/registry'
 
 describe 'actions.assert', ->
+  return unless tags.api
   
   describe 'returned value', ->
 

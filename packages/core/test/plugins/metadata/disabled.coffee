@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.metadata.disabled', ->
+  return unless tags.api
   
   it 'default', ->
     nikita.call

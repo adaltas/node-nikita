@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'registry.deprecate', ->
+  return unless tags.api
 
   it.skip 'function handler without new name', ->
     nikita

@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.status', ->
+  return tags.api
   
   describe 'returned coercion', ->
 

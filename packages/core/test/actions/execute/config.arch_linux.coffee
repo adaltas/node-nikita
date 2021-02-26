@@ -4,9 +4,8 @@ utils = require '../../../src/utils'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.system_execute_arc_chroot
-
 describe 'actions.execute.config.arch_linux', ->
+  return unless tags.system_execute_arc_chroot
   
   describe 'schema', ->
     

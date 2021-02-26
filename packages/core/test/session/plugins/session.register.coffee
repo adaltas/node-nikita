@@ -1,10 +1,12 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 session = require '../../../src/session'
 
 # Test the construction of the session namespace stored in state
 
 describe 'session.plugins.session.register', ->
+  return unless tags.api
   
   it 'alter action - sync', ->
     nikita ({plugins, registry}) ->

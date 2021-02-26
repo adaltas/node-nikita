@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'plugin.conditions if_execute', ->
+  return unless tags.posix
 
   they 'pass if string command is successfull', ({ssh}) ->
     {status} = await nikita

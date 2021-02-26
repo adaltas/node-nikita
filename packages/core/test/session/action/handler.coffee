@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'session.action.handler', ->
+  return unless tags.api
   
   describe 'root action', ->
     

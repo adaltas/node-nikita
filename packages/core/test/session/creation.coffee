@@ -1,8 +1,10 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 session = require '../../src/session'
 
 describe 'session.creation', ->
+  return unless tags.api
   
   describe 'args is array of actions', ->
   

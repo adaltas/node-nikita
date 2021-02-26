@@ -1,7 +1,7 @@
 
+{tags} = require '../../test'
 stream = require 'stream'
 nikita = require '../../../src'
-{tags} = require '../../test'
 
 describe 'metadata "debug"', ->
   return unless tags.api

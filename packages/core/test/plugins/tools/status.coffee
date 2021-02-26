@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.tools.status', ->
+  return tags.api
 
   it 'root', ->
     nikita ({tools: {status}}) ->

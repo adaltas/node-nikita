@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.instance', ->
+  return unless tags.api
   
   it 'is a promise', ->
     schedule()

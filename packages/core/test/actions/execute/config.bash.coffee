@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'actions.execute.config.bash', ->
+  return unless tags.posix
 
   they 'in generated path', ({ssh}) ->
     nikita

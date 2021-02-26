@@ -1,10 +1,11 @@
 
 nikita = require '../../src'
 registry = require '../../src/registry'
-{tags, config} = require '../../test'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 describe 'actions.call', ->
+  return unless tags.api
 
   it 'call action from global registry', ->
     nikita

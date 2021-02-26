@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.global', ->
+  return tags.api
   
   it 'merge from root', ->
     nikita

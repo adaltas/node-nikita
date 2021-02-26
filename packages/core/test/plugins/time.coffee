@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.time', ->
+  return tags.api
   
   it 'start and end time', ->
     nikita ->

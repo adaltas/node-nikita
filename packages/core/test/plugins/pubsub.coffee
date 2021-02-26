@@ -6,6 +6,7 @@ they = require('mocha-they')(config)
 
 
 describe 'plugins.pubsub', ->
+  return tags.api
   
   they 'set then get', ({ssh}) ->
     engine = memory()

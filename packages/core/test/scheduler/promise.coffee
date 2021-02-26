@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.instance.promise', ->
+  return unless tags.api
   
   describe 'instantiate handlers with error', ->
 

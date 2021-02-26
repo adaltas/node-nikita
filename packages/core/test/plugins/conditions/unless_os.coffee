@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config, conditions_if_os} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.conditions_if_os
-
 describe 'plugin.conditions unless_os', ->
+  return unless tags.conditions_if_os
 
   they 'match distribution string', ({ssh}) ->
     nikita

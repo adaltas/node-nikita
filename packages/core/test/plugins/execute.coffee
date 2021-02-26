@@ -1,6 +1,6 @@
 
 nikita = require '../../src'
-{tags, config} = require '../../test'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 describe 'plugins.execute', ->

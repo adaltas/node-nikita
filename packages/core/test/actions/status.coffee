@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'actions.status', ->
+  return unless tags.api
 
   it 'get `-1`', ->
     nikita

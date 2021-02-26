@@ -4,9 +4,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'actions.execute.config.env_export', ->
+  return unless tags.posix
 
   they 'env in execute action', ({ssh}) ->
     nikita ssh: ssh, ->

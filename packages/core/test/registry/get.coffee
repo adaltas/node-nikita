@@ -1,9 +1,11 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 registry = require '../../src/registry'
 plugandplay = require 'plug-and-play'
 
 describe 'registry.get', ->
+  return unless tags.api
 
   it 'return null when not registered', ->
     reg = registry.create()

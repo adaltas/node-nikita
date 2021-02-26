@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.sudo
-
 describe 'actions.execute.config.sudo', ->
+  return unless tags.sudo
 
   they 'execute.assert', ({ssh}) ->
     nikita

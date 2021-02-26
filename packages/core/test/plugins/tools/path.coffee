@@ -4,9 +4,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'plugins.tools.path', ->
+  return unless tags.posix
 
   they 'ssh defined in current action', ({ssh}) ->
     nikita

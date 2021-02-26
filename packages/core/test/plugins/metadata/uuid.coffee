@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.metadata.uuid', ->
+  return unless tags.api
 
   it 'in root action', ->
     nikita ({metadata: {uuid}}) ->

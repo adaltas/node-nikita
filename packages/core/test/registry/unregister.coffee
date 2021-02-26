@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'registry.unregister', ->
+  return unless tags.api
 
   describe 'global', ->
 

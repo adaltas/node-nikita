@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.metadata.raw', ->
+  return unless tags.api
 
   describe 'input', ->
     

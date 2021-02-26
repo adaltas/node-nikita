@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.tools.events', ->
+  return tags.api
   
   it 'emit events', ->
     nikita ({tools: {events}}) ->

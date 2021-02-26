@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugin.assertions assert', ->
+  return unless tags.api
   
   describe 'array', ->
 

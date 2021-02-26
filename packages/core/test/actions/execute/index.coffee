@@ -4,9 +4,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'actions.execute', ->
+  return unless tags.posix
 
   describe 'config `command`', ->
 

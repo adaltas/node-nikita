@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.args', ->
+  return tags.api
 
   it 'argument is a function', ->
     nikita.call ({args}) ->

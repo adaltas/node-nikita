@@ -1,7 +1,6 @@
 
-nikita = require '../../../src'
 {tags} = require '../../test'
-
+nikita = require '../../../src'
 
 describe 'plugins.metadata.attempt (plugin.retry)', ->
   return unless tags.api

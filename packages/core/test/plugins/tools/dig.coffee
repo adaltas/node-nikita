@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugins.tools.dig', ->
+  return tags.api
 
   it 'root action', ->
     nikita a_key: 'a value', ({tools: {dig}}) ->

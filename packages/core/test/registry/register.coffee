@@ -1,8 +1,10 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 registry = require '../../src/registry'
 
 describe 'registry.register', ->
+  return unless tags.api
 
   describe 'namespace', ->
 

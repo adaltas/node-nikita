@@ -1,8 +1,10 @@
 
+{tags} = require '../test'
 contextualize = require '../../src/session/contextualize'
 normalize = require '../../src/session/normalize'
 
 describe 'session.contextualize', ->
+  return unless tags.api
   
   it 'handle function as handler', ->
     expect = [

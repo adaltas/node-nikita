@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.flow', ->
+  return unless tags.api
   
   it 'pause in options', ->
     stack = []

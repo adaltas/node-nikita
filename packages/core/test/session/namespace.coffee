@@ -1,10 +1,12 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 registry = require '../../src/registry'
 
 # Test the construction of the session namespace stored in state
 
 describe 'session.namespace', ->
+  return unless tags.api
 
   it 'call registered action', ->
     nikita ({registry}) ->

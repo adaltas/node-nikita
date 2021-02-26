@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'action.scheduler', ->
+  return unless tags.api
 
   describe 'arguments', ->
 

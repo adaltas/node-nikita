@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 nikita = require '../../src'
 
 describe 'plugins.argument', ->
+  return tags.api
   
   it 'enrich config', ->
     nikita

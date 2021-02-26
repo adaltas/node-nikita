@@ -3,9 +3,8 @@ nikita = require '../../../src'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 
-return unless tags.posix
-
 describe 'plugin.assertions unassert_exists', ->
+  return unless tags.posix
 
   they 'success if no file exists', ({ssh}) ->
     nikita

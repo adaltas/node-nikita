@@ -1,7 +1,9 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 
 describe 'plugin.condition', ->
+  return unless tags.api
 
   it 'normalize', ->
     nikita ->

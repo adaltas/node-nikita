@@ -1,8 +1,10 @@
 
+{tags} = require '../../test'
 nikita = require '../../../src'
 stream = require 'stream'
 
 describe 'plugins.tools.log', ->
+  return tags.api
 
   describe 'events', ->
     

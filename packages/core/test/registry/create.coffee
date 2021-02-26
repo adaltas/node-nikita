@@ -1,7 +1,9 @@
 
+{tags} = require '../test'
 registry = require '../../src/registry'
 
 describe 'registry.create', ->
+  return unless tags.api
 
   it 'static', ->
     registry.create.should.be.a.Function()
