@@ -44,7 +44,7 @@ schema = {
     },
     'container': {
       type: 'string',
-      pattern: "(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)",
+      pattern: '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)',
       description: `The name of the container. Must:
 - be between 1 and 63 characters long
 - be made up exclusively of letters, numbers and dashes from the ASCII table

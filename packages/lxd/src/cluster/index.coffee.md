@@ -17,7 +17,7 @@ networks:
     ipv6.address: none
     dns.domain: nikita.local
 containers:
-  nikita
+  nikita:
     image: images:centos/7
     properties:
       environment:

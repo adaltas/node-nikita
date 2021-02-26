@@ -21,14 +21,14 @@ describe 'lxd.cluster', ->
         handler: (->)
         config:
           containers:
-            c1: {}
+            nikita_cluster: {}
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       nikita.lxd.cluster
         handler: (->)
         config:
           containers:
-            c1:
+            nikita_cluster:
               image: 'images:centos/7'
       .should.be.fulfilled()
   
@@ -38,7 +38,7 @@ describe 'lxd.cluster', ->
         handler: (->)
         config:
           containers:
-            c1:
+            nikita_cluster:
               image: 'images:centos/7'
               disk:
                 nikitadir: true, path: '/nikita'
@@ -48,7 +48,7 @@ describe 'lxd.cluster', ->
         handler: (->)
         config:
           containers:
-            c1:
+            nikita_cluster:
               image: 'images:centos/7'
               disk:
                 nikitadir: source: '/nikita', path: '/nikita'
@@ -61,7 +61,7 @@ describe 'lxd.cluster', ->
     , ({registry}) ->
       await registry.register ['clean'], ->
         await @lxd.delete
-          container: 'c1'
+          container: 'nikita-cluster-1'
           force: true
         await @lxd.network.delete
           network: 'nktlxdpub'
@@ -81,7 +81,7 @@ describe 'lxd.cluster', ->
             'ipv6.address': 'none'
             'dns.domain': 'nikita.local'
         containers:
-          c1:
+          'nikita-cluster-1':
             image: 'images:centos/7'
             disk:
               nikitadir: source: '/nikita', path: '/nikita'
@@ -93,15 +93,15 @@ describe 'lxd.cluster', ->
                 ip: '192.0.2.5', netmask: '255.255.255.0'
       await @wait time: 200
       {exists} = await @lxd.config.device.exists
-        container: 'c1'
+        container: 'nikita-cluster-1'
         device: 'nikitadir'
       exists.should.be.true()
       {exists} = await @lxd.config.device.exists
-        container: 'c1'
+        container: 'nikita-cluster-1'
         device: 'eth0'
       exists.should.be.true()
       {exists} = await @lxd.config.device.exists
-        container: 'c1'
+        container: 'nikita-cluster-1'
         device: 'eth1'
       exists.should.be.true()
       @clean()
@@ -113,7 +113,7 @@ describe 'lxd.cluster', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         @lxd.delete
-          container: 'c1'
+          container: 'nikita-cluster-2'
           force: true
         @lxd.network.delete
           network: 'nktlxdprv'
@@ -126,7 +126,7 @@ describe 'lxd.cluster', ->
               'ipv6.address': 'none'
               'dns.domain': 'nikita.local'
           containers:
-            c1:
+            'nikita-cluster-2':
               image: 'images:centos/7'
               nic:
                 eth0: # Overwrite the default DHCP Nat enabled interface
@@ -135,7 +135,7 @@ describe 'lxd.cluster', ->
               ssh:
                 enabled: config.enabled
         @lxd.exec
-          container: 'c1'
+          container: 'nikita-cluster-2'
           command: '''
           echo > /dev/tcp/192.0.2.6/22
           '''
