@@ -29,6 +29,7 @@ create = ->
     require './plugins/execute'
     require './plugins/global'
     require './plugins/history'
+    require './plugins/magic_dollar'
     require './plugins/pubsub'
     require './plugins/output_logs'
     require './plugins/schema'

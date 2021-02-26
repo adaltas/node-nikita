@@ -11,7 +11,7 @@ describe 'plugins.global', ->
         my_key: 'my value'
     , ->
       @call ->
-        @call metadata: global: 'my_global', ({config}) ->
+        @call $global: 'my_global', ({config}) ->
           config.should.eql
             my_key: 'my value'
               
@@ -21,14 +21,14 @@ describe 'plugins.global', ->
         my_global:
           my_key: 'my value'
       , ->
-        @call metadata: global: 'my_global', ({config}) ->
+        @call $global: 'my_global', ({config}) ->
           config.should.eql
             my_key: 'my value'
               
   it 'merge from current', ->
     nikita ->
       @call
-        metadata: global: 'my_global'
+        $global: 'my_global'
         my_global:
           my_key: 'my value'
       , ({config}) ->

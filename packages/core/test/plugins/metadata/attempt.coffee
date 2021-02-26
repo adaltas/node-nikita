@@ -9,9 +9,9 @@ describe 'plugins.metadata.attempt (plugin.retry)', ->
 
     it 'ensure attempt equals or is greater than 0', ->
       nikita
-      .call metadata: attempt: 0, (->)
-      .call metadata: attempt: 1, (->)
-      .call metadata: attempt: -1, (->)
+      .call $attempt: 0, (->)
+      .call $attempt: 1, (->)
+      .call $attempt: -1, (->)
       .should.be.rejectedWith [
         'METADATA_ATTEMPT_INVALID_RANGE:'
         'configuration `attempt` expect a number above or equal to 0,'
@@ -26,7 +26,7 @@ describe 'plugins.metadata.attempt (plugin.retry)', ->
 
     it 'follow the number of retry', ->
       count = 0
-      nikita.call metadata: retry: 5, sleep: 0, ({metadata}) ->
+      nikita.call $retry: 5, sleep: 0, ({metadata}) ->
         metadata.attempt.should.eql count++
         throw Error 'Catchme' if metadata.attempt < 4
 

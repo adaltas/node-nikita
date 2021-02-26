@@ -9,32 +9,30 @@ describe 'plugins.execute', ->
   describe 'usage', ->
 
     it 'supported properties', ->
-      nikita
-        metadata:
-          arch_chroot: true
-          arch_chroot_rootdir: '/tmp'
-          bash: true
-          dry: true
-          env: key: 'value'
-          env_export: true
-          sudo: true
+      config = await nikita
+        $arch_chroot: true
+        $arch_chroot_rootdir: '/tmp'
+        $bash: true
+        $dry: true
+        $env: key: 'value'
+        $env_export: true
+        $sudo: true
       , ->
-        @execute 'fake cmd', ({config}) ->
-          config.arch_chroot.should.eql true
-          config.arch_chroot_rootdir.should.eql '/tmp'
-          config.bash.should.eql true
-          config.dry.should.eql true
-          config.env.should.containEql key: 'value'
-          config.env_export.should.eql true
-          config.sudo.should.eql true
+        @execute 'fake cmd', ({config}) -> config
+      config.arch_chroot.should.eql true
+      config.arch_chroot_rootdir.should.eql '/tmp'
+      config.bash.should.eql true
+      config.dry.should.eql true
+      config.env.should.containEql key: 'value'
+      config.env_export.should.eql true
+      config.sudo.should.eql true
   
   describe 'env', ->
     
     they 'merge parent metadata with config', ({ssh}) ->
       nikita
         ssh: ssh
-        metadata:
-          env: 'NIKITA_PROCESS_ENV_1': '1'
+        $env: 'NIKITA_PROCESS_ENV_1': '1'
       , ->
         {env} = await @execute
           command: 'env'
@@ -47,8 +45,7 @@ describe 'plugins.execute', ->
     they 'process.env disabled if some env are provided', ({ssh}) ->
       nikita
         ssh: ssh
-        metadata:
-          env: 'NIKITA_PROCESS_ENV': '1'
+        $env: 'NIKITA_PROCESS_ENV': '1'
       , ->
         process.env['NIKITA_PROCESS_ENV'] = '1'
         {stdout} = await @execute

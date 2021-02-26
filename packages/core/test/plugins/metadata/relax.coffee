@@ -7,12 +7,12 @@ describe 'plugins.metadata.relax', ->
   return unless tags.api
 
   it 'handler throw error', ->
-    {error} = await nikita.call metadata: relax: true, ->
+    {error} = await nikita.call $relax: true, ->
       throw Error 'Dont worry, be happy'
     error.message.should.eql 'Dont worry, be happy'
 
   it 'handler return rejected promise', ->
-    {error} = await nikita.call metadata: relax: true, ->
+    {error} = await nikita.call $relax: true, ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject Error 'Dont worry, be happy'
@@ -21,17 +21,17 @@ describe 'plugins.metadata.relax', ->
   it 'handler return rejected promise', ->
     {error} = await nikita.call ({context}) ->
       context.call ({context}) -> # with parent
-        context.call metadata: relax: true, ->
+        context.call $relax: true, ->
           throw Error 'catchme'
     error.message.should.eql 'catchme'
   
   it 'does not depend on the sibling position, fix #282', ->
     # # Error thrown in last child
-    # {error} = await nikita metadata: relax: true, ->
+    # {error} = await nikita $relax: true, ->
     #   @call -> throw Error 'catchme'
     # error.message.should.eql 'catchme'
     # Error not thrown in last child
-    result = await nikita metadata: relax: true, ->
+    result = await nikita $relax: true, ->
       @call -> throw Error 'catchme'
       @call -> 'getme'
     result.should.eql 'getme'
@@ -105,7 +105,7 @@ describe 'plugins.metadata.relax', ->
 
   it 'value should be of type boolean, string, array or regexp', ->
     nikita
-    .call metadata: relax: 1, (->)
+    .call $relax: 1, (->)
     .should.be.rejectedWith
       code: 'METADATA_RELAX_INVALID_VALUE'
       message: [
@@ -114,14 +114,14 @@ describe 'plugins.metadata.relax', ->
       ].join ' '
 
   it 'handler return rejected promise', ->
-    {error} = await nikita.call metadata: relax: 'NIKITA_ERR', ->
+    {error} = await nikita.call $relax: 'NIKITA_ERR', ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject err 'NIKITA_ERR', ['an error']
     error.message.should.eql 'NIKITA_ERR: an error'
 
   it 'handler rejects promise with string as param', ->
-    nikita.call metadata: relax: 'NIKITA_ERR', ->
+    nikita.call $relax: 'NIKITA_ERR', ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject err 'NIKITA_OTHER_ERR', ['other error']
@@ -130,7 +130,7 @@ describe 'plugins.metadata.relax', ->
       code: 'NIKITA_OTHER_ERR'
 
   it 'handler rejects promise with array as param', ->
-    nikita.call metadata: relax: ['NIKITA_ERR', 'NIKITA_ERR_OTHER'], ->
+    nikita.call $relax: ['NIKITA_ERR', 'NIKITA_ERR_OTHER'], ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject err 'NIKITA_OTHER_ERR', ['other error']
@@ -139,14 +139,14 @@ describe 'plugins.metadata.relax', ->
       code: 'NIKITA_OTHER_ERR'
 
   it 'handler return rejected promise with regexp as param', ->
-    {error} = await nikita.call metadata: relax: /^NIKITA_/, ->
+    {error} = await nikita.call $relax: /^NIKITA_/, ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject err 'NIKITA_ERR', ['an error']
     error.message.should.eql 'NIKITA_ERR: an error'
 
   it 'handler rejects promise with regexp as param', ->
-    nikita.call metadata: relax: /^NIKITA_ERR/, ->
+    nikita.call $relax: /^NIKITA_ERR/, ->
       new Promise (resolve, reject) ->
         setImmediate ->
           reject err 'NIKITA_OTHER_ERR', ['other error']

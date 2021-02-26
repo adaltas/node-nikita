@@ -12,13 +12,11 @@ describe 'plugins.pubsub', ->
     engine = memory()
     await nikita
       ssh: ssh
-      metadata:
-        pubsub: engine
+      $pubsub: engine
     , ({tools: {pubsub}}) ->
       await pubsub.set 'a_key', 'a value'
     nikita
-      metadata:
-        pubsub: engine
+      $pubsub: engine
     , ({tools: {pubsub}}) ->
       value = await pubsub.get 'a_key'
       value.should.eql 'a value'
@@ -28,8 +26,7 @@ describe 'plugins.pubsub', ->
     new Promise (resolve, reject) ->
       nikita
         ssh: ssh
-        metadata:
-          pubsub: engine
+        $pubsub: engine
       , ({tools: {pubsub}}) ->
         try
           value = await pubsub.get 'a_key'
@@ -37,7 +34,6 @@ describe 'plugins.pubsub', ->
           resolve()
         catch err then reject err
       nikita
-        metadata:
-          pubsub: engine
+        $pubsub: engine
       , ({tools: {pubsub}}) ->
         await pubsub.set 'a_key', 'a value'

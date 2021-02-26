@@ -14,12 +14,11 @@ describe 'plugins.schema', ->
     # This generates a log and execute the handler
     # instead of raising an error
     nikita
-      metadata:
-        schema:
-          type: 'object'
-          properties:
-            'parent':
-              required: ['child']
+      $schema:
+        type: 'object'
+        properties:
+          'parent':
+            required: ['child']
     , ->
       console.log 'called but why, the doc say the contrary'
 
@@ -46,7 +45,7 @@ describe 'plugins.schema', ->
       {a_string, an_integer} = await @call
         a_string: 'a value'
         an_integer: 1
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -57,26 +56,29 @@ describe 'plugins.schema', ->
   
   describe 'plugins', ->
     
-    it 'run after the disabled plugin', ->
-      schema =
-        type: 'object'
-        properties:
-          'a_string': type: 'string'
-        required: ['a_string']
+    it ' with `metadata.disabled` as `true`', ->
       # No validation occured when disabled
       nikita
       .call
-        metadata:
-          disabled: true
-          schema: schema
+        $disabled: true
+        $schema: 
+          type: 'object'
+          properties:
+            'a_string': type: 'string'
+          required: ['a_string']
       , -> throw Error 'KO'
       .should.be.resolved()
+        
+    it ' with `metadata.disabled` as `false`', ->
       # Validation occured when not disabled
       nikita
       .call
-        metadata:
-          disabled: false
-          schema: schema
+        $disabled: false
+        $schema: 
+          type: 'object'
+          properties:
+            'a_string': type: 'string'
+          required: ['a_string']
       , -> throw Error 'KO'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -90,16 +92,14 @@ describe 'plugins.schema', ->
       # No validation occured when condition failed
       nikita
       .call
-        metadata:
-          schema: schema
+        $schema: schema
         if: false
       , -> throw Error 'KO'
       .should.be.resolved()
       # Validation occured if condition succeed
       nikita
       .call
-        metadata:
-          schema: schema
+        $schema: schema
         if: true
       , -> throw Error 'KO'
       .should.be.rejectedWith
@@ -111,7 +111,7 @@ describe 'plugins.schema', ->
       nikita.call
         a_string: 1
         an_integer: 0
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer', 'minimum': 1
@@ -127,7 +127,7 @@ describe 'plugins.schema', ->
       nikita.call
         a_string: 'ok'
         lonely_duck: true
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -139,23 +139,25 @@ describe 'plugins.schema', ->
         '#/additionalProperties config should NOT have additional properties,'
         'additionalProperty is "lonely_duck".'
       ].join ' '
-
-    it 'ensure schema is an object', ->
-      nikita.call
-        metadata: schema: true
-        handler: (->)
-      .should.be.rejectedWith [
-        'METADATA_SCHEMA_INVALID_VALUE:'
-        'option `schema` expect an object literal value,'
-        'got true in action `call`.'
-      ].join ' '
+    
+    it 'ensure schema is an object in root action', ->
       nikita
-        metadata: schema: true
+        $schema: true
         handler: (->)
       .should.be.rejectedWith [
         'METADATA_SCHEMA_INVALID_VALUE:'
         'option `schema` expect an object literal value,'
         'got true in root action.'
+      ].join ' '
+
+    it 'ensure schema is an object in child action', ->
+      nikita.call
+        $schema: true
+        handler: (->)
+      .should.be.rejectedWith [
+        'METADATA_SCHEMA_INVALID_VALUE:'
+        'option `schema` expect an object literal value,'
+        'got true in action `call`.'
       ].join ' '
   
   describe '$ref module', ->
@@ -163,7 +165,7 @@ describe 'plugins.schema', ->
     it 'invalid ref location', ->
       nikita.call
         an_object: an_integer: 'abc'
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://invalid/action'
@@ -189,7 +191,7 @@ describe 'plugins.schema', ->
       # Valid schema
       .call
         an_object: an_integer: 1234
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
@@ -198,7 +200,7 @@ describe 'plugins.schema', ->
     it 'invalid ref location', ->
       nikita.call
         an_object: an_integer: 'abc'
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://invalid/action'
@@ -221,7 +223,7 @@ describe 'plugins.schema', ->
         handler: (->)
       .call
         an_object: an_integer: 'abc'
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
@@ -237,7 +239,7 @@ describe 'plugins.schema', ->
 
     it 'useDefaults', ->
       nikita.call
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'a_string':
@@ -251,7 +253,7 @@ describe 'plugins.schema', ->
       # accept its rule or create ours. For example, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
       nikita.call
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'int_to_string':
@@ -268,7 +270,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof valid', ->
       nikita.call
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
@@ -279,7 +281,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof invalid', ->
       nikita.call
-        metadata: schema:
+        $schema:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
@@ -296,13 +298,12 @@ describe 'plugins.schema', ->
 
     it 'filemode true with string casted to octal', ->
       nikita.call
-        metadata:
-          schema:
-            type: 'object'
-            properties:
-              'mode':
-                type: ['integer', 'string']
-                filemode: true
+        $schema:
+          type: 'object'
+          properties:
+            'mode':
+              type: ['integer', 'string']
+              filemode: true
         config:
           mode: '744'
       , ({config}) ->
@@ -310,13 +311,12 @@ describe 'plugins.schema', ->
 
     it 'filemode false is invalid', ->
       nikita.call
-        metadata:
-          schema:
-            type: 'object'
-            properties:
-              'mode':
-                type: ['integer', 'string']
-                filemode: false
+        $schema:
+          type: 'object'
+          properties:
+            'mode':
+              type: ['integer', 'string']
+              filemode: false
         config:
           mode: '744'
       .should.be.rejectedWith

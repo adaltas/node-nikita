@@ -7,14 +7,14 @@ describe 'plugins.metadata.shy', ->
 
   it 'dont alter status', ->
     {$status} = await nikita ->
-      @call metadata: shy: true, -> true
+      @call $shy: true, -> true
       @call -> false
       null
     $status.should.eql false
 
   it 'doesnt apply to output', ->
     {$status} = await nikita ->
-      {$status} = await @call metadata: shy: true, -> true
+      {$status} = await @call $shy: true, -> true
       $status.should.eql true
       null
     $status.should.eql false
@@ -23,10 +23,10 @@ describe 'plugins.metadata.shy', ->
     nikita ->
       {$status} = await @call ->
         [act1, act2] = await @call [
-          metadata: shy: true
+          $shy: true
           handler: -> true
         ,
-          metadata: shy: false
+          $shy: false
           handler: -> false
         ]
         act1.$status.should.be.true()
@@ -38,10 +38,10 @@ describe 'plugins.metadata.shy', ->
     nikita ->
       {$status} = await @call ->
         [act1, act2] = await @call [
-          metadata: shy: false
+          $shy: false
           handler: -> true
         ,
-          metadata: shy: true
+          $shy: true
           handler: -> false
         ]
         act1.$status.should.be.true()

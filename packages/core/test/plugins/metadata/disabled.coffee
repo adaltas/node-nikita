@@ -7,18 +7,18 @@ describe 'plugins.metadata.disabled', ->
   
   it 'default', ->
     nikita.call
-      metadata: disabled: false
+      $disabled: false
     , ({metadata: {disabled}}) ->
       disabled.should.be.false()
 
   it 'when `true`', ->
     nikita.call
-      metadata: disabled: true
+      $disabled: true
       handler: -> throw Error 'forbidden'
 
   it 'when `false`', ->
     nikita.call
-      metadata: disabled: false
+      $disabled: false
       handler: -> 'called'
     .should.be.resolvedWith 'called'
 

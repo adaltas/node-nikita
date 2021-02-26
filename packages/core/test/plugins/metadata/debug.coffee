@@ -12,7 +12,7 @@ describe 'metadata "debug"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita.call metadata: debug: ws, ({tools: {log}}) ->
+      await nikita.call $debug: ws, ({tools: {log}}) ->
         log 'Some message'
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
@@ -24,7 +24,7 @@ describe 'metadata "debug"', ->
         command: """
         echo to_stdout; echo to_stderr 1>&2
         """
-        metadata: debug: ws
+        $debug: ws
       data.join().should.eql [
         '\u001b[33m[1.1.INFO execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
         '\u001b[36m[1.1.INFO execute] to_stdout\u001b[39m\n'
@@ -37,7 +37,7 @@ describe 'metadata "debug"', ->
       data = []
       write = process.stderr.write
       process.stderr.write = (chunk) -> data.push chunk
-      await nikita.call metadata: debug: true, ({tools: {log}}) ->
+      await nikita.call $debug: true, ({tools: {log}}) ->
         log 'Some message'
       process.stderr.write = write
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
@@ -46,7 +46,7 @@ describe 'metadata "debug"', ->
       data = []
       write = process.stdout.write
       process.stdout.write = (chunk) -> data.push chunk
-      await nikita.call metadata: debug: 'stdout', ({tools: {log}}) ->
+      await nikita.call $debug: 'stdout', ({tools: {log}}) ->
         log 'Some message'
       process.stdout.write = write
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
@@ -55,7 +55,7 @@ describe 'metadata "debug"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita.call metadata: debug: ws, ({tools: {log}}) ->
+      await nikita.call $debug: ws, ({tools: {log}}) ->
         log 'Some message'
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
     
@@ -65,7 +65,7 @@ describe 'metadata "debug"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita.call metadata: debug: ws, ({tools: {log}}) ->
+      await nikita.call $debug: ws, ({tools: {log}}) ->
         log 'Parent message'
         @call (->)
         @call ({tools: {log}}) ->
@@ -81,7 +81,7 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.call ({tools: {log}}) ->
         log 'Parent message'
-        @call metadata: debug: ws, ({tools: {log}}) ->
+        @call $debug: ws, ({tools: {log}}) ->
           log 'Child message'
       data.join().should.eql '\u001b[32m[1.1.1.INFO call] Child message\u001b[39m\n'
       
@@ -92,7 +92,7 @@ describe 'metadata "debug"', ->
       await nikita
       .call ->
         @call (->)
-        @call metadata: debug: ws, ({tools: {log}}) ->
+        @call $debug: ws, ({tools: {log}}) ->
           log 'Child message'
       .call ({tools: {log}}) ->
         log 'Sibling message'
@@ -102,7 +102,7 @@ describe 'metadata "debug"', ->
       
     it 'invalid string', ->
       nikita
-      .call metadata: debug: 'oh no', (->)
+      .call $debug: 'oh no', (->)
       .should.be.rejectedWith [
         'METADATA_DEBUG_INVALID_VALUE:'
         'configuration `debug` expect a boolean value,'
