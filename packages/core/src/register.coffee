@@ -6,7 +6,7 @@ module.exports =
   '': handler: (->)
   'assert': '@nikitajs/core/src/actions/assert'
   'call':
-    '': {}
+    '': '@nikitajs/core/src/actions/call'
   'execute':
     '': '@nikitajs/core/src/actions/execute'
     'assert': '@nikitajs/core/src/actions/execute/assert'

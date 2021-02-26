@@ -1,6 +1,8 @@
 
 nikita = require '../../src'
 registry = require '../../src/registry'
+{tags, config} = require '../../test'
+they = require('mocha-they')(config)
 
 describe 'actions.call', ->
 
@@ -14,3 +16,18 @@ describe 'actions.call', ->
       pass_a_key.should.eql 'a value'
     .call ->
       registry.unregister 'my_function'
+  
+  they 'call a module after its path', ({ssh}) ->
+    nikita
+      ssh: ssh
+      metadata: tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.writeFile
+        content: '''
+        module.exports = ({config}) => {
+          return config
+        }
+        '''
+        target: "#{tmpdir}/my_module.js"
+      result = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
+      result.should.containEql my_key: 'my value' 

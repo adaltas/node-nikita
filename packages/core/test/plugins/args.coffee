@@ -4,7 +4,7 @@ nikita = require '../../src'
 describe 'plugins.args', ->
 
   it 'argument is a function', ->
-    nikita.call ({args})->
+    nikita.call ({args}) ->
       args.length.should.eql 1
       args[0].should.be.a.Function()
 

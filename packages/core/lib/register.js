@@ -11,7 +11,7 @@ module.exports = {
   },
   'assert': '@nikitajs/core/lib/actions/assert',
   'call': {
-    '': {}
+    '': '@nikitajs/core/lib/actions/call'
   },
   'execute': {
     '': '@nikitajs/core/lib/actions/execute',
