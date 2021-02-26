@@ -30,17 +30,19 @@ describe 'plugins.execute', ->
   
   describe 'env', ->
     
-    they 'merge parent metadat with config', ({ssh}) ->
+    they 'merge parent metadata with config', ({ssh}) ->
       nikita
         ssh: ssh
         metadata:
           env: 'NIKITA_PROCESS_ENV_1': '1'
       , ->
-        @execute
+        {env} = await @execute
           command: 'env'
           env: 'NIKITA_PROCESS_ENV_2': '2'
-        , ({config}) ->
-          console.log config.env
+        , ({config}) -> env: config.env
+        env.should.eql
+          NIKITA_PROCESS_ENV_1: '1'
+          NIKITA_PROCESS_ENV_2: '2'
     
     they 'process.env disabled if some env are provided', ({ssh}) ->
       nikita
