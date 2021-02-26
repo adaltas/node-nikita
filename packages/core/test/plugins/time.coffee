@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.time', ->
-  return tags.api
+  return unless tags.api
   
   it 'start and end time', ->
     nikita ->

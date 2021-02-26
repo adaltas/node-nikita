@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.args', ->
-  return tags.api
+  return unless tags.api
 
   it 'argument is a function', ->
     nikita.call ({args}) ->

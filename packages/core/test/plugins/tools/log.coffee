@@ -4,7 +4,7 @@ nikita = require '../../../src'
 stream = require 'stream'
 
 describe 'plugins.tools.log', ->
-  return tags.api
+  return unless tags.api
 
   describe 'events', ->
     
@@ -24,7 +24,7 @@ describe 'plugins.tools.log', ->
           depth: 0
           file: 'log.coffee'
           filename: __filename
-          line: 18
+          line: 23
           
     it 'argument is immutable', ->
       arg = key: 'value'

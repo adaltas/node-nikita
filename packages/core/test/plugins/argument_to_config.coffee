@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.argument', ->
-  return tags.api
+  return unless tags.api
   
   it 'enrich config', ->
     nikita

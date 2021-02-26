@@ -3,7 +3,7 @@
 nikita = require '../../../src'
 
 describe 'plugins.tools.dig', ->
-  return tags.api
+  return unless tags.api
 
   it 'root action', ->
     nikita a_key: 'a value', ({tools: {dig}}) ->

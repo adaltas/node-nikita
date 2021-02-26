@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.schema', ->
-  return tags.api
+  return unless tags.api
 
   it 'expose ajv', ->
     nikita ({tools: {schema}}) ->

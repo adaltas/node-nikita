@@ -3,7 +3,7 @@
 nikita = require '../../../src'
 
 describe 'plugins.tools.events', ->
-  return tags.api
+  return unless tags.api
   
   it 'emit events', ->
     nikita ({tools: {events}}) ->

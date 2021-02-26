@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.history', ->
-  return tags.api
+  return unless tags.api
 
   describe 'children', ->
 

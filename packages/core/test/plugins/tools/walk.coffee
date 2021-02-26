@@ -3,7 +3,7 @@
 nikita = require '../../../src'
 
 describe 'plugins.tools.walk', ->
-  return tags.api
+  return unless tags.api
   
   describe 'action', ->
 

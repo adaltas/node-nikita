@@ -3,7 +3,7 @@
 nikita = require '../../../src'
 
 describe 'plugins.output.logs', ->
-  return tags.api
+  return unless tags.api
   
   it 'return logs', ->
     nikita ->

@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.templated', ->
-  return tags.api
+  return unless tags.api
 
   it 'access config', ->
     nikita

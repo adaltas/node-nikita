@@ -3,7 +3,7 @@
 nikita = require '../../src'
 
 describe 'plugins.status', ->
-  return tags.api
+  return unless tags.api
   
   describe 'returned coercion', ->
 

@@ -3,7 +3,7 @@
 nikita = require '../../../src'
 
 describe 'plugins.tools.status', ->
-  return tags.api
+  return unless tags.api
 
   it 'root', ->
     nikita ({tools: {status}}) ->
