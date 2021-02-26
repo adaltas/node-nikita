@@ -4,70 +4,142 @@ sort: 8
 
 # Error handling
 
-Nikita implements error management by following familiar [Node.js](https://nodejs.org) conventions. The handling of errors different slightly between synchronous and asynchronous functions.
+Nikita rejects errors when they occur with the [action promise](/current/usages/promise). When a promise rejects, the control jumps to the closest rejection handler.
 
-## Emitting errors
-
-Synchronous handlers may throw an error:
+In case of any action fails and an error is not caught, the native Nikita scheduler interrupts the global Nikita session and subsequent actions are not performed. For example, the second action is never being called because of the first one fails:
 
 ```js
-require('nikita')
-// Synchronous function
-.call(function({config}){
-  // Throw the error
-  throw Error 'Catch me'
-})
-// Catch the error
-.next(function(err){
-  console.info(err.message)  
-})
-```
-
-Asynchronous handlers must pass the error as the first argument of the callback.
-
-```js
-require('nikita')
-// Synchronous function
-.call(function({config}, callback){
-  setImmediate(function(){
-    // Throw the error
-    callback(Error 'Catch me')
+// Global Nikita session
+nikita
+.call(function() {
+  // 1st action fails
+  this.call(() => {
+    // highlight-next-line
+    throw Error('Catch me!')
   })
-})
-// Catch the error
-.next(function(err){
-  console.info(err.message)  
+  // 2nd action is not called
+  this.call(() => {
+    console.info('I will never be printed.')
+  })
 })
 ```
 
 ## Catching errors
 
-In case an error encountered, the sequence of actions is interrupted and the Nikita session will exit with a failure. The error can be catch in the action callback, with the `nikita.next` function or with the 'error' event.
+There are multiple ways of catching errors with promises. 
 
-The behavior can be altered to treat error as non destructive. Using the `relax` metadata, the error will be available in the callback function but the sequence of actions will not be interrupted and the error will not be propagated to any other actions.
+The most elegant way to catch errors is using [`try...catch` statement](https://nodejs.org/en/knowledge/errors/what-is-try-catch/) in a combination with [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await).
 
 ```js
-require('should')
-require('nikita')
-// Pass the relax metadata
-.call({relax: true}, function({config}){
-  // Throw the error
-  throw Error 'Catch me'
-}, function(err){
-  // Error is available in the action callback
-  err.message.should.eql 'Catch me'
-})
-// Keep working
-.call(function({config}, callback){
-  setImmediate(function(){
-    callback(null, true)
+// Global Nikita session
+nikita
+// Call an action with asynchronous handler
+// highlight-range{1-9}
+.call(async function() {
+  try {
+    // Action throws an error
+    await this.call(() => {
+      throw Error('Catch me!')
+    })
+  } catch(err) {
+    console.info(err.message) // Catch me!
+  }
+  // 2nd action is called
+  this.call(() => {
+    console.info('I am printed.')
   })
 })
-// Finalize the session
-.next(function(err){
-  // Error is not propagated
-  (err === undefined).should.be.true()
-  // Status was changed by the second action
-  status.should.be.true()
+```
+
+Alternatively, this example can be rewritten using the Promise API methods. The following example uses the [`catch` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) to declare the rejection handler and the [`finally` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally) to continue the session:
+
+```js
+// Global Nikita session
+nikita
+.call(function() {
+  // Action rejects an error
+  this.call(function() {
+    throw Error('Catch me!')
+  })
+  // Catch and handle an error
+  // highlight-next-line
+  .catch((err) => { console.info(err.message) })  // Catch me! 
+  // Run next commands
+  // highlight-range{1-4}
+  .finally(() => {
+    // 2nd action is called
+    this.call(() => { console.info('I am printed.') })
+  })
+})
+```
+
+Similarly, the errors is caught with the [`then` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) when providing the rejection handler as the second argument:
+
+```js
+// Global Nikita session
+nikita
+.call(function() {
+  // Action rejects an error
+  this.call(function() {
+    throw Error('Catch me!')
+  })
+  // Catch and handle an error
+  // highlight-range{1-4}
+  .then(
+    (result) => { /* Do something */ },     // Run when fulfilled
+    (err) => { console.info(err.message) }  // Run when rejected 
+  )
+  // Run next commands
+  .finally(() => {
+    // 2nd action is called
+    this.call(() => { console.info('I am printed.') })
+  })
+})
+```
+
+## Cascading errors
+
+Errors are cascaded from child actions to the parent:
+
+```js
+nikita
+// Call parent action
+.call(function() {
+  // Call 1st child action
+  this.call(() => {
+    throw Error('Catch me!')
+  })
+  // Call 2nd child action
+  this.call(() => {
+    console.info('I will never be printed.')
+  })
+})
+// Catch error of the child action
+.catch((err) => {
+  console.info(err.message) // Catch me!
+})
+```
+
+## Relax behavior
+
+To disable the session interruption in case of failure of an action and to treat an error as non-destructive, you can use the [`relax` metadata](/current/metadata/relax). In such a case, the error object will be available as a property in the [action output](/current/action/output). 
+
+```js
+nikita
+.call(async function() {
+  // Get error message of the 1st action
+  const {error} = await this.call(({
+    // Enable relax behavior
+    // highlight-next-line
+    metadata: { relax: true }
+  }), () => {
+    throw Error('I am error!')
+  })
+  // Print error message
+  console.info(error.message)  // I am error!
+  // 2nd action is called
+  this.call(() => {
+    console.info('I am printed.')
+  })
 })
 ```
