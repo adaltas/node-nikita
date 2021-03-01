@@ -1,5 +1,5 @@
 ---
-title: Config
+navtitle: Config
 sort: 1
 ---
 
