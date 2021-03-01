@@ -134,7 +134,7 @@ describe 'actions.fs.remove', ->
         target: "#{tmpdir}/remove_dir"
       .should.be.rejectedWith
         code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-        message: /Directory not empty/
+        message: /failed to remove the file/
 
   they 'a dir without recursive', ({ssh}) ->
     nikita
