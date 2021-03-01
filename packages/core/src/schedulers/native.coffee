@@ -32,12 +32,12 @@ module.exports = (handlers, options = {}) ->
             result = await item.handler.call()
             state.running = false
             item.resolve.call null, result
-            state.output.push result if item.options.output
+            state.output.push result if options.managed or item.options.managed
             setImmediate -> scheduler.pump()
           catch error
             state.running = false
             item.reject.call null, error
-            state.error = error unless state.stack.length is 0
+            state.error = error if options.managed or item.options.managed
             setImmediate -> scheduler.pump()
       unshift: (handlers, options={}) ->
         options.pump ?= true
@@ -81,7 +81,7 @@ module.exports = (handlers, options = {}) ->
         prom
     if handlers
       if handlers.length
-        scheduler.push handlers, output: true
+        scheduler.push handlers, managed: true
       else
         resolve []
   promise.catch (->) # Handle strict unhandled rejections

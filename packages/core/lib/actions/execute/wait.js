@@ -106,7 +106,7 @@ handler = async function({
       message: `Start attempt #${attempts}`,
       level: 'DEBUG'
     });
-    commands = (await (await utils.promise.array_filter(commands, async(command) => {
+    commands = (await utils.promise.array_filter(commands, async(command) => {
       var success;
       ({
         status: success
@@ -122,7 +122,7 @@ handler = async function({
         }
       })));
       return !success;
-    })));
+    }));
     log({
       message: `Attempt #${attempts} expect ${config.quorum} success, got ${config.command.length - commands.length}`,
       level: 'INFO'

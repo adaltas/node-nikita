@@ -81,13 +81,15 @@ describe 'actions.assert', ->
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
 
-    it 'multiple actions', ->
+    it 'multiple actions, all resolve true', ->
       nikita.assert [
           -> true
         ,
           -> new Promise (resolve) -> resolve true
         ]
       .should.be.fulfilled()
+
+    it 'multiple actions, one resolve false', ->
       nikita.assert [
           -> true
         ,

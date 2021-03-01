@@ -10,6 +10,14 @@ describe 'session.error', ->
   
   describe 'cascade', ->
   
+    it 'error in last action but return valid result', ->
+      session ->
+        @call (->)
+        @call ->
+          throw Error 'KO'
+        'OK'
+      .should.be.resolvedWith 'OK'
+      
     it 'thrown error sync in last action', ->
       session ->
         @call (->)

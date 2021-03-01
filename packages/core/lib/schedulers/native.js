@@ -46,7 +46,7 @@ module.exports = function(handlers, options = {}) {
             result = (await item.handler.call());
             state.running = false;
             item.resolve.call(null, result);
-            if (item.options.output) {
+            if (options.managed || item.options.managed) {
               state.output.push(result);
             }
             return setImmediate(function() {
@@ -56,7 +56,7 @@ module.exports = function(handlers, options = {}) {
             error = error1;
             state.running = false;
             item.reject.call(null, error);
-            if (state.stack.length !== 0) {
+            if (options.managed || item.options.managed) {
               state.error = error;
             }
             return setImmediate(function() {
@@ -148,7 +148,7 @@ module.exports = function(handlers, options = {}) {
     if (handlers) {
       if (handlers.length) {
         return scheduler.push(handlers, {
-          output: true
+          managed: true
         });
       } else {
         return resolve([]);

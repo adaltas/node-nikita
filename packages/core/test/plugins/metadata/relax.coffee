@@ -19,21 +19,22 @@ describe 'plugins.metadata.relax', ->
     error.message.should.eql 'Dont worry, be happy'
 
   it 'handler return rejected promise', ->
-    nikita.call ({context}) ->
+    {error} = await nikita.call ({context}) ->
       context.call ({context}) -> # with parent
         context.call metadata: relax: true, ->
-          throw Error 'Dont cry, laugh outloud'
+          throw Error 'catchme'
+    error.message.should.eql 'catchme'
   
   it 'does not depend on the sibling position, fix #282', ->
-    # Error thrown in last child
-    {error} = await nikita metadata: relax: true, ->
-      @call -> throw Error 'catchme'
-    error.message.should.eql 'catchme'
+    # # Error thrown in last child
+    # {error} = await nikita metadata: relax: true, ->
+    #   @call -> throw Error 'catchme'
+    # error.message.should.eql 'catchme'
     # Error not thrown in last child
-    {error} = await nikita metadata: relax: true, ->
+    result = await nikita metadata: relax: true, ->
       @call -> throw Error 'catchme'
-      @call -> true
-    error.message.should.eql 'catchme'
+      @call -> 'getme'
+    result.should.eql 'getme'
 
   it.skip 'sync with error throw in child', ->
     nikita

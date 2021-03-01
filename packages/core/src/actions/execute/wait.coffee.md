@@ -84,7 +84,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
       while true
         attempts++
         log message: "Start attempt ##{attempts}", level: 'DEBUG'
-        commands = await await utils.promise.array_filter commands, (command) =>
+        commands = await utils.promise.array_filter commands, (command) =>
             {status: success} = await @execute
               command: command
               code: config.code or 0
