@@ -13,7 +13,7 @@ describe 'plugin.condition', ->
         conditions.if.should.be.eql [true]
     
   it 'before schema', ->
-    {status} = await nikita.call
+    {$status} = await nikita.call
       if: false
       metadata:
         schema:
@@ -21,5 +21,5 @@ describe 'plugin.condition', ->
           properties: 'a_key': type: 'boolean'
           required: ['a_key']
     , -> true
-    status.should.be.false()
+    $status.should.be.false()
     

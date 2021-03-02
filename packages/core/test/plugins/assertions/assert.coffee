@@ -186,7 +186,7 @@ describe 'plugin.assertions assert', ->
       .should.be.resolved()
       
     it 'error if not all validate', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         assert: [
           -> true
           -> false

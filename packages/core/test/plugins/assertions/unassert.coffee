@@ -209,7 +209,7 @@ describe 'plugin.assertions unassert', ->
       .should.be.rejected()
   
     it 'error if not all fail', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         unassert: [
           -> true
           -> false

@@ -11,42 +11,42 @@ describe 'actions.execute.wait', ->
       ssh: ssh
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @execute.wait
+      {$status} = await @execute.wait
         command: "test -d #{tmpdir}"
-      status.should.be.false()
+      $status.should.be.false()
       @call ->
         setTimeout ->
           nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
         , 100
-      {status} = await @execute.wait
+      {$status} = await @execute.wait
         command: "test -d #{tmpdir}/a_file"
         interval: 60
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'take multiple commands', ({ssh}) ->
     nikita
       ssh: ssh
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @execute.wait
+      {$status} = await @execute.wait
         command: [
           "test -d #{tmpdir}"
           "test -d #{tmpdir}"
         ]
-      status.should.be.false()
+      $status.should.be.false()
       @call ->
         setTimeout ->
           nikita(ssh: ssh?.config)
           .fs.mkdir "#{tmpdir}/file_1"
           .fs.mkdir "#{tmpdir}/file_2"
         , 100
-      {status} = await @execute.wait
+      {$status} = await @execute.wait
         command: [
           "test -d #{tmpdir}/file_1"
           "test -d #{tmpdir}/file_2"
         ]
         interval: 40
-      status.should.be.true()
+      $status.should.be.true()
   
   describe 'code_skipped', ->
   
@@ -160,7 +160,7 @@ describe 'actions.execute.wait', ->
           .fs.mkdir "#{tmpdir}/file_2"
           .wait 200
           .fs.mkdir "#{tmpdir}/file_3"
-        {attempts, status} = await @execute.wait
+        {attempts, $status} = await @execute.wait
           command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
@@ -168,7 +168,7 @@ describe 'actions.execute.wait', ->
           ]
           interval: 100
         attempts.should.be.above 2
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n3\n'
@@ -186,14 +186,14 @@ describe 'actions.execute.wait', ->
           .fs.mkdir "#{tmpdir}/file_1"
           .wait 200
           .fs.mkdir "#{tmpdir}/file_2"
-        {status} = await @execute.wait
+        {$status} = await @execute.wait
           command: [
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
             "test -d #{tmpdir}/file_2 && echo 2 >> #{tmpdir}/result"
           ]
           interval: 40
           quorum: 2
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n'
@@ -211,7 +211,7 @@ describe 'actions.execute.wait', ->
           .fs.mkdir "#{tmpdir}/file_1"
           .wait 200
           .fs.mkdir "#{tmpdir}/file_2"
-        {status} = await @execute.wait
+        {$status} = await @execute.wait
           command: [
             'exit 99'
             "test -d #{tmpdir}/file_1 && echo 1 >> #{tmpdir}/result"
@@ -221,7 +221,7 @@ describe 'actions.execute.wait', ->
           ]
           interval: 50
           quorum: true
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n'

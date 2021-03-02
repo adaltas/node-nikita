@@ -8,10 +8,10 @@ change had occured. Otherwise it will be set to "true".
 ## Example
 
 ```js
-const {status} = await nikita.execute.wait({
+const {$status} = await nikita.execute.wait({
   command: "test -f /tmp/sth"
 })
-console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
+console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
 ```
 
 ## Hooks
@@ -75,7 +75,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       attempts = 0
-      status = false
+      $status = false
       wait = (timeout) ->
         return unless timeout
         new Promise (resolve) ->
@@ -85,7 +85,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
         attempts++
         log message: "Start attempt ##{attempts}", level: 'DEBUG'
         commands = await utils.promise.array_filter commands, (command) =>
-            {status: success} = await @execute
+            {$status: success} = await @execute
               command: command
               code: config.code or 0
               code_skipped: config.code_skipped
@@ -99,7 +99,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
         break if commands.length <= config.command.length - config.quorum
         await wait config.interval
       attempts: attempts
-      status: attempts > 1
+      $status: attempts > 1
 
 ## Exports
 

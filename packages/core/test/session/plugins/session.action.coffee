@@ -26,7 +26,7 @@ describe 'session.plugins.session.action', ->
         context.an.action().should.be.finally.containEql
           key: 'value'
           new_key: 'new value'
-          status: false
+          $status: false
         
     it 'plugin return a promise, ensure child is executed', ->
       session ({context, plugins, registry}) ->

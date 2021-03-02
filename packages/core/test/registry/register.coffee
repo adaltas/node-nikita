@@ -111,9 +111,9 @@ describe 'registry.register', ->
           callback null, true
       .my_function
         my_option: 'my value'
-      .next (err, {status}) ->
+      .next (err, {$status}) ->
         throw err if err
-        status.should.be.true()
+        $status.should.be.true()
         n.registry.registered('my_function').should.be.true()
       n.promise()
 
@@ -154,9 +154,9 @@ describe 'registry.register', ->
         value = config.value
         callback null, true
       .this.is.a.function value: 'yes'
-      .next (err, {status}) ->
+      .next (err, {$status}) ->
         throw err if err
-        status.should.be.true()
+        $status.should.be.true()
       .promise()
 
     it.skip 'namespace accept object', ->
@@ -172,9 +172,9 @@ describe 'registry.register', ->
             callback null, true
       .namespace value: 'a'
       .namespace.child value: 'b'
-      .next (err, {status}) ->
+      .next (err, {$status}) ->
         throw err if err
-        status.should.be.true()
+        $status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
       .promise()
@@ -190,9 +190,9 @@ describe 'registry.register', ->
         callback null, true
       .a.function value: 'a'
       .a.function.with.a.child value: 'b'
-      .next (err, {status}) ->
+      .next (err, {$status}) ->
         throw err if err
-        status.should.be.true()
+        $status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
       .promise()
@@ -219,8 +219,8 @@ describe 'registry.register', ->
       n.registry.registered('my_function').should.be.true()
       n.my_function
         my_option: 'my value'
-      n.next (err, {status}) ->
+      n.next (err, {$status}) ->
         throw err if err
-        status.should.be.true()
+        $status.should.be.true()
         nikita.registry.unregister 'my_function'
       n.promise()

@@ -13,14 +13,14 @@ describe 'actions.ssh.close', ->
       nikita ->
         {ssh} = await @ssh.open ssh
         @ssh.close ssh: ssh
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
 
     they 'status is false without a connection', ({ssh}) ->
       nikita ->
         {ssh} = await @ssh.open ssh
         @ssh.close ssh: ssh
         @ssh.close ssh: ssh
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         
   describe 'sibling connection', ->
 
@@ -28,7 +28,7 @@ describe 'actions.ssh.close', ->
       nikita ->
         @ssh.open ssh
         @ssh.close()
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
 
       they 'error if no ssh to close', ({ssh}) ->
         nikita ->

@@ -9,14 +9,14 @@ describe 'actions.status', ->
     nikita
     .call -> false
     .call -> true
-    .status(-1)
+    .$status(-1)
     .should.be.resolvedWith true
 
   it 'get `0`', ->
     nikita
     .call -> true
     .call -> false
-    .status(0)
+    .$status(0)
     .should.be.resolvedWith true
 
   it 'get `undefined` with status `true`', ->
@@ -24,12 +24,12 @@ describe 'actions.status', ->
     .call -> false
     .call -> true
     .call -> false
-    .status()
+    .$status()
     .should.be.resolvedWith true
 
   it 'get `undefined` with status `false`', ->
     nikita
     .call -> false
     .call -> false
-    .status()
+    .$status()
     .should.be.resolvedWith false

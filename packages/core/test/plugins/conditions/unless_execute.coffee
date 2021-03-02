@@ -7,19 +7,19 @@ describe 'plugin.conditions unless_execute', ->
   return unless tags.posix
 
   they 'skip if string command is successfull', ({ssh}) ->
-    {status, value} = await nikita
+    {$status, value} = await nikita
       unless_execute: 'exit 0'
       metadata: disabled: true
       handler: -> throw Error 'forbidden'
       ssh: ssh
-    status.should.be.false()
+    $status.should.be.false()
 
   they 'pass if string command exit with code_skipped', ({ssh}) ->
-    {status} = await nikita
+    {$status} = await nikita
       unless_execute: 'exit 42'
       handler: -> true
       ssh: ssh
-    status.should.be.true()
+    $status.should.be.true()
 
   they 'error if code_skipped not match', ({ssh}) ->
     nikita
@@ -36,10 +36,10 @@ describe 'plugin.conditions unless_execute', ->
       ].join ' '
   
   they 'pass if skip_code match', ({ssh}) ->
-    {status} = await nikita
+    {$status} = await nikita
       unless_execute:
         code_skipped: 42
         command: 'exit 42'
       handler: -> true
       ssh: ssh
-    status.should.be.true()
+    $status.should.be.true()

@@ -132,6 +132,6 @@ describe 'actions.fs.chown', ->
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
         @fs.chown "#{tmpdir}/a_file", uid: 1234
-        .should.finally.containEql status: true
+        .should.finally.containEql $status: true
         @fs.chown "#{tmpdir}/a_file", uid: 1234
-        .should.finally.containEql status: false
+        .should.finally.containEql $status: false

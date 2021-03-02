@@ -103,11 +103,11 @@ handlers = {
       },
       parent: action
     }, async function() {
-      var arch, distribution, linux_version, match, status, stdout, version;
-      ({status, stdout} = (await this.execute({
+      var $status, arch, distribution, linux_version, match, stdout, version;
+      ({$status, stdout} = (await this.execute({
         command: utils.os.command
       })));
-      if (!status) {
+      if (!$status) {
         return final_run = false;
       }
       [arch, distribution, version, linux_version] = stdout.split('|');
@@ -178,11 +178,11 @@ handlers = {
       },
       parent: action
     }, async function() {
-      var arch, distribution, linux_version, match, status, stdout, version;
-      ({status, stdout} = (await this.execute({
+      var $status, arch, distribution, linux_version, match, stdout, version;
+      ({$status, stdout} = (await this.execute({
         command: utils.os.command
       })));
-      if (!status) {
+      if (!$status) {
         return final_run = false;
       }
       [arch, distribution, version, linux_version] = stdout.split('|');

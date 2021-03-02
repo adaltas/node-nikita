@@ -23,9 +23,9 @@ describe 'actions.fs.hash', ->
       metadata: tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
-      {hash, status} = await @fs.hash "#{tmpdir}/a_file"
+      {hash, $status} = await @fs.hash "#{tmpdir}/a_file"
       hash.should.eql '9893532233caff98cd083a116b013c0b'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'a file with a globing pattern', ({ssh}) ->
     nikita
@@ -48,9 +48,9 @@ describe 'actions.fs.hash', ->
       @fs.base.symlink
         source: "#{tmpdir}/a_file"
         target: "#{tmpdir}/a_link"
-      {hash, status} = await @fs.hash "#{tmpdir}/a_link"
+      {hash, $status} = await @fs.hash "#{tmpdir}/a_link"
       hash.should.eql '9893532233caff98cd083a116b013c0b'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'a directory', ({ssh}) ->
     nikita
@@ -64,9 +64,9 @@ describe 'actions.fs.hash', ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_dir/file_2"
         content: 'hello 2'
-      {hash, status} = await @fs.hash "#{tmpdir}/a_dir"
+      {hash, $status} = await @fs.hash "#{tmpdir}/a_dir"
       hash.should.eql 'df940215c7446254f1334d923b3053c6'
-      status.should.be.true()
+      $status.should.be.true()
           
   they 'throws error if file does not exist', ({ssh}) ->
     nikita
@@ -101,10 +101,10 @@ describe 'actions.fs.hash', ->
         metadata: tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
-        {status} = await @fs.hash
+        {$status} = await @fs.hash
           target: "#{tmpdir}/a_file"
           hash: '9893532233caff98cd083a116b013c0b'
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'invalid', ({ssh}) ->
       nikita

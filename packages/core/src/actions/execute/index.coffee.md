@@ -15,7 +15,7 @@ creating any modifications.
 
 ## Output
 
-* `info.status`   
+* `info.$status`   
   Value is "true" if command exit equals option "code", "0" by default, "false" if
   command exit equals option "code_skipped", none by default.
 * `info.stdout`   
@@ -50,12 +50,12 @@ An exit code equal to "9" defined by the "code_skipped" option indicates that
 the command is considered successfull but without any impact.
 
 ```js
-const {status} = await nikita.execute({
+const {$status} = await nikita.execute({
   ssh: ssh,
   command: 'useradd myfriend',
   code_skipped: 9
 })
-console.info(`User was created: ${status}`)
+console.info(`User was created: ${$status}`)
 ```
 
 ## Run a command with bash
@@ -361,7 +361,7 @@ console.info(stdout)
           stdout: []
           stderr: []
           code: null
-          status: false
+          $status: false
           command: config.command_original
           # env_export_hash: env_export_hash
         return resolve result if config.dry
@@ -432,7 +432,7 @@ console.info(stdout)
                 else "while expecting one of #{JSON.stringify config.code}."
               ], {...result, exit_code: code}
             if config.code_skipped.indexOf(code) is -1
-              result.status = true
+              result.$status = true
             else
               log message: "Skip exit code \"#{code}\"", level: 'INFO'
             resolve result

@@ -14,7 +14,7 @@ describe 'actions.execute', ->
         @execute
           command: 'text=yes; echo $text'
         .should.be.finally.containEql
-          status: true
+          $status: true
           stdout: 'yes\n'
 
     they 'as an argument', ({ssh}) ->
@@ -23,7 +23,7 @@ describe 'actions.execute', ->
       , ->
         @execute 'text=yes; echo $text'
         .should.be.finally.containEql
-          status: true
+          $status: true
           stdout: 'yes\n'
 
     they 'as an action handler returning a string', ({ssh}) ->
@@ -121,11 +121,11 @@ describe 'actions.execute', ->
         @execute
           command: "exit 42"
           code_skipped: 42
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @execute
           command: "exit 42"
           code_skipped: [42,43]
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
   describe 'trim', ->
 
@@ -227,7 +227,7 @@ describe 'actions.execute', ->
           exit_code: 2
           stdout: ''
           stderr: 'Some Error\n'
-          status: false
+          $status: false
 
   describe 'dry', ->
     
@@ -239,5 +239,5 @@ describe 'actions.execute', ->
         stdout: []
         stderr: []
         code: null
-        status: false
+        $status: false
         logs: (it) -> it.should.be.an.Array()

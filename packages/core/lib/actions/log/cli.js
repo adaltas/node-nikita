@@ -124,7 +124,7 @@ handler = function({config, metadata, ssh}) {
   }
   // Events
   ids = {};
-  format_line = function({host, header, status, time}) {
+  format_line = function({host, header, $status, time}) {
     if (config.pad.host) {
       host = pad(host, config.pad.host);
     }
@@ -134,7 +134,7 @@ handler = function({config, metadata, ssh}) {
     if (config.pad.time) {
       time = pad(time, config.pad.time);
     }
-    return [host, config.separator.host, header, config.separator.header, status, config.time ? config.separator.time : '', time].join('');
+    return [host, config.separator.host, header, config.separator.header, $status, config.time ? config.separator.time : '', time].join('');
   };
   return this.call(stream, {
     config: config,
@@ -158,7 +158,7 @@ handler = function({config, metadata, ssh}) {
         line = format_line({
           host: config.host,
           header: '',
-          status: '♥',
+          $status: '♥',
           time: ''
         });
         if (color) {
@@ -172,7 +172,7 @@ handler = function({config, metadata, ssh}) {
         line = format_line({
           host: config.host,
           header: '', // error.message
-          status: '✘',
+          $status: '✘',
           time: ''
         });
         if (color) {
@@ -190,7 +190,7 @@ handler = function({config, metadata, ssh}) {
       //   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
       //   null
       'nikita:action:end': function(action, error, output) {
-        var color, headers, line, status;
+        var $status, color, headers, line;
         if (!action.metadata.header) {
           return;
         }
@@ -200,10 +200,10 @@ handler = function({config, metadata, ssh}) {
         // TODO: I don't like this, the `end` event should receive raw output
         // with error not placed inside output by the history plugin
         error = error || action.metadata.relax && output.error;
-        status = error ? '✘' : (output != null ? output.status : void 0) && !action.metadata.shy ? '✔' : '-';
+        $status = error ? '✘' : (output != null ? output.$status : void 0) && !action.metadata.shy ? '✔' : '-';
         color = false;
         if (config.colors) {
-          color = error ? config.colors.status_error : output.status ? config.colors.status_true : config.colors.status_false;
+          color = error ? config.colors.status_error : output.$status ? config.colors.status_true : config.colors.status_false;
         }
         if (action.metadata.disabled) {
           // action = ids[action.index]
@@ -214,7 +214,7 @@ handler = function({config, metadata, ssh}) {
         line = format_line({
           host: config.host,
           header: headers.join(config.divider),
-          status: status,
+          $status: $status,
           time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''
         });
         if (color) {

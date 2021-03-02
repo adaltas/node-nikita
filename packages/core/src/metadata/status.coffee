@@ -17,13 +17,13 @@ module.exports =
       # Todo: create a test to illutrate it
       # action.metadata.shy ?= false
       # Register action
-      action.registry.register ['status'],
+      action.registry.register ['$status'],
         metadata: raw: true
         handler: ({parent, args: [position]}) ->
           if typeof position is 'number'
-            parent.children.slice(position)[0].output.status
+            parent.children.slice(position)[0].output.$status
           else unless position?
-            parent.children.some (child) -> child.output.status
+            parent.children.some (child) -> child.output.$status
           else
             throw utils.error 'NIKITA_STATUS_POSITION_INVALID', [
               'argument position must be an integer if defined,'
@@ -34,33 +34,33 @@ module.exports =
         action = await handler.apply null, arguments
         # Register `status` operation
         action.tools ?= {}
-        action.tools.status = (index) ->
+        action.tools.$status = (index) ->
           if arguments.length is 0
             action.children.some (sibling) ->
-              not sibling.metadata.shy and sibling.output?.status is true
+              not sibling.metadata.shy and sibling.output?.$status is true
           else
             l = action.children.length
             i =  if index < 0 then (l + index) else index
             sibling = action.children[i]
             throw Error "Invalid Index #{index}" unless sibling
-            sibling.output.status
+            sibling.output.$status
         action
     'nikita:result':
       before: '@nikitajs/core/src/plugins/history'
       handler: ({action, error, output}) ->
         inherit = (output) ->
           output ?= {}
-          output.status = action.children.some (child) ->
+          output.$status = action.children.some (child) ->
             return false if child.metadata.shy
-            child.output?.status is true
+            child.output?.$status is true
           output
         if not error and not action.metadata.raw_output
           arguments[0].output =
             if typeof output is 'boolean'
-              status: output
+              $status: output
             else if is_object_literal output
-              if output.hasOwnProperty 'status'
-                output.status = !!output.status
+              if output.hasOwnProperty '$status'
+                output.$status = !!output.$status
                 output
               else
                 inherit output

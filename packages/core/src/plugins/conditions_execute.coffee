@@ -24,7 +24,7 @@ handlers =
     final_run = true
     for condition in action.conditions.if_execute
       try
-        {status} = await session
+        {$status} = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:
@@ -33,7 +33,7 @@ handlers =
             namespace: ['execute']
           parent: action
         , condition
-        final_run = false unless status
+        final_run = false unless $status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped
         throw err if code_skipped and parseInt(code_skipped, 10) isnt err.exit_code
@@ -43,7 +43,7 @@ handlers =
     final_run = true
     for condition in action.conditions.unless_execute
       try
-        {status} = await session
+        {$status} = await session
           hooks:
             on_result: ({action}) -> delete action.parent
           metadata:
@@ -52,7 +52,7 @@ handlers =
             namespace: ['execute']
           parent: action
         , condition
-        final_run = false if status
+        final_run = false if $status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped
         throw err if code_skipped and parseInt(code_skipped, 10) isnt err.exit_code
