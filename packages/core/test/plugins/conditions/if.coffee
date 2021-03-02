@@ -111,41 +111,41 @@ describe 'plugin.conditions if', ->
   describe 'function', ->
 
     it 'run if function casts to true', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         if: -> true
-        handler: -> status: true, value: 'called'
-      status.should.be.true()
+        handler: -> $status: true, value: 'called'
+      $status.should.be.true()
       value.should.eql 'called'
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         if: -> 'abc'
-        handler: -> status: true, value: 'called'
-      status.should.be.true()
+        handler: -> $status: true, value: 'called'
+      $status.should.be.true()
       value.should.eql 'called'
 
     it 'run if promise resolves with true', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         if: ->
           new Promise (accept, reject) -> accept true
-        handler: -> status: true, value: 'called'
-      status.should.be.true()
+        handler: -> $status: true, value: 'called'
+      $status.should.be.true()
       value.should.eql 'called'
 
     it 'skip if function casts to false', ->
-      {status} = await nikita.call
+      {$status} = await nikita.call
         if: -> false
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
-      {status} = await nikita.call
+      $status.should.be.false()
+      {$status} = await nikita.call
         if: -> ''
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
+      $status.should.be.false()
 
     it 'skip if promise resolves with false', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         if: ->
           new Promise (accept, reject) -> accept false
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
+      $status.should.be.false()
 
     it 'function pass config', ->
       nikita.call

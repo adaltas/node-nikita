@@ -111,7 +111,7 @@ describe 'action.scheduler', ->
             @call ->
               throw Error 'catchme'
             true
-        .should.finally.match status: true
+        .should.finally.match $status: true
 
     it 'reject promise and return valid output', ->
       nikita ->
@@ -121,7 +121,7 @@ describe 'action.scheduler', ->
               new Promise (resolve, reject) ->
                 reject Error 'catchme'
             true
-        .should.finally.match status: true
+        .should.finally.match $status: true
   
   describe 'error in array of actions', ->
 

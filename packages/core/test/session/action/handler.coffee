@@ -38,7 +38,7 @@ describe 'session.action.handler', ->
         handler: ({config}) ->
           new Promise (accept, reject) ->
             setImmediate -> accept output: 'ok'
-      .should.be.finally.containEql output: 'ok', status: false
+      .should.be.finally.containEql output: 'ok', $status: false
 
     it 'return an action resolved promise', ->
       nikita.call
@@ -47,4 +47,4 @@ describe 'session.action.handler', ->
             handler: ->
               new Promise (accept, reject) ->
                 setImmediate -> accept output: 'ok'
-      .should.be.finally.containEql output: 'ok', status: false
+      .should.be.finally.containEql output: 'ok', $status: false

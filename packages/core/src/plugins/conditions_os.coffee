@@ -54,9 +54,9 @@ handlers =
         depth: action.metadata.depth
       parent: action
     , ->
-      {status, stdout} = await @execute
+      {$status, stdout} = await @execute
         command: utils.os.command
-      return final_run = false unless status
+      return final_run = false unless $status
       [arch, distribution, version, linux_version] = stdout.split '|'
       # Remove patch version (eg. 7.8.12 -> 7.8)
       version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
@@ -90,9 +90,9 @@ handlers =
         depth: action.metadata.depth
       parent: action
     , ->
-      {status, stdout} = await @execute
+      {$status, stdout} = await @execute
         command: utils.os.command
-      return final_run = false unless status
+      return final_run = false unless $status
       [arch, distribution, version, linux_version] = stdout.split '|'
       # Remove patch version (eg. 7.8.12 -> 7.8)
       version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version

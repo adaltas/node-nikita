@@ -17,7 +17,7 @@ module.exports = {
       // Todo: create a test to illutrate it
       // action.metadata.shy ?= false
       // Register action
-      action.registry.register(['status'], {
+      action.registry.register(['$status'], {
         metadata: {
           raw: true
         },
@@ -26,10 +26,10 @@ module.exports = {
             args: [position]
           }) {
           if (typeof position === 'number') {
-            return parent.children.slice(position)[0].output.status;
+            return parent.children.slice(position)[0].output.$status;
           } else if (position == null) {
             return parent.children.some(function(child) {
-              return child.output.status;
+              return child.output.$status;
             });
           } else {
             throw utils.error('NIKITA_STATUS_POSITION_INVALID', ['argument position must be an integer if defined,', `get ${JSON.stringify(position)}`]);
@@ -43,12 +43,12 @@ module.exports = {
         if (action.tools == null) {
           action.tools = {};
         }
-        action.tools.status = function(index) {
+        action.tools.$status = function(index) {
           var i, l, sibling;
           if (arguments.length === 0) {
             return action.children.some(function(sibling) {
               var ref;
-              return !sibling.metadata.shy && ((ref = sibling.output) != null ? ref.status : void 0) === true;
+              return !sibling.metadata.shy && ((ref = sibling.output) != null ? ref.$status : void 0) === true;
             });
           } else {
             l = action.children.length;
@@ -57,7 +57,7 @@ module.exports = {
             if (!sibling) {
               throw Error(`Invalid Index ${index}`);
             }
-            return sibling.output.status;
+            return sibling.output.$status;
           }
         };
         return action;
@@ -71,12 +71,12 @@ module.exports = {
           if (output == null) {
             output = {};
           }
-          output.status = action.children.some(function(child) {
+          output.$status = action.children.some(function(child) {
             var ref;
             if (child.metadata.shy) {
               return false;
             }
-            return ((ref = child.output) != null ? ref.status : void 0) === true;
+            return ((ref = child.output) != null ? ref.$status : void 0) === true;
           });
           return output;
         };
@@ -85,11 +85,11 @@ module.exports = {
             var ref;
             if (typeof output === 'boolean') {
               return {
-                status: output
+                $status: output
               };
             } else if (is_object_literal(output)) {
-              if (output.hasOwnProperty('status')) {
-                output.status = !!output.status;
+              if (output.hasOwnProperty('$status')) {
+                output.$status = !!output.$status;
                 return output;
               } else {
                 return inherit(output);

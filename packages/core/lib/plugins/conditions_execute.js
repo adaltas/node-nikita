@@ -34,13 +34,13 @@ module.exports = {
 
 handlers = {
   if_execute: async function(action, value) {
-    var code_skipped, condition, err, final_run, i, len, ref, ref1, status;
+    var $status, code_skipped, condition, err, final_run, i, len, ref, ref1;
     final_run = true;
     ref = action.conditions.if_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        ({status} = (await session({
+        ({$status} = (await session({
           hooks: {
             on_result: function({action}) {
               return delete action.parent;
@@ -53,7 +53,7 @@ handlers = {
           },
           parent: action
         }, condition)));
-        if (!status) {
+        if (!$status) {
           final_run = false;
         }
       } catch (error) {
@@ -68,13 +68,13 @@ handlers = {
     return final_run;
   },
   unless_execute: async function(action) {
-    var code_skipped, condition, err, final_run, i, len, ref, ref1, status;
+    var $status, code_skipped, condition, err, final_run, i, len, ref, ref1;
     final_run = true;
     ref = action.conditions.unless_execute;
     for (i = 0, len = ref.length; i < len; i++) {
       condition = ref[i];
       try {
-        ({status} = (await session({
+        ({$status} = (await session({
           hooks: {
             on_result: function({action}) {
               return delete action.parent;
@@ -87,7 +87,7 @@ handlers = {
           },
           parent: action
         }, condition)));
-        if (status) {
+        if ($status) {
           final_run = false;
         }
       } catch (error) {

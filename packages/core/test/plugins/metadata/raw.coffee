@@ -44,7 +44,7 @@ describe 'plugins.metadata.raw', ->
         .should.be.finally.containEql
           config: {}
           argument: true
-          status: false
+          $status: false
 
   describe 'output', ->
 

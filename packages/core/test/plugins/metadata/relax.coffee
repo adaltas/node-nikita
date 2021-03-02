@@ -62,9 +62,9 @@ describe 'plugins.metadata.relax', ->
         err.message.should.eql 'Dont cry, laugh outloud'
     .call ({}, callback) ->
       callback null, true
-    .next (err, {status}) ->
+    .next (err, {$status}) ->
       (err is undefined).should.be.true()
-      status.should.be.true() unless err
+      $status.should.be.true() unless err
     .promise()
   
   it.skip 'thrown error in callback are handled as an error', ->
@@ -98,9 +98,9 @@ describe 'plugins.metadata.relax', ->
       err.message.should.eql 'Dont worry, be happy'
     .call ({}, callback) ->
       callback null, true
-    .next (err, {status}) ->
+    .next (err, {$status}) ->
       (err is undefined).should.be.true()
-      status.should.be.true() unless err
+      $status.should.be.true() unless err
     .promise()
 
   it 'value should be of type boolean, string, array or regexp', ->

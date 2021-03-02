@@ -22,14 +22,14 @@ overwrite it.
 ## Example
 
 ```js
-const {status} = await nikita.fs.copy({
+const {$status} = await nikita.fs.copy({
   source: '/etc/passwd',
   target: '/etc/passwd.bck',
   uid: 'my_user',
   gid: 'my_group',
   mode: '0755'
 })
-console.info(`File was copied: ${status}`)
+console.info(`File was copied: ${$status}`)
 ```
 
 ## Hook
@@ -101,7 +101,7 @@ console.info(`File was copied: ${status}`)
 
 ## Handler
 
-    handler = ({config, tools: {status, log, path}}) ->
+    handler = ({config, tools: {$status, log, path}}) ->
       # Retrieve stats information about the source unless provided through the "source_stats" option.
       if config.source_stats
         log message: "Source Stats: using short circuit", level: 'DEBUG'
@@ -166,7 +166,7 @@ console.info(`File was copied: ${status}`)
               gid: gid
               mode: mode
         end: true
-      return res.status if res.end
+      return res.$status if res.end
       # If source is a file and target is a directory, then transform target into a file.
       await @call metadata: shy: true, ->
         return unless target_stats and utils.stats.isDirectory target_stats.mode
@@ -187,7 +187,7 @@ console.info(`File was copied: ${status}`)
         await @fs.base.copy
           source: config.source
           target: config.target
-        log message: "File copied from #{config.source} into #{config.target}", level: 'INFO' if status
+        log message: "File copied from #{config.source} into #{config.target}", level: 'INFO' if $status
       # File ownership and permissions
       config.uid ?= source_stats.uid if config.preserve
       config.gid ?= source_stats.gid if config.preserve

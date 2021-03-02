@@ -22,14 +22,14 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.fs.copy({
+// const {$status} = await nikita.fs.copy({
 //   source: '/etc/passwd',
 //   target: '/etc/passwd.bck',
 //   uid: 'my_user',
 //   gid: 'my_group',
 //   mode: '0755'
 // })
-// console.info(`File was copied: ${status}`)
+// console.info(`File was copied: ${$status}`)
 // ```
 
 // ## Hook
@@ -113,7 +113,7 @@ disposal.`,
 // ## Handler
 handler = async function({
     config,
-    tools: {status, log, path}
+    tools: {$status, log, path}
   }) {
   var err, hash, hash_source, hash_target, res, source_stats, target_stats;
   // Retrieve stats information about the source unless provided through the "source_stats" option.
@@ -247,7 +247,7 @@ handler = async function({
     };
   }));
   if (res.end) {
-    return res.status;
+    return res.$status;
   }
   // If source is a file and target is a directory, then transform target into a file.
   await this.call({
@@ -287,7 +287,7 @@ handler = async function({
       source: config.source,
       target: config.target
     });
-    if (status) {
+    if ($status) {
       log({
         message: `File copied from ${config.source} into ${config.target}`,
         level: 'INFO'

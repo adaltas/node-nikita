@@ -41,11 +41,11 @@ describe 'actions.fs.move', ->
       @fs.base.writeFile
         target: "#{tmpdir}/org_file"
         content: ''
-      {status} = await @fs.move
+      {$status} = await @fs.move
         target: "#{tmpdir}/new_name"
         source: "#{tmpdir}/org_file"
       # .should.be.finally.containEql status: true
-      status.should.be.true()
+      $status.should.be.true()
       # The target file should exists
       @fs.assert
         target: "#{tmpdir}/new_name"
@@ -66,7 +66,7 @@ describe 'actions.fs.move', ->
       @fs.move
         source: "#{tmpdir}/a_dir"
         target: "#{tmpdir}/moved"
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       # The target file should exists
       @fs.assert
         target: "#{tmpdir}/moved"
@@ -93,11 +93,11 @@ describe 'actions.fs.move', ->
       @fs.move
         source: "#{tmpdir}/src1.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.move # Move a file with the same content
         source: "#{tmpdir}/src2.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false
       @fs.assert
         target: "#{tmpdir}/dest.txt"
         content: 'hello'
@@ -120,4 +120,4 @@ describe 'actions.fs.move', ->
         source: "#{tmpdir}/src.txt"
         target: "#{tmpdir}/dest.txt"
         force: true
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true

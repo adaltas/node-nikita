@@ -87,14 +87,14 @@ nikita
       } if config.colors is true
       # Events
       ids = {}
-      format_line = ({host, header, status, time}) ->
+      format_line = ({host, header, $status, time}) ->
         host = pad host, config.pad.host if config.pad.host
         header = pad header, config.pad.header if config.pad.header
         time = pad time, config.pad.time if config.pad.time
         [
           host, config.separator.host
           header, config.separator.header
-          status, if config.time then config.separator.time else ''
+          $status, if config.time then config.separator.time else ''
           time
         ].join ''
       @call stream, config: config, serializer:
@@ -112,7 +112,7 @@ nikita
           line = format_line
             host: config.host
             header: ''
-            status: '♥'
+            $status: '♥'
             time: ''
           line = color line if color
           return line+'\n'
@@ -123,7 +123,7 @@ nikita
           line = format_line
             host: config.host
             header: '' # error.message
-            status: '✘'
+            $status: '✘'
             time: ''
           line = color line if color
           return line+'\n'
@@ -142,11 +142,11 @@ nikita
           # TODO: I don't like this, the `end` event should receive raw output
           # with error not placed inside output by the history plugin
           error = error or action.metadata.relax and output.error
-          status = if error then '✘' else if output?.status and not action.metadata.shy then '✔' else '-'
+          $status = if error then '✘' else if output?.$status and not action.metadata.shy then '✔' else '-'
           color = false
           if config.colors
             color = if error then config.colors.status_error
-            else if output.status then config.colors.status_true
+            else if output.$status then config.colors.status_true
             else config.colors.status_false
           # action = ids[action.index]
           return null if action.metadata.disabled
@@ -155,7 +155,7 @@ nikita
           line = format_line
             host: config.host
             header: headers.join config.divider
-            status: status
+            $status: $status
             time: if config.time then utils.string.print_time action.metadata.time_end - action.metadata.time_start else ''
           line = color line if color
           return line+'\n'

@@ -20,7 +20,7 @@ describe 'actions.ssh.open', ->
 
     they 'from config', ({ssh}) ->
       nikita ->
-        {ssh, status} = await @ssh.open ssh
+        {ssh, $status} = await @ssh.open ssh
         utils.ssh.is( ssh ).should.be.true()
         @ssh.close ssh: ssh
     

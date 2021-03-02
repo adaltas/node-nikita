@@ -36,7 +36,7 @@ describe 'actions.fs.chmod', ->
         @fs.chmod
           mode: '600'
           target: "#{tmpdir}/a_file"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
         utils.mode.compare(stats.mode, 0o0600).should.be.true()
 
@@ -49,11 +49,11 @@ describe 'actions.fs.chmod', ->
           content: ''
           mode: 0o0754
           target: "#{tmpdir}/a_file"
-        {status} = await @fs.chmod
+        {$status} = await @fs.chmod
           target: "#{tmpdir}/a_file"
           mode: 0o0744
-        status.should.be.true()
-        {status} = await @fs.chmod
+        $status.should.be.true()
+        {$status} = await @fs.chmod
           target: "#{tmpdir}/a_file"
           mode: 0o0744
-        status.should.be.false()
+        $status.should.be.false()

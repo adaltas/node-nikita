@@ -15,7 +15,7 @@
 
 // ## Output
 
-// * `info.status`   
+// * `info.$status`   
 //   Value is "true" if command exit equals option "code", "0" by default, "false" if
 //   command exit equals option "code_skipped", none by default.
 // * `info.stdout`   
@@ -50,12 +50,12 @@
 // the command is considered successfull but without any impact.
 
 // ```js
-// const {status} = await nikita.execute({
+// const {$status} = await nikita.execute({
 //   ssh: ssh,
 //   command: 'useradd myfriend',
 //   code_skipped: 9
 // })
-// console.info(`User was created: ${status}`)
+// console.info(`User was created: ${$status}`)
 // ```
 
 // ## Run a command with bash
@@ -438,7 +438,7 @@ handler = async function({
       stdout: [],
       stderr: [],
       code: null,
-      status: false,
+      $status: false,
       command: config.command_original
     };
     if (config.dry) {
@@ -568,7 +568,7 @@ handler = async function({
           }));
         }
         if (config.code_skipped.indexOf(code) === -1) {
-          result.status = true;
+          result.$status = true;
         } else {
           log({
             message: `Skip exit code \"${code}\"`,

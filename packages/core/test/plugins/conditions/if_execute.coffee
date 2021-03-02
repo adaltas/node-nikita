@@ -7,18 +7,18 @@ describe 'plugin.conditions if_execute', ->
   return unless tags.posix
 
   they 'pass if string command is successfull', ({ssh}) ->
-    {status} = await nikita
+    {$status} = await nikita
       if_execute: 'exit 0'
       handler: -> true
       ssh: ssh
-    status.should.be.true()
+    $status.should.be.true()
 
   they 'skip if string command exit with code_skipped', ({ssh}) ->
-    {status} = await nikita
+    {$status} = await nikita
       if_execute: 'exit 42'
       handler: -> true
       ssh: ssh
-    status.should.be.false()
+    $status.should.be.false()
 
   they 'error if code_skipped not match', ({ssh}) ->
     nikita
@@ -35,10 +35,10 @@ describe 'plugin.conditions if_execute', ->
       ].join ' '
   
   they 'skip if skip_code match', ({ssh}) ->
-    {status} = await nikita
+    {$status} = await nikita
       if_execute:
         code_skipped: 42
         command: 'exit 42'
       handler: -> true
       ssh: ssh
-    status.should.be.false()
+    $status.should.be.false()

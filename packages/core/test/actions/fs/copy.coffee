@@ -66,7 +66,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert
           target: "#{tmpdir}/a_target"
           md5: '5d41402abc4b2a76b9719d911017c592'
@@ -74,7 +74,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
         .should.be.finally.containEql
-          status: false
+          $status: false
   
     they 'into a directory', ({ssh}) ->
       nikita
@@ -88,7 +88,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/existing_dir"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert
           target: "#{tmpdir}/existing_dir/a_file"
   
@@ -103,7 +103,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert
           target: "#{tmpdir}/target_file"
           md5: '5d41402abc4b2a76b9719d911017c592'
@@ -111,7 +111,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
         .should.be.finally.containEql
-          status: false
+          $status: false
   
     they 'change permissions', ({ssh}) ->
       nikita
@@ -131,7 +131,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source_file"
           mode: 0o0750
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert
           target: "#{tmpdir}/target_file"
           mode: 0o0750
@@ -246,7 +246,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/target_1"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert "#{tmpdir}/target_1/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_1/a_file"
         # if the target exists, then copy the folder inside target
@@ -256,7 +256,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/target_2"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert "#{tmpdir}/target_2/source/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_2/source/a_file"
   
@@ -273,7 +273,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source/"
           target: "#{tmpdir}/target_1"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert "#{tmpdir}/target_1/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_1/a_file"
         # if the target exists, then copy the files inside target
@@ -283,7 +283,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source/"
           target: "#{tmpdir}/target_2"
         .should.be.finally.containEql
-          status: true
+          $status: true
         @fs.assert "#{tmpdir}/target_2/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_2/a_file"
   
@@ -387,7 +387,7 @@ describe 'actions.fs.copy', ->
         @fs.copy
           source: "#{__dirname}/../*"
           target: "#{tmpdir}"
-        , (err, {status}) ->
-          status.should.be.true() unless err
+        , (err, {$status}) ->
+          $status.should.be.true() unless err
         @fs.glob "#{tmpdir}/**", dot: true, (err, {files}) ->
             callback err

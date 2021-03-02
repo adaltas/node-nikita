@@ -8,10 +8,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.execute.wait({
+// const {$status} = await nikita.execute.wait({
 //   command: "test -f /tmp/sth"
 // })
-// console.info(`Command succeed, the file "/tmp/sth" now exists: ${status}`)
+// console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
 // ```
 
 // ## Hooks
@@ -88,9 +88,9 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var attempts, commands, status, wait;
+  var $status, attempts, commands, wait;
   attempts = 0;
-  status = false;
+  $status = false;
   wait = function(timeout) {
     if (!timeout) {
       return;
@@ -109,7 +109,7 @@ handler = async function({
     commands = (await utils.promise.array_filter(commands, async(command) => {
       var success;
       ({
-        status: success
+        $status: success
       } = (await this.execute({
         command: command,
         code: config.code || 0,
@@ -134,7 +134,7 @@ handler = async function({
   }
   return {
     attempts: attempts,
-    status: attempts > 1
+    $status: attempts > 1
   };
 };
 

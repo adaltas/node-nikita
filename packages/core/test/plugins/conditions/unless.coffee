@@ -63,10 +63,10 @@ describe 'plugin.conditions unless', ->
       , -> throw Error 'You are not welcome here'
 
     it 'run if string empty', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         unless: ''
-        handler: -> status: true, value: 'called'
-      status.should.be.true()
+        handler: -> $status: true, value: 'called'
+      $status.should.be.true()
       value.should.eql 'called'
 
     it 'skip if buffer length > 1', ->
@@ -96,37 +96,37 @@ describe 'plugin.conditions unless', ->
   describe 'function', ->
 
     it 'skip if function casts to true', ->
-      {status} = await nikita.call
+      {$status} = await nikita.call
         unless: -> true
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
-      {status} = await nikita.call
+      $status.should.be.false()
+      {$status} = await nikita.call
         unless: -> 'abc'
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
+      $status.should.be.false()
 
     it 'skip if promise resolves with true', ->
-      {status} = await nikita.call
+      {$status} = await nikita.call
         unless: ->
           new Promise (accept, reject) -> accept true
         handler: -> throw Error 'You are not welcome here'
-      status.should.be.false()
+      $status.should.be.false()
 
     it 'run if function casts to false', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         unless: -> false
         handler: -> true
-      status.should.be.true()
-      {status, value} = await nikita.call
+      $status.should.be.true()
+      {$status, value} = await nikita.call
         unless: -> ''
         handler: -> true
-      status.should.be.true()
+      $status.should.be.true()
 
     it 'run if promise resolves with false', ->
-      {status, value} = await nikita.call
+      {$status, value} = await nikita.call
         unless: -> false
         handler: -> true
-      status.should.be.true()
+      $status.should.be.true()
 
     it 'pass error on rejected promise', ->
       nikita.call
