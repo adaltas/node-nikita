@@ -20,3 +20,5 @@ Remember, in the end, an action is a JavaScript object with the mandatory proper
   Configuration properties are used to contextualize the handler function.
 * [Handler](/current/action/handler/) (function, required)   
   Define the function that an action implements to get things done.
+* [Output](/current/action/output/)   
+  Action output is the result returned by Nikita's actions.
