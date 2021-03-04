@@ -15,7 +15,7 @@ The value of the metadata is defined when [registering an action](/current/usage
 
 ## Usage
 
-The metadata can be accessed from the inside of the [action handler](/current/action/handler).
+Its value is accessed inside the [action handler](/current/action/handler).
 
 ```js
 nikita
