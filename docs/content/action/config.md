@@ -38,7 +38,7 @@ nikita
 .execute('whoami')
 ```
 
-The string configuration is here for convenience. Internally, the handler of the `nikita.execute` action receives the configuration as an object and search for the `argument` metadata property. Here's an example of how it can be implemented into an action:
+The string configuration is here for convenience. Internally, the handler of the `nikita.execute` action receives the configuration as an object and search for the [`argument` metadata](/current/metadata/argument) property. Here's an example of how it can be implemented into an action:
 
 ```js
 nikita
