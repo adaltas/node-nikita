@@ -21,5 +21,5 @@ if test -t 0; then
   fi
 # Detached mode
 else
-  npm test
+  npm run test:local
 fi

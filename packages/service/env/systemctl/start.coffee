@@ -14,6 +14,9 @@ nikita
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/service/env/systemctl/test.coffee'
+        'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
+        then 'both 1000 0'
+        else "both #{process.getuid()} 0"
       disk:
         nikitadir:
           path: '/nikita'
@@ -23,14 +26,12 @@ nikita
     await @lxd.exec
       $header: 'Node.js'
       container: config.container
-      command: """
-      command -v node && exit 42
-      NODE_VERSION=12.13.1
-      yum install -y xz
-      curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
-      tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
-      rm -f "/tmp/node.tar.xz"
-      """
+      command: '''
+      if command -v node ; then exit 42; fi
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+      . ~/.bashrc
+      nvm install node
+      '''
       trap: true
       code_skipped: 42
     await @lxd.exec

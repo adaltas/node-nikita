@@ -3,7 +3,8 @@
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
 npx coffee start.coffee
-lxc exec nikita-service-systemctl bash <<EOF
-cd /nikita/packages/service
-npx mocha 'test/**/*.coffee'
-EOF
+lxc exec \
+  --cwd /nikita/packages/service \
+  nikita-service-systemctl -- \
+  bash -l -c "npm run test:local"
+lxc stop nikita-service-systemctl

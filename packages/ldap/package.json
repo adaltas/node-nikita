@@ -75,8 +75,9 @@
   "scripts": {
     "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/ldap\\/src/@nikitajs\\/ldap\\/lib/g'",
     "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'",
-    "testall": "mocha 'test/**/*.coffee' && env/run.sh"
+    "test": "npm run test:local && npm run test:env",
+    "test:env": "env/run.sh",
+    "test:local": "mocha 'test/**/*.coffee'"
   },
   "dependencies": {
     "mixme": "^0.5.0"

@@ -8,4 +8,5 @@ lxc exec \
   --cwd /nikita/packages/core \
   --env HOME=/home/source \
   nikita-core-ssh -- \
-  bash -l -c "npx mocha 'test/**/*.coffee'"
+  bash -l -c "npm run test:local"
+lxc stop nikita-core-ssh

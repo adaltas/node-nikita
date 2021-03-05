@@ -22,3 +22,5 @@ services:
     expose:
       - "389"
       - "636"
+    logging:
+      driver: none 

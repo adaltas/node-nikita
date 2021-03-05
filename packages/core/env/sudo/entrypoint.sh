@@ -16,5 +16,5 @@ if test -t 0; then
 else
   # Run supervisord in foreground, which will stay until container is stopped.
   sudo supervisord -c /etc/supervisord.conf
-  npm test
+  npm run test:local
 fi

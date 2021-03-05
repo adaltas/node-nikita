@@ -43,12 +43,10 @@ require '@nikitajs/lxd/lib/register'
         metadata: header: 'Node.js'
         container: config.container
         command: """
-        # cd /home/source
         export HOME=/home/source
         if command -v node ; then exit 42; fi
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
-        env
         nvm install node
         """
         user: '1234'

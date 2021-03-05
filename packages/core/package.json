@@ -123,7 +123,8 @@
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "pretest": "npm run build",
-    "test": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'",
-    "testall": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee' && env/run.sh"
+    "test": "npm run test:local && npm run test:env",
+    "test:env": "env/run.sh",
+    "test:local": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'"
   }
 }

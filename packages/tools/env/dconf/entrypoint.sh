@@ -14,5 +14,5 @@ if test -t 0; then
     /bin/bash
   fi
 else
-  npm test
+  npm run test:local
 fi

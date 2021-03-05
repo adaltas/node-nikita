@@ -14,6 +14,9 @@ nikita
       image: 'images:centos/7'
       properties:
         'environment.NIKITA_TEST_MODULE': "/nikita/packages/tools/env/npm/test.coffee"
+        'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
+        then 'both 1000 0'
+        else "both #{process.getuid()} 0"
         # files in "/nikita" with vagrant user 1000 on host are mapped to root
         'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
         then 'both 1000 0'
@@ -29,12 +32,12 @@ nikita
     await @lxd.exec
       $header: 'Node.js'
       container: config.container
-      command: """
-      command -v node && exit 42
+      command: '''
+      if command -v node ; then exit 42; fi
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
       . ~/.bashrc
       nvm install node
-      """
+      '''
       trap: true
       code_skipped: 42
     await @lxd.exec

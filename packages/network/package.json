@@ -79,7 +79,7 @@
   "scripts": {
     "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/network\\/src/@nikitajs\\/network\\/lib/g'",
     "pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'",
-    "testall": "mocha 'test/**/*.coffee'"
+    "test": "npm run test:local",
+    "test:local": "mocha 'test/**/*.coffee'"
   }
 }

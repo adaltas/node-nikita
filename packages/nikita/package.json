@@ -69,7 +69,7 @@
     "directory": "packages/nikita"
   },
   "scripts": {
-    "test": "mocha 'test/**/*.js'",
-    "testall": "mocha 'test/**/*.js'"
+    "test": "npm run test:local",
+    "test:local": "mocha 'test/**/*.js'"
   }
 }
