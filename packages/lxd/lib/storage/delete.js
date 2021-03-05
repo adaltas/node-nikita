@@ -47,6 +47,7 @@ ${command_delete}`,
 module.exports = {
   handler: handler,
   metadata: {
+    argument_to_config: 'name',
     schema: schema
   }
 };

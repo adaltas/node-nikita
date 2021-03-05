@@ -51,4 +51,5 @@ console.info(`Storage was deleted: ${$status}`)
     module.exports =
       handler: handler
       metadata:
+        argument_to_config: 'name'
         schema: schema
