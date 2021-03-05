@@ -47,4 +47,5 @@ console.info(`Container was deleted: ${$status}`)
     module.exports =
       handler: handler
       metadata:
+        argument_to_config: 'container'
         schema: schema
