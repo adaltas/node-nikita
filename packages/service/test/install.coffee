@@ -11,65 +11,65 @@ describe 'service.install', ->
 
   they 'new package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove
         name: service.name
-      {status} = await @service
+      {$status} = await @service
         name: service.name
-      status.should.be.true()
+      $status.should.be.true()
   
   they 'already installed packages', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove
         name: service.name
       @service
         name: service.name
-      {status} = await @service
+      {$status} = await @service
         name: service.name
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'name as default argument', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove
         name: service.name
-      {status} = await @service service.name
-      status.should.be.true()
+      {$status} = await @service service.name
+      $status.should.be.true()
   
   they 'cache', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove
         name: service.name
       @call ({parent: {state}}) ->
         (state['nikita:execute:installed'] is undefined).should.be.true()
-      {status} = await @service
+      {$status} = await @service
         name: service.name
         cache: true
-      status.should.be.true()
+      $status.should.be.true()
       @call ({parent: {state}}) ->
         state['nikita:execute:installed'].should.containEql service.name
 
   they 'skip code when error', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status} = await @service.install
+      {$status} = await @service.install
         name: 'thisservicedoesnotexist'
         code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
-      status.should.be.false()
+      $status.should.be.false()
   
   describe 'specific', ->
     
     they 'add pacman options', ({ssh}) ->
       message = null
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ({tools: {events}}) ->
         events.on 'stdin', (log) -> message = log.message
         @service.remove
@@ -83,7 +83,7 @@ describe 'service.install', ->
     they 'add yaourt options', ({ssh}) ->
       message = null
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ({tools: {events}}) ->
         events.on 'stdin', (log) -> message = log.message
         @service.remove
@@ -97,7 +97,7 @@ describe 'service.install', ->
     they 'add yay options', ({ssh}) ->
       message = null
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ({tools: {events}}) ->
         events.on 'stdin', (log) -> message = log.message
         @service.remove

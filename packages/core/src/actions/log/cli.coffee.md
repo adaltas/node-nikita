@@ -63,7 +63,7 @@ nikita
 
 ## Handler
 
-    handler = ({config, metadata, ssh}) ->
+    handler = ({config, metadata, ssh, tools: {find}}) ->
       # Normalize
       config.enabled ?= metadata.argument if metadata.argument?
       config.enabled ?= true
@@ -78,7 +78,7 @@ nikita
       config.separator.host ?= unless config.pad.host? then '   ' else ' '
       config.separator.header ?= unless config.pad.header? then '   ' else ' '
       config.separator.time ?= unless config.pad.time? then '  ' else ' '
-      config.host ?= if ssh then ssh.config.host else 'localhost'
+      # config.host ?= if ssh then ssh.config.host else 'localhost'
       config.colors ?= process.stdout.isTTY
       config.colors = {
         status_true: colors.green
@@ -97,7 +97,7 @@ nikita
           $status, if config.time then config.separator.time else ''
           time
         ].join ''
-      @call stream, config: config, serializer:
+      @call $: stream, config, serializer:
         'nikita:action:start': (action) ->
           return unless config.enabled
           headers = get_headers action
@@ -105,23 +105,23 @@ nikita
           ids[action.metadata.index] = action
           null
         # 'diff': null
-        'nikita:resolved': ->
+        'nikita:resolved': ({action}) ->
           color = if config.colors
           then config.colors.status_true
           else false
           line = format_line
-            host: config.host
+            host: config.host or action.ssh?.config?.host or 'localhost'
             header: ''
             $status: '♥'
             time: ''
           line = color line if color
           return line+'\n'
-        'nikita:rejected': ({error}) ->
+        'nikita:rejected': ({action, error}) ->
           color = if config.colors
           then config.colors.status_error
           else false
           line = format_line
-            host: config.host
+            host: config.host or action.ssh?.config?.host or 'localhost'
             header: '' # error.message
             $status: '✘'
             time: ''
@@ -137,6 +137,7 @@ nikita
         #   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
         #   null
         'nikita:action:end': (action, error, output) ->
+          # console.log ':events:on:', 'nikita:action:end'
           return unless action.metadata.header
           return if config.depth_max and config.depth_max < action.metadata.depth
           # TODO: I don't like this, the `end` event should receive raw output
@@ -153,7 +154,7 @@ nikita
           # delete ids[action.index]
           headers = get_headers action
           line = format_line
-            host: config.host
+            host: config.host or action.ssh?.config?.host or 'localhost'
             header: headers.join config.divider
             $status: $status
             time: if config.time then utils.string.print_time action.metadata.time_end - action.metadata.time_start else ''

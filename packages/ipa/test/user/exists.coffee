@@ -11,7 +11,7 @@ describe 'ipa.user.exists', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       .ipa.user.exists connection: ipa,
         username: 'user_exists'
 
@@ -19,18 +19,18 @@ describe 'ipa.user.exists', ->
 
     they 'user doesnt exist', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del connection: ipa,
           uid: 'user_exists'
-        {status, exists} = await @ipa.user.exists connection: ipa,
+        {$status, exists} = await @ipa.user.exists connection: ipa,
           uid: 'user_exists'
-        status.should.be.false()
+        $status.should.be.false()
         exists.should.be.false()
 
     they 'user exists', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user connection: ipa,
           uid: 'user_exists'
@@ -40,7 +40,7 @@ describe 'ipa.user.exists', ->
             mail: [
               'user@nikita.js.org'
             ]
-        {status, exists} = await @ipa.user.exists connection: ipa,
+        {$status, exists} = await @ipa.user.exists connection: ipa,
           uid: 'user_exists'
-        status.should.be.true()
+        $status.should.be.true()
         exists.should.be.true()

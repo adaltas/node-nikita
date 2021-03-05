@@ -10,8 +10,8 @@ describe 'system.group.read', ->
   
     they 'shy doesnt modify the status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/group"
@@ -19,14 +19,14 @@ describe 'system.group.read', ->
           root:x:0:root
           bin:x:1:root,bin,daemon
           """
-        {status} = await @system.group.read
+        {$status} = await @system.group.read
           target: "#{tmpdir}/etc/group"
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'activate locales', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/group"
@@ -45,7 +45,7 @@ describe 'system.group.read', ->
 
     they 'use `getent` without target', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @system.group.remove 'toto'
         @system.group
@@ -65,8 +65,8 @@ describe 'system.group.read', ->
   
     they 'map a username to group record', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/group"
@@ -82,8 +82,8 @@ describe 'system.group.read', ->
     
     they 'map a gid to group record', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/group"

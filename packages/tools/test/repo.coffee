@@ -11,8 +11,8 @@ describe 'tools.repo', ->
 
   they 'Write with source option', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/repo"
       @file
@@ -25,46 +25,46 @@ describe 'tools.repo', ->
         gpgcheck=1
         gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
         """
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         source: "#{tmpdir}/CentOS.repo"
         target: "#{tmpdir}/repo/centos.repo"
-      status.should.be.true()
-      {status} = await @tools.repo
+      $status.should.be.true()
+      {$status} = await @tools.repo
         source: "#{tmpdir}/CentOS.repo"
         target: "#{tmpdir}/repo/centos.repo"
-      {status} = await status.should.be.false()
+      {$status} = await $status.should.be.false()
       @fs.assert "#{tmpdir}/repo/centos.repo"
   
   they 'Write with content option', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/repo"
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         target: "#{tmpdir}/repo/centos.repo"
         content:
           'base':
             'name':'CentOS-$releasever - Base'
             'baseurl':'http://mirror.centos.org/centos/$releasever/os/$basearch/'
             'gpgcheck':'0'
-      status.should.be.true()
-      {status} = await @tools.repo
+      $status.should.be.true()
+      {$status} = await @tools.repo
         target: "#{tmpdir}/repo/centos.repo"
         content:
           'base':
             'name':'CentOS-$releasever - Base'
             'baseurl':'http://mirror.centos.org/centos/$releasever/os/$basearch/'
             'gpgcheck':'0'
-      status.should.be.false()
+      $status.should.be.false()
       @fs.assert
         target: "#{tmpdir}/repo/centos.repo"
         content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
   
   they 'delete files with clean option', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true, dirty: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @file
         target: "#{tmpdir}/source/CentOS.repo"
@@ -79,26 +79,26 @@ describe 'tools.repo', ->
       await @tools.repo
         source: "#{tmpdir}/source/CentOS.repo"
         target: "#{tmpdir}/target/CentOS.repo"
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         source: "#{tmpdir}/source/CentOS.repo"
         target: "#{tmpdir}/target/CentOS.repo"
         clean: 'test*'
-      status.should.be.false()
+      $status.should.be.false()
       @file.touch
         target: "#{tmpdir}/target/test.repo"
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         source: "#{tmpdir}/source/CentOS.repo"
         target: "#{tmpdir}/target/CentOS.repo"
         clean: "test*"
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/target/test.repo"
         not: true
   
   they 'Download GPG Keys option', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/linuxtech.repo"
@@ -120,24 +120,24 @@ describe 'tools.repo', ->
   
   they 'Download repo from remote location', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @fs.remove '/etc/yum.repos.d/linuxtech.repo'
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
-      status.should.be.true()
-      {status} = await @tools.repo
+      $status.should.be.true()
+      {$status} = await @tools.repo
         source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
-      status.should.be.false()
+      $status.should.be.false()
       @fs.assert '/etc/yum.repos.d/linuxtech.repo'
 
   they 'Do Not update Package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @service.remove 'mongodb-org-shell'
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
           'mongodb-org-3.2':
@@ -146,22 +146,11 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
-      status.should.be.true()
-      {status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
-        content:
-          'mongodb-org-3.2':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
-            'gpgcheck':'1'
-            'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
-      status.should.be.false()
-      @service.install
+      await @service.install
         name: 'mongodb-org-shell'
       @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
           'mongodb-org-3.4':
@@ -170,8 +159,8 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      status.should.be.true()
-      {status} = await @tools.repo
+      $status.should.be.true()
+      {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
           'mongodb-org-3.4':
@@ -180,13 +169,13 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      status.should.be.false()
+      $status.should.be.false()
       @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
 
   they 'Update Package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @fs.remove '/etc/yum.repos.d/mongodb.repo'
       @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
@@ -205,7 +194,7 @@ describe 'tools.repo', ->
         name: 'mongodb-org-shell'
       @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
-      {status} = await @tools.repo
+      {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         update: true
         content:
@@ -215,8 +204,8 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      status.should.be.true()
-      {status} = await @tools.repo
+      $status.should.be.true()
+      {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         update: true
         content:
@@ -226,6 +215,6 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      status.should.be.false()
+      $status.should.be.false()
       @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"

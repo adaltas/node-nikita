@@ -7,19 +7,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Value is "true" if archive was extracted.   
+// * `$status`   
+//   Value is "true" if archive was extracted.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.tools.extract({
+// const {$status} = await nikita.tools.extract({
 //   source: '/path/to/file.tgz'
 //   destation: '/tmp'
 // })
-// console.info(`File was extracted: ${status}`)
+// console.info(`File was extracted: ${$status}`)
 // ```
 
 // ## Hooks

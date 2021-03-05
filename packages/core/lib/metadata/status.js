@@ -43,7 +43,7 @@ module.exports = {
         if (action.tools == null) {
           action.tools = {};
         }
-        action.tools.$status = function(index) {
+        action.tools.status = function(index) {
           var i, l, sibling;
           if (arguments.length === 0) {
             return action.children.some(function(sibling) {
@@ -94,6 +94,8 @@ module.exports = {
               } else {
                 return inherit(output);
               }
+            } else if (output === null) {
+              return output;
             } else if (output == null) {
               return inherit(output);
             } else if (is_object(output)) {

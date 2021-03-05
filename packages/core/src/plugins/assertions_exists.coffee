@@ -18,7 +18,8 @@ module.exports =
       handler: (action, handler) ->
         # Ventilate assertions properties defined at root
         assertions = {}
-        for property, value of action
+        # console.log action.metadata
+        for property, value of action.metadata
           if /^(un)?assert_exists$/.test property
             throw Error 'ASSERTION_DUPLICATED_DECLARATION', [
               "Property #{property} is defined multiple times,"
@@ -26,7 +27,7 @@ module.exports =
             ] if assertions[property]
             value = [value] unless Array.isArray value
             assertions[property] = value
-            delete action[property]
+            delete action.metadata[property]
         ->
           action = await handler.call null, ...arguments
           mutate action.assertions, assertions
@@ -44,17 +45,17 @@ module.exports =
 handlers =
   assert_exists: (action) ->
     final_run = true
+    # console.log action
     for assertion in action.assertions.assert_exists
       run = await session
-        hooks:
+        $hooks:
           on_result: ({action}) -> delete action.parent
-        metadata:
-          condition: true
-          depth: action.metadata.depth
-          raw_output: true
-          raw_input: true
-        parent: action
-      , ->
+        $assertion: true
+        $depth: action.metadata.depth
+        $raw_output: true
+        $raw_input: true
+        $parent: action
+      , ({parent}) ->
         {exists} = await @fs.base.exists target: assertion
         exists
       final_run = false if run is false
@@ -63,13 +64,13 @@ handlers =
     final_run = true
     for assertion in action.assertions.unassert_exists
       run = await session
-        hooks:
+        $hooks:
           on_result: ({action}) -> delete action.parent
-        metadata:
-          condition: true
-          depth: action.metadata.depth
-          raw_output: true
-        parent: action
+        $condition: true
+        $depth: action.metadata.depth
+        $parent: action
+        $raw_output: true
+        $parent: action
       , ->
         {exists} = await @fs.base.exists target: assertion
         exists

@@ -5,19 +5,16 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicates if the service was installed.   
+// * `$status`   
+//   Indicates if the service was installed.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.install({
-//   ssh: ssh,
+// const {$status} = await nikita.service.install({
 //   name: 'ntp'
 // })
-// console.info(`Package installed: ${status}`)
+// console.info(`Package installed: ${$status}`)
 // ```
 
 // ## Hooks
@@ -33,9 +30,10 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+    // 'arch_chroot_rootdir':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
     'cache': {
       type: 'boolean',
       description: `Cache the list of installed and outdated packages.`
@@ -75,9 +73,6 @@ updated if a key of the same name exists; If true, the option will be
 converted to an array with all the outdated service names as keys; if
 anything else (default), no caching will take place.`
     },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
-    },
     'pacman_flags': {
       type: 'array',
       default: [],
@@ -103,7 +98,7 @@ handler = async function({
     parent: {state},
     tools: {log}
   }) {
-  var cacheonly, err, flag, i, installedIndex, j, k, l, len, len1, len2, outdatedIndex, pkg, ref, ref1, ref2, ref3, ref4, status, stdout;
+  var $status, cacheonly, err, flag, i, installedIndex, j, k, l, len, len1, len2, outdatedIndex, pkg, ref, ref1, ref2, ref3, ref4, stdout;
   if (config.cache) {
     // Config
     if (config.installed == null) {
@@ -163,7 +158,8 @@ handler = async function({
   // List installed packages
   if (config.installed == null) {
     try {
-      ({status, stdout} = (await this.execute({
+      ({$status, stdout} = (await this.execute({
+        $shy: true,
         command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n"
 elif command -v pacman >/dev/null 2>&1; then
@@ -175,15 +171,12 @@ else
   exit 2
 fi`,
         code_skipped: 1,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir,
+        // arch_chroot: config.arch_chroot
+        // arch_chroot_rootdir: config.arch_chroot_rootdir
         stdin_log: false,
-        stdout_log: false,
-        metadata: {
-          shy: true
-        }
+        stdout_log: false
       })));
-      if (status) {
+      if ($status) {
         log({
           message: "Installed packages retrieved",
           level: 'INFO'
@@ -209,7 +202,8 @@ fi`,
   // List packages waiting for update
   if (config.outdated == null) {
     try {
-      ({status, stdout} = (await this.execute({
+      ({$status, stdout} = (await this.execute({
+        $shy: true,
         command: `if command -v yum >/dev/null 2>&1; then
   yum ${cacheonly} check-update -q | sed 's/\\([^\\.]*\\).*/\\1/'
 elif command -v pacman >/dev/null 2>&1; then
@@ -221,15 +215,12 @@ else
   exit 2
 fi`,
         code_skipped: 1,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir,
+        // arch_chroot: config.arch_chroot
+        // arch_chroot_rootdir: config.arch_chroot_rootdir
         stdin_log: false,
-        stdout_log: false,
-        metadata: {
-          shy: true
-        }
+        stdout_log: false
       })));
-      if (status) {
+      if ($status) {
         log({
           message: "Outdated package list retrieved",
           level: 'INFO'
@@ -248,7 +239,7 @@ fi`,
   // Install the package
   if (((ref3 = config.installed) != null ? ref3.indexOf(config.name) : void 0) === -1 || ((ref4 = config.outdated) != null ? ref4.indexOf(config.name) : void 0) !== -1) {
     try {
-      ({status} = (await this.execute({
+      ({$status} = (await this.execute({
         command: `if command -v yum >/dev/null 2>&1; then
   yum install -y ${cacheonly} ${config.name}
 elif command -v yay >/dev/null 2>&1; then
@@ -263,11 +254,11 @@ else
   echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
   exit 2
 fi`,
-        code_skipped: config.code_skipped,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir
+        code_skipped: config.code_skipped
       })));
-      log(status ? {
+      // arch_chroot: config.arch_chroot
+      // arch_chroot_rootdir: config.arch_chroot_rootdir
+      log($status ? {
         message: `Package \"${config.name}\" is installed`,
         level: 'WARN',
         module: 'nikita/lib/service/install'
@@ -307,7 +298,7 @@ fi`,
     });
     state['nikita:execute:outdated'] = config.outdated;
     return {
-      status: true
+      $status: true
     };
   }
 };

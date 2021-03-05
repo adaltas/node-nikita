@@ -5,21 +5,19 @@
 
 // ## Output
 
-// * `err`   
-  //   Error object if any.   
-  // * `status`   
-  //   Value is "true" if cache file was created or modified.   
+// * `$status`   
+  //   Value is "true" if cache file was created or modified.
 
 // ## HTTP example
 
 // Cache can be used from the `file.download` action:
 
 // ```js
-  // const {status} = await nikita.file.download({
+  // const {$status} = await nikita.file.download({
   //   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   //   cache_dir: '/var/tmp'
   // })
-  // console.info(`File downloaded: ${status}`)
+  // console.info(`File downloaded: ${$status}`)
   // ```
 
 // ## Schema
@@ -128,7 +126,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var _hash, algo, cookie, hash, header, ref, status, u;
+  var $status, _hash, algo, cookie, hash, header, ref, u;
   if (config.target == null) {
     config.target = config.cache_file;
   }
@@ -140,6 +138,9 @@ handler = async function({
     config.source = config.source.substr(7);
   }
   // todo, also support config.algo and config.hash
+  // replace alog and _hash with
+  // config.algo = null
+  // config.hash = false
   if (config.md5 != null) {
     algo = 'md5';
     _hash = config.md5;
@@ -173,7 +174,7 @@ handler = async function({
   // - file doesnt exist
   // - option force is provided
   // - hash isnt true and doesnt match
-  ({status} = (await this.call(async function() {
+  ({$status} = (await this.call(async function() {
     var exists, hash;
     log({
       message: `Check if target (${config.target}) exists`,
@@ -232,16 +233,18 @@ handler = async function({
       return true;
     }
   })));
-  if (!status) {
-    return status;
+  if (!$status) {
+    return $status;
   }
   // Place into cache
   if (ref = u.protocol, indexOf.call(protocols_http, ref) >= 0) {
     await this.fs.mkdir({
-      ssh: config.cache_local ? false : config.ssh,
+      $ssh: config.cache_local ? false : void 0,
       target: path.dirname(config.target)
     });
     await this.execute({
+      $ssh: config.cache_local ? false : void 0,
+      $unless_exists: config.target,
       command: [
         'curl',
         config.fail ? '--fail' : void 0,
@@ -278,9 +281,7 @@ handler = async function({
         `-s ${config.source}`,
         `-o ${config.target}`,
         config.proxy ? `-x ${config.proxy}` : void 0
-      ].join(' '),
-      ssh: config.cache_local ? false : config.ssh,
-      unless_exists: config.target
+      ].join(' ')
     });
   } else {
     await this.fs.mkdir({ // todo: copy shall handle this
@@ -293,8 +294,8 @@ handler = async function({
   }
   // Validate the cache
   ({hash} = (await this.fs.hash({
-    target: config.target,
-    if: _hash
+    $if: _hash,
+    target: config.target
   })));
   if (hash == null) {
     hash = false;

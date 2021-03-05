@@ -8,10 +8,10 @@ Upgrade all Node.js packages with NPM.
 The following action upgrades all global packages.
 
 ```js
-const {status} = await nikita.tools.npm.upgrade({
+const {$status} = await nikita.tools.npm.upgrade({
   global: true
 })
-console.info(`Packages were upgraded: ${status}`)
+console.info(`Packages were upgraded: ${$status}`)
 ```
 
 ## Schema

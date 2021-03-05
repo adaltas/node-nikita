@@ -66,7 +66,7 @@ describe 'lxd.config.device', ->
 
     they 'Create device', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -74,21 +74,21 @@ describe 'lxd.config.device', ->
         @lxd.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        {status} = await @lxd.config.device
+        {$status} = await @lxd.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom'
             path: '/testrandom'
-        status.should.be.true()
-        {status} = await @execute
+        $status.should.be.true()
+        {$status} = await @execute
           command: "lxc config device list c1 | grep test"
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'Device already created', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -103,18 +103,18 @@ describe 'lxd.config.device', ->
           properties:
             source: '/dev/urandom'
             path: '/testrandom'
-        {status} = await @lxd.config.device
+        {$status} = await @lxd.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom'
             path: '/testrandom'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'Update device configuration', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -129,20 +129,20 @@ describe 'lxd.config.device', ->
           properties:
             source: '/dev/urandom1'
             path: '/testrandom1'
-        {status} = await @lxd.config.device
+        {$status} = await @lxd.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/null'
-        status.should.be.true()
-        {status} = await @execute
+        $status.should.be.true()
+        {$status} = await @execute
           command: "lxc config device show c1 | grep 'source: /dev/null'"
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'Catch and format error when creating device', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -167,7 +167,7 @@ describe 'lxd.config.device', ->
 
     they 'Catch and format error when updating device configuration', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'

@@ -13,11 +13,11 @@ describe 'ldap.user', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
-      {status} = await @ldap.user
+      {$status} = await @ldap.user
         user:
           dn: "cn=nikita,#{ldap.suffix_dn}"
           userPassword: 'test'
@@ -31,7 +31,7 @@ describe 'ldap.user', ->
           uidNumber: '9610'
           gidNumber: '9610'
           homeDirectory: '/home/nikita'
-      status.should.be.true()
+      $status.should.be.true()
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
 
@@ -49,14 +49,14 @@ describe 'ldap.user', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
       @ldap.user
         user: user
-      {status} = await @ldap.user
+      {$status} = await @ldap.user
         user: user
-      status.should.be.false()
+      $status.should.be.false()
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"

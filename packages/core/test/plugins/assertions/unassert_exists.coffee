@@ -8,32 +8,32 @@ describe 'plugin.assertions unassert_exists', ->
 
   they 'success if no file exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @call
-        unassert_exists: "#{tmpdir}/a_file"
+        $unassert_exists: "#{tmpdir}/a_file"
       , (->)
       .should.be.resolved()
 
   they 'error if file exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @fs.base.writeFile
-        unassert_exists: "#{tmpdir}/a_file"
+        $unassert_exists: "#{tmpdir}/a_file"
         content: ''
         target: "#{tmpdir}/a_file"
       .should.be.rejected()
 
   they 'error if all file exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @call
-        unassert_exists: [
+        $unassert_exists: [
           "#{tmpdir}/file_1"
           "#{tmpdir}/file_2"
         ]
@@ -48,11 +48,11 @@ describe 'plugin.assertions unassert_exists', ->
 
   they 'error if one file exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @call
-        unassert_exists: [
+        $unassert_exists: [
           "#{tmpdir}/file_1"
           "#{tmpdir}/file_2"
           "#{tmpdir}/file_3"
@@ -65,11 +65,11 @@ describe 'plugin.assertions unassert_exists', ->
 
   they 'success if no file exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @call
-        unassert_exists: [
+        $unassert_exists: [
           "#{tmpdir}/file_1"
           "#{tmpdir}/file_2"
         ]
@@ -78,10 +78,10 @@ describe 'plugin.assertions unassert_exists', ->
 
   they 'success if file missing', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @call
-        unassert_exists: "#{tmpdir}/a_file"
-        handler: (->)
+        $unassert_exists: "#{tmpdir}/a_file"
+        $handler: (->)
       .should.be.resolved()

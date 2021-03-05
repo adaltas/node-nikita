@@ -10,17 +10,17 @@ SIGNAL is not sent.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if container was killed.
 
 ## Example
 
 ```js
-const {status} = await nikita.docker.kill({
+const {$status} = await nikita.docker.kill({
   container: 'toto',
   signal: 9
 })
-console.info(`Container was killed: ${status}`)
+console.info(`Container was killed: ${$status}`)
 ```
 
 ## Schema
@@ -45,11 +45,11 @@ console.info(`Container was killed: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      {status} = await @docker.tools.execute
+      {$status} = await @docker.tools.execute
         command: "ps | egrep ' #{config.container}$' | grep 'Up'"
         code_skipped: 1
       await @docker.tools.execute
-        if: -> status
+        $if: $status
         command: [
           'kill'
           "-s #{config.signal}" if config.signal?

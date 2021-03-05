@@ -7,7 +7,7 @@ Return true if container is running. This function is not native to docker.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if container is running.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.
@@ -17,10 +17,10 @@ Return true if container is running. This function is not native to docker.
 ## Example
 
 ```js
-const {status} = await nikita.docker.tools.status({
+const {$status} = await nikita.docker.tools.status({
   container: 'container1'
 })
-console.info(`Container is running: ${status}`)
+console.info(`Container is running: ${$status}`)
 ```
 
 ## Schema

@@ -29,18 +29,18 @@ describe 'tools.npm.upgrade', ->
 
     they 'upgrade packages locally', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
           name: 'csv-parse@3.0.0'
-        {status} = await @tools.npm.upgrade
+        {$status} = await @tools.npm.upgrade
           cwd: tmpdir
-        status.should.be.true()
-        {status} = await @tools.npm.upgrade
+        $status.should.be.true()
+        {$status} = await @tools.npm.upgrade
           cwd: tmpdir
-        status.should.be.false()
+        $status.should.be.false()
         {packages} = await @tools.npm.list
           cwd: tmpdir
         # local updates follow caret versioning and only update minor versions
@@ -49,20 +49,20 @@ describe 'tools.npm.upgrade', ->
 
     they 'upgrade packages globally', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @tools.npm.uninstall
           name: 'csv-parse'
           global: true
-        {status} = await @tools.npm
+        {$status} = await @tools.npm
           name: 'csv-parse@3.0.0'
           global: true
-        {status} = await @tools.npm.upgrade
+        {$status} = await @tools.npm.upgrade
           global: true
-        status.should.be.true()
-        {status} = await @tools.npm.upgrade
+        $status.should.be.true()
+        {$status} = await @tools.npm.upgrade
           global: true
-        status.should.be.false()
+        $status.should.be.false()
         {packages} = await @tools.npm.list
           global: true
         # global updates update major versions

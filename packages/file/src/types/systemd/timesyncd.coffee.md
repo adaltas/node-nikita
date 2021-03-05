@@ -8,14 +8,14 @@ set a list of NTP servers by using an array and a single fallback server by
 using a string.
 
 ```js
-const {status} = await nikita.file.types.systemd.timesyncd({
+const {$status} = await nikita.file.types.systemd.timesyncd({
   target: "/usr/lib/systemd/timesyncd.conf.d/10_timesyncd.conf",
   rootdir: "/mnt",
   content:
     NTP: ["ntp.domain.com", "ntp.domain2.com", "ntp.domain3.com"]
     FallbackNTP: "fallback.domain.com"
 })
-console.info(`File was overwritten: ${status}`)
+console.info(`File was overwritten: ${$status}`)
 ```
 
 Write to the default target file (`/etc/systemd/timesyncd.conf`). Set a single
@@ -24,13 +24,13 @@ Note: with `merge` set to true, this wont overwrite the target file, only
 specified values will be updated.
 
 ```js
-const {status} = await nikita.file.types.systemd.timesyncd({
+const {$status} = await nikita.file.types.systemd.timesyncd({
   content:
     NTP: "0.arch.pool.ntp.org"
     RootDistanceMaxSec: 5
   merge: true
 })
-console.info(`File was written: ${status}`)
+console.info(`File was written: ${$status}`)
 ```
 
 ## Schema
@@ -85,16 +85,16 @@ under a "Time" key so that the user doesn't have to do it manually.
       if Array.isArray config.content.FallbackNTP
         config.content.FallbackNTP = config.content.FallbackNTP.join " "
       # Write configuration
-      {status} = await @file.ini
+      {$status} = await @file.ini
         separator: "="
         target: config.target
         content: 'Time': config.content
         merge: config.merge
       await @execute
-        if: ->
+        $if: ->
           if config.reload?
           then config.reload
-          else status
+          else $status
         sudo: true
         command: """
         systemctl daemon-reload

@@ -5,22 +5,20 @@ Create a storage or update a storage configuration.
 
 ## Output
 
-* `err`
-  Error object if any
-* `status`
+* `$status`
   Was the storage created or updated
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.storage({
+const {$status} = await nikita.lxd.storage({
   name: "system",
   driver: "zfs",
   properties: {
     source: "syspool/lxd"
   }
 })
-console.info(`Storage was created or config updated: ${status}`)
+console.info(`Storage was created or config updated: ${$status}`)
 ```
 
 ## Schema
@@ -75,14 +73,14 @@ console.info(`Storage was created or config updated: ${status}`)
       {config: currentProperties} = yaml.load stdout
       changes = diff currentProperties, config.properties
       # if changes is empty status is false because no command were executed
-      {status} = await @execute (
+      {$status} = await @execute (
         command: [
           'lxc', 'storage', 'set'
           config.name
           key, "'#{value.replace '\'', '\\\''}'"
         ].join ' '
       ) for key, value of changes
-      status: status
+      $status: $status
 
 ## Export
 

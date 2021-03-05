@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.service.exists({
+// const {$status} = await nikita.ipa.service.exists({
 //   principal: 'myprincipal/my.domain.com',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Service exists: ${status}`)
+// console.info(`Service exists: ${$status}`)
 // ```
 
 // ## Schema
@@ -48,7 +48,7 @@ handler = async function({config}) {
       principal: config.principal
     });
     return {
-      status: true,
+      $status: true,
       exists: true
     };
   } catch (error) {
@@ -57,7 +57,7 @@ handler = async function({config}) {
       throw err;
     }
     return {
-      status: false,
+      $status: false,
       exists: false
     };
   }

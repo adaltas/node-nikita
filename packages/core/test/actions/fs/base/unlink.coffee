@@ -10,8 +10,8 @@ describe 'actions.fs.base.unlink', ->
 
   they 'a file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"
@@ -24,10 +24,8 @@ describe 'actions.fs.base.unlink', ->
 
   they 'a link referencing a directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata:
-        tmpdir: true
-        dirty: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -45,8 +43,8 @@ describe 'actions.fs.base.unlink', ->
 
   they 'error ENOENT', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
@@ -56,8 +54,8 @@ describe 'actions.fs.base.unlink', ->
 
   they 'error EPERM', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.mkdir
         target: "{{parent.metadata.tmpdir}}/a_target"

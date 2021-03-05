@@ -8,40 +8,40 @@ describe 'plugin.conditions if_os', ->
   
   they 'match distribution string', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {$status} = await @call
-        if_os: distribution: conditions_if_os.distribution
-        handler: -> true
+        $if_os: distribution: conditions_if_os.distribution
+        $handler: -> true
       $status.should.be.true()
       {$status} = await @call
-        if_os: distribution: 'invalid'
-        handler: -> true
-        ssh: ssh
+        $if_os: distribution: 'invalid'
+        $handler: -> true
+        $ssh: ssh
       $status.should.be.false()
 
   they 'match distribution array', ({ssh}) ->
     {$status} = await nikita
-      if_os: distribution: [conditions_if_os.distribution, 'invalid']
-      handler: -> true
-      ssh: ssh
+      $if_os: distribution: [conditions_if_os.distribution, 'invalid']
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match distribution string and version string', ({ssh}) ->
     {$status} = await nikita
-      if_os:
+      $if_os:
         distribution: conditions_if_os.distribution
         version: conditions_if_os.version
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match Linux version string', ({ssh}) ->
     {$status} = await nikita
-      if_os:
+      $if_os:
         linux_version: conditions_if_os.linux_version
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match distribution string and major version', ({ssh}) ->
@@ -50,33 +50,33 @@ describe 'plugin.conditions if_os', ->
     then condition = version: conditions_if_os.version
     else condition = linux_version: conditions_if_os.linux_version
     {$status} = await nikita
-      if_os: condition,
+      $if_os: condition,
         distribution: conditions_if_os.distribution
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
   
   they 'match major Linux version', ({ssh}) ->
     {$status} = await nikita
-      if_os:
+      $if_os:
         linux_version: conditions_if_os.linux_version.split('.')[0]
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match arch string', ({ssh}) ->
     {$status} = await nikita
-      if_os:
+      $if_os:
         arch: conditions_if_os.arch
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match distribution string, version string, Linux version string and arch string', ({ssh}) ->
     {$status} = await nikita
-      if_os: conditions_if_os
-      handler: -> true
-      ssh: ssh
+      $if_os: conditions_if_os
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()
 
   they 'match array', ({ssh}) ->
@@ -86,11 +86,11 @@ describe 'plugin.conditions if_os', ->
     else condition = [linux_version: conditions_if_os.linux_version]
     condition.push 8
     {$status} = await nikita
-      if_os: [
+      $if_os: [
         distribution: conditions_if_os.distribution
       ,
         condition
       ]
-      handler: -> true
-      ssh: ssh
+      $handler: -> true
+      $ssh: ssh
     $status.should.be.true()

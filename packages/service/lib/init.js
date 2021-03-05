@@ -6,9 +6,7 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Indicates if the init script was reloaded.
 
 // ## Schema
@@ -75,7 +73,7 @@ handler = async function({
     config,
     tools: {path}
   }) {
-  var loader, status;
+  var $status, loader;
   // check if file is target is directory
   // detect daemon loader provider to construct target
   if (config.name == null) {
@@ -106,14 +104,12 @@ handler = async function({
   if (config.loader !== 'systemctl') {
     return;
   }
-  ({status} = (await this.execute({
-    metadata: {
-      shy: true
-    },
+  ({$status} = (await this.execute({
+    $shy: true,
     command: `systemctl status ${config.name} 2>\&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
     code_skipped: 1
   })));
-  if (!status) {
+  if (!$status) {
     return;
   }
   return (await this.execute({

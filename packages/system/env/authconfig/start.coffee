@@ -7,7 +7,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 # .log.md filename: '/tmp/nikita_system_authconfig'
 .lxd.cluster
-  metadata: header: 'Container'
+  $header: 'Container'
   containers:
     'nikita-system-authconfig':
       image: 'images:centos/7'
@@ -20,7 +20,7 @@ nikita
       ssh: enabled: true
   provision_container: ({config}) ->
     await @lxd.exec
-      metadata: header: 'Node.js'
+      $header: 'Node.js'
       container: config.container
       command: '''
       command -v node && exit 42
@@ -34,7 +34,7 @@ nikita
       trap: true
       code_skipped: 42
     await @lxd.exec
-      metadata: header: 'SSH keys'
+      $header: 'SSH keys'
       container: config.container
       command: """
       mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -45,6 +45,6 @@ nikita
       """
       trap: true
     await @lxd.exec
-      header: 'Package'
+      $header: 'Package'
       container: config.container
       command: 'yum install -y authconfig'

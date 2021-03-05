@@ -77,10 +77,10 @@ and "{config.basedir}/latest".
         throw err unless err.code is 'NIKITA_FS_MKDIR_TARGET_EEXIST'
       # Events
       config.stream ?= fs.createWriteStream path.resolve logdir, config.filename
-      await @call config, stream
+      await @call $: stream, config
       # Handle link to latest directory
       await @fs.base.symlink
-        if: latestdir
+        $if: latestdir
         source: logdir
         target: latestdir
 

@@ -45,9 +45,8 @@ nikita.assert( () => {
     on_action = (action) ->
       action.handler = ( (handler) -> ({config}) ->
         result = await @call
-          metadata:
-            raw_output: true
-          handler: handler
+          $raw_output: true
+          $handler: handler
         result = [result] unless Array.isArray result
         unless config.strict
           result = then result.map (res) ->
@@ -95,7 +94,8 @@ nikita.assert( () => {
 ## Exports
 
     module.exports =
-      on_action: on_action
+      hooks:
+        on_action: on_action
       metadata:
         schema: schema
 

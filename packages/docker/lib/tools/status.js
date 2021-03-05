@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container is running.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,10 +17,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.tools.status({
+// const {$status} = await nikita.docker.tools.status({
 //   container: 'container1'
 // })
-// console.info(`Container is running: ${status}`)
+// console.info(`Container is running: ${$status}`)
 // ```
 
 // ## Schema

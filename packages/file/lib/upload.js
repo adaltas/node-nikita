@@ -6,20 +6,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Value is "true" if file was uploaded.   
+// * `$status`   
+//   Value is "true" if file was uploaded.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.file.upload({
-//   ssh: ssh
+// const {$status} = await nikita.file.upload({
 //   source: '/tmp/local_file',
 //   target: '/tmp/remote_file'
 // })
-// console.info(`File was uploaded: ${status}`)
+// console.info(`File was uploaded: ${$status}`)
 // ```
 
 // ## Schema
@@ -98,7 +95,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var algo, stage_target, stats, status;
+  var $status, algo, stage_target, stats;
   if (config.md5 != null) {
     algo = 'md5';
   } else if (config.sha1 != null) {
@@ -116,15 +113,13 @@ handler = async function({
   });
   // Stat the target and redefine its path if a directory
   stats = (await this.call({
-    metadata: {
-      raw_output: true
-    }
+    $raw_output: true
   }, async function() {
     var err;
     try {
       ({stats} = (await this.fs.base.stat({
-        ssh: false,
-        sudo: false,
+        $ssh: false,
+        $sudo: false,
         target: config.target
       })));
       if (utils.stats.isFile(stats.mode)) {
@@ -139,7 +134,7 @@ handler = async function({
       config.target = path.resolve(config.target, path.basename(config.source));
       try {
         ({stats} = (await this.fs.base.stat({
-          ssh: false,
+          $ssh: false,
           sudo: false,
           target: config.target
         })));
@@ -164,7 +159,7 @@ handler = async function({
   }));
   // Now that we know the real name of the target, define a temporary file to write
   stage_target = `${config.target}.${Date.now()}${Math.round(Math.random() * 1000)}`;
-  ({status} = (await this.call(async function() {
+  ({$status} = (await this.call(async function() {
     var hash, hash_source, hash_target, match;
     if (!stats) {
       return true;
@@ -175,10 +170,10 @@ handler = async function({
     })));
     hash_source = hash;
     ({hash} = (await this.fs.hash({
+      $ssh: false,
+      $sudo: false,
       target: config.target,
-      algo: algo,
-      ssh: false,
-      sudo: false
+      algo: algo
     })));
     hash_target = hash;
     match = hash_source === hash_target;
@@ -193,12 +188,12 @@ handler = async function({
     });
     return !match;
   })));
-  if (!status) {
+  if (!$status) {
     return;
   }
   await this.fs.mkdir({
-    ssh: false,
-    sudo: false,
+    $ssh: false,
+    $sudo: false,
     target: path.dirname(stage_target)
   });
   await this.fs.base.createReadStream({
@@ -210,8 +205,8 @@ handler = async function({
     }
   });
   await this.fs.move({
-    ssh: false,
-    sudo: false,
+    $ssh: false,
+    $sudo: false,
     source: stage_target,
     target: config.target
   });
@@ -221,16 +216,16 @@ handler = async function({
   });
   if (config.mode != null) {
     await this.fs.chmod({
-      ssh: false,
-      sudo: false,
+      $ssh: false,
+      $sudo: false,
       target: config.target,
       mode: config.mode
     });
   }
   if ((config.uid != null) || (config.gid != null)) {
     await this.fs.chown({
-      ssh: false,
-      sudo: false,
+      $ssh: false,
+      $sudo: false,
       target: config.target,
       uid: config.uid,
       gid: config.gid

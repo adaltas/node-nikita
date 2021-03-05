@@ -5,24 +5,22 @@ Fetch a Ruby gem.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Indicate if a gem was fetch.   
+* `$status`   
+  Indicate if a gem was fetch.
 * `filename`   
-  Name of the gem file.   
+  Name of the gem file.
 * `filepath`   
-  Path of the gem file.   
+  Path of the gem file.
 
 ## Example
 
 ```js
-const {status, filename, filepath} = await nikita.tools.rubygems.fetch({
+const {$status, filename, filepath} = await nikita.tools.rubygems.fetch({
   name: 'json',
   version: '2.1.0',
   cwd: '/tmp/my_gems'
 })
-console.info(`Gem fetched: ${status}`)
+console.info(`Gem fetched: ${$status}`)
 ```
 
 ## Implementation
@@ -66,23 +64,23 @@ couldn't find any suitable parser on NPM.
       config[k] ?= v for k, v of config.ruby
       # Get version
       unless config.version
-        {status, stdout} = await @execute
+        {$status, stdout} = await @execute
+          $shy: true
           command: """
           #{config.gem_bin} specification #{config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
           """
           cwd: config.cwd
-          metadata: shy: true
           bash: config.bash
-        config.version = stdout.trim() if status
+        config.version = stdout.trim() if $status
       config.target = "#{config.name}-#{config.version}.gem"
       # Fetch package
-      {status} = await @execute
+      {$status} = await @execute
         command: """
         #{config.gem_bin} fetch #{config.name} -v #{config.version}
         """
         cwd: config.cwd
         bash: config.bash
-      status: status
+      $status: $status
       filename: config.target
       filepath: path.resolve config.cwd, config.target
 

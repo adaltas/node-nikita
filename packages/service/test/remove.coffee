@@ -11,13 +11,13 @@ describe 'service.remove', ->
 
   they 'new package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.install
         name: service.name
-      {status} = await @service.remove
+      {$status} = await @service.remove
         name: service.name
-      status.should.be.true()
-      {status} = await @service.remove
+      $status.should.be.true()
+      {$status} = await @service.remove
         name: service.name
-      status.should.be.false()
+      $status.should.be.false()

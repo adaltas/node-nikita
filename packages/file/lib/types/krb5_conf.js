@@ -9,7 +9,7 @@
 // ## Example registering a new realm
 
 // ```js
-// const {status} = await nikita.file.types.krb_conf({
+// const {$status} = await nikita.file.types.krb_conf({
 //   merge: true,
 //   content: {
 //     realms: {
@@ -21,7 +21,7 @@
 //     }
 //   }
 // })
-// console.info(`Configuration was updated: ${status}`)
+// console.info(`Configuration was updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -30,10 +30,11 @@ var handler, schema, utils;
 schema = {
   type: 'object',
   properties: {
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, optional.`
-    },
+    // 'rootdir':
+    //   type: 'string'
+    //   description: """
+    //   Path to the mount point corresponding to the root directory, optional.
+    //   """
     'backup': {
       type: ['string', 'boolean'],
       description: `Create a backup, append a provided string to the filename extension or

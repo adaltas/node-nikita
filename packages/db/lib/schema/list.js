@@ -48,9 +48,7 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var schemas, stdout;
-  ({stdout} = (await this.db.query({
-    config: config
-  }, {
+  ({stdout} = (await this.db.query(config, {
     command: '\\dn',
     trim: true
   })));

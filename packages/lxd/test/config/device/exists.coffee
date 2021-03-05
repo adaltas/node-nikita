@@ -9,7 +9,7 @@ describe 'lxd.config.device.exists', ->
 
   they 'Device does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -24,7 +24,7 @@ describe 'lxd.config.device.exists', ->
 
   they 'Device exists', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'

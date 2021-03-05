@@ -20,33 +20,33 @@
 // Wait for two domains on the same port.
 
 // ```js
-// const {status} = await nikita.network.tcp.wait({
+// const {$status} = await nikita.network.tcp.wait({
 //   hosts: [ '1.domain.com', '2.domain.com' ],
 //   port: 80
 // })
-// console.info(`Servers listening on port 80: ${status}`)
+// console.info(`Servers listening on port 80: ${$status}`)
 // ```
 
 // Wait for one domain on two diffents ports.
 
 // ```js
-// const {status} = await nikita.network.tcp.wait({
+// const {$status} = await nikita.network.tcp.wait({
 //   host: 'my.domain.com',
 //   ports: [80, 443]
 // })
-// console.info(`Servers listening on ports 80 and 443: ${status}`)
+// console.info(`Servers listening on ports 80 and 443: ${$status}`)
 // ```
 
 // Wait for two domains on diffents ports.
 
 // ```js
-// const {status} = await nikita.network.tcp.wait({
+// const {$status} = await nikita.network.tcp.wait({
 //   servers: [
 //     {host: '1.domain.com', port: 80},
 //     {host: '2.domain.com', port: 443}
 //   ]
 // })
-// console.info(`Servers listening: ${status}`)
+// console.info(`Servers listening: ${$status}`)
 // ```
 
 // ## Hooks

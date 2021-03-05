@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ldap.modify({
+// const {$status} = await nikita.ldap.modify({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,dc=company,dc=com',
 //   passwd: 'secret',
@@ -19,7 +19,7 @@
 //     }]
 //   }]
 // })
-// console.log(`Entry modified: ${status}`)
+// console.log(`Entry modified: ${$status}`)
 // ```
 
 // ## Hooks

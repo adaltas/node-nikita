@@ -5,20 +5,17 @@ Activate or desactivate a service on startup.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Indicates if the startup behavior has changed.   
+* `$status`   
+  Indicates if the startup behavior has changed.
 
 ## Example
 
 ```js
-const {status} = await nikita.service.startup([{
-  ssh: ssh,
+const {$status} = await nikita.service.startup([{
   name: 'gmetad',
   startup: false
 })
-console.info(`Service was desactivated on startup: ${status}`)
+console.info(`Service was desactivated on startup: ${$status}`)
 ```
 
 ## Hooks
@@ -31,12 +28,12 @@ console.info(`Service was desactivated on startup: ${status}`)
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot_rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
         'startup':
           type: ['boolean', 'string']
           default: true
@@ -56,6 +53,7 @@ console.info(`Service was desactivated on startup: ${status}`)
       log message: "Startup service #{config.name}", level: 'INFO'
       unless config.command
         {stdout} = await @execute
+          $shy: true
           command: """
           if command -v systemctl >/dev/null 2>&1; then
             echo 'systemctl'
@@ -68,13 +66,12 @@ console.info(`Service was desactivated on startup: ${status}`)
             exit 2
           fi
           """
-          metadata: shy: true
         config.command = stdout.trim()
         throw Error "Unsupported Loader" unless config.command in ['systemctl', 'chkconfig', 'update-rc']
       switch config.command
         when 'systemctl'
           try
-            {status} = await @execute
+            {$status} = await @execute
               command: """
                 startup=#{if config.startup then '1' else ''}
                 if systemctl is-enabled #{config.name}; then
@@ -89,32 +86,32 @@ console.info(`Service was desactivated on startup: ${status}`)
                 """
               trap: true
               code_skipped: 3
-              arch_chroot: config.arch_chroot
-              rootdir: config.rootdir
+              # arch_chroot: config.arch_chroot
+              # arch_chroot_rootdir: config.arch_chroot_rootdir
             message = if config.startup then 'activated' else 'disabled'
-            log if status
+            log if $status
             then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
             else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'
           catch err
             throw Error "Startup Enable Failed: #{config.name}" if config.startup
             throw Error "Startup Disable Failed: #{config.name}" if not config.startup
         when 'chkconfig'
-          {status, stdout, stderr} = await @execute
+          {$status, stdout, stderr} = await @execute
+            $shy: true
             command: "chkconfig --list #{config.name}"
             code_skipped: 1
-            metadata: shy: true
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
             log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR'
             throw Error "Invalid chkconfig name for `#{config.name}`"
           current_startup = ''
-          if status
+          if $status
             for c in stdout.split(' ').pop().trim().split '\t'
               [level, status] = c.split ':'
               current_startup += level if ['on', 'marche'].indexOf(status) > -1
           return if config.startup is true and current_startup.length
           return if config.startup is current_startup
-          return if status and config.startup is false and current_startup is ''
+          return if $status and config.startup is false and current_startup is ''
           if config.startup
             command = "chkconfig --add #{config.name};"
             if typeof config.startup is 'string'
@@ -135,11 +132,11 @@ console.info(`Service was desactivated on startup: ${status}`)
             await @execute
               command: "chkconfig #{config.name} off"
           message = if config.startup then 'activated' else 'disabled'
-          log if status
+          log if $status
           then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
           else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
         when 'update-rc'
-          {status} = await @execute
+          {$status} = await @execute
             command: """
               startup=#{if config.startup then '1' else ''}
               if ls /etc/rc*.d/S??#{config.name}; then
@@ -153,10 +150,10 @@ console.info(`Service was desactivated on startup: ${status}`)
               fi
               """
             code_skipped: 3
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
+            # arch_chroot: config.arch_chroot
+            # arch_chroot_rootdir: config.arch_chroot_rootdir
           message = if config.startup then 'activated' else 'disabled'
-          log if status
+          log if $status
           then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
           else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'
 

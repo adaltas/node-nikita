@@ -7,7 +7,7 @@ Run Docker Containers
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True unless contaianer was already running.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.
@@ -17,14 +17,13 @@ Run Docker Containers
 ## Example
 
 ```js
-const {status} = await nikita.docker.run({
-  ssh: ssh
+const {$status} = await nikita.docker.run({
   name: 'myContainer'
   image: 'test-image'
   env: ["FOO=bar",]
   entrypoint: '/bin/true'
 })
-console.info(`Container was run: ${status}`)
+console.info(`Container was run: ${$status}`)
 ```
 
 ## Hooks
@@ -258,16 +257,16 @@ console.info(`Container was run: ${status}`)
       command += " #{config.command}" if config.command
       # need to delete the command config or it will be used in docker.exec
       # delete config.command
-      {status} = await @docker.tools.execute
-        if: config.name?
+      {$status} = await @docker.tools.execute
+        $if: config.name?
+        $shy: true
         command: "ps -a | egrep ' #{config.name}$'"
         code_skipped: 1
-        metadata: shy: true
-      log message: "Container already running. Skipping", level: 'INFO' if status
+      log message: "Container already running. Skipping", level: 'INFO' if $status
       result = await @docker.tools.execute
+        $if: -> not config.name? or $status is false
         command: command
-        if: -> not config.name? or status is false
-      log message: "Container now running", level: 'WARN' if result.status
+      log message: "Container now running", level: 'WARN' if result.$status
       result
 
 ## Exports

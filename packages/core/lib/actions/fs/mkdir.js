@@ -23,7 +23,7 @@
 
 // ```js
 // const {status} = await nikita.fs.mkdir({
-//   ssh: ssh,
+//   $ssh: ssh,
 //   target: './some/dir',
 //   uid: 'a_user',
 //   gid: 'a_group'
@@ -112,6 +112,7 @@ handler = async function({
   }) {
   var attr, creates, err, i, j, k, l, len, len1, len2, opts, parents, ref, ref1, ref2, stats, target, val;
   if (!ssh && (config.cwd === true || !config.cwd)) {
+    // console.log ':fs.mkdir:target', config.target
     // Configuration validation
     config.cwd = process.cwd();
   }
@@ -191,17 +192,17 @@ handler = async function({
       level: 'DEBUG'
     });
     await this.fs.chown({
+      $if: (config.uid != null) || (config.gid != null),
       target: config.target,
       stats: stats,
       uid: config.uid,
-      gid: config.gid,
-      if: (config.uid != null) || (config.gid != null)
+      gid: config.gid
     });
     await this.fs.chmod({
+      $if: config.mode != null,
       target: config.target,
       stats: stats,
-      mode: config.mode,
-      if: config.mode != null
+      mode: config.mode
     });
   }
   return {};

@@ -9,19 +9,19 @@ describe 'docker.rmi', ->
 
   they 'remove image', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.build
         image: 'nikita/rmi_test'
         content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      {status} = await @docker.rmi
+      {$status} = await @docker.rmi
         image: 'nikita/rmi_test'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'status unmodifed', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.build
@@ -29,6 +29,6 @@ describe 'docker.rmi', ->
         content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       @docker.rmi
         image: 'nikita/rmi_test'
-      {status} = await @docker.rmi
+      {$status} = await @docker.rmi
         image: 'nikita/rmi_test'
-      status.should.be.false()
+      $status.should.be.false()

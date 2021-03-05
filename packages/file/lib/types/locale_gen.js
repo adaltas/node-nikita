@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-  // const {status} = await nikita.file.types.locale_gen({
+  // const {$status} = await nikita.file.types.locale_gen({
   //   target: '/etc/locale.gen',
   //   rootdir: '/mnt',
   //   locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
   // })
-  // console.info(`File was updated: ${status}`)
+  // console.info(`File was updated: ${$status}`)
   // ```
 
 // ## Schema
@@ -84,12 +84,12 @@ handler = async function({config}) {
   }
   // Reload configuration
   await this.execute({
-    if: config.generate != null ? config.generate : status,
+    $if: config.generate != null ? config.generate : status,
     rootdir: config.rootdir,
     command: "locale-gen"
   });
   return {
-    status: status || config.generate
+    $status: status || config.generate
   };
 };
 

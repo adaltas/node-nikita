@@ -12,7 +12,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.user({
+// const {$status} = await nikita.ipa.user({
 //   uid: "someone",
 //   attributes: {
 //     noprivate: true,
@@ -25,7 +25,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`User was updated: ${status}`)
+// console.info(`User was updated: ${$status}`)
 // ```
 
 // ## Hooks
@@ -93,16 +93,16 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, data, error, exists, status;
+  var $status, base, data, error, exists;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
-  ({status} = (await this.ipa.user.exists({
+  ({$status} = (await this.ipa.user.exists({
     connection: config.connection,
     uid: config.uid
   })));
-  exists = status;
-  status = true;
+  exists = $status;
+  $status = true;
   if (exists && !config.force_userpassword) {
     config.attributes.userpassword = void 0;
   }
@@ -121,10 +121,10 @@ handler = async function({config}) {
       error.code = data.error.code;
       throw error;
     }
-    status = false;
+    $status = false;
   }
   return {
-    status: status
+    $status: $status
   };
 };
 

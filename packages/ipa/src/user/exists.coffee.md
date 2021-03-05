@@ -6,7 +6,7 @@ Check if a user exists inside FreeIPA.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.user.exists({
+const {$status} = await nikita.ipa.user.exists({
   uid: 'someone',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@ const {status} = await nikita.ipa.user.exists({
     password: "mysecret"
   }
 })
-console.info(`User exists: ${status}`)
+console.info(`User exists: ${$status}`)
 ```
 
 ## Hooks
@@ -52,10 +52,10 @@ console.info(`User exists: ${status}`)
         await @ipa.user.show
           connection: config.connection
           uid: config.uid
-        status: true, exists: true
+        $status: true, exists: true
       catch err
         throw err if err.code isnt 4001 # user not found
-        status: false, exists: false
+        $status: false, exists: false
 
 ## Export
 

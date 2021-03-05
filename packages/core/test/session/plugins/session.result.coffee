@@ -10,7 +10,7 @@ describe 'session.plugins.session.result', ->
 
   it 'is called before action and children resolved', ->
     called = false
-    await session plugins: [
+    await session $plugins: [
       ->
         hooks: 'nikita:result': ({action}, handler) ->
           await new Promise (resolved) ->

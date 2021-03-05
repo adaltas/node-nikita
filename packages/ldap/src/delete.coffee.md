@@ -6,13 +6,13 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.delete({
+const {$status} = await nikita.ldap.delete({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   dn: 'cn=group1,ou=groups,dc=company,dc=com'
 })
-console.log(`Entry deleted: ${status}`)
+console.log(`Entry deleted: ${$status}`)
 ```
 
 ## Schema
@@ -66,7 +66,7 @@ console.log(`Entry deleted: ${status}`)
       # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba'
       await @execute
         # Check that the entry exists
-        if_execute: "ldapsearch #{binddn} #{passwd} #{uri} -b #{dn} -s base"
+        $if_execute: "ldapsearch #{binddn} #{passwd} #{uri} -b #{dn} -s base"
         command: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68
       # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length

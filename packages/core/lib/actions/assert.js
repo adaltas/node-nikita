@@ -48,10 +48,8 @@ on_action = function(action) {
     return async function({config}) {
       var result;
       result = (await this.call({
-        metadata: {
-          raw_output: true
-        },
-        handler: handler
+        $raw_output: true,
+        $handler: handler
       }));
       if (!Array.isArray(result)) {
         result = [result];
@@ -114,7 +112,9 @@ schema = {
 
 // ## Exports
 module.exports = {
-  on_action: on_action,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     schema: schema
   }

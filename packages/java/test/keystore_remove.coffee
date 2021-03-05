@@ -11,18 +11,18 @@ describe 'java.keystore_remove', ->
 
     they 'keystore doesnt need to exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_remove
+        {$status} = await @java.keystore_remove
           keystore: "#{tmpdir}/does/not/exist"
           storepass: "invalid"
           caname: "invalid"
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'caname or name must be provided', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @java.keystore_remove
           keystore: "invalid"
@@ -39,7 +39,7 @@ describe 'java.keystore_remove', ->
           
     they 'caname and name are provided', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @java.keystore_remove
           keystore: "invalid"
@@ -51,8 +51,8 @@ describe 'java.keystore_remove', ->
 
     they 'remove cacerts', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         keystore =  "#{tmpdir}/cacerts"
         caname = 'my_alias'
@@ -62,16 +62,16 @@ describe 'java.keystore_remove', ->
           storepass: "#{storepass}"
           caname: "#{caname}"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        {status} = await @java.keystore_remove
+        {$status} = await @java.keystore_remove
           keystore: "#{keystore}"
           storepass: "#{storepass}"
           caname: "#{caname}"
-        status.should.be.true()
-        {status} = await @java.keystore_remove
+        $status.should.be.true()
+        {$status} = await @java.keystore_remove
           keystore: "#{keystore}"
           storepass: "#{storepass}"
           caname: "#{caname}"
-        status.should.be.false()
+        $status.should.be.false()
         await @execute
           command: """
           keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{caname}
@@ -82,8 +82,8 @@ describe 'java.keystore_remove', ->
 
     they 'remove cacerts file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         keystore =  "#{tmpdir}/cacerts"
         caname = 'my_alias'
@@ -99,18 +99,18 @@ describe 'java.keystore_remove', ->
           cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
           keypass: 'mypassword'
           name: "#{name}"
-        {status} = await @java.keystore_remove
+        {$status} = await @java.keystore_remove
           keystore: "#{keystore}"
           storepass: "#{storepass}"
           name: "#{name}"
           keypass: "#{keypass}"
-        status.should.be.true()
-        {status} = await @java.keystore_remove
+        $status.should.be.true()
+        {$status} = await @java.keystore_remove
           keystore: "#{keystore}"
           storepass: "#{storepass}"
           name: "#{name}"
           keypass: "#{keypass}"
-        status.should.be.false()
+        $status.should.be.false()
         await @execute
           command: """
           keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{name}

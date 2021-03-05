@@ -12,13 +12,13 @@
 // ## Create Schema example
 
 // ```js
-// const {status} = await nikita.db.schema({
+// const {$status} = await nikita.db.schema({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_database'
 //   schema: 'my_schema'
 // })
-// console.info(`Schema created or modified: ${status}`)
+// console.info(`Schema created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -60,27 +60,23 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status, stderr;
-  ({status} = (await this.execute({
+  var $status, stderr;
+  ({$status} = (await this.execute({
+    $shy: true,
     code_skipped: 2,
-    command: command(config, '\\dt'),
-    metadata: {
-      shy: true
-    }
+    command: command(config, '\\dt')
   })));
-  if (!status) {
+  if (!$status) {
     throw Error(`Database does not exist ${config.database}`);
   }
-  await this.db.query({
-    config: config
-  }, {
+  await this.db.query(config, {
     command: `CREATE SCHEMA ${config.schema};`,
-    unless_execute: command(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
+    $unless_execute: command(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
   });
   // Check if owner is the good one
   ({stderr} = (await this.execute({
-    if: config.owner != null,
-    unless_execute: command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
+    $if: config.owner != null,
+    $unless_execute: command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
     command: command(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
     code_skipped: 1
   })));

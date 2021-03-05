@@ -5,35 +5,76 @@ nikita = require '../../../src'
 describe 'plugins.metadata.raw', ->
   return unless tags.api
 
-  describe 'input', ->
+  describe 'plugins.metadata.raw', ->
     
-    describe 'registry', ->
+    describe 'raw_input', ->
+      
+      it 'get default from `raw`', ->
+        nikita
+          $raw: true
+        , ({metadata}) ->
+          metadata.raw.should.be.true()
+          metadata.raw_input.should.be.true()
 
-      it 'pass `true` as is', ->
-        nikita ({registry}) ->
-          await registry.register ['an', 'action'], raw_input: true, handler: ({args}) -> args
-        .an.action true
-        .should.be.resolvedWith [true]
-          
-      it 'pass `false` as is', ->
-        nikita ({registry}) ->
-          await registry.register ['an', 'action'], raw_input: true, handler: ({args}) -> args
-        .an.action false
-        .should.be.resolvedWith [false]
-
-      it 'pass `{}` as is', ->
-        nikita ({registry}) ->
-          await registry.register ['an', 'action'], raw_input: true, handler: ({args}) -> args
-        .an.action {}
-        .should.be.resolvedWith [{}]
-
-      it 'config is empty', ->
+      it 'argument is `true`', ->
         nikita ({registry}) ->
           await registry.register ['an', 'action'],
-            metadata: raw: true
-            handler: ({config}) -> config
-        .an.action 'an argument'
-        .should.be.resolvedWith {}
+            metadata: raw_input: true
+            handler: ({config, args}) ->
+              config: config
+              args: args
+        .an.action true
+        .should.be.finally.match
+          args: [true]
+          config: {}
+          
+      it 'argument is `false`', ->
+        nikita ({registry}) ->
+          await registry.register ['an', 'action'],
+            metadata: raw_input: true
+            handler: ({config, args}) ->
+              config: config
+              args: args
+        .an.action false
+        .should.be.finally.match
+          args: [false]
+          config: {}
+
+      it 'no argument', ->
+        nikita ({registry}) ->
+          await registry.register ['an', 'action'],
+            metadata: raw_input: true
+            handler: ({config, args}) ->
+              config: config
+              args: args
+        .an.action()
+        .should.be.finally.match
+          args: []
+          config: {}
+
+      it 'argument is `{}`', ->
+        nikita ({registry}) ->
+          await registry.register ['an', 'action'],
+            metadata: raw_input: true
+            handler: ({config, args}) ->
+              config: config
+              args: args
+        .an.action {}
+        .should.be.finally.match
+          args: [{}]
+          config: {}
+
+      it 'multiple arguments', ->
+        nikita ({registry}) ->
+          await registry.register ['an', 'action'],
+            metadata: raw_input: true
+            handler: ({args, config}) ->
+              args: args
+              config: config
+        .an.action 'an argument', a_key: 'a value'
+        .should.be.finally.match
+          args: ['an argument', a_key: 'a value']
+          config: {}
           
     describe 'arguments', ->
       

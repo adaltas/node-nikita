@@ -12,10 +12,9 @@ describe 'service#config.state', ->
     it 'fail on invalid state', ->
       nikita
       .service
-        config:
-          name: service.name
-          srv_name: service.srv_name
-          state: 'invalidstate'
+        name: service.name
+        srv_name: service.srv_name
+        state: 'invalidstate'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -28,8 +27,7 @@ describe 'service#config.state', ->
     it 'requires config `name`, `srv_name` or `chk_name`', ->
       nikita
       .service
-        config:
-          state: 'started'
+        state: 'started'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -47,85 +45,76 @@ describe 'service#config.state', ->
 
     they 'should start', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
-          config:
-            name: service.name
-            srv_name: service.srv_name
-            state: 'started'
-        status.should.be.true()
-        {status} = await @service.status
+        {$status} = await @service
+          name: service.name
+          srv_name: service.srv_name
+          state: 'started'
+        $status.should.be.true()
+        {$status} = await @service.status
           name: service.srv_name
-        status.should.be.true()
-        {status} = await @service # Detect already started
-          config:
-            srv_name: service.srv_name
-            state: 'started'
-        status.should.be.false()
+        $status.should.be.true()
+        {$status} = await @service # Detect already started
+          srv_name: service.srv_name
+          state: 'started'
+        $status.should.be.false()
 
     they 'should stop', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
-          config:
-            name: service.name
-            srv_name: service.srv_name
-            state: 'stopped'
-        status.should.be.true()
-        {status} = await @service.status
+        {$status} = await @service
+          name: service.name
+          srv_name: service.srv_name
+          state: 'stopped'
+        $status.should.be.true()
+        {$status} = await @service.status
           name: service.srv_name
-        status.should.be.false()
-        {status} = await @service # Detect already stopped
-          config:
-            srv_name: service.srv_name
-            state: 'stopped'
-        status.should.be.false()
+        $status.should.be.false()
+        {$status} = await @service # Detect already stopped
+          srv_name: service.srv_name
+          state: 'stopped'
+        $status.should.be.false()
 
     they 'should restart', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
         @service
-          config:
-            name: service.name
-            srv_name: service.srv_name
-            state: 'started'
-        {status} = await @service
-          config:
-            srv_name: service.srv_name
-            state: 'restarted'
-        status.should.be.true()
+          name: service.name
+          srv_name: service.srv_name
+          state: 'started'
+        {$status} = await @service
+          srv_name: service.srv_name
+          state: 'restarted'
+        $status.should.be.true()
         @service.stop
           name: service.srv_name
-        {status} = await @service
-          config:
-            srv_name: service.srv_name
-            state: 'restarted'
-        status.should.be.false()
+        {$status} = await @service
+          srv_name: service.srv_name
+          state: 'restarted'
+        $status.should.be.false()
 
     they 'should all together', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
-          config:
-            name: service.name
-            srv_name: service.srv_name
-            state: 'stopped,started,restarted'
-        status.should.be.true()
-        {status} = await @service
-          config:
-            name: service.name
-            srv_name: service.srv_name
-            state: ['stopped', 'started', 'restarted']
-        status.should.be.true()
+        {$status} = await @service
+          name: service.name
+          srv_name: service.srv_name
+          state: 'stopped,started,restarted'
+        $status.should.be.true()
+        {$status} = await @service
+          name: service.name
+          srv_name: service.srv_name
+          state: ['stopped', 'started', 'restarted']
+        $status.should.be.true()

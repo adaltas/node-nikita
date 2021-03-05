@@ -12,13 +12,13 @@ presence of the targeted database.
 ## Create Schema example
 
 ```js
-const {status} = await nikita.db.schema({
+const {$status} = await nikita.db.schema({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_database'
   schema: 'my_schema'
 })
-console.info(`Schema created or modified: ${status}`)
+console.info(`Schema created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -56,18 +56,18 @@ console.info(`Schema created or modified: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      {status} = await @execute
+      {$status} = await @execute
+        $shy: true
         code_skipped: 2
         command: command config, '\\dt'
-        metadata: shy: true
-      throw Error "Database does not exist #{config.database}" if !status
-      await @db.query config: config,
+      throw Error "Database does not exist #{config.database}" if !$status
+      await @db.query config,
         command: "CREATE SCHEMA #{config.schema};"
-        unless_execute: command(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
+        $unless_execute: command(config, "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';") + " | grep 1"
       # Check if owner is the good one
       {stderr} = await @execute
-        if: config.owner?
-        unless_execute: command(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
+        $if: config.owner?
+        $unless_execute: command(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
         command: command config, "ALTER SCHEMA #{config.schema} OWNER TO #{config.owner};"
         code_skipped: 1
       throw Error "Owner #{config.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr

@@ -9,7 +9,7 @@ describe 'lxd.config.set', ->
 
   they 'Set multiple keys', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -17,12 +17,12 @@ describe 'lxd.config.set', ->
       @lxd.init
         image: "images:#{images.alpine}"
         container: 'c1'
-      {status} = await @lxd.config.set
+      {$status} = await @lxd.config.set
         container: 'c1'
         properties:
           'environment.MY_KEY_1': 'my value 1'
           'environment.MY_KEY_2': 'my value 2'
-      status.should.be.true()
+      $status.should.be.true()
       await @lxd.start
         container: 'c1'
       {stdout} = await @execute
@@ -36,7 +36,7 @@ describe 'lxd.config.set', ->
 
   they 'Does not set the same configuration', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -44,13 +44,13 @@ describe 'lxd.config.set', ->
       @lxd.init
         image: "images:#{images.alpine}"
         container: 'c1'
-      {status} = await @lxd.config.set
+      {$status} = await @lxd.config.set
         container: 'c1'
         properties:
           'environment.MY_KEY_1': 'my value 1'
-      status.should.be.true()
-      {status} = await @lxd.config.set
+      $status.should.be.true()
+      {$status} = await @lxd.config.set
         container: 'c1'
         properties:
           'environment.MY_KEY_1': 'my value 1'
-      status.should.be.false()
+      $status.should.be.false()

@@ -41,17 +41,15 @@ handlers = {
       condition = ref[i];
       try {
         ({$status} = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            namespace: ['execute']
-          },
-          parent: action
+          $condition: true,
+          $depth: action.metadata.depth,
+          $namespace: ['execute'],
+          $parent: action
         }, condition)));
         if (!$status) {
           final_run = false;
@@ -75,17 +73,15 @@ handlers = {
       condition = ref[i];
       try {
         ({$status} = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            namespace: ['execute']
-          },
-          parent: action
+          $condition: true,
+          $depth: action.metadata.depth,
+          $namespace: ['execute'],
+          $parent: action
         }, condition)));
         if ($status) {
           final_run = false;

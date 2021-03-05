@@ -42,6 +42,7 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 
     module.exports =
       handler: handler
-      on_action: on_action
+      hooks:
+        on_action: on_action
       metadata:
         schema: schema

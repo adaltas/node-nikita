@@ -6,11 +6,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.file.exists({
+// const {$status} = await nikita.lxd.file.exists({
 //   container: 'my_container',
 //   target: '/root/a_file'
 // })
-// console.info(`File exists: ${status}`)
+// console.info(`File exists: ${$status}`)
 // ```
 
 // ## Todo
@@ -39,13 +39,13 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status;
-  ({status} = (await this.execute({
+  var $status;
+  ({$status} = (await this.execute({
     command: `lxc exec ${config.container} -- stat ${config.target}`,
     code_skipped: 1
   })));
   return {
-    exists: status
+    exists: $status
   };
 };
 

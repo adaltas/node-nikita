@@ -5,18 +5,16 @@ Start containers.
 
 ## Output
 
-* `err`
-  Error object if any.
-* `info.status`
+* `$status`
   Was the container started or already running.
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.start({
+const {$status} = await nikita.lxd.start({
   container: "my_container"
 })
-console.info(`Container was started: ${status}`)
+console.info(`Container was started: ${$status}`)
 ```
 
 ## Schema

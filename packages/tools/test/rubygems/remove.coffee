@@ -9,31 +9,31 @@ describe 'tools.rubygems.remove', ->
 
   they 'remove an existing package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       ruby: ruby
     , ->
       await @tools.rubygems.install
         name: 'execjs'
-      {status} = await @tools.rubygems.remove
+      {$status} = await @tools.rubygems.remove
         name: 'execjs'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'remove a non existing package', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       ruby: ruby
     , ->
       await @tools.rubygems.install
         name: 'execjs'
       await @tools.rubygems.remove
         name: 'execjs'
-      {status} = await @tools.rubygems.remove
+      {$status} = await @tools.rubygems.remove
         name: 'execjs'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'remove multiple versions', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       ruby: ruby
     , ->
       await @tools.rubygems.install
@@ -42,9 +42,9 @@ describe 'tools.rubygems.remove', ->
       await @tools.rubygems.install
         name: 'execjs'
         version: '2.7.0'
-      {status} = await @tools.rubygems.remove
+      {$status} = await @tools.rubygems.remove
         name: 'execjs'
-      status.should.be.true()
-      {status} = await @tools.rubygems.remove
+      $status.should.be.true()
+      {$status} = await @tools.rubygems.remove
         name: 'execjs'
-      status.should.be.false()
+      $status.should.be.false()

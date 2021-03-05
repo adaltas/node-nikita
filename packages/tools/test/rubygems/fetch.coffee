@@ -9,15 +9,15 @@ describe 'tools.rubygems.fetch', ->
 
   they 'with a version', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       ruby: ruby
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status, filename, filepath} = await @tools.rubygems.fetch
+      {$status, filename, filepath} = await @tools.rubygems.fetch
         name: 'execjs'
         version: '2.7.0'
         cwd: "#{tmpdir}"
-      status.should.be.true()
+      $status.should.be.true()
       filename.should.eql 'execjs-2.7.0.gem'
       filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
       @fs.assert
@@ -25,14 +25,14 @@ describe 'tools.rubygems.fetch', ->
 
   they 'without a version', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       ruby: ruby
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status, filename, filepath} = await @tools.rubygems.fetch
+      {$status, filename, filepath} = await @tools.rubygems.fetch
         name: 'execjs'
         cwd: "#{tmpdir}"
-      status.should.be.true()
+      $status.should.be.true()
       filename.should.eql 'execjs-2.7.0.gem'
       filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
       @fs.assert

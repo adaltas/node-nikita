@@ -12,7 +12,7 @@ module.exports =
     'nikita:normalize': (action, handler) ->
       # Ventilate assertions properties defined at root
       assertions = {}
-      for property, value of action
+      for property, value of action.metadata
         if /^(un)?assert$/.test property
           throw Error 'ASSERTION_DUPLICATED_DECLARATION', [
             "Property #{property} is defined multiple times,"
@@ -20,7 +20,7 @@ module.exports =
           ] if assertions[property]
           value = [value] unless Array.isArray value
           assertions[property] = value
-          delete action[property]
+          delete action.metadata[property]
       ->
         action = await handler.call null, ...arguments
         action.assertions = assertions
@@ -41,15 +41,15 @@ handlers =
     for assertion in action.assertions.assert
       if typeof assertion is 'function'
         run = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            raw_output: true
-            raw_input: true
-          parent: action
-          handler: assertion
+          $assertion: true
+          $depth: action.metadata.depth
+          $raw_output: true
+          $raw_input: true
+          $handler: assertion
+          $parent: action
+        ,
           config: action.config
           error: error
           output: output
@@ -63,15 +63,18 @@ handlers =
     for assertion in action.assertions.unassert
       if typeof assertion is 'function'
         run = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            raw_output: true
-          parent: action
-          handler: assertion
+          $assertion: true
+          $depth: action.metadata.depth
+          $raw_output: true
+          $raw_input: true
+          $handler: assertion
+          $parent: action
+        ,
           config: action.config
+          error: error
+          output: output
         throw Error unless typeof run is 'boolean'
       else
         run = utils.object.match output, assertion

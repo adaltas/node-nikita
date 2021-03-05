@@ -7,16 +7,16 @@ Unpause all processes within a container.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if container was unpaused.
 
 ## Example
 
 ```js
-const {status} = await nikita.docker.unpause({
+const {$status} = await nikita.docker.unpause({
   container: 'toto'
 })
-console.info(`Container was unpaused: ${status}`)
+console.info(`Container was unpaused: ${$status}`)
 ```
 
 ## Schema

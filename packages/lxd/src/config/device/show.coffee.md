@@ -5,11 +5,9 @@ Show full device configuration for containers or profiles.
 
 ## Output parameters
 
-* `err`
-  Error object if any.
-* `result.status` (boolean)
+* `$status` (boolean)
   True if the device was created or the configuraion updated.
-* `result.properties` (object)   
+* `properties` (object)   
   Device configuration.
 
 ## Example
@@ -46,7 +44,7 @@ console.info(properties)
         path: '/' + [
           '1.0', 'instances', config.container
         ].join '/'
-      status: true
+      $status: true
       properties: data.devices[config.device]
 
 ## Exports

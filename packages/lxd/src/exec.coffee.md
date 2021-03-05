@@ -6,11 +6,11 @@ Execute command in containers.
 ## Example
 
 ```js
-const {status, stdout, stderr} = await nikita.lxd.exec({
+const {$status, stdout, stderr} = await nikita.lxd.exec({
   container: "my-container",
   command: "whoami"
 })
-console.info(`Command was executed: ${status}`)
+console.info(`Command was executed: ${$status}`)
 console.info(stdout)
 ```
 
@@ -69,7 +69,6 @@ console.info(stdout)
       ].join ' '
       # console.log config, opt
       await @execute config, trap: false,
-        # metadata: debug: true
         command: [
           "cat <<'NIKITALXDEXEC' | lxc exec #{opt} #{config.container} -- #{config.shell}"
           'set -e' if config.trap

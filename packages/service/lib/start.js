@@ -6,20 +6,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Indicates if the service was started ("true") or if it was already running 
-//   ("false").   
+//   ("false").
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.start([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.start([{
 //   name: 'gmetad'
 // })
-// console.info(`Service was started: ${status}`)
+// console.info(`Service was started: ${$status}`)
 // ```
 
 // ## Hooks
@@ -35,16 +32,14 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
     'name': {
       $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     }
   },
+  // 'rootdir':
+  //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
   required: ['name']
 };
 
@@ -53,9 +48,9 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var err, status;
+  var $status, err;
   try {
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep -w "${config.name}" || exit 3
 if command -v systemctl >/dev/null 2>&1; then
   systemctl status ${config.name} && exit 3
@@ -67,17 +62,17 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-      code_skipped: 3,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir
+      code_skipped: 3
     })));
-    if (status) {
+    if ($status) {
+      // arch_chroot: config.arch_chroot
+      // rootdir: config.rootdir
       log({
         message: "Service is started",
         level: 'INFO'
       });
     }
-    if (!status) {
+    if (!$status) {
       return log({
         message: "Service already started",
         level: 'WARN'

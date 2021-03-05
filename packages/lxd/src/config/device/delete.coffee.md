@@ -5,19 +5,17 @@ Delete a device from a container
 
 ## Output
 
-* `err`
-  Error object if any.
-* `result.status`
+* `$status`
   True if the device was removed False otherwise.
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.config.device.delete({
+const {$status} = await nikita.lxd.config.device.delete({
   container: 'container1',
   device: 'root'
 })
-console.info(`Device was removed: ${status}`)
+console.info(`Device was removed: ${$status}`)
 ```
 
 ## Schema
@@ -40,14 +38,14 @@ console.info(`Device was removed: ${status}`)
       {properties} = await @lxd.config.device.show
         container: config.container
         device: config.device
-      return status: false unless properties
-      {status} = await @execute
+      return $status: false unless properties
+      {$status} = await @execute
         command: [
           'lxc', 'config', 'device', 'remove'
           config.container
           config.device
         ].join ' '
-      status: status
+      $status: $status
 
 ## Export
 

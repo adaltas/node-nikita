@@ -8,7 +8,7 @@ native docker command.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if command was executed.
 * `checksum`   
   Image cheksum if it exist, undefined otherwise.
@@ -56,14 +56,14 @@ native docker command.
       # Run `docker images` with the following config:
       # - `--no-trunc`: display full checksum
       # - `--quiet`: discard headers
-      {status, stdout} = await @docker.tools.execute
+      {$status, stdout} = await @docker.tools.execute
         boot2docker: config.boot2docker
         command: "images --no-trunc --quiet #{config.image}:#{config.tag}"
         compose: config.compose
         machine: config.machine
       checksum = if stdout is '' then undefined else stdout.toString().trim()
-      log message: "Image checksum for #{config.image}: #{checksum}", level: 'INFO' if status
-      status: status, checksum: checksum
+      log message: "Image checksum for #{config.image}: #{checksum}", level: 'INFO' if $status
+      $status: $status, checksum: checksum
 
 ## Exports
 

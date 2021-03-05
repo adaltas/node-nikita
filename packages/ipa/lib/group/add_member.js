@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.group.add_member({
+// const {$status} = await nikita.ipa.group.add_member({
 //   cn: "somegroup",
 //   attributes: {
 //     user: ["someone"]
@@ -17,7 +17,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Member was added to the group: ${status}`)
+// console.info(`Member was added to the group: ${$status}`)
 // ```
 
 // ## Schema
@@ -75,7 +75,7 @@ handler = async function({config}) {
     throw error;
   } else {
     return {
-      status: true,
+      $status: true,
       result: data.result.result
     };
   }

@@ -32,8 +32,8 @@ describe 'actions.fs.base.createWriteStream', ->
 
     they 'NIKITA_FS_CWS_TARGET_ENOENT if parent direction does not exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.createWriteStream
           target: "#{tmpdir}/a_dir/a_file"
@@ -51,8 +51,8 @@ describe 'actions.fs.base.createWriteStream', ->
 
     they 'write a file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ->
         await @fs.base.createWriteStream
           target: "{{parent.metadata.tmpdir}}/a_file"
@@ -65,8 +65,8 @@ describe 'actions.fs.base.createWriteStream', ->
 
     they 'argument `target`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ->
         await @fs.base.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
           stream: (ws) ->
@@ -78,8 +78,8 @@ describe 'actions.fs.base.createWriteStream', ->
 
     they 'config `mode`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -90,7 +90,7 @@ describe 'actions.fs.base.createWriteStream', ->
     
     they.skip 'config `flags` equal "a"', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         tmpdir: true
       , ->
         @fs.base.createWriteStream

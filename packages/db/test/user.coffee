@@ -12,7 +12,7 @@ for engine, _ of db
 
     they 'requires host, hostname, username', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @db.user
           port: 5432
@@ -30,7 +30,7 @@ for engine, _ of db
     
     they 'requires admin_username, password, username', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @db.user
           host: 'localhost'
@@ -48,18 +48,18 @@ for engine, _ of db
 
     they 'add new user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.user.remove 'test_user_1_user'
-        {status} = await @db.user
+        {$status} = await @db.user
           username: 'test_user_1_user'
           password: 'test_user_1_password'
-        status.should.be.true()
-        {status} = await @db.user
+        $status.should.be.true()
+        {$status} = await @db.user
           username: 'test_user_1_user'
           password: 'test_user_1_password'
-        status.should.be.false()
+        $status.should.be.false()
         {exists} = await @db.user.exists
           username: 'test_user_1_user'
         exists.should.be.true()
@@ -67,7 +67,7 @@ for engine, _ of db
 
     they 'change password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.database.remove 'test_user_2_db'

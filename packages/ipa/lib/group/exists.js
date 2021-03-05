@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.group.exists({
+// const {$status} = await nikita.ipa.group.exists({
 //   cn: 'somegroup',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Group exists: ${status}`)
+// console.info(`Group exists: ${$status}`)
 // ```
 
 // ## Schema
@@ -48,7 +48,7 @@ handler = async function({config}) {
       cn: config.cn
     });
     return {
-      status: true,
+      $status: true,
       exists: true
     };
   } catch (error) {
@@ -57,7 +57,7 @@ handler = async function({config}) {
       throw err;
     }
     return {
-      status: false,
+      $status: false,
       exists: false
     };
   }

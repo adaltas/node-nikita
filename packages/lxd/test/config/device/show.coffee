@@ -9,7 +9,7 @@ describe 'lxd.config.device.show', ->
 
   they 'config output', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -24,10 +24,10 @@ describe 'lxd.config.device.show', ->
         properties:
           source: '/dev/urandom'
           path: '/testrandom'
-      {status, properties} = await @lxd.config.device.show
+      {$status, properties} = await @lxd.config.device.show
         container: 'c1'
         device: 'test'
-      status.should.be.true()
+      $status.should.be.true()
       properties.should.eql
         path: '/testrandom'
         source: '/dev/urandom'

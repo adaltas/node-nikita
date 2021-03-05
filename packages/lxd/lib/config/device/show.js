@@ -5,11 +5,9 @@
 
 // ## Output parameters
 
-// * `err`
-//   Error object if any.
-// * `result.status` (boolean)
+// * `$status` (boolean)
 //   True if the device was created or the configuraion updated.
-// * `result.properties` (object)   
+// * `properties` (object)   
 //   Device configuration.
 
 // ## Example
@@ -49,7 +47,7 @@ handler = async function({config}) {
     path: '/' + ['1.0', 'instances', config.container].join('/')
   })));
   return {
-    status: true,
+    $status: true,
     properties: data.devices[config.device]
   };
 };

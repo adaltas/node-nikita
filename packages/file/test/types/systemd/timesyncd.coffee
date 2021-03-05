@@ -9,8 +9,8 @@ describe 'file.types.systemd.timesyncd', ->
 
   they 'servers as a string', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
@@ -29,8 +29,8 @@ describe 'file.types.systemd.timesyncd', ->
 
   they 'servers as an array', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
@@ -49,8 +49,8 @@ describe 'file.types.systemd.timesyncd', ->
 
   they 'option `merge`', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"

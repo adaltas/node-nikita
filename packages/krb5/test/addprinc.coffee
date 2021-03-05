@@ -41,58 +41,58 @@ describe 'krb5.addprinc', ->
 
     they 'create a new principal with a randkey', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         await @krb5.delprinc
           principal: "nikita@#{krb5.realm}"
-        {status} = await @krb5.addprinc
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           randkey: true
-        status.should.be.true()
-        {status} = await @krb5.addprinc
+        $status.should.be.true()
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           randkey: true
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'create a new principal with a password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         await @krb5.delprinc
           principal: "nikita@#{krb5.realm}"
-        {status} = await @krb5.addprinc
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           password: 'password1'
-        status.should.be.true()
-        {status} = await @krb5.addprinc
+        $status.should.be.true()
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           password: 'password2'
           password_sync: true
-        status.should.be.true()
-        {status} = await @krb5.addprinc
+        $status.should.be.true()
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           password: 'password2'
           password_sync: true
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'dont overwrite password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         await @krb5.delprinc
           principal: "nikita@#{krb5.realm}"
-        {status} = await @krb5.addprinc
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           password: 'password1'
-        status.should.be.true()
-        {status} = await @krb5.addprinc
+        $status.should.be.true()
+        {$status} = await @krb5.addprinc
           principal: "nikita@#{krb5.realm}"
           password: 'password2'
           password_sync: false # Default
-        status.should.be.false()
+        $status.should.be.false()
         await @execute
           command: "echo password1 | kinit nikita@#{krb5.realm}"
 
@@ -102,7 +102,7 @@ describe 'krb5.addprinc', ->
         password_sync: true
         principal: 'user2@NODE.DC1.CONSUL'
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         await @execute
@@ -115,8 +115,8 @@ describe 'krb5.addprinc', ->
           principal: "user1/krb5@NODE.DC1.CONSUL"
           randkey: true
           keytab: '/etc/security/keytabs/user1.service.keytab'
-        {status} = await @krb5.addprinc user
-        status.should.be.true()
-        {status} = await @execute
+        {$status} = await @krb5.addprinc user
+        $status.should.be.true()
+        {$status} = await @execute
           command: "echo #{user.password} | kinit #{user.principal}"
-        status.should.be.true()
+        $status.should.be.true()

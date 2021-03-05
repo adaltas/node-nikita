@@ -62,15 +62,11 @@ handler = async function({
   // have the same parent directory
   await this.fs.base.mkdir({
     target: path.dirname(config.target),
-    metadata: {
-      relax: 'EEXIST'
-    }
+    $relax: 'EEXIST'
   });
   if (config.exec) {
     exists = (await this.call({
-      metadata: {
-        raw_output: true
-      }
+      $raw_output: true
     }, async function() {
       var data, exec_command;
       ({exists} = (await this.fs.base.exists({
@@ -101,9 +97,7 @@ exec ${config.source} $@`;
     });
   } else {
     exists = (await this.call({
-      metadata: {
-        raw_output: true
-      }
+      $raw_output: true
     }, async function() {
       var err, target;
       try {

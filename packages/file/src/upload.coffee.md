@@ -6,20 +6,17 @@ function with the addition of the "binary" option.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value is "true" if file was uploaded.   
+* `$status`   
+  Value is "true" if file was uploaded.
 
 ## Example
 
 ```js
-const {status} = await nikita.file.upload({
-  ssh: ssh
+const {$status} = await nikita.file.upload({
   source: '/tmp/local_file',
   target: '/tmp/remote_file'
 })
-console.info(`File was uploaded: ${status}`)
+console.info(`File was uploaded: ${$status}`)
 ```
 
 ## Schema
@@ -96,9 +93,12 @@ console.info(`File was uploaded: ${status}`)
       log message: "Source is \"#{config.source}\"", level: 'DEBUG'
       log message: "Destination is \"#{config.target}\"", level: 'DEBUG'
       # Stat the target and redefine its path if a directory
-      stats = await @call metadata: raw_output: true, ->
+      stats = await @call $raw_output: true, ->
         try
-          {stats} = await @fs.base.stat ssh: false, sudo: false, target: config.target
+          {stats} = await @fs.base.stat
+            $ssh: false
+            $sudo: false
+            target: config.target
           # Target is a file
           return stats if utils.stats.isFile stats.mode
           # Target is invalid
@@ -106,7 +106,10 @@ console.info(`File was uploaded: ${status}`)
           # Target is a directory
           config.target = path.resolve config.target, path.basename config.source
           try
-            {stats} = await @fs.base.stat ssh: false, sudo: false, target: config.target
+            {stats} = await @fs.base.stat
+              $ssh: false
+              sudo: false
+              target: config.target
             return stats if utils.stats.isFile stats.mode
             throw Error "Invalid target: #{config.target}"
           catch err
@@ -117,21 +120,27 @@ console.info(`File was uploaded: ${status}`)
           throw err
       # Now that we know the real name of the target, define a temporary file to write
       stage_target = "#{config.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
-      {status} = await @call ->
+      {$status} = await @call ->
         return true unless stats
-        {hash} = await @fs.hash target: config.source, algo: algo
+        {hash} = await @fs.hash
+          target: config.source
+          algo: algo
         hash_source = hash
-        {hash} = await @fs.hash target: config.target, algo: algo, ssh: false, sudo: false
+        {hash} = await @fs.hash
+          $ssh: false
+          $sudo: false
+          target: config.target
+          algo: algo
         hash_target = hash
         match = hash_source is hash_target
         log if match
         then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download'
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         not match
-      return unless status
+      return unless $status
       await @fs.mkdir
-        ssh: false
-        sudo: false
+        $ssh: false
+        $sudo: false
         target: path.dirname stage_target
       await @fs.base.createReadStream
         target: config.source
@@ -139,21 +148,21 @@ console.info(`File was uploaded: ${status}`)
           ws = fs.createWriteStream stage_target
           rs.pipe ws
       await @fs.move
-        ssh: false
-        sudo: false
+        $ssh: false
+        $sudo: false
         source: stage_target
         target: config.target
       log message: "Unstaged uploaded file", level: 'INFO'
       if config.mode?
         await @fs.chmod
-          ssh: false
-          sudo: false
+          $ssh: false
+          $sudo: false
           target: config.target
           mode: config.mode
       if config.uid? or config.gid?
         await @fs.chown
-          ssh: false
-          sudo: false
+          $ssh: false
+          $sudo: false
           target: config.target
           uid: config.uid
           gid: config.gid

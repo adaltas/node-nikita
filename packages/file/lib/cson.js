@@ -11,13 +11,13 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.file.yaml({
+// const {$status} = await nikita.file.yaml({
 //   content: {
 //     'my_key': 'my value'
 //   },
 //   target: '/tmp/my_file'
 // })
-// console.info(`Content was updated: ${status}`)
+// console.info(`Content was updated: ${$status}`)
 // ```
 
 // ## Schema

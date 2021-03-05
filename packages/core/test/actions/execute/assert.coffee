@@ -12,18 +12,18 @@ describe 'actions.execute.assert', ->
       nikita.execute.assert
         command: 'exit 1'
         code: 1
-        handler: ({config}) ->
+        $handler: ({config}) ->
           config.code.should.eql [1]
   
   describe 'exit code', ->
 
     they 'assert command succeed', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: 'exit 0'
 
     they 'assert command fail', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: 'exit 1'
         .should.be.rejectedWith [
@@ -33,7 +33,7 @@ describe 'actions.execute.assert', ->
         ].join ' '
 
     they 'assert custom code', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: 'exit 1'
           code: 1
@@ -47,7 +47,7 @@ describe 'actions.execute.assert', ->
         ].join ' '
 
     they 'assert custom code with negation', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: 'exit 1'
           not: true
@@ -65,7 +65,7 @@ describe 'actions.execute.assert', ->
   describe 'content', ->
 
     they 'assert stdout match content', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: 'text=hello; echo $text'
           content: 'hello\n'
@@ -79,7 +79,7 @@ describe 'actions.execute.assert', ->
         ].join ' '
 
     they 'assert stdout match regexp', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: "echo \"toto\nest\r\nau\rbistrot\""
           content: /^bistrot$/m
@@ -93,14 +93,14 @@ describe 'actions.execute.assert', ->
         ].join ' '
 
     they 'option trim on command', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           command: "echo '' && echo 'yo'"
           content: 'yo'
           trim: true
 
     they 'option trim on content', ({ssh}) ->
-      nikita ssh: ssh, ->
+      nikita $ssh: ssh, ->
         @execute.assert
           bash: true
           command: "echo -n 'yo'"

@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.user.del({
+// const {$status} = await nikita.ipa.user.del({
 //   uid: "someone",
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`User was deleted: ${status}`)
+// console.info(`User was deleted: ${$status}`)
 // ```
 
 // ## Hooks
@@ -50,18 +50,16 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, status;
+  var $status, base;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
-  ({status} = (await this.ipa.user.exists({
+  ({$status} = (await this.ipa.user.exists({
+    $shy: false,
     connection: config.connection,
-    metadata: {
-      shy: false
-    },
     uid: config.uid
   })));
-  if (!status) {
+  if (!$status) {
     return;
   }
   return (await this.network.http(config.connection, {

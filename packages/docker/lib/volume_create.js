@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True is volume was created.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.volume_create({
+// const {$status} = await nikita.docker.volume_create({
 //   name: 'my_volume'
 // })
-// console.info(`Volume was created: ${status}`)
+// console.info(`Volume was created: ${$status}`)
 // ```
 
 // ## Schema
@@ -55,7 +55,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status;
+  var $status;
   if (typeof config.label === 'string') {
     // Normalize config
     config.label = [config.label];
@@ -63,19 +63,15 @@ handler = async function({config}) {
   if (typeof config.opt === 'string') {
     config.opt = [config.opt];
   }
-  ({status} = (await this.docker.tools.execute({
-    if: config.name,
+  ({$status} = (await this.docker.tools.execute({
+    $if: config.name,
+    $shy: true,
     command: `volume inspect ${config.name}`,
     code: 1,
-    code_skipped: 0,
-    metadata: {
-      shy: true
-    }
+    code_skipped: 0
   })));
   return (await this.docker.tools.execute({
-    if: function() {
-      return !config.name || status;
-    },
+    $if: !config.name || $status,
     command: ["volume create", config.driver ? `--driver ${config.driver}` : void 0, config.label ? `--label ${config.label.join(',')}` : void 0, config.name ? `--name ${config.name}` : void 0, config.opt ? `--opt ${config.opt.join(',')}` : void 0].join(' ')
   }));
 };

@@ -34,17 +34,14 @@ describe 'session.action.handler', ->
   describe 'result', ->
 
     it 'return a user resolved promise', ->
-      nikita.call
-        handler: ({config}) ->
-          new Promise (accept, reject) ->
-            setImmediate -> accept output: 'ok'
+      nikita.call ({config}) ->
+        new Promise (accept, reject) ->
+          setImmediate -> accept output: 'ok'
       .should.be.finally.containEql output: 'ok', $status: false
 
     it 'return an action resolved promise', ->
-      nikita.call
-        handler: ({config}) ->
-          @call
-            handler: ->
-              new Promise (accept, reject) ->
-                setImmediate -> accept output: 'ok'
+      nikita.call ({config}) ->
+        @call ->
+          new Promise (accept, reject) ->
+            setImmediate -> accept output: 'ok'
       .should.be.finally.containEql output: 'ok', $status: false

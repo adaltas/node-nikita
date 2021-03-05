@@ -30,29 +30,27 @@
 
 // ## Output
 
-// * `err` (Error)   
-  //   Error object if any.
-  // * `output.status` (boolean)   
+// * `$status` (boolean)   
   //   Value is "true" if file was downloaded.
 
 // ## File example
 
 // ```js
-  // const {status} = await nikita.file.download({
+  // const {$status} = await nikita.file.download({
   //   source: 'file://path/to/something',
   //   target: 'node-sigar.tgz'
   // })
-  // console.info(`File downloaded: ${status}`)
+  // console.info(`File downloaded: ${$status}`)
   // ```
 
 // ## HTTP example
 
 // ```js
-  // const {status} = await nikita.file.download({
+  // const {$status} = await nikita.file.download({
   //   source: 'https://github.com/adaltas/node-nikita/tarball/v0.0.1',
   //   target: 'node-sigar.tgz'
   // })
-  // console.info(`File downloaded: ${status}`)
+  // console.info(`File downloaded: ${$status}`)
   // ```
 
 // ## TODO
@@ -251,9 +249,7 @@ handler = async function({
   // we compare it with the target file signature and stop if they match
   if (typeof source_hash === 'string') {
     ({shortcircuit} = (await this.call({
-      metadata: {
-        shy: true
-      }
+      $shy: true
     }, async function() {
       var err, hash;
       log({
@@ -291,8 +287,8 @@ handler = async function({
   if (config.cache) {
     await this.file.cache({
       // Local file must be readable by the current process
-      ssh: false,
-      sudo: false,
+      $ssh: false,
+      $sudo: false,
       source: config.source,
       cache_dir: config.cache_dir,
       cache_file: config.cache_file,
@@ -337,13 +333,12 @@ handler = async function({
     });
     // Ensure target directory exists
     await this.fs.mkdir({
-      metadata: {
-        shy: true
-      },
+      $shy: true,
       target: path.dirname(stageDestination)
     });
     // Download the file
     await this.execute({
+      $shy: true,
       command: [
         'curl',
         config.fail ? '--fail' : void 0,
@@ -380,10 +375,7 @@ handler = async function({
         `-s ${config.source}`,
         `-o ${stageDestination}`,
         config.proxy ? `-x ${config.proxy}` : void 0
-      ].join(' '),
-      metadata: {
-        shy: true
-      }
+      ].join(' ')
     });
     hash_source = hash_target = null;
     ({hash} = (await this.fs.hash(stageDestination, {
@@ -417,9 +409,7 @@ handler = async function({
     });
     if (match) {
       await this.fs.remove({
-        metadata: {
-          shy: true
-        },
+        $shy: true,
         target: stageDestination
       });
     }
@@ -456,9 +446,7 @@ handler = async function({
     });
     if (!match) {
       await this.fs.mkdir({
-        metadata: {
-          shy: true
-        },
+        $shy: true,
         target: path.dirname(stageDestination)
       });
       await this.fs.copy({
@@ -473,10 +461,10 @@ handler = async function({
     });
     hash_source = hash_target = null;
     ({hash} = (await this.fs.hash({
+      $ssh: false,
+      $sudo: false,
       target: config.source,
-      algo: algo,
-      ssh: false,
-      sudo: false
+      algo: algo
     })));
     hash_source = hash;
     ({exists} = (await this.fs.base.exists({
@@ -501,9 +489,7 @@ handler = async function({
     });
     if (!match) {
       await this.fs.mkdir({
-        metadata: {
-          shy: true
-        },
+        $shy: true,
         target: path.dirname(stageDestination)
       });
       try {

@@ -10,8 +10,8 @@ describe 'actions.fs.base.rename', ->
 
   they 'create', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"

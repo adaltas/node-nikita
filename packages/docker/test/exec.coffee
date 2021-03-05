@@ -9,7 +9,7 @@ describe 'docker.exec', ->
 
   they 'simple command', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -18,10 +18,10 @@ describe 'docker.exec', ->
       @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_exec'
-      {status, stdout} = await @docker.exec
+      {$status, stdout} = await @docker.exec
         container: 'nikita_test_exec'
         command: 'echo toto'
-      status.should.be.true()
+      $status.should.be.true()
       stdout.trim().should.eql 'toto'
       @docker.rm
         container: 'nikita_test_exec'
@@ -29,7 +29,7 @@ describe 'docker.exec', ->
 
   they 'on stopped container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       try
@@ -54,7 +54,7 @@ describe 'docker.exec', ->
 
   they 'on non existing container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.exec
@@ -64,7 +64,7 @@ describe 'docker.exec', ->
 
   they 'skip exit code', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -73,11 +73,11 @@ describe 'docker.exec', ->
       @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_exec'
-      {status} = await @docker.exec
+      {$status} = await @docker.exec
         container: 'nikita_test_exec'
         command: 'toto'
         code_skipped: 126
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_test_exec'
         force: true

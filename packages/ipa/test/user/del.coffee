@@ -11,7 +11,7 @@ describe 'ipa.user.del', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       .ipa.user.del connection: ipa,
         username: 'test_user_del'
 
@@ -19,17 +19,17 @@ describe 'ipa.user.del', ->
     
     they 'delete a missing user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del connection: ipa,
           uid: 'test_user_del'
-        {status} = await @ipa.user.del connection: ipa,
+        {$status} = await @ipa.user.del connection: ipa,
           uid: 'test_user_del'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'delete a user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user connection: ipa,
           uid: 'test_user_del'
@@ -39,6 +39,6 @@ describe 'ipa.user.del', ->
             mail: [
               'test_user_del@nikita.js.org'
             ]
-        {status} = await @ipa.user.del connection: ipa,
+        {$status} = await @ipa.user.del connection: ipa,
           uid: 'test_user_del'
-        status.should.be.true()
+        $status.should.be.true()

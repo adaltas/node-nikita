@@ -9,7 +9,7 @@ describe 'system.uid_gid', ->
 
   they 'convert names to id', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @system.user.remove 'toto'
       @system.group.remove ['toto', 'lulu']
@@ -26,8 +26,8 @@ describe 'system.uid_gid', ->
 
   they 'leave id untouched', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @file
         target: "#{tmpdir}/etc/group"
@@ -43,24 +43,24 @@ describe 'system.uid_gid', ->
         bin:x:1:1:bin:/bin:/usr/bin/nologin
         wdavidw:x:99:99:wdavidw:/:/home/wdavidw
         """
-      {status, uid, gid} = await @system.uid_gid
+      {$status, uid, gid} = await @system.uid_gid
         group_target: "#{tmpdir}/etc/group"
         passwd_target: "#{tmpdir}/etc/passwd"
         gid: '994'
         uid: '99'
-      status.should.be.false()
+      $status.should.be.false()
       uid.should.eql 99
       gid.should.eql 994
 
   they 'accept missing uid and gid', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
-      {status, uid, gid} = await @system.uid_gid
+      {$status, uid, gid} = await @system.uid_gid
         group_target: "#{tmpdir}/etc/group"
         passwd_target: "#{tmpdir}/etc/passwd"
-      status.should.be.false()
+      $status.should.be.false()
       (uid is undefined).should.be.true()
       (gid is undefined).should.be.true()
   

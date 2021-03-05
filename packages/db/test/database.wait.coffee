@@ -11,27 +11,27 @@ for engine, _ of db
 
     they 'is already created', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.database.remove 'db_wait_1'
         @db.database 'db_wait_0'
-        {status} = await @db.database.wait 'db_wait_0'
-        status.should.be.false()
+        {$status} = await @db.database.wait 'db_wait_0'
+        $status.should.be.false()
         @db.database.remove 'db_wait_0'
 
     they 'is not yet created', ({ssh}) ->
       setTimeout ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         .db.database 'db_wait_1'
       , 200
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.database.remove 'db_wait_1'
-        {status} = await @db.database.wait 'db_wait_1'
-        status.should.be.true()
+        {$status} = await @db.database.wait 'db_wait_1'
+        $status.should.be.true()
         @db.database.remove 'db_wait_1'

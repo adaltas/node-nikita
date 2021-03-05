@@ -163,12 +163,10 @@ handler = async function({
   // Create target parent directory if target does not exists and if the "parent"
   // config is set to "true" (default) or as an object.
   await this.fs.mkdir({
-    if: !!config.parent,
-    unless: target_stats,
-    target: path.dirname(config.target),
-    metadata: {
-      shy: true
-    }
+    $if: !!config.parent,
+    $unless: target_stats,
+    $shy: true,
+    target: path.dirname(config.target)
   }, config.parent);
   // Stop here if source is a directory. We traverse all its children
   // Recursively, calling either `fs.mkdir` or `fs.copy`.
@@ -178,9 +176,7 @@ handler = async function({
   // copied into "/tmp/a_target/a_source". With an ending slash, all the files
   // present inside "/tmp/a_source" are copied inside "/tmp/a_target".
   res = (await this.call({
-    metadata: {
-      shy: true
-    }
+    $shy: true
   }, async function() {
     var files, i, len, source, sourceEndWithSlash;
     if (!utils.stats.isDirectory(source_stats.mode)) {
@@ -251,9 +247,7 @@ handler = async function({
   }
   // If source is a file and target is a directory, then transform target into a file.
   await this.call({
-    metadata: {
-      shy: true
-    }
+    $shy: true
   }, function() {
     if (!(target_stats && utils.stats.isDirectory(target_stats.mode))) {
       return;
@@ -311,17 +305,17 @@ handler = async function({
     }
   }
   await this.fs.chown({
+    $if: (config.uid != null) || (config.gid != null),
     target: config.target,
     stats: target_stats,
     uid: config.uid,
-    gid: config.gid,
-    if: (config.uid != null) || (config.gid != null)
+    gid: config.gid
   });
   await this.fs.chmod({
+    $if: config.mode != null,
     target: config.target,
     stats: target_stats,
-    mode: config.mode,
-    if: config.mode != null
+    mode: config.mode
   });
   return {};
 };

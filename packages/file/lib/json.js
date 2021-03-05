@@ -6,7 +6,7 @@
 // Merge the destination file with user provided content.
 
 // ```js
-// const {status} = await nikita.file.json({
+// const {$status} = await nikita.file.json({
 //   target: "/path/to/target.json",
 //   content: { preferences: { colors: 'blue' } },
 //   transform: function(data){
@@ -16,7 +16,7 @@
 //   merge: true,
 //   pretty: true
 // })
-// console.info(`File was merged: ${status}`)
+// console.info(`File was merged: ${$status}`)
 // ```
 
 // ## Hooks
@@ -91,8 +91,8 @@ handler = async function({config}) {
   }
   if (config.source) {
     ({data} = (await this.fs.base.readFile({
-      ssh: config.local ? false : void 0,
-      sudo: config.local ? false : void 0,
+      $ssh: config.local ? false : void 0,
+      $sudo: config.local ? false : void 0,
       target: config.source,
       encoding: 'utf8'
     })));

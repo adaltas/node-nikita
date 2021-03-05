@@ -10,8 +10,8 @@ describe 'file config diff', ->
   they 'type is a function', ({ssh}) ->
     diffcalled = false
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file"
@@ -26,14 +26,14 @@ describe 'file config diff', ->
             { value: 'original text', count: 1, added: undefined, removed: true }
             { value: 'new text', count: 1, added: true, removed: undefined }
           ]
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
 
   they 'emit logs', ({ssh}) ->
     # Prepare by creating a file with content
     logs = []
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) -> logs.push log.message
       @file
@@ -53,8 +53,8 @@ describe 'file config diff', ->
     # with message "#{content} has no method 'split'",
     # make sure this is fixed for ever
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       diffs = []
       events.on 'diff', (log) ->
@@ -69,8 +69,8 @@ describe 'file config diff', ->
   they 'empty source on empty file', ({ssh}) ->
     logs = []
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) ->
         logs.push log.message
@@ -85,8 +85,8 @@ describe 'file config diff', ->
   they 'content on created file', ({ssh}) ->
     diff = null
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @file
         target: "#{tmpdir}/file"

@@ -30,29 +30,27 @@ calculated if neither sha256, sh1 nor md5 is provided.
 
 ## Output
 
-* `err` (Error)   
-  Error object if any.
-* `output.status` (boolean)   
+* `$status` (boolean)   
   Value is "true" if file was downloaded.
 
 ## File example
 
 ```js
-const {status} = await nikita.file.download({
+const {$status} = await nikita.file.download({
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
 })
-console.info(`File downloaded: ${status}`)
+console.info(`File downloaded: ${$status}`)
 ```
 
 ## HTTP example
 
 ```js
-const {status} = await nikita.file.download({
+const {$status} = await nikita.file.download({
   source: 'https://github.com/adaltas/node-nikita/tarball/v0.0.1',
   target: 'node-sigar.tgz'
 })
-console.info(`File downloaded: ${status}`)
+console.info(`File downloaded: ${$status}`)
 ```
 
 ## TODO
@@ -205,7 +203,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # If we know the source signature and if the target file exists
       # we compare it with the target file signature and stop if they match
       if typeof source_hash is 'string'
-        {shortcircuit} = await @call metadata: shy: true, ->
+        {shortcircuit} = await @call $shy: true, ->
           log message: "Shortcircuit check if provided hash match target", level: 'WARN'
           try
             {hash} = await @fs.hash config.target, algo: algo
@@ -221,8 +219,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       if config.cache
         await @file.cache
           # Local file must be readable by the current process
-          ssh: false
-          sudo: false
+          $ssh: false
+          $sudo: false
           source: config.source
           cache_dir: config.cache_dir
           cache_file: config.cache_file
@@ -250,10 +248,11 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         log message: "Download file from url using curl", level: 'INFO'
         # Ensure target directory exists
         await @fs.mkdir
-          metadata: shy: true
+          $shy: true
           target: path.dirname stageDestination
         # Download the file
         await @execute
+          $shy: true
           command: [
             'curl'
             '--fail' if config.fail
@@ -265,7 +264,6 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             "-o #{stageDestination}"
             "-x #{config.proxy}" if config.proxy
           ].join ' '
-          metadata: shy: true
         hash_source = hash_target = null
         {hash} = await @fs.hash stageDestination, algo: algo
         # Hash validation
@@ -282,7 +280,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         if match
           await @fs.remove
-            metadata: shy: true
+            $shy: true
             target: stageDestination
       else if source_url.protocol not in protocols_http and not ssh
         log message: "File Download without ssh (with or without cache)", level: 'DEBUG'
@@ -299,7 +297,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           await @fs.mkdir
-            metadata: shy: true
+            $shy: true
             target: path.dirname stageDestination
           await @fs.copy
             source: config.source
@@ -307,7 +305,11 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       else if source_url.protocol not in protocols_http and ssh
         log message: "File Download with ssh (with or without cache)", level: 'DEBUG'
         hash_source = hash_target = null
-        {hash} = await @fs.hash target: config.source, algo: algo, ssh: false, sudo: false
+        {hash} = await @fs.hash
+          $ssh: false
+          $sudo: false
+          target: config.source
+          algo: algo
         hash_source = hash
         {exists} = await @fs.base.exists target: config.target
         if exists
@@ -319,7 +321,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
         unless match
           await @fs.mkdir
-            metadata: shy: true
+            $shy: true
             target: path.dirname stageDestination
           try
             await @fs.base.createWriteStream

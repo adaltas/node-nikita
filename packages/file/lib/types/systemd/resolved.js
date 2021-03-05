@@ -7,14 +7,14 @@
 // a list of fallback dns servers by using an array and set ReadEtcHosts to true.
 
 // ```js
-// const {status} = await nikita.file.types.systemd.resolved({
+// const {$status} = await nikita.file.types.systemd.resolved({
 //   target: "/etc/systemd/resolved.conf",
 //   rootdir: "/mnt",
 //   content:
 //     FallbackDNS: ["1.1.1.1", "9.9.9.10", "8.8.8.8", "2606:4700:4700::1111"]
 //     ReadEtcHosts: true
 // })
-// console.info(`File was overwritten: ${status}`)
+// console.info(`File was overwritten: ${$status}`)
 // ```
 
 // Write to the default target file (`/etc/systemd/resolved.conf`). Set a single
@@ -23,13 +23,13 @@
 // will be updated.
 
 // ```js
-// const {status} = await nikita.file.types.systemd.resolved({
+// const {$status} = await nikita.file.types.systemd.resolved({
 //   content:
 //     DNS: "ns0.fdn.fr"
 //     DNSSEC: "allow-downgrade"
 //   merge: true
 // })
-// console.info(`File was written: ${status}`)
+// console.info(`File was written: ${$status}`)
 // ```
 
 // ## Schema
@@ -67,7 +67,7 @@ systemd-resolved\` after having wrote the configuration file.`
 // section called "Time". Thus, everything in `content` will be automatically put
 // under a "Time" key so that the user doesn't have to do it manually.
 handler = async function({config}) {
-  var status;
+  var $status;
   if (config.rootdir) {
     // Configs
     config.target = `${path.join(config.rootdir, config.target)}`;
@@ -82,7 +82,7 @@ handler = async function({config}) {
     config.content.Domains = config.content.Domains.join(" ");
   }
   // Write configuration
-  ({status} = (await this.file.ini({
+  ({$status} = (await this.file.ini({
     separator: "=",
     target: config.target,
     content: {
@@ -91,11 +91,11 @@ handler = async function({config}) {
     merge: config.merge
   })));
   return (await this.execute({
-    if: function() {
+    $if: function() {
       if (config.reload != null) {
         return config.reload;
       } else {
-        return status;
+        return $status;
       }
     },
     sudo: true,

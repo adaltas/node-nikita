@@ -80,9 +80,9 @@ value properties.
         log message: "Read source properties from #{config.source}", level: 'DEBUG', module: '@nikita/file/lib/types/hfile'
         # Populate config.source
         {data} = await @fs.base.readFile
+          $ssh: false if config.local
           encoding: config.encoding
           target: config.target
-          ssh: if config.local then false else config.ssh
         config.source = parse data
       # Merge source properties
       if config.source

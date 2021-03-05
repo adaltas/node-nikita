@@ -10,11 +10,12 @@ module.exports = {
   require: ['@nikitajs/core/lib/metadata/raw', '@nikitajs/core/lib/metadata/disabled'],
   hooks: {
     'nikita:normalize': function(action, handler) {
-      var assertions, property, value;
+      var assertions, property, ref, value;
       // Ventilate assertions properties defined at root
       assertions = {};
-      for (property in action) {
-        value = action[property];
+      ref = action.metadata;
+      for (property in ref) {
+        value = ref[property];
         if (/^(un)?assert$/.test(property)) {
           if (assertions[property]) {
             throw Error('ASSERTION_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside assertions']);
@@ -23,7 +24,7 @@ module.exports = {
             value = [value];
           }
           assertions[property] = value;
-          delete action[property];
+          delete action.metadata[property];
         }
       }
       return async function() {
@@ -62,19 +63,18 @@ handlers = {
       assertion = ref[i];
       if (typeof assertion === 'function') {
         run = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            raw_output: true,
-            raw_input: true
-          },
-          parent: action,
-          handler: assertion,
+          $assertion: true,
+          $depth: action.metadata.depth,
+          $raw_output: true,
+          $raw_input: true,
+          $handler: assertion,
+          $parent: action
+        }, {
           config: action.config,
           error: error,
           output: output
@@ -99,19 +99,21 @@ handlers = {
       assertion = ref[i];
       if (typeof assertion === 'function') {
         run = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            raw_output: true
-          },
-          parent: action,
-          handler: assertion,
-          config: action.config
+          $assertion: true,
+          $depth: action.metadata.depth,
+          $raw_output: true,
+          $raw_input: true,
+          $handler: assertion,
+          $parent: action
+        }, {
+          config: action.config,
+          error: error,
+          output: output
         }));
         if (typeof run !== 'boolean') {
           throw Error;

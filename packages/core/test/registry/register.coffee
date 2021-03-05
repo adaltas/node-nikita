@@ -15,14 +15,18 @@ describe 'registry.register', ->
     it 'is an array', ->
       reg = await registry
       .create()
-      .register ['this', 'is', 'a', 'function'], key: 'value', handler: (->)
+      .register ['this', 'is', 'a', 'function'],
+        config: key: 'value'
+        handler: (->)
       reg.get ['this', 'is', 'a', 'function']
       .then ({config}) -> config.key.should.eql 'value'
 
     it 'is a string', ->
       reg = await registry
       .create()
-      .register 'my_function', key: 'value', handler: (->)
+      .register 'my_function',
+        config: key: 'value'
+        handler: (->)
       reg.get 'my_function'
       .then ({config}) -> config.key.should.eql 'value'
 
@@ -30,15 +34,21 @@ describe 'registry.register', ->
       reg = await registry
       .create()
       .register
-        'my': 'function': key: 'value', handler: (->)
+        'my': 'function':
+          config: key: 'value'
+          handler: (->)
       reg
       .get ['my', 'function']
       .then ({config}) -> config.key.should.eql 'value'
 
     it 'overwrite an existing action', ->
       reg = registry.create()
-      reg.register 'my_function', key: 1, handler: -> 'my_function'
-      reg.register 'my_function', key: 2, handler: -> 'my_function'
+      reg.register 'my_function',
+        config: key: 1
+        handler: -> 'my_function'
+      reg.register 'my_function',
+        config: key: 2
+        handler: -> 'my_function'
       reg
       .get 'my_function'
       .then ({config}) -> config.key.should.eql 2
@@ -47,8 +57,12 @@ describe 'registry.register', ->
       reg = registry.create()
       await reg.register
         'my': 'actions':
-          '': key: 1, handler: (->)
-          'child': key: 2, handler: (->)
+          '':
+            config: key: 1
+            handler: (->)
+          'child':
+            config: key: 2
+            handler: (->)
       reg.get(['my', 'actions'])
       .then ({config}) -> config.key.should.eql 1
       reg.get(['my', 'actions', 'child'])
@@ -56,8 +70,12 @@ describe 'registry.register', ->
 
     it 'namespace with children', ->
       reg = registry.create()
-      reg.register ['a', 'function'], key: 1, handler: (->)
-      reg.register ['a', 'function', 'with', 'child'], key: 2, handler: (->)
+      reg.register ['a', 'function'],
+        config: key: 1
+        handler: (->)
+      reg.register ['a', 'function', 'with', 'child'],
+        config: key: 2
+        handler: (->)
       reg.get(['a', 'function'])
       .then ({config}) -> config.key.should.eql 1
       reg.get(['a', 'function', 'with', 'child'])
@@ -72,10 +90,12 @@ describe 'registry.register', ->
 
     it 'is an object', ->
       reg = registry.create()
-      reg.register 'an_action', a_key: 'a value', handler: (->)
+      reg.register 'an_action',
+        config: a_key: 'a value'
+        handler: (->)
       reg.registered 'an_action'
 
-    it 'is a string', ->
+    it 'is a string, function style', ->
       # Room for improvement in the future
       nikita ({registry}) ->
         await registry.register 'an_action', '@nikitajs/core/src/actions/execute'
@@ -83,9 +103,9 @@ describe 'registry.register', ->
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/core/src/actions/execute'
-        config.should.eql {}
+        should(config).be.undefined()
 
-    it 'is a string', ->
+    it 'is a string, object style', ->
       # Room for improvement in the future
       nikita ({registry}) ->
         await registry.register
@@ -98,10 +118,10 @@ describe 'registry.register', ->
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/core/src/actions/execute'
-        config.should.eql {}
+        should(config).be.undefined()
         {metadata, config} = await @registry.get ['an_action', 'child']
         metadata.module.should.eql '@nikitajs/core/src/actions/execute'
-        config.should.eql {}
+        should(config).be.undefined()
 
     it.skip 'receive config', ->
       n = nikita()

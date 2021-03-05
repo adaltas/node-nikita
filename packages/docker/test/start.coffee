@@ -9,7 +9,7 @@ describe 'docker.start', ->
 
   they 'on stopped container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -20,16 +20,16 @@ describe 'docker.start', ->
         container: 'nikita_test_start'
       @docker.stop
         container: 'nikita_test_start'
-      {status} = await @docker.start
+      {$status} = await @docker.start
         container: 'nikita_test_start'
-      status.should.be.true()
+      $status.should.be.true()
       @docker.rm
         container: 'nikita_test_start'
         force: true
 
   they 'on started container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -42,9 +42,9 @@ describe 'docker.start', ->
         container: 'nikita_test_start'
       @docker.start
         container: 'nikita_test_start'
-      {status} = await @docker.start
+      {$status} = await @docker.start
         container: 'nikita_test_start'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_test_start'
         force: true

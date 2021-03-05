@@ -10,9 +10,7 @@ started.
 
 ## Output
 
-* `err`   
-  Error object if any.
-* `status`   
+* `$status`   
   Indicate a change in service such as a change in installation, update,
   start/stop or startup registration.
 * `installed`   
@@ -23,17 +21,15 @@ started.
 ## Example
 
 ```js
-const {status} = await nikita.service([{
-  ssh: ssh,
+const {$status} = await nikita.service([{
   name: 'ganglia-gmetad-3.5.0-99',
   srv_name: 'gmetad',
   state: 'stopped',
   startup: false
 },{
-  ssh: ssh,
   name: 'ganglia-web-3.5.7-99'
 }])
-console.info(`Service status: ${status}`)
+console.info(`Service status: ${$status}`)
 ```
 
 ## Hooks
@@ -129,16 +125,16 @@ console.info(`Service status: ${status}`)
           name: chkname
           startup: config.startup
       if config.state
-        {status} = await @service.status
+        {$status} = await @service.status
+          $shy: true
           name: srvname
-          metadata: shy: true
-        if not status and 'started' in config.state
+        if not $status and 'started' in config.state
           await @service.start
             name: srvname
-        if status and 'stopped' in config.state
+        if $status and 'stopped' in config.state
           await @service.stop
             name: srvname
-        if status and 'restarted' in config.state
+        if $status and 'restarted' in config.state
           await @service.restart
             name: srvname
 

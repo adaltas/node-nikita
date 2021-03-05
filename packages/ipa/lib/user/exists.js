@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.user.exists({
+// const {$status} = await nikita.ipa.user.exists({
 //   uid: 'someone',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`User exists: ${status}`)
+// console.info(`User exists: ${$status}`)
 // ```
 
 // ## Hooks
@@ -60,7 +60,7 @@ handler = async function({config}) {
       uid: config.uid
     });
     return {
-      status: true,
+      $status: true,
       exists: true
     };
   } catch (error) {
@@ -69,7 +69,7 @@ handler = async function({config}) {
       throw err;
     }
     return {
-      status: false,
+      $status: false,
       exists: false
     };
   }

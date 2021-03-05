@@ -24,11 +24,11 @@ describe 'network.tcp.assert', ->
   they 'port and host', ({ssh}) ->
     try
       srv = await server()
-      {status} = await nikita.network.tcp.assert
+      {$status} = await nikita.network.tcp.assert
         host: 'localhost'
         port: srv.port
-        ssh: ssh
-      status.should.be.true()
+        $ssh: ssh
+      $status.should.be.true()
     finally
       await srv.close()
 
@@ -39,14 +39,14 @@ describe 'network.tcp.assert', ->
       ,
         await server()
       ]
-      {status} = await nikita.network.tcp.assert
+      {$status} = await nikita.network.tcp.assert
         servers: [
           host: 'localhost', port: '12346'
         ,
           host: 'localhost', port: '12347'
         ]
-        ssh: ssh
-      status.should.be.true()
+        $ssh: ssh
+      $status.should.be.true()
     finally
       servers.map (srv) -> srv.close()
 
@@ -54,24 +54,24 @@ describe 'network.tcp.assert', ->
     nikita.network.tcp.assert
       host: 'localhost'
       port: ++portincr
-      ssh: ssh
+      $ssh: ssh
     .should.be.rejectedWith
       message: "Address not listening: \"localhost:#{portincr}\""
 
   they 'option not', ({ssh}) ->
-    {status} = await nikita.network.tcp.assert
+    {$status} = await nikita.network.tcp.assert
       host: 'localhost'
       port: ++portincr
       not: true
-      ssh: ssh
-    status.should.be.true()
+      $ssh: ssh
+    $status.should.be.true()
     try
       srv = await server()
-      {status} = await nikita.network.tcp.assert
+      {$status} = await nikita.network.tcp.assert
         host: 'localhost'
         port: srv.port
         not: true
-        ssh: ssh
+        $ssh: ssh
       .should.be.rejectedWith
         message: "Address listening: \"localhost:#{srv.port}\""
     finally

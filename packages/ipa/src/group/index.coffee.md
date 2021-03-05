@@ -6,7 +6,7 @@ Add or modify a group in FreeIPA.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.group({
+const {$status} = await nikita.ipa.group({
   cn: 'somegroup',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@ const {status} = await nikita.ipa.group({
     password: "mysecret"
   }
 })
-console.info(`Group was updated: ${status}`)
+console.info(`Group was updated: ${$status}`)
 ```
 
 ## Schema
@@ -43,7 +43,7 @@ console.info(`Group was updated: ${status}`)
 
     handler = ({config}) ->
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
-      {status} = await @ipa.group.exists
+      {$status} = await @ipa.group.exists
         connection: config.connection
         cn: config.cn
       # Add or modify a group
@@ -51,11 +51,11 @@ console.info(`Group was updated: ${status}`)
         negotiate: true
         method: 'POST'
         data:
-          method: unless status then "group_add/1" else "group_mod/1"
+          method: unless $status then "group_add/1" else "group_mod/1"
           params: [[config.cn], config.attributes]
           id: 0
       output = {}
-      status = false
+      $status = false
       if data?.error
         if data.error.code isnt 4202 # no modifications to be performed
           error = Error data.error.message
@@ -63,13 +63,13 @@ console.info(`Group was updated: ${status}`)
           throw error
       else
         output.result = data.result.result
-        status = true
+        $status = true
       # Get result info even if no modification is performed
-      unless status
+      unless $status
         {result} = await @ipa.group.show config,
           cn: config.cn
         output.result = result
-      status: status, result: output.result
+      $status: $status, result: output.result
 
 ## Export
 

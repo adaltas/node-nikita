@@ -34,7 +34,7 @@ describe 'session.creation', ->
       # No external action but we use it as a reference
       stack = []
       await nikita
-        hooks: on_action: (action)->
+        $hooks: on_action: (action)->
           new Promise (resolve) ->
             setTimeout ->
               stack.push 'plugin'
@@ -60,7 +60,7 @@ describe 'session.creation', ->
     it 'after plugin', ->
       stack = []
       await nikita
-        hooks: on_action: (action)->
+        $hooks: on_action: (action)->
           new Promise (resolve) ->
             setTimeout ->
               stack.push 'plugin'
@@ -75,7 +75,7 @@ describe 'session.creation', ->
     it 'after plugin and handler', ->
       stack = []
       await nikita
-        hooks: on_action: (action) ->
+        $hooks: on_action: (action) ->
           new Promise (resolve) ->
             setTimeout ->
               stack.push 'plugin'

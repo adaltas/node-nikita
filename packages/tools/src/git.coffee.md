@@ -5,10 +5,8 @@ Create and synchronize a git repository.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value "true" if repository was created or modified.   
+* `$status`   
+  Value "true" if repository was created or modified.
 
 ## Example
 
@@ -16,11 +14,11 @@ The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
 ```js
-const {status} = await nikita.tools.git({
+const {$status} = await nikita.tools.git({
   source: 'https://github.com/wdavidw/node-nikita.git'
   target: '/tmp/nikita'
 })
-console.info(`Repo was synchronized: ${status}`)
+console.info(`Repo was synchronized: ${$status}`)
 ```
 
 ## Schema
@@ -62,7 +60,8 @@ console.info(`Repo was synchronized: ${status}`)
           command: "git clone #{config.source} #{config.target}"
           cwd: path.dirname config.target
       if repo_exists
-        {status: repo_uptodate} = await @execute
+        {$status: repo_uptodate} = await @execute
+          $shy: true
           command: """
           current=`git log --pretty=format:'%H' -n 1`
           target=`git rev-list --max-count=1 #{config.revision}`
@@ -74,7 +73,6 @@ console.info(`Repo was synchronized: ${status}`)
           cwd: config.target
           trap: true
           code_skipped: 3
-          metadata: shy: true
       unless repo_uptodate
         await @execute
           command: "git checkout #{config.revision}"

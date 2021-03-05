@@ -8,16 +8,16 @@ return unless tags.posix
 describe 'system.running', ->
 
   they 'pid not running', ({ssh}) ->
-    {logs, running} = await nikita({ssh: ssh}).system.running
+    {$logs, running} = await nikita({ssh: ssh}).system.running
       pid: 9999999
     running.should.be.false()
-    logs
+    $logs
     .map( ({message}) -> message)
     .should.matchAny "PID 9999999 is not running"
   
   they 'pid running', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout} = await @execute
         command: """
@@ -26,10 +26,10 @@ describe 'system.running', ->
         """
       pid = stdout.trim().split(' ').pop()
       try
-        {logs, running} = await @system.running
+        {$logs, running} = await @system.running
           pid: pid
         running.should.be.true()
-        logs
+        $logs
         .map( ({message}) -> message)
         .should.matchAny "PID #{pid} is running"
       finally
@@ -37,35 +37,35 @@ describe 'system.running', ->
         
   they 'pid file does not exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
-      {logs, running} = await @system.running
+      {$logs, running} = await @system.running
         target: "#{tmpdir}/pid.lock"
       running.should.be.false()
-      logs
+      $logs
       .map( ({message}) -> message)
       .should.matchAny "PID file #{tmpdir}/pid.lock does not exists"
         
   they 'pid file not running', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @file
         target: "#{tmpdir}/pid.lock"
         content: '9999999'
-      {logs, running} = await @system.running
+      {$logs, running} = await @system.running
         target: "#{tmpdir}/pid.lock"
       running.should.be.false()
-      logs
+      $logs
       .map( ({message}) -> message)
       .should.matchAny "PID 9999999 is not running"
         
   they 'pid file running', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       try
         {stdout} = await @execute
@@ -76,10 +76,10 @@ describe 'system.running', ->
           echo $PID
           """
         pid = stdout.trim().split(' ').pop()
-        {logs, running} = await @system.running
+        {$logs, running} = await @system.running
           target: "#{tmpdir}/pid.lock"
         running.should.be.true()
-        logs
+        $logs
         .map( ({message}) -> message)
         .should.matchAny "PID #{pid} is running"
       finally

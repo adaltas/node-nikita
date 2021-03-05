@@ -5,19 +5,17 @@ Check if the device exists in a container.
 
 ## Output
 
-* `err`
-  Error object if any.
-* `result.status`
+* `$status`
   True if the device exist, false otherwise.
 
 ## Add a network interface
 
 ```js
-const {status, config} = await nikita.lxd.config.device.exists({
+const {$status, config} = await nikita.lxd.config.device.exists({
   container: "my_container",
   device: 'eth0'
 })
-console.info(status ? `device exists, type is ${config.type}` : 'device missing')
+console.info($status ? `device exists, type is ${config.type}` : 'device missing')
 ```
 
 ## Schema

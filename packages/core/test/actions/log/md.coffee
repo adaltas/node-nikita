@@ -9,8 +9,8 @@ describe 'actions.log.md', ->
   
   they 'write entering message', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.md basedir: tmpdir
       @fs.assert
@@ -19,8 +19,8 @@ describe 'actions.log.md', ->
 
   they 'write message', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @log.md basedir: tmpdir
       @call ({tools: {log}})->
@@ -35,8 +35,8 @@ describe 'actions.log.md', ->
   
   they 'write message and module', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}})->
       @log.md basedir: tmpdir
       @call ({tools: {log}}) ->
@@ -53,18 +53,18 @@ describe 'actions.log.md', ->
   
     they 'honors header', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
-        @call metadata: header: 'h1', ({tools: {log}}) ->
+        @call $header: 'h1', ({tools: {log}}) ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
               setTimeout ->
                 resolve()
               , 500
-          @call metadata: header: 'h2', ({tools: {log}}) ->
+          @call $header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           trim: true
@@ -85,12 +85,12 @@ describe 'actions.log.md', ->
       
     they 'honors header', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
-        @call metadata: header: 'h1', ->
-          @call metadata: header: 'h2', ({tools: {log}}) ->
+        @call $header: 'h1', ->
+          @call $header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
           trim: true
@@ -111,8 +111,8 @@ describe 'actions.log.md', ->
     
     they 'honors stdout_stream', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """
@@ -130,8 +130,8 @@ describe 'actions.log.md', ->
           
     they 'stdin one line', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """
@@ -146,8 +146,8 @@ describe 'actions.log.md', ->
           
     they 'stdin multi line', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @log.md basedir: tmpdir
         @execute """

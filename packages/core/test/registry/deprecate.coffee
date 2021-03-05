@@ -11,7 +11,7 @@ describe 'registry.deprecate', ->
       nikita.registry.deprecate 'my_function', -> 'my_function'
     .call (_, next) ->
       nikita
-      .my_function relax: true, (err) ->
+      .my_function $relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated'
       .next next
     .call ->
@@ -24,7 +24,7 @@ describe 'registry.deprecate', ->
       nikita.registry.deprecate 'my_function', 'my_new_function', -> 'my_function'
     .call (_, next) ->
       nikita
-      .my_function relax: true, (err) ->
+      .my_function $relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use my_new_function'
       .next next
     .call ->
@@ -37,7 +37,7 @@ describe 'registry.deprecate', ->
       nikita.registry.deprecate 'my_function', 'nikita/file/touch'
     .call (_, next) ->
       nikita
-      .my_function relax: true, (err) ->
+      .my_function $relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use nikita/file/touch'
       .next next
     .call ->
@@ -50,7 +50,7 @@ describe 'registry.deprecate', ->
       nikita.registry.deprecate 'my_function', 'my_new_function', 'nikita/file/touch'
     .call (_, next) ->
       nikita
-      .my_function relax: true, (err) ->
+      .my_function $relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use my_new_function'
       .next next
     .call ->

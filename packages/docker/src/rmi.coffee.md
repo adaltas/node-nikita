@@ -57,6 +57,8 @@ force options is set.
         ].join ' '
         code_skipped: [1]
       await @docker.tools.execute
+        $if: ({parent}) ->
+          parent.parent.tools.status -1
         command: [
           'rmi'
           (
@@ -67,8 +69,6 @@ force options is set.
            " #{config.image}"
            ":#{config.tag}" if config.tag?
         ].join ''
-        if: ({parent}) ->
-          parent.parent.tools.status -1
 
 ## Exports
 

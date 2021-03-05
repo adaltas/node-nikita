@@ -3,6 +3,8 @@
 
 ## Example
 
+The `stream` config property receives the readable stream:
+
 ```js
 buffers = []
 await nikita.fs.base.createReadStream({
@@ -17,6 +19,9 @@ await nikita.fs.base.createReadStream({
 })
 console.info(Buffer.concat(buffers).toString())
 ```
+
+Alternatively, you can directly provide the readable function with the
+`on_readable` config property:
 
 ```js
 buffers = []
@@ -33,9 +38,18 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Hook
 
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
+    on_action =
+      after: [
+        '@nikitajs/core/src/plugins/execute'
+      ]
+      before: [
+        '@nikitajs/core/src/plugins/schema'
+        '@nikitajs/core/src/metadata/tmpdir'
+      ]
+      handler: ({config, metadata, tools: {find, walk}}) ->
+        config.target = metadata.argument if metadata.argument?
+        config.sudo ?= await find ({metadata: {sudo}}) -> sudo
+        metadata.tmpdir ?= true if config.sudo
 ## Schema
 
     schema =
@@ -49,6 +63,14 @@ console.info(Buffer.concat(buffers).toString())
           The encoding used to decode the buffer into a string. The encoding can
           be any one of those accepted by Buffer. When not defined, this action
           return a Buffer instance.
+          """
+        'on_readable':
+          typeof: 'function'
+          description: """
+          User provided function called when the readable stream is created and
+          readable. The user is responsible for pumping new content from it. It
+          is a short version of `config.stream` which registers the function to
+          the `readable` event.
           """
         'stream':
           typeof: 'function'
@@ -65,14 +87,12 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Handler
 
-    handler = ({config, hooks, metadata, tools: {path, log, find}, ssh}) ->
-      sudo = await find ({config: {sudo}}) -> sudo
+    handler = ({config, metadata, ssh, tools: {path, log, find}}) ->
       # Normalization
-      # throw Error "Required Option: the \"target\" option is mandatory" unless config.target
       config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
       throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
-      config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}" if sudo
-      throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless hooks.on_readable or config.stream
+      config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}" if config.sudo
+      throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless config.on_readable or config.stream
       # Guess current username
       current_username = utils.os.whoami ssh: ssh
       try if config.target_tmp
@@ -90,8 +110,8 @@ console.info(Buffer.concat(buffers).toString())
       new Promise (resolve, reject) ->
         buffers = []
         rs = await fs.createReadStream ssh, config.target_tmp or config.target
-        if hooks.on_readable
-        then rs.on 'readable', -> hooks.on_readable rs
+        if config.on_readable
+        then rs.on 'readable', -> config.on_readable rs
         else config.stream rs
         rs.on 'error', (err) ->
           if err.code is 'ENOENT'

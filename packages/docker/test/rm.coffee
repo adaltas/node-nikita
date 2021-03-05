@@ -10,7 +10,7 @@ describe 'docker.rm', ->
   they 'status', ({ssh}) ->
     @timeout 30000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -21,17 +21,17 @@ describe 'docker.rm', ->
         image: 'alpine'
         name: 'nikita_rm'
         rm: false
-      {status} = await @docker.rm
+      {$status} = await @docker.rm
         container: 'nikita_rm'
-      status.should.be.true()
-      {status} = await @docker.rm
+      $status.should.be.true()
+      {$status} = await @docker.rm
         container: 'nikita_rm'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'remove live container (no force)', ({ssh}) ->
     @timeout 30000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       try
@@ -56,7 +56,7 @@ describe 'docker.rm', ->
   they 'remove live container (with force)', ({ssh}) ->
     @timeout 30000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       await @docker.rm
@@ -66,7 +66,7 @@ describe 'docker.rm', ->
         image: 'httpd'
         port: '499:80'
         container: 'nikita_rm'
-      {status} = await @docker.rm
+      {$status} = await @docker.rm
         container: 'nikita_rm'
         force: true
-      status.should.be.true()
+      $status.should.be.true()

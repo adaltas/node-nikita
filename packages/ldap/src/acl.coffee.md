@@ -6,7 +6,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.acl({
+const {$status} = await nikita.ldap.acl({
   dn: '',
   acls: [{
     place_before: 'dn.subtree="dc=domain,dc=com"',
@@ -23,7 +23,7 @@ const {status} = await nikita.ldap.acl({
     ]
   }]
 })
-console.info(`ACL modified: ${status}`)
+console.info(`ACL modified: ${$status}`)
 ```
 
 ## Hooks
@@ -85,7 +85,7 @@ console.info(`ACL modified: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      status = false
+      $status = false
       # Get DN
       unless config.dn
         log message: "Get DN of the database to modify", level: 'DEBUG'
@@ -180,8 +180,8 @@ console.info(`ACL modified: ${status}`)
             value: olcAccess
         await @ldap.modify config,
           operations: operations
-        status = true
-      status
+        $status = true
+      $status
 
 ## Exports
 

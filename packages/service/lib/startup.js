@@ -5,20 +5,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicates if the startup behavior has changed.   
+// * `$status`   
+//   Indicates if the startup behavior has changed.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.startup([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.startup([{
 //   name: 'gmetad',
 //   startup: false
 // })
-// console.info(`Service was desactivated on startup: ${status}`)
+// console.info(`Service was desactivated on startup: ${$status}`)
 // ```
 
 // ## Hooks
@@ -34,14 +31,12 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+    // 'arch_chroot_rootdir':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
     'name': {
       $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     },
     'startup': {
       type: ['boolean', 'string'],
@@ -61,7 +56,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var c, command, current_startup, err, i, j, k, len, level, message, ref, ref1, startup_off, startup_on, status, stderr, stdout;
+  var $status, c, command, current_startup, err, i, j, k, len, level, message, ref, ref1, startup_off, startup_on, status, stderr, stdout;
   // Action
   log({
     message: `Startup service ${config.name}`,
@@ -69,6 +64,7 @@ handler = async function({
   });
   if (!config.command) {
     ({stdout} = (await this.execute({
+      $shy: true,
       command: `if command -v systemctl >/dev/null 2>&1; then
   echo 'systemctl'
 elif command -v chkconfig >/dev/null 2>&1; then
@@ -78,10 +74,7 @@ elif command -v update-rc.d >/dev/null 2>&1; then
 else
   echo "Unsupported Loader" >&2
   exit 2
-fi`,
-      metadata: {
-        shy: true
-      }
+fi`
     })));
     config.command = stdout.trim();
     if ((ref = config.command) !== 'systemctl' && ref !== 'chkconfig' && ref !== 'update-rc') {
@@ -91,7 +84,7 @@ fi`,
   switch (config.command) {
     case 'systemctl':
       try {
-        ({status} = (await this.execute({
+        ({$status} = (await this.execute({
           command: `startup=${config.startup ? '1' : ''}
 if systemctl is-enabled ${config.name}; then
   [ -z "$startup" ] || exit 3
@@ -103,12 +96,12 @@ else
   systemctl enable ${config.name}
 fi`,
           trap: true,
-          code_skipped: 3,
-          arch_chroot: config.arch_chroot,
-          rootdir: config.rootdir
+          code_skipped: 3
         })));
+        // arch_chroot: config.arch_chroot
+        // arch_chroot_rootdir: config.arch_chroot_rootdir
         message = config.startup ? 'activated' : 'disabled';
-        return log(status ? {
+        return log($status ? {
           message: `Service startup updated: ${message}`,
           level: 'WARN',
           module: 'nikita/lib/service/remove'
@@ -128,12 +121,10 @@ fi`,
       }
       break;
     case 'chkconfig':
-      ({status, stdout, stderr} = (await this.execute({
+      ({$status, stdout, stderr} = (await this.execute({
+        $shy: true,
         command: `chkconfig --list ${config.name}`,
-        code_skipped: 1,
-        metadata: {
-          shy: true
-        }
+        code_skipped: 1
       })));
       // Invalid service name return code is 0 and message in stderr start by error
       if (/^error/.test(stderr)) {
@@ -144,7 +135,7 @@ fi`,
         throw Error(`Invalid chkconfig name for \`${config.name}\``);
       }
       current_startup = '';
-      if (status) {
+      if ($status) {
         ref1 = stdout.split(' ').pop().trim().split('\t');
         for (j = 0, len = ref1.length; j < len; j++) {
           c = ref1[j];
@@ -160,7 +151,7 @@ fi`,
       if (config.startup === current_startup) {
         return;
       }
-      if (status && config.startup === false && current_startup === '') {
+      if ($status && config.startup === false && current_startup === '') {
         return;
       }
       if (config.startup) {
@@ -198,7 +189,7 @@ fi`,
         });
       }
       message = config.startup ? 'activated' : 'disabled';
-      return log(status ? {
+      return log($status ? {
         message: `Service startup updated: ${message}`,
         level: 'WARN',
         module: 'nikita/lib/service/startup'
@@ -208,7 +199,7 @@ fi`,
         module: 'nikita/lib/service/startup'
       });
     case 'update-rc':
-      ({status} = (await this.execute({
+      ({$status} = (await this.execute({
         command: `startup=${config.startup ? '1' : ''}
 if ls /etc/rc*.d/S??${config.name}; then
   [ -z "$startup" ] || exit 3
@@ -219,12 +210,12 @@ else
   echo 'Enable ${config.name}'
   update-rc.d -f ${config.name} enable
 fi`,
-        code_skipped: 3,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir
+        code_skipped: 3
       })));
+      // arch_chroot: config.arch_chroot
+      // arch_chroot_rootdir: config.arch_chroot_rootdir
       message = config.startup ? 'activated' : 'disabled';
-      return log(status ? {
+      return log($status ? {
         message: `Service startup updated: ${message}`,
         level: 'WARN',
         module: 'nikita/lib/service/remove'

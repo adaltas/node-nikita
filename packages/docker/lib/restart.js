@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True if container was restarted.  
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.restart({
+// const {$status} = await nikita.docker.restart({
 //   container: 'toto'
 // })
-// console.info(`Container was started or restarted: ${status}`)
+// console.info(`Container was started or restarted: ${$status}`)
 // ```
 
 // ## Schema

@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True when the command was executed successfully.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.

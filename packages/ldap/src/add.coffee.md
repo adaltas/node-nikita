@@ -6,7 +6,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.index({
+const {$status} = await nikita.ldap.index({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -18,7 +18,7 @@ const {status} = await nikita.ldap.index({
     gidNumber: 9601
   }
 })
-console.info(`Entry modified: ${status}`)
+console.info(`Entry modified: ${$status}`)
 ```
 
 ## Hooks
@@ -87,12 +87,12 @@ console.info(`Entry modified: ${status}`)
       ldif = ''
       for entry in config.entry
         # Check if record already exists
-        {status, stdout} = await @ldap.search config,
+        {$status, stdout} = await @ldap.search config,
           base: entry.dn
           code_skipped: 32 # No such object
           scope: 'base'
         original = {}
-        continue if status
+        continue if $status
         # throw Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
         ldif += '\n'
         ldif += "dn: #{entry.dn}\n"
@@ -108,7 +108,7 @@ console.info(`Entry modified: ${status}`)
           for vv in v
             ldif += "#{k}: #{vv}\n"
       {stdout, stderr} = await @execute
-        if: ldif isnt ''
+        $if: ldif isnt ''
         command: [
           [
             'ldapmodify'
@@ -124,9 +124,6 @@ console.info(`Entry modified: ${status}`)
           EOF
           """
         ].join ' '
-        # code_skipped: 68
-      # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
-      # status: modified
 
 ## Exports
 

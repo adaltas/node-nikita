@@ -7,14 +7,14 @@ Overwrite `/usr/lib/systemd/resolved.conf.d/10_resolved.conf` in `/mnt` to set
 a list of fallback dns servers by using an array and set ReadEtcHosts to true.
 
 ```js
-const {status} = await nikita.file.types.systemd.resolved({
+const {$status} = await nikita.file.types.systemd.resolved({
   target: "/etc/systemd/resolved.conf",
   rootdir: "/mnt",
   content:
     FallbackDNS: ["1.1.1.1", "9.9.9.10", "8.8.8.8", "2606:4700:4700::1111"]
     ReadEtcHosts: true
 })
-console.info(`File was overwritten: ${status}`)
+console.info(`File was overwritten: ${$status}`)
 ```
 
 Write to the default target file (`/etc/systemd/resolved.conf`). Set a single
@@ -23,13 +23,13 @@ DNS server using a string and also modify the value of DNSSEC.  Note: with
 will be updated.
 
 ```js
-const {status} = await nikita.file.types.systemd.resolved({
+const {$status} = await nikita.file.types.systemd.resolved({
   content:
     DNS: "ns0.fdn.fr"
     DNSSEC: "allow-downgrade"
   merge: true
 })
-console.info(`File was written: ${status}`)
+console.info(`File was written: ${$status}`)
 ```
 
 ## Schema
@@ -75,16 +75,16 @@ under a "Time" key so that the user doesn't have to do it manually.
       if Array.isArray config.content.Domains
         config.content.Domains = config.content.Domains.join " "
       # Write configuration
-      {status} = await @file.ini
+      {$status} = await @file.ini
         separator: "="
         target: config.target
         content: 'Resolve': config.content
         merge: config.merge
       await @execute
-        if: ->
+        $if: ->
           if config.reload?
           then config.reload
-          else status
+          else $status
         sudo: true
         command: """
         systemctl daemon-reload

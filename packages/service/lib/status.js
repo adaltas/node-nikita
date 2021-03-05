@@ -6,19 +6,16 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Indicates if the startup behavior has changed.   
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.status([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.status([{
 //   name: 'gmetad'
 // })
-// console.info(`Service status: ${status}`)
+// console.info(`Service status: ${$status}`)
 // ```
 
 // ## Notes
@@ -47,14 +44,12 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+    // 'arch_chroot_rootdir':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
     'name': {
       $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     }
   },
   required: ['name']
@@ -65,13 +60,13 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var err, status;
+  var $status, err;
   log({
     message: `Status for service ${config.name}`,
     level: 'INFO'
   });
   try {
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep -w "${config.name}" || exit 3
 if command -v systemctl >/dev/null 2>&1; then
   systemctl status ${config.name} || exit 3
@@ -82,12 +77,12 @@ else
   exit 2
 fi`,
       code: 0,
-      code_skipped: 3,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir
+      code_skipped: 3
     })));
+    // arch_chroot: config.arch_chroot
+    // arch_chroot_rootdir: config.arch_chroot_rootdir
     return log({
-      message: `Status for ${config.name} is ${status ? 'started' : 'stoped'}`,
+      message: `Status for ${config.name} is ${$status ? 'started' : 'stoped'}`,
       level: 'INFO'
     });
   } catch (error) {

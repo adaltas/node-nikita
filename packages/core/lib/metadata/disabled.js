@@ -8,7 +8,7 @@ module.exports = {
         base.disabled = false;
       }
       if (action.metadata.disabled) {
-        return null;
+        return void 0;
       } else {
         return handler;
       }

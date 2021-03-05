@@ -8,7 +8,7 @@ describe 'actions.execute.config.format', ->
 
   they 'json', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout, data} = await @execute
         command: 'echo \'{"key": "value"}\''
@@ -18,7 +18,7 @@ describe 'actions.execute.config.format', ->
 
   they 'yaml', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout, data} = await @execute
         command: '''
@@ -32,7 +32,7 @@ describe 'actions.execute.config.format', ->
 
   they 'with error', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout, data} = await @execute
         command: 'exit 1'

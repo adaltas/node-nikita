@@ -48,10 +48,8 @@ handler = async function({
   installed = [];
   // Note, cant see a difference between update and upgrade after printing help
   ({stdout} = (await this.execute({
-    command: "apm outdated --json",
-    metadata: {
-      shy: true
-    }
+    $shy: true,
+    command: "apm outdated --json"
   })));
   pkgs = JSON.parse(stdout);
   outdated = pkgs.map(function(pkg) {
@@ -64,10 +62,8 @@ handler = async function({
     outdated = [];
   }
   ({stdout} = (await this.execute({
-    command: "apm list --installed --json",
-    metadata: {
-      shy: true
-    }
+    $shy: true,
+    command: "apm list --installed --json"
   })));
   pkgs = JSON.parse(stdout);
   installed = pkgs.user.map(function(pkg) {

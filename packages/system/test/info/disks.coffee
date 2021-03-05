@@ -9,9 +9,9 @@ describe 'system.info.disks', ->
 
   they 'with no options', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status, disks} = await @system.info.disks()
+      {$status, disks} = await @system.info.disks()
       disks.length.should.be.above 0
       for disk in disks
         Object.keys(disk).should.eql [

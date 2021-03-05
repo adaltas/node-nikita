@@ -8,7 +8,7 @@ describe 'actions.execute.config.env', ->
   return unless tags.posix
 
   they 'invalid schema', ({ssh}) ->
-    nikita ssh: ssh, ->
+    nikita $ssh: ssh, ->
       @execute
         command: 'whoami'
         env: ['oh no']
@@ -25,7 +25,7 @@ describe 'actions.execute.config.env', ->
     # is determined by the AcceptEnv server setting
     # default values are "LANG,LC_*"
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout} = await @execute
         command: 'env'
@@ -34,9 +34,8 @@ describe 'actions.execute.config.env', ->
 
   they 'from parent', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata:
-        env: 'LANG': 'tv'
+      $ssh: ssh
+      $env: 'LANG': 'tv'
     , ->
       {stdout} = await @execute
         command: 'env'
@@ -44,7 +43,7 @@ describe 'actions.execute.config.env', ->
   
   they 'process.env only in local', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       process.env['NIKITA_EXECUTE_ENV'] = '1'
       {stdout} = await @execute

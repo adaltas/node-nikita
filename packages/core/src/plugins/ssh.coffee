@@ -27,14 +27,14 @@ module.exports =
     'nikita:action': (action) ->
       # Is there a connection to open
       if action.ssh and not utils.ssh.is action.ssh
-        {ssh} = await session
+        {ssh} = await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
             require '../plugins/tools_events'
             require '../plugins/tools_log'
             require '../metadata/status'
             require '../plugins/history'
           ]
-        .ssh.open config: action.ssh
+        .ssh.open action.ssh
         action.metadata.ssh_dispose = true
         action.ssh = ssh
         return
@@ -68,7 +68,7 @@ module.exports =
         action.ssh = ssh
     'nikita:result': ({action}) ->
       if action.metadata.ssh_dispose
-        await session
+        await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
             require '../plugins/tools_events'
             require '../plugins/tools_log'

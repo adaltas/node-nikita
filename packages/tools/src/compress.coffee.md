@@ -7,19 +7,17 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `$status`   
   Value is "true" if file was compressed.   
 
 ## Example
 
 ```js
-const {status} = await nikita.tools.compress({
+const {$status} = await nikita.tools.compress({
   source: '/path/to/file.tgz'
   destation: '/tmp'
 })
-console.info(`File was compressed: ${status}`)
+console.info(`File was compressed: ${$status}`)
 ```
 
 
@@ -72,7 +70,7 @@ console.info(`File was compressed: ${status}`)
         when 'xz'  then "tar cJf #{config.target} -C #{dir} #{name}"
         when 'zip' then "(cd #{dir} && zip -r #{config.target} #{name} && cd -)"
       await @fs.remove
-        if: config.clean
+        $if: config.clean
         source: config.source
         recursive: true
       output

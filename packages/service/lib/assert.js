@@ -20,18 +20,16 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+    // 'arch_chroot_rootdir':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
     'installed': {
       type: 'boolean',
       description: `Assert the package is installed.`
     },
     'name': {
       $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     },
     'srv_name': {
       type: 'string',
@@ -51,7 +49,7 @@ schema = {
 
 // ## Handler
 handler = async function({config, metadata}) {
-  var err, status;
+  var $status, err;
   if (config.srv_name == null) {
     config.srv_name = config.name;
   }
@@ -60,6 +58,7 @@ handler = async function({config, metadata}) {
   if (config.installed != null) {
     try {
       await this.execute({
+        $shy: true,
         command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n" | grep '^${config.name.join('|')}$'
 elif command -v pacman >/dev/null 2>&1; then
@@ -70,13 +69,10 @@ else
   echo "Unsupported Package Manager" >&2
   exit 2
 fi`,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir,
+        // arch_chroot: config.arch_chroot
+        // arch_chroot_rootdir: config.arch_chroot_rootdir
         stdin_log: true,
-        stdout_log: false,
-        metadata: {
-          shy: true
-        }
+        stdout_log: false
       });
     } catch (error) {
       err = error;
@@ -92,7 +88,7 @@ fi`,
     return;
   }
   try {
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep -w "${config.srv_name}" || exit 3
 if command -v systemctl >/dev/null 2>&1; then
   systemctl status ${config.srv_name} || exit 3
@@ -103,29 +99,29 @@ else
   exit 2
 fi`,
       code: 0,
-      code_skipped: 3,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir
+      code_skipped: 3
     })));
   } catch (error) {
+    // arch_chroot: config.arch_chroot
+    // arch_chroot_rootdir: config.arch_chroot_rootdir
     err = error;
     if (err.exit_code === 2) {
       throw Error("Unsupported Loader");
     }
   }
   if (config.started != null) {
-    if (config.started && !status) {
+    if (config.started && !$status) {
       throw Error(`Service Not Started: ${config.srv_name}`);
     }
-    if (!config.started && status) {
+    if (!config.started && $status) {
       throw Error(`Service Started: ${config.srv_name}`);
     }
   }
   if (config.stopped != null) {
-    if (config.stopped && status) {
+    if (config.stopped && $status) {
       throw Error(`Service Not Stopped: ${config.srv_name}`);
     }
-    if (!config.stopped && !status) {
+    if (!config.stopped && !$status) {
       throw Error(`Service Stopped: ${config.srv_name}`);
     }
   }

@@ -12,9 +12,9 @@ describe 'docker.cp', ->
   
   they 'a remote file to a local file', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_extract'
@@ -23,10 +23,10 @@ describe 'docker.cp', ->
         image: 'alpine'
         command: "whoami"
         rm: false
-      {status} = await @docker.cp
+      {$status} = await @docker.cp
         source: 'nikita_extract:/etc/apk/repositories'
         target: "#{tmpdir}/a_file"
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/a_file"
       @docker.rm
@@ -34,9 +34,9 @@ describe 'docker.cp', ->
 
   they 'a remote file to a local directory', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run
@@ -44,19 +44,19 @@ describe 'docker.cp', ->
         image: 'alpine'
         command: "whoami"
         rm: false
-      {status} = await @docker.cp
+      {$status} = await @docker.cp
         source: 'nikita_extract:/etc/apk/repositories'
         target: "#{tmpdir}"
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/repositories"
       @docker.rm container: 'nikita_extract'
 
   they 'a local file to a remote file', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run
@@ -65,10 +65,10 @@ describe 'docker.cp', ->
         volume: "#{tmpdir}:/root"
         command: "whoami"
         rm: false
-      {status} = await @docker.cp
+      {$status} = await @docker.cp
         source: "#{__filename}"
         target: "nikita_extract:/root/a_file"
-      status.should.be.true()
+      $status.should.be.true()
       @docker.cp
         source: 'nikita_extract:/root/a_file'
         target: "#{tmpdir}"
@@ -78,9 +78,9 @@ describe 'docker.cp', ->
 
   they 'a local file to a remote directory', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm container: 'nikita_extract'
       @docker.run
@@ -89,10 +89,10 @@ describe 'docker.cp', ->
         volume: "#{tmpdir}:/root"
         command: "whoami"
         rm: false
-      {status} = await @docker.cp
+      {$status} = await @docker.cp
         source: "#{__filename}"
         target: "nikita_extract:/root"
-      status.should.be.true()
+      $status.should.be.true()
       @docker.cp
         source: "nikita_extract:/root/#{path.basename __filename}"
         target: "#{tmpdir}"

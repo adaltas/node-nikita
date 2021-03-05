@@ -28,7 +28,7 @@ describe 'krb5.ticket', ->
 
     they 'create a new ticket with password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         await @krb5.delprinc
@@ -37,22 +37,22 @@ describe 'krb5.ticket', ->
           principal: "nikita@#{krb5.realm}"
           password: 'myprecious'
         await @execute 'kdestroy'
-        {status} = await @krb5.ticket
+        {$status} = await @krb5.ticket
           principal: "nikita@#{krb5.realm}"
           password: 'myprecious'
-        status.should.be.true()
-        {status} = await @krb5.ticket
+        $status.should.be.true()
+        {$status} = await @krb5.ticket
           principal: "nikita@#{krb5.realm}"
           password: 'myprecious'
-        status.should.be.false()
+        $status.should.be.false()
         await @execute
           command: 'klist -s'
 
     they 'create a new ticket with a keytab', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @krb5.delprinc
           principal: "nikita@#{krb5.realm}"
@@ -61,13 +61,13 @@ describe 'krb5.ticket', ->
           password: 'myprecious'
           keytab: "#{tmpdir}/nikita.keytab"
         await @execute 'kdestroy'
-        {status} = await @krb5.ticket
+        {$status} = await @krb5.ticket
           principal: "nikita@#{krb5.realm}"
           keytab: "#{tmpdir}/nikita.keytab"
-        status.should.be.true()
-        {status} = await @krb5.ticket
+        $status.should.be.true()
+        {$status} = await @krb5.ticket
           principal: "nikita@#{krb5.realm}"
           keytab: "#{tmpdir}/nikita.keytab"
-        status.should.be.false()
+        $status.should.be.false()
         await @execute
           command: 'klist -s'

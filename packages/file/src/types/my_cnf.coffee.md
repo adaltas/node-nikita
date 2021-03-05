@@ -8,11 +8,11 @@ Write file in the mysql ini format by default located in "/etc/my.cnf".
     schema =
       type: 'object'
       properties:
-        'rootdir':
-          type: 'string'
-          description: """
-          Path to the mount point corresponding to the root directory, optional.
-          """
+        # 'rootdir':
+        #   type: 'string'
+        #   description: """
+        #   Path to the mount point corresponding to the root directory, optional.
+        #   """
         'backup':
           type: ['string','boolean']
           description: """

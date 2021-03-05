@@ -8,10 +8,8 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Value is "true" if Iptables rules were created or modified.   
+// * `$status`   
+//   Value is "true" if Iptables rules were created or modified.
 
 // ## Usage
 
@@ -38,13 +36,12 @@
 
 // ```js
 // var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
-// const {status} = await nikita.tools.iptables({
-//   ssh: ssh,
+// const {$status} = await nikita.tools.iptables({
 //   rules: [
 //     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
 //   ]
 // })
-// console.info(`Iptables was updated: ${status}`)
+// console.info(`Iptables was updated: ${$status}`)
 // ```
 
 // ## Hooks
@@ -173,22 +170,20 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, newrules, oldrules, status, stdout;
+  var $status, command, newrules, oldrules, stdout;
   log({
     message: "List existing rules",
     level: 'WARN'
   });
-  ({status} = (await this.service.status({
+  ({$status} = (await this.service.status({
     name: 'iptables'
   })));
-  if (!status) {
+  if (!$status) {
     throw Error("Service iptables not started");
   }
   ({stdout} = (await this.execute({
+    $shy: true,
     command: 'iptables -S',
-    metadata: {
-      shy: true
-    },
     sudo: config.sudo
   })));
   oldrules = utils.iptables.parse(stdout);

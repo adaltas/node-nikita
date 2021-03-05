@@ -7,16 +7,16 @@ Stop a started container.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True unless container was already stopped.
 
 ## Example
 
 ```js
-const {status} = await nikita.docker.stop({
+const {$status} = await nikita.docker.stop({
   container: 'toto'
 })
-console.info(`Container was stopped: ${status}`)
+console.info(`Container was stopped: ${$status}`)
 ```
 
 ## Schema
@@ -43,12 +43,12 @@ console.info(`Container was stopped: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       # rm is false by default only if config.service is true
-      {status} = await @docker.tools.status config, metadata: shy: true
-      if status
+      {$status} = await @docker.tools.$status config, $shy: true
+      if $status
       then log message: "Stopping container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
       else log message: "Container already stopped #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
       await @docker.tools.execute
-        if: status
+        $if: $status
         command: [
           'stop'
           "-t #{config.timeout}" if config.timeout?

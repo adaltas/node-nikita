@@ -11,10 +11,9 @@ describe 'actions.execute.config.arch_linux', ->
     
     it 'arch_chroot require arch_chroot_rootdir', ->
       nikita.execute
-        config:
-          arch_chroot: true
-          command: ''
-        handler: (->)
+        arch_chroot: true
+        command: ''
+        $handler: (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -27,7 +26,7 @@ describe 'actions.execute.config.arch_linux', ->
 
     they 'target as string', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @execute
           command: "mount --bind /var/tmp/root.x86_64 /mnt"

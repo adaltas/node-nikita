@@ -6,7 +6,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Example
 
 ```js
-const {status} = await nikita.krb5.addprinc({
+const {$status} = await nikita.krb5.addprinc({
   admin: {
     password: 'pass',
     principal: 'me/admin@MY_REALM',
@@ -18,7 +18,7 @@ const {status} = await nikita.krb5.addprinc({
   randkey: true,
   uid: 'myservice'
 })
-console.info(`Principal was created or modified: ${status}`)
+console.info(`Principal was created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -67,25 +67,25 @@ console.info(`Principal was created or modified: ${status}`)
       config.admin.realm ?= config.admin.principal.split('@')[1] if /.*@.*/.test config.admin?.principal
       config.principal = "#{config.principal}@#{config.admin.realm}" unless /^\S+@\S+$/.test config.principal
       # Start execution
-      {status} = await @krb5.execute
+      {$status} = await @krb5.execute
+        $shy: true
         admin: config.admin
         command: "getprinc #{config.principal}"
         grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
-        metadata: shy: true
-      unless status
+      unless $status
         await @krb5.execute
+          $retry: 3
           admin: config.admin
           command: if config.password
           then "addprinc -pw #{config.password} #{config.principal}"
           else "addprinc -randkey #{config.principal}"
-          metadata: retry: 3
       if config.password and config.password_sync
         cache_name = "/tmp/nikita_#{Math.random()}" # Ticket cache location
         await @krb5.execute
-          unless_execute: "if ! echo #{config.password} | kinit '#{config.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi"
+          $retry: 3
+          $unless_execute: "if ! echo #{config.password} | kinit '#{config.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi"
           admin: config.admin
           command: "cpw -pw #{config.password} #{config.principal}"
-          metadata: retry: 3
       return unless !!config.keytab
       await @krb5.ktadd config
 

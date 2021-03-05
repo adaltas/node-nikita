@@ -5,19 +5,17 @@
 
 // ## Output
 
-// * `err`
-//   Error object if any.
-// * `result.status`
+// * `$status`
 //   True if the device was removed False otherwise.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.config.device.delete({
+// const {$status} = await nikita.lxd.config.device.delete({
 //   container: 'container1',
 //   device: 'root'
 // })
-// console.info(`Device was removed: ${status}`)
+// console.info(`Device was removed: ${$status}`)
 // ```
 
 // ## Schema
@@ -39,21 +37,21 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var properties, status;
+  var $status, properties;
   ({properties} = (await this.lxd.config.device.show({
     container: config.container,
     device: config.device
   })));
   if (!properties) {
     return {
-      status: false
+      $status: false
     };
   }
-  ({status} = (await this.execute({
+  ({$status} = (await this.execute({
     command: ['lxc', 'config', 'device', 'remove', config.container, config.device].join(' ')
   })));
   return {
-    status: status
+    $status: $status
   };
 };
 

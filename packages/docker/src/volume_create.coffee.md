@@ -7,16 +7,16 @@ Create a volume.
 
 * `err`   
   Error object if any.   
-* `status`   
+* `$status`   
   True is volume was created.
 
 ## Example
 
 ```js
-const {status} = await nikita.docker.volume_create({
+const {$status} = await nikita.docker.volume_create({
   name: 'my_volume'
 })
-console.info(`Volume was created: ${status}`)
+console.info(`Volume was created: ${$status}`)
 ```
 
 ## Schema
@@ -55,14 +55,14 @@ console.info(`Volume was created: ${status}`)
       # Normalize config
       config.label = [config.label] if typeof config.label is 'string'
       config.opt = [config.opt] if typeof config.opt is 'string'
-      {status} = await @docker.tools.execute
-        if: config.name
+      {$status} = await @docker.tools.execute
+        $if: config.name
+        $shy: true
         command: "volume inspect #{config.name}"
         code: 1
         code_skipped: 0
-        metadata: shy: true
       await @docker.tools.execute
-        if: -> not config.name or status
+        $if: not config.name or $status
         command: [
           "volume create"
           "--driver #{config.driver}" if config.driver

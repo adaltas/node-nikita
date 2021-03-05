@@ -7,19 +7,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Value is "true" if file was compressed.   
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.tools.compress({
+// const {$status} = await nikita.tools.compress({
 //   source: '/path/to/file.tgz'
 //   destation: '/tmp'
 // })
-// console.info(`File was compressed: ${status}`)
+// console.info(`File was compressed: ${$status}`)
 // ```
 
 // ## Schema
@@ -82,7 +80,7 @@ handler = async function({
     }
   })()));
   await this.fs.remove({
-    if: config.clean,
+    $if: config.clean,
     source: config.source,
     recursive: true
   });

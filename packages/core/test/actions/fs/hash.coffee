@@ -9,8 +9,8 @@ describe 'actions.fs.hash', ->
 
   they 'error if target does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.hash
         target: "#{tmpdir}/unkown"
@@ -19,8 +19,8 @@ describe 'actions.fs.hash', ->
 
   they 'a file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
       {hash, $status} = await @fs.hash "#{tmpdir}/a_file"
@@ -29,8 +29,8 @@ describe 'actions.fs.hash', ->
 
   they 'a file with a globing pattern', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/test"
       @fs.base.writeFile
@@ -41,8 +41,8 @@ describe 'actions.fs.hash', ->
 
   they 'a link', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
       @fs.base.symlink
@@ -54,8 +54,8 @@ describe 'actions.fs.hash', ->
 
   they 'a directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/a_dir"
       @fs.base.writeFile
@@ -70,8 +70,8 @@ describe 'actions.fs.hash', ->
           
   they 'throws error if file does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.hash
         target: "#{tmpdir}/does/not/exist"
@@ -86,8 +86,8 @@ describe 'actions.fs.hash', ->
 
   they 'returns the directory md5 when empty', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.mkdir "#{tmpdir}/a_dir"
       {hash} = await @fs.hash  "#{tmpdir}/a_dir"
@@ -97,8 +97,8 @@ describe 'actions.fs.hash', ->
 
     they 'valid', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
         {$status} = await @fs.hash
@@ -108,8 +108,8 @@ describe 'actions.fs.hash', ->
 
     they 'invalid', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
         @fs.hash

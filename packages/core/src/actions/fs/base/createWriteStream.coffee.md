@@ -17,11 +17,17 @@ console.info(`Stream was created: ${status}`)
 ## Hooks
 
     on_action =
-      before: '@nikitajs/core/src/metadata/tmpdir'
+      after: [
+        '@nikitajs/core/src/plugins/execute'
+      ]
+      before: [
+        '@nikitajs/core/src/plugins/schema'
+        '@nikitajs/core/src/metadata/tmpdir'
+      ]
       handler: ({config, metadata, tools: {find}}) ->
         config.target = metadata.argument if metadata.argument?
-        sudo = await find ({config: {sudo}}) -> sudo
-        metadata.tmpdir = true if sudo or config.flags?[0] is 'a'
+        config.sudo ?= await find ({metadata: {sudo}}) -> sudo
+        metadata.tmpdir = true if config.sudo or config.flags?[0] is 'a'
 
 ## Schema
 
@@ -61,10 +67,9 @@ console.info(`Stream was created: ${status}`)
 
 ## Handler
 
-    handler = ({config, metadata, tools: {find, log}, ssh}) ->
-      sudo = await find ({config: {sudo}}) -> sudo
+    handler = ({config, metadata, ssh, tools: {find, log}}) ->
       # Normalize config
-      if sudo or config.flags[0] is 'a'
+      if config.sudo or config.flags[0] is 'a'
         config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}"
       # config.mode ?= 0o644 # Node.js default to 0o666
       # In append mode, we write to a copy of the target file located in a temporary location

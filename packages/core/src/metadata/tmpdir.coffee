@@ -28,8 +28,7 @@ module.exports =
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
-        else await action.tools.find (action) ->
-          action.ssh
+        else await action.tools.find (action) -> action.ssh
         # tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
         os_tmpdir = if ssh then '/tmp' else os.tmpdir()
@@ -40,6 +39,10 @@ module.exports =
             'nikita-'+action.metadata.uuid
         action.metadata.tmpdir = path.resolve os_tmpdir, tmpdir
         # Temporary directory creation
+        tmpDirInParent = action.parent and await action.tools.find action.parent, (parent) ->
+          return true if parent.metadata.tmpdir is action.metadata.tmpdir
+          undefined
+        return if tmpDirInParent
         try
           await fs.mkdir ssh, action.metadata.tmpdir
           action.metadata.tmpdir_dispose = true
@@ -56,9 +59,7 @@ module.exports =
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
-        else await action.tools.find (action) ->
-          # action.state['nikita:ssh:connection']
-          action.ssh
+        else await action.tools.find action, (action) -> action.ssh
         # Ensure the location is correct
         tmpdir = if ssh
         then '/tmp'

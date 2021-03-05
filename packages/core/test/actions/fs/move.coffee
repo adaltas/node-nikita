@@ -9,8 +9,8 @@ describe 'actions.fs.move', ->
 
   they 'error missing target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.move
         source: "#{tmpdir}/a_file"
@@ -22,8 +22,8 @@ describe 'actions.fs.move', ->
 
   they 'error missing source', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.move
         target: "#{tmpdir}/a_file"
@@ -35,8 +35,8 @@ describe 'actions.fs.move', ->
 
   they 'rename a file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/org_file"
@@ -56,8 +56,8 @@ describe 'actions.fs.move', ->
 
   they 'rename a directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_dir"
       @fs.base.writeFile
@@ -78,8 +78,8 @@ describe 'actions.fs.move', ->
 
   they 'overwrite a file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/src1.txt"
@@ -107,8 +107,8 @@ describe 'actions.fs.move', ->
 
   they 'force bypass checksum comparison', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/src.txt"

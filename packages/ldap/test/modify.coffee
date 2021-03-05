@@ -13,7 +13,7 @@ describe 'ldap.modify', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       entry =
         dn: "cn=nikita,#{ldap.suffix_dn}"
@@ -34,14 +34,14 @@ describe 'ldap.modify', ->
       ]
       @ldap.delete
         dn: entry.dn
-      {status} = await @ldap.add
+      {$status} = await @ldap.add
         entry: entry
-      {status} = await @ldap.modify
+      {$status} = await @ldap.modify
         operations: operations
-      status.should.be.true()
-      {status} = await @ldap.modify
+      $status.should.be.true()
+      {$status} = await @ldap.modify
         operations: operations
-      status.should.be.false()
+      $status.should.be.false()
       @ldap.delete
         dn: entry.dn
     
@@ -51,7 +51,7 @@ describe 'ldap.modify', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       entry =
         dn: "cn=nikita,#{ldap.suffix_dn}"
@@ -74,13 +74,13 @@ describe 'ldap.modify', ->
       ]
       @ldap.delete
         dn: entry.dn
-      {status} = await @ldap.add
+      {$status} = await @ldap.add
         entry: entry
-      {status} = await @ldap.modify
+      {$status} = await @ldap.modify
         operations: operations
-      status.should.be.true()
-      {status} = await @ldap.modify
+      $status.should.be.true()
+      {$status} = await @ldap.modify
         operations: operations
-      status.should.be.false()
+      $status.should.be.false()
       @ldap.delete
         dn: entry.dn

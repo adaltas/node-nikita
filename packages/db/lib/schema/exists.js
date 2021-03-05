@@ -53,15 +53,13 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status;
-  ({status} = (await this.db.query({
-    config: config
-  }, {
+  var $status;
+  ({$status} = (await this.db.query(config, {
     command: `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`,
     grep: '1'
   })));
   return {
-    exists: status
+    exists: $status
   };
 };
 

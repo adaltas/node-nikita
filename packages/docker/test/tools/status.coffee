@@ -9,7 +9,7 @@ describe 'docker.tools.status', ->
 
   they 'on stopped  container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -20,16 +20,16 @@ describe 'docker.tools.status', ->
         image: 'alpine'
         rm: false
         name: 'nikita_status'
-      {status} = await @docker.tools.status
+      {$status} = await @docker.tools.status
         container: 'nikita_status'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_status'
         force: true
 
   they 'on running container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -39,9 +39,9 @@ describe 'docker.tools.status', ->
         image: 'httpd'
         port: [ '500:80' ]
         container: 'nikita_status'
-      {status} = await @docker.tools.status
+      {$status} = await @docker.tools.status
         container: 'nikita_status'
-      status.should.be.true()
+      $status.should.be.true()
       @docker.rm
         container: 'nikita_status'
         force: true

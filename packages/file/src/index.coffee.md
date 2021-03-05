@@ -5,9 +5,7 @@ Write a file or a portion of an existing file.
 
 ## Output
 
-* `err`   
-  Error object if any.
-* `status`   
+* `$status`   
   Indicate file modifications.
 
 ## Implementation details
@@ -403,30 +401,30 @@ console.info(data)
         source = config.source or config.target
         log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG'
         {exists} = await @fs.base.exists
-          ssh: config.ssh unless config.local
-          sudo: if config.local then false else config.sudo
+          $ssh: false if config.local
+          $sudo: false if config.local
           target: source
         unless exists
           throw Error "Source does not exist: #{JSON.stringify config.source}" if config.source
           config.content = ''
         log message: "Reading source", level: 'DEBUG'
         {data: config.content} = await @fs.base.readFile
-          ssh: if config.local then false else undefined
-          sudo: if config.local then false else undefined
+          $ssh: false if config.local
+          $sudo: false if config.local
           target: source
           encoding: config.encoding
       else if not config.content?
         try
           {data: config.content} = await @fs.base.readFile
-            ssh: if config.local then false else config.ssh
-            sudo: if config.local then false else config.sudo
+            $ssh: false if config.local
+            $sudo: false if config.local
             target: config.target
             encoding: config.encoding
         catch err
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           config.content = ''
       # Stat the target
-      targetStats = await @call metadata: raw_output: true, ->
+      targetStats = await @call $raw_output: true, ->
         return null unless typeof config.target is 'string'
         log message: "Stat target", level: 'DEBUG'
         try
@@ -436,7 +434,7 @@ console.info(data)
             config.target = "#{config.target}/#{path.basename config.source}"
             log message: "Destination is a directory and is now \"config.target\"", level: 'INFO'
             # Destination is the parent directory, let's see if the file exist inside
-            {stats} = await @fs.base.stat target: config.target, metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+            {stats} = await @fs.base.stat target: config.target, $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
             throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
             log message: "New target exists", level: 'INFO'
           else if utils.stats.isSymbolicLink stats.mode
@@ -500,10 +498,10 @@ console.info(data)
         config.backup_mode ?= 0o0400
         backup = if typeof config.backup is 'string' then config.backup else ".#{Date.now()}"
         await @fs.copy
+          $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
           source: config.target
           target: "#{config.target}#{backup}"
           mode: config.backup_mode
-          metadata: relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
       # Call the target with the content when a function
       if typeof config.target is 'function'
         log message: 'Write target with user function', level: 'INFO'
@@ -523,7 +521,7 @@ console.info(data)
               flags: config.flags
               content: config.content
               mode: targetStats?.mode
-            status: true
+            $status: true
         if config.mode
           await @fs.chmod
             target: config.target
@@ -536,11 +534,11 @@ console.info(data)
             mode: targetStats.mode
         # Option gid is set at runtime if target is a new file
         await @fs.chown
+          $if: config.uid? or config.gid?
           target: config.target
           stats: targetStats
           uid: config.uid
           gid: config.gid
-          if: config.uid? or config.gid?
       {}
 
 ## Exports

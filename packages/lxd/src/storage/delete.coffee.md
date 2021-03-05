@@ -5,18 +5,16 @@ Delete an existing lxd storage.
 
 ## Output
 
-* `err`
-  Error object if any
-* `status`
+* `$status`
   True if the object was deleted
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.storage.delete({
+const {$status} = await nikita.lxd.storage.delete({
   name: 'system'
 })
-console.info(`Storage was deleted: ${status}`)
+console.info(`Storage was deleted: ${$status}`)
 ```
 
 ## Schema

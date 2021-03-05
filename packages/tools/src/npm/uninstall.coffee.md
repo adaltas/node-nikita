@@ -8,11 +8,11 @@ Remove one or more NodeJS packages.
 The following action uninstalls the coffescript package globally.
 
 ```js
-const {status} = await nikita.tools.npm.uninstall({
+const {$status} = await nikita.tools.npm.uninstall({
   name: 'coffeescript',
   global: true
 })
-console.info(`Package was uninstalled: ${status}`)
+console.info(`Package was uninstalled: ${$status}`)
 ```
 
 ## Hooks
@@ -50,11 +50,11 @@ console.info(`Package was uninstalled: ${status}`)
       # Get installed packages
       installed = []
       {stdout} = await @execute
+        $shy: true
         command: "npm list --json #{global}"
         code: [0, 1]
         cwd: config.cwd
         stdout_log: false
-        metadata: shy: true
       pkgs = JSON.parse stdout
       installed = Object.keys pkgs.dependencies if Object.keys(pkgs).length
       # Uninstall

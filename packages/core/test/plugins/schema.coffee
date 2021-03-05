@@ -43,14 +43,14 @@ describe 'plugins.schema', ->
   it 'config is valid', ->
     nikita ->
       {a_string, an_integer} = await @call
-        a_string: 'a value'
-        an_integer: 1
         $schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
             'an_integer': type: 'integer', minimum: 1
-        handler: ({config}) -> config
+        a_string: 'a value'
+        an_integer: 1
+      , ({config}) -> config
       a_string.should.be.a.String()
       an_integer.should.be.a.Number()
   
@@ -93,14 +93,14 @@ describe 'plugins.schema', ->
       nikita
       .call
         $schema: schema
-        if: false
+        $if: false
       , -> throw Error 'KO'
       .should.be.resolved()
       # Validation occured if condition succeed
       nikita
       .call
         $schema: schema
-        if: true
+        $if: true
       , -> throw Error 'KO'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -109,13 +109,13 @@ describe 'plugins.schema', ->
 
     it 'invalid with one error', ->
       nikita.call
-        a_string: 1
-        an_integer: 0
         $schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer', 'minimum': 1
-        handler: (->)
+        a_string: 1
+        an_integer: 0
+      , (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
@@ -125,14 +125,14 @@ describe 'plugins.schema', ->
 
     it 'nice message with additionalProperties', ->
       nikita.call
-        a_string: 'ok'
-        lonely_duck: true
         $schema:
           type: 'object'
           properties:
             'a_string': type: 'string'
           additionalProperties: false
-        handler: (->)
+        a_string: 'ok'
+        lonely_duck: true
+      , (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
@@ -143,7 +143,7 @@ describe 'plugins.schema', ->
     it 'ensure schema is an object in root action', ->
       nikita
         $schema: true
-        handler: (->)
+        $handler: (->)
       .should.be.rejectedWith [
         'METADATA_SCHEMA_INVALID_VALUE:'
         'option `schema` expect an object literal value,'
@@ -153,7 +153,7 @@ describe 'plugins.schema', ->
     it 'ensure schema is an object in child action', ->
       nikita.call
         $schema: true
-        handler: (->)
+        $handler: (->)
       .should.be.rejectedWith [
         'METADATA_SCHEMA_INVALID_VALUE:'
         'option `schema` expect an object literal value,'
@@ -190,20 +190,20 @@ describe 'plugins.schema', ->
         handler: (->)
       # Valid schema
       .call
-        an_object: an_integer: 1234
         $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
-        handler: (->)
+        an_object: an_integer: 1234
+      , (->)
 
     it 'invalid ref location', ->
       nikita.call
-        an_object: an_integer: 'abc'
         $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://invalid/action'
+        an_object: an_integer: 'abc'
       , (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
@@ -222,12 +222,12 @@ describe 'plugins.schema', ->
             'an_integer': type: 'integer'
         handler: (->)
       .call
-        an_object: an_integer: 'abc'
         $schema:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema'
-        handler: (->)
+        $handler: (->)
+        an_object: an_integer: 'abc'
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
@@ -245,7 +245,7 @@ describe 'plugins.schema', ->
             'a_string':
               type: 'string'
               default: 'a value'
-        handler: ({config}) ->
+        $handler: ({config}) ->
           config.a_string.should.eql 'a value'
 
     it.skip 'coerceTypes', ->
@@ -260,11 +260,11 @@ describe 'plugins.schema', ->
               type: 'string'
             'string_to_boolean':
               type: 'boolean'
-        int_to_string: 1234
-        string_to_boolean: ''
-        handler: ({config}) ->
+        $handler: ({config}) ->
           config.int_to_string.should.eql '1234'
           config.string_to_boolean.should.be.false()
+        int_to_string: 1234
+        string_to_boolean: ''
   
   describe 'ajv-keywords', ->
 
@@ -274,9 +274,8 @@ describe 'plugins.schema', ->
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
-        config:
-          a_regexp: /.*/
-        handler: ({config}) ->
+        a_regexp: /.*/
+      -> ({config}) ->
           'ok'.should.match config.a_regexp
 
     it 'instanceof invalid', ->
@@ -285,9 +284,8 @@ describe 'plugins.schema', ->
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
-        config:
-          a_regexp: 'invalid'
-        handler: (->)
+        a_regexp: 'invalid'
+      , (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
@@ -304,8 +302,7 @@ describe 'plugins.schema', ->
             'mode':
               type: ['integer', 'string']
               filemode: true
-        config:
-          mode: '744'
+        mode: '744'
       , ({config}) ->
         config.mode.should.eql 0o0744
 
@@ -317,8 +314,7 @@ describe 'plugins.schema', ->
             'mode':
               type: ['integer', 'string']
               filemode: false
-        config:
-          mode: '744'
+        mode: '744'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_INVALID_DEFINITION'
         

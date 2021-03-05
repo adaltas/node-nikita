@@ -71,14 +71,14 @@ Check if a user exists in the database.
 ## Handler
 
     handler = ({config}) ->
-      {status, stdout} = await @execute
+      {$status, stdout} = await @execute
         command: command config
         trim: config.trim
       if config.grep and typeof config.grep is 'string'
-        return stdout: stdout, status: stdout.split('\n').some (line) -> line is config.grep
+        return stdout: stdout, $status: stdout.split('\n').some (line) -> line is config.grep
       if config.grep and utils.regexp.is config.grep
-        return stdout: stdout, status: stdout.split('\n').some (line) -> config.grep.test line
-      status: status, stdout: stdout
+        return stdout: stdout, $status: stdout.split('\n').some (line) -> config.grep.test line
+      status: $status, stdout: stdout
         
 ## Escape
 

@@ -27,13 +27,13 @@ describe 'ldap.add', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
-      {status} = await @ldap.add
+      {$status} = await @ldap.add
         entry: user
-      status.should.be.true()
+      $status.should.be.true()
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
 
@@ -43,16 +43,16 @@ describe 'ldap.add', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"
-      {status} = await @ldap.add
+      {$status} = await @ldap.add
         entry: user
         exclude: ['userPassword']
-      {status} = await @ldap.add
+      {$status} = await @ldap.add
         entry: user
         exclude: ['userPassword']
-      status.should.be.false()
+      $status.should.be.false()
       @ldap.delete
         dn: "cn=nikita,#{ldap.suffix_dn}"

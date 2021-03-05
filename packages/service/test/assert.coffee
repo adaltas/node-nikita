@@ -12,7 +12,7 @@ describe 'service.assert', ->
 
     they 'succeed if package is installed', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -24,7 +24,7 @@ describe 'service.assert', ->
 
     they 'fail if package isnt installed', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -41,7 +41,7 @@ describe 'service.assert', ->
 
     they 'succeed if service is started', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -60,7 +60,7 @@ describe 'service.assert', ->
 
     they 'fail if service isnt started', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -84,7 +84,7 @@ describe 'service.assert', ->
 
     they 'succeed if service is started', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -103,7 +103,7 @@ describe 'service.assert', ->
 
     they 'fail if service isnt started', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name

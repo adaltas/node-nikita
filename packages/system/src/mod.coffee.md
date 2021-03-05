@@ -77,27 +77,27 @@ require('nikita')
         target ?= "#{module}.conf"
         target = path.resolve '/etc/modules-load.d', target
         await @execute
-          if: config.load and active
+          $if: config.load and active
           command: """
           lsmod | grep #{module} && exit 3
           modprobe #{module}
           """
           code_skipped: 3
         await @execute
-          if: config.load and not active
+          $if: config.load and not active
           command: """
           lsmod | grep #{module} || exit 3
           modprobe -r #{module}
           """
           code_skipped: 3
         await @file
-          if: config.persist
+          $if: config.persist
           target: target
           match: ///^#{quote module}(\n|$)///mg
           replace: if active then "#{module}\n" else ''
           append: true
           eof: true
-      null
+      undefined
 
 ## Exports
 

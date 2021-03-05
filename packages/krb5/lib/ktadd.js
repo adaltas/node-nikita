@@ -7,11 +7,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.ktadd({
+// const {$status} = await nikita.krb5.ktadd({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 // })
-// console.info(`keytab was created or updated: ${status}`)
+// console.info(`keytab was created or updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -53,7 +53,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var _, i, keytab, kvno, len, line, match, mdate, princ, principal, ref, ref1, ref2, ref3, ref4, ref5, status, stdout, values;
+  var $status, _, i, keytab, kvno, len, line, match, mdate, princ, principal, ref, ref1, ref2, ref3, ref4, ref5, stdout, values;
   if (/^\S+@\S+$/.test(config.admin.principal)) {
     if (config.realm == null) {
       config.realm = config.admin.principal.split('@')[1];
@@ -67,14 +67,12 @@ handler = async function({
   keytab = {}; // keytab[principal] ?= {kvno: null, mdate: null}
   princ = {}; // {kvno: null, mdate: null}
   // Get keytab information
-  ({status, stdout} = (await this.execute({
+  ({$status, stdout} = (await this.execute({
+    $shy: true,
     command: `export TZ=GMT; klist -kt ${config.keytab}`,
-    code_skipped: 1,
-    metadata: {
-      shy: true
-    }
+    code_skipped: 1
   })));
-  if (status) {
+  if ($status) {
     log({
       message: "Keytab exists, check kvno validity",
       level: 'DEBUG'
@@ -99,14 +97,12 @@ handler = async function({
   }
   // Get principal information
   if (keytab[config.principal] != null) {
-    ({status, stdout} = (await this.krb5.execute({
+    ({$status, stdout} = (await this.krb5.execute({
+      $shy: true,
       admin: config.admin,
-      command: `getprinc -terse ${config.principal}`,
-      metadata: {
-        shy: true
-      }
+      command: `getprinc -terse ${config.principal}`
     })));
-    if (status) {
+    if ($status) {
       // return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
       values = utils.string.lines(stdout)[1];
       if (!values) {

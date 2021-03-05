@@ -6,17 +6,23 @@ they = require('mocha-they')(config)
 describe 'actions.execute.wait', ->
   return unless tags.posix
 
-  they 'take a single command', ({ssh}) ->
+  they 'single command, status false', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {$status} = await @execute.wait
         command: "test -d #{tmpdir}"
       $status.should.be.false()
+  
+  they 'single command, status true', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
       @call ->
         setTimeout ->
-          nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
+          nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
         , 100
       {$status} = await @execute.wait
         command: "test -d #{tmpdir}/a_file"
@@ -25,8 +31,8 @@ describe 'actions.execute.wait', ->
 
   they 'take multiple commands', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {$status} = await @execute.wait
         command: [
@@ -36,7 +42,7 @@ describe 'actions.execute.wait', ->
       $status.should.be.false()
       @call ->
         setTimeout ->
-          nikita(ssh: ssh?.config)
+          nikita($ssh: ssh?.config)
           .fs.mkdir "#{tmpdir}/file_1"
           .fs.mkdir "#{tmpdir}/file_2"
         , 100
@@ -52,8 +58,8 @@ describe 'actions.execute.wait', ->
   
     they 'error if error code not skipped, first attempt', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute.wait
           command: "exit 99"
@@ -65,12 +71,12 @@ describe 'actions.execute.wait', ->
     
     they 'error if error code not skipped, retried attempt', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call ->
           setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
+            nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
           , 200
         @execute.wait
           command: "test -d #{tmpdir}/file && exit 99"
@@ -84,25 +90,25 @@ describe 'actions.execute.wait', ->
 
     they 'attemps', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         logs = []
         @call ->
           setTimeout ->
-            nikita(ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
+            nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
           , 200
         @execute.wait
           command: "test -d #{tmpdir}/a_file"
           interval: 100
-          metadata: log: ({log}) ->
+          $log: ({log}) ->
             logs.push log if /Attempt #\d/.test log.message
         @call ->
           logs.length.should.be.within 2, 8
 
     they 'honors *_log as true', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         logs = 0
         @execute.wait
@@ -110,14 +116,14 @@ describe 'actions.execute.wait', ->
           stdin_log: true
           stdout_log: true
           stderr_log: true
-          metadata: log: ({log}) ->
+          $log: ({log}) ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         @call ->
           logs.should.eql 3
 
     they 'honors *_log as false', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         logs = 0
         @execute.wait
@@ -125,7 +131,7 @@ describe 'actions.execute.wait', ->
           stdin_log: false
           stdout_log: false
           stderr_log: false
-          metadata: log: ({log}) ->
+          $log: ({log}) ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         @call ->
           logs.should.eql 0
@@ -148,12 +154,12 @@ describe 'actions.execute.wait', ->
 
     they 'all commands succeed when not defined', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir, uuid}}) ->
         @call -> setImmediate ->
           nikita
-            ssh: ssh?.config
+            $ssh: ssh?.config
           .wait 200
           .fs.mkdir "#{tmpdir}/file_1"
           .wait 200
@@ -176,12 +182,12 @@ describe 'actions.execute.wait', ->
     they 'is a number', ({ssh}) ->
       @timeout 20000
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call -> setImmediate ->
           nikita
-            ssh: ssh?.config
+            $ssh: ssh?.config
           .wait 200
           .fs.mkdir "#{tmpdir}/file_1"
           .wait 200
@@ -201,12 +207,12 @@ describe 'actions.execute.wait', ->
     they 'with failing commands', ({ssh}) ->
       @timeout 20000
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @call -> setImmediate ->
           nikita
-            ssh: ssh?.config
+            $ssh: ssh?.config
           .wait 200
           .fs.mkdir "#{tmpdir}/file_1"
           .wait 200

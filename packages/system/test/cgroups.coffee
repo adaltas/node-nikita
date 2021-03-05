@@ -41,15 +41,15 @@ describe 'system.cgroups', ->
     
     they 'simple mount group configuration file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_mount_only.cgconfig.conf"
           mode: 0o0754
           mounts: mounts
           merge:false
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/a_file_mount_only.cgconfig.conf"
           content:  """
@@ -64,15 +64,15 @@ describe 'system.cgroups', ->
     
     they 'simple cgroup configuration file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_cgroup_only.cgconfig.conf"
           mode: 0o0754
           groups: groups
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/a_file_cgroup_only.cgconfig.conf"
           content: """
@@ -97,15 +97,15 @@ describe 'system.cgroups', ->
       
     they 'default only configuration file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_default_only.cgconfig.conf"
           mode: 0o0754
           default: def
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/a_file_default_only.cgconfig.conf"
           content: """
@@ -130,17 +130,17 @@ describe 'system.cgroups', ->
     
     they 'complete configuration file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
           mode: 0o0754
           default: def
           groups: groups
           mounts: mounts
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
           content: """
@@ -189,8 +189,8 @@ describe 'system.cgroups', ->
 
     they 'status not modifed', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
@@ -199,14 +199,14 @@ describe 'system.cgroups', ->
           groups: groups
           mounts: mounts
           merge: false
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
           mode: 0o0754
           default: def
           groups: groups
           mounts: mounts
           merge: false
-        status.should.be.false()
+        $status.should.be.false()
 
   describe 'generate with merge', ->
     
@@ -242,15 +242,15 @@ describe 'system.cgroups', ->
     
     they 'read mount from system and merge group', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           mode: 0o0754
           groups: groups
           merge: true
-        status.should.be.true()
+        $status.should.be.true()
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           encoding: 'utf8'
@@ -261,27 +261,27 @@ describe 'system.cgroups', ->
     
     they 'status not modified', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           mode: 0o0754
           groups: groups
           merge: true
-        {status} = await @system.cgroups
+        {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           mode: 0o0754
           groups: groups
           merge: true
-        status.should.be.false()
+        $status.should.be.false()
 
   describe 'centos only', ->
     
     they 'get cgroups attributes', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         {cgroups} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"

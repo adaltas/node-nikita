@@ -69,15 +69,15 @@ are converted to lower cases.`
 
 // ## Handler
 handler = async function({config}) {
-  var status, stdout;
-  ({status, stdout} = (await this.execute({
+  var $status, stdout;
+  ({$status, stdout} = (await this.execute({
     command: command(config),
     trim: config.trim
   })));
   if (config.grep && typeof config.grep === 'string') {
     return {
       stdout: stdout,
-      status: stdout.split('\n').some(function(line) {
+      $status: stdout.split('\n').some(function(line) {
         return line === config.grep;
       })
     };
@@ -85,13 +85,13 @@ handler = async function({config}) {
   if (config.grep && utils.regexp.is(config.grep)) {
     return {
       stdout: stdout,
-      status: stdout.split('\n').some(function(line) {
+      $status: stdout.split('\n').some(function(line) {
         return config.grep.test(line);
       })
     };
   }
   return {
-    status: status,
+    status: $status,
     stdout: stdout
   };
 };

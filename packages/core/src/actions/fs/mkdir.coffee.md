@@ -23,7 +23,7 @@ console.info(`Directory was created: ${status}`)
 
 ```js
 const {status} = await nikita.fs.mkdir({
-  ssh: ssh,
+  $ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
   gid: 'a_group'
@@ -91,6 +91,7 @@ console.info(`Directory was created: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log, path}, ssh}) ->
+      # console.log ':fs.mkdir:target', config.target
       # Configuration validation
       config.cwd = process.cwd() if not ssh and (config.cwd is true or not config.cwd)
       config.parent = {} if config.parent is true
@@ -128,16 +129,16 @@ console.info(`Directory was created: ${status}`)
       if creates.length is 0
         log message: "Directory already exists", level: 'DEBUG'
         await @fs.chown
+          $if: config.uid? or config.gid?
           target: config.target
           stats: stats
           uid: config.uid
           gid: config.gid
-          if: config.uid? or config.gid?
         await @fs.chmod
+          $if: config.mode?
           target: config.target
           stats: stats
           mode: config.mode
-          if: config.mode?
       {}
 
 ## Exports

@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.addprinc({
+// const {$status} = await nikita.krb5.addprinc({
 //   admin: {
 //     password: 'pass',
 //     principal: 'me/admin@MY_REALM',
@@ -18,7 +18,7 @@
 //   randkey: true,
 //   uid: 'myservice'
 // })
-// console.info(`Principal was created or modified: ${status}`)
+// console.info(`Principal was created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -65,7 +65,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, cache_name, ref, status;
+  var $status, base, cache_name, ref;
   if (/.*@.*/.test((ref = config.admin) != null ? ref.principal : void 0)) {
     // Normalize realm and principal for later usage of config
     if ((base = config.admin).realm == null) {
@@ -76,32 +76,26 @@ handler = async function({config}) {
     config.principal = `${config.principal}@${config.admin.realm}`;
   }
   // Start execution
-  ({status} = (await this.krb5.execute({
+  ({$status} = (await this.krb5.execute({
+    $shy: true,
     admin: config.admin,
     command: `getprinc ${config.principal}`,
-    grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
-    metadata: {
-      shy: true
-    }
+    grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`)
   })));
-  if (!status) {
+  if (!$status) {
     await this.krb5.execute({
+      $retry: 3,
       admin: config.admin,
-      command: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`,
-      metadata: {
-        retry: 3
-      }
+      command: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`
     });
   }
   if (config.password && config.password_sync) {
     cache_name = `/tmp/nikita_${Math.random()}`;
     await this.krb5.execute({
-      unless_execute: `if ! echo ${config.password} | kinit '${config.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
+      $retry: 3,
+      $unless_execute: `if ! echo ${config.password} | kinit '${config.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
       admin: config.admin,
-      command: `cpw -pw ${config.password} ${config.principal}`,
-      metadata: {
-        retry: 3
-      }
+      command: `cpw -pw ${config.password} ${config.principal}`
     });
   }
   if (!config.keytab) {

@@ -149,85 +149,69 @@ containers:
       # Create a network
       for networkName, networkProperties of config.networks
         await @lxd.network
-          metadata:
-            header: "Network #{networkName}"
-          config:
-            network: networkName
-            properties: networkProperties
+          $header: "Network #{networkName}"
+          network: networkName
+          properties: networkProperties
       # Init containers
       for containerName, containerConfig of config.containers then await @call
-        metadata:
-          header: "Container #{containerName}"
+        $header: "Container #{containerName}"
       , ->
         # Set configuration
         await @lxd.init
-          metadata:
-            header: 'Init'
-          config:
-            container: containerName
-            image: containerConfig.image
+          $header: 'Init'
+          container: containerName
+          image: containerConfig.image
         # Set config
         if containerConfig?.properties
           await @lxd.config.set
-            metadata:
-              header: 'Properties'
-            config:
-              container: containerName
-              properties: containerConfig.properties
+            $header: 'Properties'
+            container: containerName
+            properties: containerConfig.properties
         # Create disk device
         for deviceName, configDisk of containerConfig.disk
           await @lxd.config.device
-            metadata:
-              header: "Device #{deviceName} disk"
-            config:
-              container: containerName
-              device: deviceName
-              type: 'disk'
-              properties: configDisk
+            $header: "Device #{deviceName} disk"
+            container: containerName
+            device: deviceName
+            type: 'disk'
+            properties: configDisk
         # Create nic device
         for deviceName, configNic of containerConfig.nic
           # note: `confignic.config.parent` is not required for each type
           # throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
           await @lxd.config.device
-            metadata:
-              header: "Device #{deviceName} nic"
-            config:
-              container: containerName
-              device: deviceName
-              type: 'nic'
-              properties: utils.object.filter configNic, ['ip', 'netmask']
+            $header: "Device #{deviceName} nic"
+            container: containerName
+            device: deviceName
+            type: 'nic'
+            properties: utils.object.filter configNic, ['ip', 'netmask']
           if configNic.ip
             await @lxd.file.push
-              metadata:
-                header: "ifcfg #{deviceName}"
-              config:
-                container: containerName
-                target: "/etc/sysconfig/network-scripts/ifcfg-#{deviceName}"
-                content: """
-                NM_CONTROLLED=yes
-                BOOTPROTO=none
-                ONBOOT=yes
-                IPADDR=#{configNic.ip}
-                NETMASK=#{configNic.netmask}
-                DEVICE=#{deviceName}
-                PEERDNS=no
-                """
+              $header: "ifcfg #{deviceName}"
+              container: containerName
+              target: "/etc/sysconfig/network-scripts/ifcfg-#{deviceName}"
+              content: """
+              NM_CONTROLLED=yes
+              BOOTPROTO=none
+              ONBOOT=yes
+              IPADDR=#{configNic.ip}
+              NETMASK=#{configNic.netmask}
+              DEVICE=#{deviceName}
+              PEERDNS=no
+              """
         # Create proxy device
         for deviceName, configProxy of containerConfig.proxy
           # todo: add host detection and port forwarding to VirtualBox
           # VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
           await @lxd.config.device
-            metadata:
-              header: "Device #{deviceName} proxy"
-            config:
-              container: containerName
-              device: deviceName
-              type: 'proxy'
-              properties: configProxy
+            $header: "Device #{deviceName} proxy"
+            container: containerName
+            device: deviceName
+            type: 'proxy'
+            properties: configProxy
         # Start container
         await @lxd.start
-          metadata:
-            header: 'Start'
+          $header: 'Start'
           container: containerName
         # Wait until container is running
         await @execute.wait
@@ -235,13 +219,13 @@ containers:
         await @network.tcp.wait
           host: 'linuxfoundation.org'
           port: 80
-          # timeout: 5000
-        # Not sure why openssl is required
+          interval: 2000
+          timeout: 10000
+        # Openssl is required by the `lxd.file.push` action
         await @lxd.exec
-          metadata:
-            header: 'OpenSSL'
-            retry: 10
-            sleep: 5000
+          $header: 'OpenSSL'
+          # $retry: 10
+          # $sleep: 5000
           container: containerName
           command: """
           if command -v yum >/dev/null 2>&1; then
@@ -257,8 +241,7 @@ containers:
         # Enable SSH
         if containerConfig.ssh?.enabled
           await @lxd.exec
-            metadata:
-              header: 'SSH'
+            $header: 'SSH'
             container: containerName
             command: """
             # systemctl status sshd
@@ -281,12 +264,10 @@ containers:
             code_skipped: 42
         # Create users
         for userName, configUser of containerConfig.user then await @call
-          metadata:
-            header: "User #{userName}"
+          $header: "User #{userName}"
         , ->
           await @lxd.exec
-            metadata:
-              header: 'Create'
+            $header: 'Create'
             container: containerName
             command: """
             id #{userName} && exit 42
@@ -299,9 +280,8 @@ containers:
             code_skipped: 42
           # Enable sudo access
           await @lxd.exec
-            if: configUser.sudo
-            metadata:
-              header: 'Sudo'
+            $if: configUser.sudo
+            $header: 'Sudo'
             container: containerName
             command: """
             yum install -y sudo
@@ -313,9 +293,8 @@ containers:
             code_skipped: 42
           # Add SSH public key to authorized_keys file
           await @lxd.file.push
-            if: configUser.authorized_keys
-            metadata:
-              header: 'Authorize'
+            $if: configUser.authorized_keys
+            $header: 'Authorize'
             container: containerName
             gid: "#{userName}"
             uid: "#{userName}"
@@ -330,7 +309,7 @@ containers:
         for containerName, containerConfig of config.containers
           await @call
             container: containerName
-            config: containerConfig
+          , containerConfig
           , config.provision_container
 
 ## Export

@@ -10,41 +10,41 @@ describe 'ipa.group', ->
 
   they 'create a group', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.del connection: ipa,
         cn: 'group_add'
-      {status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: ipa,
         cn: 'group_add'
-      status.should.be.true()
-      {status} = await @ipa.group connection: ipa,
+      $status.should.be.true()
+      {$status} = await @ipa.group connection: ipa,
         cn: 'group_add'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'attribute option', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.del connection: ipa,
         cn: 'group_add'
-      {status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: ipa,
         cn: 'group_add'
-      status.should.be.true()
-      {status} = await @ipa.group connection: ipa,
+      $status.should.be.true()
+      {$status} = await @ipa.group connection: ipa,
         cn: 'group_add'
         attributes:
           description: 'group_add description'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'print result such as gidnumber', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.del connection: ipa,
         cn: 'group_add'
-      {status, result} = await @ipa.group connection: ipa,
+      {$status, result} = await @ipa.group connection: ipa,
         cn: 'group_add'
-      status.should.be.true()
+      $status.should.be.true()
       result.gidnumber.length.should.eql 1
       result = merge result, ipauniqueid: null, gidnumber: null
       result.should.eql
@@ -63,15 +63,15 @@ describe 'ipa.group', ->
 
   they 'print result even if no modification is performed', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.del connection: ipa,
         cn: 'group_add'
       @ipa.group connection: ipa,
         cn: 'group_add'
-      {status, result} = await @ipa.group connection: ipa,
+      {$status, result} = await @ipa.group connection: ipa,
         cn: 'group_add'
-      status.should.be.false()
+      $status.should.be.false()
       result.gidnumber.length.should.eql 1
       result = merge result, ipauniqueid: null, gidnumber: null
       result.should.eql

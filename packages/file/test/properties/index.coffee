@@ -9,52 +9,52 @@ describe 'file.properties', ->
 
   they 'overwrite by default', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false
       @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "another_key=another value\n"
 
   they 'option merge', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false
       @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=a value\nanother_key=another value\n"
 
   they 'honor separator', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -71,8 +71,8 @@ describe 'file.properties', ->
 
   they 'honor sort', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties
         target: "#{tmpdir}/file.properties"
@@ -95,8 +95,8 @@ describe 'file.properties', ->
 
   they 'option comments', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
@@ -118,8 +118,8 @@ describe 'file.properties', ->
 
   they 'option trim + merge', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"

@@ -11,22 +11,20 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Value is true if rendered file was created or modified.   
+// * `$status`   
+//   Value is true if rendered file was created or modified.
 
 // ## Rendering with Handlebar
 
 // ```js
-// const {status} = await nikita.file.render({
+// const {$status} = await nikita.file.render({
 //   source: './some/a_template.hbs',
 //   target: '/tmp/a_file',
 //   context: {
 //     username: 'a_user'
 //   }
 // })
-// console.info(`File was rendered: ${status}`)
+// console.info(`File was rendered: ${$status}`)
 // ```
 
 // ## Hooks
@@ -100,8 +98,8 @@ handler = async function({
   // Read source
   if (config.source) {
     ({data} = (await this.fs.base.readFile({
-      ssh: config.local ? false : config.ssh,
-      sudo: config.local ? false : config.sudo,
+      $ssh: config.local ? false : void 0,
+      $sudo: config.local ? false : void 0,
       target: config.source,
       encoding: config.encoding
     })));

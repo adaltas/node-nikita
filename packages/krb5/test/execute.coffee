@@ -25,7 +25,7 @@ describe 'krb5.execute', ->
 
     they 'global properties', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         krb5: admin: krb5
       , ->
         {stdout} = await @krb5.execute
@@ -34,7 +34,7 @@ describe 'krb5.execute', ->
 
     they 'option command', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         {stdout} = await @krb5.execute
           admin: krb5
@@ -43,31 +43,31 @@ describe 'krb5.execute', ->
 
     they 'config grep with string', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
-        {status} = await @krb5.execute
+        {$status} = await @krb5.execute
           admin: krb5
           command: 'listprincs'
           grep: krb5.principal
-        status.should.be.true()
-        {status} = await @krb5.execute
+        $status.should.be.true()
+        {$status} = await @krb5.execute
           admin: krb5
           command: 'listprincs'
           grep: "missing string"
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'config grep with regexp', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
-        {status, stdout} = await @krb5.execute
+        {$status, stdout} = await @krb5.execute
           admin: krb5
           command: 'listprincs'
           grep: /^.*@.*$/
-        status.should.be.true()
-        {status, stdout} = await @krb5.execute
+        $status.should.be.true()
+        {$status, stdout} = await @krb5.execute
           admin: krb5
           command: 'listprincs'
           grep: /^.*missing.*$/
-        status.should.be.false()
+        $status.should.be.false()
         

@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ldap.index({
+// const {$status} = await nikita.ldap.index({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
@@ -18,7 +18,7 @@
 //     gidNumber: 9601
 //   }
 // })
-// console.info(`Entry modified: ${status}`)
+// console.info(`Entry modified: ${$status}`)
 // ```
 
 // ## Hooks
@@ -75,7 +75,7 @@ configuration.`
 
 // ## Handler
 handler = async function({config}) {
-  var _, entry, i, j, k, ldif, len, len1, original, ref, status, stderr, stdout, uri, v, vv;
+  var $status, _, entry, i, j, k, ldif, len, len1, original, ref, stderr, stdout, uri, v, vv;
   // Auth related config
   // binddn = if config.binddn then "-D #{config.binddn}" else ''
   // passwd = if config.passwd then "-w #{config.passwd}" else ''
@@ -93,13 +93,13 @@ handler = async function({config}) {
   for (i = 0, len = ref.length; i < len; i++) {
     entry = ref[i];
     // Check if record already exists
-    ({status, stdout} = (await this.ldap.search(config, {
+    ({$status, stdout} = (await this.ldap.search(config, {
       base: entry.dn,
       code_skipped: 32, // No such object
       scope: 'base'
     })));
     original = {};
-    if (status) {
+    if ($status) {
       continue;
     }
     // throw Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
@@ -129,7 +129,7 @@ handler = async function({config}) {
     }
   }
   return ({stdout, stderr} = (await this.execute({
-    if: ldif !== '',
+    $if: ldif !== '',
     command: [
       ['ldapmodify',
       config.continuous ? '-c' : void 0,
@@ -143,10 +143,6 @@ EOF`
     ].join(' ')
   })));
 };
-
-// code_skipped: 68
-// modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
-// status: modified
 
 // ## Exports
 module.exports = {

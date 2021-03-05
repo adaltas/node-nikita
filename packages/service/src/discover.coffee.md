@@ -6,10 +6,8 @@ For now it only supports Centos/Redhat OS in version 6 or 7, Ubuntu.
 Store properties in the nikita state object.
 
 ## Output
-
-* `err`   
-  Error object if any.   
-* `status`   
+ 
+* `$status`   
   Indicate a change in service such as a change in installation, update, 
   start/stop or startup registration.   
 * `loader`   
@@ -44,7 +42,7 @@ Store properties in the nikita state object.
       unless state['nikita:service:loader']?
         try
           data = await @execute
-            metadata: shy: config.shy
+            $shy: config.shy
             command: """
             if command -v systemctl >/dev/null; then exit 1; fi ;
             if command -v service >/dev/null; then exit 2; fi ;
@@ -56,7 +54,7 @@ Store properties in the nikita state object.
             when 2 then 'service'
           state['nikita:service:loader'] = loader if config.cache
           loader = state['nikita:service:loader']? if config.cache and not loader?
-          status: data.status, loader: loader
+          $status: data.status, loader: loader
         catch err
           throw Error "Undetected Operating System Loader" if err.exit_code is 3 and config.strict
 

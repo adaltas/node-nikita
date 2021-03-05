@@ -12,7 +12,7 @@ describe 'plugins.metadata.tmpdir', ->
   describe 'validation', ->
 
     they 'invalid value', ({ssh}) ->
-      nikita.call ssh: ssh, $tmpdir: {}, (->)
+      nikita.call $ssh: ssh, $tmpdir: {}, (->)
       .should.be.rejectedWith
         code: 'METADATA_TMPDIR_INVALID'
         message: [
@@ -23,9 +23,14 @@ describe 'plugins.metadata.tmpdir', ->
   
   describe 'cascade', ->
 
+    they 'not available in children', ({ssh}) ->
+      nikita.call $ssh: ssh, $tmpdir: true, ->
+        @call -> @call ({metadata: {tmpdir}}) ->
+          should(tmpdir).be.undefined()
+
     they 'current action', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ({ssh}) ->
         tmpdir = await @call
           $tmpdir: true
@@ -36,7 +41,7 @@ describe 'plugins.metadata.tmpdir', ->
 
     they 'remove directory with files and foders inside', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ({ssh}) ->
         tmpdir = await @call
           $tmpdir: true
@@ -45,20 +50,12 @@ describe 'plugins.metadata.tmpdir', ->
           await fs.writeFile ssh, "#{tmpdir}/a_dir/a_file", ''
           tmpdir
         fs.exists(ssh, tmpdir).should.be.resolvedWith false
-
-    they 'in children', ({ssh}) ->
-      nikita.call ssh: ssh, $tmpdir: true, ({metadata, ssh})->
-        parent = metadata.tmpdir
-        @call -> @call ({tools}) ->
-          child = await tools.find (action) ->
-            action.metadata.tmpdir
-          child.should.eql parent
   
   describe 'option tmpdir', ->
 
     they 'is a boolean', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       .call $tmpdir: true, ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
@@ -66,19 +63,25 @@ describe 'plugins.metadata.tmpdir', ->
 
     they 'is a string', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       .call $tmpdir: './a_dir', ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
         tmpdir.should.eql unless !!ssh
         then path.resolve os.tmpdir(), './a_dir'
         else path.posix.resolve '/tmp', './a_dir'
+          
+    they 'ssh and tmpdir in same child', -> ({ssh}) ->
+      # Fix bug where the ssh connection was not discoved when
+      # ssh was created in the same child and tmpdir
+      nikita.call $ssh: ssh, $tmpdir: true, (->)
+      .should.be.resolved()
 
   describe 'option dirty', ->
 
     they 'is true', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         try
           @call $tmpdir: true, $dirty: true, (->)
@@ -89,7 +92,7 @@ describe 'plugins.metadata.tmpdir', ->
 
     they 'is false', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @call $tmpdir: true, $dirty: false, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'

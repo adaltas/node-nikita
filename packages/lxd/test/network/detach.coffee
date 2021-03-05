@@ -9,7 +9,7 @@ describe 'lxd.network.detach', ->
 
   they 'Detach a network from a container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
         @lxd.delete
@@ -27,16 +27,16 @@ describe 'lxd.network.detach', ->
         @lxd.network.attach
           network: "testnet0"
           container: "u0"
-        {status} = await @lxd.network.detach
+        {$status} = await @lxd.network.detach
           network: "testnet0"
           container: "u0"
-        status.should.be.true()
+        $status.should.be.true()
       finally
         @clean()
 
   they 'Network already detached', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
         @lxd.delete
@@ -51,9 +51,9 @@ describe 'lxd.network.detach', ->
           container: 'u0'
         @lxd.network
           network: "testnet0"
-        {status} = await @lxd.network.detach
+        {$status} = await @lxd.network.detach
           network: "testnet0"
           container: "u0"
-        status.should.be.false()
+        $status.should.be.false()
       finally
         @clean()

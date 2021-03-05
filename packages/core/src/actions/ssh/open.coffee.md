@@ -177,7 +177,7 @@ pass all the properties through the `ssh` property.
         log message: "Bootstrap Root Access", level: 'INFO'
         await @ssh.root config.root
       log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG'
-      await @call metadata: retry: 3, ->
+      await @call $retry: 3, ->
         conn = await connect config
         # state['nikita:ssh:connection'] = conn
         ssh: conn

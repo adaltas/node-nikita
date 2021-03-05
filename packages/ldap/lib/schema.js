@@ -6,14 +6,14 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ldap.schema({
+// const {$status} = await nikita.ldap.schema({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   name: 'kerberos',
 //   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
 // })
-// console.info(`Schema created or modified: ${status}`)
+// console.info(`Schema created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -54,7 +54,7 @@ handler = async function({
     metadata: {tmpdir},
     tools: {log}
   }) {
-  var binddn, conf, ldif, passwd, status, uri;
+  var $status, binddn, conf, ldif, passwd, uri;
   // Auth related config
   binddn = config.binddn ? `-D ${config.binddn}` : '';
   passwd = config.passwd ? `-w ${config.passwd}` : '';
@@ -73,12 +73,12 @@ handler = async function({
   schema = `${tmpdir}/${config.name}.schema`;
   conf = `${tmpdir}/schema.conf`;
   ldif = `${tmpdir}/ldif`;
-  ({status} = (await this.execute({
+  ({$status} = (await this.execute({
     command: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
     code: 1,
     code_skipped: 0
   })));
-  if (!status) {
+  if (!$status) {
     return false;
   }
   await this.system.mkdir({
@@ -111,12 +111,12 @@ handler = async function({
     message: 'Configuration validated',
     level: 'DEBUG'
   });
-  ({status} = (await this.fs.move({
+  ({$status} = (await this.fs.move({
     source: `${ldif}/cn=config/cn=schema/cn={0}${config.name}.ldif`,
     target: `${ldif}/cn=config/cn=schema/cn=${config.name}.ldif`,
     force: true
   })));
-  if (!status) {
+  if (!$status) {
     throw Error('No generated schema');
   }
   log({

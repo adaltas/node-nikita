@@ -6,15 +6,13 @@ Set container or server configuration keys.
 ## Set a configuration key
 
 ```js
-const {status} = await nikita.lxd.config.set({
-  config: {
-    name: "my_container",
-    properties: {
-      'boot.autostart.priority': 100
-    }
+const {$status} = await nikita.lxd.config.set({
+  name: "my_container",
+  properties: {
+    'boot.autostart.priority': 100
   }
 })
-console.info(`Property was set: ${status}`)
+console.info(`Property was set: ${$status}`)
 ```
 
 ## Schema
@@ -42,26 +40,26 @@ console.info(`Property was set: ${status}`)
         config.properties[k] = v.toString()
       keys = {}
       {stdout} = await @execute
+        $shy: true
         command: """
         #{[
           'lxc', 'config', 'show'
           config.container
         ].join ' '}
         """
-        metadata: shy: true
         code_skipped: 42
       {config: properties} = yaml.load stdout
       changes = diff properties, merge properties, config.properties
       # if changes is empty status is false because no command were executed
       # Note, it doesnt seem possible to set multiple keys in one command
-      {status} = await @execute (
+      {$status} = await @execute (
         command: [
           'lxc', 'config', 'set'
           config.container
           key, "'#{value.replace '\'', '\\\''}'"
         ].join ' '
       ) for key, value of changes
-      status: status
+      $status: $status
 
 ## Exports
 

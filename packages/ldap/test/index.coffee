@@ -49,20 +49,20 @@ describe 'ldap.index', ->
         uri: ldap.uri
         binddn: ldap.config.binddn
         passwd: ldap.config.passwd
-      ssh: ssh
+      $ssh: ssh
     , ->
       {dn} = await @ldap.tools.database
         suffix: ldap.suffix_dn
-      {status} = await @ldap.index
+      {$status} = await @ldap.index
         dn: dn
         indexes:
           aliasedEntryName: 'eq'
-      status.should.be.true()
-      {status} = await @ldap.index
+      $status.should.be.true()
+      {$status} = await @ldap.index
         dn: dn
         indexes:
           aliasedEntryName: 'eq'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'create a new index from suffix', ({ssh}) ->
     nikita
@@ -70,18 +70,18 @@ describe 'ldap.index', ->
         uri: ldap.uri
         binddn: ldap.config.binddn
         passwd: ldap.config.passwd
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status} = await @ldap.index
+      {$status} = await @ldap.index
         suffix: ldap.suffix_dn
         indexes:
           aliasedEntryName: 'eq'
-      status.should.be.true()
-      {status} = await @ldap.index
+      $status.should.be.true()
+      {$status} = await @ldap.index
         suffix: ldap.suffix_dn
         indexes:
           aliasedEntryName: 'eq'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'update an existing index', ({ssh}) ->
     nikita
@@ -89,7 +89,7 @@ describe 'ldap.index', ->
         uri: ldap.uri
         binddn: ldap.config.binddn
         passwd: ldap.config.passwd
-      ssh: ssh
+      $ssh: ssh
     , ->
       # Set initial value
       await @ldap.index
@@ -97,13 +97,13 @@ describe 'ldap.index', ->
         indexes:
           aliasedEntryName: 'eq'
       # Apply the update
-      {status} = await @ldap.index
+      {$status} = await @ldap.index
         suffix: ldap.suffix_dn
         indexes:
           aliasedEntryName: 'pres,eq'
-      status.should.be.true()
-      {status} = await @ldap.index
+      $status.should.be.true()
+      {$status} = await @ldap.index
         suffix: ldap.suffix_dn
         indexes:
           aliasedEntryName: 'pres,eq'
-      status.should.be.false()
+      $status.should.be.false()

@@ -6,9 +6,7 @@ Reload the service daemon provider depending on the os.
 
 ## Output
 
-* `err`   
-  Error object if any.
-* `status`   
+* `$status`   
   Indicates if the init script was reloaded.
 
 ## Schema
@@ -85,14 +83,14 @@ Reload the service daemon provider depending on the os.
         local: config.local
         engine: config.engine
       return unless config.loader is 'systemctl'
-      {status} = await @execute
-        metadata: shy: true
+      {$status} = await @execute
+        $shy: true
         command: """
           systemctl status #{config.name} 2>\&1 | egrep \
           '(Reason: No such file or directory)|(Unit #{config.name}.service could not be found)|(#{config.name}.service changed on disk)'
           """
         code_skipped: 1
-      return unless status
+      return unless $status
       await @execute
         command: 'systemctl daemon-reload;systemctl reset-failed'
 

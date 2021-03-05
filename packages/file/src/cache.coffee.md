@@ -5,21 +5,19 @@ Download a file and place it on a local or remote folder for later usage.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value is "true" if cache file was created or modified.   
+* `$status`   
+  Value is "true" if cache file was created or modified.
 
 ## HTTP example
 
 Cache can be used from the `file.download` action:
 
 ```js
-const {status} = await nikita.file.download({
+const {$status} = await nikita.file.download({
   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   cache_dir: '/var/tmp'
 })
-console.info(`File downloaded: ${status}`)
+console.info(`File downloaded: ${$status}`)
 ```
 
 ## Schema
@@ -133,6 +131,9 @@ console.info(`File downloaded: ${status}`)
       config.target = path.resolve config.cache_dir, config.target
       config.source = config.source.substr 7 if /^file:\/\//.test config.source
       # todo, also support config.algo and config.hash
+      # replace alog and _hash with
+      # config.algo = null
+      # config.hash = false
       if config.md5?
         algo = 'md5'
         _hash = config.md5
@@ -157,7 +158,7 @@ console.info(`File downloaded: ${status}`)
       # - file doesnt exist
       # - option force is provided
       # - hash isnt true and doesnt match
-      {status} = await @call ->
+      {$status} = await @call ->
         log message: "Check if target (#{config.target}) exists", level: 'DEBUG'
         {exists} = await @fs.base.exists target: config.target
         if exists
@@ -183,13 +184,15 @@ console.info(`File downloaded: ${status}`)
         else
           log message: "Target file does not exists", level: 'INFO'
           true
-      return status unless status
+      return $status unless $status
       # Place into cache
       if u.protocol in protocols_http
         await @fs.mkdir
-          ssh: if config.cache_local then false else config.ssh
+          $ssh: false if config.cache_local
           target: path.dirname config.target
         await @execute
+          $ssh: false if config.cache_local
+          $unless_exists: config.target
           command: [
             'curl'
             '--fail' if config.fail
@@ -201,8 +204,6 @@ console.info(`File downloaded: ${status}`)
             "-o #{config.target}"
             "-x #{config.proxy}" if config.proxy
           ].join ' '
-          ssh: if config.cache_local then false else config.ssh
-          unless_exists: config.target
       else
         await @fs.mkdir # todo: copy shall handle this
           target: "#{path.dirname config.target}"
@@ -211,8 +212,8 @@ console.info(`File downloaded: ${status}`)
           target: "#{config.target}"
       # Validate the cache
       {hash} = await @fs.hash
+        $if: _hash
         target: config.target
-        if: _hash
       hash ?= false
       throw errors.NIKITA_FILE_INVALID_TARGET_HASH config: config, hash: hash, _hash: _hash unless _hash is hash
       {}

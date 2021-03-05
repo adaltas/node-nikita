@@ -11,28 +11,28 @@ describe 'docker.compose', ->
 
   they 'up from content', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
         container: 'nikita_docker_compose_up_content'
         force: true
-      {status} = await @docker.compose.up
+      {$status} = await @docker.compose.up
         content:
           compose:
             image: 'httpd'
             container_name: 'nikita_docker_compose_up_content'
             ports: ['499:80']
-      status.should.be.true()
-      {status} = await @execute
+      $status.should.be.true()
+      {$status} = await @execute
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        if: status # Inside docker-compose
+        $if: $status # Inside docker-compose
         host: 'dind'
         port: 499
       @network.tcp.wait
-        unless: status # Inside host node
+        $unless: $status # Inside host node
         host: '127.0.0.1'
         port: 499
       @docker.rm
@@ -41,30 +41,30 @@ describe 'docker.compose', ->
   
   they 'up from content to file', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_docker_compose_up_content_to_file'
         force: true
-      {status} = await @docker.compose
+      {$status} = await @docker.compose
         content:
           compose:
             image: 'httpd'
             container_name: 'nikita_docker_docker_compose_up_content_to_file'
             ports: ['499:80']
         target: "#{tmpdir}/docker_compose_up_content_to_file/docker-compose.yml"
-      status.should.be.true()
-      {status} = await @execute
+      $status.should.be.true()
+      {$status} = await @execute
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        if: status # Inside docker-compose
+        $if: $status # Inside docker-compose
         host: 'dind'
         port: 499
       @network.tcp.wait
-        unless: status # Inside host node
+        $unless: $status # Inside host node
         host: '127.0.0.1'
         port: 499
       @docker.rm
@@ -73,9 +73,9 @@ describe 'docker.compose', ->
 
   they 'up from file', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_up_file'
@@ -89,15 +89,15 @@ describe 'docker.compose', ->
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       @docker.compose
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
-      {status} = await @execute
+      {$status} = await @execute
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        if: status # Inside docker-compose
+        $if: $status # Inside docker-compose
         host: 'dind'
         port: 499
       @network.tcp.wait
-        unless: status # Inside host node
+        $unless: $status # Inside host node
         host: '127.0.0.1'
         port: 499
       @docker.rm
@@ -106,9 +106,9 @@ describe 'docker.compose', ->
   
   they 'up with service name', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_up_service'
@@ -123,15 +123,15 @@ describe 'docker.compose', ->
       @docker.compose
         service: 'compose'
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
-      {status} = await @execute
+      {$status} = await @execute
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        if: status # Inside docker-compose
+        $if: $status # Inside docker-compose
         host: 'dind'
         port: 499
       @network.tcp.wait
-        unless: status # Inside host node
+        $unless: $status # Inside host node
         host: '127.0.0.1'
         port: 499
       @docker.rm
@@ -140,9 +140,9 @@ describe 'docker.compose', ->
   
   they 'status not modified', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @docker.rm
         container: 'nikita_docker_compose_idem'
@@ -161,7 +161,7 @@ describe 'docker.compose', ->
         port: 499
       {status} = await @docker.compose
         target: "#{tmpdir}/nikita_docker_compose_idem/docker-compose.yml"
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_docker_compose_idem'
         force: true

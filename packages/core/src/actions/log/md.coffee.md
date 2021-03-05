@@ -28,7 +28,7 @@ Write log to the host filesystem in Markdown.
 
     handler = ({config}) ->
       state = last_event_type: undefined
-      await @call log_fs, config: config, serializer:
+      await @call $: log_fs, config, serializer:
         'nikita:action:start': (action) ->
           content = []
           content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n" if action.metadata.module

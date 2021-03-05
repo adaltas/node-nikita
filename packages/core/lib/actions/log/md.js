@@ -34,8 +34,9 @@ handler = async function({config}) {
   state = {
     last_event_type: void 0
   };
-  return (await this.call(log_fs, {
-    config: config,
+  return (await this.call({
+    $: log_fs
+  }, config, {
     serializer: {
       'nikita:action:start': function(action) {
         var content, header, headers, last_event_type, walk;

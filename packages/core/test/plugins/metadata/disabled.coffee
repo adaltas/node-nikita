@@ -14,12 +14,12 @@ describe 'plugins.metadata.disabled', ->
   it 'when `true`', ->
     nikita.call
       $disabled: true
-      handler: -> throw Error 'forbidden'
+      $handler: -> throw Error 'forbidden'
 
   it 'when `false`', ->
     nikita.call
       $disabled: false
-      handler: -> 'called'
+      $handler: -> 'called'
     .should.be.resolvedWith 'called'
 
   it.skip 'emit lifecycle event when disabled', ->

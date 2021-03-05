@@ -13,7 +13,7 @@ describe 'ldap.search', ->
         binddn: ldap.binddn
         passwd: ldap.passwd
         uri: ldap.uri
-      ssh: ssh
+      $ssh: ssh
     , ->
       {stdout} = await @ldap.search
         base: "#{ldap.suffix_dn}"

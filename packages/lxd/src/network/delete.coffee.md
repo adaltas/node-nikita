@@ -5,18 +5,16 @@ Delete an existing lxd network.
 
 ## Output
 
-* `err`   
-  Error object if any.
-* `status`   
+* `$status`   
   True if the network was deleted.
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.network.delete({
+const {$status} = await nikita.lxd.network.delete({
   network: 'network0'
 })
-console.info(`Network was deleted: ${status}`)
+console.info(`Network was deleted: ${$status}`)
 ```
 
 ## Schema

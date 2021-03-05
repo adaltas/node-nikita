@@ -11,7 +11,7 @@ describe 'tools.npm', ->
 
     it 'name is required', ->
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @tools.npm
           cwd: tmpdir
@@ -53,95 +53,92 @@ describe 'tools.npm', ->
 
     they 'option `cwd`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @tools.npm
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
-        status.should.be.true()
-        {status} = await @tools.npm
+        $status.should.be.true()
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'option `cwd` with 2 separate directories', ({ssh}) ->
       # not sure this is really relevant
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
-        {status} = await @tools.npm
+        {$status} = await @tools.npm
           cwd: "#{tmpdir}/1_dir"
           name: 'csv-parse'
-        status.should.be.true()
-        {status} = await @tools.npm
+        $status.should.be.true()
+        {$status} = await @tools.npm
           cwd: "#{tmpdir}/2_dir"
           name: 'csv-parse'
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'option `global`', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @tools.npm.uninstall
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        {status} = await @tools.npm
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        status.should.be.true()
-        {status} = await @tools.npm
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        status.should.be.false()
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        {$status} = await @tools.npm
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        $status.should.be.true()
+        {$status} = await @tools.npm
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        $status.should.be.false()
 
     they 'option `name` as an array', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @tools.npm
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: ['csv-parse', 'csv']
-        status.should.be.true()
-        {status} = await @tools.npm
+        $status.should.be.true()
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: ['csv-parse', 'csv']
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'option `upgrade`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @tools.npm
           cwd: tmpdir
           name: 'csv-parse@3.0.0'
-        {status} = await @tools.npm
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
           upgrade: true
-        status.should.be.true()
-        {status} = await @tools.npm
+        $status.should.be.true()
+        {$status} = await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
           upgrade: true
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'metadata `argument_to_config`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @tools.npm 'csv-parse',
+        {$status} = await @tools.npm 'csv-parse',
           cwd: tmpdir
-        status.should.be.true()
+        $status.should.be.true()

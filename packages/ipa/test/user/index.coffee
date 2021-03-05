@@ -53,31 +53,31 @@ describe 'ipa.user', ->
 
     they 'create a user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del
           uid: 'user_add'
           connection: ipa
-        {status} = await @ipa.user
+        {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
-        status.should.be.true()
-        {status} = await @ipa.user
+        $status.should.be.true()
+        {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'modify a user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del connection: ipa,
           uid: 'user_add'
@@ -88,14 +88,14 @@ describe 'ipa.user', ->
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
-        {status} = await @ipa.user
+        {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname 2'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
-        status.should.be.true()
+        $status.should.be.true()
         {result} = await @ipa.user.show
           uid: 'user_add'
           connection: ipa
@@ -103,7 +103,7 @@ describe 'ipa.user', ->
 
     they 'modify password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del
           connection: ipa
@@ -116,16 +116,16 @@ describe 'ipa.user', ->
             userpassword: 'toto'
           connection: ipa
           uid: 'user_add'
-        {status} = await @ipa.user
+        {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             userpassword: 'toto'
           connection: ipa
-        status.should.be.false()
+        $status.should.be.false()
         
     they 'modify password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.del
           connection: ipa
@@ -138,10 +138,10 @@ describe 'ipa.user', ->
             userpassword: 'toto'
           connection: ipa
           uid: 'user_add'
-        {status} = await @ipa.user
+        {$status} = await @ipa.user
           attributes:
             userpassword: 'toto'
           connection: ipa
           force_userpassword: true
           uid: 'user_add'
-        status.should.be.true()
+        $status.should.be.true()

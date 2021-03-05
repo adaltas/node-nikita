@@ -35,11 +35,9 @@ module.exports = {
       var i, len, ref, ref1, ref2, sibling, ssh;
       // Is there a connection to open
       if (action.ssh && !utils.ssh.is(action.ssh)) {
-        ({ssh} = (await session({
+        ({ssh} = (await session.with_options([{}], {
           plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
-        }).ssh.open({
-          config: action.ssh
-        })));
+        }).ssh.open(action.ssh)));
         action.metadata.ssh_dispose = true;
         action.ssh = ssh;
         return;
@@ -81,7 +79,7 @@ module.exports = {
     },
     'nikita:result': async function({action}) {
       if (action.metadata.ssh_dispose) {
-        return (await session({
+        return (await session.with_options([{}], {
           plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
         }).ssh.close({
           ssh: action.ssh

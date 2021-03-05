@@ -10,8 +10,8 @@ describe 'actions.fs.base.createReadStream', ->
   they 'option on_readable', ({ssh}) ->
     buffers = []
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -26,8 +26,8 @@ describe 'actions.fs.base.createReadStream', ->
   they 'option stream', ({ssh}) ->
     buffers = []
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -45,7 +45,7 @@ describe 'actions.fs.base.createReadStream', ->
 
     they 'schema', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @fs.base.createReadStream
           stream: (->)
@@ -58,8 +58,8 @@ describe 'actions.fs.base.createReadStream', ->
     
     they 'NIKITA_FS_CRS_TARGET_ENOENT if file does not exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.createReadStream
           target: "#{tmpdir}/a_file"
@@ -76,8 +76,8 @@ describe 'actions.fs.base.createReadStream', ->
   
     they 'NIKITA_FS_CRS_TARGET_EISDIR if file is a directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.createReadStream
           target: "#{tmpdir}"

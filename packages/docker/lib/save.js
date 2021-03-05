@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was saved.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,11 +17,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.save({
+// const {$status} = await nikita.docker.save({
 //   image: 'nikita/load_test:latest',
 //   output: `${scratch}/nikita_saved.tar`,
 // })
-// console.info(`Container was saved: ${status}`)
+// console.info(`Container was saved: ${$status}`)
 // ```
 
 // ## Hooks

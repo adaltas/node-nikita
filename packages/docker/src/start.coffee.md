@@ -7,7 +7,7 @@ Start a container.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True unless container was already started.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.
@@ -17,11 +17,11 @@ Start a container.
 ## Example
 
 ```js
-const {status} = await nikita.docker.start({
+const {$status} = await nikita.docker.start({
   container: 'toto',
   attach: true
 })
-console.info(`Container was started: ${status}`)
+console.info(`Container was started: ${$status}`)
 ```
 
 ## Schema
@@ -47,12 +47,12 @@ console.info(`Container was started: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      {status} = await @docker.tools.status config, metadata: shy: true
-      if status
+      {$status} = await @docker.tools.$status config, $shy: true
+      if $status
       then log message: "Container already started #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
       else log message: "Starting container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/start'
       await @docker.tools.execute
-        unless: status
+        $unless: $status
         command: [
           'start'
           '-a' if config.attach

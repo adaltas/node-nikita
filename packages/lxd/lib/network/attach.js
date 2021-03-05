@@ -5,19 +5,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if the network was attached.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.network.attach({
+// const {$status} = await nikita.lxd.network.attach({
 //   network: 'network0',
 //   container: 'container1'
 // })
-// console.info(`Network was attached: ${status}`)
+// console.info(`Network was attached: ${$status}`)
 // ```
 
 // ## Schema

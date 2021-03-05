@@ -8,16 +8,16 @@ force options is set.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if container was removed.
 
 ## Example Code
 
 ```js
-const {status} = await nikita.docker.rm({
+const {$status} = await nikita.docker.rm({
   container: 'toto'
 })
-console.info(`Container was removed: ${status}`)
+console.info(`Container was removed: ${$status}`)
 ```
 
 ## Schema
@@ -52,8 +52,8 @@ console.info(`Container was removed: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      {status: exists, data: running} = await @docker.tools.execute
-        metadata: templated: false
+      {$status: exists, data: running} = await @docker.tools.execute
+        $templated: false
         command: """
         inspect #{config.container} --format '{{ json .State.Running }}'
         """

@@ -9,8 +9,8 @@ describe 'file.json', ->
 
   they 'stringify content to target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -18,15 +18,15 @@ describe 'file.json', ->
       @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
 
   they 'merge target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -35,15 +35,15 @@ describe 'file.json', ->
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"tarval","user":"usrval"}'
 
   they 'merge source', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/source.json"
@@ -52,15 +52,15 @@ describe 'file.json', ->
         source: "#{tmpdir}/source.json"
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","user":"usrval"}'
 
   they 'merge source and traget', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/source.json"
@@ -73,29 +73,29 @@ describe 'file.json', ->
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","target":"tarval","user":"usrval"}'
   
   they 'merge with target not yet created', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
   
   they 'transform', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/target.json"
@@ -109,15 +109,15 @@ describe 'file.json', ->
           json.user = "#{json.user} usrval"
           json.transform = "tfmval"
           json
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
   
   they 'pretty', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/pretty.json"
@@ -129,8 +129,8 @@ describe 'file.json', ->
   
   they 'pretty with user indentation', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.json
         target: "#{tmpdir}/pretty_0.json"

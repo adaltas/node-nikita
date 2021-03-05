@@ -11,7 +11,7 @@ describe 'docker.tools.service', ->
     
     they 'honors docker.run', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       .docker.tools.service
         image: 'httpd'
@@ -22,19 +22,19 @@ describe 'docker.tools.service', ->
           
     they 'overwrite default', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       .docker.tools.service
         image: 'httpd'
         container: 'nikita_test_unique'
         port: '499:80'
-        handler: ({config}) ->
-          config.detach.should.be.true()
-          config.rm.should.be.false()
+      , ({config}) ->
+        config.detach.should.be.true()
+        config.rm.should.be.false()
 
     they 'simple service', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       , ->
         @docker.rm
@@ -76,7 +76,7 @@ describe 'docker.tools.service', ->
 
   they 'status not modified', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -86,11 +86,11 @@ describe 'docker.tools.service', ->
         container: 'nikita_test'
         image: 'httpd'
         port: '499:80'
-      {status} = await @docker.tools.service
+      {$status} = await @docker.tools.service
         container: 'nikita_test'
         image: 'httpd'
         port: '499:80'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         force: true
         container: 'nikita_test'

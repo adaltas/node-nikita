@@ -5,15 +5,13 @@ Create a device or update its configuration.
 
 ## Output
 
-* `err`
-  Error object if any.
-* `result.status`
+* `$status`
   True if the device was created or the configuraion updated.
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.config.device({
+const {$status} = await nikita.lxd.config.device({
   container: 'container1',
   device: 'root',
   type: 'disk',
@@ -22,7 +20,7 @@ const {status} = await nikita.lxd.config.device({
     'size': '10GB'
   }
 })
-console.info(`Disk was created: ${status}`)
+console.info(`Disk was created: ${$status}`)
 ```
 
 ## Schema
@@ -233,7 +231,7 @@ console.info(`Disk was created: ${status}`)
       try
         unless properties
           # Device not registed, we need to use `add`
-          {status} = await @execute
+          {$status} = await @execute
             command: [
               'lxc', 'config', 'device', 'add',
               config.container
@@ -246,7 +244,7 @@ console.info(`Disk was created: ${status}`)
         else
           # Device not registed, we need to use `set`
           changes = diff properties, config.properties
-          {status} = await @execute (
+          {$status} = await @execute (
             command: [
               'lxc', 'config', 'device', 'set'
               config.container
@@ -254,7 +252,7 @@ console.info(`Disk was created: ${status}`)
               key, "'#{value.replace '\'', '\\\''}'"
             ].join ' '
           ) for key, value of changes
-        status: status
+        $status: $status
       catch err
         utils.stderr_to_error_message err, err.stderr
         throw err

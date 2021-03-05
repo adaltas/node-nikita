@@ -28,7 +28,7 @@ describe 'plugins.tools.log', ->
           
     it 'argument is immutable', ->
       arg = key: 'value'
-      {logs} = await nikita.call ({tools: {log}}) ->
+      await nikita.call ({tools: {log}}) ->
         log arg
         true
       arg.should.eql key: 'value'
@@ -40,7 +40,7 @@ describe 'plugins.tools.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call metadata: log: true, ({tools: {log}}) ->
+      .call $log: true, ({tools: {log}}) ->
         log message: 'enabled parent'
         @call ({tools: {log}}) ->
           log message: 'enabled child'
@@ -51,7 +51,7 @@ describe 'plugins.tools.log', ->
       await nikita
       .call ({tools: {events}}) ->
         events.on 'text', (log) -> data.push log.message
-      .call metadata: log: false, ({tools: {log}}) ->
+      .call $log: false, ({tools: {log}}) ->
         log message: 'disabled'
         @call ({tools: {log}}) ->
           log message: 'enabled child'
@@ -63,7 +63,7 @@ describe 'plugins.tools.log', ->
       data = []
       await nikita
       .call
-        metadata: log: ({log}) ->
+        $log: ({log}) ->
           data.push log.message
       , ({tools: {log}}) ->
         log message: 'enabled parent'
@@ -75,7 +75,7 @@ describe 'plugins.tools.log', ->
       data = null
       await nikita
       .call
-        metadata: log: (args) ->
+        $log: (args) ->
           data = Object.keys(args).sort()
       , ({tools: {log}}) ->
         log message: 'enabled parent'

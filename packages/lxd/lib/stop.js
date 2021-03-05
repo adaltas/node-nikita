@@ -6,10 +6,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.stop({
+// const {$status} = await nikita.lxd.stop({
 //   container: "myubuntu"
 // })
-// console.info(`The container was stopped: ${status}`)
+// console.info(`The container was stopped: ${$status}`)
 // ```
 
 // ## Schema

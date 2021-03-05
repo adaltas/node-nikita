@@ -6,7 +6,7 @@ Insert, modify or remove entries inside an OpenLDAP server.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.modify({
+const {$status} = await nikita.ldap.modify({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,dc=company,dc=com',
   passwd: 'secret',
@@ -19,7 +19,7 @@ const {status} = await nikita.ldap.modify({
     }]
   }]
 })
-console.log(`Entry modified: ${status}`)
+console.log(`Entry modified: ${$status}`)
 ```
 
 ## Hooks

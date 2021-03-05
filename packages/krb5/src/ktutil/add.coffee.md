@@ -7,12 +7,12 @@ in the way it can manage several principal on one keytab.
 ## Example
 
 ```js
-const {status} = await nikita.krb5.ktutil.add({
+const {$status} = await nikita.krb5.ktutil.add({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   password: 'password'
 })
-console.info(`Keytab was created or modified: ${status}`)
+console.info(`Keytab was created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -70,11 +70,11 @@ console.info(`Keytab was created or modified: ${status}`)
       princ = {}
       command = null
       # Get keytab entries
-      {status, stdout, code} = await @execute
+      {$status, stdout, code} = await @execute
+        $shy: true
         command: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
         code_skipped: 1
-        metadata: shy: true
-      if status
+      if $status
         log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout
           continue unless match = /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec line
@@ -88,11 +88,11 @@ console.info(`Keytab was created or modified: ${status}`)
             enctype: enctype
         princ_entries = entries.filter((e) -> "#{e.principal}" is "#{config.principal}").reverse()
       # Get principal information and compare to keytab entries kvnos
-      {status, stdout} = await @krb5.execute
+      {$status, stdout} = await @krb5.execute
+        $shy: true
         admin: config.admin
         command: "getprinc -terse #{config.principal}"
-        metadata: shy: true
-      if status
+      if $status
         values = utils.string.lines(stdout)[1]
         # Check if a ticket exists for this
         throw Error "Principal does not exist: '#{config.principal}'" unless values

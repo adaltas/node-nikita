@@ -28,17 +28,17 @@ describe 'tools.cron.remove', ->
 
     they 'remove a job', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service 'cronie'
         @tools.cron.add
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
-        {status} = await @tools.cron.remove
+        {$status} = await @tools.cron.remove
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
-        status.should.be.true()
-        {status} = await @tools.cron.remove
+        $status.should.be.true()
+        {$status} = await @tools.cron.remove
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
-        status.should.be.false()
+        $status.should.be.false()

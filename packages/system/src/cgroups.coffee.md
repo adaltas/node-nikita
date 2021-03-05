@@ -183,29 +183,12 @@ group bibi {
       config.ignore = [config.ignore] unless Array.isArray config.ignore
       # Detect Os and version
       {os} = await @system.info.os()
-      # @execute
-      #   unless: -> @store['nikita:system:type']? and @store['nikita:system:release']?
-      #   shy: true
-      #   command: 'cat /etc/system-release'
-      #   code_skipped: 1
-      # , (err, {status, stdout}) ->
-      #   return unless status
-      #   [line] = utils.string.lines stdout
-      #   if /CentOS/.test line
-      #     @store['nikita:system:type'] ?= 'centos'
-      #     index = line.split(' ').indexOf 'release'
-      #     @store['nikita:system:release'] ?= line.split(' ')[index+1]
-      #   if /Red\sHat/.test line
-      #     @store['nikita:system:type'] ?= 'redhat'
-      #     index = line.split(' ').indexOf 'release'
-      #     @store['nikita:system:release'] ?= line.split(' ')[index+1]
-      #   throw Error 'Unsupported OS' unless @store['nikita:system:type']?
       # configure parameters based on previous OS dection
       store = {}
       if ['redhat','centos'].includes os.distribution
         {stdout} = await @execute
+          $shy: true
           command: 'cgsnapshot -s 2>&1'
-          metadata: shy: true
         cgconfig = utils.cgconfig.parse stdout
         cgconfig.mounts ?= []
         cpus = cgconfig.mounts.filter (mount) ->

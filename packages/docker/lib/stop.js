@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True unless container was already stopped.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.stop({
+// const {$status} = await nikita.docker.stop({
 //   container: 'toto'
 // })
-// console.info(`Container was stopped: ${status}`)
+// console.info(`Container was stopped: ${$status}`)
 // ```
 
 // ## Schema
@@ -46,14 +46,12 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var status;
+  var $status;
   // rm is false by default only if config.service is true
-  ({status} = (await this.docker.tools.status(config, {
-    metadata: {
-      shy: true
-    }
+  ({$status} = (await this.docker.tools.$status(config, {
+    $shy: true
   })));
-  if (status) {
+  if ($status) {
     log({
       message: `Stopping container ${config.container}`,
       level: 'INFO',
@@ -67,7 +65,7 @@ handler = async function({
     });
   }
   return (await this.docker.tools.execute({
-    if: status,
+    $if: $status,
     command: ['stop', config.timeout != null ? `-t ${config.timeout}` : void 0, `${config.container}`].join(' ')
   }));
 };

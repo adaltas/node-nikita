@@ -14,7 +14,7 @@ describe "db.query", ->
 
       they 'schema required', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
         .db.query
           command: 'select * from doesntmatter'
         .should.be.rejectedWith [
@@ -28,24 +28,24 @@ describe "db.query", ->
 
       they 'config command', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'test_query_1'
           @db.database 'test_query_1'
-          {status, stdout} = await @db.query
+          {$status, stdout} = await @db.query
             database: 'test_query_1'
             command: """
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             select * from a_table
             """
-          status.should.be.true()
+          $status.should.be.true()
           stdout.should.eql 'value\n'
 
       they 'config trim', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'test_query_1'
@@ -62,7 +62,7 @@ describe "db.query", ->
 
       they 'config grep with string', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'test_query_1'
@@ -73,22 +73,22 @@ describe "db.query", ->
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             '''
-          {status} = await @db.query
+          {$status} = await @db.query
             database: 'test_query_1'
             command: '''
             select * from a_table
             '''
             grep: 'value'
-          status.should.be.true()
-          {status} = await @db.query
+          $status.should.be.true()
+          {$status} = await @db.query
             database: 'test_query_1'
             command: 'select * from a_table'
             grep: 'invalid value'
-          status.should.be.false()
+          $status.should.be.false()
 
       they 'config grep with regexp', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'test_query_1'
@@ -99,16 +99,16 @@ describe "db.query", ->
             CREATE TABLE a_table (a_col CHAR(5));
             INSERT INTO a_table (a_col) VALUES ('value');
             '''
-          {status} = await @db.query
+          {$status} = await @db.query
             database: 'test_query_1'
             command: 'select * from a_table'
             grep: /^val.*$/
-          status.should.be.true()
-          {status} = await @db.query
+          $status.should.be.true()
+          {$status} = await @db.query
             database: 'test_query_1'
             command: 'select * from a_table'
             grep: /^val$/
-          status.should.be.false()
+          $status.should.be.false()
 
   describe 'jdbc', ->
 

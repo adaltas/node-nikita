@@ -6,7 +6,7 @@
 // ## Create database example
 
 // ```js
-// const {status} = await nikita.database.db({
+// const {$status} = await nikita.database.db({
 //   admin_username: 'test',
 //   admin_password: 'test',
 //   database: 'my_db',
@@ -55,7 +55,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command_database_create, command_grant_privileges, command_has_privileges, exists, i, len, ref, status, user;
+  var $status, command_database_create, command_grant_privileges, command_has_privileges, exists, i, len, ref, user;
   if (config.user == null) {
     config.user = [];
   }
@@ -143,7 +143,7 @@ handler = async function({
           database: null
         }, `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`);
     }
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `if ${command_has_privileges}; then
   echo '[INFO] User already with privileges'
   exit 3
@@ -152,14 +152,14 @@ echo '[WARN] User privileges granted'
 ${command_grant_privileges}`,
       code_skipped: 3
     })));
-    if (status) {
+    if ($status) {
       log({
         message: `Privileges granted: to ${JSON.stringify(user)} on ${JSON.stringify(config.database)}`,
         level: 'WARN'
       });
     }
   }
-  return null;
+  return void 0;
 };
 
 // ## Exports

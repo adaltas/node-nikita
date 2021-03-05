@@ -4,23 +4,19 @@
 Create or modify a Unix group.
 
 ## Callback Parameters
-
-* `err`   
-  Error object if any.   
-* `status`   
+ 
+* `$status`   
   Value is "true" if group was created or modified.   
 
 ## Example
 
 ```js
-require('nikita')
-.system.group({
+const {$status} = await nikita.system.group({
   name: 'myself'
   system: true
   gid: 490
-}, function(err, status){
-  console.log(err ? err.message : 'Group was created/modified: ' + status);
 });
+console.log(`Group was created/modified: ${status}`);
 ```
 
 The result of the above action can be viewed with the command
@@ -68,7 +64,7 @@ The result of the above action can be viewed with the command
       then message: "Got group information for #{JSON.stringify config.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
       else message: "Group #{JSON.stringify config.name} not present", level: 'DEBUG', module: 'nikita/lib/system/group'
       unless info # Create group
-        {status} = await @execute
+        {$status} = await @execute
           command: [
             'groupadd'
             '-r' if config.system
@@ -76,7 +72,7 @@ The result of the above action can be viewed with the command
             config.name
           ].join ' '
           code_skipped: 9
-        log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN' unless status
+        log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN' unless $status
       else # Modify group
         changes = ['gid'].filter (k) -> config[k]? and "#{info[k]}" isnt "#{config[k]}"
         if changes.length

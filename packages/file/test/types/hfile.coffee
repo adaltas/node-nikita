@@ -9,17 +9,17 @@ describe 'file.types.hfile', ->
 
   they 'without properties', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @file.types.hfile
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         content: {}
-      status.should.be.true()
-      {status} = await @file.types.hfile
+      $status.should.be.true()
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         content: {}
-      status.should.be.false()
+      $status.should.be.false()
       @fs.assert
         target: "#{tmpdir}/empty.xml"
         content: """
@@ -29,17 +29,17 @@ describe 'file.types.hfile', ->
 
   they 'with properties', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @file.types.hfile
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         properties: a_key: 'a value'
-      status.should.be.true()
-      {status} = await @file.types.hfile
+      $status.should.be.true()
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         properties: a_key: 'a value'
-      status.should.be.false()
+      $status.should.be.false()
       @fs.assert
         target: "#{tmpdir}/empty.xml"
         content: """
@@ -54,8 +54,8 @@ describe 'file.types.hfile', ->
 
   they 'with source', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/empty.xml"
@@ -68,26 +68,26 @@ describe 'file.types.hfile', ->
           </property>
         </configuration>
         """.trim()
-      {status} = await @file.types.hfile
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         properties: a_key: 'a value'
         source: "#{tmpdir}/empty.xml"
-      status.should.be.false()
-      {status} = await @file.types.hfile
+      $status.should.be.false()
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         properties: a_key: 'a new value'
         source: "#{tmpdir}/empty.xml"
-      status.should.be.true()
-      {status} = await @file.types.hfile
+      $status.should.be.true()
+      {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         properties: a_new_key: 'a value'
         source: "#{tmpdir}/empty.xml"
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'transform', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/empty.xml"

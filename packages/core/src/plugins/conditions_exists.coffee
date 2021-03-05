@@ -24,12 +24,11 @@ handlers =
     for condition in action.conditions.if_exists
       try
         await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-          parent: action
+          $condition: true
+          $depth: action.metadata.depth
+          $parent: action
         , ->
           await @fs.base.stat target: condition
       catch err
@@ -42,12 +41,11 @@ handlers =
     for condition in action.conditions.unless_exists
       try
         await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-          parent: action
+          $condition: true
+          $depth: action.metadata.depth
+          $parent: action
         , ->
           await @fs.base.stat target: condition
         final_run = false

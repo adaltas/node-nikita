@@ -41,8 +41,8 @@ describe 'actions.fs.base.chown', ->
     
     they 'pass id integers', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute """
         echo '' > '#{tmpdir}/a_file'
@@ -57,8 +57,8 @@ describe 'actions.fs.base.chown', ->
     
     they 'pass string names', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute """
         echo '' > '#{tmpdir}/a_file'

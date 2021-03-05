@@ -5,9 +5,7 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Indicate file modifications.
 
 // ## Implementation details
@@ -455,8 +453,8 @@ handler = async function({
       level: 'DEBUG'
     });
     ({exists} = (await this.fs.base.exists({
-      ssh: !config.local ? config.ssh : void 0,
-      sudo: config.local ? false : config.sudo,
+      $ssh: config.local ? false : void 0,
+      $sudo: config.local ? false : void 0,
       target: source
     })));
     if (!exists) {
@@ -472,8 +470,8 @@ handler = async function({
     ({
       data: config.content
     } = (await this.fs.base.readFile({
-      ssh: config.local ? false : void 0,
-      sudo: config.local ? false : void 0,
+      $ssh: config.local ? false : void 0,
+      $sudo: config.local ? false : void 0,
       target: source,
       encoding: config.encoding
     })));
@@ -482,8 +480,8 @@ handler = async function({
       ({
         data: config.content
       } = (await this.fs.base.readFile({
-        ssh: config.local ? false : config.ssh,
-        sudo: config.local ? false : config.sudo,
+        $ssh: config.local ? false : void 0,
+        $sudo: config.local ? false : void 0,
         target: config.target,
         encoding: config.encoding
       })));
@@ -497,9 +495,7 @@ handler = async function({
   }
   // Stat the target
   targetStats = (await this.call({
-    metadata: {
-      raw_output: true
-    }
+    $raw_output: true
   }, async function() {
     var stats;
     if (typeof config.target !== 'string') {
@@ -523,9 +519,7 @@ handler = async function({
         // Destination is the parent directory, let's see if the file exist inside
         ({stats} = (await this.fs.base.stat({
           target: config.target,
-          metadata: {
-            relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-          }
+          $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
         })));
         if (!utils.stats.isFile(stats.mode)) {
           throw Error(`Destination is not a file: ${config.target}`);
@@ -657,12 +651,10 @@ handler = async function({
     }
     backup = typeof config.backup === 'string' ? config.backup : `.${Date.now()}`;
     await this.fs.copy({
+      $relax: 'NIKITA_FS_STAT_TARGET_ENOENT',
       source: config.target,
       target: `${config.target}${backup}`,
-      mode: config.backup_mode,
-      metadata: {
-        relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-      }
+      mode: config.backup_mode
     });
   }
   // Call the target with the content when a function
@@ -695,7 +687,7 @@ handler = async function({
           mode: targetStats != null ? targetStats.mode : void 0
         });
         return {
-          status: true
+          $status: true
         };
       });
     }
@@ -714,11 +706,11 @@ handler = async function({
     }
     // Option gid is set at runtime if target is a new file
     await this.fs.chown({
+      $if: (config.uid != null) || (config.gid != null),
       target: config.target,
       stats: targetStats,
       uid: config.uid,
-      gid: config.gid,
-      if: (config.uid != null) || (config.gid != null)
+      gid: config.gid
     });
   }
   return {};

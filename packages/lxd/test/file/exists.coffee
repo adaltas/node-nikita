@@ -9,7 +9,7 @@ describe 'lxd.file.exists', ->
 
   they 'when present', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -25,11 +25,10 @@ describe 'lxd.file.exists', ->
         container: 'c1'
         target: '/root/a_file'
       exists.should.be.true()
-  
 
   they 'when missing', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'

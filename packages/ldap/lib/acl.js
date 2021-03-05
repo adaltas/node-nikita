@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ldap.acl({
+// const {$status} = await nikita.ldap.acl({
 //   dn: '',
 //   acls: [{
 //     place_before: 'dn.subtree="dc=domain,dc=com"',
@@ -23,7 +23,7 @@
 //     ]
 //   }]
 // })
-// console.info(`ACL modified: ${status}`)
+// console.info(`ACL modified: ${$status}`)
 // ```
 
 // ## Hooks
@@ -88,8 +88,8 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var access, access_by, acl, acl_by, current, dn, found, i, index, is_perfect_match, j, k, l, len, len1, len2, len3, len4, len5, len6, len7, line, m, match, n, not_found_acl, o, olcAccess, olcAccesses, old, operations, p, q, ref, ref1, ref2, ref3, ref4, status, stdout;
-  status = false;
+  var $status, access, access_by, acl, acl_by, current, dn, found, i, index, is_perfect_match, j, k, l, len, len1, len2, len3, len4, len5, len6, len7, line, m, match, n, not_found_acl, o, olcAccess, olcAccesses, old, operations, p, q, ref, ref1, ref2, ref3, ref4, stdout;
+  $status = false;
   // Get DN
   if (!config.dn) {
     log({
@@ -263,9 +263,9 @@ handler = async function({
     await this.ldap.modify(config, {
       operations: operations
     });
-    status = true;
+    $status = true;
   }
-  return status;
+  return $status;
 };
 
 // ## Exports

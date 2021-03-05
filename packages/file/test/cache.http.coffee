@@ -36,8 +36,8 @@ describe 'file.cache http', ->
     try
       srv = await server().listen()
       await nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.cache "http://localhost:#{srv.port}/my_file",
           cache_dir: "#{tmpdir}/my_cache_dir"
@@ -50,17 +50,17 @@ describe 'file.cache http', ->
     try
       srv = await server().listen()
       await nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.cache
           source: "http://localhost:#{srv.port}/my_file"
           cache_dir: "#{tmpdir}/my_cache_dir"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file.cache
           source: "http://localhost:#{srv.port}/my_file"
           cache_dir: "#{tmpdir}/my_cache_dir"
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/my_cache_dir/my_file"
     finally
@@ -70,13 +70,13 @@ describe 'file.cache http', ->
     try
       srv = await server().listen()
       await nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.cache
           source: "http://localhost:#{srv.port}/missing"
           cache_dir: "#{tmpdir}/cache_dir_1"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file.cache
           source: "http://localhost:#{srv.port}/missing"
           cache_dir: "#{tmpdir}/cache_dir_2"
@@ -91,8 +91,8 @@ describe 'file.cache http', ->
       try
         srv = await server().listen()
         await nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @log.fs
             basedir: tmpdir
@@ -104,7 +104,7 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/my_cache_file"
             md5: 'df8fede7ff71608e24a5576326e41c75'
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
             target: "#{tmpdir}/localhost.log"
             encoding: 'utf8'
@@ -116,8 +116,8 @@ describe 'file.cache http', ->
       try
         srv = await server().listen()
         await nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/my_cache_file"
@@ -126,7 +126,7 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/my_cache_file"
             md5: 'df8fede7ff71608e24a5576326e41c75'
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
       finally
         srv.close()
 
@@ -134,8 +134,8 @@ describe 'file.cache http', ->
       try
         srv = await server().listen()
         await nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file.cache
             source: "http://localhost:#{srv.port}/missing"
@@ -149,8 +149,8 @@ describe 'file.cache http', ->
       try
         srv = await server().listen()
         await nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @log.fs
             basedir: tmpdir
@@ -166,7 +166,7 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: true
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
             target: "#{tmpdir}/localhost.log"
             encoding: 'utf8'
@@ -175,7 +175,7 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: 'df8fede7ff71608e24a5576326e41c75'
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
             target: "#{tmpdir}/localhost.log"
             encoding: 'utf8'

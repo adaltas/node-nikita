@@ -18,46 +18,42 @@ describe 'lxd.cluster', ->
     
     it 'validate container.image', ->
       nikita.lxd.cluster
-        handler: (->)
-        config:
-          containers:
-            nikita_cluster: {}
+        containers:
+          nikita_cluster: {}
+      , (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       nikita.lxd.cluster
-        handler: (->)
-        config:
-          containers:
-            nikita_cluster:
-              image: 'images:centos/7'
+        containers:
+          nikita_cluster:
+            image: 'images:centos/7'
+      , (->)
       .should.be.fulfilled()
   
     it 'validate disk', ->
       # Source is invalid
       nikita.lxd.cluster
-        handler: (->)
-        config:
-          containers:
-            nikita_cluster:
-              image: 'images:centos/7'
-              disk:
-                nikitadir: true, path: '/nikita'
+        containers:
+          nikita_cluster:
+            image: 'images:centos/7'
+            disk:
+              nikitadir: true, path: '/nikita'
+      , (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       nikita.lxd.cluster
-        handler: (->)
-        config:
-          containers:
-            nikita_cluster:
-              image: 'images:centos/7'
-              disk:
-                nikitadir: source: '/nikita', path: '/nikita'
+        containers:
+          nikita_cluster:
+            image: 'images:centos/7'
+            disk:
+              nikitadir: source: '/nikita', path: '/nikita'
+      , (->)
       .should.be.fulfilled()
 
   they 'Create container with devices', ({ssh}) ->
     @timeout -1 # yum install take a lot of time
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register ['clean'], ->
         await @lxd.delete
@@ -109,16 +105,16 @@ describe 'lxd.cluster', ->
   they 'prepare ssh', ({ssh}) ->
     @timeout -1
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.delete
+        await @lxd.delete
           container: 'nikita-cluster-2'
           force: true
-        @lxd.network.delete
+        await @lxd.network.delete
           network: 'nktlxdprv'
       await registry.register 'test', ({config}) ->
-        @lxd.cluster
+        await @lxd.cluster
           networks:
             nktlxdprv:
               'ipv4.address': '192.0.2.5/30'
@@ -134,12 +130,13 @@ describe 'lxd.cluster', ->
                   ip: '192.0.2.6', netmask: '255.255.255.0'
               ssh:
                 enabled: config.enabled
-        @lxd.exec
+        await @lxd.exec
           container: 'nikita-cluster-2'
           command: '''
           echo > /dev/tcp/192.0.2.6/22
           '''
           code: if config.enabled then 0 else 1
+          shell: 'bash'
       try
         await @clean()
         await @test enabled: true

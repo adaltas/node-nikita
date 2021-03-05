@@ -14,21 +14,19 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Indicate modifications in the target file.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.file.yaml({
+// const {$status} = await nikita.file.yaml({
 //   content: {
 //     'my_key': 'my value'
 //   },
 //   target: '/tmp/my_file'
 // })
-// console.info(`Content was written: ${status}`)
+// console.info(`Content was written: ${$status}`)
 // ```
 
 // ## Schema

@@ -13,34 +13,34 @@ describe 'service.startup', ->
 
     they 'from service', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: true
-        status.should.be.true()
-        {status} = await @service
+        $status.should.be.true()
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: true
-        status.should.be.false()
-        {status} = await @service
+        $status.should.be.false()
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: false
-        status.should.be.true()
-        {status} = await @service
+        $status.should.be.true()
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: false
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'string argument', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
@@ -48,5 +48,5 @@ describe 'service.startup', ->
         @service.startup
           startup: false
           name: service.chk_name
-        {status} = await @service.startup service.chk_name
-        status.should.be.true()
+        {$status} = await @service.startup service.chk_name
+        $status.should.be.true()

@@ -11,12 +11,12 @@ describe 'service.restart', ->
 
   they 'should restart', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service
         name: service.name
       @service.start
         name: service.srv_name
-      {status} = await @service.restart
+      {$status} = await @service.restart
         name: service.srv_name
-      status.should.be.true()
+      $status.should.be.true()

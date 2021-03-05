@@ -6,19 +6,19 @@
 
 // ## Return
 
-// * `output.data` (string)   
+// * `data` (string)   
 //   The decoded data is type is provided or detected.
-// * `output.body` (string)   
+// * `body` (string)   
 //   The HTTP response body.
-// * `output.headers` ([string])   
+// * `headers` ([string])   
 //   The HTTP response headers.
-// * `output.http_version` ([string])   
+// * `http_version` ([string])   
 //   The HTTP response http_version, eg 'HTTP/1.1'.
-// * `output.status_code` (string)   
+// * `status_code` (string)   
 //   The HTTP response status code.
-// * `output.status_message` (string)   
+// * `status_message` (string)   
 //   The HTTP response status message.
-// * `output.type` (string)   
+// * `type` (string)   
 //   The format type if provided or detected, possible values is only "json" for now.
 
 // ## Error
@@ -27,9 +27,8 @@
 // them with `man 3 libcurl-errors`. For example:
 
 // ```js
-// try
-//   nikita.network.http({
-//     ssh: ssh,
+// try {
+//   await nikita.network.http({
 //     url: "http://2222:localhost"
 //   })
 // } catch (err) {
@@ -252,11 +251,11 @@ ${[
     }
   }
   await this.fs.chmod({
-    if: config.target && config.mode,
+    $if: config.target && config.mode,
     mode: config.mode
   });
   await this.fs.chown({
-    if: config.target && (config.uid != null) || (config.gid != null),
+    $if: config.target && (config.uid != null) || (config.gid != null),
     target: config.target,
     uid: config.uid,
     gid: config.gid

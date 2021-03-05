@@ -25,14 +25,14 @@ handlers =
     for condition in action.conditions.if_execute
       try
         {$status} = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            namespace: ['execute']
-          parent: action
-        , condition
+          $condition: true
+          $depth: action.metadata.depth
+          $namespace: ['execute']
+          $parent: action
+        ,
+          condition
         final_run = false unless $status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped
@@ -44,14 +44,14 @@ handlers =
     for condition in action.conditions.unless_execute
       try
         {$status} = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            namespace: ['execute']
-          parent: action
-        , condition
+          $condition: true
+          $depth: action.metadata.depth
+          $namespace: ['execute']
+          $parent: action
+        ,
+          condition
         final_run = false if $status
       catch err
         code_skipped = condition.code_skipped or condition.config?.code_skipped

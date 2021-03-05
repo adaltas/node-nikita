@@ -5,24 +5,22 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicate if a gem was fetch.   
+// * `$status`   
+//   Indicate if a gem was fetch.
 // * `filename`   
-//   Name of the gem file.   
+//   Name of the gem file.
 // * `filepath`   
-//   Path of the gem file.   
+//   Path of the gem file.
 
 // ## Example
 
 // ```js
-// const {status, filename, filepath} = await nikita.tools.rubygems.fetch({
+// const {$status, filename, filepath} = await nikita.tools.rubygems.fetch({
 //   name: 'json',
 //   version: '2.1.0',
 //   cwd: '/tmp/my_gems'
 // })
-// console.info(`Gem fetched: ${status}`)
+// console.info(`Gem fetched: ${$status}`)
 // ```
 
 // ## Implementation
@@ -59,7 +57,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var k, ref, status, stdout, v;
+  var $status, k, ref, stdout, v;
   // Global Options
   if (config.ruby == null) {
     config.ruby = {};
@@ -73,27 +71,25 @@ handler = async function({config}) {
   }
   // Get version
   if (!config.version) {
-    ({status, stdout} = (await this.execute({
+    ({$status, stdout} = (await this.execute({
+      $shy: true,
       command: `${config.gem_bin} specification ${config.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'`,
       cwd: config.cwd,
-      metadata: {
-        shy: true
-      },
       bash: config.bash
     })));
-    if (status) {
+    if ($status) {
       config.version = stdout.trim();
     }
   }
   config.target = `${config.name}-${config.version}.gem`;
   // Fetch package
-  ({status} = (await this.execute({
+  ({$status} = (await this.execute({
     command: `${config.gem_bin} fetch ${config.name} -v ${config.version}`,
     cwd: config.cwd,
     bash: config.bash
   })));
   return {
-    status: status,
+    $status: $status,
     filename: config.target,
     filepath: path.resolve(config.cwd, config.target)
   };

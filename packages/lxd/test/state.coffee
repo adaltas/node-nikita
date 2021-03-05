@@ -9,7 +9,7 @@ describe 'lxd.state', ->
       
   they 'Show instance state', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.delete
         container: 'u1'
@@ -17,14 +17,14 @@ describe 'lxd.state', ->
       await @lxd.init
         image: "images:#{images.alpine}"
         container: 'u1'
-      {status, config} = await @lxd.state
+      {$status, config} = await @lxd.state
         container: 'u1'
-      status.should.be.true()
+      $status.should.be.true()
       config.status.should.eql 'Stopped'
 
   they 'Instance not found', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.delete
         container: 'u1'

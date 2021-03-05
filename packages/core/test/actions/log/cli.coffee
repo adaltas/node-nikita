@@ -23,15 +23,15 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'h1', ->
-        @call metadata: header: 'h2a', ->
-        @call metadata: header: 'h2b', ->
-          @call metadata: header: 'h3', -> true
+      .call $header: 'h1', ->
+        @call $header: 'h2a', ->
+        @call $header: 'h2b', ->
+          @call $header: 'h3', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -45,16 +45,16 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'h1', ->
-        @call metadata: header: 'h2a', ->
+      .call $header: 'h1', ->
+        @call $header: 'h2a', ->
         @call  ->
           @call  ->
-            @call metadata: header: 'h2b', -> true
+            @call $header: 'h2b', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -67,13 +67,13 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'a', -> false
-      .call metadata: header: 'b', -> true
+      .call $header: 'a', -> false
+      .call $header: 'b', -> true
       .call ->
         data.should.eql [
           "#{host}   a   -\n"
@@ -84,13 +84,13 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'a', shy: false, -> true
-      .call metadata: header: 'b', shy: true, -> true
+      .call $header: 'a', $shy: false, -> true
+      .call $header: 'b', $shy: true, -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -102,7 +102,7 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
@@ -122,15 +122,15 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'a', -> true
-      .call metadata: header: 'b', disabled: false, -> true
-      .call metadata: header: 'c', disabled: true, -> true
-      .call metadata: header: 'd', -> true
+      .call $header: 'a', -> true
+      .call $header: 'b', $disabled: false, -> true
+      .call $header: 'c', $disabled: true, -> true
+      .call $header: 'd', -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -142,15 +142,15 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'a', -> true
-      .call if: true, metadata: header: 'b', -> true
-      .call if: false, metadata: header: 'c',  -> true
-      .call metadata: header: 'd', -> true
+      .call $header: 'a', -> true
+      .call $if: true, $header: 'b', -> true
+      .call $if: false, $header: 'c',  -> true
+      .call $header: 'd', -> true
       .call ->
         data.should.eql [
           "#{host}   a   ✔\n"
@@ -162,16 +162,16 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         depth_max: 2
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'h1', ->
-        @call metadata: header: 'h2a', -> false
-        @call metadata: header: 'h2b', ->
-          @call metadata: header: 'h3', -> false
+      .call $header: 'h1', ->
+        @call $header: 'h2a', -> false
+        @call $header: 'h2b', ->
+          @call $header: 'h3', -> false
       .call ->
         data.should.eql [
           "#{host}   h1 : h2a   -\n"
@@ -183,16 +183,16 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         divider: ' # '
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'h1', ->
-        @call metadata: header: 'h2a', ->
-        @call metadata: header: 'h2b', ->
-          @call metadata: header: 'h3', ->
+      .call $header: 'h1', ->
+        @call $header: 'h2a', ->
+        @call $header: 'h2b', ->
+          @call $header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}   h1 # h2a   -\n"
@@ -205,16 +205,16 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: false
         pad: {host: 14, header: 18}
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'h1', ->
-        @call metadata: header: 'h2a', ->
-        @call metadata: header: 'h2b', ->
-          @call metadata: header: 'h3', ->
+      .call $header: 'h1', ->
+        @call $header: 'h2a', ->
+        @call $header: 'h2b', ->
+          @call $header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}      h1 : h2a           -\n"
@@ -227,14 +227,14 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       nikita
-        ssh: ssh
+        $ssh: ssh
       .log.cli
         colors: true
         stream: new MyWritable data
         time: false
-      .call metadata: header: 'a', -> false
-      .call metadata: header: 'b', -> true
-      .call metadata: header: 'c', relax: true, -> throw Error 'ok'
+      .call $header: 'a', -> false
+      .call $header: 'b', -> true
+      .call $header: 'c', $relax: true, -> throw Error 'ok'
       .call ->
         data.should.eql [
           "\u001b[36m\u001b[2m#{host}   a   -\u001b[22m\u001b[39m\n"
@@ -245,15 +245,15 @@ describe 'actions.log.cli', ->
     they 'option time', ({ssh}) ->
       data = []
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @log.cli
           stream: new MyWritable data
           colors: false
-        @call metadata: header: 'h1', ->
+        @call $header: 'h1', ->
           @wait 100
-        @call metadata: header: 'h2', ->
-          @call metadata: header: 'h3', ->
+        @call $header: 'h2', ->
+          @call $header: 'h3', ->
             @wait 100
           @wait 100
         @call ->
@@ -267,13 +267,13 @@ describe 'actions.log.cli', ->
       data = []
       host = ssh?.host or 'localhost'
       await nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @log.cli
           colors: false
           stream: new MyWritable data
           time: false
-        @call metadata: header: 'h1', -> true
+        @call $header: 'h1', -> true
       data.should.eql [
         "#{host}   h1   ✔\n"
         "#{host}      ♥\n"
@@ -284,13 +284,13 @@ describe 'actions.log.cli', ->
       host = ssh?.host or 'localhost'
       try
         await nikita
-          ssh: ssh
+          $ssh: ssh
         , ->
           @log.cli
             colors: false
             stream: new MyWritable data
             time: false
-          @call metadata: header: 'h1', -> throw Error 'OK'
+          @call $header: 'h1', -> throw Error 'OK'
       catch err
       data.should.eql [
         "#{host}   h1   ✘\n"

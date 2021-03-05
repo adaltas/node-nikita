@@ -11,7 +11,7 @@ describe 'db.schema.list postgres', ->
 
   they 'list', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       db: db.postgresql
     , ->
       # Clean
@@ -26,15 +26,13 @@ describe 'db.schema.list postgres', ->
         database: 'db_schema_list_0_db'
       # Without a user
       @db.schema
-        config:
-          database: 'db_schema_list_0_db'
-          schema: 'db_schema_list_0_sch_0'
+        database: 'db_schema_list_0_db'
+        schema: 'db_schema_list_0_sch_0'
       # With a user
       @db.schema
-        config:
-          database: 'db_schema_list_0_db'
-          schema: 'db_schema_list_0_sch_1'
-          owner: 'db_schema_list_0_usr'
+        database: 'db_schema_list_0_db'
+        schema: 'db_schema_list_0_sch_1'
+        owner: 'db_schema_list_0_usr'
       # Test
       {schemas} = await @db.schema.list 'db_schema_list_0_db'
       schemas.should.eql [

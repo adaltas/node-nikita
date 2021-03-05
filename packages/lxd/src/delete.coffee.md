@@ -6,10 +6,10 @@ Delete a Linux Container using lxd.
 ## Example
 
 ```js
-const {status} = await nikita.lxd.delete({
+const {$status} = await nikita.lxd.delete({
   container: "myubuntu"
 })
-console.info(`Container was deleted: ${status}`)
+console.info(`Container was deleted: ${$status}`)
 ```
 
 ## Schema

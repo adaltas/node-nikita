@@ -8,12 +8,12 @@ BLOB based database.
 ## Example
 
 ```js
-const {status} = await nikita.tools.dconf({
+const {$status} = await nikita.tools.dconf({
   properties: {
     '/org/gnome/desktop/datetime/automatic-timezone': 'true'
   }
 });
-console.info(`Property was modified: ${status}`)
+console.info(`Property was modified: ${$status}`)
 ```
 
 ## Note

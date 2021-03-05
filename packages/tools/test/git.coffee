@@ -9,25 +9,25 @@ describe 'tools.git', ->
 
   they 'clones repo into new dir', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
         target: "#{tmpdir}"
-      {status} = await @tools.git
+      {$status} = await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
-      status.should.be.true()
-      {status} = await @tools.git
+      $status.should.be.true()
+      {$status} = await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'honores revision', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
@@ -35,21 +35,21 @@ describe 'tools.git', ->
       @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
-      {status} = await @tools.git
+      {$status} = await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
         revision: 'v0.0.1'
-      status.should.be.true()
-      {status} = await @tools.git
+      $status.should.be.true()
+      {$status} = await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
         revision: 'v0.0.1'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'preserves existing directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"

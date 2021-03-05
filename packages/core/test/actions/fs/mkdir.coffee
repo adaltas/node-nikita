@@ -10,8 +10,8 @@ describe 'actions.fs.mkdir', ->
 
   they 'argument', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_dir"
       {stats} = await @fs.base.stat "#{tmpdir}/a_dir"
@@ -19,8 +19,8 @@ describe 'actions.fs.mkdir', ->
 
   they 'status', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_dir"
       .should.be.finally.containEql $status: true
@@ -29,8 +29,8 @@ describe 'actions.fs.mkdir', ->
     
   they 'should create dir recursively', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_parent_dir/a_dir"
       .should.be.finally.containEql $status: true
@@ -41,8 +41,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'true set default system permissions', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_parent_dir/a_dir_2"
@@ -55,8 +55,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'object set custom permissions', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_parent_dir/a_dir_1"
@@ -73,8 +73,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'should stop when `exclude` match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         source = "#{tmpdir}/a_parent_dir/a_dir/do_not_create_this"
         @fs.mkdir
@@ -91,8 +91,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'should honore `cwd` for relative paths', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: './a_dir'
@@ -106,8 +106,8 @@ describe 'actions.fs.mkdir', ->
     they 'change mode as string', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
@@ -119,8 +119,8 @@ describe 'actions.fs.mkdir', ->
     they 'change mode as octal', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
@@ -132,8 +132,8 @@ describe 'actions.fs.mkdir', ->
     they 'detect a permission change', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
@@ -149,8 +149,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'dont ovewrite permission', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/a_dir"
@@ -167,7 +167,7 @@ describe 'actions.fs.mkdir', ->
     they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @fs.mkdir
           target: "download_test"
@@ -182,8 +182,8 @@ describe 'actions.fs.mkdir', ->
 
     they 'target exist but is not a directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -204,8 +204,8 @@ describe 'system.mkdir options uid/gid', ->
 
   they 'change owner uid/gid on creation', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @execute """
       userdel 'toto'; groupdel 'toto'

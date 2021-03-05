@@ -5,9 +5,7 @@ Backup a file, a directory or the output of a command.
 
 ## Output
 
-* `err` (Error)   
-  Error object if any.   
-* `status`  (boolean)   
+* `$status`  (boolean)   
   Value is "true" if backup was created.   
 * `base_dir` (string)   
 * `name` (string)   
@@ -19,7 +17,7 @@ Backup a file, a directory or the output of a command.
 Backup a directory:
 
 ```js
-const {status} = await nikita.tools.backup({
+const {$status} = await nikita.tools.backup({
   name: 'my_backup',
   source: '/etc',
   target: '/tmp/backup',
@@ -31,7 +29,7 @@ const {status} = await nikita.tools.backup({
   //  age: month: 2
   // }
 })
-console.info(`File was backed up: ${status}`)
+console.info(`File was backed up: ${$status}`)
 ```
 
 ## Schema

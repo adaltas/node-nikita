@@ -5,10 +5,7 @@
 
 // ## Output parameters
 
-// * `err`
-//   Error object if any.
-// * `result.status` (boolean)
-// * `result.config` (object)   
+// * `config` (object)   
 //   Current state of the instance.
 
 // ## Example

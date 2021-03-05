@@ -10,8 +10,8 @@ describe 'actions.fs.base.rmdir', ->
 
   they 'dir is removed', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -23,8 +23,8 @@ describe 'actions.fs.base.rmdir', ->
 
   they 'config recursive false, default', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -38,8 +38,8 @@ describe 'actions.fs.base.rmdir', ->
 
   they 'config recursive true', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -55,8 +55,8 @@ describe 'actions.fs.base.rmdir', ->
 
   they 'NIKITA_FS_RMDIR_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.rmdir
         target: "{{parent.metadata.tmpdir}}/missing"

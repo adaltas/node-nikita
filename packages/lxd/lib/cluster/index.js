@@ -189,13 +189,9 @@ handler = async function({config}) {
   for (networkName in ref) {
     networkProperties = ref[networkName];
     await this.lxd.network({
-      metadata: {
-        header: `Network ${networkName}`
-      },
-      config: {
-        network: networkName,
-        properties: networkProperties
-      }
+      $header: `Network ${networkName}`,
+      network: networkName,
+      properties: networkProperties
     });
   }
   ref1 = config.containers;
@@ -203,31 +199,21 @@ handler = async function({config}) {
   for (containerName in ref1) {
     containerConfig = ref1[containerName];
     await this.call({
-      metadata: {
-        header: `Container ${containerName}`
-      }
+      $header: `Container ${containerName}`
     }, async function() {
       var configDisk, configNic, configProxy, configUser, deviceName, ref2, ref3, ref4, ref5, ref6, results, userName;
       // Set configuration
       await this.lxd.init({
-        metadata: {
-          header: 'Init'
-        },
-        config: {
-          container: containerName,
-          image: containerConfig.image
-        }
+        $header: 'Init',
+        container: containerName,
+        image: containerConfig.image
       });
       // Set config
       if (containerConfig != null ? containerConfig.properties : void 0) {
         await this.lxd.config.set({
-          metadata: {
-            header: 'Properties'
-          },
-          config: {
-            container: containerName,
-            properties: containerConfig.properties
-          }
+          $header: 'Properties',
+          container: containerName,
+          properties: containerConfig.properties
         });
       }
       ref2 = containerConfig.disk;
@@ -235,15 +221,11 @@ handler = async function({config}) {
       for (deviceName in ref2) {
         configDisk = ref2[deviceName];
         await this.lxd.config.device({
-          metadata: {
-            header: `Device ${deviceName} disk`
-          },
-          config: {
-            container: containerName,
-            device: deviceName,
-            type: 'disk',
-            properties: configDisk
-          }
+          $header: `Device ${deviceName} disk`,
+          container: containerName,
+          device: deviceName,
+          type: 'disk',
+          properties: configDisk
         });
       }
       ref3 = containerConfig.nic;
@@ -253,32 +235,24 @@ handler = async function({config}) {
         // note: `confignic.config.parent` is not required for each type
         // throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
         await this.lxd.config.device({
-          metadata: {
-            header: `Device ${deviceName} nic`
-          },
-          config: {
-            container: containerName,
-            device: deviceName,
-            type: 'nic',
-            properties: utils.object.filter(configNic, ['ip', 'netmask'])
-          }
+          $header: `Device ${deviceName} nic`,
+          container: containerName,
+          device: deviceName,
+          type: 'nic',
+          properties: utils.object.filter(configNic, ['ip', 'netmask'])
         });
         if (configNic.ip) {
           await this.lxd.file.push({
-            metadata: {
-              header: `ifcfg ${deviceName}`
-            },
-            config: {
-              container: containerName,
-              target: `/etc/sysconfig/network-scripts/ifcfg-${deviceName}`,
-              content: `NM_CONTROLLED=yes
+            $header: `ifcfg ${deviceName}`,
+            container: containerName,
+            target: `/etc/sysconfig/network-scripts/ifcfg-${deviceName}`,
+            content: `NM_CONTROLLED=yes
 BOOTPROTO=none
 ONBOOT=yes
 IPADDR=${configNic.ip}
 NETMASK=${configNic.netmask}
 DEVICE=${deviceName}
 PEERDNS=no`
-            }
           });
         }
       }
@@ -289,22 +263,16 @@ PEERDNS=no`
         // todo: add host detection and port forwarding to VirtualBox
         // VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
         await this.lxd.config.device({
-          metadata: {
-            header: `Device ${deviceName} proxy`
-          },
-          config: {
-            container: containerName,
-            device: deviceName,
-            type: 'proxy',
-            properties: configProxy
-          }
+          $header: `Device ${deviceName} proxy`,
+          container: containerName,
+          device: deviceName,
+          type: 'proxy',
+          properties: configProxy
         });
       }
       // Start container
       await this.lxd.start({
-        metadata: {
-          header: 'Start'
-        },
+        $header: 'Start',
         container: containerName
       });
       // Wait until container is running
@@ -313,16 +281,15 @@ PEERDNS=no`
       });
       await this.network.tcp.wait({
         host: 'linuxfoundation.org',
-        port: 80
+        port: 80,
+        interval: 2000,
+        timeout: 10000
       });
-      // timeout: 5000
-      // Not sure why openssl is required
+      // Openssl is required by the `lxd.file.push` action
       await this.lxd.exec({
-        metadata: {
-          header: 'OpenSSL',
-          retry: 10,
-          sleep: 5000
-        },
+        $header: 'OpenSSL',
+        // $retry: 10
+        // $sleep: 5000
         container: containerName,
         command: `if command -v yum >/dev/null 2>&1; then
   yum -y install openssl
@@ -337,9 +304,7 @@ command -v openssl`,
       // Enable SSH
       if ((ref5 = containerConfig.ssh) != null ? ref5.enabled : void 0) {
         await this.lxd.exec({
-          metadata: {
-            header: 'SSH'
-          },
+          $header: 'SSH',
           container: containerName,
           command: `# systemctl status sshd
 # yum install -y openssh-server
@@ -366,14 +331,10 @@ systemctl enable sshd`,
       for (userName in ref6) {
         configUser = ref6[userName];
         results.push((await this.call({
-          metadata: {
-            header: `User ${userName}`
-          }
+          $header: `User ${userName}`
         }, async function() {
           await this.lxd.exec({
-            metadata: {
-              header: 'Create'
-            },
+            $header: 'Create',
             container: containerName,
             command: `id ${userName} && exit 42
 useradd --create-home --system ${userName}
@@ -385,10 +346,8 @@ chmod 700 /home/${userName}/.ssh`,
           });
           // Enable sudo access
           await this.lxd.exec({
-            if: configUser.sudo,
-            metadata: {
-              header: 'Sudo'
-            },
+            $if: configUser.sudo,
+            $header: 'Sudo',
             container: containerName,
             command: `yum install -y sudo
 command -v sudo
@@ -399,10 +358,8 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
           });
           // Add SSH public key to authorized_keys file
           return (await this.lxd.file.push({
-            if: configUser.authorized_keys,
-            metadata: {
-              header: 'Authorize'
-            },
+            $if: configUser.authorized_keys,
+            $header: 'Authorize',
             container: containerName,
             gid: `${userName}`,
             uid: `${userName}`,
@@ -424,9 +381,8 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
     for (containerName in ref2) {
       containerConfig = ref2[containerName];
       results.push((await this.call({
-        container: containerName,
-        config: containerConfig
-      }, config.provision_container)));
+        container: containerName
+      }, containerConfig, config.provision_container)));
     }
     return results;
   }

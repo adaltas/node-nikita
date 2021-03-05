@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was pulled.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.pause({
+// const {$status} = await nikita.docker.pause({
 //   container: 'toto'
 // })
-// console.info(`Container was paused: ${status}`)
+// console.info(`Container was paused: ${$status}`)
 // ```
 
 // ## Schema

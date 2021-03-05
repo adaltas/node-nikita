@@ -5,19 +5,17 @@ Initialize a Linux Container with given image name, container name and config.
 
 ## Output
 
-* `err`
-  Error object if any
-* `info.status`
+* `$status`
   Was the container successfully created
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.init({
+const {$status} = await nikita.lxd.init({
   image: "ubuntu:18.04",
   container: "my_container"
 })
-console.info(`Container was created: ${status}`)
+console.info(`Container was created: ${$status}`)
 ```
 
 ## Implementation details

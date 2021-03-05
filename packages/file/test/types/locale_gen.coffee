@@ -9,8 +9,8 @@ describe 'file.types.locale_gen', ->
 
   they 'activate locales', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
@@ -22,11 +22,11 @@ describe 'file.types.locale_gen', ->
         #fr_FR ISO-8859-1
         #es_ES.UTF-8 UTF-8
         """
-      {status} = await @file.types.locale_gen
+      {$status} = await @file.types.locale_gen
         target: "#{tmpdir}/etc/locale.gen"
         locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
         generate: false
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: """
@@ -40,8 +40,8 @@ describe 'file.types.locale_gen', ->
 
   they 'desactivate locales', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
@@ -53,11 +53,11 @@ describe 'file.types.locale_gen', ->
         fr_FR ISO-8859-1
         es_ES.UTF-8 UTF-8
         """
-      {status} = await @file.types.locale_gen
+      {$status} = await @file.types.locale_gen
         target: "#{tmpdir}/etc/locale.gen"
         locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
         generate: false
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: """
@@ -71,17 +71,17 @@ describe 'file.types.locale_gen', ->
 
   they 'rootdir with default target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/etc/locale.gen"
         content: "#en_US.UTF-8 UTF-8"
-      {status} = await @file.types.locale_gen
+      {$status} = await @file.types.locale_gen
         rootdir: "#{tmpdir}"
         locales: ['en_US.UTF-8']
         generate: false
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: "en_US.UTF-8 UTF-8"

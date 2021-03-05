@@ -11,7 +11,7 @@ describe 'system.authconfig', ->
     # Note, after authconfig package installation,
     # the configuration file exists and is empty
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       # Init
       @system.authconfig
@@ -19,27 +19,27 @@ describe 'system.authconfig', ->
         properties:
           mkhomedir: true
       # Change to negative
-      {status} = await @system.authconfig
+      {$status} = await @system.authconfig
         target: '/etc/sysconfig/authconfig'
         properties: {
           mkhomedir: false
         }
-      status.should.be.true()
+      $status.should.be.true()
       # Preserve negative
-      {status} = await @system.authconfig
+      {$status} = await @system.authconfig
         target: '/etc/sysconfig/authconfig'
         properties:
           mkhomedir: false
-      status.should.be.false()
+      $status.should.be.false()
       # Change to positive
-      {status} = await @system.authconfig
+      {$status} = await @system.authconfig
         target: '/etc/sysconfig/authconfig'
         properties:
           mkhomedir: true
-      status.should.be.true()
-      {status} = await @system.authconfig
+      $status.should.be.true()
+      {$status} = await @system.authconfig
         target: '/etc/sysconfig/authconfig'
         properties:
           mkhomedir: true
-      status.should.be.false()
+      $status.should.be.false()
     

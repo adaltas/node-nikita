@@ -11,23 +11,23 @@ describe 'service.status', ->
   
   they 'store status', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service
         name: service.name
       @service.stop
         name: service.srv_name
-      {status} = await @service.status
+      {$status} = await @service.status
         name: service.srv_name
-      status.should.be.false()
+      $status.should.be.false()
       @service.start
         name: service.srv_name
-      {status} = await @service.status
+      {$status} = await @service.status
         name: service.srv_name
-      status.should.be.true()
+      $status.should.be.true()
       @service.stop
         name: service.srv_name
-      {status} = await @service.status
+      {$status} = await @service.status
         name: service.name
         srv_name: service.srv_name
-      status.should.be.false()
+      $status.should.be.false()

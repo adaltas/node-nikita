@@ -16,21 +16,20 @@ describe 'tools.dconf', ->
   
   they 'set single config', ({env, ssh}) ->
     nikita
-      ssh: ssh
-      env: env
+      $ssh: ssh
+      $env: env
     , ->
       await @tools.dconf
-        debug: true
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
-      {status} = await @tools.dconf
+      {$status} = await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': true
-      status.should.be.true()
-      {status} = await @tools.dconf
+      $status.should.be.true()
+      {$status} = await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': true
-      status.should.be.false()
+      $status.should.be.false()
       await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
         content: 'true'
@@ -38,28 +37,28 @@ describe 'tools.dconf', ->
   
   they 'set multiple configs', ({env, ssh}) ->
     nikita
-      ssh: ssh
-      env: env
+      $ssh: ssh
+      $env: env
     , ->
       await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
           '/org/gnome/desktop/peripherals/touchpad/click-method': 1
-      {status} = await @tools.dconf
+      {$status} = await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': true
           '/org/gnome/desktop/peripherals/touchpad/click-method': 2
-      status.should.be.true()
-      {status} = await @tools.dconf
+      $status.should.be.true()
+      {$status} = await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
           '/org/gnome/desktop/peripherals/touchpad/click-method': 2
-      status.should.be.true()
-      {status} = await @tools.dconf
+      $status.should.be.true()
+      {$status} = await @tools.dconf
         properties:
           '/org/gnome/desktop/datetime/automatic-timezone': false
           '/org/gnome/desktop/peripherals/touchpad/click-method': 2
-      status.should.be.false()
+      $status.should.be.false()
       await @execute.assert
         command: 'dconf read /org/gnome/desktop/datetime/automatic-timezone'
         content: 'false'

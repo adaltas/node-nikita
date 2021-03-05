@@ -69,17 +69,17 @@ describe 'tools.cron.add', ->
 
     they 'add a job', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service 'cronie'
-        {status} = await @tools.cron.add
+        {$status} = await @tools.cron.add
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
-        status.should.be.true()
-        {status} = await @tools.cron.add
+        $status.should.be.true()
+        {$status} = await @tools.cron.add
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
-        status.should.be.false()
+        $status.should.be.false()
         @tools.cron.remove
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
@@ -88,15 +88,15 @@ describe 'tools.cron.add', ->
 
       they 'regexp', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
         , ->
           @service 'cronie'
-          {status} = await @tools.cron.add
+          {$status} = await @tools.cron.add
             command: "/bin/true #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
-          status.should.be.true()
-          {status} = await @tools.cron.add
+          $status.should.be.true()
+          {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: /.*bin.*/
@@ -105,27 +105,27 @@ describe 'tools.cron.add', ->
                 { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
                 { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
               ]
-          status.should.be.true()
-          {status} = await @tools.cron.add
+          $status.should.be.true()
+          {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: /.*bin.*/
-          status.should.be.false()
+          $status.should.be.false()
           @tools.cron.remove
             command: "/bin/false #{rand}"
             when: '0 * * * *'
 
       they 'string', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
         , ->
           @service 'cronie'
-          {status} = await @tools.cron.add
+          {$status} = await @tools.cron.add
             command: "/bin/true #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
-          status.should.be.true()
-          {status} = await @tools.cron.add
+          $status.should.be.true()
+          {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
@@ -134,12 +134,12 @@ describe 'tools.cron.add', ->
                 { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
                 { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
               ]
-          status.should.be.true()
-          {status} = await @tools.cron.add
+          $status.should.be.true()
+          {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
-          status.should.be.false()
+          $status.should.be.false()
           @tools.cron.remove
             command: "/bin/false #{rand}"
             when: '0 * * * *'
@@ -148,7 +148,7 @@ describe 'tools.cron.add', ->
 
       they 'invalid job: invalid command to exec', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
         , ->
           @service 'cronie'
           @tools.cron.add

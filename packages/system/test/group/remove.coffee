@@ -9,12 +9,12 @@ describe 'system.group.remove', ->
   
   they 'handle status', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @system.user.remove 'toto'
       @system.group.remove 'toto'
       @system.group 'toto'
-      {status} = await @system.group.remove 'toto'
-      status.should.be.true()
-      {status} = await @system.group.remove 'toto'
-      status.should.be.false()
+      {$status} = await @system.group.remove 'toto'
+      $status.should.be.true()
+      {$status} = await @system.group.remove 'toto'
+      $status.should.be.false()

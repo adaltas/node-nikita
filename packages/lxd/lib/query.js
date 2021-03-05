@@ -6,11 +6,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.init({
+// const {$status} = await nikita.lxd.init({
 //   image: "ubuntu:18.04",
 //   container: "my_container"
 // })
-// console.info(`Container was created: ${status}`)
+// console.info(`Container was created: ${$status}`)
 // ```
 
 // ## TODO
@@ -46,7 +46,7 @@ handler = async function({config}) {
     command: ['lxc', 'query', config.path].join(' ')
   })));
   return {
-    status: true,
+    $status: true,
     data: JSON.parse(stdout)
   };
 };

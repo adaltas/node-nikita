@@ -9,8 +9,8 @@ describe 'tools.npm.list', ->
 
   they 'option `cwd`', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.npm.uninstall
         name: 'csv-parse'
@@ -24,7 +24,7 @@ describe 'tools.npm.list', ->
 
   they 'option `global`', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @tools.npm.uninstall
         name: 'csv-parse'

@@ -9,10 +9,10 @@ describe 'file.types.krb5_conf', ->
 
   they 'write content (default MIT Kerberos file)', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @file.types.krb5_conf
+      {$status} = await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
         content:
           'logging':
@@ -38,7 +38,7 @@ describe 'file.types.krb5_conf', ->
               'forwardable': true
               'krb4_convert': false
           'dbmodules': {}
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/krb5.conf"
         content: """
@@ -78,8 +78,8 @@ describe 'file.types.krb5_conf', ->
 
   they 'merge content (default FreeIPA file)', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
@@ -95,20 +95,20 @@ describe 'file.types.krb5_conf', ->
             'udp_preference_limit': 0
             'default_ccache_name': 'KEYRING:persistent:%{uid}'
           'domain_realm': {}
-      {status} = await @file.types.krb5_conf
+      {$status} = await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
         content:
           'libdefaults':
             'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
         merge: true
-      status.should.be.true()
-      {status} = await @file.types.krb5_conf
+      $status.should.be.true()
+      {$status} = await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
         content:
           'libdefaults':
             'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
         merge: true
-      status.should.be.false()
+      $status.should.be.false()
       @fs.assert
         target: "#{tmpdir}/krb5.conf"
         content: """
@@ -130,8 +130,8 @@ describe 'file.types.krb5_conf', ->
   
   they 'test depth 2 curly braket', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/krb5.conf"

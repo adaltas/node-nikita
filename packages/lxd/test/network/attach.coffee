@@ -9,7 +9,7 @@ describe 'lxd.network.attach', ->
 
   they 'Attach a network to a container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
         @lxd.delete
@@ -24,16 +24,16 @@ describe 'lxd.network.attach', ->
           container: 'u0'
         @lxd.network
           network: "testnet0"
-        {status} = await @lxd.network.attach
+        {$status} = await @lxd.network.attach
           network: "testnet0"
           container: "u0"
-        status.should.be.true()
+        $status.should.be.true()
       finally
         @clean()
 
   they 'Network already attached', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
         @lxd.delete
@@ -51,9 +51,9 @@ describe 'lxd.network.attach', ->
         @lxd.network.attach
           network: "testnet0"
           container: "u0"
-        {status} = await @lxd.network.attach
+        {$status} = await @lxd.network.attach
           network: "testnet0"
           container: "u0"
-        status.should.be.false()
+        $status.should.be.false()
       finally
         @clean()

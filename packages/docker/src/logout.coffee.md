@@ -7,7 +7,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
 * `err`   
   Error object if any.   
-* `status`   
+* `$status`   
   True if logout.
 
 ## Schema

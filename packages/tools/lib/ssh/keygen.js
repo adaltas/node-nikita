@@ -70,7 +70,7 @@ handler = async function({
     target: `${path.dirname(config.target)}`
   });
   return (await this.execute({
-    unless_exists: `${config.target}`,
+    $unless_exists: `${config.target}`,
     command: [
       'ssh-keygen',
       "-q", // Silence

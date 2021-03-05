@@ -5,19 +5,17 @@ Detach a network from a container.
 
 ## Output
 
-* `err`
-  Error object if any
-* `status`
+* `$status`
   True if the network was detached
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.network.detach({
+const {$status} = await nikita.lxd.network.detach({
   network: 'network0',
   container: 'container1'
 })
-console.info(`Network was detached: ${status}`)
+console.info(`Network was detached: ${$status}`)
 ```
 
 ## Schema

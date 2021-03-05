@@ -24,32 +24,32 @@ describe 'file.download url', ->
     @timeout 100000
     # Download a non existing file
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.download
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/download"
         content: /okay/
       @file.download # Download on an existing file
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false
 
   they 'should chmod', ({ssh}) ->
     @timeout 10000
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.download
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download_test"
         mode: 0o0770
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/download_test"
         mode: 0o0770
@@ -60,15 +60,15 @@ describe 'file.download url', ->
       @timeout 100000
       # Download a non existing file
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           cache: true
           cache_file: "#{tmpdir}/cache_file"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/cache_file"
           content: /okay/
@@ -80,17 +80,17 @@ describe 'file.download url', ->
       @timeout 100000
       # Download a non existing file
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
         cache_file: "{{metadata.tmpdir}}/cache_file"
       , ({metadata: {tmpdir}}) ->
         @file.download
-          ssh: ssh
+          $ssh: ssh
           source: 'http://localhost:12345'
           target: "#{tmpdir}/download"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
-          ssh: null
+          $ssh: null
           target: "#{tmpdir}/cache_file"
           content: 'okay'
 
@@ -98,25 +98,25 @@ describe 'file.download url', ->
       @timeout 100000
       # Download a non existing file
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
-          ssh: ssh
+          $ssh: ssh
           source: 'http://localhost:12345'
           target: "#{tmpdir}/download"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
-          ssh: null
+          $ssh: null
           target: "#{tmpdir}/cache_dir/localhost:12345"
 
   describe 'md5', ->
 
     they 'use shortcircuit if target match md5', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir
@@ -128,7 +128,7 @@ describe 'file.download url', ->
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -136,8 +136,8 @@ describe 'file.download url', ->
 
     they 'bypass shortcircuit if target dont match md5', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: "not okay"
@@ -146,7 +146,7 @@ describe 'file.download url', ->
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/target"
           content: /okay/
@@ -154,8 +154,8 @@ describe 'file.download url', ->
     they 'check signature on downloaded file', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           md5: '2f74dbbee4142b7366c93b115f914fff'
@@ -166,20 +166,20 @@ describe 'file.download url', ->
     they 'count 1 if new file has correct checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        metadata: tmpdir: true
-        ssh: ssh
+        $tmpdir: true
+        $ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
           md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
 
     they 'count 0 if a file exist with same checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        metadata: tmpdir: true
-        ssh: ssh
+        $tmpdir: true
+        $ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: 'http://localhost:12345'
@@ -188,15 +188,15 @@ describe 'file.download url', ->
           md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
       
   describe 'error', ->
 
     they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
-        metadata: tmpdir: true
-        ssh: ssh
+        $tmpdir: true
+        $ssh: ssh
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "http://localhost/sth"

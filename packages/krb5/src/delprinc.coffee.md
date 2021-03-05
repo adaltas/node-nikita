@@ -6,7 +6,7 @@ Remove a Kerberos principal and optionally its keytab.
 ## Example
 
 ```js
-const {status} = await nikita.krb5.delrinc({
+const {$status} = await nikita.krb5.delrinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   admin: {
@@ -15,7 +15,7 @@ const {status} = await nikita.krb5.delrinc({
     server: 'localhost'
   }
 })
-console.info(`Principal was removed: ${status}`)
+console.info(`Principal was removed: ${$status}`)
 ```
 
 ## Schema
@@ -49,12 +49,12 @@ console.info(`Principal was removed: ${status}`)
       config.realm ?= config.admin.principal.split('@')[1] if /.*@.*/.test config.admin.principal
       config.principal = "#{config.principal}@#{config.realm}" unless /^\S+@\S+$/.test config.principal
       # Prepare commands
-      {status} = await @krb5.execute
+      {$status} = await @krb5.execute
+        $shy: true
         admin: config.admin
         command: "getprinc #{config.principal}"
         grep: new RegExp "^.*#{utils.regexp.escape config.principal}$"
-        metadata: shy: true
-      if status
+      if $status
         await  @krb5.execute
           admin: config.admin
           command: "delprinc -force #{config.principal}"

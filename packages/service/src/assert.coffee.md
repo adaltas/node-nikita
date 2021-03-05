@@ -17,8 +17,10 @@ to "['start', 'restart']" to ensure the service will be always started.
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot_rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'installed':
           type: 'boolean'
           description: """
@@ -26,8 +28,6 @@ to "['start', 'restart']" to ensure the service will be always started.
           """
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
         'srv_name':
           type: 'string'
           description: """
@@ -54,6 +54,7 @@ to "['start', 'restart']" to ensure the service will be always started.
       if config.installed?
         try
           await @execute
+            $shy: true
             command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n" | grep '^#{config.name.join '|'}$'
@@ -66,11 +67,10 @@ to "['start', 'restart']" to ensure the service will be always started.
               exit 2
             fi
             """
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
+            # arch_chroot: config.arch_chroot
+            # arch_chroot_rootdir: config.arch_chroot_rootdir
             stdin_log: true
             stdout_log: false
-            metadata: shy: true
         catch err
           throw Error "Unsupported Package Manager" if err.exit_code is 2
           throw Error "Uninstalled Package: #{config.name}"
@@ -78,7 +78,7 @@ to "['start', 'restart']" to ensure the service will be always started.
       # Note, this doesnt check wether a service is installed or not.
       return unless config.started? or config.stopped?
       try
-        {status} = await @execute
+        {$status} = await @execute
           command: """
             ls \
               /lib/systemd/system/*.service \
@@ -98,16 +98,16 @@ to "['start', 'restart']" to ensure the service will be always started.
             """
           code: 0
           code_skipped: 3
-          arch_chroot: config.arch_chroot
-          rootdir: config.rootdir
+          # arch_chroot: config.arch_chroot
+          # arch_chroot_rootdir: config.arch_chroot_rootdir
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
       if config.started?
-        throw Error "Service Not Started: #{config.srv_name}" if config.started and not status
-        throw Error "Service Started: #{config.srv_name}" if not config.started and status
+        throw Error "Service Not Started: #{config.srv_name}" if config.started and not $status
+        throw Error "Service Started: #{config.srv_name}" if not config.started and $status
       if config.stopped?
-        throw Error "Service Not Stopped: #{config.srv_name}" if config.stopped and status
-        throw Error "Service Stopped: #{config.srv_name}" if not config.stopped and not status
+        throw Error "Service Not Stopped: #{config.srv_name}" if config.stopped and $status
+        throw Error "Service Stopped: #{config.srv_name}" if not config.stopped and not $status
 
 ## Export
 

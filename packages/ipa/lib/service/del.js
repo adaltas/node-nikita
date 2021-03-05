@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.service.del({
+// const {$status} = await nikita.ipa.service.del({
 //   principal: "myprincipal/my.domain.com",
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Service was deleted: ${status}`)
+// console.info(`Service was deleted: ${$status}`)
 // ```
 
 // ## Schema
@@ -38,18 +38,16 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, status;
+  var $status, base;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
-  ({status} = (await this.ipa.service.exists({
+  ({$status} = (await this.ipa.service.exists({
+    $shy: false,
     connection: config.connection,
-    metadata: {
-      shy: false
-    },
     principal: config.principal
   })));
-  if (!status) {
+  if (!$status) {
     return;
   }
   return (await this.network.http(config.connection, {

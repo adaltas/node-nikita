@@ -55,6 +55,9 @@ handler = async function({config}) {
     code_skipped: [1]
   });
   return (await this.docker.tools.execute({
+    $if: function({parent}) {
+      return parent.parent.tools.status(-1);
+    },
     command: [
       'rmi',
       ['force',
@@ -66,10 +69,7 @@ handler = async function({config}) {
       }),
       ` ${config.image}`,
       config.tag != null ? `:${config.tag}` : void 0
-    ].join(''),
-    if: function({parent}) {
-      return parent.parent.tools.status(-1);
-    }
+    ].join('')
   }));
 };
 

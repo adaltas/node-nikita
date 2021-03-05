@@ -9,7 +9,7 @@ describe 'lxd.goodie.prlimit', ->
 
   they 'stdout', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'

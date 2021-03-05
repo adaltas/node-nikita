@@ -6,7 +6,7 @@
 Merge the destination file with user provided content.
 
 ```js
-const {status} = await nikita.file.json({
+const {$status} = await nikita.file.json({
   target: "/path/to/target.json",
   content: { preferences: { colors: 'blue' } },
   transform: function(data){
@@ -16,7 +16,7 @@ const {status} = await nikita.file.json({
   merge: true,
   pretty: true
 })
-console.info(`File was merged: ${status}`)
+console.info(`File was merged: ${$status}`)
 ```
 
 ## Hooks
@@ -87,8 +87,8 @@ console.info(`File was merged: ${status}`)
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.source
         {data} = await @fs.base.readFile
-          ssh: if config.local then false else undefined
-          sudo: if config.local then false else undefined
+          $ssh: false if config.local
+          $sudo: false if config.local
           target: config.source
           encoding: 'utf8'
         config.content = merge JSON.parse(data), config.content

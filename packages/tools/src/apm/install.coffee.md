@@ -34,8 +34,8 @@ Install Atom packages with APM.
       installed = []
       # Note, cant see a difference between update and upgrade after printing help
       {stdout} = await @execute
+        $shy: true
         command: "apm outdated --json"
-        metadata: shy: true
       pkgs = JSON.parse stdout
       outdated = pkgs.map (pkg) -> pkg.name.toLowerCase()
       if config.upgrade and outdated.length
@@ -43,8 +43,8 @@ Install Atom packages with APM.
           command: "apm upgrade --no-confirm"
         outdated = []
       {stdout} = await @execute
+        $shy: true
         command: "apm list --installed --json"
-        metadata: shy: true
       pkgs = JSON.parse stdout
       installed = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
       # Upgrade

@@ -92,16 +92,14 @@ handlers = {
     var final_run;
     final_run = true;
     await session({
-      hooks: {
+      $hooks: {
         on_result: function({action}) {
           return delete action.parent;
         }
       },
-      metadata: {
-        condition: true,
-        depth: action.metadata.depth
-      },
-      parent: action
+      $condition: true,
+      $depth: action.metadata.depth,
+      $parent: action
     }, async function() {
       var $status, arch, distribution, linux_version, match, stdout, version;
       ({$status, stdout} = (await this.execute({
@@ -167,16 +165,14 @@ handlers = {
     var final_run;
     final_run = true;
     await session({
-      hooks: {
+      $hooks: {
         on_result: function({action}) {
           return delete action.parent;
         }
       },
-      metadata: {
-        condition: true,
-        depth: action.metadata.depth
-      },
-      parent: action
+      $condition: true,
+      $depth: action.metadata.depth,
+      $parent: action
     }, async function() {
       var $status, arch, distribution, linux_version, match, stdout, version;
       ({$status, stdout} = (await this.execute({

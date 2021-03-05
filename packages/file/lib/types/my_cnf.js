@@ -9,10 +9,11 @@ var handler, schema, utils;
 schema = {
   type: 'object',
   properties: {
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, optional.`
-    },
+    // 'rootdir':
+    //   type: 'string'
+    //   description: """
+    //   Path to the mount point corresponding to the root directory, optional.
+    //   """
     'backup': {
       type: ['string', 'boolean'],
       description: `Create a backup, append a provided string to the filename extension or

@@ -6,20 +6,17 @@ Note, does not throw an error if service is not installed.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `$status`   
   Indicates if the service was started ("true") or if it was already running 
-  ("false").   
+  ("false").
 
 ## Example
 
 ```js
-const {status} = await nikita.service.start([{
-  ssh: ssh,
+const {$status} = await nikita.service.start([{
   name: 'gmetad'
 })
-console.info(`Service was started: ${status}`)
+console.info(`Service was started: ${$status}`)
 ```
 
 ## Hooks
@@ -32,19 +29,19 @@ console.info(`Service was started: ${status}`)
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
+        # 'rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
       required: ['name']
 
 ## Handler
 
     handler = ({config, tools: {log}}) ->
       try
-        {status} = await @execute
+        {$status} = await @execute
           command: """
           ls \
             /lib/systemd/system/*.service \
@@ -65,10 +62,10 @@ console.info(`Service was started: ${status}`)
           fi
           """
           code_skipped: 3
-          arch_chroot: config.arch_chroot
-          rootdir: config.rootdir
-        log message: "Service is started", level: 'INFO' if status
-        log message: "Service already started", level: 'WARN' if not status
+          # arch_chroot: config.arch_chroot
+          # rootdir: config.rootdir
+        log message: "Service is started", level: 'INFO' if $status
+        log message: "Service already started", level: 'WARN' if not $status
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

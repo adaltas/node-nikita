@@ -11,19 +11,19 @@ describe 'service.stop', ->
 
   they 'should stop', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.install service.name
       @service.start service.srv_name
-      {status} = await @service.stop service.srv_name
-      status.should.be.true()
-      {status} = await @service.stop service.srv_name
-      status.should.be.false()
+      {$status} = await @service.stop service.srv_name
+      $status.should.be.true()
+      {$status} = await @service.stop service.srv_name
+      $status.should.be.false()
 
   they 'no error when invalid service name', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status} = await @service.stop
+      {$status} = await @service.stop
         name: 'thisdoenstexit'
-      status.should.be.false()
+      $status.should.be.false()

@@ -9,9 +9,7 @@ Comments will be preserved if the `comments` and `merge` config are enabled.
 
 ## Output
 
-* `err` (Error)   
-  Error object if any.   
-* `status`  (boolean)   
+* `$status`  (boolean)   
   Value is "true" if the property was created or updated.
 
 ## Usefull Commands
@@ -28,13 +26,13 @@ Comments will be preserved if the `comments` and `merge` config are enabled.
 ## Example
 
 ```js
-const {status} = await nikita.tools.sysctl({
+const {$status} = await nikita.tools.sysctl({
   source: '/etc/sysctl.conf',
   properties: {
     'vm.swappiness': 1
   }
 })
-console.info(`Systcl was reloaded: ${status}`)
+console.info(`Systcl was reloaded: ${$status}`)
 ```
 
 ## Schema
@@ -83,11 +81,10 @@ console.info(`Systcl was reloaded: ${status}`)
     handler = ({config, tools: {log}}) ->
       # Read current properties
       current = {}
-      status = false
+      $status = false
       log message: "Read target: #{config.target}", level: 'DEBUG'
       try
         {data} = await @fs.base.readFile
-          ssh: config.ssh
           target: config.target
           encoding: 'ascii'
         for line in utils.string.lines data
@@ -105,7 +102,7 @@ console.info(`Systcl was reloaded: ${status}`)
           # Skip property
           if key in config.properties and not config.properties[key]?
             log "Removing Property: #{key}, was #{value}", level: 'INFO'
-            status = true
+            $status = true
             continue
           # Set property
           current[key] = value
@@ -114,15 +111,15 @@ console.info(`Systcl was reloaded: ${status}`)
       # Merge user properties
       final = {}
       final[k] = v for k, v of current if config.merge
-      status = false
+      $status = false
       for key, value of config.properties
         continue unless value?
         value = "#{value}" if typeof value is 'number'
         continue if current[key] is value
         log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO'
         final[key] = value
-        status = true
-      if status
+        $status = true
+      if $status
         await @file
           target: config.target
           backup: config.backup
@@ -133,7 +130,7 @@ console.info(`Systcl was reloaded: ${status}`)
               else
                 "#{key}"
           ).join '\n'
-      if config.load and status
+      if config.load and $status
         await @execute "sysctl -p #{config.target}"
 
 ## Exports

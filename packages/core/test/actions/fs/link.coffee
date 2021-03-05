@@ -36,8 +36,8 @@ describe 'actions.fs.link', ->
     they 'should link file', ({ssh}) ->
       # Create a non existing link
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.link # Link does not exist
           source: __filename
@@ -53,8 +53,8 @@ describe 'actions.fs.link', ->
 
     they 'should link file with exec', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.link
           source: __filename
@@ -77,15 +77,15 @@ describe 'actions.fs.link', ->
     they 'should link dir', ({ssh}) ->
       # Create a non existing link
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.link # Link does not exist
           source: __dirname
           target: "#{tmpdir}/link_test"
         .should.be.finally.containEql $status: true
         @fs.link # Link already exists
-          ssh: ssh
+          $ssh: ssh
           source: __dirname
           target: "#{tmpdir}/link_test"
         .should.be.finally.containEql $status: false
@@ -96,8 +96,8 @@ describe 'actions.fs.link', ->
     they 'should create parent directories', ({ssh}) ->
       # Create a non existing link
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.link
           source: __dirname
@@ -107,20 +107,20 @@ describe 'actions.fs.link', ->
           target: "#{tmpdir}/test/dir/link_test"
           type: 'symlink'
         @fs.link
-          ssh: ssh
+          $ssh: ssh
           source: "#{__dirname}/merge.coffee"
           target: "#{tmpdir}/test/dir2/merge.coffee"
         .should.be.finally.containEql $status: true
         @fs.link
-          ssh: ssh
+          $ssh: ssh
           source: "#{__dirname}/mkdir.coffee"
           target: "#{tmpdir}/test/dir2/mkdir.coffee"
         .should.be.finally.containEql $status: true
 
     they 'should override invalid link', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/invalid_file"

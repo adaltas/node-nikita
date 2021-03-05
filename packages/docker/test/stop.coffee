@@ -9,22 +9,22 @@ describe 'docker.stop', ->
 
   they 'on running container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_stop'
-      {status} = await @docker.stop
+      {$status} = await @docker.stop
         container: 'nikita_test_stop'
-      status.should.be.true()
+      $status.should.be.true()
       @docker.rm
         container: 'nikita_test_stop'
         force: true
 
   they 'on stopped container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.tools.service
@@ -32,9 +32,9 @@ describe 'docker.stop', ->
         container: 'nikita_test_stop'
       @docker.stop
         container: 'nikita_test_stop'
-      {status} = await @docker.stop
+      {$status} = await @docker.stop
         container: 'nikita_test_stop'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_test_stop'
         force: true

@@ -89,19 +89,19 @@ handler = async function({metadata, config}) {
     }
     target = path.resolve('/etc/modules-load.d', target);
     await this.execute({
-      if: config.load && active,
+      $if: config.load && active,
       command: `lsmod | grep ${module} && exit 3
 modprobe ${module}`,
       code_skipped: 3
     });
     await this.execute({
-      if: config.load && !active,
+      $if: config.load && !active,
       command: `lsmod | grep ${module} || exit 3
 modprobe -r ${module}`,
       code_skipped: 3
     });
     await this.file({
-      if: config.persist,
+      $if: config.persist,
       target: target,
       match: RegExp(`^${quote(module)}(\\n|$)`, "mg"),
       replace: active ? `${module}\n` : '',
@@ -109,7 +109,7 @@ modprobe -r ${module}`,
       eof: true
     });
   }
-  return null;
+  return void 0;
 };
 
 // ## Exports

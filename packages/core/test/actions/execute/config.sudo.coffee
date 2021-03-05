@@ -8,35 +8,35 @@ describe 'actions.execute.config.sudo', ->
 
   they 'execute.assert', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @execute.assert
         command: 'whoami'
         content: 'root'
-        sudo: true
+        $sudo: true
         trim: true
 
   they 'readFile without sudo', ({ssh}) ->
     nikita
-      ssh: ssh
-      sudo: false
-      metadata: tmpdir: true
+      $ssh: ssh
+      $sudo: false
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
-        sudo: true
+        $sudo: true
       await @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
-        sudo: true
+        $sudo: true
       await @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
-        sudo: true
+        $sudo: true
       # Note, we are testing EACCESS error because it is impossible to do it
       # without sudo inside fs.readFile
       @fs.base.readFile
@@ -51,35 +51,35 @@ describe 'actions.execute.config.sudo', ->
 
   they 'readFile with sudo', ({ssh}) ->
     nikita
-      ssh: ssh
-      sudo: false
-      metadata: tmpdir: true
+      $ssh: ssh
+      $sudo: false
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
-        sudo: true
+        $sudo: true
       @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
-        sudo: true
+        $sudo: true
       @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
-        sudo: true
+        $sudo: true
       @fs.base.readFile
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
-        sudo: true
+        $sudo: true
       .should.be.finally.containEql data: 'hello'
 
   they 'writeFile', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: '/tmp/nikita'
     , ({metadata: {tmpdir}})->
       await @fs.base.mkdir
         target: "#{tmpdir}/a_dir"
@@ -87,16 +87,20 @@ describe 'actions.execute.config.sudo', ->
         target: "#{tmpdir}/a_dir"
         uid: 0
         gid: 0
-        sudo: true
+        $sudo: true
       @fs.base.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
-        sudo: true
+        $sudo: true
       @fs.base.readFile
         target: "#{tmpdir}/a_dir/a_file"
-        sudo: true
+        encoding: 'ascii'
+        $sudo: true
       .should.resolvedWith data: 'some content'
       @fs.base.unlink
         target: "#{tmpdir}/a_dir/a_file"
-        sudo: true
+        $sudo: true
+      @fs.base.rmdir
+        target: "#{tmpdir}/a_dir"
+        $sudo: true
     

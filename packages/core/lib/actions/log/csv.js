@@ -25,8 +25,9 @@ var handler, log_fs;
 handler = async function({config}) {
   // Obtains config from "log_csv" namespace
   // stdouting = 0
-  return (await this.call(log_fs, {
-    config: config,
+  return (await this.call({
+    $: log_fs
+  }, config, {
     serializer: {
       'nikita:action:start': function(action) {
         var header, headers, walk;

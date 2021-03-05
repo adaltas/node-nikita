@@ -176,7 +176,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
             log message: data, type: 'stderr'
           child.stderr.on 'end', (data) =>
             log message: null, type: 'stderr'
-      await @call if: rebooting, metadata: retry: true, sleep: 3000, ->
+      await @call if: rebooting, $retry: true, sleep: 3000, ->
         conn = await connect config
         conn.end()
 

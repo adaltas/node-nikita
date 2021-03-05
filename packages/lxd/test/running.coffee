@@ -9,7 +9,7 @@ describe 'lxd.running', ->
 
   they 'Running container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.delete
         container: 'u1'
@@ -19,13 +19,13 @@ describe 'lxd.running', ->
         container: 'u1'
       await @lxd.start
         container: 'u1'
-      {status} = await @lxd.running
+      {$status} = await @lxd.running
         container: 'u1'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'Stopped container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.delete
         container: 'u1'
@@ -33,6 +33,6 @@ describe 'lxd.running', ->
       await @lxd.init
         image: "images:#{images.alpine}"
         container: 'u1'
-      {status} = await @lxd.running
+      {$status} = await @lxd.running
         container: 'u1'
-      status.should.be.false()
+      $status.should.be.false()

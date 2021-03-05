@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.group({
+// const {$status} = await nikita.ipa.group({
 //   cn: 'somegroup',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Group was updated: ${status}`)
+// console.info(`Group was updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -43,11 +43,11 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, data, error, output, result, status;
+  var $status, base, data, error, output, result;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
-  ({status} = (await this.ipa.group.exists({
+  ({$status} = (await this.ipa.group.exists({
     connection: config.connection,
     cn: config.cn
   })));
@@ -56,13 +56,13 @@ handler = async function({config}) {
     negotiate: true,
     method: 'POST',
     data: {
-      method: !status ? "group_add/1" : "group_mod/1",
+      method: !$status ? "group_add/1" : "group_mod/1",
       params: [[config.cn], config.attributes],
       id: 0
     }
   })));
   output = {};
-  status = false;
+  $status = false;
   if (data != null ? data.error : void 0) {
     if (data.error.code !== 4202) { // no modifications to be performed
       error = Error(data.error.message);
@@ -71,17 +71,17 @@ handler = async function({config}) {
     }
   } else {
     output.result = data.result.result;
-    status = true;
+    $status = true;
   }
   // Get result info even if no modification is performed
-  if (!status) {
+  if (!$status) {
     ({result} = (await this.ipa.group.show(config, {
       cn: config.cn
     })));
     output.result = result;
   }
   return {
-    status: status,
+    $status: $status,
     result: output.result
   };
 };

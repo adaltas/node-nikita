@@ -31,8 +31,8 @@ describe 'lxd.file.push', ->
     
     they 'require openssl', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @lxd.delete
           container: 'c1'
@@ -53,8 +53,8 @@ describe 'lxd.file.push', ->
 
     they 'a new file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @lxd.delete
           container: 'c1'
@@ -65,28 +65,26 @@ describe 'lxd.file.push', ->
         await @lxd.start
           container: 'c1'
         await @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add openssl'
         await @file
           target: "#{tmpdir}/a_file"
           content: 'something'
-        {status} = await @lxd.file.push
+        {$status} = await @lxd.file.push
           container: 'c1'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
-        status.should.be.true()
-        {status} = await @lxd.file.exists
+        $status.should.be.true()
+        {$status} = await @lxd.file.exists
           container: 'c1'
           target: '/root/a_file'
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'the same file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @lxd.delete
           container: 'c1'
@@ -97,9 +95,7 @@ describe 'lxd.file.push', ->
         @lxd.start
           container: 'c1'
         await @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add openssl'
         @file
@@ -109,18 +105,18 @@ describe 'lxd.file.push', ->
           container: 'c1'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
-        {status} = await @lxd.file.push
+        {$status} = await @lxd.file.push
           container: 'c1'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
-        status.should.be.false()
+        $status.should.be.false()
   
   describe 'content', ->
     return unless tags.lxd
 
     they 'a new file', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -131,16 +127,14 @@ describe 'lxd.file.push', ->
         @lxd.start
           container: 'c1'
         await @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add openssl'
-        {status} = await @lxd.file.push
+        {$status} = await @lxd.file.push
           container: 'c1'
           target: '/root/a_file'
           content: 'something'
-        status.should.be.true()
+        $status.should.be.true()
         {stdout} = await @lxd.exec
           container: 'c1'
           command: 'cat /root/a_file'
@@ -148,7 +142,7 @@ describe 'lxd.file.push', ->
 
     they 'the same file', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -159,27 +153,25 @@ describe 'lxd.file.push', ->
         @lxd.start
           container: 'c1'
         await @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add openssl'
         @lxd.file.push
           container: 'c1'
           target: '/root/a_file'
           content: 'something'
-        {status} = await @lxd.file.push
+        {$status} = await @lxd.file.push
           container: 'c1'
           target: '/root/a_file'
           content: 'something'
-        status.should.be.false()
+        $status.should.be.false()
   
   describe 'mode', ->
     return unless tags.lxd
     
     they 'absolute mode', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @lxd.delete
           container: 'c1'
@@ -190,9 +182,7 @@ describe 'lxd.file.push', ->
         @lxd.start
           container: 'c1'
         @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add openssl'
         @lxd.file.push

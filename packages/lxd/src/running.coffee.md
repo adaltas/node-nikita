@@ -3,25 +3,18 @@
 
 Check if container is running.
 
-## config
-
-* `container` (string, required)
-  The name of the container.
-
 ## Output
 
-* `err`
-  Error object if any.
-* `info.status`
+* `$status`
   Was the container started or already running.
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.running({
+const {$status} = await nikita.lxd.running({
   container: "my_container"
 })
-console.info(`Container is running: ${status}`)
+console.info(`Container is running: ${$status}`)
 ```
 
 ## Schema

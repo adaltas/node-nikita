@@ -9,23 +9,23 @@ describe 'krb5.delprinc', ->
 
   they 'a principal which exists', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       krb5: admin: krb5
     , ->
       await @krb5.addprinc
         principal: "nikita@#{krb5.realm}"
         randkey: true
-      {status} = await @krb5.delprinc
+      {$status} = await @krb5.delprinc
         principal: "nikita@#{krb5.realm}"
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'a principal which does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       krb5: admin: krb5
     , ->
       await @krb5.delprinc
         principal: "nikita@#{krb5.realm}"
-      {status} = await @krb5.delprinc
+      {$status} = await @krb5.delprinc
         principal: "nikita@#{krb5.realm}"
-      status.should.be.false()
+      $status.should.be.false()

@@ -9,7 +9,7 @@ describe 'ipa.group.show', ->
 
   they 'get single group', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {result} = await @ipa.group.show connection: ipa,
         cn: 'admins'
@@ -24,7 +24,7 @@ describe 'ipa.group.show', ->
 
   they 'get missing group', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.show connection: ipa,
         cn: 'missing'

@@ -9,13 +9,13 @@ describe 'ipa.group.del', ->
 
   they 'delete a group', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group connection: ipa,
         cn: 'group_del'
-      {status} = await @ipa.group.del connection: ipa,
+      {$status} = await @ipa.group.del connection: ipa,
         cn: 'group_del'
-      status.should.be.true()
-      {status} = await @ipa.group.del connection: ipa,
+      $status.should.be.true()
+      {$status} = await @ipa.group.del connection: ipa,
         cn: 'group_del'
-      status.should.be.false()
+      $status.should.be.false()

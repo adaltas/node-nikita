@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.group.del({
+// const {$status} = await nikita.ipa.group.del({
 //   cn: 'somegroup',
 //   connection: {
 //     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Group was deleted: ${status}`)
+// console.info(`Group was deleted: ${$status}`)
 // ```
 
 // ## Schema
@@ -38,18 +38,16 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, status;
+  var $status, base;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
-  ({status} = (await this.ipa.group.exists({
+  ({$status} = (await this.ipa.group.exists({
+    $shy: false,
     connection: config.connection,
-    metadata: {
-      shy: false
-    },
     cn: config.cn
   })));
-  if (!status) {
+  if (!$status) {
     return;
   }
   return (await this.network.http(config.connection, {

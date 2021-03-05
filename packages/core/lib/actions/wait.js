@@ -46,7 +46,9 @@ handler = function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  on_action: on_action,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     schema: schema
   }

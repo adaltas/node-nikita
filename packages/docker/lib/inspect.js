@@ -10,7 +10,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was killed.
 
 // ## Example

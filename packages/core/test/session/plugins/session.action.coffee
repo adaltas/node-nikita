@@ -21,7 +21,7 @@ describe 'session.plugins.session.action', ->
                     action.config.new_key = 'new value'
                     handler.call action.context, action
         context.registry.register ['an', 'action'],
-          key: 'value'
+          config: key: 'value'
           handler: ({config}) -> config
         context.an.action().should.be.finally.containEql
           key: 'value'

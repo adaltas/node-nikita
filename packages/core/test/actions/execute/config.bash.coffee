@@ -8,7 +8,7 @@ describe 'actions.execute.config.bash', ->
 
   they 'in generated path', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     .execute
       command: "echo $BASH"
       bash: true
@@ -17,7 +17,7 @@ describe 'actions.execute.config.bash', ->
 
   they.skip 'in user path', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     .execute
       command: "echo $BASH"
       bash: true
@@ -37,15 +37,13 @@ describe 'actions.execute.config.bash', ->
     .file.assert
       target: "#{scratch}/my_script"
       not: true
-    .promise()
 
   they.skip 'honors exit code', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     .execute
       command: "exit 2"
       bash: true
       code_skipped: 2
     , (err, {status}) ->
       status.should.be.false() unless err
-    .promise()

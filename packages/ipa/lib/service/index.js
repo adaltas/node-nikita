@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.service({
+// const {$status} = await nikita.ipa.service({
 //   principal: "myprincipal/my.domain.com"
 //   },
 //   connection: {
@@ -15,7 +15,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`Service was updated: ${status}`)
+// console.info(`Service was updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -39,14 +39,14 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var base, data, error, status;
+  var $status, base, data, error;
   if ((base = config.connection.http_headers)['Referer'] == null) {
     base['Referer'] = config.connection.referer || config.connection.url;
   }
   // @ipa.service.exists
   //   connection: config.connection
   //   principal: config.principal
-  status = true;
+  $status = true;
   ({data} = (await this.network.http(config.connection, {
     negotiate: true,
     method: 'POST',
@@ -62,10 +62,10 @@ handler = async function({config}) {
       error.code = data.error.code;
       throw error;
     }
-    status = false;
+    $status = false;
   }
   return {
-    status: status
+    $status: $status
   };
 };
 

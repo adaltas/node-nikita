@@ -30,76 +30,76 @@ describe 'service#config.startup', ->
 
     they 'activate startup with boolean true', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: true
-        status.should.be.true()
-        {status} = await @service
+        $status.should.be.true()
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: true
-        status.should.be.false()
+        $status.should.be.false()
     
     they 'activate startup with boolean false', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @service.remove
           name: service.name
-        {status} = await @service
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: false
-        status.should.be.true()
-        {status} = await @service
+        $status.should.be.true()
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: false
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'activate startup with string', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         # Note, `-v` flag differ between bash (exit code 1) and sh (exit code 127)
-        {status} = await @execute 'command -v chkconfig', code_skipped: 127, metadata: relax: true
-        return unless status
+        {$status} = await @execute 'command -v chkconfig', code_skipped: 127, $relax: true
+        return unless $status
         @service.remove
           name: service.name
-        {status} = await @service
+        {$status} = await @service
           name: service.name
           chk_name: service.chk_name
           startup: '235'
-        status.should.be.true()
-        {status} = await @service
+        $status.should.be.true()
+        {$status} = await @service
           chk_name: service.chk_name
           startup: '235'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'detect change in startup', ({ssh}) ->
       # Startup levels only apply to chkconfig
       # Note, on CentOS 7, chkconfig is installed but Nikita wont use it
       # if it detect systemctl
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         try
           await @execute '! command -v systemctl && command -v chkconfig'
           @service.remove
             name: service.name
-          {status} = await @service
+          {$status} = await @service
             name: service.name
             chk_name: service.chk_name
             startup: '2345'
-          status.should.be.true()
-          {status} = await @service
+          $status.should.be.true()
+          {$status} = await @service
             chk_name: service.chk_name
             startup: '2345'
-          status.should.be.false()
+          $status.should.be.false()
         catch err
           return

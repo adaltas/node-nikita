@@ -7,8 +7,8 @@
 require './register'
 session = require './session'
   
-create = ->
-  session plugins: [
+create = (...args) ->
+  session.with_options args, plugins: [
     require './metadata/debug'
     require './metadata/disabled'
     require './metadata/position'
@@ -42,7 +42,7 @@ create = ->
     require './plugins/tools_log'
     require './plugins/tools_path'
     require './plugins/tools_walk'
-  ], ...arguments
+  ]
 
 module.exports = new Proxy create,
   get: (target, name) ->

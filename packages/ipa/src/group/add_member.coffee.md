@@ -6,7 +6,7 @@ Add member to a group in FreeIPA.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.group.add_member({
+const {$status} = await nikita.ipa.group.add_member({
   cn: "somegroup",
   attributes: {
     user: ["someone"]
@@ -17,7 +17,7 @@ const {status} = await nikita.ipa.group.add_member({
     password: "mysecret"
   }
 })
-console.info(`Member was added to the group: ${status}`)
+console.info(`Member was added to the group: ${$status}`)
 ```
 
 ## Schema
@@ -60,7 +60,7 @@ console.info(`Member was added to the group: ${status}`)
         error.code = data.error.code
         throw error
       else
-        status: true, result: data.result.result
+        $status: true, result: data.result.result
 
 ## Export
 

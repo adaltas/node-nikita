@@ -6,10 +6,10 @@ Execute a Kerberos command.
 ## Example
 
 ```js
-const {status} = await nikita.krb5.exec({
+const {$status} = await nikita.krb5.exec({
   command: 'listprincs'
 })
-console.info(`Command was executed: ${status}`)
+console.info(`Command was executed: ${$status}`)
 ```
 
 ## Hooks
@@ -69,10 +69,10 @@ console.info(`Command was executed: ${status}`)
         then "kadmin #{realm} -p #{config.admin.principal} -s #{config.admin.server} -w #{config.admin.password} -q '#{config.command}'"
         else "kadmin.local #{realm} -q '#{config.command}'"
       if config.grep and typeof config.grep is 'string'
-        return stdout: stdout, status: stdout.split('\n').some (line) -> line is config.grep
+        return stdout: stdout, $status: stdout.split('\n').some (line) -> line is config.grep
       if config.grep and utils.regexp.is config.grep
-        return stdout: stdout, status: stdout.split('\n').some (line) -> config.grep.test line
-      status: true, stdout: stdout
+        return stdout: stdout, $status: stdout.split('\n').some (line) -> config.grep.test line
+      $status: true, stdout: stdout
 
 ## Export
 

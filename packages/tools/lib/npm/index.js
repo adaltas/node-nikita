@@ -10,11 +10,11 @@
 // The following action installs the coffescript package globally.
 
 // ```js
-// const {status} = await nikita.tools.npm({
+// const {$status} = await nikita.tools.npm({
 //   name: 'coffeescript',
 //   global: true
 // })
-// console.info(`Package was installed: ${status}`)
+// console.info(`Package was installed: ${$status}`)
 // ```
 
 // ## Schema
@@ -66,15 +66,14 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var install, installed, name, packages, status;
-  // names = config.name.map (name) -> name.split('@')[0]
+  var install, installed, name, packages;
   // Upgrade
-  ({status} = (await this.tools.npm.upgrade({
+  await this.tools.npm.upgrade({
+    $if: config.upgrade,
     cwd: config.cwd,
     global: config.global,
-    if: config.upgrade,
     name: config.name
-  })));
+  });
   // Get installed packages
   ({packages} = (await this.tools.npm.list({
     cwd: config.cwd,

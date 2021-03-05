@@ -9,25 +9,25 @@ describe 'lxd.storage.delete', ->
 
   they 'Delete a storage', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
-      {status} = await @lxd.storage.delete
+      {$status} = await @lxd.storage.delete
         name: "teststorage0"
-      status.should.be.true()
+      $status.should.be.true()
       
   they 'Storage already deleted', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
       await @lxd.storage.delete
         name: "teststorage0"
-      {status} = await @lxd.storage.delete
+      {$status} = await @lxd.storage.delete
         name: "teststorage0"
-      status.should.be.false()
+      $status.should.be.false()
   

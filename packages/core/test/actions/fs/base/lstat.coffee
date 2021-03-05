@@ -10,8 +10,8 @@ describe 'actions.fs.base.lstat', ->
 
   they 'with a file link', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -27,8 +27,8 @@ describe 'actions.fs.base.lstat', ->
 
   they 'with a directory link', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -43,8 +43,8 @@ describe 'actions.fs.base.lstat', ->
 
   they 'option argument default to target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"

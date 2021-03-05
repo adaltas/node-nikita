@@ -6,12 +6,12 @@ Update the locale definition file located in "/etc/locale.gen".
 ## Example
 
 ```js
-const {status} = await nikita.file.types.locale_gen({
+const {$status} = await nikita.file.types.locale_gen({
   target: '/etc/locale.gen',
   rootdir: '/mnt',
   locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
 })
-console.info(`File was updated: ${status}`)
+console.info(`File was updated: ${$status}`)
 ```
 
 ## Schema
@@ -70,13 +70,13 @@ console.info(`File was updated: ${status}`)
           content: data
       # Reload configuration
       await @execute
-        if:
+        $if:
           if config.generate?
           then config.generate
           else status
         rootdir: config.rootdir
         command: "locale-gen"
-      status: status || config.generate
+      $status: status || config.generate
 
 ## Exports
 

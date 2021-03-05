@@ -84,10 +84,12 @@ handler = async function({config}) {
   if (config.stream == null) {
     config.stream = fs.createWriteStream(path.resolve(logdir, config.filename));
   }
-  await this.call(config, stream);
+  await this.call({
+    $: stream
+  }, config);
   // Handle link to latest directory
   return (await this.fs.base.symlink({
-    if: latestdir,
+    $if: latestdir,
     source: logdir,
     target: latestdir
   }));

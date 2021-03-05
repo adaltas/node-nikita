@@ -7,12 +7,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.ktutil.add({
+// const {$status} = await nikita.krb5.ktutil.add({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 //   password: 'password'
 // })
-// console.info(`Keytab was created or modified: ${status}`)
+// console.info(`Keytab was created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -67,7 +67,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var _, code, command, enctype, entries, entry, i, j, k, kvno, len, len1, len2, line, match, mdate, princ, princ_entries, principal, ref, ref1, ref2, slot, status, stdout, timestamp, tmp_keytab, values;
+  var $status, _, code, command, enctype, entries, entry, i, j, k, kvno, len, len1, len2, line, match, mdate, princ, princ_entries, principal, ref, ref1, ref2, slot, stdout, timestamp, tmp_keytab, values;
   if (/^\S+@\S+$/.test(config.principal)) {
     if (config.realm == null) {
       config.realm = config.principal.split('@')[1];
@@ -83,14 +83,12 @@ handler = async function({
   princ = {};
   command = null;
   // Get keytab entries
-  ({status, stdout, code} = (await this.execute({
+  ({$status, stdout, code} = (await this.execute({
+    $shy: true,
     command: `echo -e 'rkt ${config.keytab}\nlist -e -t \n' | ktutil`,
-    code_skipped: 1,
-    metadata: {
-      shy: true
-    }
+    code_skipped: 1
   })));
-  if (status) {
+  if ($status) {
     log({
       message: "Principal exist in Keytab, check kvno validity",
       level: 'DEBUG'
@@ -116,14 +114,12 @@ handler = async function({
     }).reverse();
   }
   // Get principal information and compare to keytab entries kvnos
-  ({status, stdout} = (await this.krb5.execute({
+  ({$status, stdout} = (await this.krb5.execute({
+    $shy: true,
     admin: config.admin,
-    command: `getprinc -terse ${config.principal}`,
-    metadata: {
-      shy: true
-    }
+    command: `getprinc -terse ${config.principal}`
   })));
-  if (status) {
+  if ($status) {
     values = utils.string.lines(stdout)[1];
     if (!values) {
       // Check if a ticket exists for this

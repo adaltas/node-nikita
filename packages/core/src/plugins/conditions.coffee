@@ -12,7 +12,9 @@ module.exports =
       handler: (action, handler) ->
         # Ventilate conditions properties defined at root
         conditions = {}
-        for property, value of action
+        # console.log action.metadata
+        for property, value of action.metadata
+          # console.log property, /^(if|unless)($|_[\w_]+$)/.test property
           if /^(if|unless)($|_[\w_]+$)/.test property
             throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
               "Property #{property} is defined multiple times,"
@@ -20,7 +22,7 @@ module.exports =
             ] if conditions[property]
             value = [value] unless Array.isArray value
             conditions[property] = value
-            delete action[property]
+            delete action.metadata[property]
         ->
           action = await handler.call null, ...arguments
           action.conditions = conditions
@@ -42,15 +44,15 @@ handlers =
     for condition in action.conditions.if
       if typeof condition is 'function'
         condition = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            raw_output: true
-          parent: action
-          handler: condition
-          config: action.config
+          $condition: true
+          $depth: action.metadata.depth
+          $parent: action
+          $raw_output: true
+          $handler: condition
+        ,
+          action.config
       run = switch typeof condition
         when 'undefined' then false
         when 'boolean' then condition
@@ -70,15 +72,15 @@ handlers =
     for condition in action.conditions.unless
       if typeof condition is 'function'
         condition = await session
-          hooks:
+          $hooks:
             on_result: ({action}) -> delete action.parent
-          metadata:
-            condition: true
-            depth: action.metadata.depth
-            raw_output: true
-          parent: action
-          handler: condition
-          config: action.config
+          $condition: true
+          $depth: action.metadata.depth
+          $parent: action
+          $raw_output: true
+          $handler: condition
+        ,
+          action.config
       run = switch typeof condition
         when 'undefined' then true
         when 'boolean' then !condition

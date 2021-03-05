@@ -6,12 +6,12 @@ Register a job on crontab.
 ## Example
 
 ```js
-const {status} = await nikita.cron.add({
+const {$status} = await nikita.cron.add({
   command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *',
   user: 'service'
 })
-console.info(`Cron entry created or modified: ${status}`)
+console.info(`Cron entry created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -90,7 +90,7 @@ console.info(`Cron entry created or modified: ${status}`)
         jobs.push new_job
         log message: "Job not found in crontab, adding", level: 'WARN'
       jobs = null unless added or modified
-      return status: false unless jobs
+      return $status: false unless jobs
       if config.exec
         await @execute
           command: if config.user? then "su -l #{config.user} -c '#{config.command}'" else config.command

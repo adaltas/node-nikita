@@ -28,7 +28,7 @@ Check if a database exists.
 ## Handler
 
     handler = ({config}) ->
-      {status} = await @db.query connection_config(config),
+      {$status} = await @db.query config,
         command: switch config.engine
           when 'mariadb', 'mysql'
             'SHOW DATABASES'
@@ -37,7 +37,7 @@ Check if a database exists.
             "SELECT datname FROM pg_database WHERE datname = '#{config.database}'"
         database: null
         grep: config.database
-      exists: status
+      exists: $status
 
 ## Exports
 
@@ -51,4 +51,4 @@ Check if a database exists.
 
 ## Dependencies
 
-    {command, connection_config} = require '../query'
+    {command} = require '../query'

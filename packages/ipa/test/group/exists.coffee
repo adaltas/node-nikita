@@ -9,22 +9,22 @@ describe 'ipa.group.exists', ->
 
   they 'group doesnt exist', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group.del connection: ipa,
         cn: 'group_exists'
-      {status, exists} = await @ipa.group.exists connection: ipa,
+      {$status, exists} = await @ipa.group.exists connection: ipa,
         cn: 'group_exists'
-      status.should.be.false()
+      $status.should.be.false()
       exists.should.be.false()
 
   they 'group exists', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.group connection: ipa,
         cn: 'group_exists'
-      {status, exists} = await @ipa.group.exists connection: ipa,
+      {$status, exists} = await @ipa.group.exists connection: ipa,
         cn: 'admins'
-      status.should.be.true()
+      $status.should.be.true()
       exists.should.be.true()

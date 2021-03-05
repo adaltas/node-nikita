@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True if logout.
 
 // ## Schema

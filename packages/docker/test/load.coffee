@@ -13,9 +13,9 @@ describe 'docker.load', ->
   they 'loads simple image', ({ssh}) ->
     @timeout 30000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"
@@ -29,19 +29,19 @@ describe 'docker.load', ->
         output: "#{tmpdir}/nikita_load.tar"
       @docker.rmi
         image: 'nikita/load_test'
-      {status} = await @docker.load
+      {$status} = await @docker.load
         image: 'nikita/load_test'
         tag: 'latest'
         input: "#{tmpdir}/nikita_load.tar"
-      status.should.be.true()
+      $status.should.be.true()
       @docker.rmi
         image: 'nikita/load_test'
 
   they 'not loading if checksum', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"
@@ -53,17 +53,17 @@ describe 'docker.load', ->
         image: 'nikita/load_test'
         tag: 'latest'
         output: "#{tmpdir}/nikita_load.tar"
-      {status} = await @docker.load
+      {$status} = await @docker.load
         input: "#{tmpdir}/nikita_load.tar"
         checksum: checksum
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'status not modified if same image', ({ssh}) ->
     @timeout 30000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.remove
         target: "#{tmpdir}/nikita_load.tar"
@@ -79,7 +79,7 @@ describe 'docker.load', ->
       @docker.load
         image: 'nikita/nikita_load:latest'
         input: "#{tmpdir}/load.tar"
-      {status} = await @docker.load
+      {$status} = await @docker.load
         image: 'nikita/nikita_load:latest'
         input: "#{tmpdir}/load.tar"
-      status.should.be.false()
+      $status.should.be.false()

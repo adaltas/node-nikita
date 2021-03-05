@@ -6,11 +6,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.ticket({
+// const {$status} = await nikita.krb5.ticket({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 // })
-// console.info(`ticket was renewed: ${status}`)
+// console.info(`ticket was renewed: ${$status}`)
 // ```
 
 // ## Schema

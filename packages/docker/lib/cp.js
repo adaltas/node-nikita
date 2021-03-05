@@ -16,21 +16,21 @@
 // ## Uploading a file
 
 // ```js
-// const {status} = await nikita.docker.cp({
+// const {$status} = await nikita.docker.cp({
 //   source: readable_stream or '/path/to/source'
 //   target: 'my_container:/path/to/target'
 // })
-// console.info(`Container was copied: ${status}`)
+// console.info(`Container was copied: ${$status}`)
 // ```
 
 // ## Downloading a file
 
 // ```js
-// const {status} = await nikita.docker.cp({
+// const {$status} = await nikita.docker.cp({
 //   source: 'my_container:/path/to/source',
 //   target: writable_stream or '/path/to/target'
 // })
-// console.info(`Container was copied: ${status}`)
+// console.info(`Container was copied: ${$status}`)
 // ```
 
 // ## Schema
@@ -74,7 +74,6 @@ handler = async function({config}) {
     }
     try {
       ({stats} = (await this.fs.base.stat({
-        ssh: config.ssh,
         target: source_path
       })));
       if (utils.stats.isDirectory(stats.mode)) {
@@ -90,8 +89,8 @@ handler = async function({config}) {
     }
   }
   await this.fs.mkdir({
-    target: source_path,
-    if: source_mkdir
+    $if: source_mkdir,
+    target: source_path
   });
   // Destination is on the host
   if (!target_container) {
@@ -114,8 +113,8 @@ handler = async function({config}) {
     }
   }
   await this.fs.base.mkdir({
-    target: target_path,
-    if: target_mkdir
+    $if: target_mkdir,
+    target: target_path
   });
   return (await this.docker.tools.execute({
     command: `cp ${config.source} ${config.target}`

@@ -18,22 +18,25 @@
 var errors, fs, handler, on_action, schema, utils;
 
 on_action = {
-  before: '@nikitajs/core/lib/metadata/tmpdir',
+  after: ['@nikitajs/core/lib/plugins/execute'],
+  before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/metadata/tmpdir'],
   handler: async function({
       config,
       metadata,
       tools: {find}
     }) {
-    var ref, sudo;
+    var ref;
     if (metadata.argument != null) {
       config.target = metadata.argument;
     }
-    sudo = (await find(function({
-        config: {sudo}
-      }) {
-      return sudo;
-    }));
-    if (sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
+    if (config.sudo == null) {
+      config.sudo = (await find(function({
+          metadata: {sudo}
+        }) {
+        return sudo;
+      }));
+    }
+    if (config.sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
       return metadata.tmpdir = true;
     }
   }
@@ -84,17 +87,12 @@ stream.`
 handler = async function({
     config,
     metadata,
-    tools: {find, log},
-    ssh
+    ssh,
+    tools: {find, log}
   }) {
-  var err, sudo;
-  sudo = (await find(function({
-      config: {sudo}
-    }) {
-    return sudo;
-  }));
+  var err;
   // Normalize config
-  if (sudo || config.flags[0] === 'a') {
+  if (config.sudo || config.flags[0] === 'a') {
     if (config.target_tmp == null) {
       config.target_tmp = `${metadata.tmpdir}/${utils.string.hash(config.target)}`;
     }

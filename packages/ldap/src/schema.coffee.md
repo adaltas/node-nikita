@@ -6,14 +6,14 @@ Register a new ldap schema.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.schema({
+const {$status} = await nikita.ldap.schema({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   name: 'kerberos',
   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
 })
-console.info(`Schema created or modified: ${status}`)
+console.info(`Schema created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -65,14 +65,14 @@ console.info(`Schema created or modified: ${status}`)
       schema = "#{tmpdir}/#{config.name}.schema"
       conf = "#{tmpdir}/schema.conf"
       ldif = "#{tmpdir}/ldif"
-      {status} = await @execute
+      {$status} = await @execute
         command: """
         ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" \
         | grep -E cn=\\{[0-9]+\\}#{config.name},cn=schema,cn=config
         """
         code: 1
         code_skipped: 0
-      return false unless status
+      return false unless $status
       await @system.mkdir
         target: ldif
       log message: 'Directory ldif created', level: 'DEBUG'
@@ -87,11 +87,11 @@ console.info(`Schema created or modified: ${status}`)
       await @execute
         command: "slaptest -f #{conf} -F #{ldif}"
       log message: 'Configuration validated', level: 'DEBUG'
-      {status} = await @fs.move
+      {$status} = await @fs.move
         source: "#{ldif}/cn=config/cn=schema/cn={0}#{config.name}.ldif"
         target: "#{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"
         force: true
-      throw Error 'No generated schema' unless status
+      throw Error 'No generated schema' unless $status
       log message: 'Configuration renamed', level: 'DEBUG'
       await @file
         target: "#{ldif}/cn=config/cn=schema/cn=#{config.name}.ldif"

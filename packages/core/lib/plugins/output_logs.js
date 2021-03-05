@@ -49,7 +49,7 @@ module.exports = {
         return async function({action}) {
           output = (await handler.apply(null, arguments));
           if (is_object_literal(output)) {
-            output.logs = action.state.logs;
+            output.$logs = action.state.logs;
           }
           return output;
         };

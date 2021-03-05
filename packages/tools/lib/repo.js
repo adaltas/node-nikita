@@ -6,11 +6,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.tools.repo({
+// const {$status} = await nikita.tools.repo({
 //   source: '/tmp/centos.repo',
 //   clean: 'CentOs*'
 // })
-// console.info(`Repo was updated: ${status}`)
+// console.info(`Repo was updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -71,7 +71,7 @@ handler = async function({
     config,
     tools: {log, path}
   }) {
-  var data, file, files, i, key, keys, len, name, remote_files, repoids, section, status;
+  var $status, data, file, files, i, key, keys, len, name, remote_files, repoids, section;
   if (config.source != null) {
     // TODO wdavidw 180115, target should be mandatory and not default to the source filename
     if (config.target == null) {
@@ -108,7 +108,7 @@ handler = async function({
   await this.fs.remove(remote_files);
   // Download source
   await this.file.download({
-    if: config.source != null,
+    $if: config.source != null,
     source: config.source,
     target: config.target,
     headers: config.headers,
@@ -119,7 +119,7 @@ handler = async function({
   });
   // Write
   await this.file.types.yum_repo({
-    if: config.content != null,
+    $if: config.content != null,
     content: config.content,
     mode: config.mode,
     uid: config.uid,
@@ -164,26 +164,26 @@ handler = async function({
         level: 'DEBUG',
         module: 'nikita/lib/tools/repo'
       });
-      ({status} = (await this.file.download({
+      ({$status} = (await this.file.download({
         source: key,
         target: `${config.gpg_dir}/${path.basename(key)}`
       })));
-      ({status} = (await this.execute({
-        if: status,
+      ({$status} = (await this.execute({
+        $if: $status,
         command: `rpm --import ${config.gpg_dir}/${path.basename(key)}`
       })));
     }
   }
   // Clean Metadata
-  ({status} = (await this.execute({
-    if: path.relative('/etc/yum.repos.d', config.target) !== '..' && status,
-    // wdavidw: 180114, was "yum clean metadata", ensure an appropriate
+  ({$status} = (await this.execute({
+    $if: path.relative('/etc/yum.repos.d', config.target) !== '..' && $status,
+    // wdavidw: 180114, was "yum clean metadata"
     // explanation is provided in case of revert.
-    // expire-cache is much faster,  It forces yum to go redownload the small
+    // expire-cache is much faster, it forces yum to go redownload the small
     // repo files only, then if there's newer repo data, it will downloaded it.
     command: 'yum clean expire-cache; yum repolist -y'
   })));
-  if (config.update && status) {
+  if (config.update && $status) {
     return (await this.execute({
       command: `yum update -y --disablerepo=* --enablerepo='${repoids.join(',')}'
 yum repolist`,

@@ -6,11 +6,11 @@ Setup packet manager repository. Only support yum for now.
 ## Example
 
 ```js
-const {status} = await nikita.tools.repo({
+const {$status} = await nikita.tools.repo({
   source: '/tmp/centos.repo',
   clean: 'CentOs*'
 })
-console.info(`Repo was updated: ${status}`)
+console.info(`Repo was updated: ${$status}`)
 ```
 
 ## Schema
@@ -89,7 +89,7 @@ console.info(`Repo was updated: ${status}`)
       await @fs.remove remote_files
       # Download source
       await @file.download
-        if: config.source?
+        $if: config.source?
         source: config.source
         target: config.target
         headers: config.headers
@@ -99,7 +99,7 @@ console.info(`Repo was updated: ${status}`)
         cache: false
       # Write
       await @file.types.yum_repo
-        if: config.content?
+        $if: config.content?
         content: config.content
         mode: config.mode
         uid: config.uid
@@ -122,21 +122,21 @@ console.info(`Repo was updated: ${status}`)
       if config.verify
         for key in keys
           log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-          {status} = await @file.download
+          {$status} = await @file.download
             source: key
             target: "#{config.gpg_dir}/#{path.basename key}"
-          {status} = await @execute
-            if: status
+          {$status} = await @execute
+            $if: $status
             command: "rpm --import #{config.gpg_dir}/#{path.basename key}"
       # Clean Metadata
-      {status} = await @execute
-        if: path.relative('/etc/yum.repos.d', config.target) isnt '..' and status
-        # wdavidw: 180114, was "yum clean metadata", ensure an appropriate
+      {$status} = await @execute
+        $if: path.relative('/etc/yum.repos.d', config.target) isnt '..' and $status
+        # wdavidw: 180114, was "yum clean metadata"
         # explanation is provided in case of revert.
-        # expire-cache is much faster,  It forces yum to go redownload the small
+        # expire-cache is much faster, it forces yum to go redownload the small
         # repo files only, then if there's newer repo data, it will downloaded it.
         command: 'yum clean expire-cache; yum repolist -y'
-      if config.update and status
+      if config.update and $status
         await @execute
           command: """
           yum update -y --disablerepo=* --enablerepo='#{repoids.join(',')}'

@@ -6,20 +6,17 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Indicates if the service was stopped ("true") or if it was already stopped 
-//   ("false").   
+//   ("false").
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.stop([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.stop([{
 //   name: 'gmetad'
 // })
-// console.info(`Service was stopped: ${status}`)
+// console.info(`Service was stopped: ${$status}`)
 // ```
 
 // ## Hooks
@@ -35,14 +32,12 @@ on_action = function({config, metadata}) {
 schema = {
   type: 'object',
   properties: {
-    'arch_chroot': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    },
+    // 'arch_chroot':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+    // 'arch_chroot_rootdir':
+    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
     'name': {
       $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    },
-    'rootdir': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
     }
   },
   required: ['name']
@@ -53,13 +48,13 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var err, status;
+  var $status, err;
   log({
     message: `Stop service ${config.name}`,
     level: 'INFO'
   });
   try {
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep -w "${config.name}" || exit 3
 if command -v systemctl >/dev/null 2>&1; then
   systemctl status ${config.name} || exit 3
@@ -71,17 +66,17 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-      code_skipped: 3,
-      arch_chroot: config.arch_chroot,
-      rootdir: config.rootdir
+      code_skipped: 3
     })));
-    if (status) {
+    if ($status) {
+      // arch_chroot: config.arch_chroot
+      // arch_chroot_rootdir: config.arch_chroot_rootdir
       log({
         message: "Service is stopped",
         level: 'INFO'
       });
     }
-    if (!status) {
+    if (!$status) {
       return log({
         message: "Service already stopped",
         level: 'WARN'

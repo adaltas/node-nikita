@@ -5,22 +5,20 @@
 
 // ## Output
 
-// * `err`
-//   Error object if any
-// * `status`
+// * `$status`
 //   Was the storage created or updated
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.storage({
+// const {$status} = await nikita.lxd.storage({
 //   name: "system",
 //   driver: "zfs",
 //   properties: {
 //     source: "syspool/lxd"
 //   }
 // })
-// console.info(`Storage was created or config updated: ${status}`)
+// console.info(`Storage was created or config updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -55,7 +53,7 @@ fields](https://lxd.readthedocs.io/en/latest/storage/).`
 
 // ## Handler
 handler = async function({config}) {
-  var changes, code, currentProperties, k, key, ref, status, stdout, v, value;
+  var $status, changes, code, currentProperties, k, key, ref, stdout, v, value;
   ref = config.properties;
   // Normalize config
   for (k in ref) {
@@ -103,12 +101,12 @@ ${[
   for (key in changes) {
     value = changes[key];
     // if changes is empty status is false because no command were executed
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: ['lxc', 'storage', 'set', config.name, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {
-    status: status
+    $status: $status
   };
 };
 

@@ -9,7 +9,7 @@ describe 'docker.kill', ->
 
   they 'running container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -19,14 +19,14 @@ describe 'docker.kill', ->
         image: 'httpd'
         port: '499:80'
         container: 'nikita_test_kill'
-      {status} = await @docker.kill
+      {$status} = await @docker.kill
         container: 'nikita_test_kill'
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'status not modified (previously killed)', ({ssh}) ->
     @timeout 120000
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -38,13 +38,13 @@ describe 'docker.kill', ->
         container: 'nikita_test_kill'
       @docker.kill
         container: 'nikita_test_kill'
-      {status} = await @docker.kill
+      {$status} = await @docker.kill
         container: 'nikita_test_kill'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'status not modified (not living)', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -54,8 +54,8 @@ describe 'docker.kill', ->
         image: 'alpine'
         rm: false
         name: 'nikita_test_kill'
-      {status} = await @docker.kill
+      {$status} = await @docker.kill
         container: 'nikita_test_kill'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         container: 'nikita_test_kill'

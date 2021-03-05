@@ -5,19 +5,16 @@ Remove a package or service.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Indicates if the startup behavior has changed.   
+* `$status`   
+  Indicates if the startup behavior has changed.
 
 ## Example
 
 ```js
-const {status} = await nikita.service.remove([{
-  ssh: ssh,
+const {$status} = await nikita.service.remove([{
   name: 'gmetad'
 })
-console.info(`Package or service was removed: ${status}`)
+console.info(`Package or service was removed: ${$status}`)
 ```
 
 ## Hooks
@@ -59,6 +56,7 @@ console.info(`Package or service was removed: ${status}`)
       unless installed?
         try
           {stdout} = await @execute
+            $shy: true
             command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n"
@@ -73,7 +71,6 @@ console.info(`Package or service was removed: ${status}`)
             """
             code_skipped: 1
             stdout_log: false
-            metadata: shy: true
           log message: "Installed packages retrieved", level: 'INFO'
           installed = for pkg in utils.string.lines(stdout) then pkg
         catch err
@@ -81,7 +78,7 @@ console.info(`Package or service was removed: ${status}`)
           throw err
       if installed.indexOf(config.name) isnt -1
         try
-          {status} = await @execute
+          {$status} = await @execute
             command: """
             if command -v yum >/dev/null 2>&1; then
               yum remove -y #{cacheonly} '#{config.name}'
@@ -98,17 +95,16 @@ console.info(`Package or service was removed: ${status}`)
           # Update list of installed packages
           installed.splice installed.indexOf(config.name), 1
           # Log information
-          log if status
+          log if $status
           then message: "Service removed", level: 'WARN', module: 'nikita/lib/service/remove'
           else message: "Service already removed", level: 'INFO', module: 'nikita/lib/service/remove'
         catch err
           throw Error "Invalid Service Name: #{config.name}" if err
           throw err
       if config.cache
-        await @call
-          handler: ->
-            log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
-            state['nikita:execute:installed'] = installed
+        await @call ->
+          log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
+          state['nikita:execute:installed'] = installed
 
 ## Export
 

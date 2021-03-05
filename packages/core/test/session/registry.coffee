@@ -35,16 +35,24 @@ describe 'action.registry', ->
     it 'overwrite registration with namespace argument', ->
       nikita ({registry}) ->
         # Register a namespace
-        registry.register ['my', 'function'], key: 'a', handler: ({config}) -> config.key
-        registry.register ['my', 'function'], key: 'b', handler: ({config}) -> config.key
+        registry.register ['my', 'function'],
+          config: key: 'a'
+          handler: ({config}) -> config.key
+        registry.register ['my', 'function'],
+          config: key: 'b'
+          handler: ({config}) -> config.key
         result = await @my.function()
         result.should.eql 'b'
 
     it 'overwrite registration object argument', ->
       nikita ({registry}) ->
         registry.register
-          'my': 'function': key: 'a', handler: ({config}) -> config.key
+          'my': 'function':
+            config: key: 'a'
+            handler: ({config}) -> config.key
         registry.register
-          'my': 'function': key: 'b', handler: ({config}) -> config.key
+          'my': 'function':
+            config: key: 'b'
+            handler: ({config}) -> config.key
         result = await @my.function()
         result.should.eql 'b'

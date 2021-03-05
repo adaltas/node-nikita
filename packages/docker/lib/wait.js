@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True unless container was already stopped.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.wait({
+// const {$status} = await nikita.docker.wait({
 //   container: 'toto'
 // })
-// console.info(`Did we really had to wait: ${status}`)
+// console.info(`Did we really had to wait: ${$status}`)
 // ```
 
 // ## Schema

@@ -12,30 +12,30 @@ for engine, _ of db then do (engine) ->
 
     they 'database as an argument', ({ssh}) ->
       {exists} = await nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       .db.database.remove 'db_create_0'
       .db.database 'db_create_0'
       .db.database.exists 'db_create_0'
       exists.should.be.true()
 
-    they 'metadata status', ({ssh}) ->
+    they 'output `$status`', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.database.remove 'db_create_1'
-        {status} = await @db.database 'db_create_1'
-        status.should.be.true()
-        {status} = await @db.database 'db_create_1'
-        status.should.be.false()
+        {$status} = await @db.database 'db_create_1'
+        $status.should.be.true()
+        {$status} = await @db.database 'db_create_1'
+        $status.should.be.false()
         @db.database.remove 'db_create_1'
 
     describe 'user', ->
 
       they 'which is existing', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'db_create_3'
@@ -47,7 +47,7 @@ for engine, _ of db then do (engine) ->
             database: 'db_create_3'
             user: 'db_create_user_3'
           # Todo: why not using nikita.user.exists ?
-          {status: user_exists} = await @execute
+          {$status: user_exists} = await @execute
             command: switch engine
               when 'mariadb', 'mysql' then command(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
               when 'postgresql' then command(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
@@ -55,9 +55,9 @@ for engine, _ of db then do (engine) ->
           @db.database.remove 'db_create_3'
           @db.user.remove 'db_create_user_3'
 
-      they 'metadata status', ({ssh}) ->
+      they 'output `$status`', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           @db.database.remove 'db_create_3'
@@ -67,20 +67,20 @@ for engine, _ of db then do (engine) ->
             password: 'db_create_user_3'
           @db.database
             database: 'db_create_3'
-          {status} = await @db.database
+          {$status} = await @db.database
             database: 'db_create_3'
             user: 'db_create_user_3'
-          status.should.be.true()
-          {status} = await @db.database
+          $status.should.be.true()
+          {$status} = await @db.database
             database: 'db_create_3'
             user: 'db_create_user_3'
-          status.should.be.false()
+          $status.should.be.false()
           @db.database.remove 'db_create_3'
           @db.user.remove 'db_create_user_3'
 
       they 'which is not existing', ({ssh}) ->
         nikita
-          ssh: ssh
+          $ssh: ssh
           db: db[engine]
         , ->
           try

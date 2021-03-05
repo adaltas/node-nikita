@@ -11,8 +11,8 @@ describe 'service.init', ->
 
   they 'init file with target and source (default)', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @service.remove 'cronie'
       @fs.remove
@@ -24,7 +24,7 @@ describe 'service.init', ->
   
   they 'init file with source only (default)', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove 'cronie'
       @fs.remove
@@ -35,7 +35,7 @@ describe 'service.init', ->
   
   they 'init file with source and name (default)', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service.remove 'cronie'
       @fs.remove
@@ -49,8 +49,8 @@ describe 'service.init', ->
   
     they 'with systemctl sysv-generator', ({ssh}) ->
       nikita
-        ssh: ssh
-        if_os: name: ['redhat','centos'], version: '7'
+        $ssh: ssh
+        $if_os: name: ['redhat','centos'], version: '7'
       , ->
         @service.remove 'cronie'
         @service.install 'cronie'
@@ -69,22 +69,20 @@ describe 'service.init', ->
 
     they 'with systemctl systemd script', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
+        $if_os: name: ['redhat','centos'], version: '7'
       , ->
-        @call
-          if_os: name: ['redhat','centos'], version: '7'
-        , ->
-          @service.remove 'cronie'
-          @service.install 'cronie'
-          @fs.remove
-            target: '/etc/init.d/crond'
-          @fs.remove
-            target: '/usr/lib/systemd/system/crond.service'
-          {status} = await @service.init
-            source: "#{__dirname}/crond-systemd.hbs"
-            context: description: 'Command Scheduler Test 1'
-            target: '/usr/lib/systemd/system/crond.service'
-          status.should.be.true()
-          @fs.assert '/usr/lib/systemd/system/crond.service'
-          @service.start
-            name: 'crond'
+        @service.remove 'cronie'
+        @service.install 'cronie'
+        @fs.remove
+          target: '/etc/init.d/crond'
+        @fs.remove
+          target: '/usr/lib/systemd/system/crond.service'
+        {$status} = await @service.init
+          source: "#{__dirname}/crond-systemd.hbs"
+          context: description: 'Command Scheduler Test 1'
+          target: '/usr/lib/systemd/system/crond.service'
+        $status.should.be.true()
+        @fs.assert '/usr/lib/systemd/system/crond.service'
+        @service.start
+          name: 'crond'

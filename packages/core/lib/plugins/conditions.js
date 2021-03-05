@@ -9,11 +9,14 @@ module.exports = {
   hooks: {
     'nikita:normalize': {
       handler: function(action, handler) {
-        var conditions, property, value;
+        var conditions, property, ref, value;
         // Ventilate conditions properties defined at root
         conditions = {};
-        for (property in action) {
-          value = action[property];
+        ref = action.metadata;
+        // console.log action.metadata
+        for (property in ref) {
+          value = ref[property];
+          // console.log property, /^(if|unless)($|_[\w_]+$)/.test property
           if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
             if (conditions[property]) {
               throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
@@ -22,7 +25,7 @@ module.exports = {
               value = [value];
             }
             conditions[property] = value;
-            delete action[property];
+            delete action.metadata[property];
           }
         }
         return async function() {
@@ -66,20 +69,17 @@ handlers = {
       condition = ref[i];
       if (typeof condition === 'function') {
         condition = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            raw_output: true
-          },
-          parent: action,
-          handler: condition,
-          config: action.config
-        }));
+          $condition: true,
+          $depth: action.metadata.depth,
+          $parent: action,
+          $raw_output: true,
+          $handler: condition
+        }, action.config));
       }
       run = (function() {
         switch (typeof condition) {
@@ -118,20 +118,17 @@ handlers = {
       condition = ref[i];
       if (typeof condition === 'function') {
         condition = (await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth,
-            raw_output: true
-          },
-          parent: action,
-          handler: condition,
-          config: action.config
-        }));
+          $condition: true,
+          $depth: action.metadata.depth,
+          $parent: action,
+          $raw_output: true,
+          $handler: condition
+        }, action.config));
       }
       run = (function() {
         switch (typeof condition) {

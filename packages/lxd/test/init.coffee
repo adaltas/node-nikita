@@ -86,31 +86,31 @@ describe 'lxd.init', ->
   
     they 'Init a new container', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'u1'
           force: true
-        {status} = await @lxd.init
+        {$status} = await @lxd.init
           image: "images:#{images.alpine}"
           container: 'u1'
-        status.should.be.true()
+        $status.should.be.true()
   
     they 'Validate name', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'u1'
           force: true
-        {status} = await @lxd.init
+        {$status} = await @lxd.init
           image: "images:#{images.alpine}"
           container: 'u1'
-        status.should.be.true()
+        $status.should.be.true()
   
     they 'Container already exist', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'u1'
@@ -118,27 +118,27 @@ describe 'lxd.init', ->
         await @lxd.init
           image: "images:#{images.alpine}"
           container: 'u1'
-        {status} = await @lxd.init
+        {$status} = await @lxd.init
           image: "images:#{images.alpine}"
           container: 'u1'
-        status.should.be.false()
+        $status.should.be.false()
   
     they 'Init new VM', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'vm1'
           force: true
-        {status} = await @lxd.init
+        {$status} = await @lxd.init
           image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
-        status.should.be.true()
+        $status.should.be.true()
   
     they 'VM already exist', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'vm1'
@@ -147,8 +147,8 @@ describe 'lxd.init', ->
           image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
-        {status} = await @lxd.init
+        {$status} = await @lxd.init
           image: "images:#{images.alpine}"
           container: 'vm1'
           vm: true
-        status.should.be.false()
+        $status.should.be.false()

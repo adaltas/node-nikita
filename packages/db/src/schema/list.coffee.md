@@ -41,7 +41,7 @@ schemas.map( ({name, owner}) => {
 ## Handler
 
     handler = ({config}) ->
-      {stdout} = await @db.query config: config,
+      {stdout} = await @db.query config,
         command: '\\dn'
         trim: true
       schemas = utils.string

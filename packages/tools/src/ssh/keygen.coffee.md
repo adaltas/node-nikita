@@ -67,7 +67,7 @@ console.info(`Key was generated: ${status}`)
       await @fs.mkdir
         target: "#{path.dirname config.target}"
       await @execute
-        unless_exists: "#{config.target}"
+        $unless_exists: "#{config.target}"
         command: [
           'ssh-keygen'
           "-q" # Silence

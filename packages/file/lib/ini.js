@@ -26,21 +26,19 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicate a change in the target file.   
+// * `$status`   
+//   Indicate a change in the target file.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.file.ini({
+// const {$status} = await nikita.file.ini({
 //   content: {
 //     'my_key': 'my value'
 //   },
 //   target: '/tmp/my_file'
 // })
-// console.info(`Content was updated: ${status}`)
+// console.info(`Content was updated: ${$status}`)
 // ```
 
 // ## Schema
@@ -156,9 +154,9 @@ handler = async function({
     // Default properties
     if (config.source) {
       ({data} = (await this.fs.base.readFile({
-        if: config.source,
-        ssh: config.local ? false : void 0,
-        sudo: config.local ? false : void 0,
+        $if: config.source,
+        $ssh: config.local ? false : void 0,
+        $sudo: config.local ? false : void 0,
         target: config.source,
         encoding: config.encoding
       })));

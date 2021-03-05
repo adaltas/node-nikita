@@ -117,9 +117,7 @@ handler = async function({
         stdin_log: config.stdin_log,
         stdout_log: config.stdout_log,
         stderr_log: config.stderr_log,
-        metadata: {
-          relax: config.code_skipped === void 0
-        }
+        $relax: config.code_skipped === void 0
       })));
       return !success;
     }));

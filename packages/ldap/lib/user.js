@@ -6,13 +6,13 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ldap.user({
+// const {$status} = await nikita.ldap.user({
 //   uri: 'ldap://openldap.server/',
 //   binddn: 'cn=admin,cn=config',
 //   passwd: 'password',
 //   user: {}
 // })
-// console.info(`User created or modified: ${status}`)
+// console.info(`User created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -118,7 +118,7 @@ handler = async function({
     new_password = false;
     if (!added && user.userPassword && !/^\{SASL\}/.test(user.userPassword)) {
       ({
-        status: loggedin
+        $status: loggedin
       } = (await this.ldap.search({
         // See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
         binddn: user.dn,
@@ -150,7 +150,7 @@ handler = async function({
     }
   }
   return {
-    status: modified
+    $status: modified
   };
 };
 

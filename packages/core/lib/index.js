@@ -9,10 +9,10 @@ require('./register');
 
 session = require('./session');
 
-create = function() {
-  return session({
-    plugins: [require('./metadata/debug'), require('./metadata/disabled'), require('./metadata/position'), require('./metadata/raw'), require('./metadata/relax'), require('./metadata/retry'), require('./metadata/status'), require('./metadata/tmpdir'), require('./metadata/uuid'), require('./plugins/args'), require('./plugins/argument_to_config'), require('./plugins/assertions'), require('./plugins/assertions_exists'), require('./plugins/conditions'), require('./plugins/conditions_execute'), require('./plugins/conditions_exists'), require('./plugins/conditions_os'), require('./plugins/execute'), require('./plugins/global'), require('./plugins/history'), require('./plugins/pubsub'), require('./plugins/output_logs'), require('./plugins/schema'), require('./plugins/ssh'), require('./plugins/time'), require('./plugins/templated'), require('./plugins/tools_dig'), require('./plugins/tools_events'), require('./plugins/tools_find'), require('./plugins/tools_log'), require('./plugins/tools_path'), require('./plugins/tools_walk')]
-  }, ...arguments);
+create = function(...args) {
+  return session.with_options(args, {
+    plugins: [require('./metadata/debug'), require('./metadata/disabled'), require('./metadata/position'), require('./metadata/raw'), require('./metadata/relax'), require('./metadata/retry'), require('./metadata/status'), require('./metadata/tmpdir'), require('./metadata/uuid'), require('./plugins/args'), require('./plugins/argument_to_config'), require('./plugins/assertions'), require('./plugins/assertions_exists'), require('./plugins/conditions'), require('./plugins/conditions_execute'), require('./plugins/conditions_exists'), require('./plugins/conditions_os'), require('./plugins/execute'), require('./plugins/global'), require('./plugins/history'), require('./plugins/magic_dollar'), require('./plugins/pubsub'), require('./plugins/output_logs'), require('./plugins/schema'), require('./plugins/ssh'), require('./plugins/time'), require('./plugins/templated'), require('./plugins/tools_dig'), require('./plugins/tools_events'), require('./plugins/tools_find'), require('./plugins/tools_log'), require('./plugins/tools_path'), require('./plugins/tools_walk')]
+  });
 };
 
 module.exports = new Proxy(create, {

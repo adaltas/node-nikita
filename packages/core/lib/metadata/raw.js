@@ -4,16 +4,21 @@ module.exports = {
   hooks: {
     'nikita:registry:normalize': function(action) {
       var base, base1, base2;
+      // TODO: Validation
       if (action.metadata == null) {
         action.metadata = {};
       }
       if ((base = action.metadata).raw == null) {
         base.raw = false;
       }
-      if ((base1 = action.metadata).raw_input == null) {
-        base1.raw_input = action.metadata.raw;
+      if (action.metadata.raw) {
+        if ((base1 = action.metadata).raw_input == null) {
+          base1.raw_input = action.metadata.raw;
+        }
       }
-      return (base2 = action.metadata).raw_output != null ? base2.raw_output : base2.raw_output = action.metadata.raw;
+      if (action.metadata.raw) {
+        return (base2 = action.metadata).raw_output != null ? base2.raw_output : base2.raw_output = action.metadata.raw;
+      }
     },
     'nikita:action': function(action) {
       var base, base1, base2;

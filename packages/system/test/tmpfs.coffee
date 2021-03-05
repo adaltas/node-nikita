@@ -11,12 +11,12 @@ describe 'system.tmpfs', ->
     
     they 'simple mount group configuration with target', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
           target: "#{tmpdir}/file_1.conf"
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -25,7 +25,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @fs.assert
@@ -36,10 +36,10 @@ describe 'system.tmpfs', ->
 
     they 'status not modified', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -48,8 +48,8 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
-        {status} = await @system.tmpfs
+        $status.should.be.true()
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -58,7 +58,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.false()
+        $status.should.be.false()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @fs.assert
@@ -69,12 +69,12 @@ describe 'system.tmpfs', ->
   
     they 'Override existing configuration file with target', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
           target: "#{tmpdir}/file_1.conf"
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -83,8 +83,8 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
-        {status} = await @system.tmpfs
+        $status.should.be.true()
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_2'
           uid: 'root'
@@ -93,7 +93,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @execute
           command: " if [ -d \"/var/run/file_2\" ] ; then exit 0; else exit 1; fi"
         @fs.assert
@@ -106,12 +106,12 @@ describe 'system.tmpfs', ->
     
     they 'multiple file with target', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
           target: "#{tmpdir}/file_2.conf"
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_2'
           uid: 'root'
@@ -120,8 +120,8 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
-        {status} = await @system.tmpfs
+        $status.should.be.true()
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -130,7 +130,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: true
-        status.should.be.true()
+        $status.should.be.true()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @execute
@@ -144,12 +144,12 @@ describe 'system.tmpfs', ->
 
     they 'multiple file merge status not modifed with target', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
           target: "#{tmpdir}/file_2.conf"
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_2'
           uid: 'root'
@@ -158,8 +158,8 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
-        {status} = await @system.tmpfs
+        $status.should.be.true()
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -168,8 +168,8 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: true
-        status.should.be.true()
-        {status} = await @system.tmpfs
+        $status.should.be.true()
+        {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_1'
           uid: 'root'
@@ -178,7 +178,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: true
-        status.should.be.false()
+        $status.should.be.false()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @execute
@@ -194,11 +194,11 @@ describe 'system.tmpfs', ->
     
     they 'simple mount group configuration', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @fs.remove
           target: "/etc/tmpfiles.d/root.conf"
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           mount: '/var/run/file_1'
           uid: 'root'
           gid: 'root'
@@ -206,7 +206,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @fs.assert
@@ -215,10 +215,10 @@ describe 'system.tmpfs', ->
 
     they 'simple mount group no uid', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @fs.remove '/etc/tmpfiles.d/root.conf'
-        {status} = await @system.tmpfs
+        {$status} = await @system.tmpfs
           mount: '/var/run/file_1'
           uid: 'root'
           gid: 'root'
@@ -226,7 +226,7 @@ describe 'system.tmpfs', ->
           argu: '-'
           perm: '0644'
           merge: false
-        status.should.be.true()
+        $status.should.be.true()
         @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
         @fs.assert

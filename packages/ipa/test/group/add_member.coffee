@@ -9,7 +9,7 @@ describe 'ipa.group.add_member', ->
   they 'add_member to a group', ({ssh}) ->
     gidnumber = null
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @ipa.group.del connection: ipa, [
         cn: 'group_add_member'
@@ -27,11 +27,11 @@ describe 'ipa.group.add_member', ->
           givenname: 'Firstname'
           sn: 'Lastname'
           mail: [ 'user@nikita.js.org' ]
-      {status} = await @ipa.group.add_member connection: ipa,
+      {$status} = await @ipa.group.add_member connection: ipa,
         cn: 'group_add_member'
         attributes:
           user: ['group_add_member_user']
-      status.should.be.true()
+      $status.should.be.true()
       {result} = await @ipa.group.show connection: ipa,
         cn: 'group_add_member'
       result.gidnumber.should.eql gidnumber

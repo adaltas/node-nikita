@@ -41,16 +41,14 @@ handlers = {
       condition = ref[i];
       try {
         await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth
-          },
-          parent: action
+          $condition: true,
+          $depth: action.metadata.depth,
+          $parent: action
         }, async function() {
           return (await this.fs.base.stat({
             target: condition
@@ -75,16 +73,14 @@ handlers = {
       condition = ref[i];
       try {
         await session({
-          hooks: {
+          $hooks: {
             on_result: function({action}) {
               return delete action.parent;
             }
           },
-          metadata: {
-            condition: true,
-            depth: action.metadata.depth
-          },
-          parent: action
+          $condition: true,
+          $depth: action.metadata.depth,
+          $parent: action
         }, async function() {
           return (await this.fs.base.stat({
             target: condition

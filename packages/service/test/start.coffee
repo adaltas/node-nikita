@@ -11,26 +11,26 @@ describe 'service.start', ->
   
   they 'should start', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service
         name: service.name
       @service.stop
         name: service.srv_name
-      {status} = await @service.start
+      {$status} = await @service.start
         name: service.srv_name
-      status.should.be.true()
-      {status} = await @service.status
+      $status.should.be.true()
+      {$status} = await @service.status
         name: service.srv_name
-      status.should.be.true()
-      {status} = await @service.start # Detect already started
+      $status.should.be.true()
+      {$status} = await @service.start # Detect already started
         name: service.srv_name
-      status.should.be.false()
+      $status.should.be.false()
   
   they 'no error when invalid service name', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status} = await @service.start
+      {$status} = await @service.start
         name: 'thisdoenstexit'
-      status.should.be.false()
+      $status.should.be.false()

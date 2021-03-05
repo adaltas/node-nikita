@@ -7,7 +7,7 @@ Register or log in to a Docker registry server.
 
 * `err`   
   Error object if any.   
-* `status`   
+* `$status`   
   True when the command was executed successfully.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.

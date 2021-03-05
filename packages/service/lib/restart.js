@@ -5,19 +5,16 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `modified`   
+// * `$status`   
 //   Indicates if the startup behavior has changed.   
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.restart([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.restart([{
 //   name: 'gmetad'
 // })
-// console.info(`Service was restarted: ${status}`)
+// console.info(`Service was restarted: ${$status}`)
 // ```
 
 // ## Hooks

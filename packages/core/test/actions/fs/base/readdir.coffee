@@ -11,7 +11,7 @@ describe 'actions.fs.base.readdir', ->
   
   it 'get native behavior', ->
     nikita
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await fs.mkdir "#{tmpdir}/parent"
       await fs.mkdir "#{tmpdir}/parent/a_dir"
@@ -35,8 +35,8 @@ describe 'actions.fs.base.readdir', ->
 
   they 'target option as argument', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
       @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
@@ -48,8 +48,8 @@ describe 'actions.fs.base.readdir', ->
 
   they 'target does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.readdir "{{parent.metadata.tmpdir}}/missing"
       .should.be.rejectedWith
@@ -58,8 +58,8 @@ describe 'actions.fs.base.readdir', ->
 
   they 'handle missing file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
       @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"

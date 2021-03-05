@@ -9,18 +9,18 @@ describe 'docker.run', ->
 
   they 'simple command', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
-      {status, stdout} = await @docker.run
+      {$status, stdout} = await @docker.run
         command: "/bin/echo 'test'"
         image: 'alpine'
-      status.should.be.true()
+      $status.should.be.true()
       stdout.should.match /^test.*/
   
   they '--rm (flag option)', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -39,7 +39,7 @@ describe 'docker.run', ->
   they 'unique option from array option', ({ssh}) ->
     @timeout 0
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -57,7 +57,7 @@ describe 'docker.run', ->
 
   they 'array options', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -78,7 +78,7 @@ describe 'docker.run', ->
 
   they 'existing container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -89,19 +89,19 @@ describe 'docker.run', ->
         image: 'alpine'
         container: 'nikita_test'
         rm: false
-      {status} = await @docker.run
+      {$status} = await @docker.run
         command: "echo test"
         image: 'alpine'
         container: 'nikita_test'
         rm: false
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         force: true
         container: 'nikita_test'
 
   they 'status not modified', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -112,12 +112,12 @@ describe 'docker.run', ->
         image: 'alpine'
         container: 'nikita_test'
         rm: false
-      {status} = await @docker.run
+      {$status} = await @docker.run
         command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
         rm: false
-      status.should.be.false()
+      $status.should.be.false()
       @docker.rm
         force: true
         container: 'nikita_test'

@@ -6,10 +6,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.exec({
+// const {$status} = await nikita.krb5.exec({
 //   command: 'listprincs'
 // })
-// console.info(`Command was executed: ${status}`)
+// console.info(`Command was executed: ${$status}`)
 // ```
 
 // ## Hooks
@@ -76,7 +76,7 @@ handler = async function({config}) {
   if (config.grep && typeof config.grep === 'string') {
     return {
       stdout: stdout,
-      status: stdout.split('\n').some(function(line) {
+      $status: stdout.split('\n').some(function(line) {
         return line === config.grep;
       })
     };
@@ -84,13 +84,13 @@ handler = async function({config}) {
   if (config.grep && utils.regexp.is(config.grep)) {
     return {
       stdout: stdout,
-      status: stdout.split('\n').some(function(line) {
+      $status: stdout.split('\n').some(function(line) {
         return config.grep.test(line);
       })
     };
   }
   return {
-    status: true,
+    $status: true,
     stdout: stdout
   };
 };

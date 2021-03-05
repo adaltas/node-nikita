@@ -8,7 +8,7 @@ describe 'actions.wait', ->
 
   they 'time as main argument', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {before} = await @call ->
         before: Date.now()
@@ -21,7 +21,7 @@ describe 'actions.wait', ->
   they 'validate argument', ({ssh}) ->
     before = Date.now()
     nikita
-      ssh: ssh
+      $ssh: ssh
     .wait
       time: 'an': 'object'
     .should.be.rejectedWith [

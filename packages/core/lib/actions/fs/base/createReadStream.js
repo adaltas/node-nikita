@@ -3,6 +3,8 @@
 
 // ## Example
 
+// The `stream` config property receives the readable stream:
+
 // ```js
 // buffers = []
 // await nikita.fs.base.createReadStream({
@@ -17,6 +19,9 @@
 // })
 // console.info(Buffer.concat(buffers).toString())
 // ```
+
+// Alternatively, you can directly provide the readable function with the
+// `on_readable` config property:
 
 // ```js
 // buffers = []
@@ -34,9 +39,27 @@
 // ## Hook
 var errors, fs, handler, on_action, schema, utils;
 
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
+on_action = {
+  after: ['@nikitajs/core/lib/plugins/execute'],
+  before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/metadata/tmpdir'],
+  handler: async function({
+      config,
+      metadata,
+      tools: {find, walk}
+    }) {
+    if (metadata.argument != null) {
+      config.target = metadata.argument;
+    }
+    if (config.sudo == null) {
+      config.sudo = (await find(function({
+          metadata: {sudo}
+        }) {
+        return sudo;
+      }));
+    }
+    if (config.sudo) {
+      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
+    }
   }
 };
 
@@ -51,6 +74,13 @@ schema = {
       description: `The encoding used to decode the buffer into a string. The encoding can
 be any one of those accepted by Buffer. When not defined, this action
 return a Buffer instance.`
+    },
+    'on_readable': {
+      typeof: 'function',
+      description: `User provided function called when the readable stream is created and
+readable. The user is responsible for pumping new content from it. It
+is a short version of \`config.stream\` which registers the function to
+the \`readable\` event.`
     },
     'stream': {
       typeof: 'function',
@@ -75,29 +105,22 @@ The user is responsible for pumping new content from it.`
 // ## Handler
 handler = async function({
     config,
-    hooks,
     metadata,
-    tools: {path, log, find},
-    ssh
+    ssh,
+    tools: {path, log, find}
   }) {
-  var current_username, err, sudo;
-  sudo = (await find(function({
-      config: {sudo}
-    }) {
-    return sudo;
-  }));
+  var current_username, err;
   // Normalization
-  // throw Error "Required Option: the \"target\" option is mandatory" unless config.target
   config.target = config.cwd ? path.resolve(config.cwd, config.target) : path.normalize(config.target);
   if (ssh && !path.isAbsolute(config.target)) {
     throw Error(`Non Absolute Path: target is ${JSON.stringify(config.target)}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option`);
   }
-  if (sudo) {
+  if (config.sudo) {
     if (config.target_tmp == null) {
       config.target_tmp = `${metadata.tmpdir}/${utils.string.hash(config.target)}`;
     }
   }
-  if (!(hooks.on_readable || config.stream)) {
+  if (!(config.on_readable || config.stream)) {
     throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER();
   }
   // Guess current username
@@ -131,9 +154,9 @@ chown '${current_username}' '${config.target_tmp}'`);
     var buffers, rs;
     buffers = [];
     rs = (await fs.createReadStream(ssh, config.target_tmp || config.target));
-    if (hooks.on_readable) {
+    if (config.on_readable) {
       rs.on('readable', function() {
-        return hooks.on_readable(rs);
+        return config.on_readable(rs);
       });
     } else {
       config.stream(rs);

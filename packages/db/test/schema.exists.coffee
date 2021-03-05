@@ -11,23 +11,20 @@ describe 'db.schema.exists postgres', ->
 
   they 'output exists', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       db: db.postgresql
     , ->
       @db.database.remove 'schema_exists_0'
       @db.database 'schema_exists_0'
       {exists} = await @db.schema.exists
-        config:
-          schema: 'schema_exists_0'
-          database: 'schema_exists_0'
+        schema: 'schema_exists_0'
+        database: 'schema_exists_0'
       exists.should.be.false()
       await @db.schema
-        config:
-          schema: 'schema_exists_0'
-          database: 'schema_exists_0'
+        schema: 'schema_exists_0'
+        database: 'schema_exists_0'
       {exists} = await @db.schema.exists
-        config:
-          schema: 'schema_exists_0'
-          database: 'schema_exists_0'
+        schema: 'schema_exists_0'
+        database: 'schema_exists_0'
       exists.should.be.true()
       @db.database.remove 'schema_exists_0'

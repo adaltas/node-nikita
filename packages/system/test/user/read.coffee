@@ -11,8 +11,8 @@ describe 'system.user.read', ->
 
     they 'shy doesnt modify the status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"
@@ -20,14 +20,14 @@ describe 'system.user.read', ->
           root:x:0:0:root:/root:/bin/bash
           bin:x:1:1:bin:/bin:/usr/bin/nologin
           """
-        {status} = await @system.user.read
+        {$status} = await @system.user.read
           target: "#{tmpdir}/etc/passwd"
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'return all users', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"
@@ -46,7 +46,7 @@ describe 'system.user.read', ->
 
     they 'use `getent` without target', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
@@ -70,8 +70,8 @@ describe 'system.user.read', ->
 
     they 'map a username to group record', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"
@@ -87,8 +87,8 @@ describe 'system.user.read', ->
 
     they 'map a uid to user record', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"
@@ -104,8 +104,8 @@ describe 'system.user.read', ->
 
     they 'throw error if uid is a username dont match any user', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"
@@ -121,8 +121,8 @@ describe 'system.user.read', ->
     
     they 'throw error if uid is an id dont match any user', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}})->
         @file
           target: "#{tmpdir}/etc/passwd"

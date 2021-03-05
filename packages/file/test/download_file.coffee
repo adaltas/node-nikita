@@ -12,43 +12,43 @@ describe 'file.download file', ->
 
     they 'with file protocol', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "file://#{__filename}"
           target: "#{tmpdir}/download_test" # Download a non existing file
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/download_test"
           content: /yeah/
         @file.download
           source: "file://#{__filename}"
           target: "#{tmpdir}/download_test" # Download on an existing file
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'without protocol', ({ssh}) ->
       # Download a non existing file
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__filename}"
           target: "#{tmpdir}/download_test"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/download_test"
           content: /yeah/
         @file.download # Download on an existing file
           source: "#{__filename}"
           target: "#{tmpdir}/download_test"
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'doesnt exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__dirname}/doesnotexists"
@@ -57,8 +57,8 @@ describe 'file.download file', ->
 
     they 'into an existing directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/download_test"
@@ -73,37 +73,37 @@ describe 'file.download file', ->
     they 'validate md5', ({ssh}) ->
       source = "#{__dirname}/download.zip"
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
-          ssh: ssh
+          $ssh: ssh
           source: source
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
           md5: '3f104676a5f72de08b811dbb725244ff'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert "#{tmpdir}/cache_dir/#{path.basename source}"
 
     they 'cache dir', ({ssh}) ->
       # Download a non existing file
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
-          ssh: ssh
+          $ssh: ssh
           source: "#{__filename}"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert "#{tmpdir}/cache_dir/#{path.basename __filename}"
 
     they 'detect file already present', ({ssh}) ->
       ssh = null
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.download
           source: "#{__filename}"
@@ -115,7 +115,7 @@ describe 'file.download file', ->
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @file
           content: 'abc'
           target: "#{tmpdir}/download_test"
@@ -124,15 +124,15 @@ describe 'file.download file', ->
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
   
   describe 'md5', ->
 
     they 'cache dir with md5 string', ({ssh}) ->
       # Download a non existing file
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -143,7 +143,7 @@ describe 'file.download file', ->
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/cache_dir/a_file"
           content: 'okay'
@@ -154,8 +154,8 @@ describe 'file.download file', ->
     they 'is computed if true', ({ssh}) ->
       # Download with invalid checksum
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @log.fs
           basedir: tmpdir
@@ -167,12 +167,12 @@ describe 'file.download file', ->
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file.download
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -184,8 +184,8 @@ describe 'file.download file', ->
     they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.touch
           target: "#{tmpdir}/a_file"

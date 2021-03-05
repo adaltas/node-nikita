@@ -9,8 +9,8 @@ describe 'actions.fs.base.writeFile', ->
 
   they 'content is a string', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -20,8 +20,8 @@ describe 'actions.fs.base.writeFile', ->
 
   they 'content is empty', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -31,8 +31,8 @@ describe 'actions.fs.base.writeFile', ->
   
   they.skip 'option append on missing file', ({ssh}) ->
     nikita
-      ssh: ssh
-      tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
@@ -47,8 +47,8 @@ describe 'actions.fs.base.writeFile', ->
     # its behavior, no time to investigate and we shall wait for `dirty` which
     # will help the debugging
     nikita
-      ssh: ssh
-      tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"

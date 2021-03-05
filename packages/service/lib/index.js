@@ -10,9 +10,7 @@
 
 // ## Output
 
-// * `err`   
-  //   Error object if any.
-  // * `status`   
+// * `$status`   
   //   Indicate a change in service such as a change in installation, update,
   //   start/stop or startup registration.
   // * `installed`   
@@ -23,17 +21,15 @@
 // ## Example
 
 // ```js
-  // const {status} = await nikita.service([{
-  //   ssh: ssh,
+  // const {$status} = await nikita.service([{
   //   name: 'ganglia-gmetad-3.5.0-99',
   //   srv_name: 'gmetad',
   //   state: 'stopped',
   //   startup: false
   // },{
-  //   ssh: ssh,
   //   name: 'ganglia-web-3.5.7-99'
   // }])
-  // console.info(`Service status: ${status}`)
+  // console.info(`Service status: ${$status}`)
   // ```
 
 // ## Hooks
@@ -133,7 +129,7 @@ use an empty string to not define any run level.`
 
 // ## Handler
 handler = async function({config, parent, state}) {
-  var chkname, pkgname, srvname, status;
+  var $status, chkname, pkgname, srvname;
   pkgname = config.yum_name || config.name;
   chkname = config.chk_name || config.srv_name || config.name;
   srvname = config.srv_name || config.chk_name || config.name;
@@ -156,23 +152,21 @@ handler = async function({config, parent, state}) {
     });
   }
   if (config.state) {
-    ({status} = (await this.service.status({
-      name: srvname,
-      metadata: {
-        shy: true
-      }
+    ({$status} = (await this.service.status({
+      $shy: true,
+      name: srvname
     })));
-    if (!status && indexOf.call(config.state, 'started') >= 0) {
+    if (!$status && indexOf.call(config.state, 'started') >= 0) {
       await this.service.start({
         name: srvname
       });
     }
-    if (status && indexOf.call(config.state, 'stopped') >= 0) {
+    if ($status && indexOf.call(config.state, 'stopped') >= 0) {
       await this.service.stop({
         name: srvname
       });
     }
-    if (status && indexOf.call(config.state, 'restarted') >= 0) {
+    if ($status && indexOf.call(config.state, 'restarted') >= 0) {
       return (await this.service.restart({
         name: srvname
       }));

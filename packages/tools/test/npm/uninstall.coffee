@@ -11,7 +11,7 @@ describe 'tools.npm.uninstall', ->
 
     it 'name is required', ->
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @tools.npm.uninstall
           cwd: tmpdir
@@ -45,25 +45,25 @@ describe 'tools.npm.uninstall', ->
 
     they 'uninstall locally', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
-        {status} = await @tools.npm.uninstall
+        {$status} = await @tools.npm.uninstall
           cwd: tmpdir
           name: 'csv-parse'
-        status.should.be.true()
-        {status} = await @tools.npm.uninstall
+        $status.should.be.true()
+        {$status} = await @tools.npm.uninstall
           cwd: tmpdir
           name: 'csv-parse'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'uninstall locally in a current working directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir "#{tmpdir}/1_dir"
         @fs.mkdir "#{tmpdir}/2_dir"
@@ -73,58 +73,55 @@ describe 'tools.npm.uninstall', ->
         @tools.npm
           name: 'csv-parse'
           cwd: "#{tmpdir}/2_dir"
-        {status} = await @tools.npm.uninstall
+        {$status} = await @tools.npm.uninstall
           cwd: "#{tmpdir}/1_dir"
           name: 'csv-parse'
-        status.should.be.true()
-        {status} = await @tools.npm.uninstall
+        $status.should.be.true()
+        {$status} = await @tools.npm.uninstall
           cwd: "#{tmpdir}/2_dir"
           name: 'csv-parse'
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'uninstall globally', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @tools.npm
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        {status} = await @tools.npm.uninstall
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        status.should.be.true()
-        {status} = await @tools.npm.uninstall
-          config:
-            name: 'csv-parse'
-            global: true
-            sudo: true
-        status.should.be.false()
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        {$status} = await @tools.npm.uninstall
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        $status.should.be.true()
+        {$status} = await @tools.npm.uninstall
+          name: 'csv-parse'
+          global: true
+          # sudo: true
+        $status.should.be.false()
 
     they 'uninstall multiple packages', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
           name: ['csv-parse', 'csv']
-        {status} = await @tools.npm.uninstall
+        {$status} = await @tools.npm.uninstall
           cwd: tmpdir
           name: ['csv-parse', 'csv']
-        status.should.be.true()
+        $status.should.be.true()
     
     they 'name as argument', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @tools.npm
           cwd: tmpdir
           name: 'csv-parse'
-        {status} = await @tools.npm.uninstall 'csv-parse',
+        {$status} = await @tools.npm.uninstall 'csv-parse',
           cwd: tmpdir
-        status.should.be.true()
+        $status.should.be.true()

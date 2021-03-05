@@ -9,47 +9,47 @@ describe 'lxd.storage', ->
 
   they 'Create a storage', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage.delete
         name: "teststorage0"
-      {status} = await @lxd.storage
+      {$status} = await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'Different types of config parameters', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage.delete
         name: "teststorage0"
-      {status} = await @lxd.storage
+      {$status} = await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
         properties:
           size: '10GB'
           'zfs.clone_copy': false
-      status.should.be.true()
+      $status.should.be.true()
 
   they 'Storage already created', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage.delete
         name: "teststorage0"
-      {status} = await @lxd.storage
+      {$status} = await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
-      status.should.be.true()
-      {status} = await @lxd.storage
+      $status.should.be.true()
+      {$status} = await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'Update storage configuration', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.storage.delete
         name: "teststorage0"
@@ -58,10 +58,10 @@ describe 'lxd.storage', ->
         driver: "zfs"
         properties:
           size: "20GB"
-      {status} = await @lxd.storage
+      {$status} = await @lxd.storage
         name: "teststorage0"
         driver: "zfs"
         properties:
           size: "10GB"
           'zfs.clone_copy': false
-      status.should.be.true()
+      $status.should.be.true()

@@ -7,9 +7,7 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Indicate a change in service such as a change in installation, update, 
 //   start/stop or startup registration.   
 // * `loader`   
@@ -49,9 +47,7 @@ handler = async function({
   if (state['nikita:service:loader'] == null) {
     try {
       data = (await this.execute({
-        metadata: {
-          shy: config.shy
-        },
+        $shy: config.shy,
         command: `if command -v systemctl >/dev/null; then exit 1; fi ;
 if command -v service >/dev/null; then exit 2; fi ;
 exit 3 ;`,
@@ -72,7 +68,7 @@ exit 3 ;`,
         loader = state['nikita:service:loader'] != null;
       }
       return {
-        status: data.status,
+        $status: data.status,
         loader: loader
       };
     } catch (error) {

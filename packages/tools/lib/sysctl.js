@@ -9,9 +9,7 @@
 
 // ## Output
 
-// * `err` (Error)   
-  //   Error object if any.   
-  // * `status`  (boolean)   
+// * `$status`  (boolean)   
   //   Value is "true" if the property was created or updated.
 
 // ## Usefull Commands
@@ -28,13 +26,13 @@
 // ## Example
 
 // ```js
-  // const {status} = await nikita.tools.sysctl({
+  // const {$status} = await nikita.tools.sysctl({
   //   source: '/etc/sysctl.conf',
   //   properties: {
   //     'vm.swappiness': 1
   //   }
   // })
-  // console.info(`Systcl was reloaded: ${status}`)
+  // console.info(`Systcl was reloaded: ${$status}`)
   // ```
 
 // ## Schema
@@ -81,17 +79,16 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var current, data, err, final, i, k, key, len, line, ref, ref1, status, v, value;
+  var $status, current, data, err, final, i, k, key, len, line, ref, ref1, v, value;
   // Read current properties
   current = {};
-  status = false;
+  $status = false;
   log({
     message: `Read target: ${config.target}`,
     level: 'DEBUG'
   });
   try {
     ({data} = (await this.fs.base.readFile({
-      ssh: config.ssh,
       target: config.target,
       encoding: 'ascii'
     })));
@@ -118,7 +115,7 @@ handler = async function({
         log(`Removing Property: ${key}, was ${value}`, {
           level: 'INFO'
         });
-        status = true;
+        $status = true;
         continue;
       }
       // Set property
@@ -138,7 +135,7 @@ handler = async function({
       final[k] = v;
     }
   }
-  status = false;
+  $status = false;
   ref1 = config.properties;
   for (key in ref1) {
     value = ref1[key];
@@ -155,9 +152,9 @@ handler = async function({
       level: 'INFO'
     });
     final[key] = value;
-    status = true;
+    $status = true;
   }
-  if (status) {
+  if ($status) {
     await this.file({
       target: config.target,
       backup: config.backup,
@@ -176,7 +173,7 @@ handler = async function({
       })()).join('\n')
     });
   }
-  if (config.load && status) {
+  if (config.load && $status) {
     return (await this.execute(`sysctl -p ${config.target}`));
   }
 };

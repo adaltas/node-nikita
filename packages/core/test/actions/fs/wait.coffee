@@ -10,15 +10,15 @@ describe 'actions.fs.wait', ->
   describe 'schema', ->
   
     it 'string argument converted to target', ->
-      nikita.fs.wait '/path/to/file', handler: ({config}) ->
+      nikita.fs.wait '/path/to/file', ({config}) ->
         config.target.should.eql ['/path/to/file']
   
   describe 'usage', ->
 
     they 'status false if already exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {$status} = await @fs.wait
           target: "#{tmpdir}"
@@ -26,8 +26,8 @@ describe 'actions.fs.wait', ->
 
     they 'status true if created', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         setTimeout ->
           nikita(ssh: ssh).fs.mkdir "#{tmpdir}/a_dir"

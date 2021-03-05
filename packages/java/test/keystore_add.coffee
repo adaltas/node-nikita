@@ -11,10 +11,10 @@ describe 'java.keystore_add', ->
 
     they 'caname, cacert, cert, name, key, keypass are provided', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_caname"
@@ -23,77 +23,77 @@ describe 'java.keystore_add', ->
           name: "my_name"
           key: "#{__dirname}/keystore/certs1/node_1_key.pem"
           keypass: 'mypassword'
-        status.should.be.true()
+        $status.should.be.true()
 
   describe 'cacert', ->
 
     they 'create new cacerts file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'create parent directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/a/dir/cacerts"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'detect existing cacert signature', ({ssh}) ->
       nikita
-        ssh: null
-        metadata: tmpdir: true
+        $ssh: null
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
+          $shy: true
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-          metadata: shy: true
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'update a new cacert with same alias', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
+          $shy: true
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-          metadata: shy: true
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs2/cacert.pem"
-        status.should.be.true()
+        $status.should.be.true()
         await @execute.assert
           command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias"
           content: /^my_alias,/m
 
     they 'fail if CA file does not exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -105,8 +105,8 @@ describe 'java.keystore_add', ->
 
     they 'import certificate chain', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @execute
           command: """
@@ -118,18 +118,18 @@ describe 'java.keystore_add', ->
           openssl x509 -req -in ca_int2.req -CAkey ca_int1.key.pem -CA ca_int1.cert.pem -days 20 -set_serial 01 -sha512 -out ca_int2.cert.pem
           cat #{__dirname}/keystore/certs1/cacert.pem ca_int1.cert.pem ca_int2.cert.pem > ca.cert.pem
           """
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{tmpdir}/tmp/ca.cert.pem"
-        status.should.be.true()
-        {status} = await @java.keystore_add
+        $status.should.be.true()
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{tmpdir}/tmp/ca.cert.pem"
-        status.should.be.false()
+        $status.should.be.false()
         await @execute.assert
           command: "keytool -list -keystore #{tmpdir}/keystore -storepass changeit -alias my_alias-0"
           content: /^my_alias-0,/m
@@ -142,8 +142,8 @@ describe 'java.keystore_add', ->
 
     they 'honors status with certificate chain', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute
           command: """
@@ -158,27 +158,27 @@ describe 'java.keystore_add', ->
           openssl x509 -req -in ca_int2b.req -CAkey ca_int1.key.pem -CA ca_int1.cert.pem -days 20 -set_serial 01 -sha512 -out ca_int2b.cert.pem
           cat #{__dirname}/keystore/certs1/cacert.pem ca_int1.cert.pem ca_int2b.cert.pem > ca.b.cert.pem
           """
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{tmpdir}/ca/ca.a.cert.pem"
-        status.should.be.true()
-        {status} = await @java.keystore_add
+        $status.should.be.true()
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{tmpdir}/ca/ca.b.cert.pem"
-        status.should.be.true()
+        $status.should.be.true()
 
   describe 'key', ->
 
     they 'create new cacerts file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
@@ -187,14 +187,14 @@ describe 'java.keystore_add', ->
           cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
           keypass: 'mypassword'
           name: 'node_1'
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'detect existing cacert signature', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
@@ -203,8 +203,8 @@ describe 'java.keystore_add', ->
           cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
           keypass: 'mypassword'
           name: 'node_1'
-        status.should.be.true()
-        {status} = await @java.keystore_add
+        $status.should.be.true()
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
@@ -213,12 +213,12 @@ describe 'java.keystore_add', ->
           cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
           keypass: 'mypassword'
           name: 'node_1'
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'update a new cacert with same alias', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
@@ -229,7 +229,7 @@ describe 'java.keystore_add', ->
           cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
           keypass: 'mypassword'
           name: 'node_1'
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changeit"
           caname: "my_alias"
@@ -238,13 +238,13 @@ describe 'java.keystore_add', ->
           cert: "#{__dirname}/keystore/certs2/node_1_cert.pem"
           keypass: 'mypassword'
           name: 'node_1'
-        status.should.be.true()
+        $status.should.be.true()
 
   describe 'keystore', ->
 
     they.skip 'change password', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @java.keystore_add
@@ -252,19 +252,19 @@ describe 'java.keystore_add', ->
           storepass: "changeit"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        {status} = await @java.keystore_add
+        {$status} = await @java.keystore_add
           keystore: "#{tmpdir}/keystore"
           storepass: "changednow"
           caname: "my_alias"
           cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        status.should.be.true()
+        $status.should.be.true()
 
   describe 'config openssl', ->
 
     they 'throw error if not detected', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @java.keystore_add
           keystore: "#{tmpdir}/keystore"

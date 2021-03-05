@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.cron.remove({
+// const {$status} = await nikita.cron.remove({
 //   command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
 //   when: '0 */9 * * *',
 //   user: 'service'
 // })
-// console.info(`Cron entry was removed: ${status}`)
+// console.info(`Cron entry was removed: ${$status}`)
 // ```
 
 // ## Schema
@@ -59,10 +59,8 @@ handler = async function({
   status = false;
   jobs = [];
   ({stdout, stderr} = (await this.execute({
-    command: `${crontab} -l`,
-    metadata: {
-      shy: true
-    }
+    $shy: true,
+    command: `${crontab} -l`
   })));
   if (/^no crontab for/.test(stderr)) {
     throw Error('User crontab not found');

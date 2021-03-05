@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was pulled.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,10 +17,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.pull({
+// const {$status} = await nikita.docker.pull({
 //   image: 'postgresql'
 // })
-// console.info(`Image was pulled: ${status}`)
+// console.info(`Image was pulled: ${$status}`)
 // ```
 
 // ## Schema
@@ -50,7 +50,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var name, status, tag;
+  var $status, name, tag;
   // Validate
   [name, tag] = config.image.split(':');
   config.image = name;
@@ -62,16 +62,16 @@ handler = async function({config}) {
     config.tag = tag || 'latest';
   }
   // Check if exist
-  ({status} = (await this.docker.tools.execute({
+  ({$status} = (await this.docker.tools.execute({
     // avoid checking when all config is true,
     // because there is no native way to list all existing tags on the registry
-    unless: config.all,
+    $unless: config.all,
     command: ['images', `| grep '${config.image}'`, `| grep '${config.tag}'`].join(' '),
     code_skipped: 1
   })));
   // Pull image
   return (await this.docker.tools.execute({
-    unless: status,
+    $unless: $status,
     command: ['pull', config.all ? `-a ${config.image}` : `${config.image}:${config.tag}`].join(' ')
   }));
 };

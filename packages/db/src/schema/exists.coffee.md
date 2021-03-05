@@ -49,10 +49,10 @@ console.info(`Schema exists: ${exists}`)
 ## Handler
 
     handler = ({config}) ->
-      {status} = await @db.query config: config,
+      {$status} = await @db.query config,
         command: "SELECT 1 FROM pg_namespace WHERE nspname = '#{config.schema}';"
         grep: '1'
-      exists: status
+      exists: $status
 
 ## Exports
 

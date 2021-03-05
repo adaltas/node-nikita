@@ -11,7 +11,7 @@ for engine, _ of db
 
     they 'database missing', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ({tools: {status}}) ->
         {exists} = await @db.database.exists database: 'test_database_exists_0_db'
@@ -22,14 +22,14 @@ for engine, _ of db
 
     they 'database exists', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ({tools: {status}}) ->
-        @db.database.remove 'test_database_exists_1_db', metadata: shy: true
-        @db.database 'test_database_exists_1_db', metadata: shy: true
+        @db.database.remove 'test_database_exists_1_db', $shy: true
+        @db.database 'test_database_exists_1_db', $shy: true
         {exists} = await @db.database.exists database: 'test_database_exists_1_db'
         exists.should.be.true()
         {exists} = await @db.database.exists 'test_database_exists_1_db'
         exists.should.be.true()
-        @db.database.remove 'test_database_exists_1_db', metadata: shy: true
+        @db.database.remove 'test_database_exists_1_db', $shy: true
         status().should.be.false()

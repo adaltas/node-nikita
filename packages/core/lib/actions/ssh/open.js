@@ -221,9 +221,7 @@ handler = async function({
     level: 'DEBUG'
   });
   return (await this.call({
-    metadata: {
-      retry: 3
-    }
+    $retry: 3
   }, async function() {
     conn = (await connect(config));
     return {

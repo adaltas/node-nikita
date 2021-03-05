@@ -10,8 +10,8 @@ describe 'system.user.remove', ->
     return unless tags.api
     
     it 'default argument', ->
-      {config} = await nikita.system.user.remove 'toto',
-        handler: ({config}) -> config: config
+      {config} = await nikita.system.user.remove 'toto', ({config}) ->
+        config: config
       config.name.should.eql 'toto'
       
   describe 'usage', ->
@@ -20,12 +20,12 @@ describe 'system.user.remove', ->
   
     they 'handle status', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
         @system.user 'toto'
-        {status} = await @system.user.remove 'toto'
-        status.should.be.true()
-        {status} = await @system.user.remove 'toto'
-        status.should.be.false()
+        {$status} = await @system.user.remove 'toto'
+        $status.should.be.true()
+        {$status} = await @system.user.remove 'toto'
+        $status.should.be.false()

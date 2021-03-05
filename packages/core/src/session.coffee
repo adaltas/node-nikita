@@ -7,39 +7,25 @@ contextualize = require './session/contextualize'
 normalize = require './session/normalize'
 utils = require './utils'
 
-session = (action={}) ->
-  action.metadata ?= {}
-  action.metadata.namespace ?= []
-  action.state ?= {}
-  action.state.namespace ?= []
+session = (args, options={}) ->
   # Catch calls to new actions
+  namespace = []
   on_call = (...args) ->
     # Extract action namespace and reset the state
-    namespace = action.state.namespace.slice()
-    action.state.namespace = []
+    [namespace, nm] = [[], namespace]
     # Schedule the action and get the result as a promise
     prom = action.scheduler.push ->
       # Validate the namespace
-      child = await action.registry.get namespace
+      child = await action.registry.get nm
       unless child
         return Promise.reject utils.error 'ACTION_UNREGISTERED_NAMESPACE', [
           'no action is registered under this namespace,'
-          "got #{JSON.stringify namespace}."
+          "got #{JSON.stringify nm}."
         ]
-      actions = await action.plugins.call
-        name: 'nikita:arguments'
-        args: args: args, child: child, parent: action, namespace: namespace
-        handler: ({args, parent, namespace}) ->
-          actions = contextualize [...args, metadata: namespace: namespace]
-          (if Array.isArray actions then actions else [actions]).map (action) ->
-            action.config ?= {}
-            action.config.parent = action.parent if action.parent?
-            action.parent = parent
-          actions
-      unless Array.isArray actions
-        session actions
-      else
-        schedule actions.map (action) -> -> session action
+      session args,
+        namespace: nm
+        child: child
+        parent: action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
@@ -48,16 +34,35 @@ session = (action={}) ->
         return target[name].bind target
       else
         return target[name]
-    if action.state.namespace.length is 0
+    if namespace.length is 0
       switch name
         when 'plugins' then return action.plugins
-    action.state.namespace.push name
+    namespace.push name
     new Proxy on_call, get: on_get
   # Initialize the plugins manager
-  action.plugins = plugandplay
-    plugins: action.plugins
+  options.parent = options.parent or args[0]?.$parent or undefined
+  options.namespace = options.namespace or args[0]?.$namespace or undefined
+  plugins = plugandplay
+    plugins: options.plugins or args[0]?.$plugins or args[0]?.plugins
     chain: new Proxy on_call, get: on_get
-    parent: if action.parent then action.parent.plugins else undefined
+    parent: if options.parent then options.parent.plugins else undefined
+  # Normalize arguments
+  if options.normalize isnt false
+    actions = plugins.call_sync
+      name: 'nikita:arguments',
+      plugins: options.plugins
+      args: {args: args, ...options}
+      handler: ({args, namespace}) ->
+        contextualize [...args, $namespace: namespace]
+  else
+    actions = args[0]
+  if Array.isArray actions
+    options.normalize = false
+    return schedule actions.map (action) -> -> session [action], options
+  action = actions
+  action.parent = options.parent
+  action.plugins = plugins
+  action.metadata.namespace ?= []
   # Initialize the registry to manage action registration
   action.registry = registry.create
     plugins: action.plugins
@@ -137,9 +142,8 @@ session = (action={}) ->
   # - resolved with the result of handler
   new Proxy result, get: on_get
 
-module.exports = run = (...args) ->
-  actions = contextualize args
-  # Are we scheduling one or multiple actions
-  if Array.isArray actions
-  then schedule actions.map (action) -> -> session action
-  else session actions
+module.exports = (...args) ->
+  session args
+
+module.exports.with_options = (args, options) ->
+  session args, options

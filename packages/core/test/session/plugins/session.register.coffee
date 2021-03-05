@@ -13,10 +13,10 @@ describe 'session.plugins.session.register', ->
       plugins.register
         'hooks':
           'nikita:register': ({action}, handler)->
-            action.key = 'new value'
+            action.config?.key = 'new value'
             handler
       @registry.register ['an', 'action'],
-        key: 'value'
+        config: key: 'value'
         handler: (->)
       @an.action ({config}) ->
         config.key.should.eql 'new value'
@@ -28,10 +28,10 @@ describe 'session.plugins.session.register', ->
           'nikita:register': ({action}, handler)->
             new Promise (resolve, reject) ->
               setImmediate ->
-                action.key = 'new value'
+                action.config?.key = 'new value'
                 resolve handler
       context.registry.register ['an', 'action'],
-        key: 'value'
+        config: key: 'value'
         handler: (->)
       context.an.action ({config}) ->
         config.key.should.eql 'new value'

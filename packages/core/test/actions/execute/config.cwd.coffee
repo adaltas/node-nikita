@@ -8,8 +8,8 @@ describe 'actions.execute.config.cwd', ->
 
   they 'execute in the context of directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {stdout} = await @execute
         command: 'pwd'

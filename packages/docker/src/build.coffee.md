@@ -16,7 +16,7 @@ Status unmodified if the repository is identical to a previous one
 
 * `err`   
   Error object if any.   
-* `status`   
+* `$status`   
   True if image was successfully built.   
 * `image`   
   Image ID if the image was built, the ID is based on the image sha256 checksum.   
@@ -28,11 +28,11 @@ Status unmodified if the repository is identical to a previous one
 ## Builds a repository from dockerfile without any resourcess
 
 ```js
-const {status} = await nikita.docker.build({
+const {$status} = await nikita.docker.build({
   image: 'ryba/targe-build',
   source: '/home/ryba/Dockerfile'
 })
-console.info(`Container was built: ${status}`)
+console.info(`Container was built: ${$status}`)
 ```
 
 ## Builds a repository from dockerfile with external resources
@@ -56,23 +56,22 @@ Build directory tree :
 ```
 
 ```js
-const {status} = await nikita.docker.build({
+const {$status} = await nikita.docker.build({
   tag: 'ryba/target-build',
   source: '/home/ryba/Dockerfile',
   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
 })
-console.info(`Container was built: ${status}`)
+console.info(`Container was built: ${$status}`)
 ```
 
 ## Builds a repository from stdin
 
 ```js
-const {status} = await nikita.docker.build({
-  ssh: ssh,
+const {$status} = await nikita.docker.build({
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
 })
-console.info(`Container was built: ${status}`)
+console.info(`Container was built: ${$status}`)
 ```
 
 ## Hooks

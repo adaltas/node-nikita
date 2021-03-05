@@ -8,13 +8,13 @@
 // Use a custom delimiter with spaces around the equal sign.
 
 // ```js
-// const {status} = await nikita.file.properties({
+// const {$status} = await nikita.file.properties({
 //   target: "/path/to/target.json",
 //   content: { key: "value" },
 //   separator: ' = '
 //   merge: true
 // })
-// console.info(`File was written: ${status}`)
+// console.info(`File was written: ${$status}`)
 // ```
 
 // ## Schema
@@ -66,7 +66,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var data, exists, fnl_props, k, key, keys, org_props, properties, ref, status, v;
+  var $status, data, exists, fnl_props, k, key, keys, org_props, properties, ref, v;
   // Trim
   if (!config.trim) {
     fnl_props = config.content;
@@ -101,8 +101,8 @@ handler = async function({
   }
   org_props = properties || {};
   // Diff
-  ({status} = (await this.call(function() {
-    var i, j, key, keys, l, len, len1, len2, ref1, ref2, ref3;
+  ({$status} = (await this.call(function() {
+    var i, j, key, keys, l, len, len1, len2, ref1, ref2, ref3, status;
     status = false;
     keys = {};
     ref1 = Object.keys(org_props);
@@ -154,13 +154,11 @@ handler = async function({
     return results;
   })();
   await this.file({
+    $shy: true,
     target: `${config.target}`,
     content: data.join('\n'),
     backup: config.backup,
-    eof: true,
-    metadata: {
-      shy: true
-    }
+    eof: true
   });
   if (config.uid || config.gid) {
     await this.system.chown({

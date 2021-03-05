@@ -9,16 +9,16 @@ describe 'docker.volume_create', ->
 
   they 'a named volume', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.volume_rm
         name: 'my_volume'
-      {status} = await @docker.volume_create
+      {$status} = await @docker.volume_create
         name: 'my_volume'
-      status.should.be.true()
-      {status} = await @docker.volume_create
+      $status.should.be.true()
+      {$status} = await @docker.volume_create
         name: 'my_volume'
-      status.should.be.false()
+      $status.should.be.false()
       @docker.volume_rm
         name: 'my_volume'

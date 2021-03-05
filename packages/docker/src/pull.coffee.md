@@ -7,7 +7,7 @@ Pull an image or a repository from a registry.
 
 * `err`   
   Error object if any.
-* `status`   
+* `$status`   
   True if container was pulled.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.
@@ -17,10 +17,10 @@ Pull an image or a repository from a registry.
 ## Example
 
 ```js
-const {status} = await nikita.docker.pull({
+const {$status} = await nikita.docker.pull({
   image: 'postgresql'
 })
-console.info(`Image was pulled: ${status}`)
+console.info(`Image was pulled: ${$status}`)
 ```
 
 ## Schema
@@ -57,10 +57,10 @@ console.info(`Image was pulled: ${status}`)
       throw Error 'Tag must be specified either in the image or in the tag config' if tag and config.tag
       config.tag ?= tag or 'latest'
       # Check if exist
-      {status} = await @docker.tools.execute
+      {$status} = await @docker.tools.execute
         # avoid checking when all config is true,
         # because there is no native way to list all existing tags on the registry
-        unless: config.all
+        $unless: config.all
         command: [
           'images'
           "| grep '#{config.image}'"
@@ -69,7 +69,7 @@ console.info(`Image was pulled: ${status}`)
         code_skipped: 1
       # Pull image
       await @docker.tools.execute
-        unless: status
+        $unless: $status
         command: [
           'pull'
           if config.all

@@ -6,19 +6,16 @@ Note, does not throw an error if service is not installed.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `$status`   
   Indicates if the startup behavior has changed.   
 
 ## Example
 
 ```js
-const {status} = await nikita.service.status([{
-  ssh: ssh,
+const {$status} = await nikita.service.status([{
   name: 'gmetad'
 })
-console.info(`Service status: ${status}`)
+console.info(`Service status: ${$status}`)
 ```
 
 ## Notes
@@ -44,12 +41,12 @@ We might think about re-integrating them.
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot_rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
       required: ['name']
 
 ## Handler
@@ -57,7 +54,7 @@ We might think about re-integrating them.
     handler = ({config, tools: {log}}) ->
       log message: "Status for service #{config.name}", level: 'INFO'
       try
-        {status} = await @execute
+        {$status} = await @execute
           command: """
             ls \
               /lib/systemd/system/*.service \
@@ -77,9 +74,9 @@ We might think about re-integrating them.
             """
           code: 0
           code_skipped: 3
-          arch_chroot: config.arch_chroot
-          rootdir: config.rootdir
-        log message: "Status for #{config.name} is #{if status then 'started' else 'stoped'}", level: 'INFO'
+          # arch_chroot: config.arch_chroot
+          # arch_chroot_rootdir: config.arch_chroot_rootdir
+        log message: "Status for #{config.name} is #{if $status then 'started' else 'stoped'}", level: 'INFO'
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

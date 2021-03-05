@@ -11,8 +11,8 @@ describe 'file', ->
     
     they 'check for empty replace if no source and no content', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @fs.base.writeFile
           target: "#{tmpdir}/check_replace"
@@ -32,21 +32,21 @@ describe 'file', ->
   
     they 'is a string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'Hello'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'Hello'
 
     they 'is a function', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -57,26 +57,26 @@ describe 'file', ->
 
     they 'status is false if content is the same', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'original content'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/file"
           content: 'new content'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/file"
           content: 'new content'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'with source is a file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_source"
@@ -84,11 +84,11 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/a_target"
           source: "#{tmpdir}/a_source"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/a_target"
           source: "#{tmpdir}/a_source"
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/a_source"
           content: 'Hello'
@@ -98,73 +98,73 @@ describe 'file', ->
 
     they 'empty file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: ''
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: ''
 
     they 'override empty file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/empty_file"
           content: ''
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/empty_file"
           content: ''
         @file
           target: "#{tmpdir}/empty_file"
           content: 'toto'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/empty_file"
           content: 'toto'
 
     they 'handle integer type', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 123
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: '123'
 
     they 'create parent directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello'
 
     they 'skip empty lines', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello\r\nworld'
           remove_empty_lines: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello\rworld'
@@ -173,8 +173,8 @@ describe 'file', ->
 
     they 'follow link by default', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'ko'
@@ -194,8 +194,8 @@ describe 'file', ->
 
     they 'throw error if link is a directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/target"
@@ -209,8 +209,8 @@ describe 'file', ->
 
     they 'dont follow link if option "unlink"', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'ko'
@@ -231,8 +231,8 @@ describe 'file', ->
 
     they 'dont follow link if option "unlink" and link is directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.mkdir
           target: "#{tmpdir}/target"
@@ -255,8 +255,8 @@ describe 'file', ->
 
     they 'set permission', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -268,8 +268,8 @@ describe 'file', ->
 
     they 'does not modify parent', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.mkdir
           target: "#{tmpdir}/a_dir"
@@ -284,8 +284,8 @@ describe 'file', ->
       
     they 'ensure mode is preserved on content update', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -300,8 +300,8 @@ describe 'file', ->
 
     they 'change permission', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -311,17 +311,17 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           content: 'ok'
           mode: 0o0705
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/a_file"
           content: 'ok'
           mode: 0o0705
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'change permission after modification', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -339,25 +339,25 @@ describe 'file', ->
   
     they 'with from and with to', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
-          ssh: ssh
+          $ssh: ssh
           target: "#{tmpdir}/fromto.md"
           from: '# from'
           to: '# to'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\n# from\nmy friend\n# to\nyou coquin'
 
     they 'with from and with to append', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -368,7 +368,7 @@ describe 'file', ->
           to: '# to'
           append: true
           replace: 'my friend'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nyou coquin\n# from\nmy friend\n# to'
@@ -379,37 +379,37 @@ describe 'file', ->
           append: true
           replace: 'my best friend'
           eof: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
 
     they 'with from and without to', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
           from: '# from'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\n# from\nmy friend'
 
     they 'without from and with to', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
           to: '# to'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
 
@@ -417,8 +417,8 @@ describe 'file', ->
   
     they 'without match and place_before a string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -431,8 +431,8 @@ describe 'file', ->
   
     they 'without match and place_before a regexp', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
@@ -447,35 +447,35 @@ describe 'file', ->
   
     they 'with match a line as a string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
           match: 'lets try to replace that one'
           content: 'here we are\nlets try to replace that one\nyou coquin'
           replace: 'my friend'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/fromto.md"
           match: 'my friend'
           replace: 'my friend'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nmy friend\nyou coquin'
   
     they 'with match a word as a string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/fromto.md"
           match: 'replace'
           content: 'replace that one\nand\nreplace this one\nand not this one'
           replace: 'switch'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'switch that one\nand\nswitch this one\nand not this one'
@@ -483,43 +483,43 @@ describe 'file', ->
     they 'with match as a regexp', ({ssh}) ->
       # With a match
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/replace"
           content: 'email=david(at)adaltas(dot)com\nusername=root'
           match: /(username)=(.*)/
           replace: '$1=david (was $2)'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file # Without a match
           target: "#{tmpdir}/replace"
           match: /this wont work/
           replace: '$1=david (was $2)'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'email=david(at)adaltas(dot)com\nusername=david (was root)'
 
     they 'with match as a regexp and multiple content', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           match: /(.*try) (.*)/
           content: 'here we are\nlets try to replace that one\nyou coquin'
           replace: ['my friend, $1']
           target: "#{tmpdir}/replace"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'here we are\nmy friend, lets try\nyou coquin'
 
     they 'with match as a regexp on line and empty string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           append: true
@@ -528,35 +528,35 @@ describe 'file', ->
           match: /^match(\n|$)/mg
           replace: ''
           target: "#{tmpdir}/replace"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'aaa\nccc\n'
 
     they 'with match with global and multilines', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/replace"
           match: /^property=.*$/mg
           content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
           replace: 'property=50'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/replace"
           match: /^property=50$/mg
           replace: 'property=50'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/replace"
           content: '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
 
     they 'will replace target if source or content does not exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -565,12 +565,12 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           match: /(.*content)/
           replace: 'a text'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/a_file"
           match: /(.*content)/
           replace: 'a text'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: 'This is\na text\nfor testing'
@@ -580,8 +580,8 @@ describe 'file', ->
     they 'is true, prepend the content', ({ssh}) ->
       # File doesnt exists, creates one
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -600,8 +600,8 @@ describe 'file', ->
     they 'append content to missing file', ({ssh}) ->
       # File does not exist, it creates it with the content
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -614,8 +614,8 @@ describe 'file', ->
     they 'append content to existing file', ({ssh}) ->
       # File does not exists, it create one
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -636,8 +636,8 @@ describe 'file', ->
       they 'place_before true, replace a string, match a regexp', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -647,7 +647,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             place_before: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -657,15 +657,15 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             place_before: true
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
 
       they 'place_before true, replace a string, match a string', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -675,7 +675,7 @@ describe 'file', ->
             match: "you coquin"
             replace: 'new coquin'
             place_before: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -685,7 +685,7 @@ describe 'file', ->
             match: "new coquin"
             replace: 'new coquin'
             place_before: true
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -693,8 +693,8 @@ describe 'file', ->
       they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -704,7 +704,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             append: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nnew coquin\n'
@@ -714,7 +714,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             append: true
-          .should.be.finally.containEql status: false
+          .should.be.finally.containEql $status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nnew coquin\n'
@@ -722,8 +722,8 @@ describe 'file', ->
     they 'will append if no match', ({ssh}) ->
       # Prepare by creating a file with content
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -733,7 +733,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'here we are\nyou coquin\nAdd this line'
@@ -743,8 +743,8 @@ describe 'file', ->
       they 'place_before', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -754,7 +754,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             place_before: /^.*we.*$/m
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin\nshould we\nhave fun'
@@ -762,8 +762,8 @@ describe 'file', ->
       they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -773,7 +773,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/m
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nAdd this line\nyou coquin\nshould we\nhave fun'
@@ -782,8 +782,8 @@ describe 'file', ->
 
       they 'place_before', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -793,7 +793,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             place_before: /^.*we.*$/gm
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin\nAdd this line\nshould we\nhave fun'
@@ -801,8 +801,8 @@ describe 'file', ->
       they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -812,15 +812,15 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/gm
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
 
     they 'will append place_after a match if append is a string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -830,7 +830,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: 'we'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
@@ -839,8 +839,8 @@ describe 'file', ->
 
       they 'place_before', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -850,15 +850,15 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             place_before: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin'
 
       they 'place_after', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
@@ -868,7 +868,7 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             append: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nyou coquin\nAdd this line'
@@ -877,38 +877,38 @@ describe 'file', ->
 
       they 'place_before', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
             match: /will never be found/
             replace: 'Add this line'
             place_before: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line'
 
       they 'place_after', ({ssh}) ->
         nikita
-          ssh: ssh
-          metadata: tmpdir: true
+          $ssh: ssh
+          $tmpdir: true
         , ({metadata: {tmpdir}}) ->
           @file
             target: "#{tmpdir}/file"
             match: /will never be found/
             replace: 'Add this line'
             append: true
-          .should.be.finally.containEql status: true
+          .should.be.finally.containEql $status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line'
 
     they 'match is optional', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/a_file"
@@ -917,19 +917,19 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           replace: 'Add this line'
           append: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @file
           target: "#{tmpdir}/a_file"
           replace: 'Add this line'
           append: true
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @file
           target: "#{tmpdir}/a_file"
           write: [
             replace: 'Add this line'
             append: true
           ]
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: 'Here we are\nyou coquin\nAdd this line'
@@ -938,8 +938,8 @@ describe 'file', ->
   
     they 'create a file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -948,7 +948,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'Hello'
           backup: '.bck'
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
         @fs.assert
           target: "#{tmpdir}/file.bck"
           not: true
@@ -956,29 +956,29 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'Hello Node'
           backup: '.bck'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file.bck"
           content: 'Hello'
 
     they 'a non-existing file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'Hello'
           backup: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'Hello'
 
     they 'with specific permissions', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/new_file_perm"
@@ -988,7 +988,7 @@ describe 'file', ->
           content: 'Hello'
           mode: 0o0644
           backup: '.bck1'
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/new_file_perm.bck1"
           content: 'Hello World'
@@ -999,7 +999,7 @@ describe 'file', ->
           backup: '.bck2'
           mode: 0o0644
           backup_mode: 0o0640
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/new_file_perm.bck2"
           content: 'Hello'
@@ -1009,8 +1009,8 @@ describe 'file', ->
   
     they 'do multiple replace', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1027,15 +1027,15 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: me"
           ]
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: you\n\nfriends: me'
   
     they 'use append', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1053,15 +1053,15 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: me"
           ]
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: you\nemail: your@email\nfriends: me'
   
     they 'handle partial match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1079,7 +1079,7 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: you"
           ]
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: me\nemail: my@email\nfriends: you'
@@ -1088,8 +1088,8 @@ describe 'file', ->
 
     they 'can not define source and content', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: 'abc'
@@ -1099,8 +1099,8 @@ describe 'file', ->
 
     they 'if source doesn\'t exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1109,8 +1109,8 @@ describe 'file', ->
 
     they 'if local source doesn\'t exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1122,29 +1122,29 @@ describe 'file', ->
 
     they 'auto-detected', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'this is\r\nsome content'
           eof: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'this is\r\nsome content\r\n'
 
     they 'not detected', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
-          ssh: ssh
+          $ssh: ssh
           target: "#{tmpdir}/file"
           content: 'this is some content'
           eof: true
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'this is some content\n'
@@ -1153,20 +1153,20 @@ describe 'file', ->
 
     they 'transform content status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'hello'
           transform: ({config}) ->
             "#{config.content} world"
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
 
     they 'transform content value', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1179,8 +1179,8 @@ describe 'file', ->
 
     they 'transform resolve promise status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1188,12 +1188,12 @@ describe 'file', ->
           transform: ->
             new Promise (resolve, reject) ->
               resolve('hello')
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
 
     they 'transform resolve promise value', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1207,8 +1207,8 @@ describe 'file', ->
 
     they 'transform reject promise status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1220,8 +1220,8 @@ describe 'file', ->
 
     they 'transform reject promise value', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1235,20 +1235,20 @@ describe 'file', ->
 
     they 'transform returns null status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'hello'
           transform: ({config}) ->
             null
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'transform returns null file doesnt exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1261,20 +1261,20 @@ describe 'file', ->
 
     they 'transform returns undefined status', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
           content: 'hello'
           transform: ({config}) ->
             undefined
-        .should.be.finally.containEql status: false
+        .should.be.finally.containEql $status: false
 
     they 'transform returns undefined file doesnt exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1287,8 +1287,8 @@ describe 'file', ->
         
     they 'transform throws error', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           target: "#{tmpdir}/file"
@@ -1301,8 +1301,8 @@ describe 'file', ->
 
     they 'catch error', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'hello'
@@ -1312,8 +1312,8 @@ describe 'file', ->
 
     they 'function called on content change', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'hello'

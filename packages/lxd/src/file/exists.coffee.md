@@ -6,11 +6,11 @@ Check if the file exists in a container.
 ## Example
 
 ```js
-const {status} = await nikita.lxd.file.exists({
+const {$status} = await nikita.lxd.file.exists({
   container: 'my_container',
   target: '/root/a_file'
 })
-console.info(`File exists: ${status}`)
+console.info(`File exists: ${$status}`)
 ```
 
 ## Todo
@@ -37,12 +37,12 @@ console.info(`File exists: ${status}`)
 ## Handler
 
     handler = ({config}) ->
-      {status} = await @execute
+      {$status} = await @execute
         command: """
         lxc exec #{config.container} -- stat #{config.target}
         """
         code_skipped: 1
-      exists: status
+      exists: $status
 
 ## Export
 

@@ -5,22 +5,18 @@
 
 // ## Callback Parameters
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
+// * `$status`   
 //   Value is "true" if group was created or modified.   
 
 // ## Example
 
 // ```js
-// require('nikita')
-// .system.group({
+// const {$status} = await nikita.system.group({
 //   name: 'myself'
 //   system: true
 //   gid: 490
-// }, function(err, status){
-//   console.log(err ? err.message : 'Group was created/modified: ' + status);
 // });
+// console.log(`Group was created/modified: ${status}`);
 // ```
 
 // The result of the above action can be viewed with the command
@@ -63,7 +59,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var changes, groups, info, status;
+  var $status, changes, groups, info;
   if (config.system == null) {
     config.system = false;
   }
@@ -83,11 +79,11 @@ handler = async function({
     module: 'nikita/lib/system/group'
   });
   if (!info) { // Create group
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: ['groupadd', config.system ? '-r' : void 0, config.gid != null ? `-g ${config.gid}` : void 0, config.name].join(' '),
       code_skipped: 9
     })));
-    if (!status) { // Modify group
+    if (!$status) { // Modify group
       return log({
         message: "Group defined elsewhere than '/etc/group', exit code is 9",
         level: 'WARN'

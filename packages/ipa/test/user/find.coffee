@@ -36,7 +36,7 @@ describe 'ipa.user.find', ->
 
   they 'all users', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @call delete_users
       @call create_users
@@ -54,7 +54,7 @@ describe 'ipa.user.find', ->
 
   they 'criteria in_group', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @call delete_users
       @call create_users

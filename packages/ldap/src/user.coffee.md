@@ -6,13 +6,13 @@ Create and modify a user store inside an OpenLDAP server.
 ## Example
 
 ```js
-const {status} = await nikita.ldap.user({
+const {$status} = await nikita.ldap.user({
   uri: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   user: {}
 })
-console.info(`User created or modified: ${status}`)
+console.info(`User created or modified: ${$status}`)
 ```
 
 ## Schema
@@ -86,7 +86,7 @@ console.info(`User created or modified: ${status}`)
         # Check password is user is not new and his password is not of type SASL
         new_password = false
         if not added and user.userPassword and not /^\{SASL\}/.test user.userPassword
-          {status: loggedin} = await @ldap.search
+          {$status: loggedin} = await @ldap.search
             # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
             binddn: user.dn
             passwd: user.userPassword
@@ -114,7 +114,7 @@ console.info(`User created or modified: ${status}`)
             ].join ' '
           log message: "Password modified", level: 'WARN'
           modified = true
-      status: modified
+      $status: modified
 
 ## Exports
 

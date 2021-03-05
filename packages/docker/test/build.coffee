@@ -13,7 +13,7 @@ describe 'docker.build', ->
 
     they 'fail with missing image parameter', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       .docker.build
         false_source: 'Dockerfile'
@@ -27,7 +27,7 @@ describe 'docker.build', ->
 
     they 'fail with exclusive parameters', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       .docker.build
         image: 'nikita/should_not_exists_1'
@@ -42,25 +42,25 @@ describe 'docker.build', ->
     
     they 'from text', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
       , ->
         @docker.rmi 'nikita/should_exists_1'
-        {status, stdout} = await @docker.build
+        {$status, stdout} = await @docker.build
           image: 'nikita/should_exists_1'
           content: """
           FROM scratch
           CMD echo hello 1
           """
-        status.should.be.true()
+        $status.should.be.true()
         stdout.should.containEql 'Step 2/2 : CMD echo hello'
         @docker.rmi 'nikita/should_exists_1'
 
     they 'from cwd',  ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_2'
         @file
@@ -69,17 +69,17 @@ describe 'docker.build', ->
           FROM scratch
           CMD echo hello 2
           """
-        {status} = await @docker.build
+        {$status} = await @docker.build
           image: 'nikita/should_exists_2'
           cwd: tmpdir
-        status.should.be.true()
+        $status.should.be.true()
         @docker.rmi 'nikita/should_exists_2'
 
     they 'from Dockerfile (exist)', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_3'
         @file
@@ -88,17 +88,17 @@ describe 'docker.build', ->
           CMD ['echo "hello build from Dockerfile #{Date.now()}"']
           """
           target: "#{tmpdir}/nikita_Dockerfile"
-        {status} = await @docker.build
+        {$status} = await @docker.build
           image: 'nikita/should_exists_3'
           file: "#{tmpdir}/nikita_Dockerfile"
-        status.should.be.true()
+        $status.should.be.true()
         @docker.rmi 'nikita/should_exists_3'
 
     they 'from Dockerfile (not exist)', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @docker.build
           image: 'nikita/should_not_exists_4'
@@ -110,9 +110,9 @@ describe 'docker.build', ->
       status_true = []
       status_false = []
       nikita
-        ssh: ssh
+        $ssh: ssh
         docker: docker
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @docker.rmi 'nikita/should_exists_5'
         @file
@@ -121,16 +121,16 @@ describe 'docker.build', ->
           FROM scratch
           CMD echo hello 5
           """
-        {status, stdout} = await @docker.build
+        {$status, stdout} = await @docker.build
+          $log: ({log}) -> status_true.push log
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
-          metadata: log: ({log}) -> status_true.push log
-        status.should.be.true()
-        {status} = await @docker.build
+        $status.should.be.true()
+        {$status} = await @docker.build
+          $log: ({log}) -> status_false.push log
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
-          metadata: log: ({log}) -> status_false.push log
-        status.should.be.false()
+        $status.should.be.false()
         @docker.rmi 'nikita/should_exists_5'
         @call ->
           status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1

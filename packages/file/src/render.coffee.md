@@ -11,22 +11,20 @@ its first argument.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value is true if rendered file was created or modified.   
+* `$status`   
+  Value is true if rendered file was created or modified.
 
 ## Rendering with Handlebar
 
 ```js
-const {status} = await nikita.file.render({
+const {$status} = await nikita.file.render({
   source: './some/a_template.hbs',
   target: '/tmp/a_file',
   context: {
     username: 'a_user'
   }
 })
-console.info(`File was rendered: ${status}`)
+console.info(`File was rendered: ${$status}`)
 ```
 
 ## Hooks
@@ -75,8 +73,8 @@ console.info(`File was rendered: ${status}`)
       # Read source
       if config.source
         {data} = await @fs.base.readFile
-          ssh: if config.local then false else config.ssh
-          sudo: if config.local then false else config.sudo
+          $ssh: false if config.local
+          $sudo: false if config.local
           target: config.source
           encoding: config.encoding
         if data?

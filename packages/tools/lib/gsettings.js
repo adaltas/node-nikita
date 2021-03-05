@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.tools.gsettings({
+// const {$status} = await nikita.tools.gsettings({
 //   properties: {
 //     'org.gnome.desktop.input-sources': 'xkb-config': '[\'ctrl:swap_lalt_lctl\']'
 //   }
 // })
-// console.log(`Property was modified: ${status}`)
+// console.log(`Property was modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -20,9 +20,9 @@ var handler, schema;
 schema = {
   type: 'object',
   properties: {
-    '': {
+    'properties': {
       type: 'object',
-      description: `          `
+      description: `List of properties to set.`
     }
   }
 };

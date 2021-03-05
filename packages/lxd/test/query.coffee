@@ -9,9 +9,9 @@ describe 'lxd.query', ->
 
   they 'with path', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status, data} = await @lxd.query
+      {$status, data} = await @lxd.query
         path: '/1.0'
-      status.should.eql true
+      $status.should.eql true
       data.api_version.should.eql '1.0'

@@ -5,10 +5,8 @@
 
 // ## Output parameters
 
-// * `err`
-//   Error object if any.
-// * `result.status` (boolean)
-// * `result.config` (object)   
+// * `$status` (boolean)
+// * `config` (object)   
 //   Information about the resources available to the LXD server.
 
 // ## Example

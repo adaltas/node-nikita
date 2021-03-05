@@ -11,7 +11,7 @@ for engine, _ of db
 
     they 'user not created', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ->
         @db.user.remove 'test_user_exists_1_user'
@@ -21,17 +21,17 @@ for engine, _ of db
 
     they 'with status as false as true', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         db: db[engine]
       , ({tools: {status}})->
-        @db.user.remove 'test_user_exists_2_user', metadata: shy: true
+        @db.user.remove 'test_user_exists_2_user', $shy: true
         @db.user
           username: 'test_user_exists_2_user'
           password: 'test_user_exists_2_password'
-          metadata: shy: true
-        {status: lstatus} = await @db.user.exists
+          $shy: true
+        {$status} = await @db.user.exists
           username: 'test_user_exists_2_user'
-        lstatus.should.be.true()
-        @db.user.remove 'test_user_exists_2_user', metadata: shy: true
+        $status.should.be.true()
+        @db.user.remove 'test_user_exists_2_user', $shy: true
         # Modules of type exists shall be shy
         status().should.be.false()

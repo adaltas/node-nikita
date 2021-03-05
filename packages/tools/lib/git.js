@@ -5,10 +5,8 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Value "true" if repository was created or modified.   
+// * `$status`   
+//   Value "true" if repository was created or modified.
 
 // ## Example
 
@@ -16,11 +14,11 @@
 // HEAD revision.
 
 // ```js
-// const {status} = await nikita.tools.git({
+// const {$status} = await nikita.tools.git({
 //   source: 'https://github.com/wdavidw/node-nikita.git'
 //   target: '/tmp/nikita'
 // })
-// console.info(`Repo was synchronized: ${status}`)
+// console.info(`Repo was synchronized: ${$status}`)
 // ```
 
 // ## Schema
@@ -79,8 +77,9 @@ handler = async function({
   }
   if (repo_exists) {
     ({
-      status: repo_uptodate
+      $status: repo_uptodate
     } = (await this.execute({
+      $shy: true,
       command: `current=\`git log --pretty=format:'%H' -n 1\`
 target=\`git rev-list --max-count=1 ${config.revision}\`
 echo "current revision: $current"
@@ -89,10 +88,7 @@ if [ $current != $target ]; then exit 3; fi`,
       // stdout: process.stdout
       cwd: config.target,
       trap: true,
-      code_skipped: 3,
-      metadata: {
-        shy: true
-      }
+      code_skipped: 3
     })));
   }
   if (!repo_uptodate) {

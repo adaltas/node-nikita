@@ -6,20 +6,17 @@ Note, does not throw an error if service is not installed.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `$status`   
   Indicates if the service was stopped ("true") or if it was already stopped 
-  ("false").   
+  ("false").
 
 ## Example
 
 ```js
-const {status} = await nikita.service.stop([{
-  ssh: ssh,
+const {$status} = await nikita.service.stop([{
   name: 'gmetad'
 })
-console.info(`Service was stopped: ${status}`)
+console.info(`Service was stopped: ${$status}`)
 ```
 
 ## Hooks
@@ -32,12 +29,12 @@ console.info(`Service was stopped: ${status}`)
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot_rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
       required: ['name']
 
 ## Handler
@@ -45,7 +42,7 @@ console.info(`Service was stopped: ${status}`)
     handler = ({config, tools: {log}}) ->
       log message: "Stop service #{config.name}", level: 'INFO'
       try
-        {status} = await @execute
+        {$status} = await @execute
           command: """
           ls \
             /lib/systemd/system/*.service \
@@ -66,10 +63,10 @@ console.info(`Service was stopped: ${status}`)
           fi
           """
           code_skipped: 3
-          arch_chroot: config.arch_chroot
-          rootdir: config.rootdir
-        log message: "Service is stopped", level: 'INFO' if status
-        log message: "Service already stopped", level: 'WARN' if not status
+          # arch_chroot: config.arch_chroot
+          # arch_chroot_rootdir: config.arch_chroot_rootdir
+        log message: "Service is stopped", level: 'INFO' if $status
+        log message: "Service already stopped", level: 'WARN' if not $status
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 

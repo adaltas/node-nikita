@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.   
-// * `status`   
+// * `$status`   
 //   True if command was executed in container.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.   
@@ -17,11 +17,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.exec({
+// const {$status} = await nikita.docker.exec({
 //   container: 'myContainer',
 //   command: '/bin/bash -c "echo toto"'
 // })
-// console.info(`Command was executed: ${status}`)
+// console.info(`Command was executed: ${$status}`)
 // ```
 
 // ## Schema

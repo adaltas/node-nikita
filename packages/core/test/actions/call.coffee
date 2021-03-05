@@ -21,7 +21,7 @@ describe 'actions.call', ->
   they 'call a module after its path', ({ssh}) ->
     nikita
       ssh: ssh
-      metadata: tmpdir: true
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         content: '''

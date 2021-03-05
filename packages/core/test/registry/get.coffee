@@ -1,6 +1,5 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
 registry = require '../../src/registry'
 plugandplay = require 'plug-and-play'
 
@@ -15,14 +14,16 @@ describe 'registry.get', ->
   it 'a registered function', ->
     reg = await registry
     .create()
-    .register ['get', 'an', 'action'], key: 'value', (->)
+    .register ['get', 'an', 'action'],
+      config: key: 'value',
+      handler: (->)
     {config} = await reg.get ['get', 'an', 'action']
     config.key.should.eql 'value'
 
   it 'get all', ->
     reg = registry.create()
-    await reg.register ['get', 'first', 'action'], (->)
-    await reg.register ['get', 'second', 'action'], (->)
+    await reg.register ['get', 'first', 'action'], handler: (->)
+    await reg.register ['get', 'second', 'action'], handler: (->)
     reg.get().then (actions) ->
       Object.keys(
         actions.get
@@ -63,10 +64,12 @@ describe 'registry.get', ->
           ->
             hooks:
               'nikita:registry:normalize': (action) ->
-                action.key = 'new value'
-                action.new_key = 'new value'
+                action.config?.key = 'new value'
+                action.config?.new_key = 'new value'
         ]
-    reg.register ['action'], key: 'value', handler: (->)
+    reg.register ['action'],
+      config: key: 'value'
+      handler: (->)
     action = await reg.get 'action'
     # Ensure the returned action is altered
     action.should.match
@@ -76,5 +79,5 @@ describe 'registry.get', ->
     # Now, make sure the action is not altered
     action = await reg.get 'action', normalize: false
     action.should.match
-      key: 'value'
+      config: key: 'value'
       handler: (val) -> val.should.be.a.Function()

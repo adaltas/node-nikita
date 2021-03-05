@@ -8,7 +8,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if command was executed.
 // * `checksum`   
 //   Image cheksum if it exist, undefined otherwise.
@@ -56,7 +56,7 @@ handler = async function({
     config,
     tools: {find, log}
   }) {
-  var checksum, k, ref, status, stdout, v;
+  var $status, checksum, k, ref, stdout, v;
   // Global config
   config.docker = (await find(function({
       config: {docker}
@@ -77,21 +77,21 @@ handler = async function({
   // Run `docker images` with the following config:
   // - `--no-trunc`: display full checksum
   // - `--quiet`: discard headers
-  ({status, stdout} = (await this.docker.tools.execute({
+  ({$status, stdout} = (await this.docker.tools.execute({
     boot2docker: config.boot2docker,
     command: `images --no-trunc --quiet ${config.image}:${config.tag}`,
     compose: config.compose,
     machine: config.machine
   })));
   checksum = stdout === '' ? void 0 : stdout.toString().trim();
-  if (status) {
+  if ($status) {
     log({
       message: `Image checksum for ${config.image}: ${checksum}`,
       level: 'INFO'
     });
   }
   return {
-    status: status,
+    $status: $status,
     checksum: checksum
   };
 };

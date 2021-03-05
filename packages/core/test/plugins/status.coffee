@@ -19,9 +19,17 @@ describe 'plugins.$status', ->
       {$status} = await nikita.call -> $status: true
       $status.should.be.true()
 
-    it 'convert `{$status: false}` to `{$status: false}`', ->
+    it 'convert `{status: false}` to `{status: false}`', ->
       {$status} = await nikita.call -> $status: false
       $status.should.be.false()
+
+    it 'otherwise no coercion', ->
+      result = await nikita.call -> 'ok'
+      result.should.eql 'ok'
+      result = await nikita.call -> []
+      result.should.eql []
+      result = await nikita.call -> null
+      should(result).be.null()
         
   describe 'last child no interference', ->
 

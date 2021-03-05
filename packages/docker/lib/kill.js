@@ -10,17 +10,17 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was killed.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.kill({
+// const {$status} = await nikita.docker.kill({
 //   container: 'toto',
 //   signal: 9
 // })
-// console.info(`Container was killed: ${status}`)
+// console.info(`Container was killed: ${$status}`)
 // ```
 
 // ## Schema
@@ -46,15 +46,13 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status;
-  ({status} = (await this.docker.tools.execute({
+  var $status;
+  ({$status} = (await this.docker.tools.execute({
     command: `ps | egrep ' ${config.container}$' | grep 'Up'`,
     code_skipped: 1
   })));
   return (await this.docker.tools.execute({
-    if: function() {
-      return status;
-    },
+    $if: $status,
     command: ['kill', config.signal != null ? `-s ${config.signal}` : void 0, `${config.container}`].join(' ')
   }));
 };

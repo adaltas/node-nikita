@@ -9,7 +9,7 @@ describe 'docker.tools.checksum', ->
 
   they 'checksum on existing repository', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rmi
@@ -26,7 +26,7 @@ describe 'docker.tools.checksum', ->
 
   they 'checksum on not existing repository', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       {checksum} = await @docker.tools.checksum

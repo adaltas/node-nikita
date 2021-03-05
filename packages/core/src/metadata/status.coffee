@@ -34,7 +34,7 @@ module.exports =
         action = await handler.apply null, arguments
         # Register `status` operation
         action.tools ?= {}
-        action.tools.$status = (index) ->
+        action.tools.status = (index) ->
           if arguments.length is 0
             action.children.some (sibling) ->
               not sibling.metadata.shy and sibling.output?.$status is true
@@ -64,6 +64,8 @@ module.exports =
                 output
               else
                 inherit output
+            else if output is null
+              output
             else if not output?
               inherit output
             else if is_object output

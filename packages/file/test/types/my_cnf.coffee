@@ -9,15 +9,15 @@ describe 'file.types.my_cnf', ->
 
   they 'generate from content', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {status} = await @file.types.my_cnf
+      {$status} = await @file.types.my_cnf
         target: "#{tmpdir}/my.cnf"
         content:
           'client':
             'socket': '/var/lib/mysql/mysql.sock'
-      status.should.be.true()
+      $status.should.be.true()
       @fs.assert
         target: "#{tmpdir}/my.cnf"
         content: """

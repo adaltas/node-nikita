@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.ipa.user.find({
+// const {$status} = await nikita.ipa.user.find({
 //   criterias: {
 //     in_group: ["user_find_group"]
 //   }
@@ -16,7 +16,7 @@
 //     password: "mysecret"
 //   }
 // })
-// console.info(`User was found: ${status}`)
+// console.info(`User was found: ${$status}`)
 // ```
 
 // ## Schema

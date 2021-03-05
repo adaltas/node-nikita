@@ -18,7 +18,7 @@ describe 'ipa.user.show', ->
 
     they 'get single user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         {result} = await @ipa.user.show connection: ipa,
           uid: 'admin'
@@ -26,7 +26,7 @@ describe 'ipa.user.show', ->
 
     they 'get missing user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         @ipa.user.show connection: ipa,
           uid: 'missing'

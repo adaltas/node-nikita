@@ -8,13 +8,13 @@ Write a file in the Java properties format.
 Use a custom delimiter with spaces around the equal sign.
 
 ```js
-const {status} = await nikita.file.properties({
+const {$status} = await nikita.file.properties({
   target: "/path/to/target.json",
   content: { key: "value" },
   separator: ' = '
   merge: true
 })
-console.info(`File was written: ${status}`)
+console.info(`File was written: ${$status}`)
 ```
 
 ## Schema
@@ -79,7 +79,7 @@ console.info(`File was written: ${status}`)
           trim: config.trim
       org_props = properties or {}
       # Diff
-      {status} = await @call ->
+      {$status} = await @call ->
         status = false
         keys = {}
         for k in Object.keys(org_props) then keys[k] = true
@@ -101,11 +101,11 @@ console.info(`File was written: ${status}`)
         then "#{key}#{config.separator}#{fnl_props[key]}"
         else "#{key}" # This is a comment
       await @file
+        $shy: true
         target: "#{config.target}"
         content: data.join '\n'
         backup: config.backup
         eof: true
-        metadata: shy: true
       if config.uid or config.gid
         await @system.chown
           target: config.target

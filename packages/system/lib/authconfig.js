@@ -8,15 +8,12 @@
 // Example of a group object
 
 // ```cson
-// require('nikita')
-// .system.authconfig({
+// const {$status} = await nikita.system.authconfig({
 //   properties: {
 //     mkhomedir: true
 //   }
-// }, (err, {status}){
-//   console.info(err ? err.message : 'Config' + 
-//     status ? 'updated' : 'already set')
-//   })
+// })
+// console.info(`Was the configudation updated ${$status}`)
 // ```
 
 // ## Schema

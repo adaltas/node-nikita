@@ -71,7 +71,7 @@ console.info(`Stdout was asserted: ${status}`)
       config.content = config.content.trim() if config.content and config.trim
       # Command exit code
       if config.code?
-        {code} = await @execute config, metadata: relax: true
+        {code} = await @execute config, $relax: true
         unless config.not
           unless code in config.code
             throw utils.error 'NIKITA_EXECUTE_ASSERT_EXIT_CODE', [

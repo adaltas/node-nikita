@@ -39,15 +39,11 @@ schema = {
 // ## Handler
 handler = async function({config}) {
   var exists;
-  ({exists} = (await this.db.schema.exists({
-    config: config
-  })));
+  ({exists} = (await this.db.schema.exists(config)));
   if (!exists) {
     return false;
   }
-  return (await this.db.query({
-    config: config
-  }, {
+  return (await this.db.query(config, {
     command: `DROP SCHEMA IF EXISTS ${config.schema};`
   }));
 };

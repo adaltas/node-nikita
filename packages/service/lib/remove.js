@@ -5,19 +5,16 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicates if the startup behavior has changed.   
+// * `$status`   
+//   Indicates if the startup behavior has changed.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.service.remove([{
-//   ssh: ssh,
+// const {$status} = await nikita.service.remove([{
 //   name: 'gmetad'
 // })
-// console.info(`Package or service was removed: ${status}`)
+// console.info(`Package or service was removed: ${$status}`)
 // ```
 
 // ## Hooks
@@ -60,7 +57,7 @@ handler = async function({
     parent: {state},
     tools: {log}
   }) {
-  var cacheonly, err, installed, pkg, status, stdout;
+  var $status, cacheonly, err, installed, pkg, stdout;
   // config.manager ?= state['nikita:service:manager'] # not supported
   log({
     message: `Remove service ${config.name}`,
@@ -73,6 +70,7 @@ handler = async function({
   if (installed == null) {
     try {
       ({stdout} = (await this.execute({
+        $shy: true,
         command: `if command -v yum >/dev/null 2>&1; then
   rpm -qa --qf "%{NAME}\n"
 elif command -v pacman >/dev/null 2>&1; then
@@ -84,10 +82,7 @@ else
   exit 2
 fi`,
         code_skipped: 1,
-        stdout_log: false,
-        metadata: {
-          shy: true
-        }
+        stdout_log: false
       })));
       log({
         message: "Installed packages retrieved",
@@ -113,7 +108,7 @@ fi`,
   }
   if (installed.indexOf(config.name) !== -1) {
     try {
-      ({status} = (await this.execute({
+      ({$status} = (await this.execute({
         command: `if command -v yum >/dev/null 2>&1; then
   yum remove -y ${cacheonly} '${config.name}'
 elif command -v pacman >/dev/null 2>&1; then
@@ -129,7 +124,7 @@ fi`,
       // Update list of installed packages
       installed.splice(installed.indexOf(config.name), 1);
       // Log information
-      log(status ? {
+      log($status ? {
         message: "Service removed",
         level: 'WARN',
         module: 'nikita/lib/service/remove'
@@ -147,14 +142,12 @@ fi`,
     }
   }
   if (config.cache) {
-    return (await this.call({
-      handler: function() {
-        log({
-          message: "Caching installed on \"nikita:execute:installed\"",
-          level: 'INFO'
-        });
-        return state['nikita:execute:installed'] = installed;
-      }
+    return (await this.call(function() {
+      log({
+        message: "Caching installed on \"nikita:execute:installed\"",
+        level: 'INFO'
+      });
+      return state['nikita:execute:installed'] = installed;
     }));
   }
 };

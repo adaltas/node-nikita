@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True unless container was already started.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,11 +17,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.start({
+// const {$status} = await nikita.docker.start({
 //   container: 'toto',
 //   attach: true
 // })
-// console.info(`Container was started: ${status}`)
+// console.info(`Container was started: ${$status}`)
 // ```
 
 // ## Schema
@@ -51,13 +51,11 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var status;
-  ({status} = (await this.docker.tools.status(config, {
-    metadata: {
-      shy: true
-    }
+  var $status;
+  ({$status} = (await this.docker.tools.$status(config, {
+    $shy: true
   })));
-  if (status) {
+  if ($status) {
     log({
       message: `Container already started ${config.container} (Skipping)`,
       level: 'INFO',
@@ -71,7 +69,7 @@ handler = async function({
     });
   }
   return (await this.docker.tools.execute({
-    unless: status,
+    $unless: $status,
     command: ['start', config.attach ? '-a' : void 0, `${config.container}`].join(' ')
   }));
 };

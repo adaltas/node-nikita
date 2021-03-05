@@ -12,10 +12,8 @@
 
 // ## Output
 
-// * `err`   
-//   Error object if any.   
-// * `status`   
-//   Indicate if a gem was removed.   
+// * `$status`   
+//   Indicate if a gem was removed.
 
 // ## Ruby behavior
 

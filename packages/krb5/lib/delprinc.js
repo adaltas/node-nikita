@@ -6,7 +6,7 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.krb5.delrinc({
+// const {$status} = await nikita.krb5.delrinc({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 //   admin: {
@@ -15,7 +15,7 @@
 //     server: 'localhost'
 //   }
 // })
-// console.info(`Principal was removed: ${status}`)
+// console.info(`Principal was removed: ${$status}`)
 // ```
 
 // ## Schema
@@ -45,7 +45,7 @@ schema = {
 
 // ## Handler
 handler = async function({config}) {
-  var status;
+  var $status;
   if (/.*@.*/.test(config.admin.principal)) {
     // Normalize realm and principal for later usage of config
     if (config.realm == null) {
@@ -56,15 +56,13 @@ handler = async function({config}) {
     config.principal = `${config.principal}@${config.realm}`;
   }
   // Prepare commands
-  ({status} = (await this.krb5.execute({
+  ({$status} = (await this.krb5.execute({
+    $shy: true,
     admin: config.admin,
     command: `getprinc ${config.principal}`,
-    grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`),
-    metadata: {
-      shy: true
-    }
+    grep: new RegExp(`^.*${utils.regexp.escape(config.principal)}$`)
   })));
-  if (status) {
+  if ($status) {
     await this.krb5.execute({
       admin: config.admin,
       command: `delprinc -force ${config.principal}`

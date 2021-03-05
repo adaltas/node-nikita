@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was loaded.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,12 +17,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.load({
+// const {$status} = await nikita.docker.load({
 //   image: 'nikita/load_test:latest',
 //   machine: machine,
 //   source: source + "/nikita_load.tar"
 // })
-// console.info(`Image was loaded: ${status}`);
+// console.info(`Image was loaded: ${$status}`);
 // ```
 
 // ## Schema
@@ -160,7 +160,7 @@ handler = async function({
     }
   }
   return {
-    status: status,
+    $status: $status,
     stdout: stdout,
     stderr: stderr
   };

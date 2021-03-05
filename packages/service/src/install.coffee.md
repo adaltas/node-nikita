@@ -5,19 +5,16 @@ Install a service. Yum, Yay, Yaourt, Pacman and apt-get are supported.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Indicates if the service was installed.   
+* `$status`   
+  Indicates if the service was installed.
 
 ## Example
 
 ```js
-const {status} = await nikita.service.install({
-  ssh: ssh,
+const {$status} = await nikita.service.install({
   name: 'ntp'
 })
-console.info(`Package installed: ${status}`)
+console.info(`Package installed: ${$status}`)
 ```
 
 ## Hooks
@@ -30,8 +27,10 @@ console.info(`Package installed: ${status}`)
     schema =
       type: 'object'
       properties:
-        'arch_chroot':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
+        # 'arch_chroot_rootdir':
+        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'cache':
           type: 'boolean'
           description: """
@@ -71,8 +70,6 @@ console.info(`Package installed: ${status}`)
           converted to an array with all the outdated service names as keys; if
           anything else (default), no caching will take place.
           """
-        'rootdir':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
         'pacman_flags':
           type: 'array'
           default: []
@@ -117,7 +114,8 @@ console.info(`Package installed: ${status}`)
       # List installed packages
       unless config.installed?
         try
-          {status, stdout} = await @execute
+          {$status, stdout} = await @execute
+            $shy: true
             command: """
             if command -v yum >/dev/null 2>&1; then
               rpm -qa --qf "%{NAME}\n"
@@ -131,12 +129,11 @@ console.info(`Package installed: ${status}`)
             fi
             """
             code_skipped: 1
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
+            # arch_chroot: config.arch_chroot
+            # arch_chroot_rootdir: config.arch_chroot_rootdir
             stdin_log: false
             stdout_log: false
-            metadata: shy: true
-          if status
+          if $status
             log message: "Installed packages retrieved", level: 'INFO'
             config.installed = for pkg in utils.string.lines(stdout) then pkg
         catch err
@@ -144,7 +141,8 @@ console.info(`Package installed: ${status}`)
       # List packages waiting for update
       if not config.outdated?
         try
-          {status, stdout} = await @execute
+          {$status, stdout} = await @execute
+            $shy: true
             command: """
             if command -v yum >/dev/null 2>&1; then
               yum #{cacheonly} check-update -q | sed 's/\\([^\\.]*\\).*/\\1/'
@@ -158,12 +156,11 @@ console.info(`Package installed: ${status}`)
             fi
             """
             code_skipped: 1
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
+            # arch_chroot: config.arch_chroot
+            # arch_chroot_rootdir: config.arch_chroot_rootdir
             stdin_log: false
             stdout_log: false
-            metadata: shy: true
-          if status
+          if $status
             log message: "Outdated package list retrieved", level: 'INFO'
             config.outdated = utils.string.lines stdout.trim()
           else
@@ -173,7 +170,7 @@ console.info(`Package installed: ${status}`)
       # Install the package
       if config.installed?.indexOf(config.name) is -1 or config.outdated?.indexOf(config.name) isnt -1
         try
-          {status} = await @execute
+          {$status} = await @execute
             command: """
             if command -v yum >/dev/null 2>&1; then
               yum install -y #{cacheonly} #{config.name}
@@ -191,9 +188,9 @@ console.info(`Package installed: ${status}`)
             fi
             """
             code_skipped: config.code_skipped
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
-          log if status
+            # arch_chroot: config.arch_chroot
+            # arch_chroot_rootdir: config.arch_chroot_rootdir
+          log if $status
           then message: "Package \"#{config.name}\" is installed", level: 'WARN', module: 'nikita/lib/service/install'
           else message: "Package \"#{config.name}\" is already installed", level: 'INFO', module: 'nikita/lib/service/install'
           # Enrich installed array with package name unless already there
@@ -210,7 +207,7 @@ console.info(`Package installed: ${status}`)
         state['nikita:execute:installed'] = config.installed
         log message: "Caching outdated list on \"nikita:execute:outdated\"", level: 'INFO'
         state['nikita:execute:outdated'] = config.outdated
-        status: true
+        $status: true
 
 ## Export
 

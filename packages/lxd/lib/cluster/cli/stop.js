@@ -7,9 +7,7 @@ require('@nikitajs/lxd/lib/register');
 
 module.exports = function({params}) {
   return nikita({
-    metadata: {
-      debug: params.debug
-    }
+    $debug: params.debug
   }).log.cli({
     pad: {
       host: 20,
@@ -19,7 +17,7 @@ module.exports = function({params}) {
     basename: 'start',
     basedir: params.log,
     archive: false,
-    if: params.log
+    $if: params.log
   }).execute({
     cwd: `${__dirname}/../../../assets`,
     command: `vagrant halt`

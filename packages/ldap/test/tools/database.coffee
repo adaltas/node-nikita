@@ -37,7 +37,7 @@ describe 'ldap.database', ->
   
     they 'create a new index', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         {dn, database} = await @ldap.tools.database
           suffix: ldap.suffix_dn

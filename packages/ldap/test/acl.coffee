@@ -49,24 +49,24 @@ describe 'ldap.acl', ->
         uri: ldap.uri
         binddn: ldap.config.binddn
         passwd: ldap.config.passwd
-      ssh: ssh
+      $ssh: ssh
     , ->
-      {status} = await @ldap.acl
+      {$status} = await @ldap.acl
         suffix: ldap.suffix_dn
         acls:
           to: 'dn.base="dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
           ]
-      status.should.be.true()
-      {status} = await @ldap.acl
+      $status.should.be.true()
+      {$status} = await @ldap.acl
         suffix: ldap.suffix_dn
         acls:
           to: 'dn.base="dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
           ]
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'respect order in creation', ({ssh}) ->
     nikita
@@ -74,7 +74,7 @@ describe 'ldap.acl', ->
         uri: ldap.uri
         binddn: ldap.config.binddn
         passwd: ldap.config.passwd
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ldap.acl
         suffix: ldap.suffix_dn

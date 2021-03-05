@@ -5,15 +5,13 @@
 
 // ## Output
 
-// * `err`
-//   Error object if any.
-// * `result.status`
+// * `$status`
 //   True if the device was created or the configuraion updated.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.config.device({
+// const {$status} = await nikita.lxd.config.device({
 //   container: 'container1',
 //   device: 'root',
 //   type: 'disk',
@@ -22,7 +20,7 @@
 //     'size': '10GB'
 //   }
 // })
-// console.info(`Disk was created: ${status}`)
+// console.info(`Disk was created: ${$status}`)
 // ```
 
 // ## Schema
@@ -310,7 +308,7 @@ additional properties.`
 
 // ## Handler
 handler = async function({config}) {
-  var changes, err, k, key, properties, ref, status, v, value;
+  var $status, changes, err, k, key, properties, ref, v, value;
   ref = config.properties;
   // Normalize config
   for (k in ref) {
@@ -327,7 +325,7 @@ handler = async function({config}) {
   try {
     if (!properties) {
       // Device not registed, we need to use `add`
-      ({status} = (await this.execute({
+      ({$status} = (await this.execute({
         command: [
           'lxc',
           'config',
@@ -355,13 +353,13 @@ handler = async function({config}) {
       changes = diff(properties, config.properties);
       for (key in changes) {
         value = changes[key];
-        ({status} = (await this.execute({
+        ({$status} = (await this.execute({
           command: ['lxc', 'config', 'device', 'set', config.container, config.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
         })));
       }
     }
     return {
-      status: status
+      $status: $status
     };
   } catch (error) {
     err = error;

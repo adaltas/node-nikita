@@ -9,7 +9,7 @@ describe 'lxd.exec', ->
 
   they 'a command with pipe inside', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       await @lxd.delete
         container: 'c1'
@@ -19,19 +19,19 @@ describe 'lxd.exec', ->
         container: 'c1'
       await @lxd.start
         container: 'c1'
-      {status, stdout} = await @lxd.exec
+      {$status, stdout} = await @lxd.exec
         container: 'c1'
         command: """
         cat /etc/os-release | egrep ^ID=
         """
       stdout.trim().should.eql 'ID=alpine'
-      status.should.be.true()
+      $status.should.be.true()
 
   describe 'option `shell`', ->
     
     they 'default to shell', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -49,7 +49,7 @@ describe 'lxd.exec', ->
           
     they 'set to bash', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -60,9 +60,7 @@ describe 'lxd.exec', ->
         await @lxd.start
           container: 'c1'
         await @lxd.exec
-          metadata: # Wait for network to be ready
-            retry: 3
-            sleep: 200
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'c1'
           command: 'apk add bash'
         {stdout} = await @lxd.exec
@@ -76,7 +74,7 @@ describe 'lxd.exec', ->
 
     they 'is enabled', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -98,7 +96,7 @@ describe 'lxd.exec', ->
 
     they 'is disabled', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -108,21 +106,21 @@ describe 'lxd.exec', ->
           container: 'c1'
         await @lxd.start
           container: 'c1'
-        {status, code} = await @lxd.exec
+        {$status, code} = await @lxd.exec
           container: 'c1'
           trap: false
           command: """
           false
           true
           """
-        status.should.be.true()
+        $status.should.be.true()
         code.should.eql 0
 
   describe 'option `env`', ->
 
     they 'pass multiple variables', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -147,7 +145,7 @@ describe 'lxd.exec', ->
 
     they 'non root user', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'
@@ -171,7 +169,7 @@ describe 'lxd.exec', ->
 
     they 'change directory', ({ssh}) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
       , ->
         await @lxd.delete
           container: 'c1'

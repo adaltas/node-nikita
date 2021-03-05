@@ -6,7 +6,7 @@ Delete a group from FreeIPA.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.group.del({
+const {$status} = await nikita.ipa.group.del({
   cn: 'somegroup',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
@@ -14,7 +14,7 @@ const {status} = await nikita.ipa.group.del({
     password: "mysecret"
   }
 })
-console.info(`Group was deleted: ${status}`)
+console.info(`Group was deleted: ${$status}`)
 ```
 
 ## Schema
@@ -37,11 +37,11 @@ console.info(`Group was deleted: ${status}`)
 
     handler = ({config}) ->
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
-      {status} = await @ipa.group.exists
+      {$status} = await @ipa.group.exists
+        $shy: false
         connection: config.connection
-        metadata: shy: false
         cn: config.cn
-      return unless status
+      return unless $status
       await @network.http config.connection,
         negotiate: true
         method: 'POST'

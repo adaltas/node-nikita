@@ -6,7 +6,7 @@ Create a database inside the destination datababse server.
 ## Create database example
 
 ```js
-const {status} = await nikita.database.db({
+const {$status} = await nikita.database.db({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',
@@ -86,7 +86,7 @@ console.info(`Database created or modified: ${status}`)
           when 'postgresql'
             command_has_privileges = command(config, database: config.database, "\\l") + " | egrep '^#{user}='"
             command_grant_privileges = command config, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{config.database} TO #{user}"
-        {status} = await @execute
+        {$status} = await @execute
           command: """
           if #{command_has_privileges}; then
             echo '[INFO] User already with privileges'
@@ -96,8 +96,8 @@ console.info(`Database created or modified: ${status}`)
           #{command_grant_privileges}
           """
           code_skipped: 3
-        log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN' if status
-      null
+        log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN' if $status
+      undefined
 
 ## Exports
 

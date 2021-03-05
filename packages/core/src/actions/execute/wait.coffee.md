@@ -92,8 +92,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
               stdin_log: config.stdin_log
               stdout_log: config.stdout_log
               stderr_log: config.stderr_log
-              metadata:
-                relax: config.code_skipped is undefined
+              $relax: config.code_skipped is undefined
             !success
         log message: "Attempt ##{attempts} expect #{config.quorum} success, got #{config.command.length - commands.length}", level: 'INFO'
         break if commands.length <= config.command.length - config.quorum

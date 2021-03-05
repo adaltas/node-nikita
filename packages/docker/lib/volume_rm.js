@@ -7,16 +7,16 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True is volume was removed.
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.volume_rm({
+// const {$status} = await nikita.docker.volume_rm({
 //   name: 'my_volume'
 // })
-// console.info(`Volume was removed: ${status}`)
+// console.info(`Volume was removed: ${$status}`)
 // ```
 
 // ## Schema

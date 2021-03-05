@@ -21,7 +21,7 @@ module.exports = {
     'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/metadata/uuid'],
       handler: async function(action) {
-        var err, os_tmpdir, ref, ssh, tmpdir;
+        var err, os_tmpdir, ref, ssh, tmpDirInParent, tmpdir;
         if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
           throw utils.error('METADATA_TMPDIR_INVALID', ['the "tmpdir" metadata value must be a boolean or a string,', `got ${JSON.stringify(action.metadata.tmpdir)}`]);
         }
@@ -44,8 +44,17 @@ module.exports = {
           }
         })();
         action.metadata.tmpdir = path.resolve(os_tmpdir, tmpdir);
+        // Temporary directory creation
+        tmpDirInParent = action.parent && (await action.tools.find(action.parent, function(parent) {
+          if (parent.metadata.tmpdir === action.metadata.tmpdir) {
+            return true;
+          }
+          return void 0;
+        }));
+        if (tmpDirInParent) {
+          return;
+        }
         try {
-          // Temporary directory creation
           await fs.mkdir(ssh, action.metadata.tmpdir);
           return action.metadata.tmpdir_dispose = true;
         } catch (error) {
@@ -72,8 +81,7 @@ module.exports = {
           return;
         }
         // SSH connection extraction
-        ssh = action.config.ssh === false ? void 0 : (await action.tools.find(function(action) {
-          // action.state['nikita:ssh:connection']
+        ssh = action.config.ssh === false ? void 0 : (await action.tools.find(action, function(action) {
           return action.ssh;
         }));
         // Ensure the location is correct

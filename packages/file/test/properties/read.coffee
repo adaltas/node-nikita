@@ -9,8 +9,8 @@ describe 'file.properties.read', ->
 
   they 'read single key', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
@@ -21,8 +21,8 @@ describe 'file.properties.read', ->
 
   they 'option separator', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
@@ -34,8 +34,8 @@ describe 'file.properties.read', ->
 
   they 'option trim', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file
         target: "#{tmpdir}/file.properties"
@@ -48,8 +48,8 @@ describe 'file.properties.read', ->
   
   they 'error if target does not exist', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties.read
         target: "#{tmpdir}/ohno"
@@ -57,8 +57,8 @@ describe 'file.properties.read', ->
   
   they 'error missing target', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.properties.read
         separator: ':'

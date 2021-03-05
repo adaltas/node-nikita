@@ -68,7 +68,7 @@ handler = async function({
     config,
     tools: {find, log}
   }) {
-  var clean_target, containers, k, ref, status, stdout, v;
+  var $status, clean_target, containers, k, ref, stdout, v;
   // Global config
   config.docker = (await find(function({
       config: {docker}
@@ -101,39 +101,36 @@ handler = async function({
   if (!Array.isArray(config.services)) {
     config.services = [config.services];
   }
-  // services = config.services.join ' '
   await this.file.yaml({
-    if: config.content != null,
+    $if: config.content != null,
     eof: config.eof,
     backup: config.backup,
     target: config.target,
     content: config.content
   });
-  ({status, stdout} = (await this.docker.tools.execute({
+  ({$status, stdout} = (await this.docker.tools.execute({
+    $shy: true,
     command: `--file ${config.target} ps -q | xargs docker ${utils.opts(config)} inspect`,
     compose: true,
     cwd: config.cwd,
     uid: config.uid,
     code_skipped: 123,
-    stdout_log: false,
-    metadata: {
-      shy: true
-    }
+    stdout_log: false
   })));
-  if (!status) {
-    status = true;
+  if (!$status) {
+    $status = true;
   } else {
     containers = JSON.parse(stdout);
-    status = containers.some(function(container) {
+    $status = containers.some(function(container) {
       return !container.State.Running;
     });
-    if (status) {
+    if ($status) {
       log("Docker created, need start");
     }
   }
   try {
     return (await this.docker.tools.execute({
-      if: config.force || status,
+      $if: config.force || $status,
       command: [`--file ${config.target} up`, config.detached ? '-d' : void 0, config.force ? '--force-recreate' : void 0, ...config.services].join(' '),
       compose: true,
       cwd: path.dirname(config.target),
@@ -141,7 +138,7 @@ handler = async function({
     }));
   } finally {
     await this.fs.remove({
-      if: clean_target,
+      $if: clean_target,
       target: config.target
     });
   }

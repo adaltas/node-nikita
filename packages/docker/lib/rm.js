@@ -8,16 +8,16 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True if container was removed.
 
 // ## Example Code
 
 // ```js
-// const {status} = await nikita.docker.rm({
+// const {$status} = await nikita.docker.rm({
 //   container: 'toto'
 // })
-// console.info(`Container was removed: ${status}`)
+// console.info(`Container was removed: ${$status}`)
 // ```
 
 // ## Schema
@@ -53,12 +53,10 @@ schema = {
 handler = async function({config}) {
   var exists, running;
   ({
-    status: exists,
+    $status: exists,
     data: running
   } = (await this.docker.tools.execute({
-    metadata: {
-      templated: false
-    },
+    $templated: false,
     command: `inspect ${config.container} --format '{{ json .State.Running }}'`,
     code_skipped: 1,
     format: 'json'

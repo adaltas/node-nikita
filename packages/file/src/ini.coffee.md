@@ -26,21 +26,19 @@ The default stringify function accepts:
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Indicate a change in the target file.   
+* `$status`   
+  Indicate a change in the target file.
 
 ## Example
 
 ```js
-const {status} = await nikita.file.ini({
+const {$status} = await nikita.file.ini({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
 })
-console.info(`Content was updated: ${status}`)
+console.info(`Content was updated: ${$status}`)
 ```
 
 ## Schema
@@ -148,9 +146,9 @@ console.info(`Content was updated: ${status}`)
       # Default properties
       try if config.source
         {data} = await @fs.base.readFile
-          if: config.source
-          ssh: if config.local then false else undefined
-          sudo: if config.local then false else undefined
+          $if: config.source
+          $ssh: false if config.local
+          $sudo: false if config.local
           target: config.source
           encoding: config.encoding
         content = utils.object.clean config.content, true

@@ -12,16 +12,21 @@ module.exports = {
   hooks: {
     'nikita:arguments': {
       handler: function({args, child}, handler) {
+        var ref;
+        // return handler is args.length is 0 # nikita is called without any args, eg `nikita.call(...)`
         // Erase all arguments to re-inject them later
-        if (child.metadata.raw_input) {
-          arguments[0].args = [];
+        // return null if args.length is 1 and args[0]?.args
+        if (child != null ? (ref = child.metadata) != null ? ref.raw_input : void 0 : void 0) { //or child?.metadata?.raw
+          arguments[0].args = [{}];
         }
-        return async function() {
-          var actions;
-          actions = (await handler.apply(null, arguments));
+        return function() {
+          var actions, ref1;
+          // console.log child, args
+          actions = handler.apply(null, arguments);
+          // console.log actions
           // If raw_input is activated, just pass arguments as is
           // Always one action since arguments are erased
-          if (child.metadata.raw_input) {
+          if (child != null ? (ref1 = child.metadata) != null ? ref1.raw_input : void 0 : void 0) {
             actions.args = args;
             actions.metadata.raw_input = true;
             return actions;
@@ -33,7 +38,7 @@ module.exports = {
               action.args = args[i];
               return action;
             });
-          } else {
+          } else if (actions) {
             actions.args = args[0];
             return actions;
           }

@@ -9,7 +9,7 @@ describe 'lxd.config.device.delete', ->
 
   they 'Fail if the device does not exist', ({ssh}) -> ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -17,14 +17,14 @@ describe 'lxd.config.device.delete', ->
       @lxd.init
         image: "images:#{images.alpine}"
         container: 'c1'
-      {status} = await @lxd.config.device.delete
+      {$status} = await @lxd.config.device.delete
         device: 'nondevice'
         container: 'c1'
-      status.should.be.false()
+      $status.should.be.false()
 
   they 'Delete a device', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @lxd.delete
         container: 'c1'
@@ -39,7 +39,7 @@ describe 'lxd.config.device.delete', ->
         properties:
           source: '/dev/urandom'
           path: '/testrandom'
-      {status} = await @lxd.config.device.delete
+      {$status} = await @lxd.config.device.delete
         device: 'test'
         container: 'c1'
-      status.should.be.true()
+      $status.should.be.true()

@@ -7,11 +7,11 @@ called by the `krb5.addprinc` function.
 ## Example
 
 ```js
-const {status} = await nikita.krb5.ktadd({
+const {$status} = await nikita.krb5.ktadd({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
 })
-console.info(`keytab was created or updated: ${status}`)
+console.info(`keytab was created or updated: ${$status}`)
 ```
 
 ## Schema
@@ -55,11 +55,11 @@ console.info(`keytab was created or updated: ${status}`)
       keytab = {} # keytab[principal] ?= {kvno: null, mdate: null}
       princ = {} # {kvno: null, mdate: null}
       # Get keytab information
-      {status, stdout} = await @execute
+      {$status, stdout} = await @execute
+        $shy: true
         command: "export TZ=GMT; klist -kt #{config.keytab}"
         code_skipped: 1
-        metadata: shy: true
-      if status
+      if $status
         log message: "Keytab exists, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout
           continue unless match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
@@ -71,11 +71,11 @@ console.info(`keytab was created or updated: ${status}`)
             keytab[principal] = kvno: kvno, mdate: mdate
       # Get principal information
       if keytab[config.principal]?
-        {status, stdout} = await @krb5.execute
+        {$status, stdout} = await @krb5.execute
+          $shy: true
           admin: config.admin
           command: "getprinc -terse #{config.principal}"
-          metadata: shy: true
-        if status
+        if $status
           # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
           values = utils.string.lines(stdout)[1]
           # Check if a ticket exists for this

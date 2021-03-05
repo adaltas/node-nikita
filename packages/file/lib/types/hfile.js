@@ -114,9 +114,9 @@ handler = async function({
     });
     // Populate config.source
     ({data} = (await this.fs.base.readFile({
+      $ssh: config.local ? false : void 0,
       encoding: config.encoding,
-      target: config.target,
-      ssh: config.local ? false : config.ssh
+      target: config.target
     })));
     config.source = parse(data);
   }

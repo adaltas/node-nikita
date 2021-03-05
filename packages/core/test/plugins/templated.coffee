@@ -9,8 +9,7 @@ describe 'plugins.templated', ->
     nikita
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
-      handler: ({config}) ->
-        config
+      $handler: ({config}) -> config
     .should.be.finally.containEql
       key_1: 'value 1'
       key_2: 'value 2 and value 1'
@@ -19,22 +18,24 @@ describe 'plugins.templated', ->
     nikita
       key: 'value'
     , ->
-      @call key: "get {{parent.config.key}} from parent", ({config}) -> config
+      @call
+        key: "get {{parent.config.key}} from parent"
+      , ({config}) -> config
       .should.be.finally.containEql
         key: 'get value from parent'
 
   it 'when `false`', ->
     nikita.call
-      metadata: templated: false
+      $templated: false
     , ({metadata: {templated}}) ->
       templated.should.be.false()
 
   it 'disabled in current', ->
     nikita
-      metadata: templated: false
+      $templated: false
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
-      handler: ({config}) -> config
+    , ({config}) -> config
     .should.be.finally.containEql
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
@@ -42,7 +43,7 @@ describe 'plugins.templated', ->
   it 'disabled in parent', ->
     nikita ->
       @call
-        metadata: templated: false
+        $templated: false
       , ->
         @call ->
           @call ->

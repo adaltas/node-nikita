@@ -114,19 +114,17 @@ Setting the number of open file descriptors to .75 of the maximum value for
 all the users:
 
 ```js
-const {status} = await nikita.system.limits({
+const {$status} = await nikita.system.limits({
   system: true,
   nofile: true
 });
-console.log(`Limits modified: ${status}`);
+console.log(`Limits modified: ${$status}`);
 ```
 
 ## Callback parameters
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value is "true" if limits configuration file has been modified.   
+* `$status`   
+  Value is "true" if limits configuration file has been modified.
 
 ## Schema
 

@@ -5,9 +5,7 @@
 
 // ## Callback parameters
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Value is "true" if user was created or modified.
 
 // ## Example
@@ -42,13 +40,6 @@ schema = {
   required: ['name']
 };
 
-// * `arch_chroot` (boolean|string)   
-//   Run this command inside a root directory with the arc-chroot command or any
-//   provided string, require the "rootdir" option if activated.
-// * `rootdir` (string)   
-//   Path to the mount point corresponding to the root directory, required if
-//   the "arch_chroot" option is activated.
-
 // ## Handler
 handler = function({config}) {
   return this.execute({
@@ -56,10 +47,6 @@ handler = function({config}) {
     code_skipped: 6
   });
 };
-
-// arch_chroot: config.arch_chroot
-// rootdir: config.rootdir
-// sudo: config.sudo
 
 // ## Exports
 module.exports = {

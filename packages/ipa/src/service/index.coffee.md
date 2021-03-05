@@ -6,7 +6,7 @@ Add a service in FreeIPA.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.service({
+const {$status} = await nikita.ipa.service({
   principal: "myprincipal/my.domain.com"
   },
   connection: {
@@ -15,7 +15,7 @@ const {status} = await nikita.ipa.service({
     password: "mysecret"
   }
 })
-console.info(`Service was updated: ${status}`)
+console.info(`Service was updated: ${$status}`)
 ```
 
 ## Schema
@@ -41,7 +41,7 @@ console.info(`Service was updated: ${status}`)
       # @ipa.service.exists
       #   connection: config.connection
       #   principal: config.principal
-      status = true
+      $status = true
       {data} = await @network.http config.connection,
         negotiate: true
         method: 'POST'
@@ -54,8 +54,8 @@ console.info(`Service was updated: ${status}`)
           error = Error data.error.message
           error.code = data.error.code
           throw error
-        status = false
-      status: status
+        $status = false
+      $status: $status
 
 ## Exports
 

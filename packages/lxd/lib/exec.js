@@ -6,11 +6,11 @@
 // ## Example
 
 // ```js
-// const {status, stdout, stderr} = await nikita.lxd.exec({
+// const {$status, stdout, stderr} = await nikita.lxd.exec({
 //   container: "my-container",
 //   command: "whoami"
 // })
-// console.info(`Command was executed: ${status}`)
+// console.info(`Command was executed: ${$status}`)
 // console.info(stdout)
 // ```
 
@@ -82,7 +82,6 @@ handler = async function({config}) {
   return (await this.execute(config, {
     trap: false
   }, {
-    // metadata: debug: true
     command: [`cat <<'NIKITALXDEXEC' | lxc exec ${opt} ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
   }));
 };

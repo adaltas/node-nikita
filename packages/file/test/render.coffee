@@ -11,8 +11,8 @@ describe 'file.render', ->
 
     they 'when option "source" doesnt exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           source: "#{tmpdir}/oups.hbs"
@@ -26,8 +26,8 @@ describe 'file.render', ->
 
     they 'when option "context" is missing', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           content: 'Hello {{ who }}'
@@ -40,8 +40,8 @@ describe 'file.render', ->
 
     they 'unsupported source extension', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file.render
           source: 'gohome.et'
@@ -54,40 +54,40 @@ describe 'file.render', ->
 
     they 'detect `source`', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
+          $templated: false
           target: "#{tmpdir}/source.hbs"
           content: 'Hello {{ who }}'
-          metadata: templated: false
         @file.render
+          $templated: false
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context: who: 'you'
-          metadata: templated: false
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello you'
 
     they 'check autoescaping (disabled)', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
+          $templated: false
           target: "#{tmpdir}/source.hbs"
           content: 'Hello "{{ who }}" \'{{ anInt }}\''
-          metadata: templated: false
         @file.render
+          $templated: false
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context:
             who: 'you'
             anInt: 42
-          metadata: templated: false
-        .should.be.finally.containEql status: true
+        .should.be.finally.containEql $status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello "you" \'42\''

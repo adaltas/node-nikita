@@ -10,11 +10,11 @@ It upgrades outdated packages if config "upgrade" is "true".
 The following action installs the coffescript package globally.
 
 ```js
-const {status} = await nikita.tools.npm({
+const {$status} = await nikita.tools.npm({
   name: 'coffeescript',
   global: true
 })
-console.info(`Package was installed: ${status}`)
+console.info(`Package was installed: ${$status}`)
 ```
 
 ## Schema
@@ -51,12 +51,11 @@ console.info(`Package was installed: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      # names = config.name.map (name) -> name.split('@')[0]
       # Upgrade
-      {status} = await @tools.npm.upgrade
+      await @tools.npm.upgrade
+        $if: config.upgrade
         cwd: config.cwd
         global: config.global
-        if: config.upgrade
         name: config.name
       # Get installed packages
       {packages} = await @tools.npm.list

@@ -10,8 +10,8 @@ describe 'file.upload', ->
 
   they 'source is missing', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         target: "#{tmpdir}/#{path.basename __filename}"
@@ -23,8 +23,8 @@ describe 'file.upload', ->
 
   they 'target is missing', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
@@ -36,32 +36,32 @@ describe 'file.upload', ->
 
   they 'file into a file', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}/#{path.basename __filename}"
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/#{path.basename __filename}"
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}/#{path.basename __filename}"
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false
 
   they 'file into a directory', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}"
-      .should.be.finally.containEql status: true
+      .should.be.finally.containEql $status: true
       @fs.assert
         target: "#{tmpdir}/#{path.basename __filename}"
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}"
-      .should.be.finally.containEql status: false
+      .should.be.finally.containEql $status: false

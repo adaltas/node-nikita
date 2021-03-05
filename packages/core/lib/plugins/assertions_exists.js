@@ -17,11 +17,13 @@ module.exports = {
       //   '@nikitajs/core/lib/plugins/assertions'
       // ]
       handler: function(action, handler) {
-        var assertions, property, value;
+        var assertions, property, ref, value;
         // Ventilate assertions properties defined at root
         assertions = {};
-        for (property in action) {
-          value = action[property];
+        ref = action.metadata;
+        // console.log action.metadata
+        for (property in ref) {
+          value = ref[property];
           if (/^(un)?assert_exists$/.test(property)) {
             if (assertions[property]) {
               throw Error('ASSERTION_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside assertions']);
@@ -30,7 +32,7 @@ module.exports = {
               value = [value];
             }
             assertions[property] = value;
-            delete action[property];
+            delete action.metadata[property];
           }
         }
         return async function() {
@@ -66,22 +68,21 @@ handlers = {
     var assertion, final_run, i, len, ref, run;
     final_run = true;
     ref = action.assertions.assert_exists;
+    // console.log action
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       run = (await session({
-        hooks: {
+        $hooks: {
           on_result: function({action}) {
             return delete action.parent;
           }
         },
-        metadata: {
-          condition: true,
-          depth: action.metadata.depth,
-          raw_output: true,
-          raw_input: true
-        },
-        parent: action
-      }, async function() {
+        $assertion: true,
+        $depth: action.metadata.depth,
+        $raw_output: true,
+        $raw_input: true,
+        $parent: action
+      }, async function({parent}) {
         var exists;
         ({exists} = (await this.fs.base.exists({
           target: assertion
@@ -101,17 +102,16 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       run = (await session({
-        hooks: {
+        $hooks: {
           on_result: function({action}) {
             return delete action.parent;
           }
         },
-        metadata: {
-          condition: true,
-          depth: action.metadata.depth,
-          raw_output: true
-        },
-        parent: action
+        $condition: true,
+        $depth: action.metadata.depth,
+        $parent: action,
+        $raw_output: true,
+        $parent: action
       }, async function() {
         var exists;
         ({exists} = (await this.fs.base.exists({

@@ -4,4 +4,4 @@ module.exports =
   hooks:
     'nikita:action': (action, handler) ->
       action.metadata.disabled ?= false
-      if action.metadata.disabled then null else handler
+      if action.metadata.disabled then undefined else handler

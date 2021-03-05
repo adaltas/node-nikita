@@ -34,7 +34,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
-  metadata: header: 'Container'
+  $header: 'Container'
   # FreeIPA do a reverse lookup on initialisation
   # Using the default bridge yields to the error
   # `The host name freeipa.nikita does not match the value freeipa.lxd obtained by reverse lookup on IP address fd42:f662:97ea:ba7f:216:3eff:fe1d:96f2%215`
@@ -63,7 +63,7 @@ nikita
       ssh: enabled: true
   provision_container: ({config}) ->
     await @lxd.exec
-      metadata: header: 'Node.js'
+      $header: 'Node.js'
       container: config.container
       command: """
       command -v node && exit 42
@@ -76,7 +76,7 @@ nikita
       trap: true
       code_skipped: 42
     await @lxd.exec
-      metadata: header: 'SSH keys'
+      $header: 'SSH keys'
       container: config.container
       command: """
       mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -87,7 +87,7 @@ nikita
       """
       trap: true
     await @lxd.exec
-      metadata: header: 'Install FreeIPA'
+      $header: 'Install FreeIPA'
       container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:

@@ -47,12 +47,11 @@ handlers =
   if_os: (action) ->
     final_run = true
     await session
-      hooks:
+      $hooks:
         on_result: ({action}) -> delete action.parent
-      metadata:
-        condition: true
-        depth: action.metadata.depth
-      parent: action
+      $condition: true
+      $depth: action.metadata.depth
+      $parent: action
     , ->
       {$status, stdout} = await @execute
         command: utils.os.command
@@ -83,12 +82,11 @@ handlers =
   unless_os: (action) ->
     final_run = true
     await session
-      hooks:
+      $hooks:
         on_result: ({action}) -> delete action.parent
-      metadata:
-        condition: true
-        depth: action.metadata.depth
-      parent: action
+      $condition: true
+      $depth: action.metadata.depth
+      $parent: action
     , ->
       {$status, stdout} = await @execute
         command: utils.os.command

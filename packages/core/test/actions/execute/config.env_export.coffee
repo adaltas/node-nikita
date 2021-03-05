@@ -8,56 +8,50 @@ describe 'actions.execute.config.env_export', ->
   return unless tags.posix
 
   they 'env in execute action', ({ssh}) ->
-    nikita ssh: ssh, ->
+    nikita $ssh: ssh, ->
       logs = []
       {stdout} = await @execute
         command: 'env'
         env: 'MY_KEY': 'MY VALUE'
         env_export: true
-        metadata:
-          log: ({log}) ->
-            return unless log.type is 'text'
-            logs.push log.message if /^Writing env export/.test log.message
+        $log: ({log}) ->
+          return unless log.type is 'text'
+          logs.push log.message if /^Writing env export/.test log.message
       stdout.split('\n').includes('MY_KEY=MY VALUE').should.be.true()
       logs.length.should.eql 1
 
   they 'env in parent action', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata:
-        env: 'MY_KEY': 'MY VALUE'
+      $ssh: ssh
+      $env: 'MY_KEY': 'MY VALUE'
     ,->
       @call ->
         logs = []
         {stdout} = await @execute
           command: 'env'
           env_export: true
-          metadata:
-            log: ({log}) ->
-              return unless log.type is 'text'
-              logs.push log.message if /^Writing env export/.test log.message
+          $log: ({log}) ->
+            return unless log.type is 'text'
+            logs.push log.message if /^Writing env export/.test log.message
         stdout.split('\n').includes('MY_KEY=MY VALUE').should.be.true()
         logs.length.should.eql 1
 
   they 'env merged with parent action', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata:
-        env: 'MY_KEY_1': 'MY VALUE 1'
+      $ssh: ssh
+      $env: 'MY_KEY_1': 'MY VALUE 1'
     ,->
       @call
-        metadata:
-          env: 'MY_KEY_2': 'MY VALUE 2'
+        $env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout} = await @execute
           command: 'env'
           env: 'MY_KEY_3': 'MY VALUE 3'
           env_export: true
-          metadata:
-            log: ({log}) ->
-              return unless log.type is 'text'
-              logs.push log.message if /^Writing env export/.test log.message
+          $log: ({log}) ->
+            return unless log.type is 'text'
+            logs.push log.message if /^Writing env export/.test log.message
         stdout.split('\n').includes('MY_KEY_1=MY VALUE 1').should.be.true()
         stdout.split('\n').includes('MY_KEY_2=MY VALUE 2').should.be.true()
         stdout.split('\n').includes('MY_KEY_3=MY VALUE 3').should.be.true()
@@ -65,14 +59,11 @@ describe 'actions.execute.config.env_export', ->
 
   they.skip 'dont write if someone did it', ({ssh}) ->
     nikita
-      ssh: ssh
-      metadata:
-        env: 'MY_KEY_1': 'MY VALUE 1'
-      # metadata: tmpdir: true
+      $ssh: ssh
+      $env: 'MY_KEY_1': 'MY VALUE 1'
     , ({metadata: {tmpdir}}) ->
       @call
-        metadata:
-          env: 'MY_KEY_2': 'MY VALUE 2'
+        $env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute
@@ -81,19 +72,15 @@ describe 'actions.execute.config.env_export', ->
           env_export: true
         console.log '111111env_export_hash', env_export_hash
       @call
-        metadata:
-          env: 'MY_KEY_2': 'MY VALUE 2'
+        $env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute
           command: 'env'
           env_export: true
-          metadata:
-            log: ({log}) ->
-              return unless log.type is 'text'
-              logs.push log.message if /^Writing env export/.test log.message
-        console.log '222222env_export_hash', env_export_hash
-        console.log(stdout)
+          $log: ({log}) ->
+            return unless log.type is 'text'
+            logs.push log.message if /^Writing env export/.test log.message
         # stdout.split('\n').includes('MY_KEY_1=MY VALUE 1').should.be.true()
         # stdout.split('\n').includes('MY_KEY_2=MY VALUE 2').should.be.true()
         # stdout.split('\n').includes('MY_KEY_3=MY VALUE 3').should.be.true()

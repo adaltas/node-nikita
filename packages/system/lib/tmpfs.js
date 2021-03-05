@@ -5,9 +5,7 @@
 
 // ## Callback parameters
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Wheter the directory was mounted or already mounted.
 
 // # Example
@@ -85,7 +83,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var content, data, err, i, key, len, ref, source, status;
+  var $status, content, data, err, i, key, len, ref, source;
   // for now only support directory type path option
   content = {};
   content[config.mount] = {};
@@ -134,14 +132,14 @@ handler = async function({
   }
   // Seriazile and write the content
   content = utils.tmpfs.stringify(content);
-  ({status} = (await this.file({
+  ({$status} = (await this.file({
     content: content,
     gid: config.gid,
     mode: config.mode,
     target: config.target,
     uid: config.uid
   })));
-  if (status) {
+  if ($status) {
     log({
       message: `re-creating ${config.mount} tmpfs file`,
       level: 'INFO'

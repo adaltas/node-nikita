@@ -16,21 +16,21 @@ Note, stream are not yet supported.
 ## Uploading a file
 
 ```js
-const {status} = await nikita.docker.cp({
+const {$status} = await nikita.docker.cp({
   source: readable_stream or '/path/to/source'
   target: 'my_container:/path/to/target'
 })
-console.info(`Container was copied: ${status}`)
+console.info(`Container was copied: ${$status}`)
 ```
 
 ## Downloading a file
 
 ```js
-const {status} = await nikita.docker.cp({
+const {$status} = await nikita.docker.cp({
   source: 'my_container:/path/to/source',
   target: writable_stream or '/path/to/target'
 })
-console.info(`Container was copied: ${status}`)
+console.info(`Container was copied: ${$status}`)
 ```
 
 ## Schema
@@ -66,15 +66,15 @@ console.info(`Container was copied: ${status}`)
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
         try
-          {stats} = await @fs.base.stat ssh: config.ssh, target: source_path
+          {stats} = await @fs.base.stat target: source_path
           source_path = "#{source_path}/#{path.basename target_path}" if utils.stats.isDirectory stats.mode
         catch err
           throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
           target_mkdir = true
       await @fs.mkdir
+        $if: source_mkdir
         target: source_path
-        if: source_mkdir
       # Destination is on the host
       unless target_container
         if /\/$/.test target_path
@@ -86,8 +86,8 @@ console.info(`Container was copied: ${status}`)
           throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           target_mkdir = true
       await @fs.base.mkdir
+        $if: target_mkdir
         target: target_path
-        if: target_mkdir
       await @docker.tools.execute
         command: "cp #{config.source} #{config.target}"
 

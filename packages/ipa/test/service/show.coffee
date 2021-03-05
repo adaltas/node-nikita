@@ -9,7 +9,7 @@ describe 'ipa.service.show', ->
 
   they 'get single service', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {result} = await @ipa.service.show connection: ipa,
         principal: 'HTTP/ipa.nikita.local'
@@ -17,7 +17,7 @@ describe 'ipa.service.show', ->
 
   they 'get missing service', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.service.show connection: ipa,
         principal: 'missing/ipa.nikita.local'

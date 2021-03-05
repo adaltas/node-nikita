@@ -8,11 +8,13 @@ describe 'session.contextualize', ->
   
   it 'handle function as handler', ->
     expect = [
+      config: b: ''
       handler: (->)
-      b: ''
+      metadata: {}, hooks: {}, state: {}
     ,
+      config: c: ''
       handler: (->)
-      c: ''
+      metadata: {}, hooks: {}, state: {}
     ]
     # String is place before objects
     contextualize [
@@ -29,11 +31,13 @@ describe 'session.contextualize', ->
   
   it 'handle string as metadata.argument', ->
     expect = [
+      config: b: ''
       metadata: argument: 'a'
-      b: ''
+      hooks: {}, state: {}
     ,
+      config: c: ''
       metadata: argument: 'a'
-      c: ''
+      hooks: {}, state: {}
     ]
     # String is place before objects
     contextualize [
@@ -46,4 +50,35 @@ describe 'session.contextualize', ->
       [{b: ''}, {c: ''}]
       'a'
     ]
+    .should.eql expect
+  
+  it 'metadata as $$ object', ->
+    expect = [
+      metadata: a: '1', b: '2'
+      config: b: ''
+    ,
+      metadata: a: '1', b: '2'
+      config: c: ''
+    ]
+    # Metadata in first argument
+    contextualize [
+      $$: a: '1', b: '2'
+      [{b: ''}, {c: ''}]
+    ]
+    .map (el) ->
+      metadata:
+        a: el.metadata.a
+        b: el.metadata.b
+      config: el.config
+    .should.eql expect
+    # Metadata are overwritten
+    contextualize [
+      $$: a: 'x', b: 'x'
+      [{b: '', $a: '1', $b: '2'}, {c: '', $$: a: '1', b: '2'}]
+    ]
+    .map (el) ->
+      metadata:
+        a: el.metadata.a
+        b: el.metadata.b
+      config: el.config
     .should.eql expect

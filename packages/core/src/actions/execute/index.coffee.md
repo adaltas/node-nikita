@@ -84,9 +84,9 @@ console.info(stdout)
         config.env ?= if not ssh and not config.env then process.env else {}
         env_export = if config.env_export? then config.env_export else !!ssh
         if config.sudo or config.bash or config.arch_chroot or (env_export and Object.keys(config.env).length)
-          metadata.tmpdir = true
+          metadata.tmpdir ?= true
         config.command = metadata.argument if metadata.argument?
-        
+
 ## Schema
 
     schema =
@@ -281,12 +281,12 @@ console.info(stdout)
     handler = ({config, metadata, parent, tools: {dig, find, log, path, walk}, ssh}) ->
       # Validate parameters
       config.mode ?= 0o500
-      config.command = await @call config: config, config.command if typeof config.command is 'function'
+      config.command = await @call config, config.command if typeof config.command is 'function'
       config.bash = 'bash' if config.bash is true
       config.arch_chroot = 'arch-chroot' if config.arch_chroot is true
       config.command = "set -e\n#{config.command}" if config.command and config.trap
       config.command_original = "#{config.command}"
-      sudo = await find ({config: {sudo}}) -> sudo
+      # sudo = await find ({config: {sudo}}) -> sudo
       dry = await find ({config: {dry}}) -> dry
       # TODO move next 2 lines this to schema or on_action ?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
@@ -305,9 +305,9 @@ console.info(stdout)
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
         else process.env['USER']
       # Sudo
-      if sudo
+      if config.sudo
         if current_username is 'root'
-          sudo = false
+          config.sudo = false
         else
           config.bash = 'bash' unless ['bash', 'arch_chroot'].some (k) -> config[k]
       # User substitution
@@ -324,7 +324,7 @@ console.info(stdout)
         await @fs.base.writeFile
           content: env_export_content
           mode: 0o500
-          sudo: false
+          $sudo: false
           target: env_export_target
           uid: config.uid
       # Write script
@@ -338,7 +338,7 @@ console.info(stdout)
         await @fs.base.writeFile
           content: command
           mode: config.mode
-          sudo: false
+          $sudo: false
           target: config.target
           uid: config.uid
       if config.arch_chroot
@@ -351,8 +351,8 @@ console.info(stdout)
           target: "#{path.join config.arch_chroot_rootdir, config.target}"
           content: "#{command}"
           mode: config.mode
-          sudo: false
-      if sudo
+          $sudo: false
+      if config.sudo
         config.command = "sudo #{config.command}"
       # Execute
       new Promise (resolve, reject) ->

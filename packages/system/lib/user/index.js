@@ -8,9 +8,7 @@
 
 // ## Callback parameters
 
-// * `err`   
-//   Error object if any.
-// * `status`   
+// * `$status`   
 //   Value is "true" if user was created or modified.
 
 // ## Example
@@ -96,14 +94,12 @@ will be disabled.`
       description: `Synchronize password`
     },
     'shell': {
-      oneOf: [
-        {
-          type: 'boolean'
-        },
-        {
-          type: 'string'
-        }
-      ],
+      // oneOf: [
+      //   type: 'boolean'
+      // ,
+      //   type: 'string'
+      // ]
+      type: ['boolean', 'string'],
       default: '/bin/sh',
       description: `Path to the user shell, set to "/sbin/nologin" if \`false\` and "/bin/sh"
 if \`true\` or \`undefined\`.`
@@ -133,7 +129,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var changed, err, group, groups, groups_info, i, j, k, len, len1, ref, ref1, status, user_info, users;
+  var $status, changed, err, group, groups, groups_info, i, j, k, len, len1, ref, ref1, user_info, users;
   log({
     message: "Entering user",
     level: 'DEBUG'
@@ -169,7 +165,7 @@ handler = async function({
   // * user already exists
   // * we need to compare groups membership
   ({groups} = (await this.system.group.read({
-    if: user_info && config.groups
+    $if: user_info && config.groups
   })));
   groups_info = groups;
   if (groups_info) {
@@ -180,7 +176,7 @@ handler = async function({
   }
   if (config.home) {
     this.fs.mkdir({
-      unless_exists: path.dirname(config.home),
+      $unless_exists: path.dirname(config.home),
       target: path.dirname(config.home),
       uid: 0,
       gid: 0,
@@ -207,8 +203,8 @@ handler = async function({
       `${config.name}`].join(' ')
       },
       {
-        command: `chown ${config.name}. ${config.home}`,
-        if: config.home
+        $if: config.home,
+        command: `chown ${config.name}. ${config.home}`
       }
     ]);
     log({
@@ -247,11 +243,8 @@ handler = async function({
     });
     try {
       await this.execute({
-        command: ['usermod', config.home ? `-d ${config.home}` : void 0, config.shell ? `-s ${config.shell}` : void 0, config.comment != null ? `-c ${utils.string.escapeshellarg(config.comment)}` : void 0, config.gid ? `-g ${config.gid}` : void 0, config.groups ? `-G ${config.groups.join(',')}` : void 0, config.uid ? `-u ${config.uid}` : void 0, `${config.name}`].join(' '),
-        if: changed.length,
-        arch_chroot: config.arch_chroot,
-        rootdir: config.rootdir,
-        sudo: config.sudo
+        $if: changed.length,
+        command: ['usermod', config.home ? `-d ${config.home}` : void 0, config.shell ? `-s ${config.shell}` : void 0, config.comment != null ? `-c ${utils.string.escapeshellarg(config.comment)}` : void 0, config.gid ? `-g ${config.gid}` : void 0, config.groups ? `-G ${config.groups.join(',')}` : void 0, config.uid ? `-u ${config.uid}` : void 0, `${config.name}`].join(' ')
       });
     } catch (error) {
       err = error;
@@ -263,8 +256,8 @@ handler = async function({
     }
     if (config.home && (config.uid || config.gid)) {
       await this.fs.chown({
-        if_exists: config.home,
-        unless: config.no_home_ownership,
+        $if_exists: config.home,
+        $unless: config.no_home_ownership,
         target: config.home,
         uid: config.uid,
         gid: config.gid
@@ -274,11 +267,11 @@ handler = async function({
   // TODO, detect changes in password
   // echo #{config.password} | passwd --stdin #{config.name}
   if (config.password_sync && config.password) {
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: `hash=$(echo ${config.password} | openssl passwd -1 -stdin)
 usermod --pass="$hash" ${config.name}`
     })));
-    if (status) {
+    if ($status) {
       // arch_chroot: config.arch_chroot
       // rootdir: config.rootdir
       // sudo: config.sudo

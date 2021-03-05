@@ -9,19 +9,16 @@ Status will only be true if the file was created.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `$status`   
   Value is "true" if file was created or modified.   
 
 ## Example
 
 ```js
-const {status} = await nikita.file.touch({
-  ssh: ssh,
+const {$status} = await nikita.file.touch({
   target: '/tmp/a_file'
 })
-console.info(`File was touched: ${status}`)
+console.info(`File was touched: ${$status}`)
 ```
 
 ## Hooks
@@ -55,13 +52,13 @@ console.info(`File was touched: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      {status} = await @call ->
+      {$status} = await @call ->
         log message: "Check if target exists \"#{config.target}\"", level: 'DEBUG'
         {exists} = await @fs.base.exists target: config.target
         log message: "Destination does not exists", level: 'INFO' if not exists
         !exists
       # if the file doesn't exist, create a new one
-      if status
+      if $status
         await @file
           content: ''
           target: config.target
@@ -72,8 +69,8 @@ console.info(`File was touched: ${status}`)
       else
         # todo check uid/gid/mode
         await @execute
+          $shy: true
           command: "touch #{config.target}"
-          metadata: shy: true
       {}
 
 ## Exports

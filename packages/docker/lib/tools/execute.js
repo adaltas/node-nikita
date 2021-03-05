@@ -22,11 +22,12 @@ schema = {
       type: ['boolean', 'string'],
       description: `Serialize the command into a file and execute it with bash.`
     },
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, required
-if the "arch_chroot" option is activated.`
-    },
+    // 'rootdir':
+    //   type: 'string'
+    //   description: """
+    //   Path to the mount point corresponding to the root directory, required
+    //   if the "arch_chroot" option is activated.
+    //   """
     'command': {
       oneOf: [
         {

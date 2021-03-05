@@ -77,7 +77,7 @@ describe 'network.http', ->
           body, data, headers,
           status_code, status_message, type
         } = await nikita.network.http
-          ssh: ssh
+          $ssh: ssh
           url: "http://localhost:#{srv.port}"
         status_code.should.eql 200
         status_message.should.eql 'OK'
@@ -95,7 +95,7 @@ describe 'network.http', ->
           body, data, headers,
           status_code, status_message, type
         } = await nikita.network.http
-          ssh: ssh
+          $ssh: ssh
           url: "http://localhost:#{srv.port}/ping"
           data:
             'te\'st': 'va\'lue'
@@ -111,7 +111,7 @@ describe 'network.http', ->
     
     they 'honors curl exit code', ({ssh}) ->
       nikita.network.http
-        ssh: ssh
+        $ssh: ssh
         url: "http://2222:localhost"
       .should.be.rejectedWith
         code: 'CURLE_URL_MALFORMAT'
@@ -124,7 +124,7 @@ describe 'network.http', ->
         srv = await server().listen()
         {status_code, data} = await nikita.network.http
           location: true
-          ssh: ssh
+          $ssh: ssh
           url: "http://localhost:#{srv.port}/follow_redirect_1"
         status_code.should.eql 200
         data.should.eql key: 'value'
@@ -137,10 +137,12 @@ describe 'network.http', ->
       try
         srv = await server().listen()
         output = await nikita.network.http
-          ssh: ssh
+          $ssh: ssh
           url: "http://localhost:#{srv.port}/request_404"
         output = merge output, raw: null, logs: [], headers: Date: null
         output.should.match
+          $logs: []
+          $status: true
           body: ''
           data: undefined
           headers:
@@ -148,9 +150,7 @@ describe 'network.http', ->
             'Connection': 'keep-alive'
             'Transfer-Encoding': 'chunked'
           http_version: '1.1'
-          logs: []
           raw: null
-          status: true
           status_code: 404
           status_message: 'Not found'
           type: undefined
@@ -161,7 +161,7 @@ describe 'network.http', ->
       try
         srv = await server().listen()
         {status_code} = await nikita.network.http
-          ssh: ssh
+          $ssh: ssh
           url: "http://localhost:#{srv.port}/request_301"
         status_code.should.eql 301
       finally
@@ -171,7 +171,7 @@ describe 'network.http', ->
       try
         srv = await server().listen()
         {status_code, data, headers} = await nikita.network.http
-          ssh: ssh
+          $ssh: ssh
           location: true
           url: "http://localhost:#{srv.port}/content_type_with_charset"
         headers['Content-Type'].should.eql 'application/json; charset=utf-8'

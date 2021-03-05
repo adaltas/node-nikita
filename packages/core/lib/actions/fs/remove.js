@@ -26,8 +26,8 @@
 
 // ```js
 // const {status} = await nikita.fs.remove({
-//   target: './some/dir',
-//   unless_exists: './some/file'
+//   $unless_exists: './some/file',
+//   target: './some/dir'
 // })
 // console.info(`Directory was removed: ${status}`)
 // ```
@@ -36,7 +36,7 @@
 
 // ```js
 // const {status} = await nikita.fs.remove([
-//   { target: './some/dir', unless_exists: './some/file' },
+//   { $unless_exists: './some/file', target: './some/dir' },
 //   './some/file'
 // ])
 // console.info(`Directories was removed: ${status}`)

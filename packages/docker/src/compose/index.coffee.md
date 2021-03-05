@@ -79,30 +79,29 @@ Create and start containers according to a docker-compose file
       config.recreate ?= false # TODO: move to schema
       config.services ?= []
       config.services = [config.services] if not Array.isArray config.services
-      # services = config.services.join ' '
       await @file.yaml
-        if: config.content?
+        $if: config.content?
         eof: config.eof
         backup: config.backup
         target: config.target
         content: config.content
-      {status, stdout} = await @docker.tools.execute
+      {$status, stdout} = await @docker.tools.execute
+        $shy: true
         command: "--file #{config.target} ps -q | xargs docker #{utils.opts config} inspect"
         compose: true
         cwd: config.cwd
         uid: config.uid
         code_skipped: 123
         stdout_log: false
-        metadata: shy: true
-      unless status
-        status = true
+      unless $status
+        $status = true
       else
         containers = JSON.parse stdout
-        status = containers.some (container) -> not container.State.Running
-        log "Docker created, need start" if status
+        $status = containers.some (container) -> not container.State.Running
+        log "Docker created, need start" if $status
       try
         await @docker.tools.execute
-          if: config.force or status
+          $if: config.force or $status
           command: [
             "--file #{config.target} up"
             '-d' if config.detached
@@ -114,7 +113,7 @@ Create and start containers according to a docker-compose file
           uid: config.uid
       finally
         await @fs.remove
-          if: clean_target
+          $if: clean_target
           target: config.target
 
 ## Exports

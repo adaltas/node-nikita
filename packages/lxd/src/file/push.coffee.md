@@ -6,12 +6,12 @@ Push files into containers.
 ## Example
 
 ```js
-const {status} = await nikita.lxd.file.push({
+const {$status} = await nikita.lxd.file.push({
   container: 'my_container',
   source: `#{scratch}/a_file`,
   target: '/root/a_file'
 })
-console.info(`File was pushed: ${status}`)
+console.info(`File was pushed: ${$status}`)
 ```
 
 ## Todo
@@ -96,12 +96,12 @@ console.info(`File was pushed: ${status}`)
       # note, name could be obtained from lxd_target
       # throw Error "Invalid Option: target is required" if not config.target and not config.lxd_target
       config.lxd_target ?= "#{path.join config.container, config.target}"
-      {status} = await @lxd.running
+      {$status} = await @lxd.running
         container: config.container
-      status_running = status
-      if status
+      status_running = $status
+      if $status
         try
-          {status} = await @execute
+          {$status} = await @execute
             command: """
             # Ensure source is a file
             [ -f "#{config.source}" ] || exit 2
@@ -126,7 +126,7 @@ console.info(`File was pushed: ${status}`)
             'the openssl package must be installed in the container'
             'and accessible from the `$PATH`.'
           ] if err.exit_code is 4
-      if not status_running or status
+      if not status_running or $status
         await @execute
           command: """
           #{[

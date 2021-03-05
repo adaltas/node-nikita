@@ -8,10 +8,8 @@ Iptables rules are only inserted if the service is started on the target system.
 
 ## Output
 
-* `err`   
-  Error object if any.   
-* `status`   
-  Value is "true" if Iptables rules were created or modified.   
+* `$status`   
+  Value is "true" if Iptables rules were created or modified.
 
 ## Usage
 
@@ -38,13 +36,12 @@ modules are:
 
 ```js
 var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
-const {status} = await nikita.tools.iptables({
-  ssh: ssh,
+const {$status} = await nikita.tools.iptables({
   rules: [
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
   ]
 })
-console.info(`Iptables was updated: ${status}`)
+console.info(`Iptables was updated: ${$status}`)
 ```
 
 ## Hooks
@@ -161,12 +158,12 @@ console.info(`Iptables was updated: ${status}`)
 
     handler = ({config, tools: {log}}) ->
       log message: "List existing rules", level: 'WARN'
-      {status} = await @service.status
+      {$status} = await @service.status
         name: 'iptables'
-      throw Error "Service iptables not started" unless status
+      throw Error "Service iptables not started" unless $status
       {stdout} = await @execute
+        $shy: true
         command: 'iptables -S'
-        metadata: shy: true
         sudo: config.sudo
       oldrules = utils.iptables.parse stdout
       newrules = utils.iptables.normalize config.rules

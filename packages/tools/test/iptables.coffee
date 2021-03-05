@@ -10,20 +10,19 @@ describe 'tools.iptables', ->
 
   they 'insert a rull after existing', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @service
-        config:
-          name: 'iptables-services'
-          srv_name: 'iptables'
-          state: ['started']
+        name: 'iptables-services'
+        srv_name: 'iptables'
+        state: ['started']
       after = chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'
-      {status} = await @tools.iptables
-        sudo: true
+      {$status} = await @tools.iptables
+        $sudo: true
         rules: [
           chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
         ]
-      status.should.be.true()
+      $status.should.be.true()
       {stdout} = await @execute
         sudo: true
         command: 'iptables -S'

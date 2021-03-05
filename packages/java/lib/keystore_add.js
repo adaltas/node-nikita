@@ -35,7 +35,7 @@
 // ## Uploading public and private keys into a keystore
 
 // ```js
-// const {status} = await nikita.java.keystore_add([{
+// const {$status} = await nikita.java.keystore_add([{
 //   keystore: java_home + '/lib/security/cacerts',
 //   storepass: 'changeit',
 //   caname: 'my_ca_certificate',
@@ -45,19 +45,19 @@
 //   keypass: 'mypassword',
 //   name: 'node_1'
 // })
-// console.info(`Keystore was updated: ${status}`)
+// console.info(`Keystore was updated: ${$status}`)
 // ```
 
 // ## Uploading a certificate authority
 
 // ```js
-// const {status} = await nikita.java.keystore_add([{
+// const {$status} = await nikita.java.keystore_add([{
 //   keystore: java_home + '/lib/security/cacerts',
 //   storepass: 'changeit',
 //   caname: 'my_ca_certificate',
 //   cacert: '/tmp/cacert.pem'
 // })
-// console.info(`Keystore was updated: ${status}`)
+// console.info(`Keystore was updated: ${$status}`)
 // ```
 
 // ## Requirements
@@ -149,42 +149,34 @@ handler = async function({
   // Used to upload certificates and to isolate certificates from their file
   if (tmpdir) {
     await this.fs.mkdir({
+      $shy: true,
       target: tmpdir,
-      mode: 0o0700,
-      metadata: {
-        shy: true
-      }
+      mode: 0o0700
     });
   }
   // Upload certificates
   if (ssh && config.local && config.cacert) {
     await this.file.download({
+      $shy: true,
       source: config.cacert,
       target: files.cacert,
-      mode: 0o0600,
-      metadata: {
-        shy: true
-      }
+      mode: 0o0600
     });
   }
   if (ssh && config.local && config.cert) {
     await this.file.download({
+      $shy: true,
       source: config.cert,
       target: files.cert,
-      mode: 0o0600,
-      metadata: {
-        shy: true
-      }
+      mode: 0o0600
     });
   }
   if (ssh && config.local && config.key) {
     await this.file.download({
+      $shy: true,
       source: config.key,
       target: files.key,
-      mode: 0o0600,
-      metadata: {
-        shy: true
-      }
+      mode: 0o0600
     });
   }
   // Prepare parent directory

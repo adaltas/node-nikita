@@ -9,8 +9,8 @@ describe 'actions.fs.base.readlink', ->
 
   they 'get value', ({ssh}) ->
     await nikita
-      ssh: ssh
-      metadata: tmpdir: true
+      $ssh: ssh
+      $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"

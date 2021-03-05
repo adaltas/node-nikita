@@ -87,14 +87,15 @@ on_action = {
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
     if (config.sudo || config.bash || config.arch_chroot || (env_export && Object.keys(config.env).length)) {
-      metadata.tmpdir = true;
+      if (metadata.tmpdir == null) {
+        metadata.tmpdir = true;
+      }
     }
     if (metadata.argument != null) {
       return config.command = metadata.argument;
     }
   }
 };
-
 
 // ## Schema
 schema = {
@@ -282,15 +283,13 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, sudo, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
   }
   if (typeof config.command === 'function') {
-    config.command = (await this.call({
-      config: config
-    }, config.command));
+    config.command = (await this.call(config, config.command));
   }
   if (config.bash === true) {
     config.bash = 'bash';
@@ -302,11 +301,7 @@ handler = async function({
     config.command = `set -e\n${config.command}`;
   }
   config.command_original = `${config.command}`;
-  sudo = (await find(function({
-      config: {sudo}
-    }) {
-    return sudo;
-  }));
+  // sudo = await find ({config: {sudo}}) -> sudo
   dry = (await find(function({
       config: {dry}
     }) {
@@ -338,9 +333,9 @@ handler = async function({
   // Guess current username
   current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
   // Sudo
-  if (sudo) {
+  if (config.sudo) {
     if (current_username === 'root') {
-      sudo = false;
+      config.sudo = false;
     } else {
       if (!['bash', 'arch_chroot'].some(function(k) {
         return config[k];
@@ -371,7 +366,7 @@ handler = async function({
     await this.fs.base.writeFile({
       content: env_export_content,
       mode: 0o500,
-      sudo: false,
+      $sudo: false,
       target: env_export_target,
       uid: config.uid
     });
@@ -396,7 +391,7 @@ handler = async function({
     await this.fs.base.writeFile({
       content: command,
       mode: config.mode,
-      sudo: false,
+      $sudo: false,
       target: config.target,
       uid: config.uid
     });
@@ -418,10 +413,10 @@ handler = async function({
       target: `${path.join(config.arch_chroot_rootdir, config.target)}`,
       content: `${command}`,
       mode: config.mode,
-      sudo: false
+      $sudo: false
     });
   }
-  if (sudo) {
+  if (config.sudo) {
     config.command = `sudo ${config.command}`;
   }
   // Execute

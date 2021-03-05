@@ -12,7 +12,7 @@ option.
 ## Example
 
 ```js
-const {status} = await nikita.ipa.user({
+const {$status} = await nikita.ipa.user({
   uid: "someone",
   attributes: {
     noprivate: true,
@@ -25,7 +25,7 @@ const {status} = await nikita.ipa.user({
     password: "mysecret"
   }
 })
-console.info(`User was updated: ${status}`)
+console.info(`User was updated: ${$status}`)
 ```
 
 ## Hooks
@@ -76,11 +76,11 @@ console.info(`User was updated: ${status}`)
 
     handler = ({config}) ->
       config.connection.http_headers['Referer'] ?= config.connection.referer or config.connection.url
-      {status} = await @ipa.user.exists
+      {$status} = await @ipa.user.exists
         connection: config.connection
         uid: config.uid
-      exists = status
-      status = true
+      exists = $status
+      $status = true
       config.attributes.userpassword = undefined if exists and not config.force_userpassword
       {data} = await @network.http config.connection,
         negotiate: true
@@ -94,8 +94,8 @@ console.info(`User was updated: ${status}`)
           error = Error data.error.message
           error.code = data.error.code
           throw error
-        status = false
-      status: status
+        $status = false
+      $status: $status
 
 ## Exports
 

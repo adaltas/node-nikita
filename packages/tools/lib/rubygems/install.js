@@ -15,29 +15,29 @@
 // Install a gem from its name and version:
 
 // ```js
-  // const {status} = await nikita.tools.rubygems.install({
+  // const {$status} = await nikita.tools.rubygems.install({
   //   name: 'json',
   //   version: '2.1.0',
   // })
-  // console.info(`Gem installed: ${status}`)
+  // console.info(`Gem installed: ${$status}`)
   // ```
 
 // Install a gem from a local file:
 
 // ```js
-  // const {status} = await nikita.tools.rubygems.install({
+  // const {$status} = await nikita.tools.rubygems.install({
   //   source: '/path/to/json-2.1.0.gem'
   // })
-  // console.info(`Gem installed: ${status}`)
+  // console.info(`Gem installed: ${$status}`)
   // ```
 
 // Install gems from a glob expression:
 
 // ```js
-  // const {status} = await nikita.tools.rubygems.install({
+  // const {$status} = await nikita.tools.rubygems.install({
   //   source: '/path/to/*.gem',
   // })
-  // console.info(`Gem installed: ${status}`)
+  // console.info(`Gem installed: ${$status}`)
   // ```
 
 // ## Schema
@@ -108,10 +108,8 @@ handler = async function({
   // Get all current gems
   current_gems = {};
   ({stdout} = (await this.execute({
+    $shy: true,
     command: `${config.gem_bin} list --versions`,
-    metadata: {
-      shy: true
-    },
     bash: config.bash
   })));
   ref1 = utils.string.lines(stdout);

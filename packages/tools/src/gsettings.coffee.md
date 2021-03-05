@@ -6,12 +6,12 @@ GSettings configuration tool.
 ## Example
 
 ```js
-const {status} = await nikita.tools.gsettings({
+const {$status} = await nikita.tools.gsettings({
   properties: {
     'org.gnome.desktop.input-sources': 'xkb-config': '[\'ctrl:swap_lalt_lctl\']'
   }
 })
-console.log(`Property was modified: ${status}`)
+console.log(`Property was modified: ${$status}`)
 ```
 
 ## Schema
@@ -19,9 +19,10 @@ console.log(`Property was modified: ${status}`)
     schema =
       type: 'object'
       properties:
-        '':
+        'properties':
           type: 'object'
           description: """
+          List of properties to set.
           """
 
 ## Handler

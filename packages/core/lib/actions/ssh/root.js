@@ -265,10 +265,8 @@ fi;`);
   });
   return (await this.call({
     if: rebooting,
-    metadata: {
-      retry: true,
-      sleep: 3000
-    }
+    $retry: true,
+    sleep: 3000
   }, async function() {
     var conn;
     conn = (await connect(config));

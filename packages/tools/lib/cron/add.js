@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.cron.add({
+// const {$status} = await nikita.cron.add({
 //   command: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
 //   when: '0 */9 * * *',
 //   user: 'service'
 // })
-// console.info(`Cron entry created or modified: ${status}`)
+// console.info(`Cron entry created or modified: ${$status}`)
 // ```
 
 // ## Schema
@@ -132,7 +132,7 @@ handler = async function({
   }
   if (!jobs) {
     return {
-      status: false
+      $status: false
     };
   }
   if (config.exec) {

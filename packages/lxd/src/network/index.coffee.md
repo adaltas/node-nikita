@@ -5,22 +5,20 @@ Create a network or update a network configuration
 
 ## Output
 
-* `err`
-  Error object if any
-* `status`
+* `$status`
   True if the network was created/updated
 
 ## Example
 
 ```js
-const {status} = await nikita.lxd.network({
+const {$status} = await nikita.lxd.network({
   network: 'lxbr0'
-  config: {
+  properties: {
     'ipv4.address': '172.89.0.0/24',
     'ipv6.address': 'none'
   }
 })
-console.info(`Network was created: ${status}`)
+console.info(`Network was created: ${$status}`)
 ```
 
 ## Schema
@@ -60,7 +58,7 @@ console.info(`Network was created: ${status}`)
         continue if typeof v is 'string'
         config.properties[k] = v.toString()
       # Command if the network does not yet exist
-      {stdout, code, status} = await @execute
+      {stdout, code, $status} = await @execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented
         command: """
         lxc network > /dev/null || exit 5
@@ -77,19 +75,19 @@ console.info(`Network was created: ${status}`)
         """
         code_skipped: [5, 42]
       throw Error "This version of lxc does not support the network command." if code is 5
-      return status: status unless code is 42 # was created
+      return $status: $status unless code is 42 # was created
       # Network already exists, find the changes
       return unless config?.properties
       current = yaml.load stdout
       changes = diff current.config, merge current.config, config.properties
-      {status} = await @execute (
+      {$status} = await @execute (
         command: [
           'lxc', 'network', 'set'
           config.network
           key, "'#{value.replace '\'', '\\\''}'"
         ].join ' '
       ) for key, value of changes
-      status: status
+      $status: $status
 
 ## Export
 

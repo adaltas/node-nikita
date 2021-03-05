@@ -35,7 +35,7 @@ alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"...
 ## Uploading public and private keys into a keystore
 
 ```js
-const {status} = await nikita.java.keystore_add([{
+const {$status} = await nikita.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -45,19 +45,19 @@ const {status} = await nikita.java.keystore_add([{
   keypass: 'mypassword',
   name: 'node_1'
 })
-console.info(`Keystore was updated: ${status}`)
+console.info(`Keystore was updated: ${$status}`)
 ```
 
 ## Uploading a certificate authority
 
 ```js
-const {status} = await nikita.java.keystore_add([{
+const {$status} = await nikita.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
   cacert: '/tmp/cacert.pem'
 })
-console.info(`Keystore was updated: ${status}`)
+console.info(`Keystore was updated: ${$status}`)
 ```
 
 ## Requirements
@@ -141,28 +141,28 @@ default location of the Oracle JDK installation.
       # Used to upload certificates and to isolate certificates from their file
       if tmpdir
         await @fs.mkdir
+          $shy: true
           target: tmpdir
           mode: 0o0700
-          metadata: shy: true
       # Upload certificates
       if ssh and config.local and config.cacert
         await @file.download
+          $shy: true
           source: config.cacert
           target: files.cacert
           mode: 0o0600
-          metadata: shy: true
       if ssh and config.local and config.cert
         await @file.download
+          $shy: true
           source: config.cert
           target: files.cert
           mode: 0o0600
-          metadata: shy: true
       if ssh and config.local and config.key
         await @file.download
+          $shy: true
           source: config.key
           target: files.key
           mode: 0o0600
-          metadata: shy: true
       # Prepare parent directory
       await @fs.mkdir
         parent: config.parent

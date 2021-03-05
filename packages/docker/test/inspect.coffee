@@ -9,7 +9,7 @@ describe 'docker.inspect', ->
 
   they 'one running container', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm
@@ -27,7 +27,7 @@ describe 'docker.inspect', ->
 
   they 'two running containers', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       docker: docker
     , ->
       @docker.rm [

@@ -11,7 +11,7 @@ describe 'system.limits', ->
 
     it 'system or user is required', ->
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -27,7 +27,7 @@ describe 'system.limits', ->
 
     it 'error if both system and user are defined', ->
       nikita
-        metadata: tmpdir: true
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -42,28 +42,28 @@ describe 'system.limits', ->
 
     they 'do nothing without any limits', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
-        status.should.be.false()
+        $status.should.be.false()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           not: true
 
     they 'nofile and noproc accept int', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2048
           nproc: 2048
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
@@ -74,15 +74,15 @@ describe 'system.limits', ->
 
     they 'set global value', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           system: true
           nofile: 2048
           nproc: 2048
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
@@ -93,16 +93,16 @@ describe 'system.limits', ->
 
     they 'specify hard and soft values', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile:
             soft: 2048
             hard: 4096
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
@@ -113,8 +113,8 @@ describe 'system.limits', ->
 
     they 'detect changes', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -122,17 +122,17 @@ describe 'system.limits', ->
           nofile: 2048
           nproc: 2048
           shy: true
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2047
           nproc: 2047
-        status.should.be.true()
+        $status.should.be.true()
 
     they 'detect no change', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -140,17 +140,17 @@ describe 'system.limits', ->
           nofile: 2048
           nproc: 2048
           shy: true
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2048
           nproc: 2048
-        status.should.be.false()
+        $status.should.be.false()
 
     they 'nofile and noproc default to 75% of kernel limits', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           target: '/proc/sys/fs/file-max'
@@ -162,12 +162,12 @@ describe 'system.limits', ->
           command: 'cat /proc/sys/kernel/pid_max'
           trim: true
         nproc = Math.round parseInt(nproc, 10) * 0.75
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: true
           nproc: true
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
@@ -182,8 +182,8 @@ describe 'system.limits', ->
 
     they 'raise an error if nofile is too high', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -194,8 +194,8 @@ describe 'system.limits', ->
 
     they 'raise an error if nproc is too high', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -206,8 +206,8 @@ describe 'system.limits', ->
 
     they 'raise an error if hardness is incoherent', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
@@ -220,15 +220,15 @@ describe 'system.limits', ->
 
     they 'accept value \'unlimited\'', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        {status} = await @system.limits
+        {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2048
           nproc: 'unlimited'
-        status.should.be.true()
+        $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """

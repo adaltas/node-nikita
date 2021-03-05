@@ -8,9 +8,7 @@ ownerships and 0644 permissions unless it already exists.
 
 ## Callback parameters
 
-* `err`   
-  Error object if any.
-* `status`   
+* `$status`   
   Value is "true" if user was created or modified.
 
 ## Example
@@ -104,11 +102,12 @@ you are a member of the "wheel" group (gid of "10") with the command
           Synchronize password
           '''
         'shell':
-          oneOf: [
-            type: 'boolean'
-          ,
-            type: 'string'
-          ]
+          # oneOf: [
+          #   type: 'boolean'
+          # ,
+          #   type: 'string'
+          # ]
+          type: ['boolean', 'string']
           default: '/bin/sh'
           description: '''
           Path to the user shell, set to "/sbin/nologin" if `false` and "/bin/sh"
@@ -153,12 +152,12 @@ you are a member of the "wheel" group (gid of "10") with the command
       # * user already exists
       # * we need to compare groups membership
       {groups} = await @system.group.read
-        if: user_info and config.groups
+        $if: user_info and config.groups
       groups_info = groups
       log message: "Got group information for #{JSON.stringify config.name}", level: 'DEBUG' if groups_info
       if config.home
         @fs.mkdir
-          unless_exists: path.dirname config.home
+          $unless_exists: path.dirname config.home
           target: path.dirname config.home
           uid: 0
           gid: 0
@@ -183,8 +182,8 @@ you are a member of the "wheel" group (gid of "10") with the command
             "#{config.name}"
             ].join ' '
         ,
+          $if: config.home
           command: "chown #{config.name}. #{config.home}"
-          if: config.home
         ]
         log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN'
       else
@@ -199,6 +198,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         else message: "User #{config.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user/add'
         try
           await @execute
+            $if: changed.length
             command: [
               'usermod'
               "-d #{config.home}" if config.home
@@ -209,25 +209,21 @@ you are a member of the "wheel" group (gid of "10") with the command
               "-u #{config.uid}" if config.uid
               "#{config.name}"
             ].join ' '
-            if: changed.length
-            arch_chroot: config.arch_chroot
-            rootdir: config.rootdir
-            sudo: config.sudo
         catch err
           if err.exit_code is 8
             throw Error "User #{config.name} is logged in"
           else throw err
         if config.home and (config.uid or config.gid)
           await @fs.chown
-            if_exists: config.home
-            unless: config.no_home_ownership
+            $if_exists: config.home
+            $unless: config.no_home_ownership
             target: config.home
             uid: config.uid
             gid: config.gid
       # TODO, detect changes in password
       # echo #{config.password} | passwd --stdin #{config.name}
       if config.password_sync and config.password
-        {status} = await @execute
+        {$status} = await @execute
           command: """
           hash=$(echo #{config.password} | openssl passwd -1 -stdin)
           usermod --pass="$hash" #{config.name}
@@ -235,7 +231,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           # arch_chroot: config.arch_chroot
           # rootdir: config.rootdir
           # sudo: config.sudo
-        log message: "Password modified", level: 'WARN' if status
+        log message: "Password modified", level: 'WARN' if $status
 
 ## Exports
 

@@ -9,14 +9,14 @@ describe 'plugins.metadata.shy', ->
     {$status} = await nikita ->
       @call $shy: true, -> true
       @call -> false
-      null
+      undefined
     $status.should.eql false
 
   it 'doesnt apply to output', ->
     {$status} = await nikita ->
       {$status} = await @call $shy: true, -> true
       $status.should.eql true
-      null
+      undefined
     $status.should.eql false
 
   it 'output from array', ->
@@ -24,14 +24,14 @@ describe 'plugins.metadata.shy', ->
       {$status} = await @call ->
         [act1, act2] = await @call [
           $shy: true
-          handler: -> true
+          $handler: -> true
         ,
           $shy: false
-          handler: -> false
+          $handler: -> false
         ]
         act1.$status.should.be.true()
         act2.$status.should.be.false()
-        null
+        undefined
       $status.should.be.false()
   
   it 'false disreregard a status true', ->
@@ -39,12 +39,12 @@ describe 'plugins.metadata.shy', ->
       {$status} = await @call ->
         [act1, act2] = await @call [
           $shy: false
-          handler: -> true
+          $handler: -> true
         ,
           $shy: true
-          handler: -> false
+          $handler: -> false
         ]
         act1.$status.should.be.true()
         act2.$status.should.be.false()
-        null
+        undefined
       $status.should.be.true()

@@ -21,8 +21,8 @@ describe 'actions.fs.assert', ->
 
     they 'file doesnt not exist', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert "#{tmpdir}/a_file"
         .should.be.rejectedWith
@@ -35,16 +35,16 @@ describe 'actions.fs.assert', ->
 
     they 'file exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         @fs.assert "#{tmpdir}/a_file"
   
     they 'with config not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert "#{tmpdir}/a_file", not: true
         @fs.base.writeFile "#{tmpdir}/a_file", content: ''
@@ -59,8 +59,8 @@ describe 'actions.fs.assert', ->
   
     they 'requires target', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           content: "are u here"
@@ -69,8 +69,8 @@ describe 'actions.fs.assert', ->
   
     they 'send custom error message', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           target: "#{tmpdir}/a_file"
@@ -83,8 +83,8 @@ describe 'actions.fs.assert', ->
   
     they 'assert a file', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         @fs.assert
@@ -106,8 +106,8 @@ describe 'actions.fs.assert', ->
   
     they 'assert a directory', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           target: "#{tmpdir}"
@@ -131,8 +131,8 @@ describe 'actions.fs.assert', ->
 
     they 'filter single pattern', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -144,8 +144,8 @@ describe 'actions.fs.assert', ->
 
     they 'filter array of patterns', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -160,8 +160,8 @@ describe 'actions.fs.assert', ->
 
     they 'filter multi line content', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -180,8 +180,8 @@ describe 'actions.fs.assert', ->
   
     they 'content match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -192,8 +192,8 @@ describe 'actions.fs.assert', ->
   
     they 'content dont match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -212,8 +212,8 @@ describe 'actions.fs.assert', ->
   
     they 'content match with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -235,8 +235,8 @@ describe 'actions.fs.assert', ->
 
     they 'content match regexp', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -247,8 +247,8 @@ describe 'actions.fs.assert', ->
 
     they 'content unmatch', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -268,8 +268,8 @@ describe 'actions.fs.assert', ->
           
     they 'content unmatch with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -281,8 +281,8 @@ describe 'actions.fs.assert', ->
   
     they 'content match with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -302,8 +302,8 @@ describe 'actions.fs.assert', ->
   
     they 'send custom error message', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
           target: "#{tmpdir}/a_file"
@@ -320,8 +320,8 @@ describe 'actions.fs.assert', ->
   
     they 'detect if file does not exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           target: "#{tmpdir}/a_file"
@@ -331,8 +331,8 @@ describe 'actions.fs.assert', ->
   
     they 'hash match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
@@ -341,8 +341,8 @@ describe 'actions.fs.assert', ->
   
     they 'hash dont match', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
@@ -359,8 +359,8 @@ describe 'actions.fs.assert', ->
   
     they 'hash dont match with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
@@ -370,8 +370,8 @@ describe 'actions.fs.assert', ->
           
     they 'hash match with not not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
@@ -388,8 +388,8 @@ describe 'actions.fs.assert', ->
   
     they 'send custom error message', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         .fs.assert
@@ -404,8 +404,8 @@ describe 'actions.fs.assert', ->
   
     they 'validate hash', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
         @fs.assert
@@ -416,8 +416,8 @@ describe 'actions.fs.assert', ->
   
     they 'validate hash', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
         @fs.assert
@@ -428,8 +428,8 @@ describe 'actions.fs.assert', ->
   
     they 'file does not exists', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.assert
           target: "#{tmpdir}/a_file"
@@ -439,8 +439,8 @@ describe 'actions.fs.assert', ->
   
     they 'file matching', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
         .fs.assert
@@ -449,8 +449,8 @@ describe 'actions.fs.assert', ->
   
     they 'file not matching', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
         .fs.assert
@@ -466,8 +466,8 @@ describe 'actions.fs.assert', ->
   
     they 'directory match with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.mkdir
           target: "#{tmpdir}/a_file"
@@ -487,8 +487,8 @@ describe 'actions.fs.assert', ->
   
     they 'directory not matching with not', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.mkdir
           target: "#{tmpdir}/a_file"
@@ -501,8 +501,8 @@ describe 'actions.fs.assert', ->
   
     they 'send custom error message', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '', mode: 0o0755
         @fs.assert
@@ -517,10 +517,8 @@ describe 'actions.fs.assert', ->
         
     they 'detect root ownerships', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata:
-          tmpdir: true
-          dirty: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         {stdout} = await @execute 'id -u && id -g'
         [uid, gid] = stdout.split '\n'
@@ -535,8 +533,8 @@ describe 'actions.fs.assert', ->
   
     they 'on target against content string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
@@ -546,8 +544,8 @@ describe 'actions.fs.assert', ->
           
     they 'on target against content buffer', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
@@ -557,8 +555,8 @@ describe 'actions.fs.assert', ->
   
     they 'on target against content regexp', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
@@ -568,8 +566,8 @@ describe 'actions.fs.assert', ->
   
     they 'with content string', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
         @fs.assert
@@ -579,8 +577,8 @@ describe 'actions.fs.assert', ->
   
     they 'with content buffer', ({ssh}) ->
       nikita
-        ssh: ssh
-        metadata: tmpdir: true
+        $ssh: ssh
+        $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
         @fs.assert

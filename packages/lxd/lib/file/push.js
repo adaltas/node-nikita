@@ -6,12 +6,12 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.file.push({
+// const {$status} = await nikita.lxd.file.push({
 //   container: 'my_container',
 //   source: `#{scratch}/a_file`,
 //   target: '/root/a_file'
 // })
-// console.info(`File was pushed: ${status}`)
+// console.info(`File was pushed: ${$status}`)
 // ```
 
 // ## Todo
@@ -89,7 +89,7 @@ handler = async function({
     config,
     metadata: {tmpdir}
   }) {
-  var err, status, status_running, tmpfile;
+  var $status, err, status_running, tmpfile;
   // Make source file with content
   if (config.content != null) {
     tmpfile = path.join(tmpdir, `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`);
@@ -104,13 +104,13 @@ handler = async function({
   if (config.lxd_target == null) {
     config.lxd_target = `${path.join(config.container, config.target)}`;
   }
-  ({status} = (await this.lxd.running({
+  ({$status} = (await this.lxd.running({
     container: config.container
   })));
-  status_running = status;
-  if (status) {
+  status_running = $status;
+  if ($status) {
     try {
-      ({status} = (await this.execute({
+      ({$status} = (await this.execute({
         command: `# Ensure source is a file
 [ -f "${config.source}" ] || exit 2
 command -v openssl >/dev/null || exit 3
@@ -140,7 +140,7 @@ EOF\`
       }
     }
   }
-  if (!status_running || status) {
+  if (!status_running || $status) {
     await this.execute({
       command: `${['lxc', 'file', 'push', config.source, config.lxd_target, config.create_dirs ? '--create-dirs' : void 0, (config.gid != null) && typeof config.gid === 'number' ? '--gid' : void 0, (config.uid != null) && typeof config.uid === 'number' ? '--uid' : void 0, config.mode ? `--mode ${config.mode}` : void 0].join(' ')}`,
       trap: true,

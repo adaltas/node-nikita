@@ -5,22 +5,20 @@
 
 // ## Output
 
-// * `err`
-//   Error object if any
-// * `status`
+// * `$status`
 //   True if the network was created/updated
 
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.network({
+// const {$status} = await nikita.lxd.network({
 //   network: 'lxbr0'
-//   config: {
+//   properties: {
 //     'ipv4.address': '172.89.0.0/24',
 //     'ipv6.address': 'none'
 //   }
 // })
-// console.info(`Network was created: ${status}`)
+// console.info(`Network was created: ${$status}`)
 // ```
 
 // ## Schema
@@ -57,7 +55,7 @@ fields](https://lxd.readthedocs.io/en/latest/networks/).`
 
 // ## Handler
 handler = async function({config}) {
-  var changes, code, current, k, key, ref, status, stdout, v, value;
+  var $status, changes, code, current, k, key, ref, stdout, v, value;
   ref = config.properties;
   // Normalize config
   for (k in ref) {
@@ -68,7 +66,7 @@ handler = async function({config}) {
     config.properties[k] = v.toString();
   }
   // Command if the network does not yet exist
-  ({stdout, code, status} = (await this.execute({
+  ({stdout, code, $status} = (await this.execute({
     // return code 5 indicates a version of lxc where 'network' command is not implemented
     command: `lxc network > /dev/null || exit 5
 lxc network show ${config.network} && exit 42
@@ -97,7 +95,7 @@ ${[
   }
   if (code !== 42) { // was created
     return {
-      status: status
+      $status: $status
     };
   }
   // Network already exists, find the changes
@@ -108,12 +106,12 @@ ${[
   changes = diff(current.config, merge(current.config, config.properties));
   for (key in changes) {
     value = changes[key];
-    ({status} = (await this.execute({
+    ({$status} = (await this.execute({
       command: ['lxc', 'network', 'set', config.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
     })));
   }
   return {
-    status: status
+    $status: $status
   };
 };
 

@@ -6,10 +6,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.lxd.delete({
+// const {$status} = await nikita.lxd.delete({
 //   container: "myubuntu"
 // })
-// console.info(`Container was deleted: ${status}`)
+// console.info(`Container was deleted: ${$status}`)
 // ```
 
 // ## Schema
@@ -43,6 +43,7 @@ ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' 
 module.exports = {
   handler: handler,
   metadata: {
+    argument_to_config: 'container',
     schema: schema
   }
 };

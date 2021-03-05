@@ -64,7 +64,12 @@
 // ## Handler
 var colors, get_headers, handler, pad, stream, utils;
 
-handler = function({config, metadata, ssh}) {
+handler = function({
+    config,
+    metadata,
+    ssh,
+    tools: {find}
+  }) {
   var base, base1, base2, format_line, ids;
   if (metadata.argument != null) {
     // Normalize
@@ -109,9 +114,7 @@ handler = function({config, metadata, ssh}) {
   if ((base2 = config.separator).time == null) {
     base2.time = config.pad.time == null ? '  ' : ' ';
   }
-  if (config.host == null) {
-    config.host = ssh ? ssh.config.host : 'localhost';
-  }
+  // config.host ?= if ssh then ssh.config.host else 'localhost'
   if (config.colors == null) {
     config.colors = process.stdout.isTTY;
   }
@@ -136,8 +139,9 @@ handler = function({config, metadata, ssh}) {
     }
     return [host, config.separator.host, header, config.separator.header, $status, config.time ? config.separator.time : '', time].join('');
   };
-  return this.call(stream, {
-    config: config,
+  return this.call({
+    $: stream
+  }, config, {
     serializer: {
       'nikita:action:start': function(action) {
         var headers;
@@ -152,11 +156,11 @@ handler = function({config, metadata, ssh}) {
         return null;
       },
       // 'diff': null
-      'nikita:resolved': function() {
-        var color, line;
+      'nikita:resolved': function({action}) {
+        var color, line, ref, ref1;
         color = config.colors ? config.colors.status_true : false;
         line = format_line({
-          host: config.host,
+          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
           header: '',
           $status: '♥',
           time: ''
@@ -166,11 +170,11 @@ handler = function({config, metadata, ssh}) {
         }
         return line + '\n';
       },
-      'nikita:rejected': function({error}) {
-        var color, line;
+      'nikita:rejected': function({action, error}) {
+        var color, line, ref, ref1;
         color = config.colors ? config.colors.status_error : false;
         line = format_line({
-          host: config.host,
+          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
           header: '', // error.message
           $status: '✘',
           time: ''
@@ -190,7 +194,8 @@ handler = function({config, metadata, ssh}) {
       //   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
       //   null
       'nikita:action:end': function(action, error, output) {
-        var $status, color, headers, line;
+        var $status, color, headers, line, ref, ref1;
+        // console.log ':events:on:', 'nikita:action:end'
         if (!action.metadata.header) {
           return;
         }
@@ -212,7 +217,7 @@ handler = function({config, metadata, ssh}) {
         // delete ids[action.index]
         headers = get_headers(action);
         line = format_line({
-          host: config.host,
+          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
           header: headers.join(config.divider),
           $status: $status,
           time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''

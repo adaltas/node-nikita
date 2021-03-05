@@ -6,11 +6,11 @@ Send a raw query to LXD.
 ## Example
 
 ```js
-const {status} = await nikita.lxd.init({
+const {$status} = await nikita.lxd.init({
   image: "ubuntu:18.04",
   container: "my_container"
 })
-console.info(`Container was created: ${status}`)
+console.info(`Container was created: ${$status}`)
 ```
 
 ## TODO
@@ -44,7 +44,7 @@ Flags:
         command: [
           'lxc', 'query', config.path
         ].join ' '
-      status: true
+      $status: true
       data: JSON.parse stdout
 
 ## Exports

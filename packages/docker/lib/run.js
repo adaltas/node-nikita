@@ -7,7 +7,7 @@
 
 // * `err`   
 //   Error object if any.
-// * `status`   
+// * `$status`   
 //   True unless contaianer was already running.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` option is provided.
@@ -17,14 +17,13 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.docker.run({
-//   ssh: ssh
+// const {$status} = await nikita.docker.run({
 //   name: 'myContainer'
 //   image: 'test-image'
 //   env: ["FOO=bar",]
 //   entrypoint: '/bin/true'
 // })
-// console.info(`Container was run: ${status}`)
+// console.info(`Container was run: ${$status}`)
 // ```
 
 // ## Hooks
@@ -233,7 +232,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var command, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result, status;
+  var $status, command, flag, i, len, opt, p, ref, ref1, ref2, ref3, ref4, result;
   if (!((config.name != null) || config.rm)) {
     // Validate parameters
     log({
@@ -328,27 +327,25 @@ handler = async function({
   }
   // need to delete the command config or it will be used in docker.exec
   // delete config.command
-  ({status} = (await this.docker.tools.execute({
-    if: config.name != null,
+  ({$status} = (await this.docker.tools.execute({
+    $if: config.name != null,
+    $shy: true,
     command: `ps -a | egrep ' ${config.name}$'`,
-    code_skipped: 1,
-    metadata: {
-      shy: true
-    }
+    code_skipped: 1
   })));
-  if (status) {
+  if ($status) {
     log({
       message: "Container already running. Skipping",
       level: 'INFO'
     });
   }
   result = (await this.docker.tools.execute({
-    command: command,
-    if: function() {
-      return (config.name == null) || status === false;
-    }
+    $if: function() {
+      return (config.name == null) || $status === false;
+    },
+    command: command
   }));
-  if (result.status) {
+  if (result.$status) {
     log({
       message: "Container now running",
       level: 'WARN'

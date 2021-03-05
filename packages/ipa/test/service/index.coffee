@@ -10,22 +10,22 @@ describe 'ipa.service', ->
   
   they 'create a service', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
-      {status} = await @ipa.service
+      {$status} = await @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
-      status.should.be.true()
+      $status.should.be.true()
       @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
 
   they 'create an existing service', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
@@ -33,10 +33,10 @@ describe 'ipa.service', ->
       @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
-      {status} = await @ipa.service
+      {$status} = await @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
-      status.should.be.false()
+      $status.should.be.false()
       @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: ipa
