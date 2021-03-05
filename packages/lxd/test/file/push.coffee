@@ -33,83 +33,86 @@ describe 'lxd.file.push', ->
       nikita
         $ssh: ssh
         $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        await @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-1', force: true
+        await @clean()
         await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-1'
         await @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-1'
         await @file.touch
           target: "#{tmpdir}/a_file"
         @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-1'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
         .should.be.rejectedWith
           code: 'NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL'
+        await @clean()
 
     they 'a new file', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        await @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-2', force: true
+        await @clean()
         await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-2'
         await @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-2'
         await @lxd.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'c1'
+          container: 'nikita-file-push-2'
           command: 'apk add openssl'
         await @file
           target: "#{tmpdir}/a_file"
           content: 'something'
         {$status} = await @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-2'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
         $status.should.be.true()
         {$status} = await @lxd.file.exists
-          container: 'c1'
+          container: 'nikita-file-push-2'
           target: '/root/a_file'
         $status.should.be.true()
+        await @clean()
 
     they 'the same file', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-3', force: true
+        await @clean()
         @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-3'
         @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-3'
         await @lxd.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'c1'
+          container: 'nikita-file-push-3'
           command: 'apk add openssl'
         @file
           target: "#{tmpdir}/a_file"
           content: 'something'
         @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-3'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
         {$status} = await @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-3'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
         $status.should.be.false()
+        await @clean()
   
   describe 'content', ->
     return unless tags.lxd
@@ -117,54 +120,56 @@ describe 'lxd.file.push', ->
     they 'a new file', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-4', force: true
+        await @clean()
         @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-4'
         @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-4'
         await @lxd.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'c1'
+          container: 'nikita-file-push-4'
           command: 'apk add openssl'
         {$status} = await @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-4'
           target: '/root/a_file'
           content: 'something'
         $status.should.be.true()
         {stdout} = await @lxd.exec
-          container: 'c1'
+          container: 'nikita-file-push-4'
           command: 'cat /root/a_file'
         stdout.trim().should.eql 'something'
+        await @clean()
 
     they 'the same file', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-5', force: true
+        await @clean()
         @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-5'
         @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-5'
         await @lxd.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'c1'
+          container: 'nikita-file-push-5'
           command: 'apk add openssl'
         @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-5'
           target: '/root/a_file'
           content: 'something'
         {$status} = await @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-5'
           target: '/root/a_file'
           content: 'something'
         $status.should.be.false()
+        await @clean()
   
   describe 'mode', ->
     return unless tags.lxd
@@ -172,27 +177,28 @@ describe 'lxd.file.push', ->
     they 'absolute mode', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        @lxd.delete
-          container: 'c1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-file-push-6', force: true
+        await @clean()
         @lxd.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-file-push-6'
         @lxd.start
-          container: 'c1'
+          container: 'nikita-file-push-6'
         @lxd.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'c1'
+          container: 'nikita-file-push-6'
           command: 'apk add openssl'
         @lxd.file.push
-          container: 'c1'
+          container: 'nikita-file-push-6'
           target: '/root/a_file'
           content: 'something'
           mode: 700
         {stdout} = await @lxd.exec
-          container: 'c1'
+          container: 'nikita-file-push-6'
           command: 'ls -l /root/a_file'
           trim: true
         stdout.should.match /^-rwx------\s+/
+        await @clean()
   

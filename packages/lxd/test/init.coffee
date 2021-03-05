@@ -87,68 +87,73 @@ describe 'lxd.init', ->
     they 'Init a new container', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        await @lxd.delete
-          container: 'u1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-init-1', force: true
+        await @clean()
         {$status} = await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'u1'
+          container: 'nikita-init-1'
         $status.should.be.true()
+        await @clean()
   
     they 'Validate name', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        await @lxd.delete
-          container: 'u1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-init-2', force: true
+        await @clean()
         {$status} = await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'u1'
+          container: 'nikita-init-2'
         $status.should.be.true()
+        await @clean()
   
     they 'Container already exist', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        await @lxd.delete
-          container: 'u1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-init-3', force: true
+        await @clean()
         await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'u1'
+          container: 'nikita-init-3'
         {$status} = await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'u1'
+          container: 'nikita-init-3'
         $status.should.be.false()
+        await @clean()
   
     they 'Init new VM', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        await @lxd.delete
-          container: 'vm1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-init-vm1', force: true
+        await @clean()
         {$status} = await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'vm1'
+          container: 'nikita-init-vm1'
           vm: true
         $status.should.be.true()
+        await @clean()
   
     they 'VM already exist', ({ssh}) ->
       nikita
         $ssh: ssh
-      , ->
-        await @lxd.delete
-          container: 'vm1'
-          force: true
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxd.delete 'nikita-init-vm2', force: true
+        await @clean()
         await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'vm1'
+          container: 'nikita-init-vm2'
           vm: true
         {$status} = await @lxd.init
           image: "images:#{images.alpine}"
-          container: 'vm1'
+          container: 'nikita-init-vm2'
           vm: true
         $status.should.be.false()
+        await @clean()

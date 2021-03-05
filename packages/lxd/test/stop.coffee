@@ -10,29 +10,31 @@ describe 'lxd.stop', ->
   they 'Already stopped', ({ssh})  ->
     nikita
       $ssh: ssh
-    , ->
-      await @lxd.delete
-        container: 'u1'
-        force: true
+    , ({registry}) ->
+      registry.register 'clean', ->
+        @lxd.delete 'nikita-stop-1', force: true
+      await @clean()
       await @lxd.init
         image: "images:#{images.alpine}"
-        container: 'u1'
+        container: 'nikita-stop-1'
       {$status} = await @lxd.stop
-        container: 'u1'
+        container: 'nikita-stop-1'
       $status.should.be.false()
+      await @clean()
 
-  they 'Stop a container', ({ssh}) ->
+  they.only 'Stop a container', ({ssh}) ->
     nikita
       $ssh: ssh
-    , ->
-      await @lxd.delete
-        container: 'u1'
-        force: true
+    , ({registry}) ->
+      registry.register 'clean', ->
+        @lxd.delete 'nikita-stop-2', force: true
+      await @clean()
       await @lxd.init
         image: "images:#{images.alpine}"
-        container: 'u1'
+        container: 'nikita-stop-2'
       await @lxd.start
-        container: 'u1'
+        container: 'nikita-stop-2'
       {$status} = await @lxd.stop
-        container: 'u1'
+        container: 'nikita-stop-2'
       $status.should.be.true()
+      await @clean()

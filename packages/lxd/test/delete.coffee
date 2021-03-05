@@ -13,14 +13,14 @@ describe 'lxd.delete', ->
     , ->
       await @lxd.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-delete-1'
       await @lxd.stop
-        container: 'c1'
+        container: 'nikita-delete-1'
       {$status} = await @lxd.delete
-        container: 'c1'
+        container: 'nikita-delete-1'
       $status.should.be.true()
       {$status} = await @lxd.delete
-        container: 'c1'
+        container: 'nikita-delete-1'
       $status.should.be.false()
   
   they 'Force deletion of a running container', ({ssh}) ->
@@ -29,11 +29,11 @@ describe 'lxd.delete', ->
     , ->
       await @lxd.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-delete-2'
       await @lxd.start
-        container: 'c1'
+        container: 'nikita-delete-2'
       {$status} = await @lxd.delete
-        container: 'c1'
+        container: 'nikita-delete-2'
         force: true
       $status.should.be.true()
 
@@ -42,7 +42,7 @@ describe 'lxd.delete', ->
       $ssh: ssh
     , ->
       await @lxd.delete  # repeated to be sure the container is absent
-        container: 'c1'
+        container: 'nikita-delete-3'
       {$status} = await @lxd.delete
-        container: 'c1'
+        container: 'nikita-delete-3'
       $status.should.be.false()
