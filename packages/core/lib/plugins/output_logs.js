@@ -47,11 +47,18 @@ module.exports = {
           return handler;
         }
         return async function({action}) {
-          output = (await handler.apply(null, arguments));
-          if (is_object_literal(output)) {
-            output.$logs = action.state.logs;
+          var err;
+          try {
+            output = (await handler.apply(null, arguments));
+            if (is_object_literal(output)) {
+              output.$logs = action.state.logs;
+            }
+            return output;
+          } catch (error) {
+            err = error;
+            err.$logs = action.state.logs;
+            throw err;
           }
-          return output;
         };
       }
     }

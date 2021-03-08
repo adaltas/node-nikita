@@ -41,6 +41,10 @@ module.exports =
       handler: ({action, output}, handler) ->
         return handler if action.metadata.raw_output
         ({action}) ->
-          output = await handler.apply null, arguments
-          output.$logs = action.state.logs if is_object_literal output
-          output
+          try
+            output = await handler.apply null, arguments
+            output.$logs = action.state.logs if is_object_literal output
+            output
+          catch err
+            err.$logs = action.state.logs
+            throw err
