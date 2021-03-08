@@ -69,23 +69,25 @@ nikita
       $header: 'Node.js'
       container: config.container
       command: '''
-      if command -v node ; then exit 42; fi
+      bash -l -c "command -v node" && exit 42
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
       . ~/.bashrc
       nvm install node
       '''
-      trap: true
       code_skipped: 42
+      trap: true
     await @lxd.exec
       $header: 'SSH keys'
       container: config.container
       command: """
+      grep "`cat /root/.ssh/id_rsa.pub`" /root/.ssh/authorized_keys && exit 42
       mkdir -p /root/.ssh && chmod 700 /root/.ssh
       if [ ! -f /root/.ssh/id_rsa ]; then
         ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
         cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
       fi
       """
+      code_skipped: 42
       trap: true
     await @lxd.exec
       $header: 'Install FreeIPA'
@@ -120,4 +122,4 @@ nikita
       ].join ' '}
       """
       # ipa-server-install --uninstall
-      # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local -r NIKITA.LOCAL --auto-reverse --setup-dns
+      # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
