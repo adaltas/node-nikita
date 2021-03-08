@@ -159,7 +159,7 @@ describe 'docker.compose', ->
       @network.tcp.wait
         host: 'dind'
         port: 499
-      {status} = await @docker.compose
+      {$status} = await @docker.compose
         target: "#{tmpdir}/nikita_docker_compose_idem/docker-compose.yml"
       $status.should.be.false()
       @docker.rm

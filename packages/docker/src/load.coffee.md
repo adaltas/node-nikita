@@ -101,7 +101,7 @@ console.info(`Image was loaded: ${$status}`);
               status = true
               log message: 'Identical images', level: 'INFO'
               break
-      $status: $status, stdout: stdout, stderr: stderr
+      $status: status, stdout: stdout, stderr: stderr
           
 ## Exports
 

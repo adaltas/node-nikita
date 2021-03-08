@@ -229,13 +229,13 @@ console.info(`Container was built: ${$status}`)
         if (line.indexOf('Successfully built') isnt  -1 )
           image_id = line.split(' ').pop().toString()
       userargs =
-        status: number_of_step isnt number_of_cache
+        $status: number_of_step isnt number_of_cache
         image: image_id
         stdout: stdout
         stderr: stderr
-      log if userargs.status
-      then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
-      else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
+      log if userargs.$status
+      then message: "New image id #{userargs.image}", level: 'INFO', module: 'nikita/lib/docker/build'
+      else message: "Identical image id #{userargs.image}", level: 'INFO', module: 'nikita/lib/docker/build'
       userargs
 
 ## Exports

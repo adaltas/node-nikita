@@ -107,8 +107,6 @@ describe 'docker.build', ->
           code: 'NIKITA_FS_ASSERT_FILE_MISSING'
 
     they 'status not modified', ({ssh}) ->
-      status_true = []
-      status_false = []
       nikita
         $ssh: ssh
         docker: docker
@@ -121,17 +119,15 @@ describe 'docker.build', ->
           FROM scratch
           CMD echo hello 5
           """
-        {$status, stdout} = await @docker.build
-          $log: ({log}) -> status_true.push log
+        {$logs: logs_status_true, $status, stdout} = await @docker.build
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
         $status.should.be.true()
-        {$status} = await @docker.build
-          $log: ({log}) -> status_false.push log
+        {$logs: logs_status_false, $status} = await @docker.build
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
         $status.should.be.false()
         @docker.rmi 'nikita/should_exists_5'
         @call ->
-          status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
-          status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1
+          logs_status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
+          logs_status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1
