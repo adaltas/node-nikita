@@ -228,6 +228,7 @@ containers:
           # $sleep: 5000
           container: containerName
           command: """
+          command -v openssl && exit 42
           if command -v yum >/dev/null 2>&1; then
             yum -y install openssl
           elif command -v apt-get >/dev/null 2>&1; then
@@ -238,6 +239,7 @@ containers:
           command -v openssl
           """
           trap: true
+          code_skipped: 42
         # Enable SSH
         if containerConfig.ssh?.enabled
           await @lxd.exec

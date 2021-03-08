@@ -291,7 +291,8 @@ PEERDNS=no`
         // $retry: 10
         // $sleep: 5000
         container: containerName,
-        command: `if command -v yum >/dev/null 2>&1; then
+        command: `command -v openssl && exit 42
+if command -v yum >/dev/null 2>&1; then
   yum -y install openssl
 elif command -v apt-get >/dev/null 2>&1; then
   apt-get -y install openssl
@@ -299,7 +300,8 @@ else
   echo "Unsupported Package Manager" >&2 && exit 2
 fi
 command -v openssl`,
-        trap: true
+        trap: true,
+        code_skipped: 42
       });
       // Enable SSH
       if ((ref5 = containerConfig.ssh) != null ? ref5.enabled : void 0) {
