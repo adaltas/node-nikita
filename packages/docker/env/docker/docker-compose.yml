@@ -25,3 +25,5 @@ services:
       - DOCKER_TLS_CERTDIR=
     expose:
       - "2375"
+    logging:
+      driver: none

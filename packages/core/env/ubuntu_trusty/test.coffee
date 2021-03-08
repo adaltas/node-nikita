@@ -1,9 +1,7 @@
 
 module.exports =
   tags:
-    api: true
     conditions_if_os: true
-    posix: true
   conditions_if_os:
     arch: 'x86_64'
     distribution: 'ubuntu'

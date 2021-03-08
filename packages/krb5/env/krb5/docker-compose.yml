@@ -23,6 +23,6 @@ services:
     volumes:
       - /dev/urandom:/dev/random
     logging:
-      driver: none 
+      driver: none
     environment:
       BOOTSTRAP: 1
