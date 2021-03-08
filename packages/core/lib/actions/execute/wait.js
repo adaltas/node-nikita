@@ -89,6 +89,9 @@ handler = async function({
     tools: {log}
   }) {
   var $status, attempts, commands, wait;
+  if (config.retry == null) {
+    config.retry = -1;
+  }
   attempts = 0;
   $status = false;
   wait = function(timeout) {
@@ -100,7 +103,7 @@ handler = async function({
     });
   };
   commands = config.command;
-  while (true) {
+  while (attempts !== config.retry) {
     attempts++;
     log({
       message: `Start attempt #${attempts}`,
@@ -126,14 +129,14 @@ handler = async function({
       level: 'INFO'
     });
     if (commands.length <= config.command.length - config.quorum) {
-      break;
+      return {
+        attempts: attempts,
+        $status: attempts > 1
+      };
     }
     await wait(config.interval);
   }
-  return {
-    attempts: attempts,
-    $status: attempts > 1
-  };
+  throw utils.error('NIKITA_EXECUTE_WAIT_MAX_RETRY', ['the number of attempts reached the maximum number of retries,', `got ${config.retry}.`]);
 };
 
 // ## Exports

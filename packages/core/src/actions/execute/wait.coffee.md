@@ -74,6 +74,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
+      config.retry ?= -1
       attempts = 0
       $status = false
       wait = (timeout) ->
@@ -81,7 +82,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
         new Promise (resolve) ->
           setTimeout resolve, timeout
       commands = config.command
-      while true
+      while attempts isnt config.retry
         attempts++
         log message: "Start attempt ##{attempts}", level: 'DEBUG'
         commands = await utils.promise.array_filter commands, (command) =>
@@ -95,10 +96,15 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
               $relax: config.code_skipped is undefined
             !success
         log message: "Attempt ##{attempts} expect #{config.quorum} success, got #{config.command.length - commands.length}", level: 'INFO'
-        break if commands.length <= config.command.length - config.quorum
+        if commands.length <= config.command.length - config.quorum
+          return
+            attempts: attempts
+            $status: attempts > 1
         await wait config.interval
-      attempts: attempts
-      $status: attempts > 1
+      throw utils.error 'NIKITA_EXECUTE_WAIT_MAX_RETRY', [
+        'the number of attempts reached the maximum number of retries,'
+        "got #{config.retry}."
+      ]
 
 ## Exports
 

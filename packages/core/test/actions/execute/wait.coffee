@@ -53,8 +53,54 @@ describe 'actions.execute.wait', ->
         ]
         interval: 40
       $status.should.be.true()
+
+  describe 'logs', ->
+
+    they 'attemps', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @call ->
+          setTimeout ->
+            nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
+          , 200
+        {$logs} = await @execute.wait
+          command: "test -d #{tmpdir}/a_file"
+          interval: 100
+        $logs
+        .filter (log) -> /Attempt #\d/.test log.message
+        .length.should.be.within 2, 8
+
+    they 'honors *_log as true', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        logs = 0
+        await @execute.wait
+          command: "echo stdout; echo stderr >&2"
+          stdin_log: true
+          stdout_log: true
+          stderr_log: true
+          $log: ({log}) ->
+            logs++ if log.type in ['stdin', 'stdout', 'stderr']
+        logs.should.eql 3
+
+    they 'honors *_log as false', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        logs = 0
+        await @execute.wait
+          command: "echo stdout; echo stderr >&2"
+          stdin_log: false
+          stdout_log: false
+          stderr_log: false
+          $log: ({log}) ->
+            logs++ if log.type in ['stdin', 'stdout', 'stderr']
+        logs.should.eql 0
   
-  describe 'code_skipped', ->
+  describe 'config `code_skipped`', ->
   
     they 'error if error code not skipped, first attempt', ({ssh}) ->
       nikita
@@ -85,58 +131,8 @@ describe 'actions.execute.wait', ->
         .should.be.rejectedWith
           code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
           exit_code: 99
-  
-  describe 'log', ->
 
-    they 'attemps', ({ssh}) ->
-      nikita
-        $ssh: ssh
-        $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        logs = []
-        @call ->
-          setTimeout ->
-            nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
-          , 200
-        @execute.wait
-          command: "test -d #{tmpdir}/a_file"
-          interval: 100
-          $log: ({log}) ->
-            logs.push log if /Attempt #\d/.test log.message
-        @call ->
-          logs.length.should.be.within 2, 8
-
-    they 'honors *_log as true', ({ssh}) ->
-      nikita
-        $ssh: ssh
-      , ->
-        logs = 0
-        @execute.wait
-          command: "echo stdout; echo stderr >&2"
-          stdin_log: true
-          stdout_log: true
-          stderr_log: true
-          $log: ({log}) ->
-            logs++ if log.type in ['stdin', 'stdout', 'stderr']
-        @call ->
-          logs.should.eql 3
-
-    they 'honors *_log as false', ({ssh}) ->
-      nikita
-        $ssh: ssh
-      , ->
-        logs = 0
-        @execute.wait
-          command: "echo stdout; echo stderr >&2"
-          stdin_log: false
-          stdout_log: false
-          stderr_log: false
-          $log: ({log}) ->
-            logs++ if log.type in ['stdin', 'stdout', 'stderr']
-        @call ->
-          logs.should.eql 0
-
-  describe 'quorum', ->
+  describe 'config `quorum`', ->
     
     it 'boolean `true` is converted to quorum', ->
       # Odd number
@@ -231,3 +227,21 @@ describe 'actions.execute.wait', ->
         @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n'
+  
+  describe 'option `retry`', ->
+    
+    they 'when `0`, not execution', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        try
+          await @execute.wait
+            command: "test -d #{tmpdir}/a_file"
+            interval: 100
+            retry: 3
+        catch err
+          err.code.should.eql 'NIKITA_EXECUTE_WAIT_MAX_RETRY'
+          err.$logs
+          .filter (log) -> /Attempt #\d/.test log.message
+          .length.should.eql 3
