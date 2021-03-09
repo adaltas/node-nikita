@@ -22,6 +22,11 @@ module.exports = {
       if (!action.parent) {
         return;
       }
+      // A bastard is not recognized by their parent as children
+      // examples include conditions and assertions
+      if (action.metadata.bastard) {
+        return;
+      }
       return action.parent.children.push({
         children: action.children,
         metadata: action.metadata,
