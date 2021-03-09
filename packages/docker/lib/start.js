@@ -52,7 +52,7 @@ handler = async function({
     tools: {log}
   }) {
   var $status;
-  ({$status} = (await this.docker.tools.$status(config, {
+  ({$status} = (await this.docker.tools.status(config, {
     $shy: true
   })));
   if ($status) {

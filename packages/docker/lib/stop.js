@@ -48,7 +48,7 @@ handler = async function({
   }) {
   var $status;
   // rm is false by default only if config.service is true
-  ({$status} = (await this.docker.tools.$status(config, {
+  ({$status} = (await this.docker.tools.status(config, {
     $shy: true
   })));
   if ($status) {

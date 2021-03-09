@@ -160,7 +160,7 @@ handler = async function({
     }
   }
   return {
-    $status: $status,
+    $status: status,
     stdout: stdout,
     stderr: stderr
   };

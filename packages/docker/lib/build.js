@@ -284,17 +284,17 @@ handler = async function({
     }
   }
   userargs = {
-    status: number_of_step !== number_of_cache,
+    $status: number_of_step !== number_of_cache,
     image: image_id,
     stdout: stdout,
     stderr: stderr
   };
-  log(userargs.status ? {
-    message: `New image id ${userargs[1]}`,
+  log(userargs.$status ? {
+    message: `New image id ${userargs.image}`,
     level: 'INFO',
     module: 'nikita/lib/docker/build'
   } : {
-    message: `Identical image id ${userargs[1]}`,
+    message: `Identical image id ${userargs.image}`,
     level: 'INFO',
     module: 'nikita/lib/docker/build'
   });
