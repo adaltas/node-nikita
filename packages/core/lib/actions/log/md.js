@@ -31,15 +31,13 @@ markdown header.`
 // ## Handler
 handler = async function({config}) {
   var state;
-  state = {
-    last_event_type: void 0
-  };
+  state = {};
   return (await this.call({
     $: log_fs
   }, config, {
     serializer: {
       'nikita:action:start': function({action}) {
-        var content, header, headers, last_event_type, walk;
+        var content, header, headers, walk;
         content = [];
         if (action.metadata.module) {
           content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
@@ -49,8 +47,6 @@ handler = async function({config}) {
         if (!action.metadata.header) {
           return content.join('');
         }
-        ({last_event_type} = state);
-        state.last_event_type = 'nikita:action:start';
         walk = function(parent) {
           var precious, results;
           precious = parent.metadata.header;
@@ -85,7 +81,6 @@ handler = async function({config}) {
       },
       'stdout_stream': function(log) {
         var out;
-        state.last_event_type = 'stdout_stream';
         if (log.message === null) {
           state.stdout_count = 0;
         } else if (state.stdout_count === void 0) {
@@ -107,7 +102,6 @@ handler = async function({config}) {
       },
       'text': function(log) {
         var content;
-        state.last_event_type = 'text';
         content = [];
         content.push(`\n${log.message}`);
         if (log.module && log.module !== '@nikitajs/core/lib/actions/call') {

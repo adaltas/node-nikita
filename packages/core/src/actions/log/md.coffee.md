@@ -27,14 +27,12 @@ Write log to the host filesystem in Markdown.
 ## Handler
 
     handler = ({config}) ->
-      state = last_event_type: undefined
+      state = {}
       await @call $: log_fs, config, serializer:
         'nikita:action:start': ({action}) ->
           content = []
           content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n" if action.metadata.module
           return content.join '' unless action.metadata.header
-          {last_event_type} = state
-          state.last_event_type = 'nikita:action:start'
           walk = (parent) ->
             precious = parent.metadata.header
             results = []
@@ -56,7 +54,6 @@ Write log to the host filesystem in Markdown.
         'stderr': (log) ->
           "\n```stderr\n#{log.message}```\n"
         'stdout_stream': (log) ->
-          state.last_event_type = 'stdout_stream'
           if log.message is null
             state.stdout_count = 0
           else if state.stdout_count is undefined
@@ -69,7 +66,6 @@ Write log to the host filesystem in Markdown.
           out.push '\n```\n' if state.stdout_count is 0
           out.join ''
         'text': (log) ->
-          state.last_event_type = 'text'
           content = []
           content.push "\n#{log.message}"
           content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module and log.module isnt '@nikitajs/core/src/actions/call'
