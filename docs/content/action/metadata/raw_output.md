@@ -7,26 +7,24 @@ related:
 
 # Metadata "raw_output"
 
-The `raw_output` metadata prevents any modification to the value returned by an action. The value is returned as it is returned by the [action handler](/current/action/handler).
+The `raw_output` metadata preserve the value returned by an action from modifications. Thus, the value returned inside the [action handler](/current/action/handler) is not altered.
 
 * Type: `boolean`
 * Default: `false`
 
-For example, the object returned by the handler is not merged with the object containing the `status` and `log` properties accomplishing [the default behavior](/current/action/handler#return):
+For example, an object literal returned by the handler is not enriched with the `$status` and `$log` properties as it is by [default](/current/action/handler#return):
 
 ```js
 nikita
 .call(async function() {
   // Get the output
   const output = await this.call({
-    metadata: {
-      // highlight-next-line
-      raw_output: true
-    }
+    // highlight-next-line
+    $raw_output: true
   }, function() {
     return {who: 'Nikita'}
   })
-  // Print the output
-  console.log(output) // {who: 'Nikita'}
+  console.log(output)
+  // Print the output `{who: 'Nikita'}`
 })
 ```
