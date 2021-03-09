@@ -17,9 +17,7 @@ module.exports =
         if child?.metadata?.raw_input #or child?.metadata?.raw
           arguments[0].args = [{}]
         ->
-          # console.log child, args
           actions = handler.apply null, arguments
-          # console.log actions
           # If raw_input is activated, just pass arguments as is
           # Always one action since arguments are erased
           if child?.metadata?.raw_input

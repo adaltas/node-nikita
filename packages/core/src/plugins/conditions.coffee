@@ -12,9 +12,7 @@ module.exports =
       handler: (action, handler) ->
         # Ventilate conditions properties defined at root
         conditions = {}
-        # console.log action.metadata
         for property, value of action.metadata
-          # console.log property, /^(if|unless)($|_[\w_]+$)/.test property
           if /^(if|unless)($|_[\w_]+$)/.test property
             throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
               "Property #{property} is defined multiple times,"
@@ -44,9 +42,7 @@ handlers =
     for condition in action.conditions.if
       if typeof condition is 'function'
         condition = await session
-          $hooks:
-            on_result: ({action}) -> delete action.parent
-          $condition: true
+          $bastard: true
           $depth: action.metadata.depth
           $parent: action
           $raw_output: true
@@ -72,9 +68,7 @@ handlers =
     for condition in action.conditions.unless
       if typeof condition is 'function'
         condition = await session
-          $hooks:
-            on_result: ({action}) -> delete action.parent
-          $condition: true
+          $bastard: true
           $depth: action.metadata.depth
           $parent: action
           $raw_output: true

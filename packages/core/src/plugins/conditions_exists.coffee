@@ -24,10 +24,7 @@ handlers =
     for condition in action.conditions.if_exists
       try
         await session
-          # $hooks:
-          #   on_result: ({action}) -> delete action.parent
           $bastard: true
-          # $condition: true
           $depth: action.metadata.depth
           $parent: action
         , ->
@@ -42,10 +39,7 @@ handlers =
     for condition in action.conditions.unless_exists
       try
         await session
-          # $hooks:
-          #   on_result: ({action}) -> delete action.parent
           $bastard: true
-          # $condition: true
           $depth: action.metadata.depth
           $parent: action
         , ->

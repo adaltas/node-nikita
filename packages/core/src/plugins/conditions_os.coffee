@@ -47,9 +47,7 @@ handlers =
   if_os: (action) ->
     final_run = true
     await session
-      $hooks:
-        on_result: ({action}) -> delete action.parent
-      $condition: true
+      $bastard: true
       $depth: action.metadata.depth
       $parent: action
     , ->
@@ -82,9 +80,7 @@ handlers =
   unless_os: (action) ->
     final_run = true
     await session
-      $hooks:
-        on_result: ({action}) -> delete action.parent
-      $condition: true
+      $bastard: true
       $depth: action.metadata.depth
       $parent: action
     , ->

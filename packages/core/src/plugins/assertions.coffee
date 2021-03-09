@@ -41,10 +41,7 @@ handlers =
     for assertion in action.assertions.assert
       if typeof assertion is 'function'
         run = await session
-          # $hooks:
-          #   on_result: ({action}) -> delete action.parent
           $bastard: true
-          # $assertion: true
           $depth: action.metadata.depth
           $raw_output: true
           $raw_input: true
@@ -64,10 +61,7 @@ handlers =
     for assertion in action.assertions.unassert
       if typeof assertion is 'function'
         run = await session
-          # $hooks:
-          #   on_result: ({action}) -> delete action.parent
           $bastard: true
-          # $assertion: true
           $depth: action.metadata.depth
           $raw_output: true
           $raw_input: true

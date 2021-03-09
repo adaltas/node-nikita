@@ -7,21 +7,6 @@ return unless tags.posix
 
 describe 'actions.log.md', ->
   
-  they 'compatible with pseudo-child sessions', ({ssh}) ->
-    # if_exists, if_execute...
-    nikita
-      $ssh: ssh
-      $tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      await @log.md basedir: tmpdir
-      await @call
-        $unless_exists: "#{tmpdir}/toto"
-      , ->
-        console.log 'ok'
-      await @fs.assert
-        target: "#{tmpdir}/localhost.log"
-        content: /^Entering.*$/mg
-  
   they 'write entering message', ({ssh}) ->
     nikita
       $ssh: ssh

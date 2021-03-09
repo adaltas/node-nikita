@@ -18,7 +18,6 @@ module.exports =
       handler: (action, handler) ->
         # Ventilate assertions properties defined at root
         assertions = {}
-        # console.log action.metadata
         for property, value of action.metadata
           if /^(un)?assert_exists$/.test property
             throw Error 'ASSERTION_DUPLICATED_DECLARATION', [
@@ -45,13 +44,9 @@ module.exports =
 handlers =
   assert_exists: (action) ->
     final_run = true
-    # console.log action
     for assertion in action.assertions.assert_exists
       run = await session
-        # $hooks:
-        #   on_result: ({action}) -> delete action.parent
         $bastard: true
-        # $assertion: true
         $depth: action.metadata.depth
         $raw_output: true
         $raw_input: true
@@ -65,12 +60,11 @@ handlers =
     final_run = true
     for assertion in action.assertions.unassert_exists
       run = await session
-        $hooks:
-          on_result: ({action}) -> delete action.parent
-        $condition: true
+        $bastard: true
         $depth: action.metadata.depth
         $parent: action
         $raw_output: true
+        $raw_input: true
         $parent: action
       , ->
         {exists} = await @fs.base.exists target: assertion
