@@ -61,7 +61,7 @@
     }
   ],
   "dependencies": {
-    "ajv": "^7.0.4",
+    "ajv": "^7.2.1",
     "ajv-formats": "^1.5.1",
     "ajv-keywords": "^4.0.0",
     "colors": "^1.4.0",
@@ -81,12 +81,12 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
     "coffeescript": "^2.5.1",
-    "eslint": "^7.19.0",
-    "eslint-plugin-coffee": "^0.1.13",
-    "mocha": "^8.2.1",
+    "eslint": "^7.21.0",
+    "eslint-plugin-coffee": "^0.1.14",
+    "mocha": "^8.3.1",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
   },
