@@ -7,25 +7,49 @@ related:
 
 # Metadata "raw_input"
 
-The `raw_input` metadata enables preventing arguments passed to an action to move into the ['config' property](/current/action/config). It is only used on [registering an action](/current/usages/registry).
+The `raw_input` metadata enables preventing arguments passed to an action to move into the ['config' property](/current/action/config). It is only used when [registering an action](/current/usages/registry) and shall be considered as an advanced usage.
 
 * Type: `boolean`
 * Default: `false`
 
-For example, `config` is empty when passing arguments to the action with the metadata enabled:
+## Usage
+
+The `raw_input` metadata property is commonly used along the `args` property of the action:
 
 ```js
 nikita
 // Register an action
 .registry.register('my_action', {
+  // highlight-next-line
   metadata: {
-    // highlight-next-line
+    raw_input: true
+  },
+  handler: function({config, args}){
+    console.info(args)
+    // Print `[ { who: 'Nikita' }, 'whoami' ]`
+  }
+})
+// Call the action
+.my_action({who: 'Nikita'}, 'whoami')
+```
+
+## Notes about configuration
+
+The `config` property is empty when passing arguments to the action with the metadata enabled:
+
+```js
+nikita
+// Register an action
+.registry.register('my_action', {
+  // highlight-next-line
+  metadata: {
     raw_input: true
   },
   handler: function({config}){
-    // Print config
-    console.info(config) // {}
-}})
+    console.info(config)
+    // Print config as `{}`
+  }
+})
 // Call the action
 .my_action({who: 'Nikita'})
 ```
