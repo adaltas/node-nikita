@@ -180,3 +180,18 @@ describe 'actions.log.md', ->
         .should.be.resolvedWith
           data: ''
     
+    they 'disabled with $log', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @log.md basedir: tmpdir
+        await @call $log: false, (->)
+        await @call (->)
+        await @call $log: false, (->)
+        @fs.base.readFile
+          target: "#{tmpdir}/localhost.log"
+          encoding: 'ascii'
+        .should.be.resolvedWith
+          data: "\nEntering @nikitajs/core/src/actions/call (1.3)\n"
+    

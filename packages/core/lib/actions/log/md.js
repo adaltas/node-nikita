@@ -58,7 +58,7 @@ handler = async function({config}) {
       'nikita:action:start': function({action}) {
         var content, header, headers, walk;
         content = [];
-        if (config.enter && action.metadata.module) {
+        if (config.enter && action.metadata.module && action.metadata.log !== false) {
           content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
             return index + 1;
           })).join('.')})\n`);

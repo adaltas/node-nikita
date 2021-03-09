@@ -51,7 +51,7 @@ nikita(async function(){
       await @call $: log_fs, config, serializer:
         'nikita:action:start': ({action}) ->
           content = []
-          if config.enter and action.metadata.module
+          if config.enter and action.metadata.module and action.metadata.log isnt false
             content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n"
           return content.join '' unless action.metadata.header
           walk = (parent) ->
