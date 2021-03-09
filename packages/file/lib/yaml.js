@@ -192,7 +192,7 @@ handler = async function({
     message: "Serialize content",
     level: 'DEBUG'
   });
-  config.content = yaml.safeDump(config.content, {
+  config.content = yaml.dump(config.content, {
     noRefs: true,
     lineWidth: config.line_width
   });

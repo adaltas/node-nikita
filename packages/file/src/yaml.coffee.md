@@ -175,7 +175,7 @@ console.info(`Content was written: ${$status}`)
         # console.info JSON.stringify config.content, null, true
         utils.object.clean config.content
       log message: "Serialize content", level: 'DEBUG'
-      config.content = yaml.safeDump config.content, noRefs: true, lineWidth: config.line_width
+      config.content = yaml.dump config.content, noRefs: true, lineWidth: config.line_width
       await @file config
 
 ## Exports
