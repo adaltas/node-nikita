@@ -93,6 +93,8 @@ handler = async function({config}) {
     cache_name = `/tmp/nikita_${Math.random()}`;
     await this.krb5.execute({
       $retry: 3,
+      // Test the user password
+      // On success, write the ticket to a temporary location before cleanup
       $unless_execute: `if ! echo ${config.password} | kinit '${config.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
       admin: config.admin,
       command: `cpw -pw ${config.password} ${config.principal}`
