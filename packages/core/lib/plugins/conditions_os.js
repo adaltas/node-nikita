@@ -92,12 +92,7 @@ handlers = {
     var final_run;
     final_run = true;
     await session({
-      $hooks: {
-        on_result: function({action}) {
-          return delete action.parent;
-        }
-      },
-      $condition: true,
+      $bastard: true,
       $depth: action.metadata.depth,
       $parent: action
     }, async function() {
@@ -165,12 +160,7 @@ handlers = {
     var final_run;
     final_run = true;
     await session({
-      $hooks: {
-        on_result: function({action}) {
-          return delete action.parent;
-        }
-      },
-      $condition: true,
+      $bastard: true,
       $depth: action.metadata.depth,
       $parent: action
     }, async function() {

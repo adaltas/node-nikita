@@ -41,10 +41,7 @@ handlers = {
       condition = ref[i];
       try {
         ({$status} = (await session({
-          // $hooks:
-          //   on_result: ({action}) -> delete action.parent
           $bastard: true,
-          // $condition: true
           $depth: action.metadata.depth,
           $namespace: ['execute'],
           $parent: action
@@ -71,10 +68,7 @@ handlers = {
       condition = ref[i];
       try {
         ({$status} = (await session({
-          // $hooks:
-          //   on_result: ({action}) -> delete action.parent
           $bastard: true,
-          // $condition: true
           $depth: action.metadata.depth,
           $namespace: ['execute'],
           $parent: action

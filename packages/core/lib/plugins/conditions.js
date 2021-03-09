@@ -13,10 +13,8 @@ module.exports = {
         // Ventilate conditions properties defined at root
         conditions = {};
         ref = action.metadata;
-        // console.log action.metadata
         for (property in ref) {
           value = ref[property];
-          // console.log property, /^(if|unless)($|_[\w_]+$)/.test property
           if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
             if (conditions[property]) {
               throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
@@ -69,12 +67,7 @@ handlers = {
       condition = ref[i];
       if (typeof condition === 'function') {
         condition = (await session({
-          $hooks: {
-            on_result: function({action}) {
-              return delete action.parent;
-            }
-          },
-          $condition: true,
+          $bastard: true,
           $depth: action.metadata.depth,
           $parent: action,
           $raw_output: true,
@@ -118,12 +111,7 @@ handlers = {
       condition = ref[i];
       if (typeof condition === 'function') {
         condition = (await session({
-          $hooks: {
-            on_result: function({action}) {
-              return delete action.parent;
-            }
-          },
-          $condition: true,
+          $bastard: true,
           $depth: action.metadata.depth,
           $parent: action,
           $raw_output: true,

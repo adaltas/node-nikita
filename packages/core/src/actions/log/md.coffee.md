@@ -3,6 +3,20 @@
 
 Write log to the host filesystem in Markdown.
 
+## Example
+
+```js
+nikita(async function(){
+  await this.log.md({
+    basedir: './logs',
+    filename: 'nikita.log'
+  })
+  await this.call(({tools: {log}}) => {
+    log({message: 'hello'})
+  })
+})
+```
+
 ## Hook
 
     on_action = ({config}) ->
@@ -22,6 +36,12 @@ Write log to the host filesystem in Markdown.
             The characters used to join the hierarchy of headers to create a
             markdown header.
             """
+          enter:
+            type: 'boolean'
+            default: true
+            description: '''
+            Enable or disable the entering messages.
+            '''
       ]
 
 ## Handler
@@ -31,7 +51,8 @@ Write log to the host filesystem in Markdown.
       await @call $: log_fs, config, serializer:
         'nikita:action:start': ({action}) ->
           content = []
-          content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n" if action.metadata.module
+          if config.enter and action.metadata.module
+            content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n"
           return content.join '' unless action.metadata.header
           walk = (parent) ->
             precious = parent.metadata.header

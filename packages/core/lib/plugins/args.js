@@ -21,9 +21,7 @@ module.exports = {
         }
         return function() {
           var actions, ref1;
-          // console.log child, args
           actions = handler.apply(null, arguments);
-          // console.log actions
           // If raw_input is activated, just pass arguments as is
           // Always one action since arguments are erased
           if (child != null ? (ref1 = child.metadata) != null ? ref1.raw_input : void 0 : void 0) {

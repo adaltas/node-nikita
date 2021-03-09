@@ -3,6 +3,20 @@
 
 // Write log to the host filesystem in Markdown.
 
+// ## Example
+
+// ```js
+// nikita(async function(){
+//   await this.log.md({
+//     basedir: './logs',
+//     filename: 'nikita.log'
+//   })
+//   await this.call(({tools: {log}}) => {
+//     log({message: 'hello'})
+//   })
+// })
+// ```
+
 // ## Hook
 var handler, log_fs, on_action, schema;
 
@@ -22,6 +36,11 @@ schema = {
           default: ' : ',
           description: `The characters used to join the hierarchy of headers to create a
 markdown header.`
+        },
+        enter: {
+          type: 'boolean',
+          default: true,
+          description: `Enable or disable the entering messages.`
         }
       }
     }
@@ -39,7 +58,7 @@ handler = async function({config}) {
       'nikita:action:start': function({action}) {
         var content, header, headers, walk;
         content = [];
-        if (action.metadata.module) {
+        if (config.enter && action.metadata.module) {
           content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
             return index + 1;
           })).join('.')})\n`);

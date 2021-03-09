@@ -63,10 +63,7 @@ handlers = {
       assertion = ref[i];
       if (typeof assertion === 'function') {
         run = (await session({
-          // $hooks:
-          //   on_result: ({action}) -> delete action.parent
           $bastard: true,
-          // $assertion: true
           $depth: action.metadata.depth,
           $raw_output: true,
           $raw_input: true,
@@ -97,10 +94,7 @@ handlers = {
       assertion = ref[i];
       if (typeof assertion === 'function') {
         run = (await session({
-          // $hooks:
-          //   on_result: ({action}) -> delete action.parent
           $bastard: true,
-          // $assertion: true
           $depth: action.metadata.depth,
           $raw_output: true,
           $raw_input: true,

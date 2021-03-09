@@ -49,7 +49,7 @@ describe 'actions.log.md', ->
         target: "#{tmpdir}/localhost.log"
         content: 'ok (1.INFO, written by nikita/test/log/md)'
 
-  describe 'header', ->
+  describe 'metadata `header`', ->
   
     they 'honors header', ({ssh}) ->
       nikita
@@ -163,3 +163,20 @@ describe 'actions.log.md', ->
           echo 'this is a second line'
           ```
           """
+  
+  describe 'config `enter`', ->
+            
+    they 'disabled when false', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @log.md basedir: tmpdir, enter: false
+        await @call (->)
+        await @call (->)
+        @fs.base.readFile
+          target: "#{tmpdir}/localhost.log"
+          encoding: 'ascii'
+        .should.be.resolvedWith
+          data: ''
+    

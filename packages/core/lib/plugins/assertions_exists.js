@@ -21,7 +21,6 @@ module.exports = {
         // Ventilate assertions properties defined at root
         assertions = {};
         ref = action.metadata;
-        // console.log action.metadata
         for (property in ref) {
           value = ref[property];
           if (/^(un)?assert_exists$/.test(property)) {
@@ -68,14 +67,10 @@ handlers = {
     var assertion, final_run, i, len, ref, run;
     final_run = true;
     ref = action.assertions.assert_exists;
-    // console.log action
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       run = (await session({
-        // $hooks:
-        //   on_result: ({action}) -> delete action.parent
         $bastard: true,
-        // $assertion: true
         $depth: action.metadata.depth,
         $raw_output: true,
         $raw_input: true,
@@ -100,15 +95,11 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       run = (await session({
-        $hooks: {
-          on_result: function({action}) {
-            return delete action.parent;
-          }
-        },
-        $condition: true,
+        $bastard: true,
         $depth: action.metadata.depth,
         $parent: action,
         $raw_output: true,
+        $raw_input: true,
         $parent: action
       }, async function() {
         var exists;
