@@ -8,24 +8,26 @@ related:
 
 # Children
 
-Nikita stores the hierarchical tree of the actions running in a Nikita session. Children are actions that are executed in the handler of an action which is called [parent](/action/parent). 
+A Nikita session is organized as a hierarchical tree of action. Actions have [parent](/action/parent) and children. The children are the actions executed in the handler of a parent action.
 
-The information about all the executed child actions relative to a parent action is accessed inside the [action handler](/current/action/handler) in the `children` property of the first argument. It is an array of JavaScript objects ordered according to the execution of the actions. The objects consist of the following properties:
+The `children` property of an action expose an array with all the executed action inside of it. In the `handler` function, `children` is a property available inside its first argument.
+
+The child action objects contain of the following properties:
 
 - `children`   
-  The child actions relative to the current action.
+  The child actions of the current action.
 - `metadata`   
   The [metadata properties](/current/action/metadata) of the action.
 - `config`   
-  The [configuration properties](/current/action/config) passed to an action call.
+  The [configuration properties](/current/action/config) passed to an action.
 - `error`   
   The error object of an exception [rejected by the action](/current/usages/error).
 - `output`   
-  The [action output](/current/action/output).
+  The [action returned output](/current/action/output).
 
 ## Usage
 
-The child actions are available after their execution, thus the action promise must be fulfilled before accessing `children`:
+The children property is enriched one an action complete its execution, wether it is resolved or rejected. Thus the action promise must be fulfilled before accessing the `children` property of the parent action:
 
 ```js
 nikita
