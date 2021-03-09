@@ -14,16 +14,17 @@ The `depth` metadata indicates the level number of the action in the Nikita sess
 
 ## Usage
 
-Its value is accessed inside the [action handler](/current/action/handler).
+The `depth` value is accessed inside the [action handler](/current/action/handler):
 
 ```js
+// Root action, level 0
 nikita
-// Call parent action
+// Parent action, level 1
 .call(function() {
-  // Call child action
+  // Child action, level 2
   this.call(function({metadata: {depth}}) {
-    // Print the value
-    console.info(depth) // 2
+    console.info(depth)
+    // Print the value `2`
   })
 })
 ```
