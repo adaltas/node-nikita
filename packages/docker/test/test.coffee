@@ -20,13 +20,14 @@ they = require('mocha-they')(config.config)
 they 'wait for docker daemon to listen', ({ssh}) ->
   # Note, this particularly apply to docker-compose environnements
   # where the daemon take some time to be up and running
-  # Wait 5s before timeout
+  # Wait 10s before timeout
+  # It takes some time under heavy load like testing in parallel
   nikita
     ssh: ssh
     docker: config.docker
   .execute.wait
     command: 'docker ps'
-    retry: 20
+    retry: 40
     interval: 250
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
