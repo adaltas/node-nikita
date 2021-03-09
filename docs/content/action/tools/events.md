@@ -4,7 +4,11 @@ navtitle: events
 
 # Tool "events"
 
-Nikita provides a facility to publish and listen to events. It creates an instance of the [EventEmitter](https://nodejs.org/api/events.html) class of the [Node.js events](https://nodejs.org/api/events.html) module. The instance is available inside the Nikita action handler as the `tools.events` property. 
+Nikita provides a facility to publish and listen to events. An instance of the [Node.js EventEmitter](https://nodejs.org/api/events.html) class is exported and available under the `tools.events` property.
+
+Events messages doesn't need to respect any particular structure unless you use an event name which reserved internally by Nikita. No validation will occur.
+
+Refers to the [`tools.log`](/current/action/tools/log) function for a more sophisticated mechanism, it internally relies on `tools.event`. It provides context information to the event listener such as the module name where the event occurred, the logging level, etc.
 
 ## Usage
 
@@ -13,16 +17,14 @@ You can publish events by calling the `tools.events.emit(eventName[, ...args])` 
 ```js
 nikita(({tools}) => {
   // Register a listener
-  tools.events.on('my_event', (name) => {
+  tools.events.on('whoami', (name) => {
     console.info(`I am ${name}`)
   })
   // Emit an event
-  tools.events.emit('my_event', 'Nikita')
+  tools.events.emit('whoami', 'Nikita')
 })
 // Outputs with "I am Nikita"
 ```
-
-Most of the time when writing your custom action handlers, you want to provide context information to the event listener such as the module name where the event occurred, the logging level, etc. Instead of calling `tools.events.emit`, you are encouraged to use the [`tools.log`](/current/action/tools/log) function which validates and enriches the context object, and uses native Node.js `emit` internally.
 
 ## Available events
 
@@ -37,19 +39,19 @@ Certain events are automatically emitted. They correspond to the action lifecycl
 - `nikita:rejected`   
   It is emitted once at a Nikita session when an action handler has failed.
 
-Some functionality like [logging and debugging](/current/usage/logging_debugging) also relies on the event facility and emits the following events:
+Some functionality like [logging and debugging](/current/usage/logging_debugging) introduces their own events:
 
 - `diff`   
-  It represents content modification. Used for example by the `file` action.
+  Content modification. It is emitted by the `file` action.
 - `stderr`   
-  It is an input reader receiving stderr content. Used for example by the `nikita.execute` action to send stderr output from the executed command.
+  Data string written to standard error when executing a command. It is emitted by the `nikita.execute` action to store the stderr output from the executed command.
 - `stderr_stream`   
-  It is a stream input reader receiving stderr content. Used for example by the `nikita.execute` action to send stderr output from the executed command.
+  Data stream written to standard error. It is emitted by the `nikita.execute` to listen to stderr. A message `null` is emitted to indicate that the stream is closed.
 - `stdin`   
-  It represents some stdin content. Used for example by the `nikita.execute` action to provide the script being executed.
+  Executed command. It is emitted by the `nikita.execute` action to share the executed command.
 - `stdout`   
-  It is an input reader receiving stdout content. Used for example by the `nikita.execute` action to send stdout output from the executed command.
+  Data string written to standard output when executing a command. It is emitted by the `nikita.execute` action to store the stdout output from the executed command.
 - `stdout_stream`   
-  It is a stream input reader receiving stdout content. Used for example by the `nikita.execute` action to send stdout output from the executed command.
+  Data stream written to standard output. It is emitted by the `nikita.execute` to listen to stdout. A message `null` is emitted to indicate that the stream is closed.
 - `text`   
-  It is the default event when the `tools.log()` function is called.
+  Default event when the `tools.log()` function is called.
