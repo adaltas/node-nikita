@@ -15,22 +15,20 @@ The following example represents updating a file. It contains 2 conditions appli
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-range{1-15}
-    if_exists: '/tmp/nikita/a_file',
-    if: async function({config}) {
+    $if_exists: '/tmp/nikita/a_file',
+    $if: async function({config}) {
       // Get the file information
       const {stats} = await this.fs.base.stat({
-        metadata: {
-          // Don't throw an error in case of lack of the file
-          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-        },
+        // Don't throw an error in case of lack of the file
+        $relax: 'NIKITA_FS_STAT_TARGET_ENOENT',
         target: config.target
       })
       // Pass the condition if the user is the owner
       return stats && stats.uid == process.getuid() ? true : false
-    }
+    },
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -55,15 +53,15 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-range{1-6}
-    if: [
+    $if: [
       'ok',
       1,
       true,
       ({config}) => { return config.content === 'hello' }
-    ]
+    ],
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -88,17 +86,17 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-range{1-8}
-    unless: [
+    $unless: [
       '',
       0,
       false,
       null,
       undefined,
       function({config}){ return config.content !== 'hello' },
-    ]
+    ],
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -117,10 +115,10 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-next-line
-    if_execute: '[ -f "/tmp/flag" ]'
+    $if_execute: '[ -f "/tmp/flag" ]',
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -139,10 +137,10 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-next-line
-    unless_execute: '[ -f "/tmp/flag" ]'
+    $unless_execute: '[ -f "/tmp/flag" ]',
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -161,13 +159,13 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-range{1-4}
-    if_exists: [
+    $if_exists: [
       '/tmp/nikita/a_file',
       '/tmp/flag'
-    ]
+    ],
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
 })()
@@ -186,57 +184,11 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
   var {status} = await nikita
   // Update file content
   .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
     // highlight-next-line
-    unless_exists: '/tmp/flag'
+    $unless_exists: '/tmp/flag'
+    target: '/tmp/nikita/a_file',
+    content: 'hello'
   })
   console.info('File is updated:', status)
-})()
-```
-
-## Condition writing
-
-Nikita's actions are not evaluated at declaration time. Due to the Node.js async nature, JavaScript functions are not always executed sequentially. A variable declared inside an asynchronous function will not be available in its parent context. It will generate an unexpected behavior and eventually a runtime error.
-
-For example, the second action executed below will not pass its condition `if: isItTrue` and the file will not be written.
-
-```js
-(async () => {
-  var isItTrue = null
-  var {status} = await nikita
-  // Call first action
-  .call(() => {
-    isItTrue = true
-  })
-  // Condition is not passing
-  .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
-    // highlight-next-line
-    if: isItTrue
-  })
-  console.info('File is written:', status)
-})()
-```
-
-This is because `isItTrue` is `null` and so the condition is not verified. Indeed, most of the time, the conditions are wrapped in function because they are read when the nikita action is declared, but are only evaluated at runtime:
-
-```js
-(async () => {
-  var isItTrue = null
-  var {status} = await nikita
-  // Call first action
-  .call(() => {
-    isItTrue = true
-  })
-  // Condition is passing
-  .file({
-    target: '/tmp/nikita/a_file',
-    content: 'hello',
-    // highlight-next-line
-    if: () => { return isItTrue }
-  })
-  console.info('File is written:', status)
 })()
 ```

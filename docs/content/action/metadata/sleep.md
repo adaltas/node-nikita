@@ -17,11 +17,9 @@ The `sleep` value is an integer and is interpreted in a millisecond. The default
 const assert = require('assert');
 nikita
 .call({
-  metadata: {
-    // highlight-range{1-2}
-    retry: 3,
-    sleep: 5000
-  }
+  // highlight-range{1-2}
+  $retry: 3,
+  $sleep: 5000
 }, ({metadata}) => {
   // First 2 attempts fail with an assertion error,
   // the 3rd attempt succeeds in about 10 seconds
@@ -38,27 +36,21 @@ While you can set this metadata on selected actions, it is safe to declare it at
 ```js
 const assert = require('assert');
 nikita({
-  metadata: {
-    // highlight-next-line
-    sleep: 5000
-  }
+  // highlight-next-line
+  $sleep: 5000
 })
 // Use the global sleep value of 5s
 .call({
-  metadata: {
-    // highlight-next-line
-    retry: 3,
-  }
+  // highlight-next-line
+  $retry: 3
 }, ({metadata}) => {
   assert.equal(metadata.attempt, 2)
 })
 // Overwrite the global value of 5s and use 1s
 .call({
-  metadata: {
-    // highlight-range{1-2}
-    retry: 3,
-    sleep: 1000
-  }
+  // highlight-range{1-2}
+  $retry: 3,
+  $sleep: 1000
 }, ({metadata}) => {
   assert.equal(metadata.attempt, 2)
 })

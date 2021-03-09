@@ -56,64 +56,60 @@ Depending on the value of `assert` the assertion has different behavior. When th
   // Null
   .call({
     // highlight-next-line
-    assert: null,
-    metadata: {
-      // disable output interpretation
-      raw_output: true
-    },
-    handler: () => null
+    $assert: null,
+    // disable output interpretation
+    $raw_output: true,
+    $handler: () => null
   })
   // Boolean
   .call({
     // highlight-next-line
-    assert: true,
-    metadata: {
-      // disable output interpretation
-      raw_output: true
-    },
-    handler: () => true
+    $assert: true,
+    // disable output interpretation
+    $raw_output: true,
+    $handler: () => true
   })
   // Number
   .call({
     // highlight-next-line
-    assert: 1,
-    handler: () => 1
+    $assert: 1,
+    $handler: () => 1
   })
   // String
   .call({
     // highlight-next-line
-    assert: 'ok',
-    handler: () => 'ok'
+    $assert: 'ok',
+    $handler: () => 'ok'
   })
   // Object
   .call({
     // highlight-next-line
-    assert: {first: true},
-    handler: () => {
+    $assert: {first: true},
+    $handler: () => {
       return {first: true, second: false}
     }
   })
   // Function
   .call({
     // highlight-range{1-3}
-    assert: ({config}) => {
+    $assert: ({config}) => {
       return config.my_config == 'my_value'
     },
-    handler: ({config}) => {
+    $handler: ({config}) => {
       config.my_config = 'my_value'
     }
   })
   // Array of functions
   .call({
     // highlight-range{1-7}
-    assert: [
+    $assert: [
       ({config}) => {
         return config.my_config == 'my_value'
       },
       // always asserts
       () => true
     ],
-    handler: ({config}) => {
+    $handler: ({config}) => {
       config.my_config = 'my_value'
     }
   })
@@ -140,56 +136,56 @@ Depending on the value of `unassert` the assertion has different behavior. When 
   // Null
   .call({
     // highlight-next-line
-    unassert: null,
-    handler: () => true
+    $unassert: null,
+    $handler: () => true
   })
   // Boolean
   .call({
     // highlight-next-line
-    unassert: false,
-    handler: () => true
+    $unassert: false,
+    $handler: () => true
   })
   // Number
   .call({
     // highlight-next-line
-    unassert: 1,
-    handler: () => 2
+    $unassert: 1,
+    $handler: () => 2
   })
   // String
   .call({
     // highlight-next-line
-    unassert: 'ko',
-    handler: () => 'ok'
+    $unassert: 'ko',
+    $handler: () => 'ok'
   })
   // Object
   .call({
     // highlight-next-line
-    unassert: {first: false, second: false},
-    handler: () => {
+    $unassert: {first: false, second: false},
+    $handler: () => {
       return {first: true, second: false}
     }
   })
   // Function
   .call({
     // highlight-range{1-3}
-    unassert: ({config}) => {
+    $unassert: ({config}) => {
       return config.my_config == 'my_wrong_value'
     },
-    handler: ({config}) => {
+    $handler: ({config}) => {
       config.my_config = 'my_value'
     }
   })
   // Array of functions
   .call({
     // highlight-range{1-7}
-    unassert: [
+    $unassert: [
       ({config}) => {
         return config.my_config == 'my_wrong_value'
       },
       // always asserts
       () => false
     ],
-    handler: ({config}) => {
+    $handler: ({config}) => {
       config.my_config = 'my_value'
     }
   })
@@ -214,7 +210,7 @@ The `assert_exists` value could be a **string** a an **array of strings**. It is
   // Array of strings
   .file.touch({
     // highlight-range{1-4}
-    assert_exists: [
+    $assert_exists: [
       '/tmp/a_dir',
       '/tmp/a_dir/a_file',
     ],
@@ -235,13 +231,13 @@ The `unassert_exists` value could be a **string** a an **array of strings**. It 
   // String
   .fs.remove({
     // highlight-next-line
-    unassert_exists: '/tmp/a_dir/a_file',
+    $unassert_exists: '/tmp/a_dir/a_file',
     target: "/tmp/a_dir/a_file"
   })
   // Array of strings
   .fs.remove({
     // highlight-range{1-4}
-    unassert_exists: [
+    $unassert_exists: [
       '/tmp/a_dir',
       '/tmp/a_dir/a_file',
     ],

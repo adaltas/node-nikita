@@ -24,16 +24,12 @@ The CLI reporting leverages the metadata to print the name of executed action to
  // highlight-next-line
  .log.cli()
  .call({
-   metadata: {
-     // highlight-next-line
-     header: 'My App'
-   }
+   // highlight-next-line
+   $header: 'My App'
  }, function(){
    this.file.yaml({
-     metadata: {
-       // highlight-next-line
-       header: 'Configuration'
-     },
+     // highlight-next-line
+     $header: 'Configuration',
      target: '/tmp/my_app/config.yaml',
      content: { http_port: 8000 }
    })
@@ -57,14 +53,10 @@ nikita
   basedir: '/tmp/my_app/log'
 })
 .call({
-  metadata: {
-    header: 'My App'
-  }
+  $header: 'My App'
 }, function(){
   this.file.yaml({
-    metadata: {
-      header: 'Configuration'
-    },
+    $header: 'Configuration'
     target: '/tmp/my_app/config.yaml',
     content: { http_port: 8000 }
   })

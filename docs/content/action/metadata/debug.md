@@ -20,10 +20,8 @@ Activating debugging is easy, simply pass the `debug` metadata with a value set 
 ```js
 nikita
 .file.touch({
-  metadata: {
-    // highlight-next-line
-    debug: true
-  },
+  // highlight-next-line
+  $debug: true
   target: '/tmp/a_file'
 })
 ```
@@ -32,10 +30,8 @@ Of course, it is possible to activate debugging to the overall Nikita session by
 
 ```js
 nikita({
-  metadata: {
-    // highlight-next-line
-    debug: true
-  }
+  // highlight-next-line
+  $debug: true
 })
 .file.touch({
   target: '/tmp/a_file'
@@ -49,10 +45,8 @@ Set the value to `stdout` if you wish to print debugging information to the stan
 ```js
 nikita
 .file.touch({
-  metadata: {
-    // highlight-next-line
-    debug: 'stdout'
-  },
+  // highlight-next-line
+  $debug: 'stdout',
   target: '/tmp/a_file'
 })
 ```

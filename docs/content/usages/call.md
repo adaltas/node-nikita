@@ -23,7 +23,7 @@ This is internally converted to:
 ```js
 nikita
 .call({
-  handler: () => {
+  $handler: () => {
     // Do something...
   }
 })
@@ -35,11 +35,9 @@ Use the expanded object syntax to pass additional information. For example, we c
 nikita
 .call({
   // highlight-range{1-4}
-  metadata: {
-    retry: 2
-  },
+  $retry: 2,
   my_config: 'my_value',
-  handler: ({config}) => {
+  $handler: ({config}) => {
     // Passing config.my_config
   }
 })
@@ -50,9 +48,7 @@ Note, the above code could be arguably simplified using 2 arguments:
 ```js
 nikita
 .call({
-  metadata: {
-    retry: 2
-  },
+  $retry: 2,
   my_config: 'my_value',
 }, ({config}) => {
   // Passing config.my_config
@@ -69,13 +65,13 @@ nikita
 .call(require('path/to/module'))
 // Pass with require in expanded object syntax
 .call({
-  handler: require('path/to/module')
+  $handler: require('path/to/module')
 })
 // Pass as a string
 .call('path/to/module')
 // Pass as a string in expanded object syntax
 .call({
-  handler: 'path/to/module'
+  $handler: 'path/to/module'
 })
 ```
 

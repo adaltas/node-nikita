@@ -475,7 +475,7 @@ The existing `nikita.file.download` action is used to dowload Redis:
 
 The second time `nikita.file.download` is called, it checks if the target exists and bypass the download in such case, thus speeding up the exection. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" configuration properties.
 
-To extract and compile Redis, a custom shell script is only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". The `nikita.execute` action to execute shell scripts:
+To extract and compile Redis, a custom shell script is only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "$if_" and their associated negation prefixed with "$unless_". The `nikita.execute` action to execute shell scripts:
 
 ```js
 (async () => {
@@ -759,15 +759,13 @@ nikita(async function() {
     $header: 'Redis installation',
   }, async function() {
     await this.file.download({
-      metadata: {
-        header: 'Downloading',
-      },
+      $header: 'Downloading',
       source: 'http://download.redis.io/redis-stable.tar.gz',
       target: `${cwd}/cache/redis-stable.tar.gz`
     })
     await this.execute({
       $header: 'Compilation',
-      unless_exists: `${cwd}/redis-stable/src/redis-server`,
+      $unless_exists: `${cwd}/redis-stable/src/redis-server`,
       cwd: cwd,
       command: `
       tar xzf cache/redis-stable.tar.gz
@@ -857,17 +855,13 @@ module.exports = async function({config}){
   if(!config.config['port']){ config.config['port'] = 6379 }
   // Do the job
   await this.file.download({
-    metadata: {
-      header: 'Download'
-    },
+    $header: 'Download',
     source: config.url,
     target: `${config.cwd}/cache/redis-stable.tar.gz`
   })
   await this.execute({
-    metadata: {
-      header: 'Compilation'
-    },
-    unless_exists: `${config.cwd}/redis-stable/src/redis-server`,
+    $header: 'Compilation',
+    $unless_exists: `${config.cwd}/redis-stable/src/redis-server`,
     cwd: config.cwd,
     command: `
     tar xzf cache/redis-stable.tar.gz

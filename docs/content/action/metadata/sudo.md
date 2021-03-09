@@ -12,11 +12,9 @@ The "sudo" metadata escalates the right of the current user with `root` privileg
 The expected value is a boolean which default to `false`.
 
 ```js
-require('nikita')
-.system.execute({
-  sudo: true,
-  cmd: 'whoami'
-}, function(err, {stdout}){
-  assert(stdout.trim() === 'root')
+nikita.file({
+  $sudo: true,
+  target: '/root/hello',
+  content: 'I am a sudoer'
 })
 ```

@@ -15,10 +15,8 @@ The following example demonstrates global definition:
 ```js
 // Activate debugging to the global session
 nikita({
-  metadata: {
-    // highlight-next-line
-    debug: true
-  }
+  // highlight-next-line
+  $debug: true
 })
 .execute({
   command: 'echo "Hello!"'
@@ -43,10 +41,8 @@ To propagate for all child actions, the metadata is defined to the specific pare
 nikita
 // Activate debugging to all child actions
 .call({
-  metadata: {
-    // highlight-next-line
-    debug: true
-  }
+  // highlight-next-line
+  $debug: true
 }, function() {
   this.execute({
     command: 'echo "Hello!"'
@@ -66,10 +62,8 @@ Or to the specific action in trouble:
 nikita
 // Activate debugging to the specific action
 .execute({
-  metadata: {
-    // highlight-next-line
-    debug: true
-  },
+  // highlight-next-line
+  $debug: true,
   command: 'echo "I am in trouble!"'
 })
 .execute({
@@ -126,19 +120,22 @@ The `nikita.log.fs` action provides an easy and quick way to write your own logg
 For example, below is a lightly modify version of the `nikita.log.csv` action:
 
 ```js
-module.exports = {ssh: false, handler: async function({config}) {
-  return (await this.log.fs({
-    config: config,
-    serializer: {
-      'nikita:action:start': function(action) {
-        const header = action.metadata.header ? action.metadata.header : action.metadata.position
-        return `"${header}",,\n`
-      },
-      'text': function(log){
-        return `${log.type},${log.level},${JSON.stringify(log.message)}\n`
-      },
-    }
-  }))}
+module.exports = {
+  ssh: false,
+  handler: async function({config}) {
+    return this.log.fs({
+      config: config,
+      serializer: {
+        'nikita:action:start': function(action) {
+          const header = action.metadata.header ? action.metadata.header : action.metadata.position
+          return `"${header}",,\n`
+        },
+        'text': function(log){
+          return `${log.type},${log.level},${JSON.stringify(log.message)}\n`
+        },
+      }
+    })
+  }
 }
 ```
 
@@ -158,18 +155,14 @@ nikita
 })
 // Header with status as true
 .file.touch({
-  metadata: {
-    // highlight-next-line
-    header: 'A file exists, 1st try',
-  },
+  // highlight-next-line
+  $header: 'A file exists, 1st try',
   target: '/tmp/nikita/a_file_exists'
 })
 // Header with status as false
 .file.touch({
-  metadata: {
-    // highlight-next-line
-    header: 'A file exists, 2nd try',
-  },
+  // highlight-next-line
+  $header: 'A file exists, 2nd try',
   target: '/tmp/nikita/a_file_exists'
 })
 ```
@@ -190,19 +183,15 @@ nikita
 .log.cli()
 // Disabled action
 .call({
-  metadata: {
-    // highlight-next-line
-    disabled: true,
-    header: 'I am not printed',
-  },
+  // highlight-next-line
+  $disabled: true,
+  $header: 'I am not printed'
 })
 // Condition is not passed
 .call({
-  if: false,
-  metadata: {
-    // highlight-next-line
-    header: 'Me neather',
-  },
+  // highlight-next-line
+  $header: 'Me neather',
+  $if: false,
 })
 ```
 

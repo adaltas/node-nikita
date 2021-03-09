@@ -7,4 +7,4 @@ lxc exec \
   --cwd /nikita/packages/ipa \
   nikita-ipa -- \
   bash -l -c "npm run test:local"
-lxc stop nikita-ipa
+# lxc stop nikita-ipa

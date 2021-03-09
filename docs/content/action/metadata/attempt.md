@@ -20,19 +20,17 @@ The associated value is incremented after each retry starting with the value `0`
 // Dependencies
 const assert = require('assert');
 (async () => {
-  var {attempt} = await nikita({
-    metadata: {
-      // highlight-next-line
-      retry: 2
-    }
+  var {attempts} = await nikita({
+    // highlight-next-line
+    $retry: 2
   }, ({metadata}) => {
     if(metadata.attempt === 0){
       throw Error('Oups')
     }
-    return {attempt: metadata.attempt}
+    return {attempts: metadata.attempt}
   })
   // The first attempt failed with an error,
   // but the second attempt succeed
-  assert.equal(attempt, 1)
+  assert.equal(attempts, 1)
 })()
 ```

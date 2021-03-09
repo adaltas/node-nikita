@@ -38,20 +38,20 @@ nikita
 .log.cli({pad: {header: 20}})
 .call({
   // highlight-next-line
-  metadata: { header: 'Packages' }
+  $header: 'Packages'
 }, function() {
   this.service({
     // highlight-next-line
-    metadata: { header: 'My PKG 1' }
+    $header: 'My PKG 1'
   }, 'my_pkg_1')
   this.service({
     // highlight-next-line
-    metadata: { header: 'My PKG 2' }
+    $header: 'My PKG 2'
   }, 'my_pkg_2')
 })
 .file.yaml({
   // highlight-next-line
-  metadata: { header: 'Config' },
+  $header: 'Config',
   target: '/etc/my_pkg/config.yaml',
   content: { my_property: 'my value' }
 })
@@ -118,13 +118,13 @@ nikita
 .call(async function() {
   // Get status of the 1st action
   // highlight-next-line
-  const {status} = await this.execute({
+  const {$status} = await this.execute({
     command: 'echo catchme | grep catchme' // Returns status true
   })
   // Run the 2nd action if status is true
   this.call({
     // highlight-next-line
-    if: status
+    $if: status
   }, function(){
     console.info('The condition passed, because the status is true')
   })
@@ -139,13 +139,13 @@ nikita
   // Get error of the 1st action
   // highlight-next-line
   const {error} = await this.execute({
-    metadata: {relax: true},  // Don't throw an error if occured
+    $relax: true,  // Don't throw an error if occured
     command: 'echo missyou | grep catchme' // fails
   })
   // Run the 2nd action if error
   this.call({
     // highlight-next-line
-    if: error
+    $if: error
   }, function(){
     console.info('The condition passed because an error occured')
   })

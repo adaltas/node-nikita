@@ -5,13 +5,15 @@ sort: 2
 
 # Metadata "handler" (function, required)
 
-The `handler` property defines the function that an action implements to get things done. It is fundamental to each action.
+The `handler` action property defines the function that an action implements to get things done. It is fundamental to each action.
 
 The property is required but most of the time, you don't have to write a handler function on your own. Instead, you can use an existing action which was previously [registered](/current/usages/registry/).
 
 However, you should not be afraid to write your own handler, it is as easy as writing a plain vanilla JavaScript function and using the Nikita `call` action to schedule its execution. 
 
-## Basic example
+## Usage
+
+You can pass the `$handler` property name when calling an action alongs its configuration.
 
 The [configuration properties](/current/action/config) passed to the `call` action are available in the `config` property of the first argument of the handler:
 
@@ -19,7 +21,7 @@ The [configuration properties](/current/action/config) passed to the `call` acti
 nikita
 .call({
   key: 'value',
-  handler: ({config}) => {
+  $handler: ({config}) => {
     // Do something
     console.info(config.key)
   }
@@ -28,7 +30,7 @@ nikita
 
 ## Style
 
-You will probably never see a handler function defined by the `handler` property. Instead, we define it with an alternative syntax by providing the handler function as an independent argument. The example above is preferably rewritten as:
+You will probably not see a handler function defined with the `$handler` property. Instead, we define it with an alternative syntax by providing the handler function as an independent argument. The example above is commonly rewritten as:
 
 ```js
 nikita
@@ -40,9 +42,11 @@ nikita
 })
 ```
 
-## Return
+## Returned output
 
-The value returned by the handler is a value sent to the [action output](/current/action/output). It can be of any type either not present, but it is interpreted differently in the output. When the value is:
+The value returned by the handler is a value sent to the [action output](/current/action/output). It can be of any type.
+
+Some plugins may alter its content:
 
 - a **boolean**, it is interpreted as the [`status` property](/current/usages/status) of the output object.
   ```js
@@ -54,6 +58,19 @@ The value returned by the handler is a value sent to the [action output](/curren
       return true
     })
     assert.equal(status, true)
+  })()
+  ```
+
+- `undefined` or `void`, it is interpreted as the [`status` property](/current/usages/status) of the output object.
+  ```js
+  const assert = require('assert');
+  (async () => {
+    const {status} = await nikita
+    .call(() => {
+      // highlight-next-line
+      return undefined
+    })
+    assert.equal(status, false)
   })()
   ```
 
@@ -71,20 +88,7 @@ The value returned by the handler is a value sent to the [action output](/curren
   })()
   ```
 
-- `null`, `undefined` or `void`, it doesn't have an impact.
-  ```js
-  const assert = require('assert');
-  (async () => {
-    const {status} = await nikita
-    .call(() => {
-      // highlight-next-line
-      return null
-    })
-    assert.equal(status, false)
-  })()
-  ```
-
-- a **string**, a **number** or an **array** are interpreted as-is.
+- `null`, a **string**, a **number** or an **array** are interpreted as-is.
   ```js
   const assert = require('assert');
   (async () => {
@@ -97,17 +101,17 @@ The value returned by the handler is a value sent to the [action output](/curren
   })()
   ```
 
-You can use the [`raw_output` metadata](/current/metadata/raw_output) to disable different interpretation. In such a case, the output will be the same as the handler returns:
+## Preserving output
+
+You can use the [`raw_output` metadata](/current/metadata/raw_output) to disable modifications. In such a case, the output will be the same as the returned handler:
 
 ```js
 const assert = require('assert');
 (async () => {
   const output = await nikita
   .call({
-    metadata: {
-      // highlight-next-line
-      raw_output: true
-    },
+    // highlight-next-line
+    $raw_output: true
   }, () => {
     // highlight-next-line
     return {key: 'value'}

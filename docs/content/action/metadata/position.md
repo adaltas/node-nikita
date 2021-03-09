@@ -12,9 +12,7 @@ The `position` metadata indicates the position of the action relative to its par
 * Type: `array`
 * Read-only
 
-It is constructed as an array of number. The length of the array is the number of parent actions. In that regard, the length equals the [`depth` metadata property](/current/metadata/depth/) plus `1` (depth start at `0`).
-
-To each element of the array correspond the action index relative to its siblings. In that regard, the last element is the index of the current action which equals the [`index` metadata property](/current/metadata/index/).
+It is constructed as an array of number. The length of the array is the number of parent actions. To each element of the array correspond the action index relative to its siblings.
 
 It is primarily used internally in functionality such as [logging and debugging](/current/usages/logging_debugging).
 
@@ -26,9 +24,23 @@ Its value is accessed inside the [action handler](/current/action/handler) as th
 nikita
 // Call an action
 .call(function({metadata: {depth, index, position}}) {
-  assert.equal(depth + 1, position.length)
-  assert.equal(index, position[position.length - 1])
   console.info(position)
   // Print the value `[ 0, 0 ]`
+})
+```
+
+## Comparing "position" with "depth" and "index"
+
+Since the length of the array is the number of parent actions, the length equals the [`depth` metadata property](/current/metadata/depth/) plus `1` (depth start at `0`).
+
+Also, the last element of the array is the position of current action relative to its siblings action. Thus, its value equals the [`index` metadata property](/current/metadata/index/).
+
+```js
+const assert = require('assert');
+nikita
+// Call an action
+.call(function({metadata: {depth, index, position}}) {
+  assert.equal(depth + 1, position.length)
+  assert.equal(index, position[position.length - 1])
 })
 ```

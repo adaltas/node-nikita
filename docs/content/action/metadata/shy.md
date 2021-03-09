@@ -23,10 +23,8 @@ const assert = require('assert');
   var {status} = await nikita
   .call(async function() {
     var {status} = await this.execute({
-      metadata: {
-        // highlight-next-line
-        shy: true
-      },
+      // highlight-next-line
+      $shy: true,
       command: 'exit 0'
     })
     // Status of the child
@@ -47,20 +45,16 @@ const assert = require('assert');
   // Status is set when shy is deactivated (default behavior)
   var {status} = await nikita
   .execute({
-    metadata: {
-      // highlight-next-line
-      shy: false
-    },
+    // highlight-next-line
+    $shy: false,
     command: 'exit 0'
   })
   assert.equal(status, true)
   // Status is set when shy is activated
   var {status} = await nikita
   .call({
-    metadata: {
-      // highlight-next-line
-      shy: true
-    },
+    // highlight-next-line
+    $shy: true,
     command: 'exit 0'
   })
   assert.equal(status, true)

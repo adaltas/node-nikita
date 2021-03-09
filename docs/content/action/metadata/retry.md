@@ -22,10 +22,8 @@ const assert = require('assert');
 nikita
 // Call an action
 .call({
-  metadata: {
-    // highlight-next-line
-    retry: 3
-  }
+  // highlight-next-line
+  $retry: 3
 }, ({metadata}) => {
   // First 2 attempts failed with an assertion error,
   // but the 3rd one succeeded
@@ -42,10 +40,8 @@ const assert = require('assert');
 nikita
 // Call an action
 .call({
-  metadata: {
-    // highlight-next-line
-    retry: true
-  }
+  // highlight-next-line
+  $retry: true
 }, function ({metadata}) {
   // First 9 attempts failed with an assertion error,
   // but 10th attempt succeeded
@@ -65,11 +61,9 @@ const assert = require('assert');
   var {status} = await nikita
   // Call an action
   .call({
-    metadata: {
-      // highlight-range{1-2}
-      retry: 2,
-      relax: true
-    }
+    // highlight-range{1-2}
+    $retry: 2,
+    $relax: true
   }, () => {
     // Will fail 2 times
     throw Error('Oups')

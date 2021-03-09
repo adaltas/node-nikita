@@ -15,9 +15,7 @@ nikita
 // Call an action with the `header` metadata
 .execute({
   // highlight-range{1-3}
-  metadata: {
-    header: 'Check user'
-  },
+  $header: 'Check user',
   command: 'whoami'
 })
 ```

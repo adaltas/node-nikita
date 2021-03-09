@@ -13,10 +13,10 @@ If `true`, all the config will be compared, included values defined as function.
 
 ```js
 require('nikita')
-.call({once: true}, function(){
+.call({$once: true}, function(){
   console.info('This message will appear only one time')
 })
-.call({once: true}, function(){
+.call({$once: true}, function(){
   console.info('This message will appear only one time')
 })
 ```
@@ -25,10 +25,10 @@ If a string or an array of strings, only the listed config will be compared:
 
 ```js
 require('nikita')
-.call({once: ['key_a', 'key_b'], key_a: 'a', key_b: 'b'}, function(){
+.call({$once: ['key_a', 'key_b'], key_a: 'a', key_b: 'b'}, function(){
   console.info('This action is called')
 })
-.call({once: ['key_a', 'key_b'], key_a: 'a', key_b: 'b'}, function(){
+.call({$once: ['key_a', 'key_b'], key_a: 'a', key_b: 'b'}, function(){
   console.info('This action is never called')
 })
 ```

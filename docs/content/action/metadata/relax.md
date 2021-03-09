@@ -20,10 +20,8 @@ In the example below, we start the MariaDB service with the `systemctl` command.
 ```js
 nikita
 .execute({
-  metadata: {
-    // highlight-next-line
-    relax: true
-  },
+  // highlight-next-line
+  $relax: true,
   command: 'systemctl start mariadb'
 })
 ```
@@ -36,10 +34,8 @@ The `relax` metadata doesn't throw an error. Any error sent by the "handler" fun
 (async () => {
   const {error} = await nikita
   .execute({
-    metadata: {
-      // highlight-next-line
-      relax: true
-    },
+    // highlight-next-line
+    $relax: true
     command: 'invalid command'
   })
   console.info(error)
@@ -69,10 +65,8 @@ When a string is passed as `relax` metadata value, it is interpreted as a `code`
 ```js
 nikita
 .execute({
-  metadata: {
-    // highlight-next-line
-    relax: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-  },
+  // highlight-next-line
+  $relax: 'NIKITA_EXECUTE_EXIT_CODE_INVALID',
   command: 'invalid command'
 })
 ```
@@ -84,10 +78,8 @@ Array's values are similar to string value enabling relax behavior for multiple 
 ```js
 nikita
 .execute({
-  metadata: {
-    // highlight-next-line
-    relax: ['NIKITA_EXECUTE_EXIT_CODE_INVALID', 'ANOTHER_CODE']
-  },
+  // highlight-next-line
+  $relax: ['NIKITA_EXECUTE_EXIT_CODE_INVALID', 'ANOTHER_CODE'],
   command: 'invalid command'
 })
 ```
@@ -99,10 +91,8 @@ The `relax` metadata accepts a regular expression as a value. It matches an erro
 ```js
 nikita
 .execute({
-  metadata: {
-    // highlight-next-line
-    relax: /^NIKITA_/
-  },
+  // highlight-next-line
+  $relax: /^NIKITA_/,
   command: 'invalid command'
 })
 ```

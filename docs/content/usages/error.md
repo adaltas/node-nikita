@@ -119,7 +119,7 @@ nikita
   const {error} = await this.call(({
     // Enable relax behavior
     // highlight-next-line
-    metadata: { relax: true }
+    $relax: true
   }), () => {
     throw Error('I am error!')
   })
