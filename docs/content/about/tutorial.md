@@ -88,15 +88,14 @@ MD
 cat > README.md <<MD
 # Nikita tutorial
 
-You will learn how to create a new project as well as the fundamentals of using 
+You will learn how to create a new project as well as the fundamentals of using
 Nikita to automate the deployment of systems.
 
 Please refer to the [official project documentation](http://nikita.adaltas.com/about/tutorial/)
 for additional information.
 MD
 # Commit to git the project description
-git add .gitignore
-git add README.md
+git add .gitignore README.md
 git commit -m "Project description"
 ```
 
@@ -109,10 +108,7 @@ npm init
 npm add nikita
 curl https://raw.githubusercontent.com/adaltas/node-nikita/master/LICENSE -o LICENSE
 # Commit to git the Node.js package declaration file
-git add package.json
-git add package-lock.json
-git add README.md
-git add LICENSE
+git add package.json package-lock.json LICENSE
 git commit -a -m "Package declaration file"
 ```
 
