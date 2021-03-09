@@ -7,18 +7,20 @@ related:
 
 # Metadata "index"
 
-The `index` metadata indicates the index of the action among sibling actions in the Nikita session tree.
+The `index` metadata indicates the index of an action relative to its sibling actions in the Nikita session tree.
 
 * Type: `number`
 * Read-only
 
-Its value is accessed inside the [action handler](/current/action/handler).
+## Usage
+
+Its value is accessed inside the [action handler](/current/action/handler) as the `metadata.index` property.
 
 ```js
 nikita
 // Call an action
 .call(function({metadata: {index}}) {
-  // Print the value
-  console.info(index) // 0
+  console.info(index)
+  // Print the value `0`
 })
 ```
