@@ -195,3 +195,18 @@ describe 'actions.log.md', ->
         .should.be.resolvedWith
           data: "\nEntering @nikitajs/core/src/actions/call (1.3)\n"
     
+    they 'filtered out for bastards action', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @log.md basedir: tmpdir
+        await @call
+          $unless_exists: "#{tmpdir}/toto"
+          $if: -> @call -> false
+        , (->)
+        @fs.base.readFile
+          target: "#{tmpdir}/localhost.log"
+          encoding: 'ascii'
+        .should.be.resolvedWith
+          data: "\nEntering @nikitajs/core/src/actions/call (1.2)\n"

@@ -56,9 +56,18 @@ handler = async function({config}) {
   }, config, {
     serializer: {
       'nikita:action:start': function({action}) {
-        var content, header, headers, walk;
+        var act, bastard, content, header, headers, walk;
+        act = action.parent;
+        bastard = void 0;
+        while (act) {
+          bastard = act.metadata.bastard;
+          if (bastard !== void 0) {
+            break;
+          }
+          act = act.parent;
+        }
         content = [];
-        if (config.enter && action.metadata.module && action.metadata.log !== false) {
+        if (config.enter && action.metadata.module && action.metadata.log !== false && bastard !== true) {
           content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
             return index + 1;
           })).join('.')})\n`);

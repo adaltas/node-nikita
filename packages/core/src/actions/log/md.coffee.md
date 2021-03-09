@@ -50,8 +50,14 @@ nikita(async function(){
       state = {}
       await @call $: log_fs, config, serializer:
         'nikita:action:start': ({action}) ->
+          act = action.parent
+          bastard = undefined
+          while act
+            bastard = act.metadata.bastard
+            break if bastard isnt undefined
+            act = act.parent
           content = []
-          if config.enter and action.metadata.module and action.metadata.log isnt false
+          if config.enter and action.metadata.module and action.metadata.log isnt false and bastard isnt true
             content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n"
           return content.join '' unless action.metadata.header
           walk = (parent) ->
