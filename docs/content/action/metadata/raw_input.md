@@ -20,8 +20,8 @@ The `raw_input` metadata property is commonly used along the `args` property of 
 nikita
 // Register an action
 .registry.register('my_action', {
-  // highlight-next-line
   metadata: {
+    // highlight-next-line
     raw_input: true
   },
   handler: function({config, args}){
