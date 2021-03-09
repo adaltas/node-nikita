@@ -1,6 +1,7 @@
 
 module.exports =
   tags:
+    api: true
     posix: true
   config: [
     label: 'local'

@@ -21,11 +21,6 @@ const {$status} = await nikita.file.touch({
 console.info(`File was touched: ${$status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -77,7 +72,6 @@ console.info(`File was touched: ${$status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         schema: schema

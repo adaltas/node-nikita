@@ -3,7 +3,6 @@ nikita = require '@nikitajs/core/lib'
 {tags, config} = require './test'
 they = require('mocha-they')(config)
 
-
 describe 'file.touch', ->
   
   describe 'schema', ->
@@ -15,6 +14,10 @@ describe 'file.touch', ->
         target: '/tmp/fake'
       , ({config}) ->
         config.mode.should.eql 0o1700
+        
+    it 'convert string argument to config.target', ->
+      nikita.file.touch '/tmp/fake', ({config}) ->
+        config.target.should.eql '/tmp/fake'
     
   describe 'usage', ->
     return unless tags.posix
