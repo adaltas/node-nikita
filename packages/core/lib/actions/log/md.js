@@ -55,6 +55,11 @@ handler = async function({config}) {
     $: log_fs
   }, config, {
     serializer: {
+      'diff': function(log) {
+        if (log.message) {
+          return `\n\`\`\`diff\n${log.message}\`\`\`\n`;
+        }
+      },
       'nikita:action:start': function({action}) {
         var act, bastard, content, header, headers, walk;
         act = action.parent;
@@ -68,9 +73,19 @@ handler = async function({config}) {
         }
         content = [];
         if (config.enter && action.metadata.module && action.metadata.log !== false && bastard !== true) {
-          content.push(`\nEntering ${action.metadata.module} (${(action.metadata.position.map(function(index) {
-            return index + 1;
-          })).join('.')})\n`);
+          content.push([
+            '\n',
+            'Entering',
+            ' ',
+            `${action.metadata.module}`,
+            ' ',
+            '(',
+            `${(action.metadata.position.map(function(index) {
+              return index + 1;
+            })).join('.')}`,
+            ')',
+            '\n'
+          ].join(''));
         }
         if (!action.metadata.header) {
           return content.join('');

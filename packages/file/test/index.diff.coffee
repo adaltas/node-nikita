@@ -93,3 +93,25 @@ describe 'file config diff', ->
         content: 'some content'
         diff: (text, raw) -> diff = text
       diff.should.eql '1 + some content\n'
+  
+  they 'honored by `log.md` action', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @log.md
+        basedir: tmpdir
+        filename: 'nikita.log'
+      await @file
+        target: "#{tmpdir}/file"
+        content: 'some content'
+        diff: (text, raw) -> diff = text
+      {data} = await @fs.base.readFile
+        $log: false
+        target: "#{tmpdir}/nikita.log"
+        encoding: 'ascii'
+      data.should.containEql '''
+      ```diff
+      1 + some content
+      ```
+      '''

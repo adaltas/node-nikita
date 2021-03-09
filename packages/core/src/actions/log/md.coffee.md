@@ -49,6 +49,8 @@ nikita(async function(){
     handler = ({config}) ->
       state = {}
       await @call $: log_fs, config, serializer:
+        'diff': (log) ->
+          "\n```diff\n#{log.message}```\n" if log.message
         'nikita:action:start': ({action}) ->
           act = action.parent
           bastard = undefined
@@ -58,7 +60,17 @@ nikita(async function(){
             act = act.parent
           content = []
           if config.enter and action.metadata.module and action.metadata.log isnt false and bastard isnt true
-            content.push "\nEntering #{action.metadata.module} (#{(action.metadata.position.map (index) -> index + 1).join '.'})\n"
+            content.push [
+              '\n'
+              'Entering'
+              ' '
+              "#{action.metadata.module}"
+              ' '
+              '('
+              "#{(action.metadata.position.map (index) -> index + 1).join '.'}"
+              ')'
+              '\n'
+            ].join ''
           return content.join '' unless action.metadata.header
           walk = (parent) ->
             precious = parent.metadata.header

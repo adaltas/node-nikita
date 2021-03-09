@@ -57,6 +57,16 @@ handler = function({
       return config.stream.close();
     }
   };
+  events.on('diff', function(log) {
+    var data;
+    if (!config.serializer.diff) {
+      return;
+    }
+    data = config.serializer.diff(log);
+    if (data != null) {
+      return config.stream.write(data);
+    }
+  });
   events.on('nikita:action:start', async function() {
     var data;
     if (!config.serializer['nikita:action:start']) {
@@ -109,8 +119,6 @@ handler = function({
   });
   events.on('nikita:resolved', function({action}) {
     var data;
-    // console.log 'nikita:resolved', position, uuid, action.metadata.position, !!action.parent
-    // return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
     if (config.serializer['nikita:resolved']) {
       data = config.serializer['nikita:resolved'].apply(null, arguments);
       if (data != null) {
@@ -121,8 +129,6 @@ handler = function({
   });
   events.on('nikita:rejected', function({action}) {
     var data;
-    // console.log 'nikita:rejected', position, uuid, action.metadata, !!action.parent
-    // return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
     if (config.serializer['nikita:rejected']) {
       data = config.serializer['nikita:rejected'].apply(null, arguments);
       if (data != null) {

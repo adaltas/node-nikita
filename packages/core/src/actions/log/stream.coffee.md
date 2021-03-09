@@ -41,6 +41,10 @@ Write log to custom destinations in a user provided format.
       # Events
       close = ->
         config.stream.close() if config.end
+      events.on 'diff', (log) ->
+        return unless config.serializer.diff
+        data = config.serializer.diff log
+        config.stream.write data if data?
       events.on 'nikita:action:start', ->
         return unless config.serializer['nikita:action:start']
         data = await config.serializer['nikita:action:start'].apply null, arguments
@@ -62,15 +66,11 @@ Write log to custom destinations in a user provided format.
         data = config.serializer.stdout_stream log
         config.stream.write data if data?
       events.on 'nikita:resolved', ({action}) ->
-        # console.log 'nikita:resolved', position, uuid, action.metadata.position, !!action.parent
-        # return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
         if config.serializer['nikita:resolved']
           data = config.serializer['nikita:resolved'].apply null, arguments
           config.stream.write data if data?
         close()
       events.on 'nikita:rejected', ({action}) ->
-        # console.log 'nikita:rejected', position, uuid, action.metadata, !!action.parent
-        # return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
         if config.serializer['nikita:rejected']
           data = config.serializer['nikita:rejected'].apply null, arguments
           config.stream.write data if data?

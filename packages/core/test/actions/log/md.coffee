@@ -61,9 +61,7 @@ describe 'actions.log.md', ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
-              setTimeout ->
-                resolve()
-              , 500
+              setTimeout resolve 200
           @call $header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
         @fs.assert
@@ -163,6 +161,23 @@ describe 'actions.log.md', ->
           echo 'this is a second line'
           ```
           """
+  
+  describe 'event `diff`', ->
+    
+    they 'write message in code block', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @log.md basedir: tmpdir, enter: false
+        await @call ({tools: {log}}) ->
+          log message: '1 + new line', type: 'diff'
+        @fs.base.readFile
+          target: "#{tmpdir}/localhost.log"
+          encoding: 'ascii'
+        .should.be.resolvedWith
+          data: '\n```diff\n1 + new line```\n'
+      
   
   describe 'config `enter`', ->
             
