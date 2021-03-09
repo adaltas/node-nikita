@@ -24,3 +24,36 @@ nikita
   console.info(module) // @nikitajs/core/lib/actions/call
 })
 ```
+
+## Debugging
+
+Logs export the `module` name from where the log message was emited. It is used to report context information. For example, the `$log` property returned by an action include the property:
+
+```js
+const {$logs} = await nikita
+.fs.mkdir({
+  target: '/tmp/a_dir'
+}, ({tools: {log}}) => {
+  log('hello')
+})
+console.info($logs)
+// Print something like:
+// {
+//   ...
+//   message: 'hello',
+//   ...
+//   module: '@nikitajs/core/lib/actions/fs/mkdir',
+//   ...
+// }
+```
+
+It is possible to call a registered action and switch its `handler` function for debugging purpose or to customize its behavior, for example implementing a quick fix or a feature. Here is an example:
+
+```js
+nikita
+.fs.mkdir({
+  target: '/tmp/a_dir'
+}, ({config: {target}, metadata: {module}})){
+  console.info(`Action ${module} receives target ${target}`)
+}
+```
