@@ -36,6 +36,7 @@ information.`,
 // ## Handler
 handler = function({
     config,
+    metadata: {position, uuid},
     tools: {events}
   }) {
   var close;
@@ -52,26 +53,20 @@ handler = function({
   }
   // Events
   close = function() {
-    return setTimeout(function() {
-      if (config.end) {
-        return config.stream.close();
-      }
-    }, 100);
+    if (config.end) {
+      return config.stream.close();
+    }
   };
-  events.on('nikita:action:start', async function(act) {
+  events.on('nikita:action:start', async function() {
     var data;
     if (!config.serializer['nikita:action:start']) {
       return;
     }
-    data = (await config.serializer['nikita:action:start'](act));
+    data = (await config.serializer['nikita:action:start'].apply(null, arguments));
     if (data != null) {
       return config.stream.write(data);
     }
   });
-  // events.on 'lifecycle', (log) ->
-  //   return unless config.serializer.lifecycle
-  //   data = config.serializer.lifecycle log
-  //   config.stream.write data if data?
   events.on('text', function(log) {
     var data;
     if (!config.serializer.text) {
@@ -82,10 +77,6 @@ handler = function({
       return config.stream.write(data);
     }
   });
-  // events.on 'header', (log) ->
-  //   return unless config.serializer.header
-  //   data = config.serializer.header log
-  //   config.stream.write data if data?
   events.on('stdin', function(log) {
     var data;
     if (!config.serializer.stdin) {
@@ -96,10 +87,6 @@ handler = function({
       return config.stream.write(data);
     }
   });
-  // events.on 'diff', (log) ->
-  //   return unless config.serializer.diff
-  //   data = config.serializer.diff log
-  //   config.stream.write data if data?
   events.on('nikita:action:end', function() {
     var data;
     if (!config.serializer['nikita:action:end']) {
@@ -120,12 +107,10 @@ handler = function({
       return config.stream.write(data);
     }
   });
-  // events.on 'stderr', (log) ->
-  //   return unless config.serializer.stderr
-  //   data = config.serializer.stderr log
-  //   config.stream.write data if data?
-  events.on('nikita:resolved', function() {
+  events.on('nikita:resolved', function({action}) {
     var data;
+    // console.log 'nikita:resolved', position, uuid, action.metadata.position, !!action.parent
+    // return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
     if (config.serializer['nikita:resolved']) {
       data = config.serializer['nikita:resolved'].apply(null, arguments);
       if (data != null) {
@@ -134,8 +119,10 @@ handler = function({
     }
     return close();
   });
-  events.on('nikita:rejected', function(err) {
+  events.on('nikita:rejected', function({action}) {
     var data;
+    // console.log 'nikita:rejected', position, uuid, action.metadata, !!action.parent
+    // return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
     if (config.serializer['nikita:rejected']) {
       data = config.serializer['nikita:rejected'].apply(null, arguments);
       if (data != null) {

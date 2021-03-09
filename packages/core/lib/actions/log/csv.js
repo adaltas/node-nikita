@@ -24,12 +24,11 @@ var handler, log_fs;
 
 handler = async function({config}) {
   // Obtains config from "log_csv" namespace
-  // stdouting = 0
   return (await this.call({
     $: log_fs
   }, config, {
     serializer: {
-      'nikita:action:start': function(action) {
+      'nikita:action:start': function({action}) {
         var header, headers, walk;
         if (!action.metadata.header) {
           return;
@@ -47,30 +46,9 @@ handler = async function({config}) {
           return results;
         };
         headers = walk(action);
-        header = headers.reverse().join(' : '); //action.config.divider
+        header = headers.reverse().join(' : ');
         return `header,,${JSON.stringify(header)}\n`;
       },
-      // 'diff': (log) ->
-      //   "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
-      // 'end': ->
-      //   "lifecycle,INFO,Finished with success,\n"
-      // 'error': (err) ->
-      //   content = []
-      //   content.push "lifecycle,ERROR,Finished with error,\n"
-      //   print = (err) ->
-      //     content.push "lifecycle,ERROR,#{err.stack or err.message},\n"
-      //   unless err.errors
-      //   then print err
-      //   else if err.errors then for error in err.errors then print error
-      //   content.join()
-      // 'header': (log) ->
-      //   "#{log.type},,,#{log.header}\n"
-      // 'stdin': (log) ->
-      //   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
-      // 'stderr': (log) ->
-      //   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
-      // 'stdout': (log) ->
-      //   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
       'text': function(log) {
         return `${log.type},${log.level},${JSON.stringify(log.message)}\n`;
       }

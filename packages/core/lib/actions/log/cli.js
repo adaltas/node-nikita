@@ -114,7 +114,6 @@ handler = function({
   if ((base2 = config.separator).time == null) {
     base2.time = config.pad.time == null ? '  ' : ' ';
   }
-  // config.host ?= if ssh then ssh.config.host else 'localhost'
   if (config.colors == null) {
     config.colors = process.stdout.isTTY;
   }
@@ -127,7 +126,7 @@ handler = function({
   }
   // Events
   ids = {};
-  format_line = function({host, header, $status, time}) {
+  format_line = function({host, header, status, time}) {
     if (config.pad.host) {
       host = pad(host, config.pad.host);
     }
@@ -137,13 +136,13 @@ handler = function({
     if (config.pad.time) {
       time = pad(time, config.pad.time);
     }
-    return [host, config.separator.host, header, config.separator.header, $status, config.time ? config.separator.time : '', time].join('');
+    return [host, config.separator.host, header, config.separator.header, status, config.time ? config.separator.time : '', time].join('');
   };
   return this.call({
     $: stream
   }, config, {
     serializer: {
-      'nikita:action:start': function(action) {
+      'nikita:action:start': function({action}) {
         var headers;
         if (!config.enabled) {
           return;
@@ -155,14 +154,13 @@ handler = function({
         ids[action.metadata.index] = action;
         return null;
       },
-      // 'diff': null
       'nikita:resolved': function({action}) {
         var color, line, ref, ref1;
         color = config.colors ? config.colors.status_true : false;
         line = format_line({
           host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
           header: '',
-          $status: '♥',
+          status: '♥',
           time: ''
         });
         if (color) {
@@ -175,8 +173,8 @@ handler = function({
         color = config.colors ? config.colors.status_error : false;
         line = format_line({
           host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
-          header: '', // error.message
-          $status: '✘',
+          header: '',
+          status: '✘',
           time: ''
         });
         if (color) {
@@ -184,18 +182,8 @@ handler = function({
         }
         return line + '\n';
       },
-      // 'header': (log) ->
-      //   return unless config.enabled
-      //   return if config.depth_max and config.depth_max < log.metadata.headers.length
-      //   ids[log.index] = log
-      //   null
-      // 'lifecycle': (log) ->
-      //   return unless ids[log.index]
-      //   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
-      //   null
-      'nikita:action:end': function(action, error, output) {
-        var $status, color, headers, line, ref, ref1;
-        // console.log ':events:on:', 'nikita:action:end'
+      'nikita:action:end': function({action, error, output}) {
+        var color, headers, line, ref, ref1, status;
         if (!action.metadata.header) {
           return;
         }
@@ -205,21 +193,19 @@ handler = function({
         // TODO: I don't like this, the `end` event should receive raw output
         // with error not placed inside output by the history plugin
         error = error || action.metadata.relax && output.error;
-        $status = error ? '✘' : (output != null ? output.$status : void 0) && !action.metadata.shy ? '✔' : '-';
+        status = error ? '✘' : (output != null ? output.$status : void 0) && !action.metadata.shy ? '✔' : '-';
         color = false;
         if (config.colors) {
-          color = error ? config.colors.status_error : output.$status ? config.colors.status_true : config.colors.status_false;
+          color = error ? config.colors.status_error : (output != null ? output.$status : void 0) ? config.colors.status_true : config.colors.status_false;
         }
         if (action.metadata.disabled) {
-          // action = ids[action.index]
           return null;
         }
-        // delete ids[action.index]
         headers = get_headers(action);
         line = format_line({
           host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
           header: headers.join(config.divider),
-          $status: $status,
+          status: status,
           time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''
         });
         if (color) {
@@ -230,11 +216,6 @@ handler = function({
     }
   });
 };
-
-// 'stdin': null
-// 'stderr': null
-// 'stdout': null
-// 'text': null
 
 // ## Exports
 module.exports = {

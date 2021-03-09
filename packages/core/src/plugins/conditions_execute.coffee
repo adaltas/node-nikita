@@ -25,9 +25,10 @@ handlers =
     for condition in action.conditions.if_execute
       try
         {$status} = await session
-          $hooks:
-            on_result: ({action}) -> delete action.parent
-          $condition: true
+          # $hooks:
+          #   on_result: ({action}) -> delete action.parent
+          $bastard: true
+          # $condition: true
           $depth: action.metadata.depth
           $namespace: ['execute']
           $parent: action
@@ -44,9 +45,10 @@ handlers =
     for condition in action.conditions.unless_execute
       try
         {$status} = await session
-          $hooks:
-            on_result: ({action}) -> delete action.parent
-          $condition: true
+          # $hooks:
+          #   on_result: ({action}) -> delete action.parent
+          $bastard: true
+          # $condition: true
           $depth: action.metadata.depth
           $namespace: ['execute']
           $parent: action

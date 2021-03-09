@@ -38,7 +38,7 @@ handler = async function({config}) {
     $: log_fs
   }, config, {
     serializer: {
-      'nikita:action:start': function(action) {
+      'nikita:action:start': function({action}) {
         var content, header, headers, last_event_type, walk;
         content = [];
         if (action.metadata.module) {
@@ -64,34 +64,12 @@ handler = async function({config}) {
           return results;
         };
         headers = walk(action);
-        // Async operation break the event order, causing header to be writen
-        // after other sync event such as text
-        // headers = await act.tools.walk ({config}) ->
-        //   config.header
         header = headers.reverse().join(config.divider);
         content.push('\n');
         content.push('#'.repeat(headers.length));
         content.push(` ${header}\n`);
         return content.join('');
       },
-      // 'diff': (log) ->
-      //   "\n```diff\n#{log.message}```\n\n" unless log.message
-      // 'end': ->
-      //   '\nFINISHED WITH SUCCESS\n'
-      // 'error': (err) ->
-      //   content = []
-      //   content.push '\nFINISHED WITH ERROR\n'
-      //   print = (err) ->
-      //     content.push err.stack or err.message + '\n'
-      //   unless err.errors
-      //     print err
-      //   else if err.errors
-      //     content.push err.message + '\n'
-      //     for error in err.errors then content.push error
-      //   content.join ''
-      // 'header': (log, act) ->
-      //   header = log.metadata.headers.join(action.config.divider)
-      //   "\n#{'#'.repeat log.metadata.headers.length} #{header}\n\n"
       'stdin': function(log) {
         var out;
         out = [];
@@ -100,7 +78,6 @@ handler = async function({config}) {
         } else {
           out.push(`\n\`\`\`stdin\n${log.message}\n\`\`\`\n`);
         }
-        // stdining = log.message isnt null
         return out.join('');
       },
       'stderr': function(log) {
@@ -109,7 +86,6 @@ handler = async function({config}) {
       'stdout_stream': function(log) {
         var out;
         state.last_event_type = 'stdout_stream';
-        // return if log.message is null and stdouting is 0
         if (log.message === null) {
           state.stdout_count = 0;
         } else if (state.stdout_count === void 0) {

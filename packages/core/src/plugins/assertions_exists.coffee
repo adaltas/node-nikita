@@ -48,9 +48,10 @@ handlers =
     # console.log action
     for assertion in action.assertions.assert_exists
       run = await session
-        $hooks:
-          on_result: ({action}) -> delete action.parent
-        $assertion: true
+        # $hooks:
+        #   on_result: ({action}) -> delete action.parent
+        $bastard: true
+        # $assertion: true
         $depth: action.metadata.depth
         $raw_output: true
         $raw_input: true

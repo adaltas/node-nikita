@@ -23,9 +23,8 @@ Global config can be alternatively set with the "log_csv" property.
 
     handler = ({config}) ->
       # Obtains config from "log_csv" namespace
-      # stdouting = 0
       await @call $: log_fs, config, serializer:
-        'nikita:action:start': (action) ->
+        'nikita:action:start': ({action}) ->
           return unless action.metadata.header
           walk = (parent) ->
             precious = parent.metadata.header
@@ -34,29 +33,8 @@ Global config can be alternatively set with the "log_csv" property.
             results.push ...(walk parent.parent) if parent.parent
             results
           headers = walk action
-          header = headers.reverse().join ' : ' #action.config.divider
+          header = headers.reverse().join ' : '
           "header,,#{JSON.stringify header}\n"
-        # 'diff': (log) ->
-        #   "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
-        # 'end': ->
-        #   "lifecycle,INFO,Finished with success,\n"
-        # 'error': (err) ->
-        #   content = []
-        #   content.push "lifecycle,ERROR,Finished with error,\n"
-        #   print = (err) ->
-        #     content.push "lifecycle,ERROR,#{err.stack or err.message},\n"
-        #   unless err.errors
-        #   then print err
-        #   else if err.errors then for error in err.errors then print error
-        #   content.join()
-        # 'header': (log) ->
-        #   "#{log.type},,,#{log.header}\n"
-        # 'stdin': (log) ->
-        #   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
-        # 'stderr': (log) ->
-        #   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
-        # 'stdout': (log) ->
-        #   "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
         'text': (log) ->
           "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
 

@@ -78,7 +78,6 @@ nikita
       config.separator.host ?= unless config.pad.host? then '   ' else ' '
       config.separator.header ?= unless config.pad.header? then '   ' else ' '
       config.separator.time ?= unless config.pad.time? then '  ' else ' '
-      # config.host ?= if ssh then ssh.config.host else 'localhost'
       config.colors ?= process.stdout.isTTY
       config.colors = {
         status_true: colors.green
@@ -87,24 +86,23 @@ nikita
       } if config.colors is true
       # Events
       ids = {}
-      format_line = ({host, header, $status, time}) ->
+      format_line = ({host, header, status, time}) ->
         host = pad host, config.pad.host if config.pad.host
         header = pad header, config.pad.header if config.pad.header
         time = pad time, config.pad.time if config.pad.time
         [
           host, config.separator.host
           header, config.separator.header
-          $status, if config.time then config.separator.time else ''
+          status, if config.time then config.separator.time else ''
           time
         ].join ''
       @call $: stream, config, serializer:
-        'nikita:action:start': (action) ->
+        'nikita:action:start': ({action}) ->
           return unless config.enabled
           headers = get_headers action
           return if config.depth_max and config.depth_max < headers.length
           ids[action.metadata.index] = action
           null
-        # 'diff': null
         'nikita:resolved': ({action}) ->
           color = if config.colors
           then config.colors.status_true
@@ -112,7 +110,7 @@ nikita
           line = format_line
             host: config.host or action.ssh?.config?.host or 'localhost'
             header: ''
-            $status: '♥'
+            status: '♥'
             time: ''
           line = color line if color
           return line+'\n'
@@ -122,48 +120,32 @@ nikita
           else false
           line = format_line
             host: config.host or action.ssh?.config?.host or 'localhost'
-            header: '' # error.message
-            $status: '✘'
+            header: ''
+            status: '✘'
             time: ''
           line = color line if color
           return line+'\n'
-        # 'header': (log) ->
-        #   return unless config.enabled
-        #   return if config.depth_max and config.depth_max < log.metadata.headers.length
-        #   ids[log.index] = log
-        #   null
-        # 'lifecycle': (log) ->
-        #   return unless ids[log.index]
-        #   ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
-        #   null
-        'nikita:action:end': (action, error, output) ->
-          # console.log ':events:on:', 'nikita:action:end'
+        'nikita:action:end': ({action, error, output}) ->
           return unless action.metadata.header
           return if config.depth_max and config.depth_max < action.metadata.depth
           # TODO: I don't like this, the `end` event should receive raw output
           # with error not placed inside output by the history plugin
           error = error or action.metadata.relax and output.error
-          $status = if error then '✘' else if output?.$status and not action.metadata.shy then '✔' else '-'
+          status = if error then '✘' else if output?.$status and not action.metadata.shy then '✔' else '-'
           color = false
           if config.colors
             color = if error then config.colors.status_error
-            else if output.$status then config.colors.status_true
+            else if output?.$status then config.colors.status_true
             else config.colors.status_false
-          # action = ids[action.index]
           return null if action.metadata.disabled
-          # delete ids[action.index]
           headers = get_headers action
           line = format_line
             host: config.host or action.ssh?.config?.host or 'localhost'
             header: headers.join config.divider
-            $status: $status
+            status: status
             time: if config.time then utils.string.print_time action.metadata.time_end - action.metadata.time_start else ''
           line = color line if color
           return line+'\n'
-        # 'stdin': null
-        # 'stderr': null
-        # 'stdout': null
-        # 'text': null
 
 ## Exports
 

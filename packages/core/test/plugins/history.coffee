@@ -8,14 +8,14 @@ describe 'plugins.history', ->
   describe 'children', ->
 
     it 'get previous action', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> 'mayday'
         @call ({parent}) ->
           parent.children[0].output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous action children', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> @call -> 'mayday'
         @call ({parent}) ->
           parent.children[0].children[0].output
@@ -28,31 +28,39 @@ describe 'plugins.history', ->
         siblings.should.eql []
 
     it 'get previous action', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> 'mayday'
-        @call ({parent, siblings}) ->
+        @call ({siblings}) ->
           siblings.slice(-1)[0].output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous slibling children', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> @call -> 'mayday'
-        @call ({parent, siblings}) ->
+        @call ({siblings}) ->
           siblings.slice(-1)[0].children[0].output
       .should.be.resolvedWith 'mayday'
               
   describe 'sibling', ->
 
     it 'get previous action', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> 'mayday'
-        @call ({parent, sibling}) ->
+        @call ({sibling}) ->
           sibling.output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous slibling children', ->
-      nikita.call ({context}) ->
+      nikita.call ->
         @call -> @call -> 'mayday'
-        @call ({parent, sibling}) ->
+        @call ({sibling}) ->
           sibling.children[0].output
       .should.be.resolvedWith 'mayday'
+              
+  describe 'bastard', ->
+
+    it 'child not attached to parent', ->
+      nikita.call ->
+        @call $bastard: true, (->)
+        @call ({parent}) ->
+          parent.children.length.should.eql 0

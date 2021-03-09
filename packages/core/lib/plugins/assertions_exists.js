@@ -72,12 +72,10 @@ handlers = {
     for (i = 0, len = ref.length; i < len; i++) {
       assertion = ref[i];
       run = (await session({
-        $hooks: {
-          on_result: function({action}) {
-            return delete action.parent;
-          }
-        },
-        $assertion: true,
+        // $hooks:
+        //   on_result: ({action}) -> delete action.parent
+        $bastard: true,
+        // $assertion: true
         $depth: action.metadata.depth,
         $raw_output: true,
         $raw_input: true,

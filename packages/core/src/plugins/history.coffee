@@ -13,6 +13,9 @@ module.exports =
         action
     'nikita:result': ({action, error, output}) ->
       return unless action.parent
+      # A bastard is not recognized by their parent as children
+      # examples include conditions and assertions
+      return if action.metadata.bastard
       action.parent.children.push
         children: action.children
         metadata: action.metadata

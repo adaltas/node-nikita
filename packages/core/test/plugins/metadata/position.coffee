@@ -25,3 +25,13 @@ describe 'plugins.metadata.position', ->
         metadata.position.should.eql [0, 1, 0]
       @call ({metadata}) ->
         metadata.position.should.eql [0, 1, 1]
+
+  it 'honors `metadata.bastard`', ->
+    nikita
+    .call -> true
+    .call ({metadata}) ->
+      metadata.position.should.eql [0, 1]
+      @call $bastard: true, ({metadata}) ->
+        metadata.position.should.eql [0, 1, 0]
+      @call ({metadata}) ->
+        metadata.position.should.eql [0, 1, 0]

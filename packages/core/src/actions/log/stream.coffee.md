@@ -32,40 +32,27 @@ Write log to custom destinations in a user provided format.
 
 ## Handler
 
-    handler = ({config, tools: {events}}) ->
+    handler = ({config, metadata: {position, uuid}, tools: {events}}) ->
       # Validate config
       throw Error 'Missing option: "stream"' unless config.stream
       throw Error 'Missing option: "serializer"' unless config.serializer
       # Normalize
       config.end ?= true
       # Events
-      close = -> setTimeout ->
+      close = ->
         config.stream.close() if config.end
-      , 100
-      events.on 'nikita:action:start', (act) ->
+      events.on 'nikita:action:start', ->
         return unless config.serializer['nikita:action:start']
-        data = await config.serializer['nikita:action:start'] act
+        data = await config.serializer['nikita:action:start'].apply null, arguments
         config.stream.write data if data?
-      # events.on 'lifecycle', (log) ->
-      #   return unless config.serializer.lifecycle
-      #   data = config.serializer.lifecycle log
-      #   config.stream.write data if data?
       events.on 'text', (log) ->
         return unless config.serializer.text
         data = config.serializer.text log
         config.stream.write data if data?
-      # events.on 'header', (log) ->
-      #   return unless config.serializer.header
-      #   data = config.serializer.header log
-      #   config.stream.write data if data?
       events.on 'stdin', (log) ->
         return unless config.serializer.stdin
         data = config.serializer.stdin log
         config.stream.write data if data?
-      # events.on 'diff', (log) ->
-      #   return unless config.serializer.diff
-      #   data = config.serializer.diff log
-      #   config.stream.write data if data?
       events.on 'nikita:action:end', ->
         return unless config.serializer['nikita:action:end']
         data = config.serializer['nikita:action:end'].apply null, arguments
@@ -74,16 +61,16 @@ Write log to custom destinations in a user provided format.
         return unless config.serializer.stdout_stream
         data = config.serializer.stdout_stream log
         config.stream.write data if data?
-      # events.on 'stderr', (log) ->
-      #   return unless config.serializer.stderr
-      #   data = config.serializer.stderr log
-      #   config.stream.write data if data?
-      events.on 'nikita:resolved', ->
+      events.on 'nikita:resolved', ({action}) ->
+        # console.log 'nikita:resolved', position, uuid, action.metadata.position, !!action.parent
+        # return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
         if config.serializer['nikita:resolved']
           data = config.serializer['nikita:resolved'].apply null, arguments
           config.stream.write data if data?
         close()
-      events.on 'nikita:rejected', (err) ->
+      events.on 'nikita:rejected', ({action}) ->
+        # console.log 'nikita:rejected', position, uuid, action.metadata, !!action.parent
+        # return unless position.slice(0, -1).join('.') is action.metadata.position.join('.')
         if config.serializer['nikita:rejected']
           data = config.serializer['nikita:rejected'].apply null, arguments
           config.stream.write data if data?

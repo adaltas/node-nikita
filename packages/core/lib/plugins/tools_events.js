@@ -19,21 +19,30 @@ module.exports = {
       };
     },
     'nikita:action': function(action) {
-      return action.tools.events.emit('nikita:action:start', action);
+      return action.tools.events.emit('nikita:action:start', {
+        action: action
+      });
     },
     'nikita:result': {
       after: '@nikitajs/core/lib/metadata/status',
       handler: function({action, error, output}, handler) {
         return async function({action}) {
-          var err;
           try {
             output = (await handler.apply(null, arguments));
-            action.tools.events.emit('nikita:action:end', action, null, output);
+            action.tools.events.emit('nikita:action:end', {
+              action: action,
+              error: void 0,
+              output: output
+            });
             return output;
           } catch (error1) {
-            err = error1;
-            action.tools.events.emit('nikita:action:end', action, err, output);
-            throw err;
+            error = error1;
+            action.tools.events.emit('nikita:action:end', {
+              action: action,
+              error: error,
+              output: void 0
+            });
+            throw error;
           }
         };
       }
