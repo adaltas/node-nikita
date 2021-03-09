@@ -18,7 +18,7 @@ For detailed information, navigate the documentation or submit an issue if you d
 
 ## What is Nikita?
 
-Nikita is a toolkit to automate the execution of your workflows. Use one of the many available actions or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
+Nikita is a toolkit to automate the execution of deployment workflows. Use one of the many available actions or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
 
 ### Technologies
 
@@ -40,14 +40,14 @@ At the end of the tutorial, you will learn how to use Nikita over SSH. This way,
 
 ### What is inside Nikita
 
-Nikita comes with a set of default functions.
-It is bundled with many handy functions covering a large range of usage:
-  - write files
-  - execute shell commands
-  - package-management
-  - run docker containers
+Nikita comes with a set of default functions. It is bundled with many handy functions covering a large range of usages:
 
-You are encouraged to extend Nikita with your own [actions](/current/action). To write an action is just about writing a plain vanilla JavaScript function.
+- write files
+- execute shell commands
+- package-management
+- run docker containers
+
+You are encouraged to extend Nikita with your own [actions](/current/action). In its simplest form, written an action is just about writing a plain vanilla JavaScript function.
 
 ## Installation instructions
 
@@ -60,13 +60,15 @@ To run your code, you must have Node.js and NPM (or YARN) installed. The procedu
 - [Package manager](https://nodejs.org/en/download/package-manager/)   
   The [package manager](https://nodejs.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depend on your system.
 - Node.js version manager
-  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advanced users, this is our recommended procedure as we use [N](https://github.com/tj/n).
+  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advanced users, this is the recommended procedure. We personnaly use [N](https://github.com/tj/n).
 
 Once installed, you should have the `node` and `npm` commands available from your terminal.
 
 ### Initialization
 
-A Nikita project is a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason, we will use [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track our development. Several tools are available such as [GIT](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [GIT](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
+A Nikita project is commonly a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason, it naturally integrates with [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track development iterations. Several tools are available such as [Git](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [Git](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
+
+We start by initializing a new Git projet:
 
 ```bash
 # Create a new folder
@@ -98,7 +100,7 @@ git add README.md
 git commit -m "Project description"
 ```
 
-A Nikita project is a Node.js project. Thus, we will use the `npm init` command to create a new project. This is a common way to bootstrap a project with the default package definition file. The project's unique required dependency is `nikita`. There is no other external dependency to declare unless you need to.
+A Nikita project is a Node.js project. Thus, we will use the `npm init` command to create a new project. This is a common way to bootstrap a project with a default package definition file. The project's unique required dependency is `nikita`. There is no other external dependency to declare unless you need to.
 
 ```bash
 # Initialize a new project
@@ -136,7 +138,7 @@ Before installing something useful, let's learn a few basics. Nikita is executed
 
 ### About CoffeeScript
 
-This tutorial is written in JavaScript to get you started quickly. If you navigate the Nikita source code, you'll see it is written in CoffeeScript, a language that transpiles into JavaScript before being executed by the Node.js engine. Run `npm install -g coffeescript` to install CoffeeScript globally. Unless you used a Node.js version manager, you will probably encounter a permission error. Read the NPM chapter about [permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions) to select a solution or install it locally without the `-g` option and use the command `./node_modules/.bin/coffee` instead of `coffee`.
+This tutorial is written in JavaScript to get you started quickly. If you navigate the Nikita source code, you'll see it is written in CoffeeScript, a language that transpiles into JavaScript before being executed by the Node.js engine. Run `npm install -g coffeescript` to install CoffeeScript globally. Unless you used a Node.js version manager, you will probably encounter a permission error. Read the NPM chapter about [permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions) to select a solution or install it locally without the `-g` option and use the command `npx coffee` instead of `coffee`. The `npx` command is available within all Node.js installation.
 
 CoffeeScript has a very clean syntax and is perfectly suited to the declarative aspect of the Nikita API. In the end, the source code looks like one written in YAML while preserving the advantages of a procedural language like JavaScript. A second advantage we found with CoffeeScript is its [literate functionality](http://coffeescript.org/#literate) which lets you write Markdown files with CoffeeScript code inside. Your source code looks a bit like a Notebook, it is a markdown document with documentation and code organized in blocks.
 
@@ -147,13 +149,13 @@ An action is the basic building block in Nikita. It is basically a function, cal
 ```js
 {
   who: 'leon',
-  handler: function({config}){
+  $handler: function({config}){
     console.info(config.who)
   }
 }
 ```
 
-As you can see, `config` is made available as a destructure property of the argument that the handler receives.
+As you can see, `config` is made available as a destructure property of the first argument that the handler receives.
 
 ### Calling actions
 
@@ -162,7 +164,7 @@ To execute an action, you must create a Nikita session and execute the `call` fu
 ```js
 nikita.call({
   who: 'leon',
-  handler: ({config}) => {
+  $handler: ({config}) => {
     console.info(config.who)
   }
 })
@@ -180,7 +182,7 @@ nikita.call({
 
 ### Action promise
 
-Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to call an asynchronous function and "await" for the result from Promise.
+Nikita's actions always return [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to use the Promise API or simply use the `async/await` construct to get the returned value.
 
 ```js
 // Call asynchronous function
@@ -188,9 +190,8 @@ Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/und
   // Await result from Promise
   var result = await nikita.call({
     who: 'leon',
-    handler: ({config}) => {
-      return {who: config.who}
-    }
+  }, ({config}) => {
+    return {who: config.who}
   })
   // Run next synchronous function
   console.info(result.who)  // leon
@@ -200,47 +201,127 @@ Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/und
 Nikita also provides you the guarantee that your actions are executed sequentially:
 
 ```js
-// Dependencies
 const assert = require('assert');
 (async () => {
   var history = []
   // Await result from Promise
-  var result = await nikita
-  // Call 1st action
-  .call(() => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        history.push('first')
-        resolve()
-      }, 200)
+  var result = await nikita(async function(){
+    // Call 1st action
+    this.call(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          history.push('first')
+          resolve()
+        }, 200)
+      })
     })
-  })
-  // Call 2nd action
-  .call(() => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        history.push('second')
-        resolve()
-      }, 100)
+    // Call 2nd action
+    this.call(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          history.push('second')
+          resolve()
+        }, 100)
+      })
     })
+    // Call 3rd action
+    this.call(() => {
+      return 'done'
+    })
+    // Verify
+    assert.equal(result, 'done')
+    assert.deepEqual(history, ['first','second'])
   })
-  // Call 3rd action
-  .call(() => {
-    return 'done'
-  })
-  // Verify
-  assert.equal(result, 'done')
-  assert.deepEqual(history, ['first','second'])
 })()
 ```
+
+### Error handling
+
+However, since actions returned promises, they cannot throw errors and stop the execution flow. To ensure errors are properly handled, it is your responsibility to raise them.
+
+The above example must be rewritten to raise errors. For example, using the `await` keyword, a simpler code looks like:
+
+```js
+const assert = require('assert');
+(async () => {
+  try{
+    await nikita(async function(){
+      await this.call(function(){
+        console.info('called')
+      })
+      await this.call(function(){
+        throw new Error('catch me')
+      })
+      await this.call(function(){
+        console.error('never called')
+      })
+    })
+  }catch(err){
+    assert.equal(err.message, 'catch me')
+  }
+})()
+```
+
+## Cascading outputs and errors
+
+Instead of throw an error, it is also possible to return the promise of a child action. This way, both resolved output and errors are cascaded up to the parent actions:
+
+```js
+(async () => {
+  try{
+    const {date} = await nikita(function(){
+      return this.call(function(){
+        return this.call(function(){
+          const today = new Date()
+          if((today).getDate() === 1){
+            return {date: today}
+          }else{
+            throw Error("Today is not the first day of the month")
+          }
+        })
+      })
+    })
+    console.info(date)
+  }catch(err){
+    console.error(err.message)
+  }
+})()
+``` 
+
+### Passing `metadata`
+
+Several properties are generic and globally available to every action. Examples include the `header`, `retry` and `relax` properties. Those are called [metadata properties](/current/metadata/).
+
+They are not to be confused with configuration properties. A configuration property is declared and used by a single action. A metadata property applies to multiple if not all actions and are usually declared inside a plugin.
+
+To avoid naming collisions with configuration properties, metadata properties are prefixed with a dollar sign (`$`) and are available inside the action under the `metadata` property:
+
+```js
+nikita({
+  $retry: 3
+}, async function({metadata: {attempt, retry}}){
+  if(attempt < retry){
+    console.info(`Attempt ${attempt} out of ${retry}`)
+    throw new Error('Please retry')
+  }else{
+    return true
+  }
+})
+// Print:
+// Attempt 0 out of 3
+// Attempt 1 out of 3
+// Attempt 2 out of 3
+```
+
+Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exeptions including `$handler`, `$plugins`, `$ssh` as well as all condition and assertion properties.
 
 ### Idempotence and status
 
 In the context of software deployment, idempotence means that an action with the same parameters can be executed multiple times without changing the final state of the system. It is a fundamental concept and every action in Nikita follows this principle.
 
-The status is used and interpreted with different meanings but in most cases, it indicates that a change occurred. Read the action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return `true` on its first run and `false` later on because the file already exists:
+The status is used and interpreted with different meanings but in most cases, it indicates that a change occurred. Read each action documentation in case of any doubt. For example, an action similar to the POSIX `touch` command could be designed to return `true` on its first run and `false` later on because the file already exists:
 
-> Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to `true` instead of `false`. Simply remove the file with `rm /tmp/a_file` to overcome this issue.
+> Important: you will encounter an error the second time you execute this code because the target file will be present and status will be set to `true` instead of `false`. Simply remove the file with `rm /tmp/a_file` between each run to overcome this issue.
 
 ```js
 // Dependencies
@@ -249,7 +330,7 @@ const fs = require('fs').promises;
 // Touch implementation
 const touch = async ({config}) => {
   try { 
-    const stats = await fs.stat('/tmp/a_file')
+    await fs.stat('/tmp/a_file')
     return false
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
@@ -260,11 +341,11 @@ const touch = async ({config}) => {
 // Calling actions
 (async () => {
   // First time calling touch
-  var {status} = await nikita.call(touch)
-  assert.equal(status, true)
+  var {$status} = await nikita.call(touch)
+  assert.equal($status, true)
   // Second time calling touch
-  var {status} = await nikita.call(touch)
-  assert.equal(status, false)
+  var {$status} = await nikita.call(touch)
+  assert.equal($status, false)
 })()
 ```
 
@@ -282,7 +363,7 @@ const fs = require('fs').promises;
 // Touch implementation
 module.exports = async ({config}) => {
   try { 
-    const stats = await fs.stat('/tmp/a_file')
+    await fs.stat('/tmp/a_file')
     return false
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
@@ -299,8 +380,8 @@ File "./app.js":
 const assert = require('assert');
 (async () => {
   // New Nikita session
-  var {status} = await nikita.call('./lib/touch')
-  assert.equal(status, true)
+  var {$status} = await nikita.call('./lib/touch')
+  assert.equal($status, true)
 })()
 ```
 
@@ -316,7 +397,7 @@ const fs = require('fs').promises;
 // Touch implementation
 module.exports = async ({config}) => {
   try { 
-    const stats = await fs.stat(config.target)
+    await fs.stat(config.target)
     return false
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
@@ -333,14 +414,12 @@ File "./app.js":
 const assert = require('assert');
 (async () => {
   // New Nikita session
-  var {status} = await nikita.call('./lib/touch', {target: '/tmp/a_file'})
-  assert.equal(status, true)
+  var {$status} = await nikita.call({
+    target: '/tmp/a_file'
+  }, './lib/touch')
+  assert.equal($status, true)
 })()
 ```
-
-### Passing `metadata`
-
-Several properties are generic and globally available to every action such as `header`, `retry`, `relax`, etc. Those are [`metadata` properties](/current/metadata/) and they are not to be confused with `config` properties that are specific to actions.
 
 ### Registering actions
 
@@ -356,6 +435,7 @@ const assert = require('assert');
   .registry.register({touch: './lib/touch'})
   // Calling the registered action
   .touch({target: '/tmp/a_file'})
+  // Validation
   assert.equal(status, true)
 })()
 ```
@@ -385,50 +465,50 @@ For the sake of this tutorial, we will create a basic Redis installation. The in
 
 Following the [Redis quickstart guide](https://redis.io/topics/quickstart), getting Redis up and ready is about downloading the package and executing the `redis-server` command. We will do this with idempotence in mind.
 
-To download Redis, we will use the existing `nikita.file.download` action.
+The existing `nikita.file.download` action is used to dowload Redis:
 
 ```js
 (async () => {
-  var {status} = await nikita.file.download({
+  var {$status} = await nikita.file.download({
     source: 'http://download.redis.io/redis-stable.tar.gz',
     target: '/tmp/nikita-tutorial/cache/redis-stable.tar.gz'
   })
-  console.info('Redis downloaded:', status ? '✔' : '-')
+  console.info('Redis downloaded:', $status ? '✔' : '-')
 })()
 ```
 
-The second time `nikita.file.download` is called, it will check if the target exists and bypass the download in such case. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" config.
+The second time `nikita.file.download` is called, it checks if the target exists and bypass the download in such case, thus speeding up the exection. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" configuration properties.
 
-To extract and compile Redis, we will write a shell script which will only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". There is the `nikita.execute` action to execute shell scripts:
+To extract and compile Redis, a custom shell script is only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "if_" and their associated negation prefixed with "unless_". The `nikita.execute` action to execute shell scripts:
 
 ```js
 (async () => {
-  var {status} = await nikita.execute({
-    unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
+  var {$status} = await nikita.execute({
+    $unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
     command: `
     tar xzf /tmp/nikita-tutorial/cache/redis-stable.tar.gz -C /tmp/nikita-tutorial
     cd /tmp/nikita-tutorial/redis-stable
     make
     `
   })
-  console.info('Redis compiled:', status ? '✔' : '-')
+  console.info('Redis compiled:', $status ? '✔' : '-')
 })()
 ```
 
-It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to shell commands each time we want to control it. That's why `nikita.execute` actions comes with the `cwd` configuration property standing for "current working directory". This is way a lot prettier:
+It is annoying and not flexible to always provide the same an absolute base directory like "/tmp/nikita-tutorial" each time. Among many others, the `nikita.execute` action comes with the `cwd` configuration property. The acronym stands for "current working directory". The command is rewritten as:
 
 ```js
 (async () => {
-  var {status} = await nikita.execute({
-    unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
-    cwd: '/tmp/nikita-tutorial',  // Define current working directory
+  var {$status} = await nikita.execute({
+    $unless_exists: '/tmp/nikita-tutorial/redis-stable/src/redis-server',
     command: `
     tar xzf cache/redis-stable.tar.gz
     cd redis-stable
     make
-    `
+    `,
+    cwd: '/tmp/nikita-tutorial',  // Define current working directory
   })
-  console.info('Redis compiled:', status ? '✔' : '-')
+  console.info('Redis compiled:', $status ? '✔' : '-')
 })()
 ```
 
@@ -436,21 +516,21 @@ It would be too annoying adding an absolute path like "/tmp/nikita-tutorial" to 
 
 *Learn how to merge or overwrite a configuration by serializing a JavaScript vanilla object.*
 
-Before starting the server, we will write a configuration file. The Redis format is made of key-value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` config set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
+Before starting the server, we create a configuration file. The Redis format is made of key-value pairs separated by spaces. This type of format can be handled with the `nikita.file.properties` action with a custom `separator` configuration set to one space. The action also comes with some handy config like `comment` to preserve comments and `merge` to preserve the properties already present in the file. 
 
 ```js
 (async () => {
-  var {status} = await nikita.file.properties({
-    target: '/tmp/nikita-tutorial/conf/redis.conf',
-    separator: ' ',
+  var {$status} = await nikita.file.properties({
     content: {
       'bind': '127.0.0.1',
       'daemonize': 'yes',
       'protected-mode': 'yes',
       'port': 6379
-    }
+    },
+    separator: ' ',
+    target: '/tmp/nikita-tutorial/conf/redis.conf',
   })
-  console.info('Redis configuration set:', status ? '✔' : '-')
+  console.info('Redis configuration set:', $status ? '✔' : '-')
 })()
 ```
 
@@ -458,26 +538,24 @@ Before starting the server, we will write a configuration file. The Redis format
 
 *Learn how to activate pretty reporting and detailed logs written in Markdown.*
 
-So far, we retrieved the action output to manually print a message for the user with the `console.info` JavaScript function signalling a status of execution. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
+So far, we retrieved the action output to manually print a message for the user with the `console.info` function completed by character depending the the execution status. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
 ```js
-nikita
-// Activate CLI reporting
-.log.cli()
-// Call any action
-.file.properties({
-  metadata: {
-    // The CLI message
-    header: 'Redis configuration',
-  },
-  target: '/tmp/nikita-tutorial/conf/redis.conf',
-  separator: ' ',
-  content: {
-    'bind': '127.0.0.1',
-    'daemonize': 'yes',
-    'protected-mode': 'yes',
-    'port': 6379
-  }
+nikita(async function(){
+  // Activate CLI reporting
+  await this.log.cli()
+  // Call any action
+  await this.file.properties({
+    $header: 'Redis configuration', // CLI messages
+    content: {
+      'bind': '127.0.0.1',
+      'daemonize': 'yes',
+      'protected-mode': 'yes',
+      'port': 6379,
+    },
+    separator: ' ',
+    target: '/tmp/nikita-tutorial/redis-stable/redis.conf',
+  })
 })
 ```
 
@@ -491,52 +569,70 @@ localhost      ♥
 What if an action failed and the error message is not explicit enough? What if a system command failed and we need to dig and get detailed information? Nikita doesn't have to run as a black box. Multiple error reporting actions are made available such as the `nikita.log.md` which writes logs in the Markdown format:
 
 ```js
-nikita
-// Activate Markdown reporting
-.log.md({
-  basedir: '/tmp/nikita-tutorial/log'
-})
-// Call any action
-.file.properties({
-  metadata: {
+nikita(async function(){
+  // Activate Markdown reporting
+  await this.log.md({
+    basedir: '/tmp/nikita-tutorial/log'
+  })
+  // Call any action
+  await this.file.properties({
     // The Markdown header
-    header: 'Redis configuration',
-  },
-  target: '/tmp/nikita-tutorial/conf/redis.conf',
-  separator: ' ',
-  content: {
-    'bind': '127.0.0.1',
-    'daemonize': 'yes',
-    'protected-mode': 'yes',
-    'port': 6379
-  }
+    $header: 'Redis configuration',
+    content: {
+      'bind': '127.0.0.1',
+      'daemonize': 'yes',
+      'protected-mode': 'yes',
+      'port': 6379
+    },
+    separator: ' ',
+    target: '/tmp/nikita-tutorial/conf/redis.conf',
+  })
 })
 ```
 
 Under the hood, both the `nikita.log.cli` and the `nikita.log.md` actions leverage the native Node.js [event API](https://nodejs.org/api/events.html). You can get more detailed information by visiting the [Logging and Debugging](/current/usages/logging_debugging/) documentation.
 
+Finally, if you need to quickly access verbose debugging information, use the `debug` metadata property:
+
+```js
+nikita({
+  $debug: true
+}, async function(){
+  await this.file.properties({
+    // The Markdown header
+    $header: 'Redis configuration',
+    content: {
+      'bind': '127.0.0.1',
+      'daemonize': 'yes',
+      'protected-mode': 'yes',
+      'port': 6379
+    },
+    separator: ' ',
+    target: '/tmp/nikita-tutorial/conf/redis.conf',
+  })
+})
+```
+
 ### 4. Get the server up and running
 
 *Learn how to leverage exit code to alter the action status.*
 
-The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value "0" will indicate that the server was started, the value "3" will indicate that it was already running and any other exit code will be treated as an error.
+The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value `0` will indicate that the server was started, the value `42` will indicate that it was already running and any other exit code will be treated as an error.
 
 ```js
-nikita
-.log.cli()
-// Start Redis
-.execute({
-  metadata: {
-    header: 'Startup',
-  },
-  cwd: '/tmp/nikita-tutorial',
-  code_skipped: 3,
-  command: `
-  # Exit code 3 if ping is successful
-  redis-stable/src/redis-cli ping && exit 3
-  # Otherwise start the server
-  nohup redis-stable/src/redis-server conf/redis.conf &
-  `
+nikita(async function(){
+  await this.log.cli()
+  await this.execute({
+    $header: 'Startup',
+    code_skipped: 42,
+    command: `
+    # Exit code 3 if ping is successful
+    redis-stable/src/redis-cli ping && exit 3
+    # Otherwise start the server
+    nohup redis-stable/src/redis-server conf/redis.conf &
+    `,
+    cwd: '/tmp/nikita-tutorial',
+  })
 })
 ```
 
@@ -546,28 +642,24 @@ nikita
 
 The Redis `PING` command is expected to return `PONG` if the server is healthy. Let's take this use case to illustrate the usage of the `relax` and `shy` metadata properties.
 
-The `relax` metadata sends the error to the resulting output without throwing an exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
+The `relax` metadata resolve the action successfully with the error placed inside the resulting output instead of rejecting the exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
 
-Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of the parent `nikita.call` action, because it is not considered as a change of its state.
+Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of the parent `nikita.call` action, because it is not considered as a change of state.
 
 ```js
-nikita
-.log.cli()
-.call({
-  metadata: {
-    header: 'Redis Check',
-  },
-  handler: function() {
+nikita(async function(){
+  await this.log.cli()
+  await this.call({
+    $header: 'Redis Check',
+  }, function() {
     this.execute({
-      metadata: {
-        header: "Check",
-        relax: true,
-        shy: true
-      },
+      $header: "Check",
+      $relax: true,
+      $shy: true,
       cwd: '/tmp/nikita-tutorial',
       command: 'redis-stable/src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
     })
-  }
+  })
 })
 ```
 
@@ -599,38 +691,35 @@ localhost      ♥
 
 *Learn how easy and transparent it is to activate SSH.*
 
-Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [all the tests](/current/about/developers/#tests-execution) are provided with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
+Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [the majority of the tests](/current/about/developers/#tests-execution) are contextualized with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
 
 Calling `nikita.ssh.open` and `nikita.ssh.close` will associate Nikita's current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
 
-> Note: both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `ssh` config to selected actions activates and deactivates the SSH connection.
+> Note: both the `nikita.log.cli` and `nikital.log.md` actions are always executed locally. When SSH is setup, passing the `$ssh` property to actions may activate and deactivate the SSH connection.
 
 ```js
-nikita
-.log.cli()
-// Open the SSH Connection
-.ssh.open({
-  metadata: {
-    header: 'SSH open',
-  },
-  host: '127.0.0.1',
-  port: 22,
-  private_key_path: '~/.ssh/id_rsa',
-  username: process.env.USER
-})
-// Call one or multiple actions
-.call(() => {
-  console.info('Business as usual')
-})
-// Close the SSH Connection
-.ssh.close({
-  metadata: {
-    header: 'SSH close',
-  },
+nikita(async function() {
+  await this.log.cli()
+  // Open the SSH Connection
+  await this.ssh.open({
+    $header: 'SSH open',
+    host: '127.0.0.1',
+    port: 22,
+    private_key_path: '~/.ssh/id_rsa',
+    username: process.env.USER
+  })
+  // Call one or multiple actions
+  await this.call(() => {
+    console.info('Business as usual')
+  })
+  // Close the SSH Connection
+  await this.ssh.close({
+    $header: 'SSH close',
+  })
 })
 ```
 
-The above example assumes that you can self connect with SSH locally. If this is not the case, SSH must be installed and listening on port 22 and you must follow the instruction targeting your operating system to get it up and running. A pair of SSH private and public keys, respectively installed at "~/.ssh/id_rsa" and "~/.ssh/id_rsa.pub", must be present and your public key must be registered inside "~/.ssh/authorized_keys". If this isn't already the case, you can run the following commands:
+The above example assumes that you can self connect with SSH locally. If this is not the case, SSH must be installed and listening on port 22 and you must follow the instructions targeting your operating system to get it up and running. A pair of SSH private and public keys, respectively installed in the files "~/.ssh/id_rsa" and "~/.ssh/id_rsa.pub", must be present and your public key must be registered inside "~/.ssh/authorized_keys". If this isn't already the case, you can run the following commands:
 
 ```bash
 # Detect if private key is already present
@@ -651,43 +740,37 @@ ssh `whoami`@127.0.0.1 "echo 'I am inside'; exit"
 
 *Learn how to chain multiple actions sequentially and compose them as children of other actions.*
 
-It is time to finalize our script and run all these actions sequentially. Every time you call an action, you scheduled it into the internal Nikita session for later execution. Because calling an action returns the Nikita session unless a `get` config is encountered, it is possible to chain multiple calls.
+It is time to finalize our script and run all these actions sequentially. Every time an action is called, it is scheduled inside the internal Nikita session for later execution.
 
-It is also possible to group multiple actions into one action, creating a hierarchical representation and enabling composition. In our example, we will regroup all Redis actions related to installation into a single action.
+It is also possible to group multiple actions into one action, creating a hierarchical representation and enabling composition. In our example, we will regroup all Redis actions related to the Redis installation into a single action.
 
 ```js
 const nikita = require('nikita');
 const cwd = '/tmp/nikita-tutorial';
-nikita
-.log.cli()
-.log.md({
-  basedir: `${cwd}/log`
-})
-.ssh.open({
-  metadata: {
-    header: 'SSH Open'
-  },
-  host: '127.0.0.1',
-  port: 22,
-  username: process.env.USER,
-  private_key_path: '~/.ssh/id_rsa'
-})
-.call({
-  metadata: {
-    header: 'Redis installation',
-  },
-  handler: function(){
-    this.file.download({
+nikita(async function() {
+  await this.log.cli()
+  await this.log.md({
+    basedir: `${cwd}/log`
+  })
+  await this.ssh.open({
+    $header: 'SSH Open',
+    host: '127.0.0.1',
+    port: 22,
+    username: process.env.USER,
+    private_key_path: '~/.ssh/id_rsa'
+  })
+  await this.call({
+    $header: 'Redis installation',
+  }, async function() {
+    await this.file.download({
       metadata: {
         header: 'Downloading',
       },
       source: 'http://download.redis.io/redis-stable.tar.gz',
       target: `${cwd}/cache/redis-stable.tar.gz`
     })
-    this.execute({
-      metadata: {
-        header: 'Compilation',
-      },
+    await this.execute({
+      $header: 'Compilation',
       unless_exists: `${cwd}/redis-stable/src/redis-server`,
       cwd: cwd,
       command: `
@@ -696,10 +779,8 @@ nikita
       make
       `
     })
-    this.file.properties({
-      metadata: {
-        header: 'Configuration',
-      },
+    await this.file.properties({
+      $header: 'Configuration',
       target: `${cwd}/conf/redis.conf`,
       separator: ' ',
       content: {
@@ -709,10 +790,8 @@ nikita
         'port': 6379
       }
     })
-    this.execute({
-      metadata: {
-        header: 'Startup',
-      },
+    await this.execute({
+      $header: 'Startup',
       cwd: cwd,
       code_skipped: 3,
       command: `
@@ -720,21 +799,17 @@ nikita
       nohup redis-stable/src/redis-server conf/redis.conf &
       `
     })
-  }
-})
-.execute({
-  metadata: {
-    header: 'Redis Check',
-    relax: true,
-    shy: true,
-  },
-  cwd: cwd,
-  command: 'redis-stable/src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
-})
-.ssh.close({
-  metadata: {
-    header: 'SSH Close'
-  },
+  })
+  await this.execute({
+    $header: 'Redis Check',
+    $relax: true,
+    $shy: true,
+    cwd: cwd,
+    command: 'redis-stable/src/redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG'
+  })
+  await this.ssh.close({
+    $header: 'SSH Close'
+  })
 })
 ```
 
@@ -748,7 +823,7 @@ const nikita = require('nikita');
 const install = require('./lib/install');
 const check = require('./lib/check');
 // Configuration
-config = {
+const config = {
   ssh: {
     host: '127.0.0.1',
     port: 22,
@@ -759,21 +834,24 @@ config = {
     cwd: '/tmp/nikita-tutorial',
     config: {}
   }
-}
+};
 // Run the application
-nikita
-.log.cli()
-.log.md({basedir: '/tmp/nikita-tutorial/log'})
-.ssh.open({metadata: {header: 'SSH Open'}}, config.ssh)
-.call({metadata: {header: 'Redis Install'}}, config.redis, install)
-.call({metadata: {header: 'Redis Check'}}, config.redis, check)
-.ssh.close({metadata: {header: 'SSH Close'}})
+(async () => {
+  await nikita(async function() {
+    await this.log.cli()
+    await this.log.md({basedir: '/tmp/nikita-tutorial/log'})
+    await this.ssh.open({$header: 'SSH Open'}, config.ssh)
+    await this.call({$header: 'Redis Install'}, config.redis, install)
+    await this.call({$header: 'Redis Check'}, config.redis, check)
+    await this.ssh.close({$header: 'SSH Close'})
+  })
+})();
 ```
 
 File "./lib/install.js":
 
 ```js
-module.exports = function({config}){
+module.exports = async function({config}){
   // Default configs
   if(!config.url){ config.url = 'http://download.redis.io/redis-stable.tar.gz' }
   if(!config.config){ config.config = {} }
@@ -782,15 +860,14 @@ module.exports = function({config}){
   if(!config.config['protected-mode']){ config.config['protected-mode'] = 'yes' }
   if(!config.config['port']){ config.config['port'] = 6379 }
   // Do the job
-  this
-  .file.download({
+  await this.file.download({
     metadata: {
       header: 'Download'
     },
     source: config.url,
     target: `${config.cwd}/cache/redis-stable.tar.gz`
   })
-  .execute({
+  await this.execute({
     metadata: {
       header: 'Compilation'
     },
@@ -802,18 +879,14 @@ module.exports = function({config}){
     make
     `
   })
-  .file.properties({
-    metadata: {
-      header: 'Configuration'
-    },
+  await this.file.properties({
+    $header: 'Configuration',
     target: `${config.cwd}/conf/redis.conf`,
     separator: ' ',
     content: config.config
   })
-  .execute({
-    metadata: {
-      header: 'Startup'
-    },
+  await this.execute({
+    $header: 'Startup',
     cwd: config.cwd,
     code_skipped: 3,
     command: `
@@ -827,7 +900,7 @@ module.exports = function({config}){
 File "./lib/check.js":
 
 ```js
-module.exports = function({config}){
+module.exports = async function({config}){
   // Get option from config if present
   if(config.config){
     if(config.config.host){ config.host = config.config.host }
@@ -837,13 +910,10 @@ module.exports = function({config}){
   if(!config.host){ config.host = '127.0.0.1' }
   if(!config.port){ config.port = 6379 }
   // Do the job
-  this
-  .execute({
-    metadata: {
-      header: 'Check',
-      relax: true,
-      shy: true
-    },
+  return this.execute({
+    $header: 'Check',
+    $relax: true,
+    $shy: true,
     cwd: config.cwd,
     command: `redis-stable/src/redis-cli -h ${config.host} -p ${config.port} ping`
   })
