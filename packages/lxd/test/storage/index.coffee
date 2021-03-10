@@ -5,16 +5,16 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.storage', ->
+describe 'lxc.storage', ->
 
   they 'Create a storage', ({ssh}) ->
     nikita
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.storage.delete 'nikita-storage-1'
+        @lxc.storage.delete 'nikita-storage-1'
       await @clean()
-      {$status} = await @lxd.storage
+      {$status} = await @lxc.storage
         name: "nikita-storage-1"
         driver: "zfs"
       $status.should.be.true()
@@ -25,9 +25,9 @@ describe 'lxd.storage', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.storage.delete 'nikita-storage-2'
+        @lxc.storage.delete 'nikita-storage-2'
       await @clean()
-      {$status} = await @lxd.storage
+      {$status} = await @lxc.storage
         name: "nikita-storage-2"
         driver: "zfs"
         properties:
@@ -41,13 +41,13 @@ describe 'lxd.storage', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.storage.delete 'nikita-storage-3'
+        @lxc.storage.delete 'nikita-storage-3'
       await @clean()
-      {$status} = await @lxd.storage
+      {$status} = await @lxc.storage
         name: "nikita-storage-3"
         driver: "zfs"
       $status.should.be.true()
-      {$status} = await @lxd.storage
+      {$status} = await @lxc.storage
         name: "nikita-storage-3"
         driver: "zfs"
       $status.should.be.false()
@@ -58,14 +58,14 @@ describe 'lxd.storage', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.storage.delete 'nikita-storage-4'
+        @lxc.storage.delete 'nikita-storage-4'
       await @clean()
-      await @lxd.storage
+      await @lxc.storage
         name: "nikita-storage-4"
         driver: "zfs"
         properties:
           size: "20GB"
-      {$status} = await @lxd.storage
+      {$status} = await @lxc.storage
         name: "nikita-storage-4"
         driver: "zfs"
         properties:

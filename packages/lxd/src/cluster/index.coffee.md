@@ -1,5 +1,5 @@
 
-# `nikita.lxd.cluster`
+# `nikita.lxc.cluster`
 
 Create a cluster of LXD instances.
 
@@ -148,7 +148,7 @@ containers:
         await @call config, config.prevision
       # Create a network
       for networkName, networkProperties of config.networks
-        await @lxd.network
+        await @lxc.network
           $header: "Network #{networkName}"
           network: networkName
           properties: networkProperties
@@ -157,19 +157,19 @@ containers:
         $header: "Container #{containerName}"
       , ->
         # Set configuration
-        await @lxd.init
+        await @lxc.init
           $header: 'Init'
           container: containerName
           image: containerConfig.image
         # Set config
         if containerConfig?.properties
-          await @lxd.config.set
+          await @lxc.config.set
             $header: 'Properties'
             container: containerName
             properties: containerConfig.properties
         # Create disk device
         for deviceName, configDisk of containerConfig.disk
-          await @lxd.config.device
+          await @lxc.config.device
             $header: "Device #{deviceName} disk"
             container: containerName
             device: deviceName
@@ -179,14 +179,14 @@ containers:
         for deviceName, configNic of containerConfig.nic
           # note: `confignic.config.parent` is not required for each type
           # throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
-          await @lxd.config.device
+          await @lxc.config.device
             $header: "Device #{deviceName} nic"
             container: containerName
             device: deviceName
             type: 'nic'
             properties: utils.object.filter configNic, ['ip', 'netmask']
           if configNic.ip
-            await @lxd.file.push
+            await @lxc.file.push
               $header: "ifcfg #{deviceName}"
               container: containerName
               target: "/etc/sysconfig/network-scripts/ifcfg-#{deviceName}"
@@ -203,14 +203,14 @@ containers:
         for deviceName, configProxy of containerConfig.proxy
           # todo: add host detection and port forwarding to VirtualBox
           # VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
-          await @lxd.config.device
+          await @lxc.config.device
             $header: "Device #{deviceName} proxy"
             container: containerName
             device: deviceName
             type: 'proxy'
             properties: configProxy
         # Start container
-        await @lxd.start
+        await @lxc.start
           $header: 'Start'
           container: containerName
         # Wait until container is running
@@ -221,8 +221,8 @@ containers:
           port: 80
           interval: 2000
           timeout: 10000
-        # Openssl is required by the `lxd.file.push` action
-        await @lxd.exec
+        # Openssl is required by the `lxc.file.push` action
+        await @lxc.exec
           $header: 'OpenSSL'
           # $retry: 10
           # $sleep: 5000
@@ -242,7 +242,7 @@ containers:
           code_skipped: 42
         # Enable SSH
         if containerConfig.ssh?.enabled
-          await @lxd.exec
+          await @lxc.exec
             $header: 'SSH'
             container: containerName
             command: """
@@ -268,7 +268,7 @@ containers:
         for userName, configUser of containerConfig.user then await @call
           $header: "User #{userName}"
         , ->
-          await @lxd.exec
+          await @lxc.exec
             $header: 'Create'
             container: containerName
             command: """
@@ -281,7 +281,7 @@ containers:
             trap: true
             code_skipped: 42
           # Enable sudo access
-          await @lxd.exec
+          await @lxc.exec
             $if: configUser.sudo
             $header: 'Sudo'
             container: containerName
@@ -294,7 +294,7 @@ containers:
             trap: true
             code_skipped: 42
           # Add SSH public key to authorized_keys file
-          await @lxd.file.push
+          await @lxc.file.push
             $if: configUser.authorized_keys
             $header: 'Authorize'
             container: containerName

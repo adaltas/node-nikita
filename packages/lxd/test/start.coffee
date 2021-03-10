@@ -5,22 +5,22 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.start', ->
+describe 'lxc.start', ->
 
   they 'Start a container', ({ssh}) ->
     nikita
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.delete 'nikita-start-1', force: true
+        @lxc.delete 'nikita-start-1', force: true
       await @clean()
-      await @lxd.delete
+      await @lxc.delete
         container: 'nikita-start-1'
         force: true
-      await @lxd.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-start-1'
-      {$status} = await @lxd.start
+      {$status} = await @lxc.start
         container: 'nikita-start-1'
       $status.should.be.true()
       await @clean()
@@ -30,14 +30,14 @@ describe 'lxd.start', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.delete 'nikita-start-2', force: true
+        @lxc.delete 'nikita-start-2', force: true
       await @clean()
-      await @lxd.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-start-2'
-      await @lxd.start
+      await @lxc.start
         container: 'nikita-start-2'
-      {$status} = await @lxd.start
+      {$status} = await @lxc.start
         container: 'nikita-start-2'
       $status.should.be.false()
       await @clean()

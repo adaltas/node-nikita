@@ -1,5 +1,5 @@
 
-# `nikita.lxd.network.attach`
+# `nikita.lxc.network.attach`
 
 Attach an existing network to a container.
 
@@ -11,7 +11,7 @@ Attach an existing network to a container.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.network.attach({
+const {$status} = await nikita.lxc.network.attach({
   network: 'network0',
   container: 'container1'
 })

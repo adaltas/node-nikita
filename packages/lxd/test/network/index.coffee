@@ -5,20 +5,20 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.network.create', ->
+describe 'lxc.network.create', ->
   
   they 'schema dns.domain', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @lxd.network.delete
+      @lxc.network.delete
         network: "testnet0"
-      await @lxd.network
+      await @lxc.network
         network: "testnet0"
         properties:
           'ipv4.address': '192.0.2.1/30'
           'dns.domain': 'nikita.local'
-      @lxd.network
+      @lxc.network
         network: "testnet0"
         properties:
           'ipv4.address': '192.0.2.1/30'
@@ -31,11 +31,11 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
         @clean()
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
         $status.should.be.true()
       finally
@@ -46,10 +46,10 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
@@ -64,12 +64,12 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
-        @lxd.network
+        @lxc.network
           network: "testnet0"
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
         $status.should.be.false()
       finally
@@ -80,12 +80,12 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
-        @lxd.network
+        @lxc.network
           network: "testnet0"
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
@@ -99,22 +99,22 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': true
         $status.should.be.true()
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': true
         $status.should.be.false()
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
@@ -128,14 +128,14 @@ describe 'lxd.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
-        @lxd.network
+        @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"
-        {$status} = await @lxd.network
+        {$status} = await @lxc.network
           network: "testnet0"
           properties:
             'ipv4.address': "192.0.2.1/30"

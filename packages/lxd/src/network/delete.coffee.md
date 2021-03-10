@@ -1,5 +1,5 @@
 
-# `nikita.lxd.network.delete`
+# `nikita.lxc.network.delete`
 
 Delete an existing lxd network.
 
@@ -11,7 +11,7 @@ Delete an existing lxd network.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.network.delete({
+const {$status} = await nikita.lxc.network.delete({
   network: 'network0'
 })
 console.info(`Network was deleted: ${$status}`)

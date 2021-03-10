@@ -1,5 +1,5 @@
 
-# `nikita.lxd.storage.delete`
+# `nikita.lxc.storage.delete`
 
 Delete an existing lxd storage.
 
@@ -11,7 +11,7 @@ Delete an existing lxd storage.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.storage.delete({
+const {$status} = await nikita.lxc.storage.delete({
   name: 'system'
 })
 console.info(`Storage was deleted: ${$status}`)

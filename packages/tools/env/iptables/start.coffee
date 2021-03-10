@@ -7,7 +7,7 @@ require '@nikitajs/tools/lib/register'
 nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_tools_iptables_lxd_install'
-.lxd.cluster
+.lxc.cluster
   $header: 'Container'
   containers:
     'nikita-tools-iptables':
@@ -23,7 +23,7 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       ssh: enabled: true
   provision_container: ({config}) ->
-    await @lxd.exec
+    await @lxc.exec
       $header: 'Node.js'
       container: config.container
       command: '''
@@ -34,7 +34,7 @@ nikita
       '''
       trap: true
       code_skipped: 42
-    await @lxd.exec
+    await @lxc.exec
       $header: 'SSH keys'
       container: config.container
       command: """

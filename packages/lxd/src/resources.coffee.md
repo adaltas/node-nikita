@@ -1,5 +1,5 @@
 
-# `nikita.lxd.resources`
+# `nikita.lxc.resources`
 
 Show full information about the resources available to the LXD server.
 
@@ -12,7 +12,7 @@ Show full information about the resources available to the LXD server.
 ## Example
 
 ```js
-const {config} = await nikita.lxd.resources({
+const {config} = await nikita.lxc.resources({
   container: 'container1',
   device: 'disk'
 })

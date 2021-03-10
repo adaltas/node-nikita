@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.cluster', ->
+describe 'lxc.cluster', ->
   
   before ->
     @timeout -1
@@ -17,13 +17,13 @@ describe 'lxd.cluster', ->
   describe 'validation', ->
     
     it 'validate container.image', ->
-      nikita.lxd.cluster
+      nikita.lxc.cluster
         containers:
           nikita_cluster: {}
       , (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-      nikita.lxd.cluster
+      nikita.lxc.cluster
         containers:
           nikita_cluster:
             image: 'images:centos/7'
@@ -32,7 +32,7 @@ describe 'lxd.cluster', ->
   
     it 'validate disk', ->
       # Source is invalid
-      nikita.lxd.cluster
+      nikita.lxc.cluster
         containers:
           nikita_cluster:
             image: 'images:centos/7'
@@ -41,7 +41,7 @@ describe 'lxd.cluster', ->
       , (->)
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-      nikita.lxd.cluster
+      nikita.lxc.cluster
         containers:
           nikita_cluster:
             image: 'images:centos/7'
@@ -56,15 +56,15 @@ describe 'lxd.cluster', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register ['clean'], ->
-        await @lxd.delete
+        await @lxc.delete
           container: 'nikita-cluster-1'
           force: true
-        await @lxd.network.delete
+        await @lxc.network.delete
           network: 'nktlxdpub'
-        await @lxd.network.delete
+        await @lxc.network.delete
           network: 'nktlxdprv'
       @clean()
-      await @lxd.cluster
+      await @lxc.cluster
         networks:
           nktlxdpub:
             'ipv4.address': '192.0.2.1/30'
@@ -88,15 +88,15 @@ describe 'lxd.cluster', ->
                 name: 'eth1', nictype: 'bridged', parent: 'nktlxdprv'
                 ip: '192.0.2.5', netmask: '255.255.255.0'
       await @wait time: 200
-      {exists} = await @lxd.config.device.exists
+      {exists} = await @lxc.config.device.exists
         container: 'nikita-cluster-1'
         device: 'nikitadir'
       exists.should.be.true()
-      {exists} = await @lxd.config.device.exists
+      {exists} = await @lxc.config.device.exists
         container: 'nikita-cluster-1'
         device: 'eth0'
       exists.should.be.true()
-      {exists} = await @lxd.config.device.exists
+      {exists} = await @lxc.config.device.exists
         container: 'nikita-cluster-1'
         device: 'eth1'
       exists.should.be.true()
@@ -108,13 +108,13 @@ describe 'lxd.cluster', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        await @lxd.delete
+        await @lxc.delete
           container: 'nikita-cluster-2'
           force: true
-        await @lxd.network.delete
+        await @lxc.network.delete
           network: 'nktlxdprv'
       await registry.register 'test', ({config}) ->
-        await @lxd.cluster
+        await @lxc.cluster
           networks:
             nktlxdprv:
               'ipv4.address': '192.0.2.5/30'
@@ -130,7 +130,7 @@ describe 'lxd.cluster', ->
                   ip: '192.0.2.6', netmask: '255.255.255.0'
               ssh:
                 enabled: config.enabled
-        await @lxd.exec
+        await @lxc.exec
           container: 'nikita-cluster-2'
           command: '''
           echo > /dev/tcp/192.0.2.6/22

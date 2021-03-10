@@ -5,29 +5,29 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.network.detach', ->
+describe 'lxc.network.detach', ->
 
   they 'Detach a network from a container', ({ssh}) ->
     nikita
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.delete
+        @lxc.delete
           container: 'u0'
           force: true
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
         @clean()
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'u0'
-        @lxd.network
+        @lxc.network
           network: "testnet0"
-        @lxd.network.attach
+        @lxc.network.attach
           network: "testnet0"
           container: "u0"
-        {$status} = await @lxd.network.detach
+        {$status} = await @lxc.network.detach
           network: "testnet0"
           container: "u0"
         $status.should.be.true()
@@ -39,19 +39,19 @@ describe 'lxd.network.detach', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxd.delete
+        @lxc.delete
           container: 'u0'
           force: true
-        @lxd.network.delete
+        @lxc.network.delete
           network: "testnet0"
       try
         @clean()
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'u0'
-        @lxd.network
+        @lxc.network
           network: "testnet0"
-        {$status} = await @lxd.network.detach
+        {$status} = await @lxc.network.detach
           network: "testnet0"
           container: "u0"
         $status.should.be.false()

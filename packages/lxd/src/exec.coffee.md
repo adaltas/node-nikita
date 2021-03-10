@@ -1,12 +1,12 @@
 
-# `nikita.lxd.exec`
+# `nikita.lxc.exec`
 
 Execute command in containers.
 
 ## Example
 
 ```js
-const {$status, stdout, stderr} = await nikita.lxd.exec({
+const {$status, stdout, stderr} = await nikita.lxc.exec({
   container: "my-container",
   command: "whoami"
 })

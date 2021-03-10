@@ -1,12 +1,12 @@
 
-# `nikita.lxd.file.exists`
+# `nikita.lxc.file.exists`
 
 Check if the file exists in a container.
 
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.file.exists({
+const {$status} = await nikita.lxc.file.exists({
   container: 'my_container',
   target: '/root/a_file'
 })

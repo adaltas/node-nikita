@@ -1,5 +1,5 @@
 
-# `nikita.lxd.config.delete`
+# `nikita.lxc.config.delete`
 
 Delete a device from a container
 
@@ -11,7 +11,7 @@ Delete a device from a container
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.config.device.delete({
+const {$status} = await nikita.lxc.config.device.delete({
   container: 'container1',
   device: 'root'
 })
@@ -35,7 +35,7 @@ console.info(`Device was removed: ${$status}`)
 ## Handler
 
     handler = ({config}) ->
-      {properties} = await @lxd.config.device.show
+      {properties} = await @lxc.config.device.show
         container: config.container
         device: config.device
       return $status: false unless properties

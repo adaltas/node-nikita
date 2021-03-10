@@ -22,7 +22,7 @@ nikita.log.cli({
     host: 20,
     header: 60
   }
-}).lxd.cluster({
+}).lxc.cluster({
   $header: 'Container',
   networks: {
     lxdbr0public: {
@@ -167,7 +167,7 @@ nikita.log.cli({
     }));
   },
   provision_container: async function({config}) {
-    return (await this.lxd.exec({
+    return (await this.lxc.exec({
       $header: 'Node.js',
       container: config.container,
       command: `command -v node && exit 42
@@ -179,7 +179,7 @@ bash n lts`,
   }
 });
 
-// @lxd.file.push
+// @lxc.file.push
 //   debug: true
 //   header: 'Test configuration'
 //   container: options.container

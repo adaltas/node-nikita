@@ -1,5 +1,5 @@
 
-# `nikita.lxd.network.detach`
+# `nikita.lxc.network.detach`
 
 Detach a network from a container.
 
@@ -11,7 +11,7 @@ Detach a network from a container.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.network.detach({
+const {$status} = await nikita.lxc.network.detach({
   network: 'network0',
   container: 'container1'
 })

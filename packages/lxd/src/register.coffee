@@ -6,7 +6,7 @@ require '@nikitajs/network/lib/register'
 registry = require '@nikitajs/core/lib/registry'
 
 module.exports =
-  lxd:
+  lxc:
     cluster:
       '': '@nikitajs/lxd/src/cluster'
     config:

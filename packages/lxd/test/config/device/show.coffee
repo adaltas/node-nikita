@@ -5,26 +5,26 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.config.device.show', ->
+describe 'lxc.config.device.show', ->
 
   they 'config output', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @lxd.delete
+      @lxc.delete
         container: 'c1'
         force: true
-      @lxd.init
+      @lxc.init
         image: "images:#{images.alpine}"
         container: 'c1'
-      @lxd.config.device
+      @lxc.config.device
         container: 'c1'
         device: 'test'
         type: 'unix-char'
         properties:
           source: '/dev/urandom'
           path: '/testrandom'
-      {$status, properties} = await @lxd.config.device.show
+      {$status, properties} = await @lxc.config.device.show
         container: 'c1'
         device: 'test'
       $status.should.be.true()

@@ -5,21 +5,21 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.delete', ->
+describe 'lxc.delete', ->
 
   they 'Delete a container', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      await @lxd.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-delete-1'
-      await @lxd.stop
+      await @lxc.stop
         container: 'nikita-delete-1'
-      {$status} = await @lxd.delete
+      {$status} = await @lxc.delete
         container: 'nikita-delete-1'
       $status.should.be.true()
-      {$status} = await @lxd.delete
+      {$status} = await @lxc.delete
         container: 'nikita-delete-1'
       $status.should.be.false()
   
@@ -27,12 +27,12 @@ describe 'lxd.delete', ->
     nikita
       $ssh: ssh
     , ->
-      await @lxd.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-delete-2'
-      await @lxd.start
+      await @lxc.start
         container: 'nikita-delete-2'
-      {$status} = await @lxd.delete
+      {$status} = await @lxc.delete
         container: 'nikita-delete-2'
         force: true
       $status.should.be.true()
@@ -41,8 +41,8 @@ describe 'lxd.delete', ->
     nikita
       $ssh: ssh
     , ->
-      await @lxd.delete  # repeated to be sure the container is absent
+      await @lxc.delete  # repeated to be sure the container is absent
         container: 'nikita-delete-3'
-      {$status} = await @lxd.delete
+      {$status} = await @lxc.delete
         container: 'nikita-delete-3'
       $status.should.be.false()

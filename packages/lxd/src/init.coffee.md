@@ -1,5 +1,5 @@
 
-# `nikita.lxd.init`
+# `nikita.lxc.init`
 
 Initialize a Linux Container with given image name, container name and config.
 
@@ -11,7 +11,7 @@ Initialize a Linux Container with given image name, container name and config.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.init({
+const {$status} = await nikita.lxc.init({
   image: "ubuntu:18.04",
   container: "my_container"
 })
@@ -27,7 +27,7 @@ fix is to prepend the init command with `echo '' | `.
 
 ## TODO
 
-We do not honors the configuration (`-c`) argument. Use the `lxd.config.set` for
+We do not honors the configuration (`-c`) argument. Use the `lxc.config.set` for
 now.
 
 ## Schema
@@ -53,7 +53,7 @@ now.
         'network':
           type: 'string'
           description: """
-          Network name to add to the container (see lxd.network).
+          Network name to add to the container (see lxc.network).
           """
         'storage':
           type: 'string'

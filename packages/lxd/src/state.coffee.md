@@ -1,5 +1,5 @@
 
-# `nikita.lxd.state`
+# `nikita.lxc.state`
 
 Show the current state of instances.
 
@@ -11,7 +11,7 @@ Show the current state of instances.
 ## Example
 
 ```js
-const {config} = await nikita.lxd.state({
+const {config} = await nikita.lxc.state({
   container: 'container1'
 })
 console.info(config)

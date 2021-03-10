@@ -5,23 +5,23 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.file.exists', ->
+describe 'lxc.file.exists', ->
 
   they 'when present', ({ssh}) ->
     nikita
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.delete 'nikita-file-exists-1', force: true
+        @lxc.delete 'nikita-file-exists-1', force: true
       await @clean()
-      @lxd.init
+      @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-file-exists-1'
-      @lxd.start
+      @lxc.start
         container: 'nikita-file-exists-1'
       @execute
         command: "lxc exec nikita-file-exists-1 -- touch /root/a_file"
-      {exists} = await @lxd.file.exists
+      {exists} = await @lxc.file.exists
         container: 'nikita-file-exists-1'
         target: '/root/a_file'
       exists.should.be.true()
@@ -32,14 +32,14 @@ describe 'lxd.file.exists', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.delete 'nikita-file-exists-2', force: true
+        @lxc.delete 'nikita-file-exists-2', force: true
       await @clean()
-      @lxd.init
+      @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-file-exists-2'
-      @lxd.start
+      @lxc.start
         container: 'nikita-file-exists-2'
-      {exists} = await @lxd.file.exists
+      {exists} = await @lxc.file.exists
         container: 'nikita-file-exists-2'
         target: '/root/a_file'
       exists.should.be.false()

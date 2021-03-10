@@ -1,12 +1,12 @@
 
-# `nikita.lxd.file.push`
+# `nikita.lxc.file.push`
 
 Push files into containers.
 
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.file.push({
+const {$status} = await nikita.lxc.file.push({
   container: 'my_container',
   source: `#{scratch}/a_file`,
   target: '/root/a_file'
@@ -96,7 +96,7 @@ console.info(`File was pushed: ${$status}`)
       # note, name could be obtained from lxd_target
       # throw Error "Invalid Option: target is required" if not config.target and not config.lxd_target
       config.lxd_target ?= "#{path.join config.container, config.target}"
-      {$status} = await @lxd.running
+      {$status} = await @lxc.running
         container: config.container
       status_running = $status
       if $status
@@ -142,11 +142,11 @@ console.info(`File was pushed: ${$status}`)
           trap: true
           trim: true
       if typeof config.gid is 'string'
-        await @lxd.exec
+        await @lxc.exec
           container: config.container
           command: "chgrp #{config.gid} #{config.target}"
       if typeof config.uid is 'string'
-        await @lxd.exec
+        await @lxc.exec
           container: config.container
           command: "chown #{config.uid} #{config.target}"
 

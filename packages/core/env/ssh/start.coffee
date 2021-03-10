@@ -8,7 +8,7 @@ require '@nikitajs/lxd/lib/register'
   await nikita
   .log.cli pad: host: 20, header: 60
   .log.md filename: '/tmp/nikita_core_ssh'
-  .lxd.cluster
+  .lxc.cluster
     metadata: header: 'Container'
     containers:
       'nikita-core-ssh':
@@ -25,7 +25,7 @@ require '@nikitajs/lxd/lib/register'
             source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
         ssh: enabled: true
     provision_container: ({config}) ->
-      await @lxd.exec
+      await @lxc.exec
         metadata: header: 'User `source`'
         container: config.container
         command: '''
@@ -39,7 +39,7 @@ require '@nikitajs/lxd/lib/register'
         chown -R source /home/source/
         '''
         trap: true
-      await @lxd.exec
+      await @lxc.exec
         metadata: header: 'Node.js'
         container: config.container
         command: """
@@ -53,7 +53,7 @@ require '@nikitajs/lxd/lib/register'
         shell: 'bash'
         trap: true
         code_skipped: 42
-      await @lxd.exec
+      await @lxc.exec
         metadata: header: 'User `target`'
         container: config.container
         command: '''

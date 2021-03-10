@@ -1,5 +1,5 @@
 
-# `nikita.lxd.start`
+# `nikita.lxc.start`
 
 Start containers.
 
@@ -11,7 +11,7 @@ Start containers.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.start({
+const {$status} = await nikita.lxc.start({
   container: "my_container"
 })
 console.info(`Container was started: ${$status}`)

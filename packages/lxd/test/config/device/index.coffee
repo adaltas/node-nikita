@@ -6,19 +6,19 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.config.device', ->
+describe 'lxc.config.device', ->
 
   describe 'schema', ->
     
     it 'Fail for invalid device type', ->
       nikita
-      .lxd.delete
+      .lxc.delete
         container: 'c1'
         force: true
-      .lxd.init
+      .lxc.init
         container: 'c1'
         image: "images:#{images.alpine}"
-      .lxd.config.device
+      .lxc.config.device
         container: 'c1'
         device: 'test'
         type: 'invalid'
@@ -29,13 +29,13 @@ describe 'lxd.config.device', ->
 
     it 'Fail for absence of required config properties', ->
       nikita
-      .lxd.delete
+      .lxc.delete
         container: 'c1'
         force: true
-      .lxd.init
+      .lxc.init
         container: 'c1'
         image: "images:#{images.alpine}"
-      .lxd.config.device
+      .lxc.config.device
         container: 'c1'
         device: 'test'
         type: 'disk'
@@ -46,13 +46,13 @@ describe 'lxd.config.device', ->
 
     it 'Fail for wrong type of config properties', ->
       nikita
-      .lxd.delete
+      .lxc.delete
         container: 'c1'
         force: true
-      .lxd.init
+      .lxc.init
         container: 'c1'
         image: "images:#{images.alpine}"
-      .lxd.config.device
+      .lxc.config.device
         container: 'c1'
         device: 'test'
         type: 'disk'
@@ -68,13 +68,13 @@ describe 'lxd.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxd.delete
+        @lxc.delete
           container: 'c1'
           force: true
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        {$status} = await @lxd.config.device
+        {$status} = await @lxc.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
@@ -90,20 +90,20 @@ describe 'lxd.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxd.delete
+        @lxc.delete
           container: 'c1'
           force: true
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        @lxd.config.device
+        @lxc.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom'
             path: '/testrandom'
-        {$status} = await @lxd.config.device
+        {$status} = await @lxc.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
@@ -116,20 +116,20 @@ describe 'lxd.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxd.delete
+        @lxc.delete
           container: 'c1'
           force: true
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        @lxd.config.device
+        @lxc.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom1'
             path: '/testrandom1'
-        {$status} = await @lxd.config.device
+        {$status} = await @lxc.config.device
           container: 'c1'
           device: 'test'
           type: 'unix-char'
@@ -144,13 +144,13 @@ describe 'lxd.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxd.delete
+        @lxc.delete
           container: 'c1'
           force: true
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        @lxd.config.device
+        @lxc.config.device
           container: 'c1'
           device: 'vpn'
           type: 'proxy'
@@ -169,20 +169,20 @@ describe 'lxd.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxd.delete
+        @lxc.delete
           container: 'c1'
           force: true
-        @lxd.init
+        @lxc.init
           image: "images:#{images.alpine}"
           container: 'c1'
-        @lxd.config.device
+        @lxc.config.device
           container: 'c1'
           device: 'vpn'
           type: 'proxy'
           properties:
             listen: 'udp:127.0.0.1:1195'
             connect: 'udp:127.0.0.1:1194'
-        @lxd.config.device
+        @lxc.config.device
           container: 'c1'
           device: 'vpn'
           type: 'proxy'

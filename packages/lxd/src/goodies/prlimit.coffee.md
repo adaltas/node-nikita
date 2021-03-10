@@ -1,5 +1,5 @@
 
-# `nikita.lxd.goodies.prlimit`
+# `nikita.lxc.goodies.prlimit`
 
 Print the process limit associated with a running container.
 
@@ -20,7 +20,7 @@ and run the action in this node.
 ## Example
 
 ```js
-const {stdout, limits} = await nikita.lxd.goodies.prlimit({
+const {stdout, limits} = await nikita.lxc.goodies.prlimit({
   container: "my_container"
 })
 console.info( `${stdout} ${JSON.decode(limits)}`)

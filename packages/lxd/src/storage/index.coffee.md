@@ -1,5 +1,5 @@
 
-# `nikita.lxd.storage`
+# `nikita.lxc.storage`
 
 Create a storage or update a storage configuration.
 
@@ -11,7 +11,7 @@ Create a storage or update a storage configuration.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.storage({
+const {$status} = await nikita.lxc.storage({
   name: "system",
   driver: "zfs",
   properties: {
@@ -43,7 +43,7 @@ console.info(`Storage was created or config updated: ${$status}`)
           description: """
           The configuration to use to configure this storage, depends on the
           driver. See [available
-          fields](https://lxd.readthedocs.io/en/latest/storage/).
+          fields](https://lxc.readthedocs.io/en/latest/storage/).
           """
       required: ['name', 'driver']
 

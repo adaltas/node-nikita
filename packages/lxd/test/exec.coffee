@@ -5,21 +5,21 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.exec', ->
+describe 'lxc.exec', ->
 
   they 'a command with pipe inside', ({ssh}) ->
     nikita
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxd.delete 'nikita-exec-1', force: true
+        @lxc.delete 'nikita-exec-1', force: true
       await @clean()
-      await @lxd.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-exec-1'
-      await @lxd.start
+      await @lxc.start
         container: 'nikita-exec-1'
-      {$status, stdout} = await @lxd.exec
+      {$status, stdout} = await @lxc.exec
         container: 'nikita-exec-1'
         command: """
         cat /etc/os-release | egrep ^ID=
@@ -35,14 +35,14 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-2', force: true
+          @lxc.delete 'nikita-exec-2', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-2'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-2'
-        {stdout} = await @lxd.exec
+        {stdout} = await @lxc.exec
           container: 'nikita-exec-2'
           command: 'echo $0'
           trim: true
@@ -54,18 +54,18 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-3', force: true
+          @lxc.delete 'nikita-exec-3', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-3'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-3'
-        await @lxd.exec
+        await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-exec-3'
           command: 'apk add bash'
-        {stdout} = await @lxd.exec
+        {stdout} = await @lxc.exec
           container: 'nikita-exec-3'
           command: 'echo $0'
           shell: 'bash'
@@ -80,14 +80,14 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-4', force: true
+          @lxc.delete 'nikita-exec-4', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-4'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-4'
-        @lxd.exec
+        @lxc.exec
           container: 'nikita-exec-4'
           trap: true
           command: """
@@ -103,14 +103,14 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-5', force: true
+          @lxc.delete 'nikita-exec-5', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-5'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-5'
-        {$status, code} = await @lxd.exec
+        {$status, code} = await @lxc.exec
           container: 'nikita-exec-5'
           trap: false
           command: """
@@ -128,14 +128,14 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-6', force: true
+          @lxc.delete 'nikita-exec-6', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-6'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-6'
-        {stdout} = await @lxd.exec
+        {stdout} = await @lxc.exec
           container: 'nikita-exec-6'
           env:
             'ENV_VAR_1': 'value 1'
@@ -154,17 +154,17 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-7', force: true
+          @lxc.delete 'nikita-exec-7', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-7'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-7'
-        @lxd.exec
+        @lxc.exec
           container: 'nikita-exec-7'
           command: 'adduser --uid 1234 --disabled-password nikita'
-        {stdout} = await @lxd.exec
+        {stdout} = await @lxc.exec
           container: 'nikita-exec-7'
           user: 1234
           command: 'whoami'
@@ -179,14 +179,14 @@ describe 'lxd.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxd.delete 'nikita-exec-8', force: true
+          @lxc.delete 'nikita-exec-8', force: true
         await @clean()
-        await @lxd.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-8'
-        await @lxd.start
+        await @lxc.start
           container: 'nikita-exec-8'
-        {stdout} = await @lxd.exec
+        {stdout} = await @lxc.exec
           container: 'nikita-exec-8'
           cwd: '/bin'
           command: 'pwd'

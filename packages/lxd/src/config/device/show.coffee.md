@@ -1,5 +1,5 @@
 
-# `nikita.lxd.config.device.show`
+# `nikita.lxc.config.device.show`
 
 Show full device configuration for containers or profiles.
 
@@ -13,7 +13,7 @@ Show full device configuration for containers or profiles.
 ## Example
 
 ```js
-const {properties} = await nikita.lxd.config.device.show({
+const {properties} = await nikita.lxc.config.device.show({
   container: 'container1',
   device: 'vpn'
 })
@@ -40,7 +40,7 @@ console.info(properties)
 ## Handler
 
     handler = ({config}) ->
-      {data} = await @lxd.query
+      {data} = await @lxc.query
         path: '/' + [
           '1.0', 'instances', config.container
         ].join '/'

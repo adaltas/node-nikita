@@ -1,5 +1,5 @@
 
-# `nikita.lxd.network`
+# `nikita.lxc.network`
 
 Create a network or update a network configuration
 
@@ -11,7 +11,7 @@ Create a network or update a network configuration
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.network({
+const {$status} = await nikita.lxc.network({
   network: 'lxbr0'
   properties: {
     'ipv4.address': '172.89.0.0/24',
@@ -46,7 +46,7 @@ console.info(`Network was created: ${$status}`)
             '.*': type: ['string', 'boolean', 'number']
           description: """
           The network configuration, see [available
-          fields](https://lxd.readthedocs.io/en/latest/networks/).
+          fields](https://lxc.readthedocs.io/en/latest/networks/).
           """
       required: ['network']
 

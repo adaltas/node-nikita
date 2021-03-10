@@ -1,5 +1,5 @@
 
-# `nikita.lxd.config.device`
+# `nikita.lxc.config.device`
 
 Create a device or update its configuration.
 
@@ -11,7 +11,7 @@ Create a device or update its configuration.
 ## Example
 
 ```js
-const {$status} = await nikita.lxd.config.device({
+const {$status} = await nikita.lxc.config.device({
   container: 'container1',
   device: 'root',
   type: 'disk',
@@ -45,7 +45,7 @@ console.info(`Disk was created: ${$status}`)
           type: 'string'
           description: """
           Type of device, see [the list of device
-          types](https://lxd.readthedocs.io/en/latest/instances/#device-types).
+          types](https://lxc.readthedocs.io/en/latest/instances/#device-types).
           """
       oneOf: [
         { $ref: '#/definitions/disk' }
@@ -119,7 +119,7 @@ console.info(`Disk was created: ${$status}`)
                   enum: ['physical', 'bridged', 'macvlan', 'p2p', 'sriov']
                   description: """
                   LXD supports different kind of [network
-                  devices](https://lxd.readthedocs.io/en/stable-3.0/containers/#type-nic)
+                  devices](https://lxc.readthedocs.io/en/stable-3.0/containers/#type-nic)
                   and each type of network interface types have different
                   additional properties.
                   """
@@ -225,7 +225,7 @@ console.info(`Disk was created: ${$status}`)
       for k, v of config.properties
         continue if typeof v is 'string'
         config.properties[k] = v.toString()
-      {properties} = await @lxd.config.device.show
+      {properties} = await @lxc.config.device.show
         container: config.container
         device: config.device
       try

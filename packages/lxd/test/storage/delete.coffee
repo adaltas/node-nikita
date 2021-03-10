@@ -5,16 +5,16 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.storage.delete', ->
+describe 'lxc.storage.delete', ->
 
   they 'Delete a storage', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      await @lxd.storage
+      await @lxc.storage
         name: "nikita-storage-delete-1"
         driver: "zfs"
-      {$status} = await @lxd.storage.delete
+      {$status} = await @lxc.storage.delete
         name: "nikita-storage-delete-1"
       $status.should.be.true()
       
@@ -22,12 +22,12 @@ describe 'lxd.storage.delete', ->
     nikita
       $ssh: ssh
     , ->
-      await @lxd.storage
+      await @lxc.storage
         name: "nikita-storage-delete-2"
         driver: "zfs"
-      await @lxd.storage.delete
+      await @lxc.storage.delete
         name: "nikita-storage-delete-2"
-      {$status} = await @lxd.storage.delete
+      {$status} = await @lxc.storage.delete
         name: "nikita-storage-delete-2"
       $status.should.be.false()
   

@@ -15,7 +15,7 @@ the current working directory.
 
 nikita
 .log.cli pad: host: 20, header: 60
-.lxd.cluster
+.lxc.cluster
   $header: 'Container'
   networks:
     lxdbr0public:
@@ -91,7 +91,7 @@ nikita
       key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({config}) ->
-    await @lxd.exec
+    await @lxc.exec
       $header: 'Node.js'
       container: config.container
       command: """
@@ -101,7 +101,7 @@ nikita
       """
       trap: true
       code_skipped: 42
-    # @lxd.file.push
+    # @lxc.file.push
     #   debug: true
     #   header: 'Test configuration'
     #   container: options.container

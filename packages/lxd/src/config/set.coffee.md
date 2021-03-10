@@ -1,12 +1,12 @@
 
-# `nikita.lxd.config.set`
+# `nikita.lxc.config.set`
 
 Set container or server configuration keys.
 
 ## Set a configuration key
 
 ```js
-const {$status} = await nikita.lxd.config.set({
+const {$status} = await nikita.lxc.config.set({
   name: "my_container",
   properties: {
     'boot.autostart.priority': 100

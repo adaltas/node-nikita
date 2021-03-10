@@ -5,15 +5,15 @@ they = require('mocha-they')(config)
 
 return unless tags.lxd
 
-describe 'lxd.network.delete', ->
+describe 'lxc.network.delete', ->
 
   they 'Delete a network', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @lxd.network
+      @lxc.network
         network: "testnet0"
-      {$status} = await @lxd.network.delete
+      {$status} = await @lxc.network.delete
         network: "testnet0"
       $status.should.be.true()
           
@@ -21,10 +21,10 @@ describe 'lxd.network.delete', ->
     nikita
       $ssh: ssh
     , ->
-      @lxd.network
+      @lxc.network
         network: "testnet0"
-      @lxd.network.delete
+      @lxc.network.delete
         network: "testnet0"
-      {$status} = await @lxd.network.delete
+      {$status} = await @lxc.network.delete
         network: "testnet0"
       $status.should.be.false()

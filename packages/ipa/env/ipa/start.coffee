@@ -33,7 +33,7 @@ require '@nikitajs/tools/lib/register'
 nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
-.lxd.cluster
+.lxc.cluster
   $header: 'Container'
   # FreeIPA do a reverse lookup on initialisation
   # Using the default bridge yields to the error
@@ -65,7 +65,7 @@ nikita
         ipa_ui_https: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
   provision_container: ({config}) ->
-    await @lxd.exec
+    await @lxc.exec
       $header: 'Node.js'
       container: config.container
       command: '''
@@ -76,7 +76,7 @@ nikita
       '''
       code_skipped: 42
       trap: true
-    await @lxd.exec
+    await @lxc.exec
       $header: 'SSH keys'
       container: config.container
       command: """
@@ -89,7 +89,7 @@ nikita
       """
       code_skipped: 42
       trap: true
-    await @lxd.exec
+    await @lxc.exec
       $header: 'Install FreeIPA'
       container: config.container
       code_skipped: 42
