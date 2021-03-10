@@ -9,7 +9,7 @@ require '@nikitajs/lxd/lib/register'
   .log.cli pad: host: 20, header: 60
   .log.md filename: '/tmp/nikita_core_ssh'
   .lxc.cluster
-    metadata: header: 'Container'
+    $header: 'Container'
     containers:
       'nikita-core-ssh':
         image: 'images:centos/7'
@@ -26,7 +26,7 @@ require '@nikitajs/lxd/lib/register'
         ssh: enabled: true
     provision_container: ({config}) ->
       await @lxc.exec
-        metadata: header: 'User `source`'
+        $header: 'User `source`'
         container: config.container
         command: '''
         if ! id -u 1234 ; then
@@ -40,7 +40,7 @@ require '@nikitajs/lxd/lib/register'
         '''
         trap: true
       await @lxc.exec
-        metadata: header: 'Node.js'
+        $header: 'Node.js'
         container: config.container
         command: """
         export HOME=/home/source
@@ -54,7 +54,7 @@ require '@nikitajs/lxd/lib/register'
         trap: true
         code_skipped: 42
       await @lxc.exec
-        metadata: header: 'User `target`'
+        $header: 'User `target`'
         container: config.container
         command: '''
         if ! id -u 1235; then

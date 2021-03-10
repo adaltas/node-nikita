@@ -21,14 +21,14 @@ describe 'plugins.metadata.retry', ->
   describe 'handler', ->
 
     it 'handler thrown exception', ->
-      nikita.call $retry: 5, sleep: 100, ({metadata}) ->
+      nikita.call $retry: 5, $sleep: 100, ({metadata}) ->
         if metadata.attempt < 2
         then throw Error 'Catchme'
         else "success #{metadata.attempt}"
       .should.be.resolvedWith 'success 2'
 
     it 'handler rejected promises', ->
-      nikita.call $retry: 5, sleep: 100, ({metadata}) ->
+      nikita.call $retry: 5, $sleep: 100, ({metadata}) ->
         new Promise (resolve, reject) ->
           if metadata.attempt < 2
           then throw Error 'Catchme'

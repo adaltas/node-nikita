@@ -26,7 +26,7 @@ describe 'plugins.metadata.attempt (plugin.retry)', ->
 
     it 'follow the number of retry', ->
       count = 0
-      nikita.call $retry: 5, sleep: 0, ({metadata}) ->
+      nikita.call $retry: 5, $sleep: 0, ({metadata}) ->
         metadata.attempt.should.eql count++
         throw Error 'Catchme' if metadata.attempt < 4
 

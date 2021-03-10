@@ -27,7 +27,7 @@ they 'wait for docker daemon to listen', ({ssh}) ->
     docker: config.docker
   .execute.wait
     command: 'docker ps'
-    retry: 40
+    $retry: 40
     interval: 250
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
