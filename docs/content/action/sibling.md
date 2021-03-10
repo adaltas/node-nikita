@@ -8,9 +8,13 @@ related:
 
 # Sibling action
 
-Nikita stores the hierarchical tree of the actions running in a Nikita session. The sibling is the closest action at the same hierarchical level executed before the current action.
+Nikita stores the hierarchical tree of the actions running in a Nikita session. The sibling is the action with the same parent and which was executed just before the current action.
 
-It is a JavaScript object which consists of the following properties:
+The `sibling` property is an alias of `siblings[siblings.length-1]`.
+
+## Properties
+
+It is an object with the following properties:
 
 - `children`   
   The [child actions](/current/action/children) relative to the current action.
@@ -19,11 +23,13 @@ It is a JavaScript object which consists of the following properties:
 - `config`   
   The [configuration properties](/current/action/config) passed to an action call.
 - `error`   
-  The error object of an exception [rejected by the action](/current/usages/error).
+  The [error object](/current/usages/error) in a rejected action.
 - `output`   
-  The [action output](/current/action/output).
-  
-The information about the executed sibling action is accessed inside the [action handler](/current/action/handler) in the `sibling` property of the first argument:
+  The [returned output](/current/action/output) in a resolved action.
+
+## Usage
+
+The property is available in the [action handler](/current/action/handler) under the `sibling` property in the first argument:
 
 ```js
 nikita

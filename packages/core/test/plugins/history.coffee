@@ -42,9 +42,21 @@ describe 'plugins.history', ->
       .should.be.resolvedWith 'mayday'
               
   describe 'sibling', ->
+    
+    it 'an alias of last element in siblings', ->
+      nikita.call ->
+        @call -> 'send'
+        @call -> 'mayday'
+        @call $raw_output: true, ({sibling, siblings}) ->
+          # For same reason, their are not the same instance
+          # Note sure why but it doesn't really matter
+          should(sibling is siblings[siblings.length - 1]).be.false()
+          # As long as the content is the same
+          sibling.should.eql siblings[siblings.length - 1]
 
     it 'get previous action', ->
       nikita.call ->
+        @call -> 'send'
         @call -> 'mayday'
         @call ({sibling}) ->
           sibling.output
@@ -52,6 +64,7 @@ describe 'plugins.history', ->
 
     it 'get previous slibling children', ->
       nikita.call ->
+        @call -> 'send'
         @call -> @call -> 'mayday'
         @call ({sibling}) ->
           sibling.children[0].output
