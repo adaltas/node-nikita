@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/core@1.0.0-alpha.0...@nikitajs/core@1.0.0-alpha.1) (2021-03-10)
+
+
+### Bug Fixes
+
+* **core:** bastard applied to all conditions and assertions ([562299c](https://github.com/adaltas/node-nikita/commit/562299c761bf74666509a95fbf4bbc8f0dfebd1a))
+* **core:** build previous feature ([958fb2d](https://github.com/adaltas/node-nikita/commit/958fb2d1db670fb6dabf78dec1bd7bf4d888abec))
+* **core:** dollar sign ([35d58c6](https://github.com/adaltas/node-nikita/commit/35d58c654d0ab0186345d8aaf0d6ec9cb07111e5))
+* **core:** filter out entering logs for bastard ([1cd8ce1](https://github.com/adaltas/node-nikita/commit/1cd8ce1cdc7935b1ab058afa2081f6bfe2cdcf2b))
+* **core:** fix folder removal error message ([205bc56](https://github.com/adaltas/node-nikita/commit/205bc567064195e07d8a0bdfa67a393c28cd0be2))
+* **core:** fix uncaught error in execute.wait ([e89ada5](https://github.com/adaltas/node-nikita/commit/e89ada52b4c7579b232cb243dac8b6acf3e9979c))
+* **core:** interpret null as a value in find ([ad78b85](https://github.com/adaltas/node-nikita/commit/ad78b857a8c57018d21ffd32e0375c7b49c70c69))
+* **core:** log.md enter honors $log false ([6a17153](https://github.com/adaltas/node-nikita/commit/6a171535176daf0170d8cce21e1e6d3c18a54161))
+* **core:** reject errors when $ref is invalid ([f8fd133](https://github.com/adaltas/node-nikita/commit/f8fd133e4a6cdb745fafa482e1b0550f097cff88))
+* **core:** relax called in result to handler scheduler errors ([41d5cf8](https://github.com/adaltas/node-nikita/commit/41d5cf82b6e0527868a6a0f158c96ce6183e39bc)), closes [#282](https://github.com/adaltas/node-nikita/issues/282)
+* **core:** remove ref to ssh in fs.move ([a1644c9](https://github.com/adaltas/node-nikita/commit/a1644c9b8d64ab94f6e8f075b450770795988c01))
+* **core:** remove usage of run ([33be522](https://github.com/adaltas/node-nikita/commit/33be522d11f6d3b5b409ae32434c170f56f8ab5e))
+* **core:** scheduler accept empty array of handlers ([7f1aa82](https://github.com/adaltas/node-nikita/commit/7f1aa82a6da6c0a58d76271c6aefe67241f90b5c))
+* **core:** session call out actions after handler actions ([a72a8d6](https://github.com/adaltas/node-nikita/commit/a72a8d6416ef2435a5dd1c82b895029804c68118))
+* **core:** siblings initialized as empty array ([93c1508](https://github.com/adaltas/node-nikita/commit/93c150884169a99208f24b387fc94f61ba259a9f))
+* **core:** use scheduler instead of Promise.all on session creation ([7d16d96](https://github.com/adaltas/node-nikita/commit/7d16d96d9893934c558efec13d0cf7990db80766))
+
+
+### Features
+
+* **core:** $log property in error thrown by action ([6a7d4e8](https://github.com/adaltas/node-nikita/commit/6a7d4e8bab7fd9627b7885341b2f36ada5518e93))
+* **core:** activate diff in log.md ([2d548db](https://github.com/adaltas/node-nikita/commit/2d548dbc09a509f1b5af58f31d6f2503cf8d9f5e))
+* **core:** call accept module path ([25ff5fc](https://github.com/adaltas/node-nikita/commit/25ff5fc20b3b7bc48e3dad4a54c08030d83cc62a))
+* **core:** close ssh conn from sibling ([85dec82](https://github.com/adaltas/node-nikita/commit/85dec826981c65dd274f047ec6f56364c1776958))
+* **core:** config enter in log.md ([bb9c496](https://github.com/adaltas/node-nikita/commit/bb9c4961e95604cb4ab09d41dda95e9d4e9f21d6))
+* **core:** fs.assert trim when match content ([e7e0262](https://github.com/adaltas/node-nikita/commit/e7e02629a9b9bdf0d515edab12dd7c575cc92940))
+* **core:** magic_dollar plugin ([77df829](https://github.com/adaltas/node-nikita/commit/77df829b653fc9dced333c0dbefcbb5ffcbd2539))
+* **core:** new bastard metadata ([0f57bab](https://github.com/adaltas/node-nikita/commit/0f57bab5e1c6c141945323962c2594b483d6c82b))
+* **core:** new retry property in execute.wait ([f38bb1d](https://github.com/adaltas/node-nikita/commit/f38bb1dbc5cfb19906dcfa777e2774ebddca1cd1))
+* **core:** new utils.promise.array_filter function ([8793cb3](https://github.com/adaltas/node-nikita/commit/8793cb3ffb45cff374df44e42700ddd997078d56))
+* **core:** plugin execute export config to metadata ([3022c14](https://github.com/adaltas/node-nikita/commit/3022c14a4b631a8ad5bc36aa7972a18f4eaad780))
+* **core:** revert scheduler to not manage errors in handler ([c6ebce7](https://github.com/adaltas/node-nikita/commit/c6ebce78be7c03330469a834a5ab89f0c4d00638))
+* **core:** scheduler pause and resume ([2635719](https://github.com/adaltas/node-nikita/commit/2635719f7435f4061ace1d1a28aa8c678877bddf))
+* schema coercion ([9e52391](https://github.com/adaltas/node-nikita/commit/9e52391852a8e45b35674faa44f17747303b2851))
+
+
+
+
+
 # [1.0.0-alpha.0](https://github.com/adaltas/node-nikita/compare/@nikitajs/core@0.9.7...@nikitajs/core@1.0.0-alpha.0) (2021-02-03)
 
 The jump to version 1.0.0 is a major which rewrite every single part of the code. The list of changes is too big to be reproduced here. We'll start generating the changelog from this version.
