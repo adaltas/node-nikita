@@ -14,7 +14,7 @@ Using metadata is as easy as passing one or multiple properties when calling an 
 nikita
 // Call an action with the `header` metadata
 .execute({
-  // highlight-range{1-3}
+  // highlight-next-line
   $header: 'Check user',
   command: 'whoami'
 })

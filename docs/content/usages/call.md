@@ -34,7 +34,7 @@ Use the expanded object syntax to pass additional information. For example, we c
 ```js
 nikita
 .call({
-  // highlight-range{1-4}
+  // highlight-next-line
   $retry: 2,
   my_config: 'my_value',
   $handler: ({config}) => {

@@ -14,7 +14,7 @@ For example, the `unassert_exists` ensures that a file or a directory is not pre
 (async () => {
   await nikita.fs.remove({
     // highlight-next-line
-    unassert_exists: '/tmp/a_dir',
+    $unassert_exists: '/tmp/a_dir',
     recursive: true,
     target: '/tmp/a_dir'
   })
@@ -27,8 +27,8 @@ Multiple assertions can be combined, in which case, all assertions must succeed.
 (async () => {
   await nikita.fs.mkdir({
     // highlight-range{1-2}
-    assert: {status: true},
-    assert_exists: '/tmp/a_dir',
+    $assert: {status: true},
+    $assert_exists: '/tmp/a_dir',
     target: "/tmp/a_dir"
   })
 })()
@@ -204,7 +204,7 @@ The `assert_exists` value could be a **string** a an **array of strings**. It is
   // String
   .fs.mkdir({
     // highlight-next-line
-    assert_exists: '/tmp/a_dir',
+    $assert_exists: '/tmp/a_dir',
     target: "/tmp/a_dir"
   })
   // Array of strings

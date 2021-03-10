@@ -105,7 +105,7 @@ connect({
   if(err) return process.exit(1)
   // Pass the connection to the `file.touch` action
   const {status} = await nikita.file.touch({
-    ssh: ssh,
+    $ssh: ssh,
     target: '/tmp/nikita/a_file'
   })
   console.info('File is written: ' + status)
@@ -119,7 +119,7 @@ connect({
 (async () => {
   const {status} = await nikita
   .file.touch({
-    ssh: {
+    $ssh: {
       host: 'localhost',
       username: 'root',
       private_key_path: '~/.ssh/id_rsa'

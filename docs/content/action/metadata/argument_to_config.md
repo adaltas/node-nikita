@@ -29,7 +29,7 @@ Note, when the same configuration property is provided to the action call, it do
 
 ## Usage
 
-It is simplified using the `argument_to_config` metadata. The example below define two configuration properties `key_1` and `key_2` where :
+It is simplified using the `argument_to_config` metadata. The example below define two configuration properties `key_1` and `key_2` where:
 
 ```js
 nikita
@@ -40,7 +40,7 @@ nikita
     argument_to_config: 'key_2'
   },
   handler: ({config}) => {
-    // my_key is already available in config
+    // key_2 is available in config
     console.info(config)
     // Handler implementation...
   }
