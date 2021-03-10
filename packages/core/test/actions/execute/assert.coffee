@@ -12,7 +12,7 @@ describe 'actions.execute.assert', ->
       nikita.execute.assert
         command: 'exit 1'
         code: 1
-        $handler: ({config}) ->
+        ({config}) ->
           config.code.should.eql [1]
   
   describe 'exit code', ->
