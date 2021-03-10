@@ -6,7 +6,7 @@ related:
 
 # Metadata "time_end"
 
-The `time_end` metadata property stores the Unix timestamp at the time when the action finish its execution.
+The `time_end` metadata property stores the Unix timestamp at the time when the action finishes its execution.
 
 * Type: `number`
 * Read-only
@@ -61,4 +61,4 @@ nikita(function(){
 })
 ```
 
-The various log related actions use this information to report the action execution time.
+The various log-related actions use this information to report the action execution time.

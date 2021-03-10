@@ -10,20 +10,20 @@ related:
 
 A Nikita session is organized as a hierarchical tree of action. Actions have [parent](/action/parent) and children. The children are the actions executed in the handler of a parent action.
 
-The `children` property of an action expose an array with all the executed action inside of it. In the `handler` function, `children` is a property available inside its first argument.
+The `children` property of an action exposes an array with all the executed action inside of it. In the `handler` function, `children` is a property available inside its first argument.
 
-The child action objects contain of the following properties:
+The child action objects contain the following properties:
 
 - `children`   
-  The child actions of the current action.
+  The child actions relative to the current action.
 - `metadata`   
   The [metadata properties](/current/action/metadata) of the action.
 - `config`   
-  The [configuration properties](/current/action/config) passed to an action.
+  The [configuration properties](/current/action/config) passed to an action call.
 - `error`   
-  The error object of an exception [rejected by the action](/current/usages/error).
+  The [error object](/current/usages/error) in a rejected action.
 - `output`   
-  The [action returned output](/current/action/output).
+  The [returned output](/current/action/output) in a resolved action.
 
 ## Usage
 

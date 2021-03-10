@@ -11,7 +11,7 @@ The status meaning may differ from one action to another, here are a few example
 - *Touching a file*   
   The status is `true` if the file was created or any metadata associated with the file has changed, such as the timestamp modification or a change of ownership.
 - *Modification of a configuration file (JSON, YAML, INI...)*   
-  The status is `true` if a property or any metadata associated with the file has changed. A change of format, like prettifying the source code, will not affect the status, while the addition of a new property or the modification on the value of an existing property will set the status to `true`.
+  The status is `true` if a property or any metadata associated with the file has changed. A change of format, like prettifying the source code, will not affect the status, while the addition of a new property or the modification on the value of existing property will set the status to `true`.
 - *Checking if a port is open*   
   The status is set to `true` if a server is listening on that port and `false` otherwise. This is arguably an alternative usage. In such a case, it is often used conjointly with the [`shy` metadata](/current/metadata/shy) to ensure that parent actions don't get their status modified.
 

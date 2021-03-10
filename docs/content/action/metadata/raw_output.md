@@ -7,7 +7,7 @@ related:
 
 # Metadata "raw_output"
 
-The `raw_output` metadata preserve the value returned by an action from modifications. Thus, the value returned inside the [action handler](/current/action/handler) is not altered.
+The `raw_output` metadata preserves the value returned by an action from modifications. Thus, the value returned inside the [action handler](/current/action/handler) is not altered.
 
 * Type: `boolean`
 * Default: `false`

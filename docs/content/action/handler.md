@@ -13,7 +13,7 @@ However, you should not be afraid to write your own handler, it is as easy as wr
 
 ## Usage
 
-You can pass the `$handler` property name when calling an action alongs its configuration.
+You can pass the `$handler` property name when calling an action along with its configuration.
 
 The [configuration properties](/current/action/config) passed to the `call` action are available in the `config` property of the first argument of the handler:
 
@@ -44,7 +44,7 @@ nikita
 
 ## Returned output
 
-The value returned by the handler is a value sent to the [action output](/current/action/output). It can be of any type.
+The value returned by the handler is a value set to the [action output](/current/action/output). It can be of any type.
 
 Some plugins may alter its content:
 

@@ -11,7 +11,7 @@ The `argument_to_config` metadata property maps a string argument passed to the 
 * Type: `string`
 
 
-When [writing and registering](/current/usages/register) Nikita actions, it is sometime interesting to simplify how arguments are provided. Instead of passing an object literal with a configuration property inside it as a string, it is potentially more convenient to directy provide this property.
+When [writing and registering](/current/usages/register) Nikita's actions, it is sometimes interesting to simplify how arguments are provided. Instead of passing an object literal with a configuration property inside it as a string, it is potentially more convenient to directly provide this property.
 
 For example, the `file.touch` action accept a `target` configuration property. An example to use it is:
 

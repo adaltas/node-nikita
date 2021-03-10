@@ -6,14 +6,14 @@ related:
 
 # Metadata "argument"
 
-The `argument` metadata property extract the last argument which is not an object literal, interpreted as a configuration, nor a function, interpreted as a handler, nor an array, converted to multiple actions.
+The `argument` metadata property extracts the last argument which is not an object literal, interpreted as a configuration, nor a function, interpreted as a handler, nor an array, converted to multiple actions.
 
 * Type: `boolean|number|string|null`
 * Read-only
 
 This metadata is primarily used to implement the [short declaration](/action/config#short-declaration) of configuration properties. The `argument_to_config` metadata property leverages and simplifies its usage. It is supported by several Nikita actions such as the [`nikita.execute`](/current/actions/execute) and [`nikita.fs.mkdir`](/current/actions/fs/mkdir) actions.
 
-This property does not provide a complete representation of the user input. Not all arguments are provided and only the last one is intepreted. Refers to the `args` action property to access the action arguments.
+This property does not provide a complete representation of the user input. Not all arguments are provided and only the last one is interpreted. Refers to the `args` action property to access the action arguments.
 
 ## Usage
 

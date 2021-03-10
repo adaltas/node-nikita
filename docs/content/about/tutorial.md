@@ -47,7 +47,7 @@ Nikita comes with a set of default functions. It is bundled with many handy func
 - package-management
 - run docker containers
 
-You are encouraged to extend Nikita with your own [actions](/current/action). In its simplest form, written an action is just about writing a plain vanilla JavaScript function.
+You are encouraged to extend Nikita with your own [actions](/current/action). In its simplest form, writing an action is just about writing a plain vanilla JavaScript function.
 
 ## Installation instructions
 
@@ -60,7 +60,7 @@ To run your code, you must have Node.js and NPM (or YARN) installed. The procedu
 - [Package manager](https://nodejs.org/en/download/package-manager/)   
   The [package manager](https://nodejs.org/en/download/package-manager/) is probably the fastest and easiest way to get Node.js installed and ready while being upgraded in the future. The choice of package managers will depend on your system.
 - Node.js version manager
-  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advanced users, this is the recommended procedure. We personnaly use [N](https://github.com/tj/n).
+  [NVM](https://github.com/creationix/nvm) and [N](https://github.com/tj/n) will manage multiple versions of Node.js in parallel. For advanced users, this is the recommended procedure. We personally use [N](https://github.com/tj/n).
 
 Once installed, you should have the `node` and `npm` commands available from your terminal.
 
@@ -68,7 +68,7 @@ Once installed, you should have the `node` and `npm` commands available from you
 
 A Nikita project is commonly a Node.js package. Everything is a file and it doesn't require you to rely on any external software such as a database. For this reason, it naturally integrates with [version control systems (VCS)](https://en.wikipedia.org/wiki/Version_control) to track development iterations. Several tools are available such as [Git](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/). In this tutorial, we will be using [Git](https://git-scm.com/) and publish the source code to the [node-nikita-tutorial repository on GitHub](https://github.com/adaltas/node-nikita-tutorial).
 
-We start by initializing a new Git projet:
+We start by initializing a new Git project:
 
 ```bash
 # Create a new folder
@@ -309,7 +309,7 @@ nikita({
 // Attempt 2 out of 3
 ```
 
-Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exeptions including `$handler`, `$plugins`, `$ssh` as well as all condition and assertion properties.
+Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exceptions including `$handler`, `$plugins`, `$ssh` as well as all condition and assertion properties.
 
 ### Idempotence and status
 
@@ -473,7 +473,7 @@ The existing `nikita.file.download` action is used to dowload Redis:
 })()
 ```
 
-The second time `nikita.file.download` is called, it checks if the target exists and bypass the download in such case, thus speeding up the exection. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" configuration properties.
+The second time `nikita.file.download` is called, it checks if the target exists and bypasses the download in such case, thus speeding up the execution. You could also adjust this behavior based on the file signature by using one of the "md5", "sha1" and "sha256" configuration properties.
 
 To extract and compile Redis, a custom shell script is only be executed if a specific generated file does not already exist. Nikita comes with a few native conditions prefixed with "$if_" and their associated negation prefixed with "$unless_". The `nikita.execute` action to execute shell scripts:
 
@@ -638,7 +638,7 @@ nikita(async function(){
 
 The Redis `PING` command is expected to return `PONG` if the server is healthy. Let's take this use case to illustrate the usage of the `relax` and `shy` metadata properties.
 
-The `relax` metadata resolve the action successfully with the error placed inside the resulting output instead of rejecting the exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
+The `relax` metadata resolves the action successfully with the error placed inside the resulting output instead of rejecting the exception, thus allowing the Nikita session to exit gracefully while printing `✘` in case of any error. 
 
 Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of the parent `nikita.call` action, because it is not considered as a change of state.
 

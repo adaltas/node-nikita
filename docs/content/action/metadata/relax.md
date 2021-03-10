@@ -15,7 +15,7 @@ Sometimes, you wish to [handle errors](/current/usages/error) not in the action 
 
 The value is a boolean with the value `false` as default. Simply set the action to a value `true` to enable the "relax" behavior.
 
-In the example below, we start the MariaDB service with the `systemctl` command. If the service is not installed or already started, the result is a non-zero code, resulting with an error unless the `relax` metadata is activated, but we don't want to deal with it:
+In the example below, we start the MariaDB service with the `systemctl` command. If the service is not installed or already started, the result is a non-zero code, resulting in an error unless the `relax` metadata is activated, but we don't want to deal with it:
 
 ```js
 nikita

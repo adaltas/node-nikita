@@ -28,7 +28,7 @@ nikita
 
 ## Plugin enrichment
 
-This returned value is eventualy modified by plugins.
+This returned value is eventually modified by plugins.
 
 The `@nikitajs/core/lib/plugins/status` plugin enriches the value with a `$status` property when an object literal is returned and converts the value `true` to `{ $status: true }` when a boolean value is returned. The `@nikitajs/core/lib/plugins/output_log` plugin returns the logs emitted inside the action.
 
