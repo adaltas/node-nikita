@@ -12,6 +12,8 @@ A Nikita session is organized as a hierarchical tree of action. Actions have [pa
 
 The `children` property of an action exposes an array with all the executed action inside of it. In the `handler` function, `children` is a property available inside its first argument.
 
+## Properties
+
 The child action objects contain the following properties:
 
 - `children`   

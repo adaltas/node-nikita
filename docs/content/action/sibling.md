@@ -29,7 +29,7 @@ It is an object with the following properties:
 
 ## Usage
 
-The property is available in the [action handler](/current/action/handler) under the `sibling` property in the first argument:
+The properties are available in the [action handler](/current/action/handler) under the `sibling` property in the first argument:
 
 ```js
 nikita
