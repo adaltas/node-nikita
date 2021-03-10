@@ -105,7 +105,6 @@
   },
   "scripts": {
     "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/file\\/src/@nikitajs\\/file\\/lib/g'",
-    "pretest": "npm run build",
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
   }
