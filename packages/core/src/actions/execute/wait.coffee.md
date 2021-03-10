@@ -86,15 +86,15 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
         attempts++
         log message: "Start attempt ##{attempts}", level: 'DEBUG'
         commands = await utils.promise.array_filter commands, (command) =>
-            {$status: success} = await @execute
-              command: command
-              code: config.code or 0
-              code_skipped: config.code_skipped
-              stdin_log: config.stdin_log
-              stdout_log: config.stdout_log
-              stderr_log: config.stderr_log
-              $relax: config.code_skipped is undefined
-            !success
+          {$status: success} = await @execute
+            command: command
+            code: config.code or 0
+            code_skipped: config.code_skipped
+            stdin_log: config.stdin_log
+            stdout_log: config.stdout_log
+            stderr_log: config.stderr_log
+            $relax: config.code_skipped is undefined
+          !success
         log message: "Attempt ##{attempts} expect #{config.quorum} success, got #{config.command.length - commands.length}", level: 'INFO'
         if commands.length <= config.command.length - config.quorum
           return

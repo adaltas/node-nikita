@@ -264,9 +264,9 @@ fi;`);
     }
   });
   return (await this.call({
-    if: rebooting,
+    $if: rebooting,
     $retry: true,
-    sleep: 3000
+    $sleep: 3000
   }, async function() {
     var conn;
     conn = (await connect(config));
