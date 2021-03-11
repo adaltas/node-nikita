@@ -49,7 +49,7 @@
 // ```
 
 // ## Exports
-var mutate;
+var mutate, path;
 
 module.exports = {
   hooks: {
@@ -58,16 +58,27 @@ module.exports = {
       if (typeof action.metadata.argument !== 'string') {
         return;
       }
-      mod = require.main.require(action.metadata.argument);
+      mod = action.metadata.argument;
+      if (mod.substr(0, 1) === '.') {
+        mod = path.resolve(process.cwd(), mod);
+      }
+      mod = require.main.require(mod);
       if (typeof mod === 'function') {
         mod = {
           handler: mod
         };
       }
-      return mutate(action, mod);
+      mutate(action, mod, {
+        metadata: {
+          module: action.metadata.argument
+        }
+      });
+      return action;
     }
   }
 };
 
 // ## Dependencies
+path = require('path');
+
 ({mutate} = require('mixme'));

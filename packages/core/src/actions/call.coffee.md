@@ -54,10 +54,14 @@ assert(key === 'value')
       hooks:
         on_action: (action) ->
           return unless typeof action.metadata.argument is 'string'
-          mod = require.main.require action.metadata.argument
+          mod = action.metadata.argument
+          mod = path.resolve process.cwd(), mod if mod.substr(0, 1) is '.'
+          mod = require.main.require mod
           mod = handler: mod if typeof mod is 'function'
-          mutate action, mod
+          mutate action, mod, metadata: module: action.metadata.argument
+          action
 
 ## Dependencies
 
+    path = require 'path'
     {mutate} = require 'mixme'

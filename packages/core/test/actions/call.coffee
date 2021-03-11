@@ -51,5 +51,8 @@ describe 'actions.call', ->
         '''
         target: "#{tmpdir}/my_module.js"
       {config, metadata} = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
-      config.should.containEql my_key: 'my value'
-      metadata.should.containEql header: 'hello'
+      config.should.containEql
+        my_key: 'my value'
+      metadata.should.containEql
+        header: 'hello'
+        module: "#{tmpdir}/my_module.js"
