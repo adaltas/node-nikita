@@ -70,6 +70,11 @@ default to "0".`
       description: `Expected code to be returned when the command failed and should be
 scheduled for later execution, default to "1".`
     },
+    'retry': {
+      type: 'integer',
+      default: -1,
+      description: `Maximum number of attempts.`
+    },
     'stdin_log': {
       $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/stdin_log'
     },
@@ -89,9 +94,6 @@ handler = async function({
     tools: {log}
   }) {
   var $status, attempts, commands, wait;
-  if (config.retry == null) {
-    config.retry = -1;
-  }
   attempts = 0;
   $status = false;
   wait = function(timeout) {
