@@ -49,13 +49,25 @@
 // ```
 
 // ## Exports
+var mutate;
+
 module.exports = {
   hooks: {
     on_action: function(action) {
+      var mod;
       if (typeof action.metadata.argument !== 'string') {
         return;
       }
-      return action.handler = require.main.require(action.metadata.argument);
+      mod = require.main.require(action.metadata.argument);
+      if (typeof mod === 'function') {
+        mod = {
+          handler: mod
+        };
+      }
+      return mutate(action, mod);
     }
   }
 };
+
+// ## Dependencies
+({mutate} = require('mixme'));

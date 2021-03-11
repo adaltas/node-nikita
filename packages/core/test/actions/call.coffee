@@ -18,7 +18,7 @@ describe 'actions.call', ->
     .call ->
       registry.unregister 'my_function'
   
-  they 'call a module after its path', ({ssh}) ->
+  they 'call a module exporting a function', ({ssh}) ->
     nikita
       ssh: ssh
       $tmpdir: true
@@ -31,4 +31,25 @@ describe 'actions.call', ->
         '''
         target: "#{tmpdir}/my_module.js"
       result = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
-      result.should.containEql my_key: 'my value' 
+      result.should.containEql my_key: 'my value'
+  
+  they 'call a module exporting an object', ({ssh}) ->
+    nikita
+      ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.writeFile
+        content: '''
+        module.exports = {
+          metadata: {
+            header: 'hello'
+          },
+          handler: ({config, metadata}) => {
+            return {config, metadata}
+          }
+        }
+        '''
+        target: "#{tmpdir}/my_module.js"
+      {config, metadata} = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
+      config.should.containEql my_key: 'my value'
+      metadata.should.containEql header: 'hello'
