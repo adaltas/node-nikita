@@ -112,7 +112,6 @@ handler = async function({
   }) {
   var attr, creates, err, i, j, k, l, len, len1, len2, opts, parents, ref, ref1, ref2, stats, target, val;
   if (!ssh && (config.cwd === true || !config.cwd)) {
-    // console.log ':fs.mkdir:target', config.target
     // Configuration validation
     config.cwd = process.cwd();
   }

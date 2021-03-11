@@ -17,7 +17,7 @@ describe 'plugins.metadata.tmpdir', ->
         code: 'METADATA_TMPDIR_INVALID'
         message: [
           'METADATA_TMPDIR_INVALID:'
-          'the "tmpdir" metadata value must be a boolean or a string,'
+          'the "tmpdir" metadata value must be a boolean, a function or a string,'
           "got {}"
         ].join ' '
   
@@ -67,9 +67,24 @@ describe 'plugins.metadata.tmpdir', ->
       .call $tmpdir: './a_dir', ({metadata}) ->
         metadata.tmpdir
       .then (tmpdir) ->
-        tmpdir.should.eql unless !!ssh
+        tmpdir.should.eql unless ssh
         then path.resolve os.tmpdir(), './a_dir'
         else path.posix.resolve '/tmp', './a_dir'
+
+    they 'is a function', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      .call
+        $tmpdir: ({action, os_tmpdir, tmpdir}) ->
+          os_tmpdir.should.eql unless ssh
+          then os.tmpdir()
+          else '/tmp'
+          tmpdir.should.match /^nikita-.*/
+          # Test action arg and return
+          action.tools.path.join os_tmpdir, "#{tmpdir}-ok"
+      , ({metadata}) -> metadata.tmpdir
+      .then (tmpdir) ->
+        tmpdir.should.match /ok$/
           
     they 'ssh and tmpdir in same child', -> ({ssh}) ->
       # Fix bug where the ssh connection was not discoved when

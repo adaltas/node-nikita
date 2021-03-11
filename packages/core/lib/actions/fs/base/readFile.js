@@ -8,7 +8,7 @@
 //   target: `${scratch}/a_file`,
 //   encoding: 'ascii'
 // })
-// console.log(data)
+// console.info(data)
 // ```
 
 // ## Hook

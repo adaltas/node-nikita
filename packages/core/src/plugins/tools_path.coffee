@@ -4,10 +4,9 @@ path = require 'path'
 
 module.exports =
   name: '@nikitajs/core/src/plugins/tools_path'
-  # require: '@nikitajs/core/src/metadata/ssh'
   hooks:
     'nikita:action':
-      # after: '@nikitajs/core/src/metadata/ssh'
+      after: '@nikitajs/core/src/plugins/ssh'
       handler: (action) ->
         action.tools ?= {}
         # Path is alwaws posix over ssh

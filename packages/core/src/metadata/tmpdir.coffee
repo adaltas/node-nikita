@@ -2,7 +2,6 @@
 # {is_object, is_object_literal} = require 'mixme'
 utils = require '../utils'
 os = require 'os'
-path = require 'path'
 process = require 'process'
 fs = require 'ssh2-fs'
 exec = require 'ssh2-exec'
@@ -17,59 +16,57 @@ module.exports =
     'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/ssh'
+        '@nikitajs/core/src/plugins/tools_path'
         '@nikitajs/core/src/metadata/uuid'
       ]
       handler: (action) ->
+        {config, metadata, tools} = action
         throw utils.error 'METADATA_TMPDIR_INVALID', [
           'the "tmpdir" metadata value must be a boolean or a string,'
-          "got #{JSON.stringify action.metadata.tmpdir}"
-        ] unless typeof action.metadata.tmpdir in ['boolean', 'string', 'undefined']
-        return unless action.metadata.tmpdir
+          "got #{typeof metadata.tmpdir}"
+        ] unless typeof metadata.tmpdir in ['boolean', 'function', 'string', 'undefined']
+        return unless metadata.tmpdir
         # SSH connection extraction
-        ssh = if action.config.ssh is false
+        ssh = if config.ssh is false
         then undefined
-        else await action.tools.find (action) -> action.ssh
+        else await tools.find (action) -> action.ssh
         # tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
         os_tmpdir = if ssh then '/tmp' else os.tmpdir()
-        tmpdir = switch typeof action.metadata.tmpdir
+        metadata.tmpdir = switch typeof metadata.tmpdir
           when 'string'
-            action.metadata.tmpdir
+            tools.path.resolve os_tmpdir, metadata.tmpdir
           when 'boolean'
-            'nikita-'+action.metadata.uuid
-        action.metadata.tmpdir = path.resolve os_tmpdir, tmpdir
+            tools.path.resolve os_tmpdir, 'nikita-'+metadata.uuid
+          when 'function'
+            metadata.tmpdir = await metadata.tmpdir.call null,
+              action: action
+              os_tmpdir: os_tmpdir
+              tmpdir: 'nikita-'+metadata.uuid
         # Temporary directory creation
-        tmpDirInParent = action.parent and await action.tools.find action.parent, (parent) ->
-          return true if parent.metadata.tmpdir is action.metadata.tmpdir
+        tmpDirInParent = action.parent and await tools.find action.parent, (parent) ->
+          return true if parent.metadata.tmpdir is metadata.tmpdir
           undefined
         return if tmpDirInParent
         try
-          await fs.mkdir ssh, action.metadata.tmpdir
-          action.metadata.tmpdir_dispose = true
+          await fs.mkdir ssh, metadata.tmpdir
+          metadata.tmpdir_dispose = true
         catch err
           throw err unless err.code is 'EEXIST'
     'nikita:result':
       before: '@nikitajs/core/src/plugins/ssh'
       handler: ({action}) ->
+        {config, metadata, tools} = action
         # Value of tmpdir could still be true if there was an error in
         # one of the on_action hook, such as a invalid schema validation
-        return unless typeof action.metadata.tmpdir is 'string'
-        return unless action.metadata.tmpdir_dispose
-        return if action.metadata.dirty
+        return unless typeof metadata.tmpdir is 'string'
+        return unless metadata.tmpdir_dispose
+        return if metadata.dirty
         # SSH connection extraction
-        ssh = if action.config.ssh is false
+        ssh = if config.ssh is false
         then undefined
-        else await action.tools.find action, (action) -> action.ssh
-        # Ensure the location is correct
-        tmpdir = if ssh
-        then '/tmp'
-        else os.tmpdir()
-        throw utils.error 'METADATA_TMPDIR_CORRUPTION', [
-          'the "tmpdir" metadata value does not start as expected,'
-          "got #{JSON.stringify action.metadata.tmpdir},"
-          "expected to start with #{JSON.stringify tmpdir}"
-        ] unless action.metadata.tmpdir.startsWith tmpdir
+        else await tools.find action, (action) -> action.ssh
         # Temporary directory decommissioning
         await new Promise (resolve, reject) ->
-          exec ssh, "rm -r '#{action.metadata.tmpdir}'", (err) ->
+          exec ssh, "rm -r '#{metadata.tmpdir}'", (err) ->
             if err then reject err else resolve()

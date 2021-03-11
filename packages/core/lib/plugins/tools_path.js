@@ -7,10 +7,9 @@ path = require('path');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools_path',
-  // require: '@nikitajs/core/lib/metadata/ssh'
   hooks: {
     'nikita:action': {
-      // after: '@nikitajs/core/lib/metadata/ssh'
+      after: '@nikitajs/core/lib/plugins/ssh',
       handler: function(action) {
         if (action.tools == null) {
           action.tools = {};

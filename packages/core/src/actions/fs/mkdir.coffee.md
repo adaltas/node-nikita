@@ -91,7 +91,6 @@ console.info(`Directory was created: ${status}`)
 ## Handler
 
     handler = ({config, tools: {log, path}, ssh}) ->
-      # console.log ':fs.mkdir:target', config.target
       # Configuration validation
       config.cwd = process.cwd() if not ssh and (config.cwd is true or not config.cwd)
       config.parent = {} if config.parent is true

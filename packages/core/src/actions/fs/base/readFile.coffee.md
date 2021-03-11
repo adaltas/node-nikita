@@ -8,7 +8,7 @@ const {data} = await nikita.fs.base.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
-console.log(data)
+console.info(data)
 ```
 
 ## Hook
