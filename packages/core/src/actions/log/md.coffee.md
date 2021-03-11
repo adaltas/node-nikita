@@ -17,17 +17,11 @@ nikita(async function(){
 })
 ```
 
-## Hook
-
-    on_action = ({config}) ->
-      config.serializer = {}
-
 ## Schema
 
     schema =
       type: 'object'
       allOf: [
-        $ref: 'module://@nikitajs/core/src/actions/log/fs'
         properties:
           divider:
             type: 'string'
@@ -42,13 +36,22 @@ nikita(async function(){
             description: '''
             Enable or disable the entering messages.
             '''
+          serializer:
+            type: 'object'
+            default: {}
+            description: '''
+            Internal property, expose access to the serializer object passed
+            to the `log.fs` action.
+            '''
+      ,
+        $ref: 'module://@nikitajs/core/src/actions/log/fs'
       ]
 
 ## Handler
 
     handler = ({config}) ->
       state = {}
-      await @call $: log_fs, config, serializer:
+      serializer =
         'diff': (log) ->
           "\n```diff\n#{log.message}```\n" if log.message
         'nikita:action:start': ({action}) ->
@@ -110,17 +113,18 @@ nikita(async function(){
           content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module and log.module isnt '@nikitajs/core/src/actions/call'
           content.push "\n"
           content.join ''
+      config.serializer = merge serializer, config.serializer
+      await @call $: log_fs, config
 
 ## Exports
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
         schema: schema
       ssh: false
 
 ## Dependencies
 
+    {merge} = require 'mixme'
     log_fs = require './fs'

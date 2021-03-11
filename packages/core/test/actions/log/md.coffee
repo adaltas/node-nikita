@@ -49,6 +49,34 @@ describe 'actions.log.md', ->
         target: "#{tmpdir}/localhost.log"
         content: 'ok (1.INFO, written by nikita/test/log/md)'
 
+  describe 'config `serializer`', ->
+    
+    they 'custom nikita:action:start', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}})->
+        @log.md
+          basedir: tmpdir
+          enter: false
+          serializer:
+            'nikita:action:start': ({action: {metadata}}) ->
+              return unless metadata.header
+              "#{metadata.position.join('.')} #{metadata.header}\n"
+        @call $header: 'h1', ->
+          @call $header: 'h2', (->)
+        @call $header: 'h1', ->
+          @call $header: 'h2', (->)
+        @fs.assert
+          trim: true
+          target: "#{tmpdir}/localhost.log"
+          content: """
+          0.1 h1
+          0.1.0 h2
+          0.2 h1
+          0.2.0 h2
+          """
+
   describe 'metadata `header`', ->
   
     they 'honors header', ({ssh}) ->
