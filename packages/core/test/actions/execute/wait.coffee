@@ -239,7 +239,7 @@ describe 'actions.execute.wait', ->
           await @execute.wait
             command: "test -d #{tmpdir}/a_file"
             interval: 100
-            $retry: 3
+            retry: 3
         catch err
           err.code.should.eql 'NIKITA_EXECUTE_WAIT_MAX_RETRY'
           err.$logs
