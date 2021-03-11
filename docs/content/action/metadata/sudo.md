@@ -1,20 +1,29 @@
 ---
-disabled: true
 navtitle: sudo
 ---
 
-# Metadata "sudo" (boolean, optional, false)
+# Metadata "sudo"
 
-The "sudo" metadata escalates the right of the current user with `root` privileges. Passwordless sudo for the user must be enabled. The "sudo" metadata is cascaded to all its children.
+The `sudo` metadata escalates the rights of the current user with `root` privileges. Passwordless sudo for the user must be enabled.
+
+* Type: `boolean`
 
 ## Usage
 
-The expected value is a boolean which default to `false`.
+The `sudo` metadata is propagated to all child actions. To run an action with `root` privileges, pass `true` to the metadata:
 
 ```js
-nikita.file({
+nikita
+// Enable sudo to all child actions
+.call({
+  // highlight-next-line
   $sudo: true,
-  target: '/root/hello',
-  content: 'I am a sudoer'
+}, async function() {
+  // Get current user
+  const {stdout} = await this.execute({
+    command: 'whoami'
+  })
+  // Print current user
+  console.log(stdout) // root
 })
 ```
