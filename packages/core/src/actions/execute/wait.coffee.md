@@ -63,6 +63,12 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
           Expected code to be returned when the command failed and should be
           scheduled for later execution, default to "1".
           """
+        'retry':
+          type: 'integer'
+          default: -1
+          description: """
+          Maximum number of attempts.
+          """
         'stdin_log':
           $ref: 'module://@nikitajs/core/src/actions/execute#/properties/stdin_log'
         'stdout_log':
@@ -74,7 +80,6 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
 ## Handler
 
     handler = ({config, tools: {log}}) ->
-      config.retry ?= -1
       attempts = 0
       $status = false
       wait = (timeout) ->
