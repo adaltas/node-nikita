@@ -1,18 +1,18 @@
 {
-  "name": "@nikitajs/core",
+  "name": "@nikitajs/log",
   "version": "1.0.0-alpha.1",
-  "description": "Automation and deployment solution of applications and infrastructures.",
+  "description": "Nikita log actions.",
   "keywords": [
     "nikita",
-    "build",
-    "cli",
+    "automation",
     "deploy",
+    "log",
+    "logging",
+    "debug",
+    "markdown",
+    "csv",
     "fs",
-    "install",
-    "masson",
-    "ssh",
-    "system",
-    "task"
+    "cli"
   ],
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
@@ -44,14 +44,6 @@
       "email": "david@adaltas.com"
     },
     {
-      "name": "Pierre Sauvage",
-      "email": "pierre@adaltas.com"
-    },
-    {
-      "name": "Lucas Bakalian",
-      "email": "lucas@adaltas.com"
-    },
-    {
       "name": "Alexander Hoffmann",
       "email": "alexander@adaltas.com"
     },
@@ -61,23 +53,9 @@
     }
   ],
   "dependencies": {
-    "ajv": "^7.2.1",
-    "ajv-formats": "^1.5.1",
-    "ajv-keywords": "^4.0.0",
-    "js-yaml": "^4.0.0",
-    "minimatch": "^3.0.4",
+    "colors": "^1.4.0",
     "mixme": "^0.5.0",
-    "pad": "^3.2.0",
-    "plug-and-play": "^2.2.0",
-    "regexp-quote": "^0.0.0",
-    "self-templated": "^0.2.1",
-    "ssh2-connect": "^3.1.0",
-    "ssh2-exec": "^0.6.0",
-    "ssh2-fs": "^1.0.6",
-    "stack-trace": "^0.0.10",
-    "tilde-expansion": "^0.0.0",
-    "toposort": "^2.0.2",
-    "uuid": "^8.3.2"
+    "pad": "^3.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
@@ -88,6 +66,9 @@
     "mocha": "^8.3.1",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
+  },
+  "peerDependencies": {
+    "@nikitajs/core": "^1.0.0"
   },
   "engines": {
     "node": ">= 10.0.0"
@@ -105,24 +86,22 @@
     "throw-deprecation": true,
     "require": [
       "should",
-      "coffeescript/register"
+      "coffeescript/register",
+      "@nikitajs/log/src/register"
     ],
     "inline-diffs": true,
-    "timeout": 5000,
+    "timeout": 40000,
     "reporter": "spec",
     "recursive": true
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/adaltas/node-nikita",
-    "directory": "packages/core"
+    "directory": "packages/log"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/core\\/src/@nikitajs\\/core\\/lib/g'",
-    "lint": "eslint 'src/**/*.coffee'",
-    "lint-fix": "eslint --fix 'src/**/*.coffee'",
-    "test": "npm run test:local && npm run test:env",
-    "test:env": "env/run.sh",
-    "test:local": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'"
+    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/log\\/src/@nikitajs\\/log\\/lib/g'",
+    "test": "npm run test:local",
+    "test:local": "mocha 'test/**/*.coffee'"
   }
 }

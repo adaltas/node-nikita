@@ -1,7 +1,7 @@
 
 fs = require 'fs'
-nikita = require '../../../src'
-{tags, config} = require '../../test'
+nikita = require '@nikitajs/core/lib'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.posix
@@ -15,7 +15,7 @@ class MyWritable extends Writable
     @data.push chunk.toString()
     callback()
 
-describe 'actions.log.cli', ->
+describe 'log.cli', ->
 
   describe 'handled event', ->
         

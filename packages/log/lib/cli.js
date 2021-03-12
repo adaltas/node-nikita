@@ -230,7 +230,7 @@ pad = require('pad');
 
 stream = require('./stream');
 
-utils = require('../../utils');
+utils = require('@nikitajs/core/lib/utils');
 
 get_headers = function(action) {
   var headers, walk;

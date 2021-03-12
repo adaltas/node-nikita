@@ -44,7 +44,7 @@ nikita(async function(){
             to the `log.fs` action.
             '''
       ,
-        $ref: 'module://@nikitajs/core/src/actions/log/fs'
+        $ref: 'module://@nikitajs/log/src/fs'
       ]
 
 ## Handler
@@ -112,7 +112,7 @@ nikita(async function(){
         'text': (log) ->
           content = []
           content.push "\n#{log.message}"
-          content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module and log.module isnt '@nikitajs/core/src/actions/call'
+          content.push " (#{log.depth}.#{log.level}, written by #{log.module})" if log.module and log.module isnt '@nikitajs/core/lib/actions/call'
           content.push "\n"
           content.join ''
       config.serializer = merge serializer, config.serializer

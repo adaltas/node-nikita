@@ -45,7 +45,7 @@ to the \`log.fs\` action.`
       }
     },
     {
-      $ref: 'module://@nikitajs/core/lib/actions/log/fs'
+      $ref: 'module://@nikitajs/log/lib/fs'
     }
   ]
 };

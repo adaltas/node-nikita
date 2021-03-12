@@ -50,15 +50,6 @@ module.exports = {
     'remove': '@nikitajs/core/lib/actions/fs/remove',
     'wait': '@nikitajs/core/lib/actions/fs/wait'
   },
-  'log': {
-    '': {
-      handler: (function() {})
-    },
-    'cli': '@nikitajs/core/lib/actions/log/cli',
-    'csv': '@nikitajs/core/lib/actions/log/csv',
-    'fs': '@nikitajs/core/lib/actions/log/fs',
-    'md': '@nikitajs/core/lib/actions/log/md'
-  },
   'registry': {
     'get': {
       metadata: {

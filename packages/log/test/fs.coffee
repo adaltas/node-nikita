@@ -1,12 +1,12 @@
 
-nikita = require '../../../src'
-utils = require '../../../src/utils'
-{tags, config} = require '../../test'
+utils = require '@nikitajs/core/lib/utils'
+nikita = require '@nikitajs/core/lib'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.posix
 
-describe 'actions.log.fs', ->
+describe 'log.fs', ->
 
   they 'requires option "serializer"', ({ssh}) ->
     nikita

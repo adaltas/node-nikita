@@ -44,6 +44,7 @@
     "@nikitajs/java": "^1.0.0-alpha.1",
     "@nikitajs/krb5": "^1.0.0-alpha.1",
     "@nikitajs/ldap": "^1.0.0-alpha.1",
+    "@nikitajs/log": "^1.0.0-alpha.1",
     "@nikitajs/lxd": "^1.0.0-alpha.1",
     "@nikitajs/network": "^1.0.0-alpha.1",
     "@nikitajs/service": "^1.0.0-alpha.1",

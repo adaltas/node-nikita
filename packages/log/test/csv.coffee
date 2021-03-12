@@ -1,12 +1,12 @@
 
 fs = require 'fs'
-nikita = require '../../../src'
-{tags, config} = require '../../test'
+nikita = require '@nikitajs/core/lib'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.posix
 
-describe 'actions.log.csv', ->
+describe 'log.csv', ->
   
   they 'write message', ({ssh}) ->
     nikita
