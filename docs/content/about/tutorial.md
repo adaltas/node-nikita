@@ -18,7 +18,7 @@ For detailed information, navigate the documentation or submit an issue if you d
 
 ## What is Nikita?
 
-Nikita is a toolkit to automate the execution of deployment workflows. Use one of the many available actions or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
+Nikita is a toolkit to automate the execution of deployment workflows. Use one of the [many available actions](/current/actions) or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
 
 ### Technologies
 
@@ -138,14 +138,14 @@ This tutorial is written in JavaScript to get you started quickly. If you naviga
 
 CoffeeScript has a very clean syntax and is perfectly suited to the declarative aspect of the Nikita API. In the end, the source code looks like one written in YAML while preserving the advantages of a procedural language like JavaScript. A second advantage we found with CoffeeScript is its [literate functionality](http://coffeescript.org/#literate) which lets you write Markdown files with CoffeeScript code inside. Your source code looks a bit like a Notebook, it is a markdown document with documentation and code organized in blocks.
 
-### Action handler
+### Action
 
 An action is the basic building block in Nikita. It is basically a function, called a handler, with some associated configuration, called `config`. It is materialized as a JavaScript object, for example:
 
 ```js
 {
   who: 'leon',
-  $handler: function({config}){
+  $handler: function({config}) {
     console.info(config.who)
   }
 }
@@ -158,9 +158,12 @@ As you can see, `config` is made available as a destructure property of the firs
 To execute an action, you must create a Nikita session and execute the `call` function:
 
 ```js
-nikita.call({
+// New Nikita session
+nikita
+// Call an action
+.call({
   who: 'leon',
-  $handler: ({config}) => {
+  $handler: function({config}) {
     console.info(config.who)
   }
 })
@@ -169,41 +172,82 @@ nikita.call({
 The function `nikita.call` is very flexible in how arguments are passed. It receives zero to multiple objects which will be merged together. Also, a function is interpreted as the action handler, being converted to an object with the `handler` property. It means the previous example could be rewritten as:
 
 ```js
-nikita.call({
+// New Nikita session
+nikita
+// Call an action
+.call({
   who: 'leon'
-}, ({config}) => {
+}, function({config}) {
   console.info(config.who)
+})
+```
+
+### Parent action and children
+
+The Nikita session is organized as a hierarchical tree of actions. The parent is an action of the higher level in the session tree. All Nikita's actions have a parent action except the root Nikita action instantiating a Nikita session. The children are the actions executed in the handler of a parent action using the [`this` keyword](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this):
+
+```js
+// Root action
+nikita(function() {
+  console.info('I am root')
+})
+// Parent action
+.call(function() {
+  console.info('I am parent')
+  // Child action
+  this.call(function() {
+    console.info('I am child')
+  })
+})
+```
+
+Alternatively, you can use [JavaScript arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) to reduce the syntax. In such a case, to call a child action you must use the [`context` property](/current/action/context), because arrow functions don't accept a custom `this` binding. `context` is available inside the handler as a property of the first argument:
+
+```js
+// Root action
+nikita(() => {
+  console.info('I am root')
+})
+// Parent action
+.call(({context}) => {
+  console.info('I am parent')
+  // Child action
+  context.call(() => {
+    console.info('I am child')
+  })
 })
 ```
 
 ### Action promise
 
-Nikita's actions always return [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to use the Promise API or simply use the `async/await` construct to get the returned value.
+Nikita's actions always resolve [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises), they either fulfill with an action output or reject an error. To access the [action output](/current/action/output), you have to use the Promise API or simply use the [`async/await` construction](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await) to get the returned value.
 
 ```js
 // Call asynchronous function
 (async () => {
-  // Await result from Promise
-  var result = await nikita.call({
-    who: 'leon',
-  }, ({config}) => {
-    return {who: config.who}
-  })
+  // Define empty array
+  history = []
+  // Access the action output
+  const result = await nikita.call(() => 'first')
   // Run next synchronous function
-  console.info(result.who)  // leon
+  history.push(result)
+  // Print array
+  console.info(history) // [ 'first' ]
 })()
 ```
 
-Nikita also provides you the guarantee that your actions are executed sequentially:
+Nikita also provides you the guarantee that your actions are executed sequentially. The following example is calling 3 asynchronous actions of various duration. The `history` array records their order of execution:
 
 ```js
 const assert = require('assert');
 (async () => {
+  // Define empty array
   var history = []
   // Await result from Promise
-  var result = await nikita(async function(){
+  var result = await nikita(async function() {
     // Call 1st action
     this.call(() => {
+      // Fulfilled in 200ms
       return new Promise((resolve) => {
         setTimeout(() => {
           history.push('first')
@@ -213,6 +257,7 @@ const assert = require('assert');
     })
     // Call 2nd action
     this.call(() => {
+      // Fulfilled in 100ms
       return new Promise((resolve) => {
         setTimeout(() => {
           history.push('second')
@@ -220,15 +265,16 @@ const assert = require('assert');
         }, 100)
       })
     })
-    // Call 3rd action
-    this.call(() => {
+    // Return 3rd action
+    return this.call(() => {
       return 'done'
     })
-    // Verify
-    assert.equal(result, 'done')
-    assert.deepEqual(history, ['first','second'])
   })
+  // Assert sequential execution
+  assert.equal(result, 'done')
+  assert.deepEqual(history, ['first','second'])
 })()
+
 ```
 
 ### Error handling
@@ -240,19 +286,19 @@ The above example must be rewritten to raise errors. For example, using the `awa
 ```js
 const assert = require('assert');
 (async () => {
-  try{
-    await nikita(async function(){
-      await this.call(function(){
+  try {
+    await nikita(async function() {
+      await this.call(function() {
         console.info('called')
       })
-      await this.call(function(){
+      await this.call(function() {
         throw new Error('catch me')
       })
-      await this.call(function(){
+      await this.call(function() {
         console.error('never called')
       })
     })
-  }catch(err){
+  } catch(err) {
     assert.equal(err.message, 'catch me')
   }
 })()
@@ -264,21 +310,21 @@ Instead of throw an error, it is also possible to return the promise of a child 
 
 ```js
 (async () => {
-  try{
-    const {date} = await nikita(function(){
-      return this.call(function(){
-        return this.call(function(){
+  try {
+    const {date} = await nikita(function() {
+      return this.call(function() {
+        return this.call(function() {
           const today = new Date()
-          if((today).getDate() === 1){
+          if((today).getDate() === 1) {
             return {date: today}
-          }else{
+          } else {
             throw Error("Today is not the first day of the month")
           }
         })
       })
     })
     console.info(date)
-  }catch(err){
+  } catch(err) {
     console.error(err.message)
   }
 })()
@@ -286,30 +332,30 @@ Instead of throw an error, it is also possible to return the promise of a child 
 
 ### Passing `metadata`
 
-Several properties are generic and globally available to every action. Examples include the `header`, `retry` and `relax` properties. Those are called [metadata properties](/current/metadata/).
+Several properties are generic and globally available for every action. Examples include the `header`, `retry` and `relax` properties. Those are called [metadata properties](/current/action/metadata).
 
-They are not to be confused with configuration properties. A configuration property is declared and used by a single action. A metadata property applies to multiple if not all actions and are usually declared inside a plugin.
+They are not to be confused with [configuration properties](/current/action/config). A configuration property is declared and used by a single action. A metadata property applies to multiple if not all actions and are usually declared inside a plugin.
 
 To avoid naming collisions with configuration properties, metadata properties are prefixed with a dollar sign (`$`) and are available inside the action under the `metadata` property:
 
 ```js
 nikita({
   $retry: 3
-}, async function({metadata: {attempt, retry}}){
-  if(attempt < retry){
+}, async function({metadata: {attempt, retry}}) {
+  if(attempt < retry) {
     console.info(`Attempt ${attempt} out of ${retry}`)
     throw new Error('Please retry')
-  }else{
+  } else {
     return true
   }
 })
-// Print:
+// Prints:
 // Attempt 0 out of 3
 // Attempt 1 out of 3
 // Attempt 2 out of 3
 ```
 
-Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exceptions including `$handler`, `$plugins`, `$ssh` as well as all condition and assertion properties.
+Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exceptions including `$handler`, `$plugins`, `$ssh` as well as all [condition](/current/usages/conditions) and [assertion](/current/usages/assertions) properties.
 
 ### Idempotence and status
 
@@ -537,7 +583,7 @@ Before starting the server, we create a configuration file. The Redis format is 
 So far, we retrieved the action output to manually print a message for the user with the `console.info` function completed by character depending the the execution status. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
 ```js
-nikita(async function(){
+nikita(async function() {
   // Activate CLI reporting
   await this.log.cli()
   // Call any action
@@ -565,7 +611,7 @@ localhost      ♥
 What if an action failed and the error message is not explicit enough? What if a system command failed and we need to dig and get detailed information? Nikita doesn't have to run as a black box. Multiple error reporting actions are made available such as the `nikita.log.md` which writes logs in the Markdown format:
 
 ```js
-nikita(async function(){
+nikita(async function() {
   // Activate Markdown reporting
   await this.log.md({
     basedir: '/tmp/nikita-tutorial/log'
@@ -593,7 +639,7 @@ Finally, if you need to quickly access verbose debugging information, use the `d
 ```js
 nikita({
   $debug: true
-}, async function(){
+}, async function() {
   await this.file.properties({
     // The Markdown header
     $header: 'Redis configuration',
@@ -616,7 +662,7 @@ nikita({
 The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value `0` will indicate that the server was started, the value `42` will indicate that it was already running and any other exit code will be treated as an error.
 
 ```js
-nikita(async function(){
+nikita(async function() {
   await this.log.cli()
   await this.execute({
     $header: 'Startup',
@@ -643,7 +689,7 @@ The `relax` metadata resolves the action successfully with the error placed insi
 Similarly, the `shy` metadata will allow us to set the status to `true`, but print `-` on success without modifying the status of the parent `nikita.call` action, because it is not considered as a change of state.
 
 ```js
-nikita(async function(){
+nikita(async function() {
   await this.log.cli()
   await this.call({
     $header: 'Redis Check',
@@ -845,7 +891,7 @@ const config = {
 File "./lib/install.js":
 
 ```js
-module.exports = async function({config}){
+module.exports = async function({config}) {
   // Default configs
   if(!config.url){ config.url = 'http://download.redis.io/redis-stable.tar.gz' }
   if(!config.config){ config.config = {} }
@@ -890,7 +936,7 @@ module.exports = async function({config}){
 File "./lib/check.js":
 
 ```js
-module.exports = async function({config}){
+module.exports = async function({config}) {
   // Get option from config if present
   if(config.config){
     if(config.config.host){ config.host = config.config.host }
