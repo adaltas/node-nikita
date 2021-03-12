@@ -8,8 +8,8 @@ registry = require '@nikitajs/core/lib/registry'
 module.exports =
   tools:
     apm:
+      '': '@nikitajs/tools/src/apm'
       'installed': '@nikitajs/tools/src/apm/installed'
-      'install': '@nikitajs/tools/src/apm/install'
       'uninstall': '@nikitajs/tools/src/apm/uninstall'
     backup: '@nikitajs/tools/src/backup'
     compress: '@nikitajs/tools/src/compress'

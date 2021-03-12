@@ -11,8 +11,8 @@ registry = require('@nikitajs/core/lib/registry');
 module.exports = {
   tools: {
     apm: {
+      '': '@nikitajs/tools/lib/apm',
       'installed': '@nikitajs/tools/lib/apm/installed',
-      'install': '@nikitajs/tools/lib/apm/install',
       'uninstall': '@nikitajs/tools/lib/apm/uninstall'
     },
     backup: '@nikitajs/tools/lib/backup',

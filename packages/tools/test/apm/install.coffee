@@ -5,14 +5,14 @@ they = require('mocha-they')(config)
 
 return unless tags.tools_apm
 
-describe 'tools.apm.install', ->
+describe 'tools.apm', ->
 
   they 'install a new package which is not already installed', ({ssh}) ->
     {$status} = await nikita
       $ssh: ssh
     .tools.apm.uninstall
       name: 'package-list'
-    .tools.apm.install
+    .tools.apm
       name: 'package-list'
     $status.should.be.true()
 
@@ -21,9 +21,9 @@ describe 'tools.apm.install', ->
       $ssh: ssh
     .tools.apm.uninstall
       name: 'package-list'
-    .tools.apm.install
+    .tools.apm
       name: 'package-list'
-    .tools.apm.install
+    .tools.apm
       name: 'package-list'
     $status.should.be.false()
     
@@ -32,5 +32,5 @@ describe 'tools.apm.install', ->
       $ssh: ssh
     .tools.apm.uninstall
       name: 'package-list'
-    .tools.apm.install 'package-list'
+    .tools.apm 'package-list'
     $status.should.be.true()

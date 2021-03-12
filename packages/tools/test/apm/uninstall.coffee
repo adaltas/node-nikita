@@ -10,7 +10,7 @@ describe 'tools.apm.uninstall', ->
   they 'uninstall an installed apm package', ({ssh}) ->
     {$status} = await nikita
       $ssh: ssh
-    .tools.apm.install
+    .tools.apm
       name: 'package-list'
     .tools.apm.uninstall
       name: 'package-list'
@@ -28,7 +28,7 @@ describe 'tools.apm.uninstall', ->
   they 'name as argument', ({ssh}) ->
     {$status} = await nikita
       $ssh: ssh
-    .tools.apm.install
+    .tools.apm
       name: 'package-list'
     .tools.apm.uninstall 'package-list'
     $status.should.be.true()
