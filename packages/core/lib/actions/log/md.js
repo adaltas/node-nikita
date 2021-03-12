@@ -62,6 +62,28 @@ handler = async function({config}) {
     },
     'nikita:action:start': function({action}) {
       var act, bastard, content, header, headers, walk;
+      content = [];
+      // Header message
+      if (action.metadata.header) {
+        walk = function(parent) {
+          var precious, results;
+          precious = parent.metadata.header;
+          results = [];
+          if (precious !== void 0) {
+            results.push(precious);
+          }
+          if (parent.parent) {
+            results.push(...(walk(parent.parent)));
+          }
+          return results;
+        };
+        headers = walk(action);
+        header = headers.reverse().join(config.divider);
+        content.push('\n');
+        content.push('#'.repeat(headers.length));
+        content.push(` ${header}\n`);
+      }
+      // Entering message
       act = action.parent;
       bastard = void 0;
       while (act) {
@@ -71,7 +93,6 @@ handler = async function({config}) {
         }
         act = act.parent;
       }
-      content = [];
       if (config.enter && action.metadata.module && action.metadata.log !== false && bastard !== true) {
         content.push([
           '\n',
@@ -87,26 +108,6 @@ handler = async function({config}) {
           '\n'
         ].join(''));
       }
-      if (!action.metadata.header) {
-        return content.join('');
-      }
-      walk = function(parent) {
-        var precious, results;
-        precious = parent.metadata.header;
-        results = [];
-        if (precious !== void 0) {
-          results.push(precious);
-        }
-        if (parent.parent) {
-          results.push(...(walk(parent.parent)));
-        }
-        return results;
-      };
-      headers = walk(action);
-      header = headers.reverse().join(config.divider);
-      content.push('\n');
-      content.push('#'.repeat(headers.length));
-      content.push(` ${header}\n`);
       return content.join('');
     },
     'stdin': function(log) {

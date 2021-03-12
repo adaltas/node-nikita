@@ -79,6 +79,21 @@ describe 'actions.log.md', ->
 
   describe 'metadata `header`', ->
   
+    they 'header before entering message', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}})->
+        @log.md basedir: tmpdir
+        @call $header: 'header', () -> true
+        @fs.assert
+          trim: true
+          filter: [
+            /^Entering.*fs\/assert.*$/mg
+          ]
+          target: "#{tmpdir}/localhost.log"
+          content: /^# header\n\nEntering.*actions\/call.*$/
+          
     they 'honors header', ({ssh}) ->
       nikita
         $ssh: ssh
