@@ -1,11 +1,11 @@
 
-nikita = require '../../../src'
-{tags, config} = require '../../test'
+nikita = require '@nikitajs/core/lib'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.posix
 
-describe 'actions.log.md', ->
+describe 'log.md', ->
   
   they 'write entering message', ({ssh}) ->
     nikita
@@ -251,7 +251,7 @@ describe 'actions.log.md', ->
           target: "#{tmpdir}/localhost.log"
           encoding: 'ascii'
         .should.be.resolvedWith
-          data: "\nEntering @nikitajs/core/src/actions/call (1.3)\n"
+          data: "\nEntering @nikitajs/core/lib/actions/call (1.3)\n"
     
     they 'filtered out for bastards action', ({ssh}) ->
       nikita
@@ -267,4 +267,4 @@ describe 'actions.log.md', ->
           target: "#{tmpdir}/localhost.log"
           encoding: 'ascii'
         .should.be.resolvedWith
-          data: "\nEntering @nikitajs/core/src/actions/call (1.2)\n"
+          data: "\nEntering @nikitajs/core/lib/actions/call (1.2)\n"

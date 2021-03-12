@@ -41,12 +41,6 @@ module.exports =
     'move': '@nikitajs/core/src/actions/fs/move'
     'remove': '@nikitajs/core/src/actions/fs/remove'
     'wait': '@nikitajs/core/src/actions/fs/wait'
-  'log':
-    '': handler: (->)
-    'cli': '@nikitajs/core/src/actions/log/cli'
-    'csv': '@nikitajs/core/src/actions/log/csv'
-    'fs': '@nikitajs/core/src/actions/log/fs'
-    'md': '@nikitajs/core/src/actions/log/md'
   'registry':
     'get':
       metadata: raw: true

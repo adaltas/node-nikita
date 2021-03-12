@@ -158,7 +158,7 @@ nikita
     colors = require 'colors/safe'
     pad = require 'pad'
     stream = require './stream'
-    utils = require '../../utils'
+    utils = require '@nikitajs/core/lib/utils'
 
     get_headers = (action) ->
       walk = (parent) ->
