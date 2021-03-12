@@ -10,14 +10,13 @@ module.exports = {
   require: ['@nikitajs/core/lib/plugins/tools_find', '@nikitajs/core/lib/plugins/tools_walk'],
   hooks: {
     'nikita:action': {
-      // after: '@nikitajs/core/lib/plugins/tools_find'
       handler: async function({
           config,
           metadata,
           tools: {find, walk}
         }) {
         var env;
-        if (metadata.namespace.join('.') !== 'execute') {
+        if (metadata.module !== '@nikitajs/core/lib/actions/execute') {
           return;
         }
         if (config.arch_chroot == null) {

@@ -22,8 +22,8 @@ module.exports =
       handler: (action) ->
         {config, metadata, tools} = action
         throw utils.error 'METADATA_TMPDIR_INVALID', [
-          'the "tmpdir" metadata value must be a boolean or a string,'
-          "got #{typeof metadata.tmpdir}"
+          'the "tmpdir" metadata value must be a boolean, a function or a string,'
+          "got #{JSON.stringify metadata.tmpdir}"
         ] unless typeof metadata.tmpdir in ['boolean', 'function', 'string', 'undefined']
         return unless metadata.tmpdir
         # SSH connection extraction

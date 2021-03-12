@@ -10,9 +10,8 @@ module.exports =
   ]
   hooks:
     'nikita:action':
-      # after: '@nikitajs/core/src/plugins/tools_find'
       handler: ({config, metadata, tools: {find, walk}}) ->
-        return unless metadata.namespace.join('.') is 'execute'
+        return unless metadata.module is '@nikitajs/core/src/actions/execute'
         config.arch_chroot ?= await find ({metadata: {arch_chroot}}) -> arch_chroot
         config.arch_chroot_rootdir ?= await find ({metadata: {arch_chroot_rootdir}}) -> arch_chroot_rootdir
         config.bash ?= await find ({metadata: {bash}}) -> bash

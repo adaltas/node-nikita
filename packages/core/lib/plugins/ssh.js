@@ -15,22 +15,16 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/ssh',
   require: ['@nikitajs/core/lib/plugins/tools_find'],
   hooks: {
-    'nikita:normalize': function(action, handler) {
-      var ssh;
-      if (action.metadata.namespace[0] === 'ssh') {
-        // Dont interfere with ssh actions
-        return handler;
-      }
-      if (action.hasOwnProperty('ssh')) {
-        ssh = action.ssh;
-        delete action.ssh;
-      }
-      return async function() {
-        action = (await handler.call(null, ...arguments));
-        action.ssh = ssh;
-        return action;
-      };
-    },
+    // 'nikita:normalize': (action, handler) ->
+    //   # Dont interfere with ssh actions
+    //   return handler if action.metadata.namespace[0] is 'ssh'
+    //   if action.hasOwnProperty 'ssh'
+    //     ssh = action.ssh
+    //     delete action.ssh
+    //   ->
+    //     action = await handler.call null, ...arguments
+    //     action.ssh = ssh
+    //     action
     'nikita:action': async function(action) {
       var i, len, ref, ref1, ref2, sibling, ssh;
       // Is there a connection to open
@@ -64,7 +58,7 @@ module.exports = {
       // Find SSH open in previous siblings
       for (i = 0, len = ref.length; i < len; i++) {
         sibling = ref[i];
-        if (sibling.metadata.namespace.join('.') !== 'ssh.open') {
+        if (sibling.metadata.module !== '@nikitajs/core/lib/actions/ssh/open') {
           continue;
         }
         if (sibling.output.ssh) {

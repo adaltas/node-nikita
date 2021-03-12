@@ -14,16 +14,16 @@ module.exports =
     '@nikitajs/core/src/plugins/tools_find'
   ]
   hooks:
-    'nikita:normalize': (action, handler) ->
-      # Dont interfere with ssh actions
-      return handler if action.metadata.namespace[0] is 'ssh'
-      if action.hasOwnProperty 'ssh'
-        ssh = action.ssh
-        delete action.ssh
-      ->
-        action = await handler.call null, ...arguments
-        action.ssh = ssh
-        action
+    # 'nikita:normalize': (action, handler) ->
+    #   # Dont interfere with ssh actions
+    #   return handler if action.metadata.namespace[0] is 'ssh'
+    #   if action.hasOwnProperty 'ssh'
+    #     ssh = action.ssh
+    #     delete action.ssh
+    #   ->
+    #     action = await handler.call null, ...arguments
+    #     action.ssh = ssh
+    #     action
     'nikita:action': (action) ->
       # Is there a connection to open
       if action.ssh and not utils.ssh.is action.ssh
@@ -59,7 +59,7 @@ module.exports =
         ]
       # Find SSH open in previous siblings
       for sibling in action.siblings
-        continue unless sibling.metadata.namespace.join('.') is 'ssh.open'
+        continue unless sibling.metadata.module is '@nikitajs/core/src/actions/ssh/open'
         if sibling.output.ssh
           ssh = sibling.output.ssh
           break
