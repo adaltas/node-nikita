@@ -25,11 +25,11 @@ The child action objects contain the following properties:
 - `error`   
   The [error object](/current/usages/error) in a rejected action.
 - `output`   
-  The [returned output](/current/action/output) in a resolved action.
+  The [returned output](/current/action/output) in a fulfilled action.
 
 ## Usage
 
-The children property is enriched one an action complete its execution, wether it is resolved or rejected. Thus the action promise must be fulfilled before accessing the `children` property of the parent action:
+The `children` property of the parent action is enriched once a child action complete its execution, wether it is fulfilled or rejected. Thus, it is accessed using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await):
 
 ```js
 nikita
