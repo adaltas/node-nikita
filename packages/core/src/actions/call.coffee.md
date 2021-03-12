@@ -57,8 +57,10 @@ assert(key === 'value')
           mod = action.metadata.argument
           mod = path.resolve process.cwd(), mod if mod.substr(0, 1) is '.'
           mod = require.main.require mod
+          on_action = mod.hooks?.on_action
           mod = handler: mod if typeof mod is 'function'
           mutate action, mod, metadata: module: action.metadata.argument
+          action = on_action.call null, action if on_action
           action
 
 ## Dependencies

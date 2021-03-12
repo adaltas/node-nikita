@@ -54,7 +54,7 @@ var mutate, path;
 module.exports = {
   hooks: {
     on_action: function(action) {
-      var mod;
+      var mod, on_action, ref;
       if (typeof action.metadata.argument !== 'string') {
         return;
       }
@@ -63,6 +63,7 @@ module.exports = {
         mod = path.resolve(process.cwd(), mod);
       }
       mod = require.main.require(mod);
+      on_action = (ref = mod.hooks) != null ? ref.on_action : void 0;
       if (typeof mod === 'function') {
         mod = {
           handler: mod
@@ -73,6 +74,9 @@ module.exports = {
           module: action.metadata.argument
         }
       });
+      if (on_action) {
+        action = on_action.call(null, action);
+      }
       return action;
     }
   }
