@@ -39,9 +39,13 @@ var handler, on_action, path, schema, utils;
 on_action = function({config}) {
   switch (config.shell) {
     case true:
-      return config.shell = '/bin/sh';
+      config.shell = '/bin/sh';
+      break;
     case false:
-      return config.shell = '/sbin/nologin';
+      config.shell = '/sbin/nologin';
+  }
+  if (typeof config.groups === 'string') {
+    return config.groups = config.groups.split(',');
   }
 };
 
@@ -62,7 +66,10 @@ schema = {
       description: `Group name or number of the user´s initial login group.`
     },
     'groups': {
-      type: 'string',
+      type: 'array',
+      items: {
+        type: 'string'
+      },
       description: `List of supplementary groups which the user is also a member of.`
     },
     'home': {
@@ -142,9 +149,6 @@ handler = async function({
   }
   if (config.password_sync == null) {
     config.password_sync = true;
-  }
-  if (typeof config.groups === 'string') {
-    config.groups = config.groups.split(',');
   }
   if (typeof config.shell === "function" ? config.shell(typeof config.shell !== 'string') : void 0) {
     throw Error(`Invalid option 'shell': ${JSON.strinfigy(config.shell)}`);

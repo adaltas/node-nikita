@@ -41,6 +41,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           config.shell = '/bin/sh'
         when false
           config.shell = '/sbin/nologin'
+      config.groups = config.groups.split ',' if typeof config.groups is 'string'
 
 ## Schema
 
@@ -63,7 +64,8 @@ you are a member of the "wheel" group (gid of "10") with the command
           Group name or number of the user´s initial login group.
           '''
         'groups':
-          type: 'string'
+          type: 'array'
+          items: type: 'string'
           description: '''
           List of supplementary groups which the user is also a member of.
           '''
@@ -140,7 +142,6 @@ you are a member of the "wheel" group (gid of "10") with the command
       config.system ?= false
       config.gid ?= null
       config.password_sync ?= true
-      config.groups = config.groups.split ',' if typeof config.groups is 'string'
       throw Error "Invalid option 'shell': #{JSON.strinfigy config.shell}" if config.shell? typeof config.shell isnt 'string'
       user_info = groups_info = null
       {users} = await @system.user.read()
