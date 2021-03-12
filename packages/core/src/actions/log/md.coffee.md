@@ -55,13 +55,27 @@ nikita(async function(){
         'diff': (log) ->
           "\n```diff\n#{log.message}```\n" if log.message
         'nikita:action:start': ({action}) ->
+          content = []
+          # Header message
+          if action.metadata.header
+            walk = (parent) ->
+              precious = parent.metadata.header
+              results = []
+              results.push precious unless precious is undefined
+              results.push ...(walk parent.parent) if parent.parent
+              results
+            headers = walk action
+            header = headers.reverse().join config.divider
+            content.push '\n'
+            content.push '#'.repeat headers.length
+            content.push " #{header}\n"
+          # Entering message
           act = action.parent
           bastard = undefined
           while act
             bastard = act.metadata.bastard
             break if bastard isnt undefined
             act = act.parent
-          content = []
           if config.enter and action.metadata.module and action.metadata.log isnt false and bastard isnt true
             content.push [
               '\n'
@@ -74,18 +88,6 @@ nikita(async function(){
               ')'
               '\n'
             ].join ''
-          return content.join '' unless action.metadata.header
-          walk = (parent) ->
-            precious = parent.metadata.header
-            results = []
-            results.push precious unless precious is undefined
-            results.push ...(walk parent.parent) if parent.parent
-            results
-          headers = walk action
-          header = headers.reverse().join config.divider
-          content.push '\n'
-          content.push '#'.repeat headers.length
-          content.push " #{header}\n"
           content.join ''
         'stdin': (log) ->
           out = []
