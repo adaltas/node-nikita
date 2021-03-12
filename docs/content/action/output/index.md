@@ -30,13 +30,13 @@ nikita
 
 This returned value is eventually modified by plugins.
 
-The `@nikitajs/core/lib/plugins/status` plugin enriches the value with a `$status` property when an object literal is returned and converts the value `true` to `{ $status: true }` when a boolean value is returned. The `@nikitajs/core/lib/plugins/output_log` plugin returns the logs emitted inside the action.
+The `@nikitajs/core/lib/plugins/status` plugin enriches the value with the `$status` property when an object literal is returned and converts the value `true` to `{ $status: true }` when a boolean value is returned. The `@nikitajs/core/lib/plugins/output_log` plugin returns the [logs emitted](/action/tools/log) inside the action handler.
 
 Below is the description of those properties when the returned value is an object literal:
 
 - [`$status`](/current/action/output/status)   
   A boolean value of the action status.
-- [`$log`](/current/action/output/log)   
+- [`$logs`](/current/action/output/logs)   
   An array of objects with [logging](/current/usages/logging_debugging) information of the action execution.
 
 In case the returned value shall be preserved and untouched, the [`raw_output` metadata](/current/metadata/raw_output) instructs Nikita to not alter the value returned by the handler.
