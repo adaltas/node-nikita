@@ -74,17 +74,23 @@ console.info(stdout)
       after: [
         '@nikitajs/core/src/plugins/execute'
         '@nikitajs/core/src/plugins/ssh'
+        '@nikitajs/core/src/plugins/tools_path'
       ]
       before: [
         '@nikitajs/core/src/plugins/schema'
         '@nikitajs/core/src/metadata/tmpdir'
       ]
-      handler: ({config, metadata, ssh, tools: {find, walk}}) ->
-        # sudo = await find ({config: {sudo}}) -> sudo
+      handler: ({config, metadata, ssh, tools: {find, path, walk}}) ->
         config.env ?= if not ssh and not config.env then process.env else {}
         env_export = if config.env_export? then config.env_export else !!ssh
-        if config.sudo or config.bash or config.arch_chroot or (env_export and Object.keys(config.env).length)
+        if config.sudo or config.bash or (env_export and Object.keys(config.env).length)
           metadata.tmpdir ?= true
+        else if config.arch_chroot_rootdir
+          metadata.tmpdir ?= ({os_tmpdir, tmpdir}) ->
+            # Note, Arch mount `/tmp` with tmpfs in memory
+            # placing a file in the host fs will not expose it inside of chroot
+            config.arch_chroot_tmpdir = path.join '/opt', tmpdir
+            path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
         config.command = metadata.argument if metadata.argument?
 
 ## Schema
@@ -322,48 +328,59 @@ console.info(stdout)
         config.command = "source #{env_export_target}\n#{config.command}"
         log message: "Writing env export to #{JSON.stringify env_export_target}", level: 'INFO'
         await @fs.base.writeFile
+          $sudo: false
+          $arch_chroot: false
+          $arch_chroot_rootdir: false
           content: env_export_content
           mode: 0o500
-          $sudo: false
           target: env_export_target
           uid: config.uid
       # Write script
       if config.bash
         command = config.command
-        config.target = path.join metadata.tmpdir, utils.string.hash config.command if typeof config.target isnt 'string'
-        log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
-        config.command = "#{config.bash} #{config.target}"
+        target = path.join metadata.tmpdir, utils.string.hash config.command if typeof target isnt 'string'
+        log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
+        config.command = "#{config.bash} #{target}"
         config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
-        config.command += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
+        config.command += ";code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
+          $sudo: false
+          $arch_chroot: false
+          $arch_chroot_rootdir: false
           content: command
           mode: config.mode
-          $sudo: false
-          target: config.target
+          target: target
           uid: config.uid
       if config.arch_chroot
+        # Note, with arch_chroot enabled, 
+        # arch_chroot_rootdir `/mnt` gave birth to
+        # tmpdir `/mnt/tmpdir/nikita-random-path`
+        # and target is inside it
         command = config.command
-        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
-        log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
-        config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{config.target}"
-        config.command += ";code=`echo $?`; rm '#{path.join config.arch_chroot_rootdir, config.target}'; exit $code" unless config.dirty
+        target_in = path.join config.arch_chroot_tmpdir, utils.string.hash config.command if typeof target isnt 'string'
+        target = path.join config.arch_chroot_rootdir, target_in
+        # target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
+        log message: "Writing arch-chroot script to #{JSON.stringify target}", level: 'INFO'
+        config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{target_in}"
+        # config.command += ";code=`echo $?`; exit $code" unless config.dirty
         await @fs.base.writeFile
-          target: "#{path.join config.arch_chroot_rootdir, config.target}"
+          $sudo: false
+          $arch_chroot: false
+          $arch_chroot_rootdir: false
+          target: "#{target}"
           content: "#{command}"
           mode: config.mode
-          $sudo: false
       if config.sudo
         config.command = "sudo #{config.command}"
       # Execute
       new Promise (resolve, reject) ->
         log message: config.command_original, type: 'stdin', level: 'INFO' if config.stdin_log
         result =
+          $status: false
           stdout: []
           stderr: []
           code: null
-          $status: false
           command: config.command_original
-          # env_export_hash: env_export_hash
         return resolve result if config.dry
         child = exec config,
           ssh: ssh
@@ -402,9 +419,8 @@ console.info(stdout)
               ].join ' '
         child.on "exit", (code) ->
           result.code = code
-          # Give it some time because the "exit" event is sometimes
-          # called before the "stdout" "data" event when running
-          # `npm test`
+          # Give it some time because the "exit" event is sometimes called
+          # before the "stdout" "data" event when running `npm test`
           setImmediate ->
             log message: null, type: 'stdout_stream' if stdout_stream_open and config.stdout_log
             log message: null, type: 'stderr_stream' if  stderr_stream_open and config.stderr_log

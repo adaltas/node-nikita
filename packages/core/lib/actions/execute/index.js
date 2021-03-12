@@ -72,23 +72,31 @@
 var exec, handler, on_action, schema, utils, yaml;
 
 on_action = {
-  after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh'],
+  after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools_path'],
   before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/metadata/tmpdir'],
   handler: function({
       config,
       metadata,
       ssh,
-      tools: {find, walk}
+      tools: {find, path, walk}
     }) {
     var env_export;
-    // sudo = await find ({config: {sudo}}) -> sudo
     if (config.env == null) {
       config.env = !ssh && !config.env ? process.env : {};
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
-    if (config.sudo || config.bash || config.arch_chroot || (env_export && Object.keys(config.env).length)) {
+    if (config.sudo || config.bash || (env_export && Object.keys(config.env).length)) {
       if (metadata.tmpdir == null) {
         metadata.tmpdir = true;
+      }
+    } else if (config.arch_chroot_rootdir) {
+      if (metadata.tmpdir == null) {
+        metadata.tmpdir = function({os_tmpdir, tmpdir}) {
+          // Note, Arch mount `/tmp` with tmpfs in memory
+          // placing a file in the host fs will not expose it inside of chroot
+          config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
+          return path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
+        };
       }
     }
     if (metadata.argument != null) {
@@ -283,7 +291,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -364,9 +372,11 @@ handler = async function({
       level: 'INFO'
     });
     await this.fs.base.writeFile({
+      $sudo: false,
+      $arch_chroot: false,
+      $arch_chroot_rootdir: false,
       content: env_export_content,
       mode: 0o500,
-      $sudo: false,
       target: env_export_target,
       uid: config.uid
     });
@@ -374,46 +384,54 @@ handler = async function({
   // Write script
   if (config.bash) {
     command = config.command;
-    if (typeof config.target !== 'string') {
-      config.target = path.join(metadata.tmpdir, utils.string.hash(config.command));
+    if (typeof target !== 'string') {
+      target = path.join(metadata.tmpdir, utils.string.hash(config.command));
     }
     log({
-      message: `Writing bash script to ${JSON.stringify(config.target)}`,
+      message: `Writing bash script to ${JSON.stringify(target)}`,
       level: 'INFO'
     });
-    config.command = `${config.bash} ${config.target}`;
+    config.command = `${config.bash} ${target}`;
     if (config.uid) {
       config.command = `su - ${config.uid} -c '${config.command}'`;
     }
     if (!config.dirty) {
-      config.command += `;code=\`echo $?\`; rm '${config.target}'; exit $code`;
+      config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
     }
     await this.fs.base.writeFile({
+      $sudo: false,
+      $arch_chroot: false,
+      $arch_chroot_rootdir: false,
       content: command,
       mode: config.mode,
-      $sudo: false,
-      target: config.target,
+      target: target,
       uid: config.uid
     });
   }
   if (config.arch_chroot) {
+    // Note, with arch_chroot enabled, 
+    // arch_chroot_rootdir `/mnt` gave birth to
+    // tmpdir `/mnt/tmpdir/nikita-random-path`
+    // and target is inside it
     command = config.command;
-    if (typeof config.target !== 'string') {
-      config.target = `${metadata.tmpdir}/${utils.string.hash(config.command)}`;
+    if (typeof target !== 'string') {
+      target_in = path.join(config.arch_chroot_tmpdir, utils.string.hash(config.command));
     }
+    target = path.join(config.arch_chroot_rootdir, target_in);
+    // target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
     log({
-      message: `Writing arch-chroot script to ${JSON.stringify(config.target)}`,
+      message: `Writing arch-chroot script to ${JSON.stringify(target)}`,
       level: 'INFO'
     });
-    config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${config.target}`;
-    if (!config.dirty) {
-      config.command += `;code=\`echo $?\`; rm '${path.join(config.arch_chroot_rootdir, config.target)}'; exit $code`;
-    }
+    config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${target_in}`;
+    // config.command += ";code=`echo $?`; exit $code" unless config.dirty
     await this.fs.base.writeFile({
-      target: `${path.join(config.arch_chroot_rootdir, config.target)}`,
+      $sudo: false,
+      $arch_chroot: false,
+      $arch_chroot_rootdir: false,
+      target: `${target}`,
       content: `${command}`,
-      mode: config.mode,
-      $sudo: false
+      mode: config.mode
     });
   }
   if (config.sudo) {
@@ -430,14 +448,13 @@ handler = async function({
       });
     }
     result = {
+      $status: false,
       stdout: [],
       stderr: [],
       code: null,
-      $status: false,
       command: config.command_original
     };
     if (config.dry) {
-      // env_export_hash: env_export_hash
       return resolve(result);
     }
     child = exec(config, {
@@ -500,9 +517,8 @@ handler = async function({
     }
     return child.on("exit", function(code) {
       result.code = code;
-      // Give it some time because the "exit" event is sometimes
-      // called before the "stdout" "data" event when running
-      // `npm test`
+      // Give it some time because the "exit" event is sometimes called
+      // before the "stdout" "data" event when running `npm test`
       return setImmediate(function() {
         if (stdout_stream_open && config.stdout_log) {
           log({
