@@ -78,7 +78,6 @@ session = (args, options={}) ->
   # Start with a paused scheduler to register actions out of the handler
   action.scheduler = schedulers.out
   # Expose the action context
-  action.config.context = action.context if action.context
   action.context = new Proxy on_call, get: on_get
   # Execute the action
   result = new Promise (resolve, reject) ->
