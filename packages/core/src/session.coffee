@@ -22,10 +22,17 @@ session = (args, options={}) ->
           'no action is registered under this namespace,'
           "got #{JSON.stringify nm}."
         ]
-      session args,
+      args_is_array = args.some (arg) -> Array.isArray arg
+      if not args_is_array or child.metadata?.raw_input then return session args,
         namespace: nm
         child: child
         parent: action
+      # Multiply the arguments
+      schedule utils.array.multiply(...args).map (args) -> ->
+        session args,
+          namespace: nm
+          child: child
+          parent: action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
@@ -47,19 +54,12 @@ session = (args, options={}) ->
     chain: new Proxy on_call, get: on_get
     parent: if options.parent then options.parent.plugins else undefined
   # Normalize arguments
-  if options.normalize isnt false
-    actions = plugins.call_sync
-      name: 'nikita:arguments',
-      plugins: options.plugins
-      args: {args: args, ...options}
-      handler: ({args, namespace}) ->
-        contextualize [...args, $namespace: namespace]
-  else
-    actions = args[0]
-  if Array.isArray actions
-    options.normalize = false
-    return schedule actions.map (action) -> -> session [action], options
-  action = actions
+  action = plugins.call_sync
+    name: 'nikita:arguments',
+    plugins: options.plugins
+    args: {args: args, ...options}
+    handler: ({args, namespace}) ->
+      contextualize [...args, $namespace: namespace]
   action.parent = options.parent
   action.plugins = plugins
   action.metadata.namespace ?= []

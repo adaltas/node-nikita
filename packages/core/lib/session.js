@@ -16,7 +16,7 @@ normalize = require('./session/normalize');
 utils = require('./utils');
 
 session = function(args, options = {}) {
-  var action, actions, base, namespace, on_call, on_get, plugins, ref, ref1, ref2, ref3, result, schedulers;
+  var action, base, namespace, on_call, on_get, plugins, ref, ref1, ref2, ref3, result, schedulers;
   // Catch calls to new actions
   namespace = [];
   on_call = function(...args) {
@@ -25,17 +25,32 @@ session = function(args, options = {}) {
     [namespace, nm] = [[], namespace];
     // Schedule the action and get the result as a promise
     prom = action.scheduler.push(async function() {
-      var child;
+      var args_is_array, child, ref;
       // Validate the namespace
       child = (await action.registry.get(nm));
       if (!child) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }
-      return session(args, {
-        namespace: nm,
-        child: child,
-        parent: action
+      args_is_array = args.some(function(arg) {
+        return Array.isArray(arg);
       });
+      if (!args_is_array || ((ref = child.metadata) != null ? ref.raw_input : void 0)) {
+        return session(args, {
+          namespace: nm,
+          child: child,
+          parent: action
+        });
+      }
+      // Multiply the arguments
+      return schedule(utils.array.multiply(...args).map(function(args) {
+        return function() {
+          return session(args, {
+            namespace: nm,
+            child: child,
+            parent: action
+          });
+        };
+      }));
     });
     return new Proxy(prom, {
       get: on_get
@@ -72,35 +87,22 @@ session = function(args, options = {}) {
     parent: options.parent ? options.parent.plugins : void 0
   });
   // Normalize arguments
-  if (options.normalize !== false) {
-    actions = plugins.call_sync({
-      name: 'nikita:arguments',
-      plugins: options.plugins,
-      args: {
-        args: args,
-        ...options
-      },
-      handler: function({args, namespace}) {
-        return contextualize([
-          ...args,
-          {
-            $namespace: namespace
-          }
-        ]);
-      }
-    });
-  } else {
-    actions = args[0];
-  }
-  if (Array.isArray(actions)) {
-    options.normalize = false;
-    return schedule(actions.map(function(action) {
-      return function() {
-        return session([action], options);
-      };
-    }));
-  }
-  action = actions;
+  action = plugins.call_sync({
+    name: 'nikita:arguments',
+    plugins: options.plugins,
+    args: {
+      args: args,
+      ...options
+    },
+    handler: function({args, namespace}) {
+      return contextualize([
+        ...args,
+        {
+          $namespace: namespace
+        }
+      ]);
+    }
+  });
   action.parent = options.parent;
   action.plugins = plugins;
   if ((base = action.metadata).namespace == null) {
@@ -129,10 +131,7 @@ session = function(args, options = {}) {
   };
   // Start with a paused scheduler to register actions out of the handler
   action.scheduler = schedulers.out;
-  if (action.context) {
-    // Expose the action context
-    action.config.context = action.context;
-  }
+  // Expose the action context
   action.context = new Proxy(on_call, {
     get: on_get
   });

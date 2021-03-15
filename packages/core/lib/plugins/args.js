@@ -20,26 +20,16 @@ module.exports = {
           arguments[0].args = [{}];
         }
         return function() {
-          var actions, ref1;
-          actions = handler.apply(null, arguments);
+          var action, ref1;
+          action = handler.apply(null, arguments);
           // If raw_input is activated, just pass arguments as is
           // Always one action since arguments are erased
           if (child != null ? (ref1 = child.metadata) != null ? ref1.raw_input : void 0 : void 0) {
-            actions.args = args;
-            actions.metadata.raw_input = true;
-            return actions;
+            action.args = args;
+            action.metadata.raw_input = true;
           }
-          // Otherwise, compute args and pass them to the returned actions
-          args = utils.array.multiply(...args);
-          if (Array.isArray(actions)) {
-            return actions.map(function(action, i) {
-              action.args = args[i];
-              return action;
-            });
-          } else if (actions) {
-            actions.args = args[0];
-            return actions;
-          }
+          action.args = args;
+          return action;
         };
       }
     },

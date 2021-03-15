@@ -7,12 +7,10 @@ var is_object_literal, mutate, properties, utils,
 utils = require('../utils');
 
 module.exports = function(args) {
-  var action, actions, arg, args_is_array, default_action, k, new_action, new_actions, prop, v;
-  args_is_array = args.some(function(arg) {
-    return Array.isArray(arg);
-  });
-  // Multiply the arguments
-  actions = utils.array.multiply(...args);
+  var arg, default_action, i, k, len, new_action, prop, v;
+  // args_is_array = args.some (arg) -> Array.isArray arg
+  // # Multiply the arguments
+  // actions = utils.array.multiply ...args
   // Reconstituate the action
   default_action = function() {
     return {
@@ -22,94 +20,79 @@ module.exports = function(args) {
       state: {}
     };
   };
-  new_actions = (function() {
-    var i, j, len, len1, results;
-    results = [];
-    for (i = 0, len = actions.length; i < len; i++) {
-      action = actions[i];
-      new_action = default_action();
-      for (j = 0, len1 = action.length; j < len1; j++) {
-        arg = action[j];
-        switch (typeof arg) {
-          case 'function':
-            if (action.handler) {
-              throw Error('Invalid Action Argument: handler is already registered, got a function');
+  new_action = default_action();
+  for (i = 0, len = args.length; i < len; i++) {
+    arg = args[i];
+    switch (typeof arg) {
+      case 'function':
+        if (new_action.handler) {
+          throw utils.error('NIKITA_SESSION_INVALID_ARGUMENTS', [`handler is already registered, got ${utils.error.got(arg)}`]);
+        }
+        mutate(new_action, {
+          handler: arg
+        });
+        break;
+      case 'string':
+        if (new_action.handler) {
+          throw utils.error('NIKITA_SESSION_INVALID_ARGUMENTS', [`handler is already registered, got ${JSON.stringigy(arg)}`]);
+        }
+        mutate(new_action, {
+          metadata: {
+            argument: arg
+          }
+        });
+        break;
+      case 'object':
+        if (Array.isArray(arg)) {
+          throw utils.error('NIKITA_SESSION_INVALID_ARGUMENTS', [`argument cannot be an array, got ${utils.error.got(arg)}`]);
+        }
+        if (arg === null) {
+          mutate(new_action, {
+            metadata: {
+              argument: null
             }
-            mutate(new_action, {
-              handler: arg
-            });
-            break;
-          case 'string':
-            if (action.handler) {
-              throw Error(`Invalid Action Argument: handler is already registered, got ${JSON.stringigy(arg)}`);
-            }
-            mutate(new_action, {
-              metadata: {
-                argument: arg
-              }
-            });
-            break;
-          case 'object':
-            if (Array.isArray(arg)) {
-              throw Error(`Invalid Action argument: argument cannot be an array, got ${JSON.stringify(arg)}`);
-            }
-            if (arg === null) {
-              mutate(new_action, {
-                metadata: {
-                  argument: null
-                }
-              });
-            } else if (is_object_literal(arg)) {
-              for (k in arg) {
-                v = arg[k];
-                if (k === '$') {
-                  mutate(new_action, v);
-                } else if (k[0] === '$') {
-                  if (k === '$$') {
-                    mutate(new_action.metadata, v);
-                  } else {
-                    prop = k.substr(1);
-                    if (indexOf.call(properties, prop) >= 0) {
-                      new_action[prop] = v;
-                    } else {
-                      new_action.metadata[prop] = v;
-                    }
-                  }
+          });
+        } else if (is_object_literal(arg)) {
+          for (k in arg) {
+            v = arg[k];
+            if (k === '$') {
+              mutate(new_action, v);
+            } else if (k[0] === '$') {
+              if (k === '$$') {
+                mutate(new_action.metadata, v);
+              } else {
+                prop = k.substr(1);
+                if (indexOf.call(properties, prop) >= 0) {
+                  new_action[prop] = v;
                 } else {
-                  if (v !== void 0) {
-                    new_action.config[k] = v;
-                  }
+                  new_action.metadata[prop] = v;
                 }
               }
             } else {
-              mutate(new_action, {
-                metadata: {
-                  argument: arg
-                }
-              });
-            }
-            break;
-          default:
-            mutate(new_action, {
-              metadata: {
-                argument: arg
+              if (v !== void 0) {
+                new_action.config[k] = v;
               }
-            });
+            }
+          }
+        } else {
+          mutate(new_action, {
+            metadata: {
+              argument: arg
+            }
+          });
         }
-      }
-      results.push(new_action);
+        break;
+      default:
+        mutate(new_action, {
+          metadata: {
+            argument: arg
+          }
+        });
     }
-    return results;
-  })();
-  if (!args.length) {
-    // Create empty action when no arguments are provided and not for an empty array
-    new_actions = default_action();
   }
-  if (args_is_array) {
-    return new_actions;
-  } else {
-    return new_actions[0];
-  }
+  // Create empty action when no arguments are provided and not for an empty array
+  // new_actions = default_action() if not args.length
+  return new_action;
 };
 
 properties = ['context', 'handler', 'hooks', 'metadata', 'config', 'parent', 'plugins', 'registry', 'run', 'scheduler', 'ssh', 'state'];

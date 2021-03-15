@@ -7,9 +7,20 @@ describe 'session.creation', ->
   return unless tags.api
   
   describe 'args is array of actions', ->
+
+    it 'first throw error', ->
+      (->
+        session []
+      ).should.throw
+        code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
+        message: [
+          'NIKITA_SESSION_INVALID_ARGUMENTS:'
+          'argument cannot be an array, got []'
+        ].join ' '
   
     it 'which succeed', ->
-      result = await session [
+      (->
+        session [
           -> new Promise (resolve) ->
             setTimeout ->
               resolve 1
@@ -19,14 +30,12 @@ describe 'session.creation', ->
               resolve 2
             , 10
         ]
-      result.should.eql [1, 2]
-    
-    it 'first throw error', ->
-      session [
-          -> throw Error 'Catchme'
-          -> true
-        ]
-      .should.be.rejectedWith 'Catchme'
+      ).should.throw
+        code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
+        message: [
+          'NIKITA_SESSION_INVALID_ARGUMENTS:'
+          'argument cannot be an array, got [function,function]'
+        ].join ' '
         
   describe 'flow with external action', ->
     

@@ -7,59 +7,44 @@ describe 'session.normalize', ->
   return unless tags.api
   
   it 'handle function as handler', ->
-    expect = [
+    expect =
       handler: (->)
-      config: b: ''
-    ,
-      handler: (->)
-      config: c: ''
-    ]
+      config: a: ''
+      hooks: {}
+      metadata: {}
+      state: {}
     # String is place before objects
     normalize contextualize [
       (->)
-      [{b: ''}, {c: ''}]
+      {a: ''}
     ]
     # Filter only metadata.argument and config
-    .map (el) ->
-      handler: el.handler
-      config: el.config
     .should.eql expect
     # String is place after objects
     normalize contextualize [
-      [{b: ''}, {c: ''}]
+      {a: ''}
       (->)
     ]
     # Filter only metadata.argument and config
-    .map (el) ->
-      handler: el.handler
-      config: el.config
     .should.eql expect
   
   it 'handle string as metadata.argument', ->
-    expect = [
+    expect =
       metadata: argument: 'a'
       config: b: ''
-    ,
-      metadata: argument: 'a'
-      config: c: ''
-    ]
+      hooks: {}
+      state: {}
     # String is place before objects
     normalize contextualize [
       'a'
-      [{b: ''}, {c: ''}]
+      {b: ''}
     ]
     # Filter only metadata.argument and config
-    .map (el) ->
-      metadata: argument: el.metadata.argument
-      config: el.config
     .should.eql expect
     # String is place after objects
     normalize contextualize [
-      [{b: ''}, {c: ''}]
+      {b: ''}
       'a'
     ]
     # Filter only metadata.argument and config
-    .map (el) ->
-      metadata: argument: el.metadata.argument
-      config: el.config
     .should.eql expect

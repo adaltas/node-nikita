@@ -17,22 +17,14 @@ module.exports =
         if child?.metadata?.raw_input #or child?.metadata?.raw
           arguments[0].args = [{}]
         ->
-          actions = handler.apply null, arguments
+          action = handler.apply null, arguments
           # If raw_input is activated, just pass arguments as is
           # Always one action since arguments are erased
           if child?.metadata?.raw_input
-            actions.args = args
-            actions.metadata.raw_input = true
-            return actions
-          # Otherwise, compute args and pass them to the returned actions
-          args = utils.array.multiply ...args
-          if Array.isArray actions
-            actions.map (action,i) ->
-              action.args = args[i]
-              action
-          else if actions
-            actions.args = args[0]
-            actions
+            action.args = args
+            action.metadata.raw_input = true
+          action.args = args
+          action
     'nikita:normalize': (action, handler) ->
       ->
         # Prevent arguments to move into config by normalize

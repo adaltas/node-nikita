@@ -35,3 +35,32 @@ NikitaError = class NikitaError extends Error {
 module.exports = function() {
   return new NikitaError(...arguments);
 };
+
+module.exports.got = function(value, {depth = 0, max_depth = 3} = {}) {
+  var _, el, out;
+  switch (typeof value) {
+    case 'function':
+      return 'function';
+    case 'object':
+      if (Array.isArray(value)) {
+        out = [];
+        for (_ in value) {
+          el = value[_];
+          if (depth === max_depth) {
+            out.push('\u2026');
+          } else {
+            out.push(module.exports.got(el, {
+              depth: depth + 1,
+              max_depth: max_depth
+            }));
+          }
+        }
+        return `[${out.join(',')}]`;
+      } else {
+        return JSON.stringify(value);
+      }
+      break;
+    default:
+      return JSON.stringify(value);
+  }
+};

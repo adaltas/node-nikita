@@ -22,3 +22,21 @@ class NikitaError extends Error
 
 module.exports = ->
   new NikitaError ...arguments
+
+module.exports.got = (value, {depth = 0, max_depth = 3} = {}) ->
+  switch typeof value
+    when 'function'
+      'function'
+    when 'object'
+      if Array.isArray value
+        out = []
+        for _, el of value
+          if depth is max_depth
+            out.push '\u2026'
+          else
+            out.push module.exports.got el, depth: depth+1, max_depth: max_depth
+        "[#{out.join ','}]"
+      else
+        JSON.stringify value
+    else
+      JSON.stringify value
