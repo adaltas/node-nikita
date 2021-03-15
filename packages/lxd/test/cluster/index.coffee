@@ -1,7 +1,8 @@
 
 nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
+path = require('path')
 
 return unless tags.lxd
 
@@ -46,7 +47,9 @@ describe 'lxc.cluster', ->
           nikita_cluster:
             image: 'images:centos/7'
             disk:
-              nikitadir: source: '/nikita', path: '/nikita'
+              nikitadir:
+                source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
+                path: '/nikita'
       , (->)
       .should.be.fulfilled()
 
@@ -80,7 +83,9 @@ describe 'lxc.cluster', ->
           'nikita-cluster-1':
             image: 'images:centos/7'
             disk:
-              nikitadir: source: '/nikita', path: '/nikita'
+              nikitadir:
+                source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
+                path: '/nikita'
             nic:
               eth0:
                 name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
