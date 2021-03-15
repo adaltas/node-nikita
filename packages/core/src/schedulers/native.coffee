@@ -5,7 +5,7 @@ utils = require '../utils'
 module.exports = (tasks, options = {}) ->
   scheduler = null
   # Managed tasks are resolved inside the scheduler promise. The promise
-  # fullfil with an array which length is the number of managed tasks.
+  # fulfill with an array which length is the number of managed tasks.
   # It is possible to defined `managed` globally for every handler and
   # individually for each handler when calling `push` or `unshift`.
   # By default, tasks passed in the scheduler creation are managed while
@@ -14,17 +14,25 @@ module.exports = (tasks, options = {}) ->
   # resolved.
   options.managed ?= false
   options.parallel ?= 1
+  options.parallel = 1 if options.parallel is false
+  options.parallel = -1 if options.parallel is true
   state =
     stack: []
     pause: if options.pause? then !!options.pause else false
     error: undefined
     output: []
-    resolved: false
+    resolved: 0
+    fulfilled: 0
+    rejected: 0
+    pending: 0
+    managed:
+      running: 0
+      resolved: false
     running: 0
-  has_pending_tasks = ->
-    pending = state.stack.some (task) ->
+  count_pending_tasks = ->
+    state.stack.filter (task) ->
       task.managed
-    pending
+    .length
   clear_managed_tasks = ->
     state.stack = state.stack.filter (task) ->
       not task.managed
@@ -34,36 +42,43 @@ module.exports = (tasks, options = {}) ->
       pump: ->
         return if state.pause
         return if state.running is options.parallel
-        unless state.resolved
+        unless state.managed.resolved
           if state.error
-            state.resolved = true
+            state.managed.resolved = true
             # Any pending managed task is stripped out after an error
             clear_managed_tasks()
             scheduler.pump()
             return reject state.error
-          else unless has_pending_tasks()
-            state.resolved = true
+          else if count_pending_tasks() + state.managed.running is 0
+            state.managed.resolved = true
             scheduler.pump()
             return resolve state.output
         return unless state.stack.length
-        state.running++
         task = state.stack.shift()
+        state.running++
+        state.pending--
+        state.managed.running++ if task.managed
         # A managed handler cannot be scheduled once the scheduler resolves
-        if task.managed and state.resolved
+        if task.managed and state.managed.resolved
           throw utils.error 'SCHEDULER_RESOLVED', [
             'cannot execute a new handler,'
             'scheduler already in resolved state.'
           ]
         setImmediate ->
           try
-            # console.log task
             result = await task.handler.call()
             state.running--
+            state.managed.running-- if task.managed
+            state.fulfilled++
+            state.resolved++
             task.resolve.call null, result
             state.output.push result if task.managed
             setImmediate scheduler.pump
           catch error
             state.running--
+            state.managed.running-- if task.managed
+            state.rejected++
+            state.resolved++
             task.reject.call null, error
             state.error = error if task.managed
             setImmediate scheduler.pump
@@ -73,6 +88,7 @@ module.exports = (tasks, options = {}) ->
         throw Error 'Invalid Argument' unless isArray or is_object_literal tasks
         new Promise (resolve, reject) ->
           unless isArray
+            state.pending++
             state.stack.unshift {
               ...options
               ...tasks
@@ -95,15 +111,9 @@ module.exports = (tasks, options = {}) ->
         isArray = Array.isArray tasks
         tasks = handler: tasks if not isArray and typeof tasks is 'function'
         throw Error 'Invalid Argument' unless isArray or is_object_literal tasks
-        
         prom = new Promise (resolve, reject) ->
           unless isArray
-            # console.log {
-            #   ...tasks
-            #   ...options
-            #   resolve: resolve
-            #   reject: reject
-            # }
+            state.pending++
             state.stack.push {
               ...options
               ...tasks

@@ -6,10 +6,10 @@ utils = require('../utils');
 ({is_object_literal, merge} = require('mixme'));
 
 module.exports = function(tasks, options = {}) {
-  var clear_managed_tasks, has_pending_tasks, promise, scheduler, state;
+  var clear_managed_tasks, count_pending_tasks, promise, scheduler, state;
   scheduler = null;
   // Managed tasks are resolved inside the scheduler promise. The promise
-  // fullfil with an array which length is the number of managed tasks.
+  // fulfill with an array which length is the number of managed tasks.
   // It is possible to defined `managed` globally for every handler and
   // individually for each handler when calling `push` or `unshift`.
   // By default, tasks passed in the scheduler creation are managed while
@@ -22,20 +22,31 @@ module.exports = function(tasks, options = {}) {
   if (options.parallel == null) {
     options.parallel = 1;
   }
+  if (options.parallel === false) {
+    options.parallel = 1;
+  }
+  if (options.parallel === true) {
+    options.parallel = -1;
+  }
   state = {
     stack: [],
     pause: options.pause != null ? !!options.pause : false,
     error: void 0,
     output: [],
-    resolved: false,
+    resolved: 0,
+    fulfilled: 0,
+    rejected: 0,
+    pending: 0,
+    managed: {
+      running: 0,
+      resolved: false
+    },
     running: 0
   };
-  has_pending_tasks = function() {
-    var pending;
-    pending = state.stack.some(function(task) {
+  count_pending_tasks = function() {
+    return state.stack.filter(function(task) {
       return task.managed;
-    });
-    return pending;
+    }).length;
   };
   clear_managed_tasks = function() {
     return state.stack = state.stack.filter(function(task) {
@@ -53,15 +64,15 @@ module.exports = function(tasks, options = {}) {
         if (state.running === options.parallel) {
           return;
         }
-        if (!state.resolved) {
+        if (!state.managed.resolved) {
           if (state.error) {
-            state.resolved = true;
+            state.managed.resolved = true;
             // Any pending managed task is stripped out after an error
             clear_managed_tasks();
             scheduler.pump();
             return reject(state.error);
-          } else if (!has_pending_tasks()) {
-            state.resolved = true;
+          } else if (count_pending_tasks() + state.managed.running === 0) {
+            state.managed.resolved = true;
             scheduler.pump();
             return resolve(state.output);
           }
@@ -69,18 +80,26 @@ module.exports = function(tasks, options = {}) {
         if (!state.stack.length) {
           return;
         }
-        state.running++;
         task = state.stack.shift();
+        state.running++;
+        state.pending--;
+        if (task.managed) {
+          state.managed.running++;
+        }
         // A managed handler cannot be scheduled once the scheduler resolves
-        if (task.managed && state.resolved) {
+        if (task.managed && state.managed.resolved) {
           throw utils.error('SCHEDULER_RESOLVED', ['cannot execute a new handler,', 'scheduler already in resolved state.']);
         }
         return setImmediate(async function() {
           var error, result;
           try {
-            // console.log task
             result = (await task.handler.call());
             state.running--;
+            if (task.managed) {
+              state.managed.running--;
+            }
+            state.fulfilled++;
+            state.resolved++;
             task.resolve.call(null, result);
             if (task.managed) {
               state.output.push(result);
@@ -89,6 +108,11 @@ module.exports = function(tasks, options = {}) {
           } catch (error1) {
             error = error1;
             state.running--;
+            if (task.managed) {
+              state.managed.running--;
+            }
+            state.rejected++;
+            state.resolved++;
             task.reject.call(null, error);
             if (task.managed) {
               state.error = error;
@@ -111,6 +135,7 @@ module.exports = function(tasks, options = {}) {
         return new Promise(function(resolve, reject) {
           var task;
           if (!isArray) {
+            state.pending++;
             state.stack.unshift({
               ...options,
               ...tasks,
@@ -159,12 +184,7 @@ module.exports = function(tasks, options = {}) {
         prom = new Promise(function(resolve, reject) {
           var task;
           if (!isArray) {
-            // console.log {
-            //   ...tasks
-            //   ...options
-            //   resolve: resolve
-            //   reject: reject
-            // }
+            state.pending++;
             state.stack.push({
               ...options,
               ...tasks,
