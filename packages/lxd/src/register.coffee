@@ -9,6 +9,8 @@ module.exports =
   lxc:
     cluster:
       '': '@nikitajs/lxd/src/cluster'
+      stop: '@nikitajs/lxd/src/cluster/stop'
+      delete: '@nikitajs/lxd/src/cluster/delete'
     config:
       device:
         '': '@nikitajs/lxd/src/config/device'

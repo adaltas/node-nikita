@@ -11,7 +11,9 @@ registry = require('@nikitajs/core/lib/registry');
 module.exports = {
   lxc: {
     cluster: {
-      '': '@nikitajs/lxd/lib/cluster'
+      '': '@nikitajs/lxd/lib/cluster',
+      stop: '@nikitajs/lxd/lib/cluster/stop',
+      delete: '@nikitajs/lxd/lib/cluster/delete'
     },
     config: {
       device: {

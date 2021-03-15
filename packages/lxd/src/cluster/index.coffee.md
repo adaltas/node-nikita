@@ -1,4 +1,3 @@
-
 # `nikita.lxc.cluster`
 
 Create a cluster of LXD instances.
@@ -233,6 +232,8 @@ containers:
             yum -y install openssl
           elif command -v apt-get >/dev/null 2>&1; then
             apt-get -y install openssl
+          elif command -v apk >/dev/null 2>&1; then
+            apk add openssl
           else
             echo "Unsupported Package Manager" >&2 && exit 2
           fi
