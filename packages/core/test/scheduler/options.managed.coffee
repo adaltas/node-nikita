@@ -136,9 +136,10 @@ describe 'scheduler.options.managed', ->
         scheduler.push -> new Promise (resolve, reject) ->
           stack.push 2
           resolve 2
-        handler = scheduler.push (-> new Promise (resolve) ->
-          resolve [...stack, 3]
-        ),
+        handler = scheduler.push
+          handler: ->
+            new Promise (resolve) ->
+              resolve [...stack, 3]
           managed: false
         scheduler
         .should.be.resolvedWith [1, 2]
@@ -155,10 +156,11 @@ describe 'scheduler.options.managed', ->
         scheduler.push -> new Promise (resolve, reject) ->
           stack.push 2
           reject Error stack.join ','
-        prom = scheduler.push (-> new Promise (resolve) ->
-          stack.push 3
-          resolve [...stack, 3]
-        ),
+        prom = scheduler.push
+          handler: ->
+            new Promise (resolve) ->
+              stack.push 3
+              resolve [...stack, 3]
           managed: false
         scheduler
         .should.be.rejectedWith '1,2'
