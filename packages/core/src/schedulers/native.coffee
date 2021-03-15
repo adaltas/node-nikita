@@ -1,21 +1,25 @@
 
 utils = require '../utils'
+{merge} = require 'mixme'
 
 module.exports = (handlers, options = {}) ->
   scheduler = null
+  # Managed handlers are resolved with the scheduler
+  options.managed ?= false
+  options.parallel ?= 1
   state =
     stack: []
     pause: if options.pause? then !!options.pause else false
     error: undefined
     output: []
     resolved: false
-    running: false
+    running: 0
   promise = new Promise (resolve, reject) ->
     scheduler =
       state: state
       pump: ->
         return if state.pause
-        return if state.running
+        return if state.running is options.parallel
         unless state.resolved
           if state.error
             state.resolved = true
@@ -24,23 +28,23 @@ module.exports = (handlers, options = {}) ->
             state.resolved = true
             return resolve state.output
         return unless state.stack.length
-        state.running = true
+        state.running++
         item = state.stack.shift()
         item = item
         setImmediate ->
           try
             result = await item.handler.call()
-            state.running = false
+            state.running--
             item.resolve.call null, result
-            state.output.push result if options.managed or item.options.managed
-            setImmediate -> scheduler.pump()
+            # console.log options.managed, item.options.managed
+            state.output.push result if item.options.managed
+            setImmediate scheduler.pump
           catch error
-            state.running = false
+            state.running--
             item.reject.call null, error
-            state.error = error if options.managed or item.options.managed
-            setImmediate -> scheduler.pump()
-      unshift: (handlers, options={}) ->
-        options.pump ?= true
+            state.error = error if item.options.managed
+            setImmediate scheduler.pump
+      unshift: (handlers, opts={}) ->
         isArray = Array.isArray handlers
         throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
         new Promise (resolve, reject) ->
@@ -49,12 +53,12 @@ module.exports = (handlers, options = {}) ->
               handler: handlers
               resolve: resolve
               reject: reject
-              options: options
+              options: merge options, opts
             scheduler.pump()
           else
             # Unshift from the last to the first element to preserve order
             Promise.all((
-              scheduler.unshift handler, pump: false for handler in handlers.reverse()
+              scheduler.unshift handler, opts for handler in handlers.reverse()
             ).reverse()).then resolve, reject
       pause: ->
         state.pause = true
@@ -62,7 +66,7 @@ module.exports = (handlers, options = {}) ->
         return unless state.pause
         state.pause = false
         scheduler.pump() if state.stack.length
-      push: (handlers, options={}) ->
+      push: (handlers, opts={}) ->
         isArray = Array.isArray handlers
         throw Error 'Invalid Argument' unless isArray or typeof handlers is 'function'
         prom = new Promise (resolve, reject) ->
@@ -71,11 +75,11 @@ module.exports = (handlers, options = {}) ->
               handler: handlers
               resolve: resolve
               reject: reject
-              options: options
+              options: merge options, opts
             scheduler.pump()
           else
             Promise.all(
-              scheduler.push handler, options for handler in handlers
+              scheduler.push handler, opts for handler in handlers
             ).then resolve, reject
         prom.catch (->) # Handle strict unhandled rejections
         prom
