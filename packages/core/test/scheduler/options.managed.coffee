@@ -112,7 +112,7 @@ describe 'scheduler.options.managed', ->
               
       it 'dont accept handler once rejected', ->
         scheduler = schedule(null, managed: true)
-        scheduler.push -> new Promise (, reject) ->
+        scheduler.push -> new Promise (resolve, reject) ->
           reject()
         scheduler
         .catch ->

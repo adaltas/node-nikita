@@ -43,18 +43,22 @@ module.exports = (tasks, options = {}) ->
         return if state.pause
         return if state.running is options.parallel
         unless state.managed.resolved
-          if state.error
+          if state.managed.error
             state.managed.resolved = true
             # Any pending managed task is stripped out after an error
             clear_managed_tasks()
             scheduler.pump()
-            return reject state.error
+            return reject state.managed.error
           else if count_pending_tasks() + state.managed.running is 0
             state.managed.resolved = true
             scheduler.pump()
             return resolve state.output
         return unless state.stack.length
         task = state.stack.shift()
+        if options.strict is true and not task.managed and state.error
+          task.reject state.error
+          setImmediate scheduler.pump
+          return
         state.running++
         state.pending--
         state.managed.running++ if task.managed
@@ -80,7 +84,8 @@ module.exports = (tasks, options = {}) ->
             state.rejected++
             state.resolved++
             task.reject.call null, error
-            state.error = error if task.managed
+            state.error = error if options.strict
+            state.managed.error = error if task.managed
             setImmediate scheduler.pump
       unshift: (tasks) ->
         isArray = Array.isArray tasks

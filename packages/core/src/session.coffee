@@ -62,6 +62,7 @@ session = (args, options={}) ->
       contextualize [...args, $namespace: namespace]
   action.parent = options.parent
   action.plugins = plugins
+  action.scheduler ?= {}
   action.metadata.namespace ?= []
   # Initialize the registry to manage action registration
   action.registry = registry.create
@@ -73,8 +74,8 @@ session = (args, options={}) ->
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
   schedulers = 
-    in: schedule()
-    out: schedule null, pause: true
+    in: schedule null, action.scheduler
+    out: schedule null, {...action.scheduler, pause: true}
   # Start with a paused scheduler to register actions out of the handler
   action.scheduler = schedulers.out
   # Expose the action context
