@@ -4,7 +4,14 @@ utils = require '../utils'
 
 module.exports = (handlers, options = {}) ->
   scheduler = null
-  # Managed handlers are resolved with the scheduler
+  # Managed handlers are resolved inside the scheduler promise. The promise
+  # fullfil with an array which length is the number of managed handlers.
+  # It is possible to defined `managed` globally for every handler and
+  # individually for each handler when calling `push` or `unshift`.
+  # By default, handlers passed in the scheduler creation are managed while
+  # handler pushed or unshifted are not.
+  # It is not possible to register managed handler once the scheduler has
+  # resolved.
   options.managed ?= false
   options.parallel ?= 1
   state =
@@ -14,6 +21,13 @@ module.exports = (handlers, options = {}) ->
     output: []
     resolved: false
     running: 0
+  has_pending_tasks = ->
+    pending = state.stack.some (task) ->
+      task.options.managed
+    pending
+  clear_managed_tasks = ->
+    state.stack = state.stack.filter (task) ->
+      not task.options.managed
   promise = new Promise (resolve, reject) ->
     scheduler =
       state: state
@@ -23,20 +37,28 @@ module.exports = (handlers, options = {}) ->
         unless state.resolved
           if state.error
             state.resolved = true
+            # Any pending managed task is stripped out after an error
+            clear_managed_tasks()
+            scheduler.pump()
             return reject state.error
-          else unless state.stack.length
+          else unless has_pending_tasks()
             state.resolved = true
+            scheduler.pump()
             return resolve state.output
         return unless state.stack.length
         state.running++
         item = state.stack.shift()
-        item = item
+        # A managed handler cannot be scheduled once the scheduler resolves
+        if item.options.managed and state.resolved
+          throw utils.error 'SCHEDULER_RESOLVED', [
+            'cannot execute a new handler,'
+            'scheduler already in resolved state.'
+          ]
         setImmediate ->
           try
             result = await item.handler.call()
             state.running--
             item.resolve.call null, result
-            # console.log options.managed, item.options.managed
             state.output.push result if item.options.managed
             setImmediate scheduler.pump
           catch error

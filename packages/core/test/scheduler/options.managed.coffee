@@ -2,7 +2,7 @@
 {tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
-describe 'scheduler.flow options.flow', ->
+describe 'scheduler.options.managed', ->
   return unless tags.api
   
   describe '`false`, default', ->
@@ -42,11 +42,11 @@ describe 'scheduler.flow options.flow', ->
       .should.be.resolved()
       .then -> stack.should.eql [1, 2, 'catchme']
   
-  describe 'push is not managed by default', ->
+  describe 'managed scheduler', ->
     
-    describe '`true`', ->
+    describe 'push managed handler', ->
 
-      it 'stop on first error', ->
+      it 'scheduler stop on first rejected error', ->
         stack = []
         scheduler = schedule(null, managed: true)
         scheduler.push -> new Promise (resolve) ->
@@ -62,7 +62,7 @@ describe 'scheduler.flow options.flow', ->
         .should.be.rejectedWith 'catchme'
         .then -> stack.should.eql [1, 2]
       
-      it 'push synchronously', ->
+      it 'scheduler stop on first thrown error', ->
         stack = []
         scheduler = schedule(null, managed: true)
         scheduler.push ->
@@ -78,7 +78,7 @@ describe 'scheduler.flow options.flow', ->
         .should.be.rejectedWith 'catchme'
         .then -> stack.should.eql [1, 2]
 
-      it 'push array', ->
+      it 'scheduler stop when an array reject an error', ->
         stack = []
         scheduler = schedule(null, managed: true)
         scheduler.push [
@@ -94,4 +94,74 @@ describe 'scheduler.flow options.flow', ->
           ]
         .should.be.rejectedWith 'catchme'
         .then -> stack.should.eql [1, 2]
+          
+      it 'dont accept handler once fulfilled', ->
+        scheduler = schedule(null, managed: true)
+        scheduler.push -> new Promise (resolve) ->
+          resolve()
+        scheduler
+        .then ->
+          scheduler.push (->)
+          .should.be.rejectedWith
+            code: 'SCHEDULER_RESOLVED'
+            message: [
+              'SCHEDULER_RESOLVED:'
+              'cannot execute a new handler,'
+              'scheduler already in resolved state.'
+            ].join ' '
+              
+      it 'dont accept handler once rejected', ->
+        scheduler = schedule(null, managed: true)
+        scheduler.push -> new Promise (, reject) ->
+          reject()
+        scheduler
+        .catch ->
+          scheduler.push (->)
+          .should.be.rejectedWith
+            code: 'SCHEDULER_RESOLVED'
+            message: [
+              'SCHEDULER_RESOLVED:'
+              'cannot execute a new handler,'
+              'scheduler already in resolved state.'
+            ].join ' '
+          
+    describe 'push unmanaged handler', ->
+
+      it 'are called but not returnd', ->
+        stack = []
+        scheduler = schedule(null, managed: true)
+        scheduler.push -> new Promise (resolve) ->
+          stack.push 1
+          resolve 1
+        scheduler.push -> new Promise (resolve, reject) ->
+          stack.push 2
+          resolve 2
+        handler = scheduler.push (-> new Promise (resolve) ->
+          resolve [...stack, 3]
+        ),
+          managed: false
+        scheduler
+        .should.be.resolvedWith [1, 2]
+        .then ->
+          handler
+          .should.be.resolvedWith [1, 2, 3]
+
+      it 'are called after an error', ->
+        stack = []
+        scheduler = schedule(null, managed: true)
+        scheduler.push -> new Promise (resolve) ->
+          stack.push 1
+          resolve 1
+        scheduler.push -> new Promise (resolve, reject) ->
+          stack.push 2
+          reject Error stack.join ','
+        prom = scheduler.push (-> new Promise (resolve) ->
+          stack.push 3
+          resolve [...stack, 3]
+        ),
+          managed: false
+        scheduler
+        .should.be.rejectedWith '1,2'
+        .catch ->
+          prom.should.be.resolvedWith [1, 2, 3]
         

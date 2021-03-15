@@ -2,7 +2,7 @@
 {tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
-describe 'scheduler.instance', ->
+describe 'scheduler.creation', ->
   return unless tags.api
   
   describe 'usage', ->

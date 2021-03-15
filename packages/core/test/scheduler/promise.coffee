@@ -2,7 +2,7 @@
 {tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
-describe 'scheduler.instance.promise', ->
+describe 'scheduler.promise', ->
   return unless tags.api
   
   describe 'instantiate handlers with error', ->
@@ -13,21 +13,21 @@ describe 'scheduler.instance.promise', ->
         ->
           stack.push 1
           true
-        ,
-          ->
-            stack.push 2
-            throw Error 'catchme'
-        ,
-          ->
-            stack.push 3
-            true
-        ]
+      ,
+        ->
+          stack.push 2
+          throw Error 'catchme'
+      ,
+        ->
+          stack.push 3
+          true
+      ]
       .should.be.rejectedWith 'catchme'
       .then -> stack.should.eql [1, 2]
 
     it 'asynchronously', ->
       stack = []
-      scheduler = schedule [
+      schedule [
         ->
           stack.push 1
           true

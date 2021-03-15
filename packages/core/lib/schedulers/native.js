@@ -6,9 +6,16 @@ utils = require('../utils');
 ({merge} = require('mixme'));
 
 module.exports = function(handlers, options = {}) {
-  var promise, scheduler, state;
+  var clear_managed_tasks, has_pending_tasks, promise, scheduler, state;
   scheduler = null;
-  // Managed handlers are resolved with the scheduler
+  // Managed handlers are resolved inside the scheduler promise. The promise
+  // fullfil with an array which length is the number of managed handlers.
+  // It is possible to defined `managed` globally for every handler and
+  // individually for each handler when calling `push` or `unshift`.
+  // By default, handlers passed in the scheduler creation are managed while
+  // handler pushed or unshifted are not.
+  // It is not possible to register managed handler once the scheduler has
+  // resolved.
   if (options.managed == null) {
     options.managed = false;
   }
@@ -22,6 +29,18 @@ module.exports = function(handlers, options = {}) {
     output: [],
     resolved: false,
     running: 0
+  };
+  has_pending_tasks = function() {
+    var pending;
+    pending = state.stack.some(function(task) {
+      return task.options.managed;
+    });
+    return pending;
+  };
+  clear_managed_tasks = function() {
+    return state.stack = state.stack.filter(function(task) {
+      return !task.options.managed;
+    });
   };
   promise = new Promise(function(resolve, reject) {
     scheduler = {
@@ -37,9 +56,13 @@ module.exports = function(handlers, options = {}) {
         if (!state.resolved) {
           if (state.error) {
             state.resolved = true;
+            // Any pending managed task is stripped out after an error
+            clear_managed_tasks();
+            scheduler.pump();
             return reject(state.error);
-          } else if (!state.stack.length) {
+          } else if (!has_pending_tasks()) {
             state.resolved = true;
+            scheduler.pump();
             return resolve(state.output);
           }
         }
@@ -48,7 +71,10 @@ module.exports = function(handlers, options = {}) {
         }
         state.running++;
         item = state.stack.shift();
-        item = item;
+        // A managed handler cannot be scheduled once the scheduler resolves
+        if (item.options.managed && state.resolved) {
+          throw utils.error('SCHEDULER_RESOLVED', ['cannot execute a new handler,', 'scheduler already in resolved state.']);
+        }
         return setImmediate(async function() {
           var error, result;
           try {
@@ -56,7 +82,6 @@ module.exports = function(handlers, options = {}) {
             state.running--;
             item.resolve.call(null, result);
             if (item.options.managed) {
-              // console.log options.managed, item.options.managed
               state.output.push(result);
             }
             return setImmediate(scheduler.pump);

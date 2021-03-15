@@ -19,13 +19,13 @@ describe 'scheduler.push', ->
 
     it 'run asynchronously', ->
       stack = []
-      scheduler = schedule()
-      scheduler.push ->
+      scheduler = schedule(null)
+      task = scheduler.push ->
         stack.push 2
         new Promise (accept, reject) ->
           accept()
       stack.push 1
-      scheduler.then ->
+      task.then ->
         stack.should.eql [1, 2]
 
   describe 'push parallel error', ->

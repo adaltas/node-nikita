@@ -2,7 +2,7 @@
 {tags} = require '../test'
 schedule = require '../../src/schedulers/native'
 
-describe 'scheduler.flow', ->
+describe 'scheduler.pause', ->
   return unless tags.api
   
   it 'pause in options', ->
@@ -27,11 +27,11 @@ describe 'scheduler.flow', ->
       stack.push 1
       resolve 1
     scheduler.pause()
-    prom1 = scheduler.push -> new Promise (resolve) ->
+    prom2 = scheduler.push -> new Promise (resolve) ->
       stack.push 2
       resolve 2
     setTimeout ->
       scheduler.state.stack.length.should.eql 1
       scheduler.resume()
     , 50
-    scheduler
+    Promise.all [prom1, prom2]
