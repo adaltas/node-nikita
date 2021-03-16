@@ -55,7 +55,7 @@ assert(files[0].isFile(), true)
         target:
           type: 'string'
           description: """
-          Path of the directory to read;
+          Path of the directory to read.
           """
         withFileTypes:
           type: 'boolean'
