@@ -11,20 +11,20 @@ describe 'lxc.network.delete', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.network
-        network: "testnet0"
+      await @lxc.network
+        network: "nkt-delete-1"
       {$status} = await @lxc.network.delete
-        network: "testnet0"
+        network: "nkt-delete-1"
       $status.should.be.true()
           
   they 'Network already deleted', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.network
-        network: "testnet0"
-      @lxc.network.delete
-        network: "testnet0"
+      await @lxc.network
+        network: "nkt-delete-2"
+      await @lxc.network.delete
+        network: "nkt-delete-2"
       {$status} = await @lxc.network.delete
-        network: "testnet0"
+        network: "nkt-delete-2"
       $status.should.be.false()
