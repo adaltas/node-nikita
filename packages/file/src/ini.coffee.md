@@ -52,79 +52,79 @@ console.info(`Content was updated: ${$status}`)
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
-          """
+          '''
         'clean':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Remove all the lines whithout a key and a value, default to "true".
-          """
+          '''
         'content':
           type: 'object'
           default: {}
-          description: """
+          description: '''
           Object to stringify.
-          """
+          '''
         'eol':
           type: 'string'
-          description: """
+          description: '''
           Characters for line delimiter, usage depends on the stringify option,
           with  the default stringify option, default to unix style if executed
           remotely  (SSH) or to the platform if executed locally ("\r\n for
           windows",  "\n" otherwise). The name stands for End Of Line.
-          """
+          '''
         'encoding':
           type: 'string'
           default: 'utf8'
-          description: """
+          description: '''
           File encoding.
-          """
+          '''
         'escape':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Escape the section's header title replace '.' by '\.'; "true" by
           default.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'merge':
           type: 'boolean'
-          description: """
+          description: '''
           Read the target if it exists and merge its content.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'parse':
           typeof: 'function'
-          description: """
+          description: '''
           User-defined function to parse the content from ini format, default to
           `require('ini').parse`, see
-          'nikita.file.utils.ini.parse\_multi\_brackets'. """
+          'nikita.file.utils.ini.parse\_multi\_brackets'. '''
         'stringify':
           typeof: 'function'
-          description: """
+          description: '''
           User-defined function to stringify the content to ini format, default
           to `require('ini').stringify`, see
           'nikita.file.utils.ini.stringify\_brackets\_then_curly' for an
           example.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           Path to a ini file providing default options; lower precedence than
           the content object; may be used conjointly with the local option;
           optional, use should_exists to enforce its presence.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           File path where to write content to or a callback.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['content', 'target']

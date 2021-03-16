@@ -24,10 +24,10 @@ schema = {
     },
     // 'rootdir':
     //   type: 'string'
-    //   description: """
+    //   description: '''
     //   Path to the mount point corresponding to the root directory, required
     //   if the "arch_chroot" option is activated.
-    //   """
+    //   '''
     'command': {
       oneOf: [
         {

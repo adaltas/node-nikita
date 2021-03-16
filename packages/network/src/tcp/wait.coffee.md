@@ -85,32 +85,32 @@ console.info(`Servers listening: ${$status}`)
           type: 'array'
           items:
             type: 'string'
-          description: """
+          description: '''
           One or multiple hosts, used to build or enrich the 'server' option.
-          """
+          '''
         'interval':
           type: 'number'
-          description: """
+          description: '''
           Time in millisecond between each connection attempt.
-          """
+          '''
         'quorum':
           type: ['boolean', 'integer']
-          description: """
+          description: '''
           Number of minimal successful connection, 50%+1 if "true".
-          """
+          '''
         'port':
           type: 'array'
           items:
             type: 'integer'
-          description: """
+          description: '''
           One or multiple ports, used to build or enrich the 'server' option.
-          """
+          '''
         'randdir':
           type: 'string'
-          description: """
+          description: '''
           Directory where to write temporary file used internally to store state
           information. It default to a temporary location.
-          """
+          '''
         'server':
           oneOf: [
             type: 'string'
@@ -131,16 +131,16 @@ console.info(`Servers listening: ${$status}`)
                   port: $ref: '#/properties/port'
               ]
           ]
-          description: """
+          description: '''
           One or multiple servers, string must be in the form of
           "{host}:{port}", object must have the properties "host" and "port".
-          """
+          '''
         'timeout':
           type: 'integer'
-          description: """
+          description: '''
           Maximum time in millisecond to wait until this function is considered
           to have failed.
-          """
+          '''
 
 ## Handler
 

@@ -24,15 +24,15 @@ console.info(`Group was updated: ${$status}`)
       properties:
         'cn':
           type: 'string'
-          description: """
+          description: '''
           Name of the group to add or modify.
-          """
+          '''
         'attributes':
           type: 'object'
           default: {}
-          description: """
+          description: '''
           Attributes associated with the group to add or modify.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

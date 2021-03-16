@@ -21,9 +21,9 @@ console.log(`Property was modified: ${$status}`)
       properties:
         'properties':
           type: 'object'
-          description: """
+          description: '''
           List of properties to set.
-          """
+          '''
 
 ## Handler
 

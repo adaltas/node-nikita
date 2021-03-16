@@ -25,21 +25,21 @@ console.info(`keytab was created or updated: ${$status}`)
           $ref: 'module://@nikitajs/file/src/index#/properties/gid'
         'keytab':
           type: 'string'
-          description: """
+          description: '''
           Path to the file storing key entries.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Principal to be created.
-          """
+          '''
         'realm':
           type: 'string'
-          description: """
+          description: '''
           The realm the principal belongs to.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['keytab', 'principal']

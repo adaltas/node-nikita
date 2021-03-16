@@ -32,19 +32,19 @@ uninstall -i /usr/share/gems json"
         'gem_bin':
           type: 'string'
           default: 'gem'
-          description: """
+          description: '''
           Path to the gem command.
-          """
+          '''
         'name':
           type: 'string'
-          description: """
+          description: '''
           Name of the gem, required.
-          """
+          '''
         'version':
           type: 'string'
-          description: """
+          description: '''
           Version of the gem.
-          """
+          '''
       required: ['name']
 
 ## Handler

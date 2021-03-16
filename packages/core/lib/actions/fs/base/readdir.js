@@ -58,7 +58,7 @@ schema = {
     },
     target: {
       type: 'string',
-      description: `Path of the directory to read;`
+      description: `Path of the directory to read.`
     },
     withFileTypes: {
       type: 'boolean',

@@ -15,14 +15,14 @@ Change permissions of a file.
       properties:
         'source':
           type: 'string'
-          description: """
+          description: '''
           Source file to be copied.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Destination file where to copy the source file.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

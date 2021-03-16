@@ -19,9 +19,9 @@ Log out from a Docker registry or the one defined by the `registry` option.
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'registry':
           type: 'string'
-          description: """
+          description: '''
           Address of the registry server, default to "https://index.docker.io/v1/".
-          """
+          '''
 
 ## Handler
 

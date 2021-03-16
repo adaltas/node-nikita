@@ -13,9 +13,9 @@ List all Node.js packages with NPM.
         'global':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Upgrades global packages.
-          """
+          '''
       if: properties: 'global': const: false
       then: required: ['cwd']
 

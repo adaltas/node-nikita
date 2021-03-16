@@ -29,9 +29,9 @@ console.info(`Content was updated: ${$status}`)
           $ref: 'module://@nikitajs/file/src/index#/properties/backup'
         'content':
           type: 'object'
-          description: """
+          description: '''
           Object to stringify.
-          """
+          '''
         'encoding':
           $ref: 'module://@nikitajs/file/src/index#/properties/encoding'
           default: 'utf8'
@@ -39,15 +39,15 @@ console.info(`Content was updated: ${$status}`)
           $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'merge':
           type: 'boolean'
-          description: """
+          description: '''
           Read the target if it exists and merge its content.
-          """
+          '''
         'target':
           $ref: 'module://@nikitajs/file/src/index#/properties/target'
-          description: """
+          description: '''
           File path where to write content to or a function that returns a valid
           file path.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/src/index#/properties/uid'
         'gid':

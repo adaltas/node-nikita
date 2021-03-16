@@ -18,19 +18,19 @@ Change ownership of a file.
       properties:
         'gid':
           type: ['integer', 'string']
-          description: """
+          description: '''
           Unix group name or id who owns the target file.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the file which permissions will change.
-          """
+          '''
         'uid':
           type: ['integer', 'string']
-          description: """
+          description: '''
           Unix user name or id who owns the target file.
-          """
+          '''
       required: ['target']
 
 ## Handler

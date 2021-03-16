@@ -60,49 +60,49 @@ returned values.
               $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
             'uid':
               type: 'integer'
-              description: """
+              description: '''
               The numeric user identifier of the user that owns the file
               (POSIX).
-              """
+              '''
             'gid':
               type: 'integer'
-              description: """
+              description: '''
               The numeric group identifier of the group that owns the file
               (POSIX).
-              """
+              '''
             'size':
               type: 'integer'
-              description: """
+              description: '''
               The size of the file in bytes.
-              """
+              '''
             'atime':
               type: 'integer'
-              description: """
+              description: '''
               The timestamp indicating the last time this file was accessed
               expressed in milliseconds since the POSIX Epoch.
-              """
+              '''
             'mtime':
               type: 'integer'
-              description: """
+              description: '''
               The timestamp indicating the last time this file was modified
               expressed in milliseconds since the POSIX Epoch.
-              """
+              '''
 
     schema =
       type: 'object'
       properties:
         'dereference':
           type: 'boolean'
-          description: """
+          description: '''
           Follow links, similar to `lstat`, default is "true", just like in the
           native Node.js `fs.stat` function, use `nikita.fs.lstat` to retrive
           link information.
-          """
+          '''
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Location of the file to analyse
-          """
+          '''
       required: ['target']
 
 ## Handler

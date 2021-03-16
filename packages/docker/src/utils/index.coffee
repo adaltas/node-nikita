@@ -64,19 +64,19 @@ module.exports = {
     'boot2docker':
       type: 'boolean'
       default: false
-      description: """
+      description: '''
       Whether to use boot2docker or not.
-      """
+      '''
     'compose':
       type: 'boolean'
-      description: """
+      description: '''
       Use the `docker-compose` command instead of `docker`.
-      """
+      '''
     'machine':
       type: 'string'
-      description: """
+      description: '''
       Name of the docker-machine, required if using docker-machine.
-      """
+      '''
   # Reformat error message if any
   # TODO: rename this function as format_error
 }

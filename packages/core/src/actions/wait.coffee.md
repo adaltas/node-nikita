@@ -27,9 +27,9 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
       properties:
         'time':
           type: 'integer'
-          description: """
+          description: '''
           Time in millisecond to wait for.
-          """
+          '''
       required: ['time']
 
 ## Handler

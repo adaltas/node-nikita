@@ -30,15 +30,15 @@ console.info(`Package was uninstalled: ${$status}`)
           $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
         'name':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Name of the package(s) to remove.
-          """
+          '''
         'global':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Uninstalls the current package context as a global package.
-          """
+          '''
       required: ['name']
       if: properties: 'global': const: false
       then: required: ['cwd']

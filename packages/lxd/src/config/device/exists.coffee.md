@@ -27,9 +27,9 @@ console.info($status ? `device exists, type is ${config.type}` : 'device missing
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'device':
           type: 'string'
-          description: """
+          description: '''
           Name of the device in LXD configuration, for example "eth0".
-          """
+          '''
       required: ['container', 'device']
 
 ## Handler

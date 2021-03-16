@@ -58,9 +58,9 @@ console.info(`Iptables was updated: ${$status}`)
           type: 'array'
           items:
             $ref: '#/definitions/rule'
-          description: """
+          description: '''
           One or more objects containing iptables rule definitions.
-          """
+          '''
         'sudo':
           $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
       definitions:
@@ -77,32 +77,32 @@ console.info(`Iptables was updated: ${$status}`)
               'comment':
                 type: 'string'
                 maxLength: 256
-                description: """
+                description: '''
                 Allows you to add comments (up to 256 characters) to any rule.
-                """
+                '''
               'limit':
                 type: 'string'
-                description: """
+                description: '''
                 The protocol of the rule or of the packet to check.
-                """
+                '''
               'state':
                 type: 'string'
-                description: """
+                description: '''
                 This module, when combined with connection tracking, allows
                 access to the connection tracking state for this packet.
-                """
+                '''
               'tcp':
                 type: ['string', 'integer']
-                description: """
+                description: '''
                 Used if protocol is set to "tcp", the supported properties are
                 "dport" and "sport".
-                """
+                '''
               'udp':
                 type: ['string', 'integer']
-                description: """
+                description: '''
                 Used if protocol is set to "udp", the supported properties are
                 "dport" and "sport".
-                """
+                '''
           ]
         'rule-config':
           type: 'object'
@@ -111,47 +111,47 @@ console.info(`Iptables was updated: ${$status}`)
               type: 'string'
             'dport':
               type: ['string', 'integer']
-              description: """
+              description: '''
               Destination port or port range specification, see the "tcp" and
               "udp" modules.
-              """
+              '''
             'jump': type: 'string'
             'in-interface':
               type: 'string'
-              description: """
+              description: '''
               Name of an interface via which a packet was received.
-              """
+              '''
             'out-interface':
               type: 'string'
-              description: """
+              description: '''
               Name of an interface via which a packet is going to be sent.
-              """
+              '''
             'protocol':
               type: 'string'
               enum: ['tcp', 'udp', 'udplite', 'icmp', 'esp', 'ah', 'sctp', 'all']
-              description: """
+              description: '''
               The protocol of the rule or of the packet to check.
-              """
+              '''
             'rulenum': type: 'string'
             'source':
               type: 'string'
-              description: """
+              description: '''
               Source specification. Address can be either a network name, a
               hostname, a network IP address (with /mask), or a plain IP
               address.
-              """
+              '''
             'sport':
               type: ['string', 'integer']
-              description: """
+              description: '''
               Source port or port range specification, see the "tcp" and "udp"
               modules.
-              """
+              '''
             'target':
               type: 'string'
-              description: """
+              description: '''
               Destination specification. See the description of the -s (source)
               flag for a detailed description of the syntax.
-              """
+              '''
       required: ['rules']
 
 ## Handler

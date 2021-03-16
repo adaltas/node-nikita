@@ -47,42 +47,42 @@ console.info(`Gem installed: ${$status}`)
       properties:
         'bindir':
           type: 'string'
-          description: """
+          description: '''
           Directory where binary files are located.
-          """
+          '''
         'build_flags':
           type: 'string'
-          description: """
+          description: '''
           Pass flags to the compiler.
-          """
+          '''
         'bash':
           $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/bash'
         'gem_bin':
           type: 'string'
           default: 'gem'
-          description: """
+          description: '''
           Path to the gem command.
-          """
+          '''
         'name':
           type: 'string'
-          description: """
+          description: '''
           Name of the gem.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           Path to the gem package.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Install directory.
-          """
+          '''
         'version':
           type: 'string'
-          description: """
+          description: '''
           Version of the gem.
-          """
+          '''
       required: ['name']
 
 ## Handler

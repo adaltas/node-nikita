@@ -40,9 +40,9 @@ console.log(`Entry modified: ${$status}`)
               'changetype':
                 type: 'string'
                 enum: ['add', 'modify', 'remove']
-                description: """
+                description: '''
                 Valid operation type
-                """
+                '''
               'attributes':
                 type: 'array'
                 items:
@@ -51,58 +51,58 @@ console.log(`Entry modified: ${$status}`)
                     'type':
                       type: 'string'
                       enum: ['add', 'delete', 'replace']
-                      description: """
+                      description: '''
                       Operation type.
-                      """
+                      '''
                     'name':
                       type: 'string'
-                      description: """
+                      description: '''
                       Attribute name.
-                      """
+                      '''
                     'value':
                       type: 'string'
-                      description: """
+                      description: '''
                       Attribute value.
-                      """
+                      '''
                   required: ['type', 'name']
-                description: """
+                description: '''
                 List of attribute operations
-                """
-          description: """
+                '''
+          description: '''
           Object to be inserted, modified or removed.
-          """
+          '''
         exclude:
           type: 'array'
           items: type: 'string'
           default: []
-          description: """
+          description: '''
           List of attribute to not compare, eg `userPassword`.
-          """
+          '''
         # General LDAP connection information
         'binddn':
           type: 'string'
-          description: """
+          description: '''
           Distinguished Name to bind to the LDAP directory.
-          """
+          '''
         'mesh':
           type: 'string'
-          description: """
+          description: '''
           Specify the SASL mechanism to be used for authentication. If it's not
           specified, the program will choose the best  mechanism  the  server
           knows.
-          """
+          '''
         'passwd':
           type: 'string'
-          description: """
+          description: '''
           Password for simple authentication.
-          """
+          '''
         'uri':
           type: 'string'
-          description: """
+          description: '''
           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
           false in which case it will use your openldap client environment
           configuration.
-          """
+          '''
       required: ['operations']
 
 ## Handler

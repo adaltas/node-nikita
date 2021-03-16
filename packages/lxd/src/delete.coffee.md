@@ -22,9 +22,9 @@ console.info(`Container was deleted: ${$status}`)
         'force':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           If true, the container will be deleted even if running.
-          """
+          '''
       required: ['container']
 
 ## Handler

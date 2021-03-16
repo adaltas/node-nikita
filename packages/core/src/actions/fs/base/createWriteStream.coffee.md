@@ -37,32 +37,32 @@ console.info(`Stream was created: ${status}`)
         'flags':
           type: 'string'
           default: 'w'
-          description: """
+          description: '''
           File system flag as defined in the [Node.js
           documentation](https://nodejs.org/api/fs.html#fs_file_system_flags)
           and [open(2)](http://man7.org/linux/man-pages/man2/open.2.html)
-          """
+          '''
         'target_tmp':
           type: 'string'
-          description: """
+          description: '''
           Location where to write the temporary uploaded file before it is
           copied into its final destination, default to
           "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
         'stream':
           typeof: 'function'
-          description: """
+          description: '''
           User provided function receiving the newly created writable stream.
           The user is responsible for writing new content and for closing the
           stream.
-          """
+          '''
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Final destination path.
-          """
+          '''
       required: ['target', 'stream']
 
 ## Handler

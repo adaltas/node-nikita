@@ -38,47 +38,47 @@ console.info(`ACL modified: ${$status}`)
       properties:
         'acls':
           type: 'array'
-          description: """
+          description: '''
           In case of multiple acls, regroup "place_before", "to" and "by" as an
           array.
-          """
+          '''
           items:
             type: 'object'
             properties:
               'by':
                 type: 'array'
                 items: type: 'string'
-                description: """
+                description: '''
                 Who to grant access to and the access to grant as an array (eg:
                 `{..., by:["ssf=64 anonymous auth"]}`).
-                """
+                '''
               'first':
                 type: 'boolean'
-                description: """
+                description: '''
                 Please ACL in the first position.
-                """
+                '''
               'place_before':
                 type: 'string'
-                description: """
+                description: '''
                 Place before another rule defined by "to".
-                """
+                '''
               'to':
                 type: 'string'
-                description: """
+                description: '''
                 What to control access to as a string.
-                """
+                '''
         'dn':
           type: 'string'
-          description: """
+          description: '''
           Distinguish name storing the "olcAccess" property, using the database
           address (eg: "olcDatabase={2}bdb,cn=config").
-          """
+          '''
         'suffix':
           type: 'string'
-          description: """
+          description: '''
           The suffix associated with the database (eg: "dc=example,dc=org"),
           used as an alternative to the `dn` configuration.
-          """
+          '''
       required: ['acls']
 
 

@@ -43,78 +43,78 @@ console.info(`File exists: ${status}`)
       properties:
         'content':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
-          description: """
+          description: '''
           Text to validate.
-          """
+          '''
         'encoding':
           type: 'string'
           default: 'utf8'
-          description: """
+          description: '''
           Content encoding, see the Node.js supported Buffer encoding.
-          """
+          '''
         'filetype':
           type: 'array'
           items:
             type: ['integer', 'string']
-          description: """
+          description: '''
           Validate the file, could be any [file type
           constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
           one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
           'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
           'ifsock',  'socket'.
-          """
+          '''
         'filter':
           type: 'array'
           items:
             instanceof: 'RegExp'
-          description: """
+          description: '''
           Text to filter in actual content before matching.
-          """
+          '''
         'gid':
           type: ['integer', 'string']
-          description: """
+          description: '''
           Group ID to assert.
-          """
+          '''
         'md5':
           type: 'string'
-          description: """
+          description: '''
           Validate signature.
-          """
+          '''
         'mode':
           type: 'array'
           items:
             $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
-          description: """
+          description: '''
           Validate file permissions.
-          """
+          '''
         'not':
           $ref: 'module://@nikitajs/core/src/actions/assert#/properties/not'
         'sha1':
           type: 'string'
-          description: """
+          description: '''
           Validate signature.
-          """
+          '''
         'sha256':
           type: 'string'
-          description: """
+          description: '''
           Validate signature.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the file to assert.
-          """
+          '''
         'trim':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Trim the actual and expected content before matching.
-          """
+          '''
         'uid':
           type: ['integer', 'string']
-          description: """
+          description: '''
           User ID to assert.
-          """
+          '''
       required: ['target']
 
 ## Handler

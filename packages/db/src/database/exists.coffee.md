@@ -14,9 +14,9 @@ Check if a database exists.
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
         'database':
           type: 'string'
-          description: """
+          description: '''
           The database name to check for existance.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':

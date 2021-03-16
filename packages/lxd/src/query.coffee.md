@@ -32,10 +32,10 @@ Flags:
       properties:
         'path':
           type: 'string'
-          description: """
+          description: '''
           The API path in the form of `[<remote>:]<API path>`, for example
           `/1.0/instances/c1`
-          """
+          '''
 
 ## Handler
 

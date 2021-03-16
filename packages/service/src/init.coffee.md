@@ -19,17 +19,17 @@ Reload the service daemon provider depending on the os.
         'context':
           $ref: 'module://@nikitajs/file/lib/index#/properties/context'
           default: {}
-          description: """
+          description: '''
           The context object used to render the scripts file; templating is
           disabled if no context is provided.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
         'filters':
           typeof: 'function'
-          description: """
+          description: '''
           Filter function to extend the nunjucks engine.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'local':
@@ -39,25 +39,25 @@ Reload the service daemon provider depending on the os.
           default: '755'
         'name':
           type: 'string'
-          description: """
+          description: '''
           The name of the destination file. Uses the name of the template if
           missing.
-          """
+          '''
         # 'skip_empty_lines': # not supported
         #   type: 'boolean'
-        #   description: """
+        #   description: '''
         #   Remove empty lines.
-        #   """
+        #   '''
         'source':
           $ref: 'module://@nikitajs/file/lib/index#/properties/source'
         'target':
           $ref: 'module://@nikitajs/file/lib/index#/properties/target'
-          description: """
+          description: '''
           The destination file. `/etc/init.d/crond` or
           `/etc/systemd/system/crond.service` for example. If no provided,
           nikita put it on the default folder based on the service daemon
           provider,the OS and use the source filename as the name.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
       required: ['source']

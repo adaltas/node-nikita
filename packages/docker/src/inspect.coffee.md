@@ -43,9 +43,9 @@ info.map( (container) =>
         'container':
           type: ['array', 'string']
           items: type: 'string'
-          description: """
+          description: '''
           Name/ID of the container (array of containers not yet implemented).
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
       required: ['container']

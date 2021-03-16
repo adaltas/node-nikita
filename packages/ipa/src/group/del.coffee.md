@@ -24,9 +24,9 @@ console.info(`Group was deleted: ${$status}`)
       properties:
         'cn':
           type: 'string'
-          description: """
+          description: '''
           Name of the group to delete.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

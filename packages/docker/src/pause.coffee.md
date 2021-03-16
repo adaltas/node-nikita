@@ -26,9 +26,9 @@ console.info(`Container was paused: ${$status}`)
       properties:
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
       required: ['container']

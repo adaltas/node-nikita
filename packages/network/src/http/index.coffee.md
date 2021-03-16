@@ -46,103 +46,103 @@ try {
           type: 'array'
           items:
             type: 'string'
-          description: """
+          description: '''
           Extra cookies to include in the request when sending HTTP to a server.
-          """
+          '''
         'data':
           type: ['array', 'boolean', 'null', 'number', 'object', 'string']
-          description: """
+          description: '''
           The request HTTP body associated with "POST" and "PUT" requests. The
           `Accept: application/json` request header will be automatically
           inserted if not yet present and if `data` is not a string.
-          """
+          '''
         'fail':
           type: 'boolean'
-          description: """
+          description: '''
           Fail silently (no output at all) on HTTP errors.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
-          description: """
+          description: '''
           Group name or id who owns the target file; only apply if `target` is
           provided.
-          """
+          '''
         'http_headers':
           type: 'object'
           default: {}
-          description: """
+          description: '''
           Extra header to include in the request when sending the HTTP request
           to a server.
-          """
+          '''
         'insecure':
           type: 'boolean'
-          description: """
+          description: '''
           Allow insecure server connections when using SSL; disabled if `cacert`
           is provided.
-          """
+          '''
         'location':
           type: 'boolean'
-          description: """
+          description: '''
           If the server reports that the requested page has moved to a different
           location (indicated with a Location: header and a 3XX response code),
           this option will make curl redo the request on the new place.
-          """
+          '''
         'method':
           type: 'string'
           default: 'GET'
-          description: """
+          description: '''
           Specify request command (HTTP method) to use.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
-          description: """
+          description: '''
           Permissions of the target. If specified, nikita will chmod after
           download.
-          """
+          '''
         'negotiate':
           type: 'boolean'
-          description: """
+          description: '''
           Use HTTP Negotiate (SPNEGO) authentication.
-          """
+          '''
         'proxy':
           type: 'string'
-          description: """
+          description: '''
           Use the specified HTTP proxy. If the port number is not specified, it
           is assumed at port 1080. See curl(1) man page.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password associated with the Kerberos principal, required if
           `principal` is provided.
-          """
+          '''
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Kerberos principal name if a ticket must be generated along the
           `negociate` option.
-          """
+          '''
         'referer':
           type: 'string'
-          description: """
+          description: '''
           An alias for connection.http_headers[\'Referer\']
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Write to file instead of stdout; mapped to the curl `output` argument.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
-          description: """
+          description: '''
           User name or id who owns the target file; only apply if `target` is
           provided.
-          """
+          '''
         'url':
           type: 'string'
-          description: """
+          description: '''
           HTTP URL endpoint, must be a valid URL.
-          """
+          '''
       required: ['url']
 
 ## Handler

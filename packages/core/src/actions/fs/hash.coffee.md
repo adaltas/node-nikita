@@ -31,26 +31,26 @@ used for comparaison.
         'algo':
           type: 'string'
           default: 'md5'
-          description: """
+          description: '''
           Any algorythm supported by `openssl` such as "md5", "sha1" and
           "sha256".
-          """
+          '''
         'hash':
           type: 'string'
-          description: """
+          description: '''
           Assert that the targeted content match a provided hash.
-          """
+          '''
         'stats':
           typeof: 'object'
-          description: """
+          description: '''
           Stat object of the target file. Short-circuit to avoid fetching the
           stat object associated with the target if one is already available.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           The file or directory to compute the hash from.
-          """
+          '''
       required: ['target']
 
 ## Handler

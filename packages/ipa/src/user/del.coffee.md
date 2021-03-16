@@ -30,14 +30,14 @@ console.info(`User was deleted: ${$status}`)
       properties:
         'uid':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to delete, same as the `username`.
-          """
+          '''
         'username':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to delete, alias of `uid`.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

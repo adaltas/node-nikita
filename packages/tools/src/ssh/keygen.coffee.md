@@ -26,38 +26,38 @@ console.info(`Key was generated: ${status}`)
         'bits':
           type: 'number'
           default: 4096
-          description: """
+          description: '''
           Specifies the number of bits in the key to create.
-          """
+          '''
         'comment':
           type: 'string'
-          description: """
+          description: '''
           Comment such as a name or email.
-          """
+          '''
         'key_format':
           type: 'string'
-          description: """
+          description: '''
           Specify a key format. The supported key formats are: `RFC4716` (RFC
           4716/SSH2 public or private key), `PKCS8` (PEM PKCS8 public key) or
           `PEM` (PEM public key).
-          """
+          '''
         'passphrase':
           type: 'string'
           default: ''
-          description: """
+          description: '''
           Key passphrase, empty string for no passphrase.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Path of the generated private key.
-          """
+          '''
         'type':
           type: 'string'
           default: 'rsa'
-          description: """
+          description: '''
           Type of key to create.
-          """
+          '''
       required: ['target']
 
 ## Handler

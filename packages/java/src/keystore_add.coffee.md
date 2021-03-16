@@ -73,55 +73,55 @@ default location of the Oracle JDK installation.
       properties:
         'name':
           type: 'string'
-          description: """
+          description: '''
           Name of the certificate.
-          """
+          '''
         'caname':
           type: 'string'
-          description: """
+          description: '''
           Name of the certificate authority (CA).
-          """
+          '''
         'cacert':
           type: 'string'
-          description: """
+          description: '''
           Path to the certificate authority (CA).
-          """
+          '''
         'cert':
           type: 'string'
-          description: """
+          description: '''
           Path to the certificate.
-          """
+          '''
         'keytool':
           type: 'string'
           default: 'keytool'
-          description: """
+          description: '''
           Path to the `keytool` command, detetected from `$PATH` by default.
-          """
+          '''
         'local':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Treat the source file (key, cert or cacert) as a local file present on
           the host, only apply with remote actions over SSH.
-          """
+          '''
         'openssl':
           type: 'string'
           default: 'openssl'
-          description: """
+          description: '''
           Path to OpenSSl command line tool.
-          """
+          '''
         'parent':
           $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/parent'
         'keystore':
           type: 'string'
-          description: """
+          description: '''
           Path to the keystore.
-          """
+          '''
         'storepass':
           type: 'string'
-          description: """
+          description: '''
           Password to manage the keystore.
-          """
+          '''
       required: ['keystore', 'storepass']
       anyOf: [
         {required: ['cacert', 'caname']}

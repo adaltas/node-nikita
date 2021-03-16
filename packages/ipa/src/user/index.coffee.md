@@ -43,14 +43,14 @@ console.info(`User was updated: ${$status}`)
       properties:
         'uid':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to add or modify, same as the `username`.
-          """
+          '''
         'username':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to add or modify, alias of `uid`.
-          """
+          '''
         'attributes':
           type: 'object'
           properties:
@@ -58,9 +58,9 @@ console.info(`User was updated: ${$status}`)
             'sn': type: 'string' # Lastname
             'mail': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
             'userpassword': type: 'string'
-          description: """
+          description: '''
           Attributes associated with the user to add or modify.
-          """
+          '''
         'force_userpassword':
           type: 'boolean'
           description: '''

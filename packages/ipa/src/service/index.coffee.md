@@ -25,9 +25,9 @@ console.info(`Service was updated: ${$status}`)
       properties:
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Name of the service to add.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

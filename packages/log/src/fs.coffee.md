@@ -22,38 +22,38 @@ and "{config.basedir}/latest".
         'archive':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Save a copy of the previous logs inside a dedicated directory.
-          """
+          '''
         'basedir':
           type: 'string'
           default: './log'
-          description: """
+          description: '''
           Directory where to store logs relative to the process working
           directory. Default to the "log" directory. Note, when the `archive`
           option is activated, the log files will be stored accessible from
           "./log/latest".
-          """
+          '''
         'filename':
           type: 'string'
           default: '{{config.basename}}.log'
-          description: """
+          description: '''
           Name of the log file. The default behavior rely on the templated
           plugin to contextually render the filename.
-          """
+          '''
         'basename':
           type: 'string'
           default: 'localhost'
-          description: """
+          description: '''
           Default variable used by the filename rendering.
-          """
+          '''
         'serializer':
           type: 'object'
-          description: """
+          description: '''
           An object of key value pairs where keys are the event types and the
           value is a function which must be implemented to serialize the
           information.
-          """
+          '''
       required: ['serializer']
 
 ## Handler

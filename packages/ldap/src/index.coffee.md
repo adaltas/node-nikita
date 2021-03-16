@@ -42,39 +42,39 @@ console.info(`Index created or modified: ${$status}`)
       properties:
         'indexes':
           type: 'object'
-          description: """
+          description: '''
           List of "olcDbIndex" values provided as key/value pairs.
-          """
+          '''
         'dn':
           type: 'string'
-          description: """
+          description: '''
           Distinguish name storing the "olcDbIndex" property, using the database
           address (eg: "olcDatabase={2}bdb,cn=config").
-          """
+          '''
         'suffix':
           type: 'string'
-          description: """
+          description: '''
           The suffix associated with the database (eg: "dc=example,dc=org"),
           used as an alternative to the `dn` configuration.
-          """
+          '''
         # General LDAP connection information
         'binddn':
           type: 'string'
-          description: """
+          description: '''
           Distinguished Name to bind to the LDAP directory.
-          """
+          '''
         'passwd':
           type: 'string'
-          description: """
+          description: '''
           Password for simple authentication.
-          """
+          '''
         'uri':
           type: 'string'
-          description: """
+          description: '''
           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
           false in which case it will use your openldap client environment
           configuration.
-          """
+          '''
 
 ## Handler
 

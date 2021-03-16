@@ -24,9 +24,9 @@ console.info(`Network was deleted: ${$status}`)
       properties:
         'network':
           type: 'string'
-          description: """
+          description: '''
           The network name to delete.
-          """
+          '''
       required: ['network']
 
 ## Handler

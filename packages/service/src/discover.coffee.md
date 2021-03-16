@@ -21,18 +21,18 @@ Store properties in the nikita state object.
         'strict':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Throw an error if the OS is not supported.
-          """
+          '''
         'shy':
           type: 'boolean'
           default: true
         'cache':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Disable cache.
-          """
+          '''
 
 ## Handler
 

@@ -135,11 +135,6 @@ handler = async function({
     }
     if (added || new_password && !/^\{SASL\}/.test(user.userPassword)) {
       await this.execute({
-        // """
-        // ldappasswd #{binddn} #{passwd} #{uri} \
-        //   -s #{user.userPassword} \
-        //   '#{user.dn}'
-        // """
         command: ['ldappasswd', config.mesh ? `-Y ${utils.string.escapeshellarg(config.mesh)}` : void 0, config.binddn ? `-D ${utils.string.escapeshellarg(config.binddn)}` : void 0, config.passwd ? `-w ${utils.string.escapeshellarg(config.passwd)}` : void 0, config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0, `-s ${user.userPassword}`, `${utils.string.escapeshellarg(user.dn)}`].join(' ')
       });
       log({

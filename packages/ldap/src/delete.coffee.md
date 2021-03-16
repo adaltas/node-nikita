@@ -23,33 +23,33 @@ console.log(`Entry deleted: ${$status}`)
         'dn':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           One or multiple DN to remove.
-          """
+          '''
         'name':
           type: 'string'
-          description: """
+          description: '''
           Distinguish name storing the "olcAccess" property, using the database
           address (eg: "olcDatabase={2}bdb,cn=config").
-          """
+          '''
         # General LDAP connection information
         'binddn':
           type: 'string'
-          description: """
+          description: '''
           Distinguished Name to bind to the LDAP directory.
-          """
+          '''
         'passwd':
           type: 'string'
-          description: """
+          description: '''
           Password for simple authentication.
-          """
+          '''
         'uri':
           type: 'string'
-          description: """
+          description: '''
           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
           false in which case it will use your openldap client environment
           configuration.
-          """
+          '''
       required: ['dn']
 
 ## Handler

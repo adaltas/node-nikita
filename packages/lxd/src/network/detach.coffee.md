@@ -25,9 +25,9 @@ console.info(`Network was detached: ${$status}`)
       properties:
         'network':
           type: 'string'
-          description: """
+          description: '''
           The network name to detach.
-          """
+          '''
         'container':
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
       required: ['network', 'container']

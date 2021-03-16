@@ -55,7 +55,7 @@ schema = {
     },
     'target': {
       type: 'string',
-      description: `The file or directory to compute the hash from.`
+      description: `Globbing expression of the directory tree to match.`
     },
     'trailing': {
       type: 'boolean',

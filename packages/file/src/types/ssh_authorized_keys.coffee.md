@@ -12,31 +12,31 @@ throw an Error if it does not exists.
       properties:
         'gid':
           type: 'string'
-          description: """
+          description: '''
           File group name or group id.
-          """
+          '''
         'keys':
           type: 'array'
-          description: """
+          description: '''
           Array containing the public keys.
-          """
+          '''
         'merge':
           type: 'boolean'
-          description: """
+          description: '''
           Read the target if it exists and merge its content.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/file/src/index#/properties/mode'
         'target':
           type: 'string'
-          description: """
+          description: '''
           File to write, default to "/etc/pacman.conf".
-          """
+          '''
         'uid':
           type: 'string'
-          description: """
+          description: '''
           File user name or user id.
-          """
+          '''
       required: ['target', 'keys']
 
 ## Handler

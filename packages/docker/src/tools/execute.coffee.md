@@ -16,66 +16,66 @@ Execute a docker command.
           $ref: '#/properties/docker/properties/machine'
         'bash':
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Serialize the command into a file and execute it with bash.
-          """
+          '''
         # 'rootdir':
         #   type: 'string'
-        #   description: """
+        #   description: '''
         #   Path to the mount point corresponding to the root directory, required
         #   if the "arch_chroot" option is activated.
-        #   """
+        #   '''
         'command':
           oneOf: [
             type: 'string'
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           String, Object or array; Command to execute. A value provided as a
           function is interpreted as an action and will be called by forwarding
           the config object. The result is the expected to be the command
           to execute.
-          """
+          '''
         'cwd':
           type: 'string'
-          description: """
+          description: '''
           Current working directory from where to execute the command.
-          """
+          '''
         'code':
           type: 'array'
           default: [0]
           items:
             type: 'integer'
-          description: """
+          description: '''
           Expected code(s) returned by the command, int or array of int, default
           to 0.
-          """
+          '''
         'docker':
           type: 'object'
           properties:
             'boot2docker':
               type: 'boolean'
               default: false
-              description: """
+              description: '''
               Whether to use boot2docker or not.
-              """
+              '''
             'compose':
               type: 'boolean'
-              description: """
+              description: '''
               Use the `docker-compose` command instead of `docker`.
-              """
+              '''
             'machine':
               type: 'string'
               format: 'hostname'
-              description: """
+              description: '''
               Name of the docker-machine, required if using docker-machine.
-              """
-          description: """
+              '''
+          description: '''
           Isolate all the parent configuration properties into a docker
           property, used when providing and cascading a docker configuration at
           a global scale.
-          """
+          '''
       required: ['command']
       additionalProperties: false
     (

@@ -31,21 +31,21 @@ console.info(`Image was pulled: ${$status}`)
         'all':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Pull all tagged images in the repository.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'image':
           type: 'string'
-          description: """
+          description: '''
           Name of an image or a repository to pull. It can contain `tag`.
-          """
+          '''
         'tag':
           type: 'string'
-          description: """
+          description: '''
           Specific image tag within a repository to pull. Default to `latest`.
-          """
+          '''
 
 ## Handler
 

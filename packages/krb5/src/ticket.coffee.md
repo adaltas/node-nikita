@@ -22,19 +22,19 @@ console.info(`ticket was renewed: ${$status}`)
           $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
         'principal':
           type: 'string'
-          description: """
+          description: '''
           The principal the ticket to be renewed.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password associated to this principal.
-          """
+          '''
         'keytab':
           type: 'string'
-          description: """
+          description: '''
           Path to the file storing key entries.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
       oneOf: [

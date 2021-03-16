@@ -15,14 +15,14 @@ Change the name or location of a file.
       properties:
         'source':
           type: 'string'
-          description: """
+          description: '''
           Location of the file to rename.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           New name of the file.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

@@ -34,9 +34,9 @@ console.info(`File exists: ${exists}`)
       properties:
         'target':
           type: 'string'
-          description: """
+          description: '''
           Destination file to check existance.
-          """
+          '''
       required: ['target']
 
 ## Handler

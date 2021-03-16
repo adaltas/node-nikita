@@ -29,9 +29,9 @@ console.info(`File exists: ${$status}`)
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'target':
           type: 'string'
-          description: """
+          description: '''
           File destination in the form of "<path>".
-          """
+          '''
       required: ['container']
 
 ## Handler

@@ -97,53 +97,53 @@ pass all the properties through the `ssh` property.
           type: 'string'
           anyOf: [{format: 'ipv4'}, {format: 'hostname'}]
           default: '127.0.0.1'
-          description: """
+          description: '''
           Hostname or IP address of the remote server.
-          """
+          '''
         'ip':
           type: 'string'
-          description: """
+          description: '''
           IP address of the remote server, used if `host` isn't already defined.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password of the user used to authenticate and create the SSH
           connection.
-          """
+          '''
         'port':
           type: 'integer'
           default: 22
-          description: """
+          description: '''
           Port of the remote server.
-          """
+          '''
         'private_key':
           type: 'string'
-          description: """
+          description: '''
           Content of the private key used to authenticate the user and create
           the SSH connection. It is only used if `password` is not provided.
-          """
+          '''
         'private_key_path':
           type: 'string'
           default: '~/.ssh/id_rsa'
-          description: """
+          description: '''
           Local file location of the private key used to authenticate the user
           and create the SSH connection. It is only used if `password` and
           `private_key` are not provided.
-          """
+          '''
         'root':
           $ref: 'module://@nikitajs/core/src/actions/ssh/root'
-          description: """
+          description: '''
           Configuration passed to `nikita.ssh.root` to enable password-less root
           login.
-          """
+          '''
         'username':
           type: 'string'
           default: 'root'
-          description: """
+          description: '''
           Username of the user used to authenticate and create the SSH
           connection.
-          """
+          '''
 
 ## Handler
 

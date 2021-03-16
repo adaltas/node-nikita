@@ -27,17 +27,17 @@ console.info(`Member was added to the group: ${$status}`)
       properties:
         'cn':
           type: 'string'
-          description: """
+          description: '''
           Name of the group to add.
-          """
+          '''
         'attributes':
           type: 'object'
           properties:
             'user': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
-          description: """
+          description: '''
           Attributes associated with the group such as `ipaexternalmember`,
           `no_members`, `user` and `group`.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

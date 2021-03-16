@@ -23,26 +23,26 @@ to "['start', 'restart']" to ensure the service will be always started.
         #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
         'installed':
           type: 'boolean'
-          description: """
+          description: '''
           Assert the package is installed.
-          """
+          '''
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
         'srv_name':
           type: 'string'
-          description: """
+          description: '''
           Name used by the service utility, default to "name".
-          """
+          '''
         'started':
           type: 'boolean'
-          description: """
+          description: '''
           Assert if started.
-          """
+          '''
         'stopped':
           type: 'boolean'
-          description: """
+          description: '''
           Assert if stopped.
-          """
+          '''
       required: ['name']
 
 ## Handler

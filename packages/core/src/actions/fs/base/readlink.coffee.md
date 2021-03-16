@@ -15,9 +15,9 @@ Read a link to retrieve its destination path.
       properties:
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Location of the link to read.
-          """
+          '''
       required: ['target']
 
 ## Handler

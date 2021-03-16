@@ -29,19 +29,19 @@ console.info(`Repo was synchronized: ${$status}`)
         'revision':
           type: 'string'
           default: 'HEAD'
-          description: """
+          description: '''
           Git revision, branch or tag.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           Git source repository address.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Directory where to clone the repository.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

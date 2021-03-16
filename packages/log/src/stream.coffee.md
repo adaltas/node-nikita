@@ -14,14 +14,14 @@ Write log to custom destinations in a user provided format.
           description: '''
           Close the writable stream with the session is finished or stoped on
           error.
-          """
+          '''
         'serializer':
           type: 'object'
-          description: """
+          description: '''
           An object of key value pairs where keys are the event types and the
           value is a function which must be implemented to serialize the
           information.
-          """
+          '''
           patternProperties:
             '.*': typeof: 'function'
           additionalProperties: false

@@ -11,36 +11,36 @@ in "/etc/pacman.conf".
       properties:
         'rootdir':
           type: 'string'
-          description: """
+          description: '''
           Path to the mount point corresponding to the root directory, optional.
-          """
+          '''
         'backup':
           type: ['string', 'boolean']
-          description: """
+          description: '''
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
-          """
+          '''
         'clean':
           type: 'boolean'
-          description: """
+          description: '''
           Remove all the lines whithout a key and a value, default to "true".
-          """
+          '''
         'content':
           type: 'object'
-          description: """
+          description: '''
           Object to stringify.
-          """
+          '''
         'merge':
           type: 'boolean'
-          description: """
+          description: '''
           Read the target if it exists and merge its content.
-          """
+          '''
         'target':
           type: 'string', default: '/etc/pacman.conf'
-          description: """
+          description: '''
           Destination file.
-          """
+          '''
           
 ## Handler
 

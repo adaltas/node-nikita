@@ -10,9 +10,9 @@ Remove a user for the destination database.
       properties:
         'username':
           type: 'string'
-          description: """
+          description: '''
           The name of the user to remove.
-          """
+          '''
       required: [
         'username'
         'admin_username', 'admin_password', 'engine', 'host'

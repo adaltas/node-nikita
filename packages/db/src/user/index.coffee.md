@@ -10,16 +10,16 @@ Create a user for the destination database.
       properties:
         'username':
           type: 'string'
-          description: """
+          description: '''
           The username of a user with privileges on the database, used unless
           admin_username is provided.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           The password of a user with privileges on the database, used unless
           admin_password is provided.
-          """
+          '''
         'admin_username':
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
         'admin_password':

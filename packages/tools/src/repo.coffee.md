@@ -20,47 +20,47 @@ console.info(`Repo was updated: ${$status}`)
       properties:
         'content':
           type: ['string', 'object']
-          description: """
+          description: '''
           Content to write inside the file.
-          """
+          '''
         'clean':
           type: 'string'
-          description: """
+          description: '''
           Globing expression used to match replaced files. When relative, the
           path is resolved to the parent target directory which is
           '/etc/yum.repos.d' when the target is a filename.
-          """
+          '''
         'gpg_dir':
           type: 'string'
           default: '/etc/pki/rpm-gpg'
-          description: """
+          description: '''
           Directory storing GPG keys.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           The source file containing the repository
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Path of the repository definition file, relative to
           '/etc/yum.repos.d'.
-          """
+          '''
         'update':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Run yum update enabling only the ids present in repo file.
-          """
+          '''
         'verify':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Download the PGP keys if it's enabled in the repo file, keys are by
           default placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option
           and the filename is derivated from the url.
-          """
+          '''
       oneOf: [
         {
           required: ['content']

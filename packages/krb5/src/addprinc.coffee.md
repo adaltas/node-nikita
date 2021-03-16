@@ -30,30 +30,30 @@ console.info(`Principal was created or modified: ${$status}`)
           $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
         'keytab':
           type: 'string'
-          description: """
+          description: '''
           Path to the file storing key entries.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password associated to this principal.
-          """
+          '''
         'password_sync':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Wether the password should be created if the principal already exists.
-          """
+          '''
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Principal to be created.
-          """
+          '''
         'randkey':
           type: 'boolean'
-          description: """
+          description: '''
           Generate a random key.
-          """
+          '''
       required: ['admin', 'principal']
       oneOf: [
         {required: ['password']}

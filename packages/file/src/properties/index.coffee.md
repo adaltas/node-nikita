@@ -29,15 +29,15 @@ console.info(`File was written: ${$status}`)
         'content':
           type: 'object'
           default: {}
-          description: """
+          description: '''
           List of properties to write.
-          """
+          '''
         'merge':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Merges content properties with target file.
-          """
+          '''
         'local':
           $ref: 'module://@nikitajs/file/src/index#/properties/local'
         'separator':
@@ -46,9 +46,9 @@ console.info(`File was written: ${$status}`)
         'sort':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Sort the properties before writting them.
-          """
+          '''
         'target':
           $ref: 'module://@nikitajs/file/src/index#/properties/target'
         'trim':

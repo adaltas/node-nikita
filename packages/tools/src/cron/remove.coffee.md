@@ -21,20 +21,20 @@ console.info(`Cron entry was removed: ${$status}`)
       properties:
         'command':
           type: 'string'
-          description: """
+          description: '''
           The shell command of the job. By default all jobs will match.
-          """
+          '''
         'user':
           type: 'string'
-          description: """
+          description: '''
           The user of the crontab. The SSH user by default.
-          """
+          '''
         'when':
           type: 'string'
-          description: """
+          description: '''
           Cron-styled time string. Defines the frequency of the cron job. By
           default all frequency will match.
-          """
+          '''
       required: ['command']
 
 ## Handler

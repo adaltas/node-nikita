@@ -15,14 +15,14 @@ Delete a name and possibly the file it refers to.
       properties:
         'source':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Location of the file to reference.
-          """
+          '''
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Destination of the link to create.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

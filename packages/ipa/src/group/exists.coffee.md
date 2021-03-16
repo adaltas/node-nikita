@@ -24,9 +24,9 @@ console.info(`Group exists: ${$status}`)
       properties:
         'cn':
           type: 'string'
-          description: """
+          description: '''
           Name of the group to check for existence.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

@@ -38,24 +38,24 @@ console.info(`Container was saved: ${$status}`)
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'image':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of base image.
-          """
+          '''
         'tag':
           type: 'string'
-          description: """
+          description: '''
           Tag of the image.
-          """
+          '''
         'output':
           type: 'string'
-          description: """
+          description: '''
           TAR archive output path.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Shortcut for "output" option, required.
-          """
+          '''
       required: ['image', 'output']
 
 ## Handler

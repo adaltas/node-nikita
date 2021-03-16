@@ -25,34 +25,34 @@ console.info(`Keytab was created or modified: ${$status}`)
         'enctypes':
           type: 'array', items: type: 'string'
           default: ['aes256-cts-hmac-sha1-96', 'aes128-cts-hmac-sha1-96', 'des3-cbc-sha1','arcfour-hmac']
-          description: """
+          description: '''
           The enctypes used by krb5_server.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
         'keytab':
           type: 'string'
-          description: """
+          description: '''
           Path to the file storing key entries.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password associated to this principal; required if no randkey is
           provided.
-          """
+          '''
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Principal to be created.
-          """
+          '''
         'realm':
           type: 'string'
-          description: """
+          description: '''
           The realm the principal belongs to.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
       required: ['keytab', 'password', 'principal']

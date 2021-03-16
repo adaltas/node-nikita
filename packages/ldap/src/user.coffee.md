@@ -22,40 +22,40 @@ console.info(`User created or modified: ${$status}`)
       properties:
         'name':
           type: 'string'
-          description: """
+          description: '''
           Distinguish name storing the "olcAccess" property, using the database
           address (eg: "olcDatabase={2}bdb,cn=config").
-          """
+          '''
         'user':
           oneOf: [
             type: 'object'
           ,
             type: 'array'
           ]
-          description: """
+          description: '''
           User object.
-          """
+          '''
         # General LDAP connection information
         'binddn':
           type: 'string'
-          description: """
+          description: '''
           Distinguished Name to bind to the LDAP directory.
-          """
+          '''
         'passwd':
           type: 'string'
-          description: """
+          description: '''
           Password for simple authentication.
-          """
+          '''
         'uri':
           oneOf: [
             {type: 'string'}
             {type: 'boolean', default: 'ldapi:///'}
           ]
-          description: """
+          description: '''
           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
           false in which case it will use your openldap client environment
           configuration.
-          """
+          '''
 
 ## Handler
 
@@ -98,11 +98,6 @@ console.info(`User created or modified: ${$status}`)
           new_password = true unless loggedin
         if added or new_password and not /^\{SASL\}/.test user.userPassword
           await @execute
-            # """
-            # ldappasswd #{binddn} #{passwd} #{uri} \
-            #   -s #{user.userPassword} \
-            #   '#{user.dn}'
-            # """
             command: [
               'ldappasswd'
               "-Y #{utils.string.escapeshellarg config.mesh}" if config.mesh

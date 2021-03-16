@@ -62,15 +62,15 @@ console.info(`Directories was removed: ${status}`)
           '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           Alias for "target".
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           File, directory or glob (pattern matching based on wildcard
           characters).
-          """
+          '''
 
 ## Handler
 

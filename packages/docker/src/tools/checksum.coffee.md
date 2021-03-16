@@ -25,20 +25,20 @@ native docker command.
       properties:
         'cwd':
           type: 'string'
-          description: """
+          description: '''
           Change the build working directory.
-          """
+          '''
         'image':
           type: 'string'
-          description: """
+          description: '''
           Name of the Docker image present in the registry.
-          """
+          '''
         'tag':
           type: 'string'
           default: 'latest'
-          description: """
+          description: '''
           Tag of the Docker image, default to latest.
-          """
+          '''
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
         'compose':

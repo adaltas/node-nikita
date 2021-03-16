@@ -38,38 +38,38 @@ console.info(`Entry modified: ${$status}`)
             properties:
               'dn':
                 type: 'string'
-                description: """
+                description: '''
                 Distinguish name of the entry
-                """
+                '''
             required: ['dn']
-          description: """
+          description: '''
           Object to be inserted or modified.
-          """
+          '''
         # General LDAP connection information
         'binddn':
           type: 'string'
-          description: """
+          description: '''
           Distinguished Name to bind to the LDAP directory.
-          """
+          '''
         'mesh':
           type: 'string'
-          description: """
+          description: '''
           Specify the SASL mechanism to be used for authentication. If it's not
           specified, the program will choose the best  mechanism  the  server
           knows.
-          """
+          '''
         'passwd':
           type: 'string'
-          description: """
+          description: '''
           Password for simple authentication.
-          """
+          '''
         'uri':
           type: 'string'
-          description: """
+          description: '''
           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
           false in which case it will use your openldap client environment
           configuration.
-          """
+          '''
       required: ['entry']
 
 ## Handler

@@ -34,61 +34,61 @@ console.info(`Public key was updoaded for root user: ${status}`)
           type: 'string'
           # oneOf: [{format: 'ipv4'}, {format: 'hostname'}]
           default: 'root'
-          description: """
+          description: '''
           Command used to become the root user on the remote server, for example
           `su -`.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           Password of the user with sudo permissions to establish the SSH
           connection  if no private key is provided.
-          """
+          '''
         'port':
           type: 'integer'
           default: 22
-          description: """
-          """
+          description: '''
+          '''
         'private_key':
           type: 'string'
-          description: """
+          description: '''
           Private key of the user with sudo permissions to establish the SSH
           connection if `password` is not provided.
-          """
+          '''
         'private_key_path':
           type: 'string'
-          description: """
+          description: '''
           Local file location of the private key of the user with sudo
           permissions and used to establish the SSH connection if `password` and
           `private_key` are not provided.
-          """
+          '''
         'public_key':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Public key added to "authorized_keys" to enable the root user.
-          """
+          '''
         'public_key_path':
           type: 'string'
-          description: """
+          description: '''
           Local path to the public key added to "authorized_keys" to enable the
           root  user.
-          """
+          '''
         'selinux':
           oneOf: [
             {type: 'string', enum: ['disabled', 'enforcing', 'permissive']},
             {type: 'boolean'}
           ]
           default: 'permissive'
-          description: """
+          description: '''
           Username of the user with sudo permissions to establish the SSH
           connection.
-          """
+          '''
         'username':
           type: 'string'
-          description: """
+          description: '''
           Username of the user with sudo permissions to establish the SSH
           connection.
-          """
+          '''
 
 ## Handler
 

@@ -24,9 +24,9 @@ console.info(`Packages were upgraded: ${$status}`)
         'global':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Upgrades global packages.
-          """
+          '''
         'major':
           type: 'boolean'
           default: false
@@ -38,9 +38,9 @@ console.info(`Packages were upgraded: ${$status}`)
           '''
         'name':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Name of the package(s) to upgrade.
-          """
+          '''
       if: properties: 'global': const: false
       then: required: ['cwd']
 

@@ -72,99 +72,99 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       properties:
         'cache':
           type: 'boolean'
-          description: """
+          description: '''
           Activate the cache, default to true if either "cache_dir" or
           "cache_file" is activated.
-          """
+          '''
         'cache_dir':
           type: 'string'
-          description: """
+          description: '''
           Path of the cache directory.
-          """
+          '''
         'cache_file':
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Cache the file on the executing machine, equivalent to cache unless an
           ssh connection is provided. If a string is provided, it will be the
           cache path. By default: basename of source
-          """
+          '''
         'cookies':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Extra cookies  to include in the request when sending HTTP to a
           server.
-          """
+          '''
         'force':
           type: 'boolean'
-          description: """
+          description: '''
           Overwrite the target file if it exists.
-          """
+          '''
         'force_cache':
           type: 'boolean'
-          description: """
+          description: '''
           Force cache overwrite if it exists
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'http_headers':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Extra header to include in the request when sending HTTP to a server.
-          """
+          '''
         'location':
           type: 'boolean'
-          description: """
+          description: '''
           If the server reports that the requested page has moved to a different
           location (indicated with a Location: header and a 3XX response code),
           this option will make curl redo the request on the new place.
-          """
+          '''
         'md5':
           default: false
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Validate uploaded file with md5 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
           "true".
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'proxy':
           type: 'string'
-          description: """
+          description: '''
           Use the specified HTTP proxy. If the port number is not specified, it
           is assumed at port 1080. See curl(1) man page.
-          """
+          '''
         'sha1':
           default: false
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Validate uploaded file with sha1 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
           "true".
-          """
+          '''
         'sha256':
           default: false
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Validate uploaded file with sha1 checksum (only for binary upload for
           now), may be the string checksum or will be deduced from source if
           "true".
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           File, HTTP URL, GIT repository. File is the default protocol if source
           is provided without any.
-          """
+          '''
         'target':
           oneOf:[
             type: 'string'
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           File path where to write content to. Pass the content.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
       required: ['target', 'source']

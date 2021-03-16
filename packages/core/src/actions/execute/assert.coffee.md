@@ -41,28 +41,28 @@ console.info(`Stdout was asserted: ${status}`)
           type: 'array'
           items:
             type: 'integer'
-          description: """
+          description: '''
           Expected exit code, activated by default unless content is provided.
-          """
+          '''
         'content':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
-          description: """
+          description: '''
           Content to match, optional.
-          """
+          '''
         'error':
           type: 'string'
-          description: """
+          description: '''
           The error message to throw if assert failed.
-          """
+          '''
         'not':
           $ref: 'module://@nikitajs/core/src/actions/assert#/properties/not'
         'trim':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Trim the expected content as well as the command output before
           matching.
-          """
+          '''
 
 ## Handler
 

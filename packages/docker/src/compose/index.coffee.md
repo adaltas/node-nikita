@@ -22,48 +22,48 @@ Create and start containers according to a docker-compose file
       properties:
         'content':
           type: 'object'
-          description: """
+          description: '''
           The content of the docker-compose.yml to write if not exist.
-          """
+          '''
         'eof':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Inherited from nikita.file use when writing docker-compose.yml file.
-          """
+          '''
         'backup':
           type: ['string', 'boolean']
           default: false
-          description: """
+          description: '''
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
-          """
+          '''
         'detached':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Run containers in detached mode.
-          """
+          '''
         'force':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Force to re-create the containers if the config and image have not
           changed.
-          """
+          '''
         'services':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Specify specific services to create.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           The docker-compose.yml absolute's file's path, required if no content
           is specified.
-          """
+          '''
 
 ## Handler
 

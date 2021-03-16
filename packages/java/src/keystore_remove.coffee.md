@@ -37,31 +37,31 @@ console.info(`Certificate authority was removed: ${$status}`)
           type: 'array'
           items: type: 'string'
           default: []
-          description: """
+          description: '''
           Alias of the key and the certificate.
-          """
+          '''
         'caname':
           type: 'array'
           items: type: 'string'
           default: []
-          description: """
+          description: '''
           Alias of the certificate authority (CA).
-          """
+          '''
         'keytool':
           type: 'boolean'
-          description: """
+          description: '''
           Path to the `keytool` command, detetected from `$PATH` by default.
-          """
+          '''
         'keystore':
           type: 'string'
-          description: """
+          description: '''
           Path to the keystore (doesn't need to exists).
-          """
+          '''
         'storepass':
           type: 'string'
-          description: """
+          description: '''
           Password to manage the keystore.
-          """
+          '''
       required: ['keystore', 'storepass']
       anyOf: [
         {required: ['name']}

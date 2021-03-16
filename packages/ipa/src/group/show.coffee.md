@@ -24,9 +24,9 @@ console.info(`Group is ${result.cn[0]}`)
       properties:
         'cn':
           type: 'string'
-          description: """
+          description: '''
           Name of the group to show.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

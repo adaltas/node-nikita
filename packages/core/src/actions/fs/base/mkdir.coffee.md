@@ -19,9 +19,9 @@ Create a directory. Missing parent directories are created as required.
           $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the directory to create.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/uid'
       required: ['target']

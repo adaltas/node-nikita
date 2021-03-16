@@ -26,10 +26,10 @@ nikita(async function(){
           divider:
             type: 'string'
             default: ' : '
-            description: """
+            description: '''
             The characters used to join the hierarchy of headers to create a
             markdown header.
-            """
+            '''
           enter:
             type: 'boolean'
             default: true

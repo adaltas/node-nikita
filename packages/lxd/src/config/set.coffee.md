@@ -26,9 +26,9 @@ console.info(`Property was set: ${$status}`)
           type: 'object'
           patternProperties:
             '': type: ['string', 'boolean', 'number']
-          description: """
+          description: '''
           One or multiple keys to set.
-          """
+          '''
       required: ['container', 'properties']
 
 ## Handler

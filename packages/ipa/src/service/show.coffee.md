@@ -33,9 +33,9 @@ catch (err){
       properties:
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Name of the service to show.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

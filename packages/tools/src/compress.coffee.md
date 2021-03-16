@@ -28,26 +28,26 @@ console.info(`File was compressed: ${$status}`)
       properties:
         clean:
           type: 'boolean'
-          description: """
+          description: '''
           Remove the source file or directory on completion.
-          """
+          '''
         format:
           type: 'string'
           enum: ['tgz', 'tar', 'zip', 'bz2', 'xz']
-          description: """
+          description: '''
           Compression tool and format to be used.
-          """
+          '''
         source:
           type: 'string'
-          description: """
+          description: '''
           Source of the file or directory to compress.
-          """
+          '''
         target:
           type: 'string'
-          description: """
+          description: '''
           Destination path of the generated archive, default to the source
           parent directory.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

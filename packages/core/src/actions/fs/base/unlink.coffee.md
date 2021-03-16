@@ -15,9 +15,9 @@ Remove a non-directory type file.
       properties:
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the file to remove.
-          """
+          '''
       required: ['target']
 
 ## Handler

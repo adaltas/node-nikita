@@ -15,48 +15,48 @@ Check if a user exists in the database.
       properties:
         'admin_username':
           type: 'string'
-          description: """
+          description: '''
           The login of the database administrator. It should have the necessary
           permissions such as to  create accounts when using the
           `nikita.db.user` action.
-          """
+          '''
         'admin_password':
           type: 'string'
-          description: """
+          description: '''
           The password of the database administrator.
-          """
+          '''
         'database':
           type: ['null', 'string'],
-          description: """
+          description: '''
           The default database name, provide the value `null` if you want to
           ensore no default database is set.
-          """
+          '''
         'grep':
           oneOf: [
             type: 'string'
           ,
             instanceof: 'RegExp'
           ]
-          description: """
+          description: '''
           Ensure the query output match a string or a regular expression
-          """
+          '''
         'engine':
           type: 'string'
           enum: ['mariadb', 'mysql', 'postgresql']
-          description: """
+          description: '''
           The engine type, can be MariaDB, MySQL or PostgreSQL. Values
           are converted to lower cases.
-          """
+          '''
         'host':
           type: 'string'
-          description: """
+          description: '''
           The hostname of the database.
-          """
+          '''
         'port':
           type: 'integer'
-          description: """
+          description: '''
           Port to the associated database.
-          """
+          '''
         'silent':
           type: 'boolean'
           default: true

@@ -29,30 +29,30 @@ console.info(`Directory was moved: ${status}`)
         'force':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Force the replacement of the file without checksum verification, speed
           up the action and disable the `moved` indicator in the callback.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           File or directory to move.
-          """
+          '''
         'source_md5':
           type: 'string'
-          description: """
+          description: '''
           Source md5 checkum if known, otherwise computed.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Final name of the moved resource.
-          """
+          '''
         'target_md5':
           type: 'string'
-          description: """
+          description: '''
           Destination md5 checkum if known, otherwise computed if target exists.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

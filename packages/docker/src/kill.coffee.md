@@ -30,16 +30,16 @@ console.info(`Container was killed: ${$status}`)
       properties:
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'signal':
           type: ['integer', 'string']
-          description: """
+          description: '''
           Use a specified signal. SIGKILL by default.
-          """
+          '''
       required: ['container']
 
 ## Handler

@@ -36,10 +36,10 @@ console.info(`File was touched: ${$status}`)
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           File path where to write file or a function that returns a valid file
           path.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/file/src/index#/properties/uid'
       required: ['target']

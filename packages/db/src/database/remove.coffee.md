@@ -10,36 +10,36 @@ Create a user for the destination database.
       properties:
         'admin_username':
           type: 'string'
-          description: """
+          description: '''
           The login of the database administrator.
-          """
+          '''
         'admin_password':
           type: 'string'
-          description: """
+          description: '''
           The password of the database administrator.
-          """
+          '''
         'database':
           type: 'string'
-          description: """
+          description: '''
           The database name to check for existance.
-          """
+          '''
         'engine':
           type: 'string'
           enum: ['mariadb', 'mysql', 'postgresql']
-          description: """
+          description: '''
           The engine type, can be MariaDB, MySQL or PostgreSQL. Values
           are converted to lower cases.
-          """
+          '''
         'host':
           type: 'string'
-          description: """
+          description: '''
           The hostname of the database.
-          """
+          '''
         'port':
           type: 'integer'
-          description: """
+          description: '''
           Port to the associated database.
-          """
+          '''
       required: ['admin_username', 'admin_password']
 
 ## Handler

@@ -25,9 +25,9 @@ console.info(`Did database existed initially: ${!$status}`)
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
         'database':
           type: 'string'
-          description: """
+          description: '''
           The database name to wait for.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':

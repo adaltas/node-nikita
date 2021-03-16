@@ -32,9 +32,9 @@ console.info(`Schema created or modified: ${$status}`)
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
         'database':
           type: 'string'
-          description: """
+          description: '''
           The database name where the schema is created.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
@@ -43,14 +43,14 @@ console.info(`Schema created or modified: ${$status}`)
           $ref: 'module://@nikitajs/db/src/query#/properties/port'
         'owner':
           type: 'string'
-          description: """
+          description: '''
           The Schema owner. Alter Schema if schema already exists.
-          """
+          '''
         'schema':
           type: 'string'
-          description: """
+          description: '''
           New schema name.
-          """
+          '''
       required: ['admin_username', 'admin_password', 'database', 'engine', 'host', 'schema']
 
 ## Handler

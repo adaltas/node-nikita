@@ -28,9 +28,9 @@ console.info(config)
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'device':
           enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy']
-          description: """
+          description: '''
           Name of the device in LXD configuration, for example "eth0".
-          """
+          '''
       required: ['container', 'device']
 
 ## Handler

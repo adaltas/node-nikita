@@ -29,20 +29,20 @@ console.info(`Package or service was removed: ${$status}`)
       properties:
         'cache':
           type: 'boolean'
-          description: """
+          description: '''
           Run entirely from system cache to list installed and outdated
           packages.
-          """
+          '''
         'cacheonly':
           $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
         'name':
           $ref: 'module://@nikitajs/service/src/install#/properties/name'
         # 'ssh':  # not supported
         #   type: 'object'
-        #   description: """
+        #   description: '''
         #   Run the action on a remote server using SSH, an ssh2 instance or an
         #   configuration object used to initialize the SSH connection.
-        #   """
+        #   '''
       required: ['name']
 
 ## Handler

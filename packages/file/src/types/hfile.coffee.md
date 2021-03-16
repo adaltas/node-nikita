@@ -11,31 +11,31 @@ value properties.
       properties:
         'merge':
           type: 'boolean'
-          description: """
+          description: '''
           Read the target if it exists and merge its content, optional.
-          """
+          '''
         'source':
           type: ['object', 'string']
-          description: """
+          description: '''
           Default configuration properties or the path to a default
           configuration file to get initial value from, optional.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Configuration file where to write, required.
-          """
+          '''
         'properties':
           type: 'object'
-          description: """
+          description: '''
           Configuration properties to write, required.
-          """
+          '''
         'transform':
           oneOf: [{typeof: 'function'}, {type: 'null'}]
           default: null
-          description: """
+          description: '''
           User defined function used to transform properties.
-          """
+          '''
         # File configuration properties
         'backup':
           $ref: 'module://@nikitajs/file/src/index#/properties/backup'

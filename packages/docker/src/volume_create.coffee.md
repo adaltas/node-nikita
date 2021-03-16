@@ -28,26 +28,26 @@ console.info(`Volume was created: ${$status}`)
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'driver':
           type: 'string'
-          description: """
+          description: '''
           Specify volume driver name.
-          """
+          '''
         'label':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Set metadata for a volume.
-          """
+          '''
         'name':
           type: 'string'
-          description: """
+          description: '''
           Specify volume name.
-          """
+          '''
         'opt':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Set driver specific options.
-          """
+          '''
 
 ## Handler
 

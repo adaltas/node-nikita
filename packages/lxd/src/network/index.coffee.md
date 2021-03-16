@@ -28,9 +28,9 @@ console.info(`Network was created: ${$status}`)
       properties:
         'network':
           type: 'string'
-          description: """
+          description: '''
           The network name to create.
-          """
+          '''
         'properties':
           type: 'object'
           patternProperties:
@@ -44,10 +44,10 @@ console.info(`Network was created: ${$status}`)
               `nikita.local` instead.
               '''
             '.*': type: ['string', 'boolean', 'number']
-          description: """
+          description: '''
           The network configuration, see [available
           fields](https://lxc.readthedocs.io/en/latest/networks/).
-          """
+          '''
       required: ['network']
 
 ## Handler

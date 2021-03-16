@@ -25,15 +25,15 @@ console.info(`Database created or modified: ${status}`)
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
         'database':
           type: 'string'
-          description: """
+          description: '''
           The name of the database to create.
-          """
+          '''
         'user':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           This users who will be granted superuser permissions.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':

@@ -47,14 +47,14 @@ console.info(`User is ${result.uid[0]}`)
       properties:
         'uid':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to show, same as the `username`.
-          """
+          '''
         'username':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to show, alias of `uid`.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

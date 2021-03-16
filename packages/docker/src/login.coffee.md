@@ -23,19 +23,19 @@ Register or log in to a Docker registry server.
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'email':
           type: 'string'
-          description: """
+          description: '''
           User email.
-          """
+          '''
         'password':
           type: 'string'
-          description: """
+          description: '''
           User password.
-          """
+          '''
         'user':
           type: 'string'
-          description: """
+          description: '''
           Username of the user.
-          """
+          '''
 
 ## Handler
 

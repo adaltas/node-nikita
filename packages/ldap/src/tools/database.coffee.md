@@ -28,9 +28,9 @@ databases.map( database => {
             default: 'cn=config'
           'suffix':
             type: 'string'
-            description: """
+            description: '''
             The suffix associated with the database.
-            """
+            '''
         required: ['suffix']
       ,
         $ref: 'module://@nikitajs/ldap/src/search'

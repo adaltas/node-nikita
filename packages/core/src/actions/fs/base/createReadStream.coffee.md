@@ -59,30 +59,30 @@ console.info(Buffer.concat(buffers).toString())
           type: 'string'
           enum: require('../../../utils/schema').encodings
           default: 'utf8'
-          description: """
+          description: '''
           The encoding used to decode the buffer into a string. The encoding can
           be any one of those accepted by Buffer. When not defined, this action
           return a Buffer instance.
-          """
+          '''
         'on_readable':
           typeof: 'function'
-          description: """
+          description: '''
           User provided function called when the readable stream is created and
           readable. The user is responsible for pumping new content from it. It
           is a short version of `config.stream` which registers the function to
           the `readable` event.
-          """
+          '''
         'stream':
           typeof: 'function'
-          description: """
+          description: '''
           User provided function receiving the newly created readable stream.
           The user is responsible for pumping new content from it.
-          """
+          '''
         'target':
           oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: """
+          description: '''
           Source location of the file to read.
-          """
+          '''
       required: ['target']
 
 ## Handler

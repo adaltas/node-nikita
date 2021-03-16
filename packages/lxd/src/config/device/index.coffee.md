@@ -32,21 +32,21 @@ console.info(`Disk was created: ${$status}`)
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
         'device':
           type: 'string'
-          description: """
+          description: '''
           Name of the device in LXD configuration, for example "eth0".
-          """
+          '''
         'properties':
           type: 'object'
           patternProperties: '': type: ['string', 'boolean', 'number']
-          description: """
+          description: '''
           One or multiple keys to set depending on the type.
-          """
+          '''
         'type':
           type: 'string'
-          description: """
+          description: '''
           Type of device, see [the list of device
           types](https://lxc.readthedocs.io/en/latest/instances/#device-types).
-          """
+          '''
       oneOf: [
         { $ref: '#/definitions/disk' }
         { $ref: '#/definitions/infiniband' }
@@ -70,16 +70,16 @@ console.info(`Disk was created: ${$status}`)
               properties:
                 'path':
                   type: 'string'
-                  description: """
+                  description: '''
                   Path inside the instance where the disk will be mounted (only
                   for containers).
-                  """
+                  '''
                 'source':
                   type: 'string'
-                  description: """
+                  description: '''
                   Path on the host, either to a file/directory or to a block
                   device.
-                  """
+                  '''
               required: ['path', 'source']
             'type':
               const: 'disk'
@@ -92,14 +92,14 @@ console.info(`Disk was created: ${$status}`)
                 'nictype':
                   type: 'string'
                   enum: ['physical', 'sriov']
-                  description: """
+                  description: '''
                   The device type, one of "physical", or "sriov".
-                  """
+                  '''
                 'parent':
                   type: 'string'
-                  description: """
+                  description: '''
                   The name of the host device or bridge.
-                  """
+                  '''
               required: ['nictype', 'parent']
             'type':
               const: 'infiniband'
@@ -117,12 +117,12 @@ console.info(`Disk was created: ${$status}`)
                 'nictype':
                   type: 'string'
                   enum: ['physical', 'bridged', 'macvlan', 'p2p', 'sriov']
-                  description: """
+                  description: '''
                   LXD supports different kind of [network
                   devices](https://lxc.readthedocs.io/en/stable-3.0/containers/#type-nic)
                   and each type of network interface types have different
                   additional properties.
-                  """
+                  '''
               oneOf: [
                 { $ref: '#/definitions/nic_physical' }
                 { $ref: '#/definitions/nic_bridged' }
@@ -170,16 +170,16 @@ console.info(`Disk was created: ${$status}`)
               properties:
                 'connect':
                   type: 'string'
-                  description: """
+                  description: '''
                   The address and port to bind and listen
                   (<type>:<addr>:<port>[-<port>][,<port>])
-                  """
+                  '''
                 'parent':
                   type: 'string'
-                  description: """
+                  description: '''
                   The address and port to connect to
                   (<type>:<addr>:<port>[-<port>][,<port>])
-                  """
+                  '''
               required: ['connect', 'listen']
             'type':
               const: 'proxy'
@@ -206,9 +206,9 @@ console.info(`Disk was created: ${$status}`)
               properties:
                 'path':
                   type: 'string'
-                  description: """
+                  description: '''
                   Path inside the instance (only for containers).
-                  """
+                  '''
               required: ['path']
             'type':
               const: 'unix-hotplug'

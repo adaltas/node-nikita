@@ -60,40 +60,40 @@ console.info(`File was copied: ${$status}`)
               'uid':
                 $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
           ]
-          description: """
+          description: '''
           Create parent directory with provided attributes if an object or
           default system config if "true", supported attributes include 'mode',
           'uid', 'gid', 'size', 'atime', and 'mtime'.
-          """
+          '''
         'preserve':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Preserve file ownerships and permissions.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           The file or directory to copy.
-          """
+          '''
         'source_stats':
           type: 'object'
-          description: """
+          description: '''
           Short-circuit to prevent source stat retrieval if already at our
           disposal.
-          """
+          '''
           properties: require('./base/stat').schema_output.properties.stats.properties
         'target':
           type: 'string'
-          description: """
+          description: '''
           Where the file or directory is copied.
-          """
+          '''
         'target_stats':
           type: 'object'
-          description: """
+          description: '''
           Short-circuit to prevent target stat retrieval if already at our
           disposal.
-          """
+          '''
           properties: require('./base/stat').schema_output.properties.stats.properties
         'uid':
           $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'

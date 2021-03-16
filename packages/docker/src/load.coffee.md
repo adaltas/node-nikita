@@ -32,22 +32,22 @@ console.info(`Image was loaded: ${$status}`);
       properties:
         'checksum':
           type: 'string'
-          description: """
+          description: '''
           If provided, will check if attached input archive to checksum already
           exist, not native to docker but implemented to get better performance.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'input':
           type: 'string'
-          description: """
+          description: '''
           TAR archive file to read from.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           Alias for the "input" option.
-          """
+          '''
 
 ## Handler
 

@@ -21,27 +21,27 @@ console.info(`File was updated: ${$status}`)
       properties:
         'rootdir':
           type: 'string'
-          description: """
+          description: '''
           Path to the mount point corresponding to the root directory, optional.
-          """
+          '''
         'generate':
           type: 'boolean', default: null
-          description: """
+          description: '''
           Run `locale-gen` by default if target was modified or force running
           the command if value is a boolean.
-          """
+          '''
         'locales':
           type: 'array'
           items:
             type: 'string'
-          description: """
+          description: '''
           List of supported locales, required.
-          """
+          '''
         'target':
           type: 'string', default: '/etc/locale.gen'
-          description: """
+          description: '''
           File to write, default to "/etc/locale.gen".
-          """
+          '''
       required: ['locales']
 
 ## Handler

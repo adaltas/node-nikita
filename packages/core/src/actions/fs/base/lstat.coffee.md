@@ -16,9 +16,9 @@ stated, not the file that it refers to.
       properties:
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the file from where to obtain information.
-          """
+          '''
       required: ['target']
 
 ## Handler

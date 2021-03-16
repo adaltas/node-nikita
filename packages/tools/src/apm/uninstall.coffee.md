@@ -16,9 +16,9 @@ Remove one or more apm packages.
       properties:
         'name':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Name of the package(s) to install.
-          """
+          '''
 
 ## Handler
 

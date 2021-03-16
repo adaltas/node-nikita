@@ -31,9 +31,9 @@ console.info(`Container is running: ${$status}`)
         'container':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Name or Id of the container.
-          """
+          '''
         'boot2docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
         'compose':

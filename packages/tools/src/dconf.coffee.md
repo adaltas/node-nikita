@@ -30,9 +30,9 @@ Run the command "dconf-editor" to navigate the database with a UI.
           patternProperties:
             '^/.*$':
               type: ['string', 'boolean', 'number']
-              description: """
+              description: '''
               A value of a key.
-              """
+              '''
           additionalProperties: false
       required: ['properties']
 

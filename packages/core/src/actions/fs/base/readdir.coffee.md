@@ -49,19 +49,19 @@ assert(files[0].isFile(), true)
       properties:
         extended:
           type: 'boolean'
-          description: """
+          description: '''
           Result contain fs.Dirent objects.
-          """
+          '''
         target:
           type: 'string'
-          description: """
+          description: '''
           Path of the directory to read.
-          """
+          '''
         withFileTypes:
           type: 'boolean'
-          description: """
+          description: '''
           Alias of `extended` named after the Node.js native function.
-          """
+          '''
       required: ['target']
 
 ## Handler

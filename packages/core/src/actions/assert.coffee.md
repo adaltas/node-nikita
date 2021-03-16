@@ -81,15 +81,15 @@ nikita.assert( () => {
         'not':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Negates the validation.
-          """
+          '''
         'strict':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Cancel the casting of output into a boolean value.
-          """
+          '''
 
 ## Exports
 

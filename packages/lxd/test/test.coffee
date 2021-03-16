@@ -21,13 +21,15 @@ they = require('mocha-they')(config.config)
 
 they 'cache container image to avoid timeout later', ({ssh}) ->
   @timeout 0
-  nikita(ssh: ssh).execute
+  nikita
+    $ssh: ssh
+  .execute
     command: "lxc image copy images:#{config.images.alpine} `lxc remote get-default`:"
 
 they 'cache vm image to avoid timeout later', ({ssh}) ->
   @timeout 0
   nikita
-    ssh: ssh
+    $ssh: ssh
   .execute
     command: "lxc image copy images:#{config.images.alpine} `lxc remote get-default`: --vm"
   # It takes time to retrieve files from a VM image archive the first

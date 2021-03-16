@@ -42,14 +42,14 @@ console.info(`Container was copied: ${$status}`)
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'source':
           type: 'string'
-          description: """
+          description: '''
           The path to upload or the container followed by the path to download.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           The path to download or the container followed by the path to upload.
-          """
+          '''
       required: ['source', 'target']
 
 ## Handler

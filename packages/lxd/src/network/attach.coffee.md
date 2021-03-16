@@ -25,9 +25,9 @@ console.info(`Network was attached: ${$status}`)
       properties:
         'network':
           type: 'string'
-          description: """
+          description: '''
           The network name to attach.
-          """
+          '''
         'container':
           $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
       required: ['network', 'container']

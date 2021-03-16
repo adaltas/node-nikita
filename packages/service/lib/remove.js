@@ -44,10 +44,10 @@ packages.`
   },
   // 'ssh':  # not supported
   //   type: 'object'
-  //   description: """
+  //   description: '''
   //   Run the action on a remote server using SSH, an ssh2 instance or an
   //   configuration object used to initialize the SSH connection.
-  //   """
+  //   '''
   required: ['name']
 };
 

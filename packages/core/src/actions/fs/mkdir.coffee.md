@@ -46,17 +46,17 @@ console.info(`Directory was created: ${status}`)
       properties:
         'cwd':
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Current working directory for relative paths. A boolean value only
           apply without an SSH connection and default to `process.cwd()`.
-          """
+          '''
         'exclude':
           instanceof: 'RegExp'
-          description: """
+          description: '''
           Exclude directories matching a regular expression. For example, the
           expression `/\${/` on './var/cache/${user}' exclude the directories
           containing a variables and only apply to `./var/cache/`.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/gid'
         'mode':
@@ -74,16 +74,16 @@ console.info(`Directory was created: ${status}`)
               'uid':
                 $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
           ]
-          description: """
+          description: '''
           Create parent directory with provided attributes if an object or
           default system options if "true", supported attributes include 'mode',
           'uid', 'gid', 'size', 'atime', and 'mtime'.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Location of the directory to create.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'
       required: ['target']

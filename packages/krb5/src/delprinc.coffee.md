@@ -27,19 +27,19 @@ console.info(`Principal was removed: ${$status}`)
           $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
         'keytab':
           type: 'string'
-          description: """
+          description: '''
           Path to the file storing key entries.
-          """
+          '''
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Principal to be created.
-          """
+          '''
         'realm':
           type: 'string'
-          description: """
+          description: '''
           The realm the principal belongs to.
-          """
+          '''
       required: ['principal']
 
 ## Handler

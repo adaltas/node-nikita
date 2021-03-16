@@ -27,26 +27,26 @@ console.info(`Container was removed: ${$status}`)
       properties:
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'link':
           type: 'boolean'
-          description: """
+          description: '''
           Remove the specified link.
-          """
+          '''
         'volumes':
           type: 'boolean'
-          description: """
+          description: '''
           Remove the volumes associated with the container.
-          """
+          '''
         'force':
           type: 'boolean'
-          description: """
+          description: '''
           Force the removal of a running container (uses SIGKILL).
-          """
+          '''
       required: ['container']
 
 ## Handler

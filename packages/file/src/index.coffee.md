@@ -174,91 +174,91 @@ console.info(data)
             instanceof: 'RegExp'
           ]
           default: false
-          description: """
+          description: '''
           Append the content to the target file. If target does not exist, the
           file will be created.
-          """
+          '''
         'backup':
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Create a backup, append a provided string to the filename extension or
           a timestamp if value is not a string, only apply if the target file
           exists and is modified.
-          """
+          '''
         'backup_mode':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
-          description: """
+          description: '''
           Backup file mode (permission and sticky bits), defaults to `0o0400`,
           in the  form of `{mode: 0o0400}` or `{mode: "0400"}`.
-          """
+          '''
         'content':
           oneOf:[
             type: 'string'
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           Text to be written, an alternative to source which reference a file.
-          """
+          '''
         'context':
           type: 'object'
-          description: """
+          description: '''
           Context provided to the template engine.
-          """
+          '''
         'diff':
           typeof: 'function'
-          description: """
+          description: '''
           Print diff information, pass a readable diff and the result of
           [jsdiff.diffLines][diffLines] as arguments if a function, default to
           true.
-          """
+          '''
         'eof':
           type: ['boolean', 'string']
-          description: """
+          description: '''
           Ensure the file ends with this charactere sequence, special values are
           'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r",
           "\n", "\u2028"), will be auto-detected if "true", default to false or
           "\n" if "true" and not detected.
-          """
+          '''
         'encoding':
           type: 'string'
           default: 'utf8'
-          description: """
+          description: '''
           Encoding of the source and target files.
-          """
+          '''
         'engine':
           type: 'string'
           default: 'handlebars'
-          description: """
+          description: '''
           Template engine being used.
-          """
+          '''
         'from':
           oneOf: [
             type: 'string'
           ,
             instanceof: 'RegExp'
           ]
-          description: """
+          description: '''
           Name of the marker from where the content will be replaced.
-          """
+          '''
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
         'local':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Treat the source as local instead of remote, only apply with "ssh"
           option.
-          """
+          '''
         'match':
           oneOf: [
             type: 'string'
           ,
             instanceof: 'RegExp'
           ]
-          description: """
+          description: '''
           Replace this marker, default to the replaced string if missing.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
         'place_before':
@@ -269,58 +269,58 @@ console.info(data)
           ,
             instanceof: 'RegExp'
           ]
-          description: """
+          description: '''
           Place the content before the match.
-          """
+          '''
         'remove_empty_lines':
           type: 'boolean'
-          description: """
+          description: '''
           Remove empty lines from content
-          """
+          '''
         'replace':
           type: ['array', 'string']
           items: type: 'string'
-          description: """
+          description: '''
           The content to be inserted, used conjointly with the from, to or match
           options.
-          """
+          '''
         'source':
           type: 'string'
-          description: """
+          description: '''
           File path from where to extract the content, do not use conjointly
           with content.
-          """
+          '''
         'target':
           oneOf: [
             type: 'string'
           ,
             typeof: 'function'
           ]
-          description: """
+          description: '''
           File path where to write content to. Pass the content.
-          """
+          '''
         'to':
           oneOf: [
             type: 'string'
           ,
             instanceof: 'RegExp'
           ]
-          description: """
+          description: '''
           Name of the marker until where the content will be replaced.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
         'unlink':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Replace the existing link, leaving the refered file untouched.
-          """
+          '''
         'write':
-          description: """
+          description: '''
           An array containing multiple transformation where a transformation is
           an object accepting the options `from`, `to`, `match` and `replace`.
-          """
+          '''
           type: 'array'
           items:
             type: 'object'
@@ -331,34 +331,34 @@ console.info(data)
                 ,
                   instanceof: 'RegExp'
                 ]
-                description: """
+                description: '''
                 File path from where to extract the content, do not use
                 conjointly with content.
-                """
+                '''
               'to':
                 oneOf: [
                   type: 'string'
                 ,
                   instanceof: 'RegExp'
                 ]
-                description: """
+                description: '''
                 Name of the marker until where the content will be replaced.
-                """
+                '''
               'match':
                 oneOf: [
                   type: 'string'
                 ,
                   instanceof: 'RegExp'
                 ]
-                description: """
+                description: '''
                 Replace this marker, default to the replaced string if missing.
-                """
+                '''
               'replace':
                 type: 'string'
-                description: """
+                description: '''
                 The content to be inserted, used conjointly with the from, to or
                 match options.
-                """
+                '''
       required: ['target']
 
 ## Handler

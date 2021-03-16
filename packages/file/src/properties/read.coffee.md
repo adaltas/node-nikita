@@ -23,28 +23,28 @@ console.info(`Properties:`, properties)
         'comment':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Preserve comments, key is the comment while value is "null".
-          """
+          '''
         'encoding':
           $ref: 'module://@nikitajs/file/src/index#/properties/encoding'
           default: 'utf8'
         'separator':
           type: 'string'
           default: '='
-          description: """
+          description: '''
           The caracter to use for separating property and value. '=' by default.
-          """
+          '''
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
-          description: """
+          description: '''
           File to read and parse.
-          """
+          '''
         'trim':
           type: 'boolean'
-          description: """
+          description: '''
           Trim keys and value.
-          """
+          '''
       required: ['target']
 
 ## Handler

@@ -26,17 +26,17 @@ console.info(`Container was stopped: ${$status}`)
       properties:
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'timeout':
           type: 'integer'
-          description: """
+          description: '''
           Seconds to wait for stop before killing the container (Docker default
           is 10).
-          """
+          '''
       required: ['container']
 
 ## Handler

@@ -37,13 +37,13 @@ console.info(`Service was desactivated on startup: ${$status}`)
         'startup':
           type: ['boolean', 'string']
           default: true
-          description: """
+          description: '''
           Run service daemon on startup, required. A string represent a list of
           activated levels, for example '2345' or 'multi-user'. An empty
           string to not define any run level. Note: String argument is only
           used if SysVinit runlevel is installed on the OS (automatically
           detected by nikita).
-          """
+          '''
       required: ['name']
 
 ## Handler

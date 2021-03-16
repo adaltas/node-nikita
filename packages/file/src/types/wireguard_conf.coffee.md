@@ -11,19 +11,19 @@ in "/etc/pacman.conf".
       properties:
         'rootdir':
           type: 'string'
-          description: """
+          description: '''
           Path to the mount point corresponding to the root directory, optional.
-          """
+          '''
         'interface':
           type: 'string'
-          description: """
+          description: '''
           Interface
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Destination file.
-          """
+          '''
 
 ## Handler
 

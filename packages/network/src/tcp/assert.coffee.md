@@ -37,14 +37,14 @@ Assert a TCP or HTTP server is listening.
       properties:
         'host':
           $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/host'
-          description: """
+          description: '''
           Host of the targeted server, could be a FQDN, a hostname or an IP.
-          """
+          '''
         'port':
           $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/port'
-          description: """
+          description: '''
           Port of the targeted server.
-          """
+          '''
         'server':
           $ref: 'module://@nikitajs/network/src/tcp/wait#/properties/server'
         'not':

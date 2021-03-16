@@ -30,19 +30,19 @@ console.info(`Link was created: ${status}`)
       properties:
         'source':
           type: 'string'
-          description: """
+          description: '''
           Referenced file to be linked.
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Symbolic link to be created.
-          """
+          '''
         'exec':
           type: 'boolean'
-          description: """
+          description: '''
           Create an executable file with an `exec` command.
-          """
+          '''
         'mode':
           $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
       required: ['source', 'target']

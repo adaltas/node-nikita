@@ -31,14 +31,14 @@ console.info(`Command was executed: ${$status}`)
       properties:
         'code_skipped':
           type: 'array', items: type: 'integer'
-          description: """
+          description: '''
           The exit code(s) to skip.
-          """
+          '''
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'gid':
@@ -46,10 +46,10 @@ console.info(`Command was executed: ${$status}`)
         'service':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           If true, run container as a service, else run as a command, true by
           default.
-          """
+          '''
         'uid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
       required: ['container', 'command']

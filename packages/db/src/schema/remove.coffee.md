@@ -14,9 +14,9 @@ Remove a schema from a database.
           $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
         'database':
           type: 'string'
-          description: """
+          description: '''
           The database name where the schema is registered.
-          """
+          '''
         'engine':
           $ref: 'module://@nikitajs/db/src/query#/properties/engine'
         'host':
@@ -25,9 +25,9 @@ Remove a schema from a database.
           $ref: 'module://@nikitajs/db/src/query#/properties/port'
         'schema':
           type: 'string'
-          description: """
+          description: '''
           New schema name.
-          """
+          '''
       required: ['admin_username', 'admin_password', 'database', 'engine', 'host', 'schema']
 
 ## Handler

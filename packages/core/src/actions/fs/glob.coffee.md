@@ -48,25 +48,25 @@ for(const file of files){
       properties:
         'dot':
           type: 'boolean'
-          description: """
+          description: '''
           Minimatch option to handle files starting with a ".".
-          """
+          '''
         'target':
           type: 'string'
-          description: """
+          description: '''
           Globbing expression of the directory tree to match.
-          """
+          '''
         'trailing':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Leave a slash at the end of directories.
-          """
+          '''
         'minimatch':
           type: 'object'
-          description: """
+          description: '''
           Pass any additionnal config to Minimatch.
-          """
+          '''
       required: ['target']
 
 ## Handler

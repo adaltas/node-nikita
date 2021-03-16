@@ -28,9 +28,9 @@ console.info(`Volume was removed: ${$status}`)
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'name':
           type: 'string'
-          description: """
+          description: '''
           Specify volume name.
-          """
+          '''
 
 ## Handler
 

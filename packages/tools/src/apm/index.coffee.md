@@ -16,15 +16,15 @@ Install Atom packages with APM.
       properties:
         'name':
           type: 'array', items: type: 'string'
-          description: """
+          description: '''
           Name of the package(s) to install.
-          """
+          '''
         'upgrade':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Upgrade all packages.
-          """
+          '''
 
 ## Handler
 

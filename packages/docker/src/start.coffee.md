@@ -32,14 +32,14 @@ console.info(`Container was started: ${$status}`)
         'attach':
           type: 'boolean'
           default: false
-          description: """
+          description: '''
           Attach STDOUT/STDERR.
-          """
+          '''
         'container':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of the container, required.
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
       required: ['container']

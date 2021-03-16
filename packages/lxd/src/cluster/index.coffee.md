@@ -60,10 +60,10 @@ containers:
       properties:
         'containers':
           type: 'object'
-          description: """
+          description: '''
           Initialize a Linux Container with given image name, container name and
           config.
-          """
+          '''
           patternProperties: '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)':
             type: 'object'
             properties:
@@ -107,15 +107,15 @@ containers:
                     'sudo':
                       type: 'boolean'
                       default: false
-                      description: """
+                      description: '''
                       Enable sudo access for the user.
-                      """
+                      '''
                     'authorized_keys':
                       type: 'string'
-                      description: """
+                      description: '''
                       Path to file with SSH public key to be added to
                       authorized_keys file.
-                      """
+                      '''
               'ssh':
                 type: 'object'
                 default: {}
@@ -123,9 +123,9 @@ containers:
                   'enabled':
                     type: 'boolean'
                     default: false
-                    description: """
+                    description: '''
                     Enable SSH connection.
-                    """
+                    '''
             required: ['image']
         'networks':
           type: 'object'

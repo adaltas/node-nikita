@@ -27,37 +27,37 @@ console.info(`Command was executed: ${$status}`)
           properties:
             'realm':
               type: 'string'
-              description: """
+              description: '''
               The realm the principal belongs to.
-              """
+              '''
             'principal':
               type: 'string'
-              description: """
+              description: '''
               KAdmin principal name unless `kadmin.local` is used.
-              """
+              '''
             'server':
               type: 'string'
-              description: """
+              description: '''
               Address of the kadmin server; optional, use "kadmin.local" if
               missing.
-              """
+              '''
             'password':
               type: 'string'
-              description: """
+              description: '''
               Password associated to the KAdmin principal.
-              """
+              '''
         'command':
           type: 'string'
-          description: """
-          """
+          description: '''
+          '''
         'grep':
           oneOf: [
             {type: 'string'}
             {instanceof: 'RegExp'}
           ]
-          description: """
+          description: '''
           Ensure the execute output match a string or a regular expression.
-          """
+          '''
       required: ['admin', 'command']
 
 ## Handler

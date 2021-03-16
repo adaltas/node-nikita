@@ -30,14 +30,14 @@ console.info(`User exists: ${$status}`)
       properties:
         'uid':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to check for existence, same as the `username`.
-          """
+          '''
         'username':
           type: 'string'
-          description: """
+          description: '''
           Name of the user to check for existence, alias of `uid`.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

@@ -24,9 +24,9 @@ console.info(`Service was deleted: ${$status}`)
       properties:
         'principal':
           type: 'string'
-          description: """
+          description: '''
           Name of the service to delete.
-          """
+          '''
         'connection':
           type: 'object'
           $ref: 'module://@nikitajs/network/lib/http'

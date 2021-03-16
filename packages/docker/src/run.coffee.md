@@ -42,183 +42,183 @@ console.info(`Container was run: ${$status}`)
         'add_host':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Add a custom host-to-IP mapping (host:ip) in the form of `host:ip`.
-          """
+          '''
         'blkio_weight':
           type: 'integer'
-          description: """
+          description: '''
           Block IO (relative weight), between 10 and 1000.
-          """
+          '''
         'cap_add':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Add Linux Capabilities.
-          """
+          '''
         'cap_drop':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Drop Linux Capabilities.
-          """
+          '''
         'cgroup_parent':
           type: 'string'
-          description: """
+          description: '''
           Optional parent cgroup for the container.
-          """
+          '''
         'cid_file':
           type: 'string'
-          description: """
+          description: '''
           Write the container ID to the file.
-          """
+          '''
         'container':
           type: 'string'
-          description: """
+          description: '''
           Alias of name.
-          """
+          '''
         'cpuset_cpus':
           type: 'string'
-          description: """
+          description: '''
           CPUs in which to allow execution (ex: 0-3 0,1 ...).
-          """
+          '''
         'cwd':
           type: 'string'
-          description: """
+          description: '''
           Working directory of container.
-          """
+          '''
         'detach':
           type: 'boolean'
-          description: """
+          description: '''
           if true, run container in background.
-          """
+          '''
         'device':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Send host device(s) to container.
-          """
+          '''
         'dns':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Set custom DNS server(s).
-          """
+          '''
         'dns_search':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Set custom DNS search domain(s).
-          """
+          '''
         'docker':
           $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
         'entrypoint':
           type: 'string'
-          description: """
+          description: '''
           Overwrite the default ENTRYPOINT of the image, equivalent to
           `--entrypoint docker parameter`
-          """
+          '''
         'env':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Environment variables for the container in the form of `VAR=value`.
-          """
+          '''
         'env_file':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Read in a file of environment variables.
-          """
+          '''
         'expose':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Export port(s).
-          """
+          '''
         'hostname':
           type: 'string'
-          description: """
+          description: '''
           Hostname in the docker container.
-          """
+          '''
         'image':
           type: 'string'
-          description: """
+          description: '''
           Name/ID of base image.
-          """
+          '''
         'ipc':
           type: 'string'
-          description: """
+          description: '''
           IPC namespace to use.
-          """
+          '''
         'label':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Set meta data on a container.
-          """
+          '''
         'label_file':
           type: 'string'
-          description: """
+          description: '''
           Path to read in a line delimited file of labels.
-          """
+          '''
         'link':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Link to other container(s) in the form of a container name or a
           container ID.
-          """
+          '''
         'name':
           type: 'string'
-          description: """
+          description: '''
           Assign a name to the container to run.
-          """
+          '''
         'net':
           type: 'string'
-          description: """
+          description: '''
           Set the Network mode for the container.
-          """
+          '''
         'port':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Port mapping in the form of `int:int`.
-          """
+          '''
         'pid':
           type: 'string'
-          description: """
+          description: '''
           PID namespace to use.
-          """
+          '''
         'publish_all':
           type: 'boolean'
-          description: """
+          description: '''
           Publish all exposed ports to random ports.
-          """
+          '''
         'rm':
           type: 'boolean'
           default: true
-          description: """
+          description: '''
           Delete the container when it ends. True by default.
-          """
+          '''
         'ulimit':
           type: 'array'
           items: type: ['integer', 'string']
-          description: """
+          description: '''
           Ulimit options.
-          """
+          '''
         'volume':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Volume mapping, in the form of `path:path`.
-          """
+          '''
         'volumes_from':
           type: 'array'
           items: type: 'string'
-          description: """
+          description: '''
           Mount volumes from the specified container(s).
-          """
+          '''
       required: ['image']
 
 ## Handler

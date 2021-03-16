@@ -48,9 +48,9 @@ missing.`
     },
     // 'skip_empty_lines': # not supported
     //   type: 'boolean'
-    //   description: """
+    //   description: '''
     //   Remove empty lines.
-    //   """
+    //   '''
     'source': {
       $ref: 'module://@nikitajs/file/lib/index#/properties/source'
     },

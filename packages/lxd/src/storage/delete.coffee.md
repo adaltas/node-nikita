@@ -24,9 +24,9 @@ console.info(`Storage was deleted: ${$status}`)
       properties:
         'name':
           type: 'string'
-          description: """
+          description: '''
           The storage name to delete.
-          """
+          '''
       required: ['name']
 
 ## Handler
