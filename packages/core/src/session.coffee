@@ -74,7 +74,7 @@ session = (args, options={}) ->
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
   schedulers = 
-    in: schedule null, action.scheduler
+    in: schedule null, {...action.scheduler, end: false}
     out: schedule null, {...action.scheduler, pause: true}
   # Start with a paused scheduler to register actions out of the handler
   action.scheduler = schedulers.out
@@ -108,8 +108,9 @@ session = (args, options={}) ->
     pump = ->
       # Now that the handler has been executed,
       # import all the actions registered outside of it
-      action.scheduler.state.stack.push child while child = schedulers.out.state.stack.shift()
-      action.scheduler.pump()
+      while task = schedulers.out.state.stack.shift()
+        action.scheduler.state.stack.push task
+      action.scheduler.end(true)
     output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
     Promise.all [output, action.scheduler]

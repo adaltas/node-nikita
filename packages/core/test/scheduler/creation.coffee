@@ -36,7 +36,7 @@ describe 'scheduler.creation', ->
       ]
       scheduler.push -> new Promise (accept) ->  accept 3
       scheduler
-      .should.be.resolvedWith []
+      .should.be.resolvedWith undefined
     
   describe 'error', ->
 

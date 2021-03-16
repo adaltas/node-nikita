@@ -12,10 +12,11 @@ module.exports = (tasks, options = {}) ->
   # handler pushed or unshifted are not.
   # It is not possible to register managed handler once the scheduler has
   # resolved.
-  options.managed ?= false
+  options.managed ?= !!tasks
   options.parallel ?= 1
   options.parallel = 1 if options.parallel is false
   options.parallel = -1 if options.parallel is true
+  options.end ?= true
   state =
     stack: []
     pause: if options.pause? then !!options.pause else false
@@ -39,20 +40,26 @@ module.exports = (tasks, options = {}) ->
   promise = new Promise (resolve, reject) ->
     scheduler =
       state: state
+      end: (end) ->
+        options.end = end
+        scheduler.pump()
       pump: ->
         return if state.pause
         return if state.running is options.parallel
-        unless state.managed.resolved
+        if not state.managed.resolved
           if state.managed.error
             state.managed.resolved = true
             # Any pending managed task is stripped out after an error
             clear_managed_tasks()
             scheduler.pump()
             return reject state.managed.error
-          else if count_pending_tasks() + state.managed.running is 0
+          else if options.managed and options.end and count_pending_tasks() + state.managed.running is 0
             state.managed.resolved = true
             scheduler.pump()
             return resolve state.output
+          else if not options.managed and options.end and state.stack.length is 0
+            state.managed.resolved = true
+            return resolve()
         return unless state.stack.length
         task = state.stack.shift()
         if options.strict is true and not task.managed and state.error
@@ -94,8 +101,8 @@ module.exports = (tasks, options = {}) ->
         new Promise (resolve, reject) ->
           unless isArray
             state.pending++
+            tasks.managed ?= options.managed
             state.stack.unshift {
-              ...options
               ...tasks
               resolve: resolve
               reject: reject
@@ -119,8 +126,8 @@ module.exports = (tasks, options = {}) ->
         prom = new Promise (resolve, reject) ->
           unless isArray
             state.pending++
+            tasks.managed ?= options.managed
             state.stack.push {
-              ...options
               ...tasks
               resolve: resolve
               reject: reject

@@ -105,6 +105,9 @@ session = function(args, options = {}) {
   });
   action.parent = options.parent;
   action.plugins = plugins;
+  if (action.scheduler == null) {
+    action.scheduler = {};
+  }
   if ((base = action.metadata).namespace == null) {
     base.namespace = [];
   }
@@ -124,8 +127,12 @@ session = function(args, options = {}) {
   });
   // Local scheduler to execute children and be notified on finish
   schedulers = {
-    in: schedule(),
+    in: schedule(null, {
+      ...action.scheduler,
+      end: false
+    }),
     out: schedule(null, {
+      ...action.scheduler,
       pause: true
     })
   };
@@ -168,13 +175,13 @@ session = function(args, options = {}) {
     });
     // Ensure child actions are executed
     pump = function() {
-      var child;
-      while (child = schedulers.out.state.stack.shift()) {
-        // Now that the handler has been executed,
-        // import all the actions registered outside of it
-        action.scheduler.state.stack.push(child);
+      var task;
+      // Now that the handler has been executed,
+      // import all the actions registered outside of it
+      while (task = schedulers.out.state.stack.shift()) {
+        action.scheduler.state.stack.push(task);
       }
-      return action.scheduler.pump();
+      return action.scheduler.end(true);
     };
     output.then(pump, pump);
     // Make sure the promise is resolved after the scheduler and its children

@@ -195,7 +195,7 @@ handler = async function({
     })));
     for (i = 0, len = files.length; i < len; i++) {
       source = files[i];
-      (async(source) => {
+      await (async(source) => {
         var gid, mode, stats, target, uid;
         target = path.resolve(config.target, path.relative(config.source, source));
         ({stats} = (await this.fs.base.stat({

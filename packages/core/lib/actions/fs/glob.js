@@ -8,10 +8,33 @@
 // The action use the POXIX `find` command to fetch all files and filter the
 // paths locally using the Minimatch package.
 
-// ## Callback information
+// ## Output
 
-// * `hash`   
-//   The hash of the file or directory identified by the "target" option.
+// * `files`   
+//   List of files matching the globing expression.
+
+// ## Examples
+
+// Short notation:
+
+// ```js
+// const {files} = await nikita.fs.glob(`${process.cwd()}/*`)
+// for(const file of files){
+//   console.info(`Found: ${file}`)
+// }
+// ```
+
+// Extended notation:
+
+// ```js
+// const {files} = await nikita.fs.glob({
+//   dot: true,
+//   target: `${process.cwd()}/*`
+// })
+// for(const file of files){
+//   console.info(`Found: ${file}`)
+// }
+// ```
 
 // ## Hook
 var Minimatch, getprefix, handler, on_action, schema, utils;

@@ -17,7 +17,7 @@ module.exports = function(tasks, options = {}) {
   // It is not possible to register managed handler once the scheduler has
   // resolved.
   if (options.managed == null) {
-    options.managed = false;
+    options.managed = !!tasks;
   }
   if (options.parallel == null) {
     options.parallel = 1;
@@ -27,6 +27,9 @@ module.exports = function(tasks, options = {}) {
   }
   if (options.parallel === true) {
     options.parallel = -1;
+  }
+  if (options.end == null) {
+    options.end = true;
   }
   state = {
     stack: [],
@@ -56,6 +59,10 @@ module.exports = function(tasks, options = {}) {
   promise = new Promise(function(resolve, reject) {
     scheduler = {
       state: state,
+      end: function(end) {
+        options.end = end;
+        return scheduler.pump();
+      },
       pump: function() {
         var task;
         if (state.pause) {
@@ -65,22 +72,30 @@ module.exports = function(tasks, options = {}) {
           return;
         }
         if (!state.managed.resolved) {
-          if (state.error) {
+          if (state.managed.error) {
             state.managed.resolved = true;
             // Any pending managed task is stripped out after an error
             clear_managed_tasks();
             scheduler.pump();
-            return reject(state.error);
-          } else if (count_pending_tasks() + state.managed.running === 0) {
+            return reject(state.managed.error);
+          } else if (options.managed && options.end && count_pending_tasks() + state.managed.running === 0) {
             state.managed.resolved = true;
             scheduler.pump();
             return resolve(state.output);
+          } else if (!options.managed && options.end && state.stack.length === 0) {
+            state.managed.resolved = true;
+            return resolve();
           }
         }
         if (!state.stack.length) {
           return;
         }
         task = state.stack.shift();
+        if (options.strict === true && !task.managed && state.error) {
+          task.reject(state.error);
+          setImmediate(scheduler.pump);
+          return;
+        }
         state.running++;
         state.pending--;
         if (task.managed) {
@@ -114,8 +129,11 @@ module.exports = function(tasks, options = {}) {
             state.rejected++;
             state.resolved++;
             task.reject.call(null, error);
-            if (task.managed) {
+            if (options.strict) {
               state.error = error;
+            }
+            if (task.managed) {
+              state.managed.error = error;
             }
             return setImmediate(scheduler.pump);
           }
@@ -136,8 +154,10 @@ module.exports = function(tasks, options = {}) {
           var task;
           if (!isArray) {
             state.pending++;
+            if (tasks.managed == null) {
+              tasks.managed = options.managed;
+            }
             state.stack.unshift({
-              ...options,
               ...tasks,
               resolve: resolve,
               reject: reject
@@ -185,8 +205,10 @@ module.exports = function(tasks, options = {}) {
           var task;
           if (!isArray) {
             state.pending++;
+            if (tasks.managed == null) {
+              tasks.managed = options.managed;
+            }
             state.stack.push({
-              ...options,
               ...tasks,
               resolve: resolve,
               reject: reject
