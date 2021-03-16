@@ -43,6 +43,7 @@
     }
   ],
   "dependencies": {
+    "@nikitajs/log": "^1.0.0-alpha.1",
     "js-yaml": "^4.0.0",
     "object-diff": "^0.0.4",
     "shell": "^0.8.4"

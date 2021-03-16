@@ -49,6 +49,7 @@
     "mixme": "^0.5.0"
   },
   "devDependencies": {
+    "@nikitajs/log": "^1.0.0-alpha.1",
     "coffeescript": "^2.5.1",
     "mocha": "^8.3.1",
     "mocha-they": "^0.1.2",

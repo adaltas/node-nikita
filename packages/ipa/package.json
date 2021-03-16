@@ -45,6 +45,7 @@
     "@nikitajs/core": "^1.0.0-alpha"
   },
   "devDependencies": {
+    "@nikitajs/log": "^1.0.0-alpha.1",
     "@nikitajs/lxd": "^1.0.0-alpha.1",
     "@nikitajs/tools": "^1.0.0-alpha.1",
     "coffeescript": "^2.5.1",
