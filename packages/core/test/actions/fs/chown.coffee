@@ -131,7 +131,7 @@ describe 'actions.fs.chown', ->
         userdel 'toto'; groupdel 'toto'
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
-        @fs.chown "#{tmpdir}/a_file", uid: 1234
-        .should.finally.containEql $status: true
-        @fs.chown "#{tmpdir}/a_file", uid: 1234
-        .should.finally.containEql $status: false
+        {$status} = await @fs.chown "#{tmpdir}/a_file", uid: 1234
+        $status.should.be.true()
+        {$status} = await @fs.chown "#{tmpdir}/a_file", uid: 1234
+        $status.should.be.false()

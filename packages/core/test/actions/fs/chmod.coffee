@@ -14,11 +14,11 @@ describe 'actions.fs.chmod', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           content: ''
           mode: 0o0644
           target: "#{tmpdir}/a_file"
-        @fs.chmod
+        await @fs.chmod
           mode: 0o0600
           target: "#{tmpdir}/a_file"
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
@@ -29,14 +29,14 @@ describe 'actions.fs.chmod', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           content: ''
           mode: 0o0644
           target: "#{tmpdir}/a_file"
-        @fs.chmod
+        {$status} = await @fs.chmod
           mode: '600'
           target: "#{tmpdir}/a_file"
-        .should.be.finally.containEql $status: true
+        $status.should.be.true()
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
         utils.mode.compare(stats.mode, 0o0600).should.be.true()
 
@@ -45,7 +45,7 @@ describe 'actions.fs.chmod', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           content: ''
           mode: 0o0754
           target: "#{tmpdir}/a_file"

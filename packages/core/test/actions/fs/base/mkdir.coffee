@@ -13,7 +13,7 @@ describe 'actions.fs.base.mkdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"
       @fs.base.stat
         target: "{{parent.metadata.tmpdir}}/a_directory"
@@ -25,7 +25,7 @@ describe 'actions.fs.base.mkdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"
       @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"

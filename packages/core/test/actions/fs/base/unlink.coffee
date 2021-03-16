@@ -13,10 +13,10 @@ describe 'actions.fs.base.unlink', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         content: 'hello'
-      @fs.base.unlink
+      await @fs.base.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/a_target"
@@ -27,17 +27,17 @@ describe 'actions.fs.base.unlink', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.symlink
+      await @fs.base.symlink
         source: "{{parent.metadata.tmpdir}}/a_dir"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      @fs.base.unlink
+      await @fs.base.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
-      @fs.assert
+      await @fs.assert
         target: "{{parent.metadata.tmpdir}}/a_dir"
         filetype: 'directory'
-      @fs.assert
+      await @fs.assert
         target: "{{parent.metadata.tmpdir}}/a_target"
         not: true
 
@@ -57,7 +57,7 @@ describe 'actions.fs.base.unlink', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.mkdir
+      await @fs.mkdir
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"

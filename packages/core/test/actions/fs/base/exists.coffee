@@ -23,7 +23,7 @@ describe 'actions.fs.base.exists', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: "some content"
       @fs.base.exists
@@ -37,7 +37,7 @@ describe 'actions.fs.base.exists', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: ''
       @fs.base.exists "{{parent.metadata.tmpdir}}/a_file"

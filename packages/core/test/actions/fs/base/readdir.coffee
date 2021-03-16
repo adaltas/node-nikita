@@ -38,10 +38,10 @@ describe 'actions.fs.base.readdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
-      @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
-      @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
-      @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
+      await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
+      await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
+      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
+      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
       @fs.base.readdir "{{parent.metadata.tmpdir}}/parent"
       .then ({files}) ->
         files.sort().should.eql ['a_dir', 'file_1', 'file_2']
@@ -61,10 +61,10 @@ describe 'actions.fs.base.readdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
-      @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
-      @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
-      @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
+      await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
+      await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
+      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
+      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
       @fs.base.readdir "{{parent.metadata.tmpdir}}/parent", withFileTypes: true
       .then ({files}) ->
         files = files.sort()

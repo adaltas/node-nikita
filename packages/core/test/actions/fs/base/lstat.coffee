@@ -13,10 +13,10 @@ describe 'actions.fs.base.lstat', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      @fs.base.symlink
+      await @fs.base.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_file"
       @fs.base.lstat
@@ -30,9 +30,9 @@ describe 'actions.fs.base.lstat', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.symlink
+      await @fs.base.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_dir"
       @fs.base.lstat
@@ -46,10 +46,10 @@ describe 'actions.fs.base.lstat', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: ''
-      @fs.base.symlink
+      await @fs.base.symlink
         target: "{{parent.metadata.tmpdir}}/a_target"
         source: "{{parent.metadata.tmpdir}}/a_source"
       @fs.base.lstat

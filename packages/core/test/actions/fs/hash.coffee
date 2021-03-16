@@ -22,7 +22,7 @@ describe 'actions.fs.hash', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
+      await @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
       {hash, $status} = await @fs.hash "#{tmpdir}/a_file"
       hash.should.eql '9893532233caff98cd083a116b013c0b'
       $status.should.be.true()
@@ -32,8 +32,8 @@ describe 'actions.fs.hash', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir "#{tmpdir}/test"
-      @fs.base.writeFile
+      await @fs.base.mkdir "#{tmpdir}/test"
+      await @fs.base.writeFile
         target: "#{tmpdir}/test/a_file"
         content: 'some content'
       {hash} = await @fs.hash "#{tmpdir}/test/a*file"
@@ -44,8 +44,8 @@ describe 'actions.fs.hash', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
-      @fs.base.symlink
+      await @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
+      await @fs.base.symlink
         source: "#{tmpdir}/a_file"
         target: "#{tmpdir}/a_link"
       {hash, $status} = await @fs.hash "#{tmpdir}/a_link"
@@ -57,11 +57,11 @@ describe 'actions.fs.hash', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir "#{tmpdir}/a_dir"
-      @fs.base.writeFile
+      await @fs.base.mkdir "#{tmpdir}/a_dir"
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir/file_1"
         content: 'hello 1'
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir/file_2"
         content: 'hello 2'
       {hash, $status} = await @fs.hash "#{tmpdir}/a_dir"
@@ -89,7 +89,7 @@ describe 'actions.fs.hash', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir "#{tmpdir}/a_dir"
+      await @fs.base.mkdir "#{tmpdir}/a_dir"
       {hash} = await @fs.hash  "#{tmpdir}/a_dir"
       hash.should.eql crypto.createHash('md5').update('').digest('hex')
     
@@ -100,7 +100,7 @@ describe 'actions.fs.hash', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
         {$status} = await @fs.hash
           target: "#{tmpdir}/a_file"
           hash: '9893532233caff98cd083a116b013c0b'
@@ -111,7 +111,7 @@ describe 'actions.fs.hash', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'some content'
         @fs.hash
           target: "#{tmpdir}/a_file"
           hash: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'

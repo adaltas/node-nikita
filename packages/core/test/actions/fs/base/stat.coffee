@@ -24,7 +24,7 @@ describe 'actions.fs.base.stat', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
       {stats} = await @fs.base.stat
@@ -42,7 +42,7 @@ describe 'actions.fs.base.stat', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
       {stats} = await @fs.base.stat
         target: "{{parent.metadata.tmpdir}}/a_dir"

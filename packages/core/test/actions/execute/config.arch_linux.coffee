@@ -28,9 +28,9 @@ describe 'actions.execute.config.arch_linux', ->
       nikita
         $ssh: ssh
       , ->
-        @execute
+        await @execute
           command: "mount --bind /var/tmp/root.x86_64 /mnt"
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: '/mnt/root/hello'
           content: "you"
         try
@@ -45,7 +45,7 @@ describe 'actions.execute.config.arch_linux', ->
         catch err
           throw err
         finally
-          @execute
+          await @execute
             command: """
             umount /mnt
             """

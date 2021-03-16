@@ -13,10 +13,10 @@ describe 'actions.fs.base.rename', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'hello'
-      @fs.base.rename
+      await @fs.base.rename
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
       {stats} = await @fs.base.stat

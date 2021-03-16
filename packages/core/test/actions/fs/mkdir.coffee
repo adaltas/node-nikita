@@ -13,7 +13,7 @@ describe 'actions.fs.mkdir', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/a_dir"
+      await @fs.mkdir "#{tmpdir}/a_dir"
       {stats} = await @fs.base.stat "#{tmpdir}/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
@@ -22,18 +22,18 @@ describe 'actions.fs.mkdir', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/a_dir"
-      .should.be.finally.containEql $status: true
-      @fs.mkdir "#{tmpdir}/a_dir"
-      .should.be.finally.containEql $status: false
+      {$status} = await @fs.mkdir "#{tmpdir}/a_dir"
+      $status.should.be.true()
+      {$status} = await @fs.mkdir "#{tmpdir}/a_dir"
+      $status.should.be.false()
     
   they 'should create dir recursively', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/a_parent_dir/a_dir"
-      .should.be.finally.containEql $status: true
+      {$status} = await @fs.mkdir "#{tmpdir}/a_parent_dir/a_dir"
+      $status.should.be.true()
       {stats} = await @fs.base.stat "#{tmpdir}/a_parent_dir/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
@@ -44,11 +44,11 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/a_parent_dir/a_dir_2"
           parent: true
           mode: 0o717
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_parent_dir"
           mode: 0o0717
           not: true
@@ -58,14 +58,14 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/a_parent_dir/a_dir_1"
           parent: mode: 0o0741
           mode: 0o0715
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_parent_dir"
           mode: 0o0741
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_parent_dir/a_dir_1"
           mode: 0o0715
 
@@ -77,14 +77,14 @@ describe 'actions.fs.mkdir', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         source = "#{tmpdir}/a_parent_dir/a_dir/do_not_create_this"
-        @fs.mkdir
+        {$status} = await @fs.mkdir
           target: source
           exclude: /^do/
-        .should.be.finally.containEql $status: true
-        @fs.assert
+        $status.should.be.true()
+        await @fs.assert
           target: source
           not: true
-        @fs.assert
+        await @fs.assert
           target: path.dirname source
 
   describe 'cwd', ->
@@ -94,11 +94,11 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        {$status} = await @fs.mkdir
           target: './a_dir'
           cwd: tmpdir
-        .should.be.finally.containEql $status: true
-        @fs.assert
+        $status.should.be.true()
+        await @fs.assert
           target: "#{tmpdir}/a_dir"
 
   describe 'mode', ->
@@ -109,10 +109,10 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: '744'
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o0744
 
@@ -122,10 +122,10 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o744
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o0744
 
@@ -135,30 +135,30 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o744
-        @fs.mkdir
+        {$status} = await @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o755
-        .should.be.finally.containEql $status: true
-        @fs.mkdir
+        $status.should.be.true()
+        {$status} = await @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o755
-        .should.be.finally.containEql $status: false
+        $status.should.be.false()
 
     they 'dont ovewrite permission', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @fs.mkdir
           target: "#{tmpdir}/a_dir"
           mode: 0o744
-        @fs.mkdir
+        {$status} = await @fs.mkdir
           target: "#{tmpdir}/a_dir"
-        .should.be.finally.containEql $status: false
-        @fs.assert
+        $status.should.be.false()
+        await @fs.assert
           target: "#{tmpdir}/a_dir"
           mode: 0o0744
 
@@ -185,7 +185,7 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: ''
         @fs.mkdir
@@ -211,7 +211,7 @@ describe 'system.mkdir options uid/gid', ->
       userdel 'toto'; groupdel 'toto'
       groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
       """
-      @fs.mkdir
+      await @fs.mkdir
         target: "#{tmpdir}/ssh_dir_string"
         uid: 1234
         gid: 5678

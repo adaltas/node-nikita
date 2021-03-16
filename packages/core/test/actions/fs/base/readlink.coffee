@@ -12,10 +12,10 @@ describe 'actions.fs.base.readlink', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: ''
-      @fs.base.symlink
+      await @fs.base.symlink
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
       {target} = await @fs.base.readlink

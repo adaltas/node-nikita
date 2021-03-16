@@ -38,7 +38,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: ''
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         @fs.assert "#{tmpdir}/a_file"
   
     they 'with config not', ({ssh}) ->
@@ -46,8 +46,8 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.assert "#{tmpdir}/a_file", not: true
-        @fs.base.writeFile "#{tmpdir}/a_file", content: ''
+        await @fs.assert "#{tmpdir}/a_file", not: true
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         @fs.assert "#{tmpdir}/a_file", not: true
         .should.be.rejectedWith
           code: 'NIKITA_FS_ASSERT_FILE_EXISTS'
@@ -86,11 +86,11 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: ''
-        @fs.assert
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           filetype: 'file'
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           filetype: fs.constants.S_IFREG
         @fs.assert
@@ -109,13 +109,13 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}"
           filetype: 'directory'
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}"
           filetype: fs.constants.S_IFDIR
-        @fs.base.writeFile "#{tmpdir}/a_file", content: ''
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         @fs.assert
           target: "#{tmpdir}/a_file"
           filetype: 'directory'
@@ -134,7 +134,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "match filter me"
         @fs.assert
@@ -147,7 +147,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "match filter1 filter2 me"
         @fs.assert
@@ -163,7 +163,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: """
           match me
@@ -183,7 +183,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "are u here"
         @fs.assert
@@ -195,7 +195,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "are u here"
         @fs.assert
@@ -215,7 +215,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "are u here"
         @fs.assert
@@ -238,7 +238,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "match me"
         @fs.assert
@@ -250,7 +250,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "are u here"
         @fs.assert
@@ -271,7 +271,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "dont match me"
         @fs.assert
@@ -284,7 +284,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "dont match me"
         @fs.assert
@@ -305,7 +305,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: "are u here"
         @fs.assert
@@ -334,7 +334,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
           target: "#{tmpdir}/a_file"
           md5: "f0a1e0f2412f62cc97178fd6b44dc978"
@@ -344,7 +344,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
           target: "#{tmpdir}/a_file"
           md5: "XXXX"
@@ -362,7 +362,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
           target: "#{tmpdir}/a_file"
           md5: 'toto'
@@ -373,7 +373,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: "are u here"
         @fs.assert
           target: "#{tmpdir}/a_file"
           md5: "f0a1e0f2412f62cc97178fd6b44dc978"
@@ -391,8 +391,8 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: ''
-        .fs.assert
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
+        @fs.assert
           target: "#{tmpdir}/a_file"
           md5: 'toto'
           error: 'Got it'
@@ -407,7 +407,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
         @fs.assert
           target: "#{tmpdir}/a_file"
           sha1: "94d1f318f02816c590bd65595c28df1dd7ff326b"
@@ -419,7 +419,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'are u here'
         @fs.assert
           target: "#{tmpdir}/a_file"
           sha256: "c98fbf6b29ab2b709b642997930f3679eedd1f5f33078bc527f770c088f0463c"
@@ -442,8 +442,8 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
-        .fs.assert
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
+        @fs.assert
           target: "#{tmpdir}/a_file"
           mode: 0o0755
   
@@ -452,8 +452,8 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
-        .fs.assert
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '',mode: 0o0755
+        @fs.assert
           target: "#{tmpdir}/a_file"
           mode: 0o0644
         .should.be.rejectedWith
@@ -469,7 +469,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.mkdir
+        await @fs.base.mkdir
           target: "#{tmpdir}/a_file"
           content: "are u here"
           mode: 0o0755
@@ -490,7 +490,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.mkdir
+        await @fs.base.mkdir
           target: "#{tmpdir}/a_file"
           content: "are u here"
           mode: 0o0755
@@ -504,7 +504,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '', mode: 0o0755
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '', mode: 0o0755
         @fs.assert
           target: "#{tmpdir}/a_file"
           mode: 0o0644
@@ -522,8 +522,8 @@ describe 'actions.fs.assert', ->
       , ({metadata: {tmpdir}}) ->
         {stdout} = await @execute 'id -u && id -g'
         [uid, gid] = stdout.split '\n'
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '', uid: uid, gid: gid
-        @fs.base.chown "#{tmpdir}/a_file", gid: gid
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '', uid: uid, gid: gid
+        await @fs.base.chown "#{tmpdir}/a_file", gid: gid
         @fs.assert
           target: "#{tmpdir}/a_file",
           uid: uid
@@ -536,7 +536,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: 'ok'
@@ -547,7 +547,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: Buffer.from 'ok'
@@ -558,7 +558,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: '\nok\n'
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: /^ok$/
@@ -569,7 +569,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: '\nok\n'
@@ -580,7 +580,7 @@ describe 'actions.fs.assert', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'ok'
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: Buffer.from '\nok\n'

@@ -81,7 +81,7 @@ describe 'actions.fs.base.createWriteStream', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/a_file"
           content: ''
           mode: 0o0611
@@ -93,12 +93,12 @@ describe 'actions.fs.base.createWriteStream', ->
         $ssh: ssh
         tmpdir: true
       , ->
-        @fs.base.createWriteStream
+        await @fs.base.createWriteStream
           target: "{{parent.metadata.tmpdir}}/a_file"
           stream: (ws) ->
             ws.write 'hello'
             ws.end()
-        @fs.base.createWriteStream
+        await @fs.base.createWriteStream
           target: "{{parent.metadata.tmpdir}}/a_file"
           flags: 'a'
           stream: (ws) ->

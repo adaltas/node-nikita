@@ -8,22 +8,23 @@ describe 'actions.call', ->
   return unless tags.api
 
   it 'call action from global registry', ->
-    nikita
-    .call ->
-      registry.register 'my_function', ({config}) ->
-        pass_a_key: config.a_key
-    .call ->
-      {pass_a_key} = await nikita.my_function a_key: 'a value'
-      pass_a_key.should.eql 'a value'
-    .call ->
-      registry.unregister 'my_function'
+    try
+      await nikita.call ->
+        registry.register 'my_function', ({config}) ->
+          pass_a_key: config.a_key
+      await nikita.call ->
+        {pass_a_key} = await nikita.my_function a_key: 'a value'
+        pass_a_key.should.eql 'a value'
+    finally ->
+      nikita.call ->
+        registry.unregister 'my_function'
   
   they 'call a module exporting a function', ({ssh}) ->
     nikita
       ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         content: '''
         module.exports = ({config}) => {
           return config
@@ -38,7 +39,7 @@ describe 'actions.call', ->
       ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         content: '''
         module.exports = {
           metadata: {

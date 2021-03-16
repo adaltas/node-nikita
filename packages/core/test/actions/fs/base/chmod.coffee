@@ -38,10 +38,10 @@ describe 'actions.fs.base.chmod', ->
         $ssh: ssh
         $tmpdir: true
       , ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "{{parent.metadata.tmpdir}}/a_target"
           content: 'hello'
-        @fs.base.chmod
+        await @fs.base.chmod
           mode: 0o600
           target: "{{parent.metadata.tmpdir}}/a_target"
         {stats} = await @fs.base.stat

@@ -13,9 +13,9 @@ describe 'actions.fs.base.rmdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.rmdir
+      await @fs.base.rmdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -26,9 +26,9 @@ describe 'actions.fs.base.rmdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
         content: ''
       @fs.base.rmdir
@@ -41,15 +41,15 @@ describe 'actions.fs.base.rmdir', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
         content: ''
       await @fs.base.rmdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
         recursive: true
-      @fs.assert
+      await @fs.assert
         target: "{{parent.metadata.tmpdir}}/a_dir"
         not: true
 

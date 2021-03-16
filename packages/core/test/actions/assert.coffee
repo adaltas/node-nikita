@@ -8,10 +8,12 @@ describe 'actions.assert', ->
   
   describe 'returned value', ->
 
-    it 'succeed only with true', ->
+    it 'fulfilled with `true`', ->
       nikita.assert ->
         true
       .should.be.fulfilled()
+
+    it 'rejected with `false`', ->
       nikita.assert ->
         false
       .should.be.rejectedWith
@@ -19,52 +21,52 @@ describe 'actions.assert', ->
 
     it 'cast', ->
       # String
-      nikita.assert ->
+      await nikita.assert ->
         'valid'
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         ''
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
       # Buffer
-      nikita.assert ->
+      await nikita.assert ->
         Buffer.from 'valid'
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         Buffer.from ''
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
       # Integer
-      nikita.assert ->
+      await nikita.assert ->
         1
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         0
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
       # Object literal
-      nikita.assert ->
+      await nikita.assert ->
         key: 'value'
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         {}
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
       # Null and undefined
-      nikita.assert ->
+      await nikita.assert ->
         null
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
-      nikita.assert ->
+      await nikita.assert ->
         undefined
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
 
     it 'handle array', ->
-      nikita.assert ->
+      await nikita.assert ->
         [true, true]
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         [false, true]
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
@@ -101,7 +103,7 @@ describe 'actions.assert', ->
         code: 'NIKITA_ASSERT_UNTRUE'
 
     it 'children must return true', ->
-      nikita.assert ->
+      await nikita.assert ->
         @call [
           $raw_output: true
           $handler: -> true
@@ -110,7 +112,7 @@ describe 'actions.assert', ->
           $handler: -> new Promise (resolve) -> resolve true
         ]
       .should.be.fulfilled()
-      nikita.assert ->
+      await nikita.assert ->
         @call [
           $raw_output: true
           $handler: -> true
@@ -124,64 +126,64 @@ describe 'actions.assert', ->
     describe 'option `not`', ->
 
       it 'succeed only with false', ->
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           false
         .should.be.fulfilled()
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           true
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
 
       it 'cast', ->
         # String
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           'false'
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           ''
         .should.be.fulfilled()
         # Buffer
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           Buffer.from 'valid'
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           Buffer.from ''
         .should.be.fulfilled()
         # Integer
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           1
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           0
         .should.be.fulfilled()
         # Object literal
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           key: 'value'
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           {}
         .should.be.fulfilled()
         # Null and undefined
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           null
         .should.be.fulfilled()
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           undefined
         .should.be.fulfilled()
 
       it 'handle array', ->
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           [false, false]
         .should.be.fulfilled()
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           [false, true]
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
-        nikita.assert not: true, ->
+        await nikita.assert not: true, ->
           [true, true]
         .should.be.rejectedWith
           code: 'NIKITA_ASSERT_UNTRUE'
@@ -189,11 +191,11 @@ describe 'actions.assert', ->
   describe 'option `strict`', ->
 
     it 'succeed only with false', ->
-      nikita.assert strict: true, ->
+      await nikita.assert strict: true, ->
         'very strict'
       .should.be.rejectedWith
         code: 'NIKITA_ASSERT_UNTRUE'
-      nikita.assert strict: true, not: true, ->
+      await nikita.assert strict: true, not: true, ->
         'very strict'
       .should.be.fulfilled()
       

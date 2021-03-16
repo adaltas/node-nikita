@@ -121,9 +121,6 @@ returned values.
             stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{config.target} # Linux
           fi
           """
-          # sudo: config.sudo
-          # bash: config.bash
-          # arch_chroot: config.arch_chroot
           trim: true
         [rawmodehex, uid, gid, size, atime, mtime] = stdout.split '|'
         stats:

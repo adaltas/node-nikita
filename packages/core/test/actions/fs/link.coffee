@@ -39,14 +39,14 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.link # Link does not exist
+        {$status} = await @fs.link # Link does not exist
           source: __filename
           target: "#{tmpdir}/link_test"
-        .should.be.finally.containEql $status: true
-        @fs.link # Link already exists
+        $status.should.be.true()
+        {$status} = await @fs.link # Link already exists
           source: __filename
           target: "#{tmpdir}/link_test"
-        .should.be.finally.containEql $status: false
+        $status.should.be.false()
         @fs.assert
           target: "#{tmpdir}/link_test"
           filetype: 'symlink'
@@ -56,16 +56,16 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.link
+        {$status} = await @fs.link
           source: __filename
           target: "#{tmpdir}/test"
           exec: true
-        .should.be.finally.containEql $status: true
-        @fs.link
+        $status.should.be.true()
+        {$status} = await @fs.link
           source: __filename
           target: "#{tmpdir}/test"
           exec: true
-        .should.be.finally.containEql $status: false
+        $status.should.be.false()
         @fs.assert
           target: "#{tmpdir}/test"
           content: """
@@ -80,15 +80,15 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.link # Link does not exist
+        {$status} = await @fs.link # Link does not exist
           source: __dirname
           target: "#{tmpdir}/link_test"
-        .should.be.finally.containEql $status: true
-        @fs.link # Link already exists
+        $status.should.be.true()
+        {$status} = await @fs.link # Link already exists
           $ssh: ssh
           source: __dirname
           target: "#{tmpdir}/link_test"
-        .should.be.finally.containEql $status: false
+        $status.should.be.false()
         @fs.assert
           target: "#{tmpdir}/link_test"
           filetype: 'symlink'
@@ -99,42 +99,42 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.link
+        {$status} = await @fs.link
           source: __dirname
           target: "#{tmpdir}/test/dir/link_test"
-        .should.be.finally.containEql $status: true
-        @fs.assert
+        $status.should.be.true()
+        await @fs.assert
           target: "#{tmpdir}/test/dir/link_test"
           type: 'symlink'
-        @fs.link
+        {$status} = await @fs.link
           $ssh: ssh
           source: "#{__dirname}/merge.coffee"
           target: "#{tmpdir}/test/dir2/merge.coffee"
-        .should.be.finally.containEql $status: true
-        @fs.link
+        $status.should.be.true()
+        {$status} = await @fs.link
           $ssh: ssh
           source: "#{__dirname}/mkdir.coffee"
           target: "#{tmpdir}/test/dir2/mkdir.coffee"
-        .should.be.finally.containEql $status: true
+        $status.should.be.true()
 
     they 'should override invalid link', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/invalid_file"
           content: 'error'
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/valid_file"
           content: 'ok'
-        @fs.link
+        {$status} = await @fs.link
           source: "#{tmpdir}/invalid_file"
           target: "#{tmpdir}/file_link"
-        .should.be.finally.containEql $status: true
-        # @fs.remove
+        $status.should.be.true()
+        # await @fs.remove
         #   target: "#{tmpdir}/test/invalid_file"
-        @fs.link
+        {$status} = await @fs.link
           source: "#{tmpdir}/test/valid_file"
           target: "#{tmpdir}/test/file_link"
-        .should.be.finally.containEql $status: true
+        $status.should.be.true()

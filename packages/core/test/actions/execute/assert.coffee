@@ -34,7 +34,7 @@ describe 'actions.execute.assert', ->
 
     they 'assert custom code', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute.assert
+        await @execute.assert
           command: 'exit 1'
           code: 1
         @execute.assert
@@ -48,7 +48,7 @@ describe 'actions.execute.assert', ->
 
     they 'assert custom code with negation', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute.assert
+        await @execute.assert
           command: 'exit 1'
           not: true
           code: 0
@@ -66,7 +66,7 @@ describe 'actions.execute.assert', ->
 
     they 'assert stdout match content', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute.assert
+        await @execute.assert
           command: 'text=hello; echo $text'
           content: 'hello\n'
         @execute.assert
@@ -80,7 +80,7 @@ describe 'actions.execute.assert', ->
 
     they 'assert stdout match regexp', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute.assert
+        await @execute.assert
           command: "echo \"toto\nest\r\nau\rbistrot\""
           content: /^bistrot$/m
         @execute.assert

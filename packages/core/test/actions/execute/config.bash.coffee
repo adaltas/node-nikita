@@ -15,35 +15,53 @@ describe 'actions.execute.config.bash', ->
     .then ({stdout}) ->
       stdout.should.containEql 'bash'
 
-  they.skip 'in user path', ({ssh}) ->
+  they 'in user path', ({ssh}) ->
     nikita
       $ssh: ssh
-    .execute
-      command: "echo $BASH"
-      bash: true
-      dirty: true
-      target: "#{scratch}/my_script"
-    , (err, {stdout}) ->
+      $tmpdir: true
+    , ({metadata: {tmpdir}})->
+      {stdout} = await @execute
+        command: "echo $BASH"
+        bash: true
+        dirty: true
+        target: "#{tmpdir}/my_script"
       stdout.should.containEql 'bash'
-    .file.assert
-      target: "#{scratch}/my_script"
-    .execute
-      command: "echo $BASH"
-      bash: true
-      dirty: false
-      target: "#{scratch}/my_script"
-    , (err, {stdout}) ->
-      stdout.should.containEql 'bash'
-    .file.assert
-      target: "#{scratch}/my_script"
-      not: true
 
-  they.skip 'honors exit code', ({ssh}) ->
+  they 'option `dirty` is `true`', ({ssh}) ->
     nikita
       $ssh: ssh
-    .execute
-      command: "exit 2"
-      bash: true
-      code_skipped: 2
-    , (err, {status}) ->
-      status.should.be.false() unless err
+      $tmpdir: true
+    , ({metadata: {tmpdir}})->
+      {stdout} = await @execute
+        command: "echo $BASH"
+        bash: true
+        dirty: true
+        target: "#{tmpdir}/my_script"
+      {files} = await @fs.glob "#{tmpdir}/*"
+      files.length.should.eql 1
+      await @fs.assert
+        target: files[0]
+        content: 'echo $BASH'
+
+    they 'option `dirty` is `false`', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}})->
+      {stdout} = await @execute
+        command: "echo $BASH"
+        bash: true
+        dirty: false
+        target: "#{tmpdir}/my_script"
+      {files} = await @fs.glob "#{tmpdir}/*"
+      files.length.should.eql 0
+
+  they 'option `code_skipped`', ({ssh}) ->
+    nikita
+      $ssh: ssh
+    , ->
+      {$status} = await @execute
+        command: "exit 2"
+        bash: true
+        code_skipped: 2
+      $status.should.be.false()

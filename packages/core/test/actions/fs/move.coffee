@@ -38,7 +38,7 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/org_file"
         content: ''
       {$status} = await @fs.move
@@ -47,10 +47,10 @@ describe 'actions.fs.move', ->
       # .should.be.finally.containEql status: true
       $status.should.be.true()
       # The target file should exists
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/new_name"
       # The source file should no longer exists
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/org_file"
         not: true
 
@@ -59,20 +59,20 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/a_dir"
-      @fs.base.writeFile
+      await @fs.mkdir "#{tmpdir}/a_dir"
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: ''
-      @fs.move
+      {$status} = await @fs.move
         source: "#{tmpdir}/a_dir"
         target: "#{tmpdir}/moved"
-      .should.be.finally.containEql $status: true
+      $status.should.be.true()
       # The target file should exists
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/moved"
         filetype: 'directory'
       # The source file should no longer exists
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir"
         not: true
 
@@ -81,27 +81,27 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/src1.txt"
         content: 'hello'
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/src2.txt"
         content: 'hello'
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/dest.txt"
         content: 'overwritten'
-      @fs.move
+      {$status} = await @fs.move
         source: "#{tmpdir}/src1.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.finally.containEql $status: true
-      @fs.move # Move a file with the same content
+      $status.should.be.true()
+      {$status} = await @fs.move # Move a file with the same content
         source: "#{tmpdir}/src2.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.finally.containEql $status: false
-      @fs.assert
+      $status.should.be.false()
+      await @fs.assert
         target: "#{tmpdir}/dest.txt"
         content: 'hello'
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/src2.txt"
         not: true
 
@@ -110,14 +110,14 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/src.txt"
         content: 'hello'
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/dest.txt"
         content: 'hello'
-      @fs.move
+      {$status} = await @fs.move
         source: "#{tmpdir}/src.txt"
         target: "#{tmpdir}/dest.txt"
         force: true
-      .should.be.finally.containEql $status: true
+      $status.should.be.true()

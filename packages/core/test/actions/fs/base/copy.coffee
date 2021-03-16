@@ -12,12 +12,12 @@ describe 'actions.fs.base.copy', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'some content'
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"
-      @fs.base.copy
+      await @fs.base.copy
         source: "{{parent.metadata.tmpdir}}/a_file"
         target: "{{parent.metadata.tmpdir}}/a_directory"
       @fs.base.readFile
@@ -30,13 +30,13 @@ describe 'actions.fs.base.copy', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some source content'
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         content: 'some target content'
-      @fs.base.copy
+      await @fs.base.copy
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.readFile
@@ -49,10 +49,10 @@ describe 'actions.fs.base.copy', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some content'
-      @fs.base.copy "{{parent.metadata.tmpdir}}/a_target",
+      await @fs.base.copy "{{parent.metadata.tmpdir}}/a_target",
         source: "{{parent.metadata.tmpdir}}/a_source"
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
@@ -64,7 +64,7 @@ describe 'actions.fs.base.copy', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some content'
       @fs.base.copy

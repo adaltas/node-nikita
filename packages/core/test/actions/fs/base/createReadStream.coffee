@@ -13,7 +13,7 @@ describe 'actions.fs.base.createReadStream', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
       await @fs.base.createReadStream
@@ -29,7 +29,7 @@ describe 'actions.fs.base.createReadStream', ->
       $ssh: ssh
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
       @fs.base.createReadStream

@@ -12,7 +12,7 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
       @fs.remove
@@ -24,7 +24,7 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
       {$status} = await @fs.remove "#{tmpdir}/a_file"
@@ -35,10 +35,10 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/file_1"
         content: ''
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/file_2"
         content: ''
       (await @fs.remove [
@@ -53,29 +53,31 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
-      @fs.remove
+      {$status} = await @fs.remove
         target: "#{tmpdir}/a_file"
-      .should.be.finally.containEql $status: true
-      @fs.remove
+      $status.should.be.true()
+      {$status} = await @fs.remove
         target: "#{tmpdir}/a_file"
-      .should.be.finally.containEql $status: false
+      $status.should.be.false()
 
   they 'a link', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
-      @fs.base.symlink source: "#{tmpdir}/a_file", target: "#{tmpdir}/a_link"
-      @fs.remove
+      await @fs.base.symlink
+        source: "#{tmpdir}/a_file"
         target: "#{tmpdir}/a_link"
-      .should.be.finally.containEql $status: true
-      @fs.assert
+      {$status} = await await @fs.remove
+        target: "#{tmpdir}/a_link"
+      $status.should.be.true()
+      await @fs.assert
         target: "#{tmpdir}/a_link"
         not: true
 
@@ -84,50 +86,50 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "#{tmpdir}/a_dir"
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: ''
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir.tar.gz"
         content: ''
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir.tz"
         content: ''
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/a_dir.zip"
         content: ''
-      @fs.remove
+      {$status} = await @fs.remove
         target: "#{tmpdir}/*gz"
-      .should.be.finally.containEql $status: true
-      @fs.assert "#{tmpdir}/a_dir.tar.gz", not: true
-      @fs.assert "#{tmpdir}/a_dir.tgz", not: true
-      @fs.assert "#{tmpdir}/a_dir.zip"
-      @fs.assert "#{tmpdir}/a_dir", type: 'directory'
+      $status.should.be.true()
+      await @fs.assert "#{tmpdir}/a_dir.tar.gz", not: true
+      await @fs.assert "#{tmpdir}/a_dir.tgz", not: true
+      await @fs.assert "#{tmpdir}/a_dir.zip"
+      await @fs.assert "#{tmpdir}/a_dir", type: 'directory'
 
   they 'a dir', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"
-      @fs.remove
+      {$status} = await @fs.remove
         target: "#{tmpdir}/remove_dir"
-      .should.be.finally.containEql $status: true
-      @fs.remove
+      $status.should.be.true()
+      {$status} = await @fs.remove
         target: "#{tmpdir}/remove_dir"
-      .should.be.finally.containEql $status: false
+      $status.should.be.false()
 
   they 'a dir without recursive', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/remove_dir/a_file"
         content: ''
       @fs.remove
@@ -141,9 +143,9 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "#{tmpdir}/remove_dir/a_file"
         content: ''
       @fs.remove

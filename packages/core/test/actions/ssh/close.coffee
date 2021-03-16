@@ -32,7 +32,7 @@ describe 'actions.ssh.close', ->
 
       they 'error if no ssh to close', ({ssh}) ->
         nikita ->
-          @ssh.open ssh
+          await @ssh.open ssh
           @ssh.close()
           .should.be.rejectedWith
             code: 'NIKITA_SSH_CLOSE_NO_CONN'

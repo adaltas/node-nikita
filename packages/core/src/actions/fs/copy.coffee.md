@@ -142,7 +142,7 @@ console.info(`File was copied: ${$status}`)
           config.target = path.resolve config.target, path.basename config.source
         log message: "Source is a directory", level: 'INFO'
         {files} = await @fs.glob "#{config.source}/**", dot: true
-        for source in files then do (source) =>
+        for source in files then await do (source) =>
           target = path.resolve config.target, path.relative config.source, source
           {stats} = await @fs.base.stat target: source
           uid = config.uid

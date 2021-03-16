@@ -44,12 +44,12 @@ describe 'actions.fs.base.chown', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @execute """
+        await @execute """
         echo '' > '#{tmpdir}/a_file'
         userdel 'toto'; groupdel 'toto'
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
-        @fs.base.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678
+        await @fs.base.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
         stats.should.match
           uid: 1234
@@ -60,12 +60,12 @@ describe 'actions.fs.base.chown', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @execute """
+        await @execute """
         echo '' > '#{tmpdir}/a_file'
         userdel 'toto'; groupdel 'toto'
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
-        @fs.base.chown "#{tmpdir}/a_file", uid: 'toto', gid: 'toto'
+        await @fs.base.chown "#{tmpdir}/a_file", uid: 'toto', gid: 'toto'
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
         stats.should.match
           uid: 1234
