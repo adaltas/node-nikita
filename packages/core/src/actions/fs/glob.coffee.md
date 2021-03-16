@@ -54,7 +54,7 @@ for(const file of files){
         'target':
           type: 'string'
           description: """
-          The file or directory to compute the hash from.
+          Globbing expression of the directory tree to match.
           """
         'trailing':
           type: 'boolean'
