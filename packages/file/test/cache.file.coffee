@@ -14,13 +14,13 @@ describe 'file.cache file', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @log.fs
+      await @log.fs
         basedir: tmpdir
         serializer: text: (log) -> "#{log.message}\n"
-      @file
+      await @file
         target: "#{tmpdir}/my_file"
         content: 'okay'
-      @file
+      await @file
         target: "#{tmpdir}/my_cache_file"
         content: 'okay'
       {$status} = await @file.cache

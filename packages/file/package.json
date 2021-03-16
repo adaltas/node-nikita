@@ -64,6 +64,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@babel/preset-env": "^7.13.10",
+    "@nikitajs/log": "^1.0.0-alpha.1",
     "coffeescript": "^2.5.1",
     "eslint": "^7.21.0",
     "eslint-plugin-coffee": "^0.1.14",
@@ -91,7 +92,8 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/file/src/register"
+      "@nikitajs/file/src/register",
+      "@nikitajs/log/src/register"
     ],
     "inline-diffs": true,
     "timeout": 40000,
