@@ -45,7 +45,7 @@
     "@nikitajs/file": "^1.0.0-alpha.1"
   },
   "peerDependencies": {
-    "@nikitajs/core": "^1.0.0"
+    "@nikitajs/core": "^1.0.0-alpha"
   },
   "devDependencies": {
     "@nikitajs/network": "^1.0.0-alpha.1",
