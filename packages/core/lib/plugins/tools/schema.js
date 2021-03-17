@@ -4,9 +4,9 @@ The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
 object.
 */
-var Ajv, ajv_formats, ajv_keywords, error, is_object_literal, parse;
+var Ajv, ajv_formats, ajv_keywords, parse, utils;
 
-error = require('../utils/error');
+utils = require('../../utils');
 
 Ajv = require('ajv').default;
 
@@ -14,13 +14,11 @@ ajv_keywords = require('ajv-keywords');
 
 ajv_formats = require("ajv-formats");
 
-({is_object_literal} = require('mixme'));
-
 parse = function(uri) {
   var matches;
   matches = /^(\w+:)\/\/(.*)/.exec(uri);
   if (!matches) {
-    throw error('SCHEMA_URI_INVALID_PROTOCOL', ['uri must start with a valid protocol', 'such as "module://" or "registry://",', `got ${uri}.`]);
+    throw utils.error('SCHEMA_URI_INVALID_PROTOCOL', ['uri must start with a valid protocol', 'such as "module://" or "registry://",', `got ${uri}.`]);
   }
   return {
     protocol: matches[1],
@@ -29,7 +27,7 @@ parse = function(uri) {
 };
 
 module.exports = {
-  name: '@nikitajs/core/lib/plugins/schema',
+  name: '@nikitajs/core/lib/plugins/tools/schema',
   hooks: {
     'nikita:normalize': {
       handler: function(action, handler) {
@@ -63,9 +61,9 @@ module.exports = {
                     try {
                       action = require.main.require(pathname);
                       return accept(action.metadata.schema);
-                    } catch (error1) {
-                      err = error1;
-                      return reject(error('NIKITA_SCHEMA_INVALID_MODULE', ['the module location is not resolvable,', `module name is ${JSON.stringify(pathname)}.`]));
+                    } catch (error) {
+                      err = error;
+                      return reject(utils.error('NIKITA_SCHEMA_INVALID_MODULE', ['the module location is not resolvable,', `module name is ${JSON.stringify(pathname)}.`]));
                     }
                     break;
                   case 'registry:':
@@ -74,7 +72,7 @@ module.exports = {
                     if (action) {
                       return accept(action.metadata.schema);
                     } else {
-                      return reject(error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
+                      return reject(utils.error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
                     }
                 }
               });
@@ -110,8 +108,8 @@ module.exports = {
               var err, validate;
               try {
                 validate = (await ajv.compileAsync(action.metadata.schema));
-              } catch (error1) {
-                err = error1;
+              } catch (error) {
+                err = error;
                 if (!err.code) {
                   err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION';
                   err.message = `${err.code}: ${err.message}`;
@@ -121,7 +119,7 @@ module.exports = {
               if (validate(action.config)) {
                 return;
               }
-              return error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
+              return utils.error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
                 validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors where found in the configuration of',
                 action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "root action:",
                 validate.errors.map(function(err) {
@@ -152,25 +150,6 @@ module.exports = {
             }
           };
           return action;
-        };
-      }
-    },
-    'nikita:action': {
-      after: ['@nikitajs/core/lib/plugins/global'],
-      handler: async function(action, handler) {
-        var err;
-        if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {
-          throw error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)} in`, action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`.` : "root action."]);
-        }
-        if (!action.metadata.schema) {
-          return handler;
-        }
-        err = (await action.tools.schema.validate(action));
-        return function() {
-          if (err) {
-            throw err;
-          }
-          return handler.apply(null, arguments);
         };
       }
     }

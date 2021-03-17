@@ -27,12 +27,12 @@ create = (...args) ->
     require './plugins/metadata/raw'
     require './plugins/metadata/relax'
     require './plugins/metadata/retry'
+    require './plugins/metadata/schema'
     require './plugins/metadata/status'
     require './plugins/metadata/tmpdir'
     require './plugins/metadata/uuid'
     require './plugins/pubsub'
     require './plugins/output_logs'
-    require './plugins/schema'
     require './plugins/ssh'
     require './plugins/time'
     require './plugins/templated'
@@ -41,6 +41,7 @@ create = (...args) ->
     require './plugins/tools/find'
     require './plugins/tools/log'
     require './plugins/tools/path'
+    require './plugins/tools/schema'
     require './plugins/tools/walk'
   ]
 

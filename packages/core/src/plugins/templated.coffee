@@ -6,7 +6,7 @@ module.exports =
   hooks:
     'nikita:action':
       after: [
-        '@nikitajs/core/src/plugins/schema'
+        '@nikitajs/core/src/plugins/metadata/schema'
         # '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: (action) ->

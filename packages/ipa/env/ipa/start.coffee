@@ -9,7 +9,8 @@ require '@nikitajs/tools/lib/register'
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
 # solution involve to run on the host machine
-# `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
+# Temporary: `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
+# Permanently: `echo 'fs.protected_regular = 0' >> /etc/sysctl.conf && sysctl -p`
 
 # console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
 # parameters({

@@ -77,7 +77,7 @@ console.info(stdout)
         '@nikitajs/core/src/plugins/tools/path'
       ]
       before: [
-        '@nikitajs/core/src/plugins/schema'
+        '@nikitajs/core/src/plugins/metadata/schema'
         '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, ssh, tools: {find, path, walk}}) ->

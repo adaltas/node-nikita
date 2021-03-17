@@ -73,7 +73,7 @@ var exec, handler, on_action, schema, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path'],
-  before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/plugins/metadata/tmpdir'],
+  before: ['@nikitajs/core/lib/plugins/metadata/schema', '@nikitajs/core/lib/plugins/metadata/tmpdir'],
   handler: function({
       config,
       metadata,

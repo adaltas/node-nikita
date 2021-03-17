@@ -4,15 +4,14 @@ schema. Thus, it mst be defined after every module which modify the config
 object.
 ###
 
-error = require '../utils/error'
+utils = require '../../utils'
 Ajv = require('ajv').default
 ajv_keywords = require 'ajv-keywords'
 ajv_formats = require "ajv-formats"
-{is_object_literal} = require 'mixme'
 
 parse = (uri) ->
   matches = /^(\w+:)\/\/(.*)/.exec uri
-  throw error 'SCHEMA_URI_INVALID_PROTOCOL', [
+  throw utils.error 'SCHEMA_URI_INVALID_PROTOCOL', [
     'uri must start with a valid protocol'
     'such as "module://" or "registry://",'
     "got #{uri}."
@@ -21,7 +20,7 @@ parse = (uri) ->
   pathname: matches[2]
 
 module.exports =
-  name: '@nikitajs/core/src/plugins/schema'
+  name: '@nikitajs/core/src/plugins/tools/schema'
   hooks:
     'nikita:normalize':
       handler: (action, handler) ->
@@ -51,7 +50,7 @@ module.exports =
                       action = require.main.require pathname
                       accept action.metadata.schema
                     catch err
-                      reject error 'NIKITA_SCHEMA_INVALID_MODULE', [
+                      reject utils.error 'NIKITA_SCHEMA_INVALID_MODULE', [
                         'the module location is not resolvable,'
                         "module name is #{JSON.stringify pathname}."
                       ]
@@ -61,7 +60,7 @@ module.exports =
                     if action
                       accept action.metadata.schema
                     else
-                      reject error 'NIKITA_SCHEMA_UNREGISTERED_ACTION', [
+                      reject utils.error 'NIKITA_SCHEMA_UNREGISTERED_ACTION', [
                         'the action is not registered inside the Nikita registry,'
                         "action namespace is #{JSON.stringify module.join '.'}."
                       ]
@@ -92,7 +91,7 @@ module.exports =
                   err.message = "#{err.code}: #{err.message}"
                 throw err
               return if validate action.config
-              error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
+              utils.error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
                 if validate.errors.length is 1
                 then 'one error was found in the configuration of'
                 else 'multiple errors where found in the configuration of'
@@ -112,22 +111,3 @@ module.exports =
                 .join('; ')+'.'
               ]
           action
-    'nikita:action':
-      after: [
-        '@nikitajs/core/src/plugins/global'
-      ]
-      handler: (action, handler) ->
-        if action.metadata.schema? and not is_object_literal action.metadata.schema
-          throw error 'METADATA_SCHEMA_INVALID_VALUE', [
-            "option `schema` expect an object literal value,"
-            "got #{JSON.stringify action.metadata.schema} in"
-            if action.metadata.namespace.length
-            then "action `#{action.metadata.namespace.join('.')}`."
-            else "root action."
-          ]
-        return handler unless action.metadata.schema
-        err = await action.tools.schema.validate action
-        ->
-          throw err if err
-          handler.apply null, arguments
-  

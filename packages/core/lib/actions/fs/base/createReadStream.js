@@ -41,7 +41,7 @@ var errors, fs, handler, on_action, schema, utils;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute'],
-  before: ['@nikitajs/core/lib/plugins/schema', '@nikitajs/core/lib/plugins/metadata/tmpdir'],
+  before: ['@nikitajs/core/lib/plugins/metadata/schema', '@nikitajs/core/lib/plugins/metadata/tmpdir'],
   handler: async function({
       config,
       metadata,

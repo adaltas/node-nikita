@@ -21,7 +21,7 @@ console.info(`Stream was created: ${status}`)
         '@nikitajs/core/src/plugins/execute'
       ]
       before: [
-        '@nikitajs/core/src/plugins/schema'
+        '@nikitajs/core/src/plugins/metadata/schema'
         '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, tools: {find}}) ->
