@@ -6,8 +6,12 @@ describe 'plugins.tools.schema', ->
   return unless tags.api
   
   describe 'usage', ->
+    
+    it 'expose the `ajv` instance', ->
+      nikita ({tools: {schema}}) ->
+        schema.ajv.should.be.an.Object()
 
-    it 'registered inside action', ->
+    it '`add` registers new schemas', ->
       nikita ({tools: {schema}}) ->
         schema.add
           'type': 'object'
@@ -20,6 +24,24 @@ describe 'plugins.tools.schema', ->
           properties:
             'a_string': type: 'string'
             'an_integer': type: 'integer', minimum: 1
+    
+    it '`validate` modifies action', ->
+      nikita key: 'value', (action) ->
+        action.metadata.schema =
+          type: 'object'
+          properties:
+            key: type: 'array', items: type: 'string'
+        await action.tools.schema.validate action
+        action.config.key.should.eql ['value']
+
+    it '`validate` return error', ->
+      nikita key: 'value', (action) ->
+        action.metadata.schema =
+          type: 'object'
+          properties:
+            key: type: 'integer'
+        error = await action.tools.schema.validate action
+        error.code.should.eql 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       
   describe '$ref with `module://` scheme', ->
 

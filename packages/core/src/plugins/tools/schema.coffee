@@ -82,9 +82,9 @@ module.exports =
             add: (schema, name) ->
               return unless schema
               ajv.addSchema schema, name
-            validate: (action) ->
+            validate: (action, schema) ->
               try
-                validate = await ajv.compileAsync action.metadata.schema
+                validate = await ajv.compileAsync schema or action.metadata.schema
               catch err
                 unless err.code
                   err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION'
