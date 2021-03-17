@@ -64,6 +64,11 @@ module.exports =
                         'the action is not registered inside the Nikita registry,'
                         "action namespace is #{JSON.stringify module.join '.'}."
                       ]
+                  else
+                    reject utils.error 'NIKITA_SCHEMA_UNSUPPORTED_PROTOCOL', [
+                      'the $ref instruction reference an unsupported protocol,'
+                      "got #{JSON.stringify protocol}."
+                    ]
           ajv_keywords ajv
           ajv_formats ajv
           ajv.addKeyword

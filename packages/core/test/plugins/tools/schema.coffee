@@ -42,8 +42,47 @@ describe 'plugins.tools.schema', ->
             key: type: 'integer'
         error = await action.tools.schema.validate action
         error.code.should.eql 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+  
+  describe '$ref', ->
+    
+    it 'invalid ref definition', ->
+      nikita
+      .registry.register ['test', 'schema'],
+        metadata: schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
+      .call
+        $schema:
+          type: 'object'
+          properties:
+            'an_object': $ref: 'registry://test/schema'
+        $handler: (->)
+        an_object: an_integer: 'abc'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action `call`:'
+        'registry://test/schema/properties/an_integer/type config/an_object/an_integer should be integer,'
+        'type is "integer".'
+      ].join ' '
+        
+    it 'invalid protocol', ->
+      nikita
+      .call
+        $schema:
+          type: 'object'
+          properties:
+            'a_key': $ref: 'invalid://protocol'
+        $handler: (->)
+        a_key: true
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_UNSUPPORTED_PROTOCOL:'
+        'the $ref instruction reference an unsupported protocol,'
+        'got "invalid:".'
+      ].join ' '
       
-  describe '$ref with `module://` scheme', ->
+  describe '$ref with `module:` protocol', ->
 
     it 'invalid ref location', ->
       nikita.call
@@ -61,7 +100,7 @@ describe 'plugins.tools.schema', ->
           'module name is "invalid/action".'
         ].join ' '
   
-  describe '$ref with `registry://` scheme', ->
+  describe '$ref with `registry:` protocol', ->
 
     it 'invalid ref location', ->
       nikita.call
@@ -111,25 +150,3 @@ describe 'plugins.tools.schema', ->
           'the action is not registered inside the Nikita registry,'
           'action namespace is "invalid.action".'
         ].join ' '
-
-    it 'invalid ref definition', ->
-      nikita
-      .registry.register ['test', 'schema'],
-        metadata: schema:
-          type: 'object'
-          properties:
-            'an_integer': type: 'integer'
-        handler: (->)
-      .call
-        $schema:
-          type: 'object'
-          properties:
-            'an_object': $ref: 'registry://test/schema'
-        $handler: (->)
-        an_object: an_integer: 'abc'
-      .should.be.rejectedWith [
-        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action `call`:'
-        'registry://test/schema/properties/an_integer/type config/an_object/an_integer should be integer,'
-        'type is "integer".'
-      ].join ' '

@@ -74,6 +74,9 @@ module.exports = {
                     } else {
                       return reject(utils.error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
                     }
+                    break;
+                  default:
+                    return reject(utils.error('NIKITA_SCHEMA_UNSUPPORTED_PROTOCOL', ['the $ref instruction reference an unsupported protocol,', `got ${JSON.stringify(protocol)}.`]));
                 }
               });
             }
