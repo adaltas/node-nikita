@@ -8,13 +8,6 @@ return unless tags.lxd
 
 describe 'lxc.cluster', ->
   
-  before ->
-    @timeout -1
-    # TODO: support and replace with alpine,
-    # we will have to work around networking in the machine first
-    await nikita.execute
-      command: "lxc image copy images:centos/7 `lxc remote get-default`:"
-  
   describe 'validation', ->
     
     it 'validate container.image', ->
@@ -53,8 +46,8 @@ describe 'lxc.cluster', ->
       , (->)
       .should.be.fulfilled()
 
-  they 'Create container with devices', ({ssh}) ->
-    @timeout -1 # yum install take a lot of time
+  they 'Create multiple devices', ({ssh}) ->
+    @timeout -1 # yum/apk install take a lot of time
     nikita
       $ssh: ssh
     , ({registry}) ->
@@ -81,7 +74,7 @@ describe 'lxc.cluster', ->
             'dns.domain': 'nikita.local'
         containers:
           'nikita-cluster-1':
-            image: 'images:centos/7'
+            image: 'images:alpine/3.11'
             disk:
               nikitadir:
                 source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
@@ -91,7 +84,7 @@ describe 'lxc.cluster', ->
                 name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
               eth1:
                 name: 'eth1', nictype: 'bridged', parent: 'nktlxdprv'
-                ip: '192.0.2.5', netmask: '255.255.255.0'
+                'ipv4.address': '192.0.2.6'
       await @wait time: 200
       {exists} = await @lxc.config.device.exists
         container: 'nikita-cluster-1'
@@ -107,7 +100,7 @@ describe 'lxc.cluster', ->
       exists.should.be.true()
       @clean()
 
-  they 'prepare ssh', ({ssh}) ->
+  they 'ip and ssh', ({ssh}) ->
     @timeout -1
     nikita
       $ssh: ssh
@@ -128,20 +121,19 @@ describe 'lxc.cluster', ->
               'dns.domain': 'nikita.local'
           containers:
             'nikita-cluster-2':
-              image: 'images:centos/7'
+              image: 'images:alpine/3.11'
               nic:
                 eth0: # Overwrite the default DHCP Nat enabled interface
                   name: 'eth0', nictype: 'bridged', parent: 'nktlxdprv'
-                  ip: '192.0.2.6', netmask: '255.255.255.0'
+                  'ipv4.address': '192.0.2.6'
               ssh:
                 enabled: config.enabled
         await @lxc.exec
           container: 'nikita-cluster-2'
           command: '''
-          echo > /dev/tcp/192.0.2.6/22
+          nc -zvw2 192.0.2.6 22
           '''
           code: if config.enabled then 0 else 1
-          shell: 'bash'
       try
         await @clean()
         await @test enabled: true

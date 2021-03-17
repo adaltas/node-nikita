@@ -60,6 +60,7 @@ nikita
       nic:
         eth0:
           name: 'eth0', nictype: 'bridged', parent: 'nktipapub'
+          'ipv4.address': '10.10.11.2'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
         ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'
