@@ -57,9 +57,7 @@ nikita.log.cli({
           name: 'eth1',
           nictype: 'bridged',
           parent: 'lxdbr1private',
-          // Custom properties from nikita
-          ip: '10.10.10.11',
-          netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.11'
         }
       },
       proxy: {
@@ -96,9 +94,7 @@ nikita.log.cli({
           name: 'eth1',
           nictype: 'bridged',
           parent: 'lxdbr1private',
-          // Custom properties from nikita
-          ip: '10.10.10.12',
-          netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.12'
         }
       },
       proxy: {
@@ -135,9 +131,7 @@ nikita.log.cli({
           name: 'eth1',
           nictype: 'bridged',
           parent: 'lxdbr1private',
-          // Custom properties from nikita
-          ip: '10.10.10.13',
-          netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.13'
         }
       },
       proxy: {

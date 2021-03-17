@@ -69,7 +69,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
         config.command = stdout.trim()
         throw Error "Unsupported Loader" unless config.command in ['systemctl', 'chkconfig', 'update-rc']
       switch config.command
-        when 'systemctl'
+        when 'systemctl' # systemd
           try
             {$status} = await @execute
               command: """
@@ -135,7 +135,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
           log if $status
           then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
           else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
-        when 'update-rc'
+        when 'update-rc' # System-V
           {$status} = await @execute
             command: """
               startup=#{if config.startup then '1' else ''}

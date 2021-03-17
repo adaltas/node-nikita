@@ -82,7 +82,7 @@ fi`
     }
   }
   switch (config.command) {
-    case 'systemctl':
+    case 'systemctl': // systemd
       try {
         ({$status} = (await this.execute({
           command: `startup=${config.startup ? '1' : ''}
@@ -198,7 +198,7 @@ fi`,
         level: 'INFO',
         module: 'nikita/lib/service/startup'
       });
-    case 'update-rc':
+    case 'update-rc': // System-V
       ({$status} = (await this.execute({
         command: `startup=${config.startup ? '1' : ''}
 if ls /etc/rc*.d/S??${config.name}; then

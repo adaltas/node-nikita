@@ -40,8 +40,7 @@ nikita
           name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
         eth1:
           name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          # Custom properties from nikita
-          ip: '10.10.10.11', netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.11'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2201', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
@@ -58,8 +57,7 @@ nikita
           name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
         eth1:
           name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          # Custom properties from nikita
-          ip: '10.10.10.12', netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.12'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2202', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
@@ -76,8 +74,7 @@ nikita
           name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
         eth1:
           name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          # Custom properties from nikita
-          ip: '10.10.10.13', netmask: '255.255.255.0'
+          'ipv4.address': '10.10.10.13'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2203', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true

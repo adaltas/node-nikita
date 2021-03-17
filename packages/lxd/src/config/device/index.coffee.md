@@ -126,8 +126,10 @@ console.info(`Disk was created: ${$status}`)
               oneOf: [
                 { $ref: '#/definitions/nic_physical' }
                 { $ref: '#/definitions/nic_bridged' }
+                { $ref: '#/definitions/nic_ipvlan' }
                 { $ref: '#/definitions/nic_macvlan' }
                 { $ref: '#/definitions/nic_p2p' }
+                { $ref: '#/definitions/nic_routed' }
                 { $ref: '#/definitions/nic_sriov' }
               ]
             'type':
@@ -142,6 +144,23 @@ console.info(`Disk was created: ${$status}`)
           properties:
             'nictype':
               const: 'bridged'
+            'ipv4.address':
+              type: 'string'
+              description: '''
+              An IPv4 address to assign to the instance through DHCP.
+              '''
+        'nic_ipvlan':
+          type: 'object'
+          properties:
+            'nictype':
+              const: 'ipvlan'
+            'ipv4.address':
+              type: 'string'
+              description: '''
+              Comma delimited list of IPv4 static addresses to add to the
+              instance. In l2 mode these can be specified as CIDR values or
+              singular addresses (if singular a subnet of /24 is used).
+              '''
         'nic_macvlan':
           type: 'object'
           properties:
@@ -152,6 +171,17 @@ console.info(`Disk was created: ${$status}`)
           properties:
             'nictype':
               const: 'p2p'
+        'nic_routed':
+          type: 'object'
+          properties:
+            'nictype':
+              const: 'routed'
+            'ipv4.address':
+              type: 'string'
+              description: '''
+               	Comma delimited list of IPv4 static addresses to add to the
+               	instance.
+              '''
         'nic_sriov':
           type: 'object'
           properties:
@@ -230,7 +260,7 @@ console.info(`Disk was created: ${$status}`)
         device: config.device
       try
         unless properties
-          # Device not registed, we need to use `add`
+          # Device not registered, we need to use `add`
           {$status} = await @execute
             command: [
               'lxc', 'config', 'device', 'add',
@@ -242,7 +272,7 @@ console.info(`Disk was created: ${$status}`)
               )
             ].join ' '
         else
-          # Device not registed, we need to use `set`
+          # Device not registered, we need to use `set`
           changes = diff properties, config.properties
           {$status} = await @execute (
             command: [

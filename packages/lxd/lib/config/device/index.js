@@ -166,10 +166,16 @@ additional properties.`
               $ref: '#/definitions/nic_bridged'
             },
             {
+              $ref: '#/definitions/nic_ipvlan'
+            },
+            {
               $ref: '#/definitions/nic_macvlan'
             },
             {
               $ref: '#/definitions/nic_p2p'
+            },
+            {
+              $ref: '#/definitions/nic_routed'
             },
             {
               $ref: '#/definitions/nic_sriov'
@@ -194,6 +200,24 @@ additional properties.`
       properties: {
         'nictype': {
           const: 'bridged'
+        },
+        'ipv4.address': {
+          type: 'string',
+          description: `An IPv4 address to assign to the instance through DHCP.`
+        }
+      }
+    },
+    'nic_ipvlan': {
+      type: 'object',
+      properties: {
+        'nictype': {
+          const: 'ipvlan'
+        },
+        'ipv4.address': {
+          type: 'string',
+          description: `Comma delimited list of IPv4 static addresses to add to the
+instance. In l2 mode these can be specified as CIDR values or
+singular addresses (if singular a subnet of /24 is used).`
         }
       }
     },
@@ -210,6 +234,19 @@ additional properties.`
       properties: {
         'nictype': {
           const: 'p2p'
+        }
+      }
+    },
+    'nic_routed': {
+      type: 'object',
+      properties: {
+        'nictype': {
+          const: 'routed'
+        },
+        'ipv4.address': {
+          type: 'string',
+          description: `Comma delimited list of IPv4 static addresses to add to the
+instance.`
         }
       }
     },
@@ -324,7 +361,7 @@ handler = async function({config}) {
   })));
   try {
     if (!properties) {
-      // Device not registed, we need to use `add`
+      // Device not registered, we need to use `add`
       ({$status} = (await this.execute({
         command: [
           'lxc',
@@ -349,7 +386,7 @@ handler = async function({config}) {
         ].join(' ')
       })));
     } else {
-      // Device not registed, we need to use `set`
+      // Device not registered, we need to use `set`
       changes = diff(properties, config.properties);
       for (key in changes) {
         value = changes[key];

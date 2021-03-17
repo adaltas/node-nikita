@@ -34,8 +34,7 @@ containers:
         container: eth1
         nictype: bridged
         parent: lxdbr1private
-        ip: '10.10.10.10'
-        netmask: '255.255.255.192'
+        ipv4.address: '10.10.10.10'
     proxy:
       ssh:
         listen: 'tcp:0.0.0.0:2200'
@@ -184,20 +183,6 @@ containers:
             device: deviceName
             type: 'nic'
             properties: utils.object.filter configNic, ['ip', 'netmask']
-          if configNic.ip
-            await @lxc.file.push
-              $header: "ifcfg #{deviceName}"
-              container: containerName
-              target: "/etc/sysconfig/network-scripts/ifcfg-#{deviceName}"
-              content: """
-              NM_CONTROLLED=yes
-              BOOTPROTO=none
-              ONBOOT=yes
-              IPADDR=#{configNic.ip}
-              NETMASK=#{configNic.netmask}
-              DEVICE=#{deviceName}
-              PEERDNS=no
-              """
         # Create proxy device
         for deviceName, configProxy of containerConfig.proxy
           # todo: add host detection and port forwarding to VirtualBox
