@@ -7,7 +7,7 @@ module.exports =
     'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/schema'
-        # '@nikitajs/core/src/metadata/tmpdir'
+        # '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: (action) ->
         templated = await action.tools.find (action) -> action.metadata.templated

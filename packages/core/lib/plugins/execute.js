@@ -7,7 +7,7 @@ session = require('../session');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/execute',
-  require: ['@nikitajs/core/lib/plugins/tools_find', '@nikitajs/core/lib/plugins/tools_walk'],
+  require: ['@nikitajs/core/lib/plugins/tools/find', '@nikitajs/core/lib/plugins/tools/walk'],
   hooks: {
     'nikita:action': {
       handler: async function({

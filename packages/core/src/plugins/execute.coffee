@@ -5,8 +5,8 @@ session = require '../session'
 module.exports =
   name: '@nikitajs/core/src/plugins/execute'
   require: [
-    '@nikitajs/core/src/plugins/tools_find'
-    '@nikitajs/core/src/plugins/tools_walk'
+    '@nikitajs/core/src/plugins/tools/find'
+    '@nikitajs/core/src/plugins/tools/walk'
   ]
   hooks:
     'nikita:action':

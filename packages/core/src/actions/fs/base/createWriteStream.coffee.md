@@ -22,7 +22,7 @@ console.info(`Stream was created: ${status}`)
       ]
       before: [
         '@nikitajs/core/src/plugins/schema'
-        '@nikitajs/core/src/metadata/tmpdir'
+        '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, tools: {find}}) ->
         config.target = metadata.argument if metadata.argument?

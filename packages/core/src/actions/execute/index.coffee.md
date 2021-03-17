@@ -74,11 +74,11 @@ console.info(stdout)
       after: [
         '@nikitajs/core/src/plugins/execute'
         '@nikitajs/core/src/plugins/ssh'
-        '@nikitajs/core/src/plugins/tools_path'
+        '@nikitajs/core/src/plugins/tools/path'
       ]
       before: [
         '@nikitajs/core/src/plugins/schema'
-        '@nikitajs/core/src/metadata/tmpdir'
+        '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, ssh, tools: {find, path, walk}}) ->
         config.env ?= if not ssh and not config.env then process.env else {}

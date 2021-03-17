@@ -44,7 +44,7 @@ console.info(Buffer.concat(buffers).toString())
       ]
       before: [
         '@nikitajs/core/src/plugins/schema'
-        '@nikitajs/core/src/metadata/tmpdir'
+        '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, tools: {find, walk}}) ->
         config.target = metadata.argument if metadata.argument?

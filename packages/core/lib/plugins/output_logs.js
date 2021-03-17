@@ -13,7 +13,7 @@ path = require('path');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/output_logs',
-  require: ['@nikitajs/core/lib/plugins/tools_log', '@nikitajs/core/lib/metadata/status', '@nikitajs/core/lib/metadata/raw'],
+  require: ['@nikitajs/core/lib/plugins/tools_log', '@nikitajs/core/lib/plugins/metadata/status', '@nikitajs/core/lib/plugins/metadata/raw'],
   hooks: {
     'nikita:action': {
       after: '@nikitajs/core/lib/plugins/tools_log',
@@ -41,7 +41,7 @@ module.exports = {
       }
     },
     'nikita:result': {
-      after: '@nikitajs/core/lib/metadata/status',
+      after: '@nikitajs/core/lib/plugins/metadata/status',
       handler: function({action, output}, handler) {
         if (action.metadata.raw_output) {
           return handler;

@@ -11,7 +11,7 @@ is `null` or `false`.
 module.exports =
   name: '@nikitajs/core/src/plugins/ssh'
   require: [
-    '@nikitajs/core/src/plugins/tools_find'
+    '@nikitajs/core/src/plugins/tools/find'
   ]
   hooks:
     # 'nikita:normalize': (action, handler) ->
@@ -29,10 +29,10 @@ module.exports =
       if action.ssh and not utils.ssh.is action.ssh
         {ssh} = await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
-            require '../plugins/tools_events'
-            require '../plugins/tools_log'
-            require '../metadata/status'
-            require '../plugins/history'
+            require './tools/events'
+            require './tools/log'
+            require './metadata/status'
+            require './history'
           ]
         .ssh.open action.ssh
         action.metadata.ssh_dispose = true
@@ -70,9 +70,9 @@ module.exports =
       if action.metadata.ssh_dispose
         await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
-            require '../plugins/tools_events'
-            require '../plugins/tools_log'
-            require '../metadata/status'
-            require '../plugins/history'
+            require './tools/events'
+            require './tools/log'
+            require './metadata/status'
+            require './history'
           ]
         .ssh.close ssh: action.ssh

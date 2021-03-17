@@ -12,7 +12,7 @@ daemon if it is not run locally.
 */
 module.exports = {
   name: '@nikitajs/core/lib/plugins/global',
-  require: ['@nikitajs/core/lib/plugins/tools_find'],
+  require: ['@nikitajs/core/lib/plugins/tools/find'],
   hooks: {
     'nikita:action': {
       handler: async function(action) {

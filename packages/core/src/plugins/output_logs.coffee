@@ -13,8 +13,8 @@ module.exports =
   name: '@nikitajs/core/src/plugins/output_logs'
   require: [
     '@nikitajs/core/src/plugins/tools_log'
-    '@nikitajs/core/src/metadata/status'
-    '@nikitajs/core/src/metadata/raw'
+    '@nikitajs/core/src/plugins/metadata/status'
+    '@nikitajs/core/src/plugins/metadata/raw'
   ]
   hooks:
     'nikita:action':
@@ -37,7 +37,7 @@ module.exports =
             log
         )(action.tools.log)
     'nikita:result':
-      after: '@nikitajs/core/src/metadata/status'
+      after: '@nikitajs/core/src/plugins/metadata/status'
       handler: ({action, output}, handler) ->
         return handler if action.metadata.raw_output
         ({action}) ->

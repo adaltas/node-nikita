@@ -8,7 +8,7 @@ module.exports = {
   hooks: {
     'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/schema'],
-      // '@nikitajs/core/lib/metadata/tmpdir'
+      // '@nikitajs/core/lib/plugins/metadata/tmpdir'
       handler: async function(action) {
         var templated;
         templated = (await action.tools.find(function(action) {

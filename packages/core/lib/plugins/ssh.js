@@ -13,7 +13,7 @@ is `null` or `false`.
 */
 module.exports = {
   name: '@nikitajs/core/lib/plugins/ssh',
-  require: ['@nikitajs/core/lib/plugins/tools_find'],
+  require: ['@nikitajs/core/lib/plugins/tools/find'],
   hooks: {
     // 'nikita:normalize': (action, handler) ->
     //   # Dont interfere with ssh actions
@@ -30,7 +30,7 @@ module.exports = {
       // Is there a connection to open
       if (action.ssh && !utils.ssh.is(action.ssh)) {
         ({ssh} = (await session.with_options([{}], {
-          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
+          plugins: [require('./tools/events'), require('./tools/log'), require('./metadata/status'), require('./history')] // Need to inject `tools.log`
         }).ssh.open(action.ssh)));
         action.metadata.ssh_dispose = true;
         action.ssh = ssh;
@@ -74,7 +74,7 @@ module.exports = {
     'nikita:result': async function({action}) {
       if (action.metadata.ssh_dispose) {
         return (await session.with_options([{}], {
-          plugins: [require('../plugins/tools_events'), require('../plugins/tools_log'), require('../metadata/status'), require('../plugins/history')] // Need to inject `tools.log`
+          plugins: [require('./tools/events'), require('./tools/log'), require('./metadata/status'), require('./history')] // Need to inject `tools.log`
         }).ssh.close({
           ssh: action.ssh
         }));

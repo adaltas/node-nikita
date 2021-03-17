@@ -11,7 +11,7 @@ continuing their execution.
 module.exports =
   name: '@nikitajs/core/src/plugins/pubsub'
   require:
-    '@nikitajs/core/src/plugins/tools_find'
+    '@nikitajs/core/src/plugins/tools/find'
   hooks:
     'nikita:action': (action) ->
       engine = await action.tools.find ({metadata}) ->

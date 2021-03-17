@@ -8,7 +8,7 @@ continuing their execution.
 */
 module.exports = {
   name: '@nikitajs/core/lib/plugins/pubsub',
-  require: '@nikitajs/core/lib/plugins/tools_find',
+  require: '@nikitajs/core/lib/plugins/tools/find',
   hooks: {
     'nikita:action': async function(action) {
       var engine;
