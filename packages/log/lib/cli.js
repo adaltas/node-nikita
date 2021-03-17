@@ -3,21 +3,6 @@
 
 // Write log to the host filesystem in a user provided format.
 
-// ## Configuration
-
-// * `depth_max` (number|boolean)    
-// * `divider` (string)    
-// * `end` (boolean)    
-// * `enabled` (boolean)    
-// * `host` (string)    
-// * `pad` (string)    
-// * `time` (boolean)    
-//   Print time.   
-// * `separator` (string|object)    
-// * `stream` (stream.Writable)  
-
-// Global config can be alternatively set with the "log_cli" property.
-
 // ## Example with the depth_max option
 
 // ```js
@@ -61,42 +46,150 @@
 // })
 // ```
 
-// ## Handler
-var colors, get_headers, handler, pad, stream, utils;
+// ## Schema
+var colors, get_headers, handler, merge, pad, schema, utils;
 
+schema = {
+  type: 'object',
+  properties: {
+    'color': {
+      oneOf: [
+        {
+          type: 'boolean'
+        },
+        {
+          type: 'object',
+          properties: {
+            'status_error': {
+              typeof: 'function',
+              description: 'Format the provided argument string on error.'
+            },
+            'status_false': {
+              typeof: 'function',
+              description: 'Format the provided argument string when status is false.'
+            },
+            'status_true': {
+              typeof: 'function',
+              description: 'Format the provided argument string when status is true.'
+            }
+          }
+        }
+      ],
+      description: `Activate or desactivate color output. The default is to detect if
+there is a tty. For finer control, the formating function can be
+defined inside an object.`
+    },
+    'depth_max': {
+      type: ['boolean', 'number'],
+      default: false,
+      description: `Disable logging after a provided depth where the depth correponds to
+the number of headers. It is desactivated by default with \`false\`.`
+    },
+    'divider': {
+      type: 'string',
+      default: ' : ',
+      description: `Separator between headers.`
+    },
+    'enabled': {
+      type: 'boolean',
+      default: true,
+      description: `Activate or desactivate logging.`
+    },
+    'end': {
+      $ref: 'module://@nikitajs/log/lib/stream#/properties/end',
+      default: false,
+      description: `Close the stream when the Nikita session terminates. The default
+is to not close the stream for this action, in opposite to the default
+\`log.stream\` action, because the default stream is \`process.stderr\`
+which is expected to remain open.`
+    },
+    'host': {
+      type: 'string',
+      description: `Hostname to display. When not defined, the default is to print the ssh
+hostname or IP or \`local\` when the action is executed locally.`
+    },
+    'pad': {
+      type: 'object',
+      default: {},
+      description: `Width of the columns, unconstrained layout by default.`,
+      properties: {
+        'header': {
+          type: 'integer',
+          description: 'Width of the header column.'
+        },
+        'host': {
+          type: 'integer',
+          description: 'Width of the host column.'
+        },
+        'time': {
+          type: 'integer',
+          description: 'Width of the time column.'
+        }
+      }
+    },
+    'time': {
+      type: 'boolean',
+      default: true,
+      description: `Print the action execution time.`
+    },
+    'separator': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'object',
+          properties: {
+            'host': {
+              type: 'integer',
+              description: 'Separator for the host column.'
+            },
+            'header': {
+              type: 'integer',
+              description: 'Separator for the header column.'
+            },
+            'time': {
+              type: 'integer',
+              description: 'Separator for the time column.'
+            }
+          }
+        }
+      ],
+      default: {},
+      description: `Separator between columns. A string value apply the same separator
+while it is also possible to target a specific sperator per column
+by setting an object.`
+    },
+    'serializer': {
+      $ref: 'module://@nikitajs/log/lib/stream#/properties/serializer',
+      default: {},
+      description: `Internal property, expose access to the serializer object passed
+to the \`log.stream\` action.`
+    },
+    'stream': {
+      $ref: 'module://@nikitajs/log/lib/stream#/properties/stream',
+      description: `The writable stream where to print the logs, default to
+\`process.stderr\`.`
+    }
+  }
+};
+
+
+// * `stream` (stream.Writable)  
+
+// Global config can be alternatively set with the "log_cli" property.
+
+// ## Handler
 handler = function({
     config,
     metadata,
     ssh,
     tools: {find}
   }) {
-  var base, base1, base2, format_line, ids;
-  if (metadata.argument != null) {
-    // Normalize
-    if (config.enabled == null) {
-      config.enabled = metadata.argument;
-    }
-  }
-  if (config.enabled == null) {
-    config.enabled = true;
-  }
+  var base, base1, base2, format_line, ids, serializer;
+  // Normalize
   if (config.stream == null) {
     config.stream = process.stderr;
-  }
-  if (config.end == null) {
-    config.end = false;
-  }
-  if (config.divider == null) {
-    config.divider = ' : ';
-  }
-  if (config.depth_max == null) {
-    config.depth_max = false;
-  }
-  if (config.pad == null) {
-    config.pad = {};
-  }
-  if (config.time == null) {
-    config.time = true;
   }
   if (typeof config.separator === 'string') {
     config.separator = {
@@ -104,7 +197,6 @@ handler = function({
       header: config.separator
     };
   }
-  config.separator = {};
   if ((base = config.separator).host == null) {
     base.host = config.pad.host == null ? '   ' : ' ';
   }
@@ -138,97 +230,99 @@ handler = function({
     }
     return [host, config.separator.host, header, config.separator.header, status, config.time ? config.separator.time : '', time].join('');
   };
-  return this.call({
-    $: stream
-  }, config, {
-    serializer: {
-      'nikita:action:start': function({action}) {
-        var headers;
-        if (!config.enabled) {
-          return;
-        }
-        headers = get_headers(action);
-        if (config.depth_max && config.depth_max < headers.length) {
-          return;
-        }
-        ids[action.metadata.index] = action;
-        return null;
-      },
-      'nikita:resolved': function({action}) {
-        var color, line, ref, ref1;
-        color = config.colors ? config.colors.status_true : false;
-        line = format_line({
-          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
-          header: '',
-          status: '♥',
-          time: ''
-        });
-        if (color) {
-          line = color(line);
-        }
-        return line + '\n';
-      },
-      'nikita:rejected': function({action, error}) {
-        var color, line, ref, ref1;
-        color = config.colors ? config.colors.status_error : false;
-        line = format_line({
-          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
-          header: '',
-          status: '✘',
-          time: ''
-        });
-        if (color) {
-          line = color(line);
-        }
-        return line + '\n';
-      },
-      'nikita:action:end': function({action, error, output}) {
-        var color, headers, line, ref, ref1, status;
-        if (!action.metadata.header) {
-          return;
-        }
-        if (config.depth_max && config.depth_max < action.metadata.depth) {
-          return;
-        }
-        // TODO: I don't like this, the `end` event should receive raw output
-        // with error not placed inside output by the history plugin
-        error = error || action.metadata.relax && output.error;
-        status = error ? '✘' : (output != null ? output.$status : void 0) && !action.metadata.shy ? '✔' : '-';
-        color = false;
-        if (config.colors) {
-          color = error ? config.colors.status_error : (output != null ? output.$status : void 0) ? config.colors.status_true : config.colors.status_false;
-        }
-        if (action.metadata.disabled) {
-          return null;
-        }
-        headers = get_headers(action);
-        line = format_line({
-          host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
-          header: headers.join(config.divider),
-          status: status,
-          time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''
-        });
-        if (color) {
-          line = color(line);
-        }
-        return line + '\n';
+  serializer = {
+    'nikita:action:start': function({action}) {
+      var headers;
+      if (!config.enabled) {
+        return;
       }
+      headers = get_headers(action);
+      if (config.depth_max && config.depth_max < headers.length) {
+        return;
+      }
+      ids[action.metadata.index] = action;
+      return null;
+    },
+    'nikita:resolved': function({action}) {
+      var color, line, ref, ref1;
+      color = config.colors ? config.colors.status_true : false;
+      line = format_line({
+        host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
+        header: '',
+        status: '♥',
+        time: ''
+      });
+      if (color) {
+        line = color(line);
+      }
+      return line + '\n';
+    },
+    'nikita:rejected': function({action, error}) {
+      var color, line, ref, ref1;
+      color = config.colors ? config.colors.status_error : false;
+      line = format_line({
+        host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
+        header: '',
+        status: '✘',
+        time: ''
+      });
+      if (color) {
+        line = color(line);
+      }
+      return line + '\n';
+    },
+    'nikita:action:end': function({action, error, output}) {
+      var color, headers, line, ref, ref1, status;
+      if (!action.metadata.header) {
+        return;
+      }
+      if (config.depth_max && config.depth_max < action.metadata.depth) {
+        return;
+      }
+      // TODO: I don't like this, the `end` event should receive raw output
+      // with error not placed inside output by the history plugin
+      error = error || action.metadata.relax && output.error;
+      status = error ? '✘' : (output != null ? output.$status : void 0) && !action.metadata.shy ? '✔' : '-';
+      color = false;
+      if (config.colors) {
+        color = error ? config.colors.status_error : (output != null ? output.$status : void 0) ? config.colors.status_true : config.colors.status_false;
+      }
+      if (action.metadata.disabled) {
+        return null;
+      }
+      headers = get_headers(action);
+      line = format_line({
+        host: config.host || ((ref = action.ssh) != null ? (ref1 = ref.config) != null ? ref1.host : void 0 : void 0) || 'localhost',
+        header: headers.join(config.divider),
+        status: status,
+        time: config.time ? utils.string.print_time(action.metadata.time_end - action.metadata.time_start) : ''
+      });
+      if (color) {
+        line = color(line);
+      }
+      return line + '\n';
     }
-  });
+  };
+  config.serializer = merge(serializer, config.serializer);
+  return this.log.stream(config);
 };
 
 // ## Exports
 module.exports = {
   ssh: false,
-  handler: handler
+  handler: handler,
+  metadata: {
+    argument_to_config: 'enabled',
+    schema: schema
+  }
 };
 
 // ## Dependencies
 colors = require('colors/safe');
 
-pad = require('pad');
+({merge} = require('mixme'));
 
-stream = require('./stream');
+pad = require('pad');
 
 utils = require('@nikitajs/core/lib/utils');
 

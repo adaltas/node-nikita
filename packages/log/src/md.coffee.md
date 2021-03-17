@@ -116,7 +116,7 @@ nikita(async function(){
           content.push "\n"
           content.join ''
       config.serializer = merge serializer, config.serializer
-      await @call $: log_fs, config
+      await @log.fs config
 
 ## Exports
 

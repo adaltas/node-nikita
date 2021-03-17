@@ -11,6 +11,7 @@ schema = {
   properties: {
     'end': {
       type: 'boolean',
+      default: true,
       description: `Close the writable stream with the session is finished or stoped on
 error.`
     },
@@ -28,9 +29,10 @@ information.`,
     },
     'stream': {
       instanceof: 'Object', // WritableStream
-      description: `Destination to which data is written.`
+      description: `The writable stream where to print the logs.`
     }
-  }
+  },
+  required: ['serializer', 'stream']
 };
 
 // ## Handler
@@ -40,17 +42,6 @@ handler = function({
     tools: {events}
   }) {
   var close;
-  if (!config.stream) {
-    // Validate config
-    throw Error('Missing option: "stream"');
-  }
-  if (!config.serializer) {
-    throw Error('Missing option: "serializer"');
-  }
-  // Normalize
-  if (config.end == null) {
-    config.end = true;
-  }
   // Events
   close = function() {
     if (config.end) {

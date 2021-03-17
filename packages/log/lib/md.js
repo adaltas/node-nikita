@@ -156,9 +156,7 @@ handler = async function({config}) {
     }
   };
   config.serializer = merge(serializer, config.serializer);
-  return (await this.call({
-    $: log_fs
-  }, config));
+  return (await this.log.fs(config));
 };
 
 // ## Exports

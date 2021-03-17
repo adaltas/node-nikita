@@ -19,11 +19,27 @@ Write log to the host filesystem in CSV.
 
 Global config can be alternatively set with the "log_csv" property.
 
+## Schema
+
+    schema =
+      type: 'object'
+      allOf: [
+        properties:
+          serializer:
+            type: 'object'
+            default: {}
+            description: '''
+            Internal property, expose access to the serializer object passed
+            to the `log.fs` action.
+            '''
+      ,
+        $ref: 'module://@nikitajs/log/src/fs'
+      ]
+
 ## Handler
 
     handler = ({config}) ->
-      # Obtains config from "log_csv" namespace
-      await @call $: log_fs, config, serializer:
+      serializer =
         'nikita:action:start': ({action}) ->
           return unless action.metadata.header
           walk = (parent) ->
@@ -37,13 +53,17 @@ Global config can be alternatively set with the "log_csv" property.
           "header,,#{JSON.stringify header}\n"
         'text': (log) ->
           "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
+      config.serializer = merge serializer, config.serializer
+      @log.fs config
 
 ## Exports
 
     module.exports =
       ssh: false
       handler: handler
+      metadata:
+        schema: schema
 
 ## Dependencies
 
-    log_fs = require './fs'
+    {merge} = require 'mixme'

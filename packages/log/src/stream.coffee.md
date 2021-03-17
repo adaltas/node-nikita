@@ -10,7 +10,8 @@ Write log to custom destinations in a user provided format.
       properties:
         'end':
           type: 'boolean'
-          description: """
+          default: true
+          description: '''
           Close the writable stream with the session is finished or stoped on
           error.
           """
@@ -26,18 +27,14 @@ Write log to custom destinations in a user provided format.
           additionalProperties: false
         'stream':
           instanceof: 'Object' # WritableStream
-          description: """
-          Destination to which data is written.
-          """
+          description: '''
+          The writable stream where to print the logs.
+          '''
+      required: ['serializer', 'stream']
 
 ## Handler
 
     handler = ({config, metadata: {position, uuid}, tools: {events}}) ->
-      # Validate config
-      throw Error 'Missing option: "stream"' unless config.stream
-      throw Error 'Missing option: "serializer"' unless config.serializer
-      # Normalize
-      config.end ?= true
       # Events
       close = ->
         config.stream.close() if config.end

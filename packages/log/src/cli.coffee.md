@@ -3,21 +3,6 @@
 
 Write log to the host filesystem in a user provided format.
 
-## Configuration
-
-* `depth_max` (number|boolean)    
-* `divider` (string)    
-* `end` (boolean)    
-* `enabled` (boolean)    
-* `host` (string)    
-* `pad` (string)    
-* `time` (boolean)    
-  Print time.   
-* `separator` (string|object)    
-* `stream` (stream.Writable)  
-
-Global config can be alternatively set with the "log_cli" property.
-
 ## Example with the depth_max option
 
 ```js
@@ -61,20 +46,134 @@ nikita
 })
 ```
 
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'color':
+          oneOf: [
+            type: 'boolean'
+          ,
+            type: 'object'
+            properties:
+              'status_error':
+                typeof: 'function'
+                description: 'Format the provided argument string on error.'
+              'status_false':
+                typeof: 'function'
+                description: 'Format the provided argument string when status is false.'
+              'status_true':
+                typeof: 'function'
+                description: 'Format the provided argument string when status is true.'
+          ]
+          description: '''
+          Activate or desactivate color output. The default is to detect if
+          there is a tty. For finer control, the formating function can be
+          defined inside an object.
+          '''
+        'depth_max':
+          type: ['boolean', 'number']
+          default: false
+          description: '''
+          Disable logging after a provided depth where the depth correponds to
+          the number of headers. It is desactivated by default with `false`.
+          '''
+        'divider':
+          type: 'string'
+          default: ' : '
+          description: '''
+          Separator between headers.
+          '''
+        'enabled':
+          type: 'boolean'
+          default: true
+          description: '''
+          Activate or desactivate logging.
+          '''
+        'end':
+          $ref: 'module://@nikitajs/log/src/stream#/properties/end'
+          default: false
+          description: '''
+          Close the stream when the Nikita session terminates. The default
+          is to not close the stream for this action, in opposite to the default
+          `log.stream` action, because the default stream is `process.stderr`
+          which is expected to remain open.
+          '''
+        'host':
+          type: 'string'
+          description: '''
+          Hostname to display. When not defined, the default is to print the ssh
+          hostname or IP or `local` when the action is executed locally.
+          '''
+        'pad':
+          type: 'object'
+          default: {}
+          description: '''
+          Width of the columns, unconstrained layout by default.
+          '''
+          properties:
+            'header':
+              type: 'integer'
+              description: 'Width of the header column.'
+            'host':
+              type: 'integer'
+              description: 'Width of the host column.'
+            'time':
+              type: 'integer'
+              description: 'Width of the time column.'
+        'time':
+          type: 'boolean'
+          default: true
+          description: '''
+          Print the action execution time.
+          '''
+        'separator':
+          oneOf: [
+            type: 'string'
+          ,
+            type: 'object'
+            properties:
+              'host':
+                type: 'integer'
+                description: 'Separator for the host column.'
+              'header':
+                type: 'integer'
+                description: 'Separator for the header column.'
+              'time':
+                type: 'integer'
+                description: 'Separator for the time column.'
+          ]
+          default: {}
+          description: '''
+          Separator between columns. A string value apply the same separator
+          while it is also possible to target a specific sperator per column
+          by setting an object.
+          '''
+        'serializer':
+          $ref: 'module://@nikitajs/log/src/stream#/properties/serializer'
+          default: {}
+          description: '''
+          Internal property, expose access to the serializer object passed
+          to the `log.stream` action.
+          '''
+        'stream':
+          $ref: 'module://@nikitajs/log/src/stream#/properties/stream'
+          description: '''
+          The writable stream where to print the logs, default to
+          `process.stderr`.
+          '''
+       
+* `stream` (stream.Writable)  
+
+Global config can be alternatively set with the "log_cli" property.
+
 ## Handler
 
     handler = ({config, metadata, ssh, tools: {find}}) ->
       # Normalize
-      config.enabled ?= metadata.argument if metadata.argument?
-      config.enabled ?= true
       config.stream ?= process.stderr
-      config.end ?= false
-      config.divider ?= ' : '
-      config.depth_max ?= false
-      config.pad ?= {}
-      config.time ?= true
       config.separator = host: config.separator, header: config.separator if typeof config.separator is 'string'
-      config.separator = {}
       config.separator.host ?= unless config.pad.host? then '   ' else ' '
       config.separator.header ?= unless config.pad.header? then '   ' else ' '
       config.separator.time ?= unless config.pad.time? then '  ' else ' '
@@ -96,7 +195,7 @@ nikita
           status, if config.time then config.separator.time else ''
           time
         ].join ''
-      @call $: stream, config, serializer:
+      serializer =
         'nikita:action:start': ({action}) ->
           return unless config.enabled
           headers = get_headers action
@@ -146,18 +245,23 @@ nikita
             time: if config.time then utils.string.print_time action.metadata.time_end - action.metadata.time_start else ''
           line = color line if color
           return line+'\n'
+      config.serializer = merge serializer, config.serializer
+      @log.stream config
 
 ## Exports
 
     module.exports =
       ssh: false
       handler: handler
+      metadata:
+        argument_to_config: 'enabled'
+        schema: schema
 
 ## Dependencies
 
     colors = require 'colors/safe'
+    {merge} = require 'mixme'
     pad = require 'pad'
-    stream = require './stream'
     utils = require '@nikitajs/core/lib/utils'
 
     get_headers = (action) ->

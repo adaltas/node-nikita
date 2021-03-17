@@ -15,7 +15,7 @@
 // and "{config.basedir}/latest".
 
 // ## Schema
-var fs, handler, path, schema, stream;
+var fs, handler, path, schema;
 
 schema = {
   type: 'object',
@@ -82,9 +82,7 @@ handler = async function({config}) {
   if (config.stream == null) {
     config.stream = fs.createWriteStream(path.resolve(logdir, config.filename));
   }
-  await this.call({
-    $: stream
-  }, config);
+  await this.log.stream(config);
   // Handle link to latest directory
   return (await this.fs.base.symlink({
     $if: latestdir,
@@ -106,5 +104,3 @@ module.exports = {
 fs = require('fs');
 
 path = require('path');
-
-stream = require('./stream');

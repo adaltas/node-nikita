@@ -16,6 +16,12 @@ class MyWritable extends Writable
     callback()
 
 describe 'log.cli', ->
+  
+  describe 'schema', ->
+    
+    it 'config `end` default to `false`', ->
+      nikita.log.cli ({config}) ->
+        config.end.should.be.false()
 
   describe 'handled event', ->
         

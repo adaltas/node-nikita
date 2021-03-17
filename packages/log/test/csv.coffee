@@ -13,8 +13,8 @@ describe 'log.csv', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @log.csv basedir: tmpdir
-      @call ({tools: {log}}) -> log 'ok'
+      await @log.csv basedir: tmpdir
+      await @call ({tools: {log}}) -> log 'ok'
       {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
       data.should.eql 'text,INFO,"ok"\n'
 
@@ -23,8 +23,8 @@ describe 'log.csv', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @log.csv basedir: tmpdir
-      @call $header: 'h1', ({tools: {log}}) -> true
+      await @log.csv basedir: tmpdir
+      await @call $header: 'h1', ({tools: {log}}) -> true
       {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
       data.should.eql 'header,,"h1"\n'
     

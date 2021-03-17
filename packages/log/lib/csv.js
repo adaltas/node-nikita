@@ -19,48 +19,69 @@
 
 // Global config can be alternatively set with the "log_csv" property.
 
-// ## Handler
-var handler, log_fs;
+// ## Schema
+var handler, merge, schema;
 
-handler = async function({config}) {
-  // Obtains config from "log_csv" namespace
-  return (await this.call({
-    $: log_fs
-  }, config, {
-    serializer: {
-      'nikita:action:start': function({action}) {
-        var header, headers, walk;
-        if (!action.metadata.header) {
-          return;
+schema = {
+  type: 'object',
+  allOf: [
+    {
+      properties: {
+        serializer: {
+          type: 'object',
+          default: {},
+          description: `Internal property, expose access to the serializer object passed
+to the \`log.fs\` action.`
         }
-        walk = function(parent) {
-          var precious, results;
-          precious = parent.metadata.header;
-          results = [];
-          if (precious !== void 0) {
-            results.push(precious);
-          }
-          if (parent.parent) {
-            results.push(...(walk(parent.parent)));
-          }
-          return results;
-        };
-        headers = walk(action);
-        header = headers.reverse().join(' : ');
-        return `header,,${JSON.stringify(header)}\n`;
-      },
-      'text': function(log) {
-        return `${log.type},${log.level},${JSON.stringify(log.message)}\n`;
       }
+    },
+    {
+      $ref: 'module://@nikitajs/log/lib/fs'
     }
-  }));
+  ]
+};
+
+// ## Handler
+handler = function({config}) {
+  var serializer;
+  serializer = {
+    'nikita:action:start': function({action}) {
+      var header, headers, walk;
+      if (!action.metadata.header) {
+        return;
+      }
+      walk = function(parent) {
+        var precious, results;
+        precious = parent.metadata.header;
+        results = [];
+        if (precious !== void 0) {
+          results.push(precious);
+        }
+        if (parent.parent) {
+          results.push(...(walk(parent.parent)));
+        }
+        return results;
+      };
+      headers = walk(action);
+      header = headers.reverse().join(' : ');
+      return `header,,${JSON.stringify(header)}\n`;
+    },
+    'text': function(log) {
+      return `${log.type},${log.level},${JSON.stringify(log.message)}\n`;
+    }
+  };
+  config.serializer = merge(serializer, config.serializer);
+  return this.log.fs(config);
 };
 
 // ## Exports
 module.exports = {
   ssh: false,
-  handler: handler
+  handler: handler,
+  metadata: {
+    schema: schema
+  }
 };
 
 // ## Dependencies
-log_fs = require('./fs');
+({merge} = require('mixme'));
