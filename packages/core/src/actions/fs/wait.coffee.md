@@ -17,7 +17,7 @@ console.info(`File was created: ${status}`)
 ## Hooks
 
     on_action =
-      after: '@nikitajs/core/src/plugins/argument_to_config'
+      after: '@nikitajs/core/src/plugins/metadata/argument_to_config'
       handler: ({config}) ->
         config.target = [config.target] if typeof config.target is 'string'
 

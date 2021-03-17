@@ -18,7 +18,7 @@
 var handler, on_action, schema;
 
 on_action = {
-  after: '@nikitajs/core/lib/plugins/argument_to_config',
+  after: '@nikitajs/core/lib/plugins/metadata/argument_to_config',
   handler: function({config}) {
     if (typeof config.target === 'string') {
       return config.target = [config.target];

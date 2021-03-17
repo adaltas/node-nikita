@@ -6,7 +6,7 @@ The `argument` plugin map an argument which is not an object into a configuratio
 ###
 
 module.exports =
-  name: '@nikitajs/core/src/plugins/argument_to_config'
+  name: '@nikitajs/core/src/plugins/metadata/argument_to_config'
   hooks:
     'nikita:action':
       handler: (action) ->

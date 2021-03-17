@@ -10,7 +10,7 @@ session = require './session'
 create = (...args) ->
   session.with_options args, plugins: [
     require './plugins/args'
-    require './plugins/argument_to_config'
+    require './plugins/metadata/argument_to_config'
     require './plugins/assertions'
     require './plugins/assertions/exists'
     require './plugins/conditions'
