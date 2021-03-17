@@ -24,7 +24,7 @@ module.exports = {
       });
     },
     'nikita:result': {
-      after: '@nikitajs/core/lib/plugins/metadata/status',
+      after: '@nikitajs/core/lib/plugins/output/status',
       handler: function({action, error, output}, handler) {
         return async function({action}) {
           try {

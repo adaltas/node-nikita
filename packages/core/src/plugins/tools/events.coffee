@@ -17,7 +17,7 @@ module.exports =
     'nikita:action': (action) ->
       action.tools.events.emit 'nikita:action:start', action: action
     'nikita:result':
-      after: '@nikitajs/core/src/plugins/metadata/status'
+      after: '@nikitajs/core/src/plugins/output/status'
       handler: ({action, error, output}, handler) ->
         ({action}) ->
           try

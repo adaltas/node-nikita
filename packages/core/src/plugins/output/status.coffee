@@ -3,7 +3,7 @@
 utils = require '../../utils'
 
 module.exports =
-  name: '@nikitajs/core/src/plugins/metadata/status'
+  name: '@nikitajs/core/src/plugins/output/status'
   require: [
     '@nikitajs/core/src/plugins/history'
     '@nikitajs/core/src/plugins/metadata/raw'

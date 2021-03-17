@@ -31,7 +31,7 @@ module.exports =
           plugins: [ # Need to inject `tools.log`
             require './tools/events'
             require './tools/log'
-            require './metadata/status'
+            require './output/status'
             require './history'
           ]
         .ssh.open action.ssh
@@ -72,7 +72,7 @@ module.exports =
           plugins: [ # Need to inject `tools.log`
             require './tools/events'
             require './tools/log'
-            require './metadata/status'
+            require './output/status'
             require './history'
           ]
         .ssh.close ssh: action.ssh

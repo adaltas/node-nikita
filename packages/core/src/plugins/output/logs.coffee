@@ -10,10 +10,10 @@ stackTrace = require 'stack-trace'
 path = require 'path'
 
 module.exports =
-  name: '@nikitajs/core/src/plugins/output_logs'
+  name: '@nikitajs/core/src/plugins/output/logs'
   require: [
     '@nikitajs/core/src/plugins/tools_log'
-    '@nikitajs/core/src/plugins/metadata/status'
+    '@nikitajs/core/src/plugins/output/status'
     '@nikitajs/core/src/plugins/metadata/raw'
   ]
   hooks:
@@ -37,7 +37,7 @@ module.exports =
             log
         )(action.tools.log)
     'nikita:result':
-      after: '@nikitajs/core/src/plugins/metadata/status'
+      after: '@nikitajs/core/src/plugins/output/status'
       handler: ({action, output}, handler) ->
         return handler if action.metadata.raw_output
         ({action}) ->
