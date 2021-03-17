@@ -28,16 +28,16 @@ describe 'lxc.cluster.delete', ->
             image: "images:#{images.alpine}"
             nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
       await @lxc.cluster cluster
+      await @wait time: 200
       await @lxc.cluster.stop {...cluster, wait: true}
       {$status} = await @lxc.cluster.delete cluster
       $status.should.be.true()
-      {data} = await @lxc.query
-        path: '/1.0/instances'
-      data.should.not.containEql '/1.0/instances/nikita-cluster-del-1'
-      data.should.not.containEql '/1.0/instances/nikita-cluster-del-2'
-      {data} = await @lxc.query
-        path: '/1.0/networks'
-      data.should.not.containEql '/1.0/instances/nktlxdpub'
+      {list} = await @lxc.list
+        filter: 'containers'
+      list.should.not.containEql 'nikita-cluster-del-1'
+      list.should.not.containEql 'nikita-cluster-del-2'
+      {list} = await @lxc.network.list()
+      list.should.not.containEql 'nktlxdpub'
   
   describe 'option `force`', ->
 
@@ -61,6 +61,7 @@ describe 'lxc.cluster.delete', ->
               image: "images:#{images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
         await @lxc.cluster cluster
+        await @wait time: 200
         await @lxc.cluster.delete cluster
         .should.be.rejectedWith /^NIKITA_EXECUTE_EXIT_CODE_INVALID:/
         await @lxc.cluster.delete {...cluster, force: true}
@@ -85,12 +86,12 @@ describe 'lxc.cluster.delete', ->
               image: "images:#{images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
         await @lxc.cluster cluster
+        await @wait time: 200
         {$status} = await @lxc.cluster.delete {...cluster, force: true}
         $status.should.be.true()
-        {data} = await @lxc.query
-          path: '/1.0/instances'
-        data.should.not.containEql '/1.0/instances/nikita-cluster-del-1'
-        data.should.not.containEql '/1.0/instances/nikita-cluster-del-2'
-        {data} = await @lxc.query
-          path: '/1.0/networks'
-        data.should.not.containEql '/1.0/instances/nktlxdpub'
+        {list} = await @lxc.list
+          filter: 'containers'
+        list.should.not.containEql 'nikita-cluster-del-1'
+        list.should.not.containEql 'nikita-cluster-del-2'
+        {list} = await @lxc.network.list()
+        list.should.not.containEql 'nktlxdpub'

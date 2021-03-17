@@ -35,7 +35,9 @@ module.exports =
       attach: '@nikitajs/lxd/src/network/attach'
       detach: '@nikitajs/lxd/src/network/detach'
       delete: '@nikitajs/lxd/src/network/delete'
+      list: '@nikitajs/lxd/src/network/list'
     query: '@nikitajs/lxd/src/query'
+    list: '@nikitajs/lxd/src/list'
     running: '@nikitajs/lxd/src/running'
     storage:
       '': '@nikitajs/lxd/src/storage'

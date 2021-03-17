@@ -6,11 +6,10 @@
 // ## Example
 
 // ```js
-// const {$status} = await nikita.lxc.init({
-//   image: "ubuntu:18.04",
-//   container: "my_container"
-// })
-// console.info(`Container was created: ${$status}`)
+// const { data } = await nikita.lxc.query({
+//   path: "/1.0/instances/c1",
+// });
+// console.info(`Container c1 info: ${data}`);
 // ```
 
 // ## TODO

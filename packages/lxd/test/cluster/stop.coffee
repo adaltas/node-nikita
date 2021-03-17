@@ -31,6 +31,7 @@ describe 'lxc.cluster.stop', ->
         await @lxc.cluster.delete {...cluster, force: true}
       @clean()
       await @lxc.cluster cluster
+      await @wait time: 200
       {$status} = await @lxc.cluster.stop {...cluster, wait: true}
       $status.should.be.true()
       {config} = await @lxc.state

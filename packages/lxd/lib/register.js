@@ -42,9 +42,11 @@ module.exports = {
       create: '@nikitajs/lxd/lib/network',
       attach: '@nikitajs/lxd/lib/network/attach',
       detach: '@nikitajs/lxd/lib/network/detach',
-      delete: '@nikitajs/lxd/lib/network/delete'
+      delete: '@nikitajs/lxd/lib/network/delete',
+      list: '@nikitajs/lxd/lib/network/list'
     },
     query: '@nikitajs/lxd/lib/query',
+    list: '@nikitajs/lxd/lib/list',
     running: '@nikitajs/lxd/lib/running',
     storage: {
       '': '@nikitajs/lxd/lib/storage',
