@@ -1,11 +1,11 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import green from '@material-ui/core/colors/green';
 import {styles} from '@material-ui/core/Typography/Typography';
 
 // A custom theme for this app
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   nprogress: {
     color: '#000',
   },
@@ -37,7 +37,7 @@ const theme = createMuiTheme({
     },
   },
 });
-
+theme = responsiveFontSizes(theme);
 // Note, the current version of mui export `styles` function to enrich the 
 // theme typography with additionnal properties like `root` and `gutterBottom`
 // Things are changing in the future version of mui (branch `next`), there is
