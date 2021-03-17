@@ -232,21 +232,31 @@ containers:
             $header: 'SSH'
             container: containerName
             command: """
-            # systemctl status sshd
-            # yum install -y openssh-server
-            # systemctl start sshd
-            # systemctl enable sshd
-            systemctl status sshd && exit 42
+            if command -v systemctl >/dev/null 2>&1; then
+              systemctl status sshd && exit 42 || echo '' > /dev/null
+            elif command -v rc-service >/dev/null 2>&1; then
+              # Exit code 3 if stopped
+              rc-service sshd status && exit 42 || echo '' > /dev/null
+            fi
             if command -v yum >/dev/null 2>&1; then
               yum -y install openssh-server
             elif command -v apt-get >/dev/null 2>&1; then
               apt-get -y install openssh-server
+            elif command -v apk >/dev/null 2>&1; then
+              apk add openssh-server
             else
-              echo "Unsupported Package Manager" >&2 && exit 2
+              echo "Unsupported package manager" >&2 && exit 2
             fi
-            systemctl status sshd && exit 42
-            systemctl start sshd
-            systemctl enable sshd
+            if command -v systemctl >/dev/null 2>&1; then
+              # systemctl status sshd && exit 42
+              systemctl start sshd
+              systemctl enable sshd
+            elif command -v rc-update >/dev/null 2>&1; then
+              rc-service sshd start
+              rc-update add sshd
+            else
+              echo "Unsupported init system" >&2 && exit 3
+            fi
             """
             trap: true
             code_skipped: 42
