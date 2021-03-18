@@ -111,18 +111,18 @@ const useStyles = theme => ({
       maxWidth: 900,
     },
   }),
-  icons: {
+  tools: {
     float: 'right',
+  },
+  icons: {
     color: '#cccccc',
-    top: '-3.8rem',
-    position: 'relative',
     '&:link,&:visited': {
       color: '#cccccc !important',
     },
     '&:hover': {
       textDecoration: 'none',
       color: theme.link.normal + ' !important',
-    },
+    }
   },
 })
 
@@ -139,42 +139,39 @@ const Content = ({
     <main css={styles.content}>
       {page && (
         <Fragment>
-          <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
-          {page.edit_url && (
-            <Tooltip id="content-edit" title="Edit on GitHub" enterDelay={300}>
-              <IconButton
-                color="inherit"
-                href={page.edit_url}
-                aria-labelledby="content-edit"
-                css={styles.icons}
-              >
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          {page.tableOfContents && page.tableOfContents.items
-            && (
-            <Fragment>
-              <Tooltip
-                id="content-toc"
-                title="Toggle table of content"
-                enterDelay={300}
-              >
+          <div css={styles.tools}>
+            {page.tableOfContents && page.tableOfContents.items && (
+                <Tooltip id="content-toc" title="Toggle table of content">
+                  <IconButton
+                    color="inherit"
+                    aria-labelledby="content-toc"
+                    css={styles.icons}
+                    onClick={onToggle}
+                  >
+                    <ListIcon />
+                  </IconButton>
+                </Tooltip>
+            )}
+            {page.edit_url && (
+              <Tooltip id="content-edit" title="Edit on GitHub">
                 <IconButton
                   color="inherit"
-                  aria-labelledby="content-toc"
+                  href={page.edit_url}
+                  aria-labelledby="content-edit"
                   css={styles.icons}
-                  onClick={onToggle}
                 >
-                  <ListIcon />
+                  <EditIcon />
                 </IconButton>
               </Tooltip>
-              <Toc
-                startLevel={1}
-                isOpen={isOpen}
-                items={page.tableOfContents.items}
-              />
-            </Fragment>
+            )}
+          </div>
+          <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
+          {page.tableOfContents && page.tableOfContents.items && (
+            <Toc
+              startLevel={1}
+              isOpen={isOpen}
+              items={page.tableOfContents.items}
+            />
           )}
         </Fragment>
       )}
