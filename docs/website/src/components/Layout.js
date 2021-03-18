@@ -37,13 +37,15 @@ const Layout = ({
   const onToggle = () => {
     setIsOpen(!isOpen)
   }
-  const handleClickLink = () => {
-    if(window.innerWidth < breakpoint){
-      setIsOpen(false)
-    }
-  }
+  // const handleClickLink = () => {
+  //   if(window.innerWidth < breakpoint){
+  //     setIsOpen(false)
+  //   }
+  // }
   const menu = { children: {} }
   data.menu.edges.forEach(edge => {
+    // Filter items for current page
+    if((page.slug || '/current/').indexOf(edge.node.fields.slug.replace(/[a-z0-9-_]*\/$/, '')) === -1) return
     const slugs = edge.node.fields.slug.split('/').filter(part => part)
     let parentMenu = menu
     slugs.forEach(slug => {
@@ -92,15 +94,7 @@ const Layout = ({
         }
         drawer={
           <Menu>
-            {Object.values(menu.children.current.children)
-            .sort((p1, p2) => p1.data.sort > p2.data.sort)
-            .map(page => (
-              <Nav
-                key={page.data.slug}
-                menu={page}
-                onClickLink={handleClickLink}
-              />
-            ))}
+            <Nav menu={menu.children.current.children}/>
           </Menu>
         }
       />

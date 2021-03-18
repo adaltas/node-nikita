@@ -2,20 +2,21 @@
 import React from 'react'
 // Material UI
 import { useTheme } from '@material-ui/core/styles'
-import Divider from '@material-ui/core/Divider'
 import Typography from '@material-ui/core/Typography'
 // Gatsby
 import { Link } from 'gatsby'
 
 const useStyles = theme => ({
   root: {
-    // position: 'relative',
-    backgroundColor: 'rgb(245, 245, 245)',
-    // height: '100%',
-    borderRight: '1px solid rgb(200, 200, 200)',
+    backgroundColor: '#fff',
+    minHeight: '100vh',
+    borderRight: '1px solid #0000001f',
+    position: 'relative',
   },
   toolbar: {
     ...theme.mixins.toolbar,
+    backgroundColor: '#f2f2f2',
+    borderBottom: '1px solid #0000001f',
     paddingLeft: theme.spacing(2),
     display: 'flex',
     flexGrow: 1,
@@ -29,11 +30,15 @@ const useStyles = theme => ({
       color: theme.palette.text.primary,
     },
   },
+  body: {
+    paddingBottom: '75px',
+  },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: '#f2f2f2',
     padding: theme.spacing(2),
-    borderTop: '1px solid rgb(200, 200, 200)',
-    backgroundColor: 'rgb(245, 245, 245)',
-    // textAlign: 'justify',
+    borderTop: '1px solid #0000001f',
     color: theme.palette.grey[600],
     '& a': {
       textDecoration: 'none',
@@ -48,16 +53,15 @@ const Menu = ({
   const styles = useStyles(useTheme())
   return (
     <div css={styles.root}>
-      <div>
-        <div css={styles.toolbar}>
-          <Link to="/">
-            Documentation
-          </Link>
-          <Typography variant="caption">{'version 0.8'}</Typography>
-        </div>
-        <Divider />
+      <div css={styles.toolbar}>
+        <Link to="/">
+          Documentation
+        </Link>
+        <Typography variant="caption">{'current version'}</Typography>
       </div>
-      {children}
+      <div css={styles.body}>
+        {children}
+      </div>
       <div css={styles.footer}>
         <Typography variant="caption">
           Help us
