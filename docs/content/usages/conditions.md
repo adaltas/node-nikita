@@ -15,7 +15,7 @@ The following example represents updating a file. It contains 2 conditions appli
   var {status} = await nikita
   // Update file content
   .file({
-    // highlight-range{1-15}
+    // highlight-range{1-11}
     $if_exists: '/tmp/nikita/a_file',
     $if: async function({config}) {
       // Get the file information
