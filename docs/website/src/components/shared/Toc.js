@@ -20,7 +20,7 @@ const styles = {
   }
 }
   
-export default ({
+const Toc = ({
   startLevel,
   isOpen,
   items,
@@ -46,3 +46,5 @@ export default ({
     </div>
   )
 }
+
+export default Toc

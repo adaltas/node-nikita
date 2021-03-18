@@ -141,7 +141,7 @@ const WrappedLayout = props => (
             frontmatter: { disabled: { eq: false } }
             fields: { slug: { regex: "/^/.+/" } }
           }
-          sort: { order: ASC, fields: [frontmatter___sort, fields___slug] }
+          sort: { order: ASC, fields: [frontmatter___sort, slug] }
         ) {
           edges {
             node {
