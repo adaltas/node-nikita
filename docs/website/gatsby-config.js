@@ -126,6 +126,9 @@ module.exports = {
             },
           },
         ],
+        // Fixes CSS of anchor icon
+        // see https://github.com/gatsbyjs/gatsby/issues/20441 
+        plugins: ['gatsby-remark-autolink-headers']
       }
     },
     {
