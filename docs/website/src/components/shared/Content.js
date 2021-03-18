@@ -21,16 +21,6 @@ const useStyles = theme => ({
     margin: '0 auto 3rem',
     // fontSize: '1rem',
     lineHeight: '1.6rem',
-    '& a': {
-      textDecoration: 'none',
-      '&:link,&:visited': {
-        color: '#00618E',
-      },
-      '&:hover': {
-        textDecoration: 'none',
-        color: theme.link.normal,
-      },
-    },
     '& h1': {
       ...theme.typography.root,
       ...theme.typography.h1,
@@ -93,7 +83,7 @@ const useStyles = theme => ({
     '& pre > code[class*="language-"]': {
       // fontSize: '1rem',
     },
-    '& :not(pre) > code[class*="language-"]': {
+    '& :not(pre) > code': {
       padding: '.2em .3em .1em .3em',
       background: '#DFDEDE',
       color: '#000',
@@ -106,6 +96,16 @@ const useStyles = theme => ({
       paddingRight: '1rem',
       borderLeft: '0.25rem solid rgba(255,255,255, .75)',
       display: 'block',
+    },
+    '& a': {
+      textDecoration: 'none',
+      '&:link,&:visited,& > code': {
+        color: '#00618E',
+      },
+      '&:hover,&:hover > code': {
+        textDecoration: 'none',
+        color: theme.link.normal,
+      },
     },
     [theme.breakpoints.up(900 + theme.spacing(6))]: {
       maxWidth: 900,
