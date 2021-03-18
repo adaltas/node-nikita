@@ -1,5 +1,4 @@
 import React from 'react';
-import 'typeface-roboto'
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
