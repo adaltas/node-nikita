@@ -50,7 +50,6 @@
     "react-scroll": "^1.8.2",
     "react-syntax-highlighter": "^15.4.3",
     "react-typography": "^0.16.19",
-    "typeface-roboto": "^1.1.13",
     "typography": "^0.16.19"
   },
   "repository": {
