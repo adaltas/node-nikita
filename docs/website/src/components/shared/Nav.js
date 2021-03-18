@@ -1,86 +1,106 @@
 // React
-import React, {useState} from 'react'
+import React, {Fragment} from 'react'
 // Material UI
 import { useTheme } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse'
-import IconButton from '@material-ui/core/IconButton'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import MenuItem from '@material-ui/core/MenuItem'
 import MenuList from '@material-ui/core/MenuList'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
+import Divider from '@material-ui/core/Divider'
 // Gatsby
 import { Link } from 'gatsby'
 
 const useStyles = theme => ({
-  root: {
-    backgroundColor: '#FFF',
+  devider: {
+    margin: '0 10px',
   },
-  leaf: {
-    fontWeight: theme.typography.fontWeightLight,
-    paddingTop: theme.spacing(.33),
-    paddingBottom: theme.spacing(.33),
+  bottomNav: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
-  link: {
-    // ...theme.typography.caption,
-    textDecoration: 'none',
-    color: theme.palette.grey[600],
-    minHeight: 'auto',
-    '&:hover': {
-      textDecoration: 'none',
-    },
+  bottomNavTitle: {
+    opacity: 0.35,
+    textTransform: 'uppercase',
+    paddingTop: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    fontSize: '1rem',
+  },
+  children: {
+    '& a': {
+      paddingLeft: theme.spacing(4),
+    }
   },
   active: {
     color: theme.link.normal,
   },
 })
 
-const Nav = ({
+const Item = ({
+  page,
+  styles
+}) => (
+  <MenuItem
+    component={Link}
+    to={page.data.slug}
+    activeStyle={styles.active}
+    partiallyActive={true}
+  >
+    <ListItemText primary={page.data.navtitle || page.data.title} />
+  </MenuItem>
+)
+
+const BottomNav = ({
   menu,
-  onClickLink
+  styles
 }) => {
-  const [isOpen, setIsOpen] = useState(true)
-  const handleClick = (e) => {
-    setIsOpen(!isOpen)
-  }
-  const styles = useStyles(useTheme())
   const pages = Object.values(menu.children)
-    .sort((p1, p2) => p1.data.sort > p2.data.sort)
-    .map(page => (
-      <MenuItem
-        component={Link}
-        key={page.data.slug}
-        to={page.data.slug}
-        css={[styles.link, styles.leaf]}
-        onClick={onClickLink}
-        activeStyle={styles.active}
-      >
-        {page.data.navtitle || page.data.title}
-      </MenuItem>
-    ))
-  return (
-    <div css={styles.root}>
-      <MenuList component="nav">
-        <MenuItem
-          component={Link}
-          to={menu.data.slug}
-          activeStyle={styles.active}
-        >
-          <ListItemText primary={menu.data.title} />
-          <ListItemSecondaryAction>
-            <IconButton onClick={handleClick}>
-              {isOpen ? <ExpandLess /> : <ExpandMore />}
-            </IconButton>
-          </ListItemSecondaryAction>
-        </MenuItem>
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <MenuList component="ul" disablePadding>
-            {pages}
+  .sort((p1, p2) => p1.data.sort > p2.data.sort)
+  .map(page => {
+    return (
+      <Fragment key={page.data.slug}>
+        <Item page={page} styles={styles} />
+        {Object.keys(page.children).length !== 0 && (
+          <MenuList css={styles.children}>
+            {Object.values(page.children)
+              .sort((p1, p2) => p1.data.sort > p2.data.sort)
+              .map(child => (
+                <Item key={child.data.slug} page={child} styles={styles} />
+              ))}
           </MenuList>
-        </Collapse>
-      </MenuList>
+        )}
+      </Fragment>
+    )
+  })
+  return (
+    <div css={styles.bottomNav}>
+      <Divider css={styles.devider}/>
+      <div css={styles.bottomNavTitle}>{menu.data.navtitle || menu.data.title}</div>
+      {pages}
     </div>
+  )
+}
+
+const Nav = ({
+  menu
+}) => {
+  const styles = useStyles(useTheme())
+  var current
+  const pages = Object.values(menu)
+  .sort((p1, p2) => p1.data.sort > p2.data.sort)
+  .map(page => {
+    if(Object.keys(page.children).length !== 0)
+      current = page
+    return (
+      <Item key={page.data.slug} page={page} styles={styles} />
+    )
+  })
+  return (
+    <MenuList component="nav">
+      {pages}
+      {current && current.children && (
+        <BottomNav styles={styles} menu={current} />
+      )}
+    </MenuList>
   )
 }
 
