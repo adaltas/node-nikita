@@ -6,6 +6,11 @@ import {styles} from '@material-ui/core/Typography/Typography';
 
 // A custom theme for this app
 let theme = createMuiTheme({
+  props: {
+    MuiButtonBase: {
+      disableRipple: true, // No ripple on the whole application
+    },
+  },
   nprogress: {
     color: '#000',
   },
