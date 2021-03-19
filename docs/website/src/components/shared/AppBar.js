@@ -36,7 +36,7 @@ const useStyles = theme => ({
   },
   logo: {
     fontSize: '1.6rem',
-    marginLeft: '.5rem',
+    marginLeft: theme.spacing(1),
   },
   title: {
     color: 'rgba(255,255,255,1)',
@@ -44,10 +44,10 @@ const useStyles = theme => ({
     fontSize: '2rem',
     fontWeight: 'bold',
     letterSpacing: '.3rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
-    marginTop: '.5rem',
-    borderRadius: '5px',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    borderRadius: '.5rem',
     textTransform: 'uppercase',
     transition: theme.transitions.create('background-color', {
       duration: theme.transitions.duration.shortest,

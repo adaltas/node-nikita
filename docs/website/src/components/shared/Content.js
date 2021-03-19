@@ -13,13 +13,11 @@ require('prismjs/themes/prism-tomorrow.css')
 
 const useStyles = theme => ({
   content: theme.mixins.gutters({
-    // ...theme.typography,
     ...theme.typography.body1,
-    paddingTop: 40,
+    paddingTop: theme.spacing(5),
     flex: '1 1 100%',
     maxWidth: '100%',
-    margin: '0 auto 3rem',
-    // fontSize: '1rem',
+    margin: theme.spacing(0, 'auto', 5),
     lineHeight: '1.6rem',
     '& h1': {
       ...theme.typography.root,
@@ -27,12 +25,6 @@ const useStyles = theme => ({
       ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
-      '& code': {
-        // color: '#000',
-        padding: '.2em .3em .1em .3em',
-        background: '#DFDEDE',
-        borderRadius: '.3em'
-      },
     },
     '& h2': {
       ...theme.typography.root,
@@ -40,7 +32,7 @@ const useStyles = theme => ({
       ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
-      // marginTop: '3.5rem',
+      marginTop: theme.spacing(4),
     },
     '& h3': {
       ...theme.typography.root,
@@ -48,7 +40,7 @@ const useStyles = theme => ({
       ...theme.typography.gutterBottom,
       color: '#777777',
       fontWeight: 'normal',
-      // marginTop: '2.5rem',
+      marginTop: theme.spacing(3),
     },
     // '& em': {
     //   color: '#2D2D2D',
@@ -56,7 +48,7 @@ const useStyles = theme => ({
     '& blockquote': {
       borderLeft: '3px solid #777777',
       margin: 0,
-      paddingLeft: '40px',
+      paddingLeft: theme.spacing(5),
     },
     '& blockquote p': {
       color: '#777777',
@@ -73,7 +65,7 @@ const useStyles = theme => ({
       // margin: 0,
     },
     '& ul': {
-      paddingLeft: 20,
+      paddingLeft: theme.spacing(2),
       // listStylePosition: 'inside',
     },
     '& li': {
@@ -84,16 +76,16 @@ const useStyles = theme => ({
       // fontSize: '1rem',
     },
     '& :not(pre) > code': {
-      padding: '.2em .3em .1em .3em',
+      padding: '.1em .3em',
       background: '#DFDEDE',
       color: '#000',
     },
     '& .gatsby-highlight-code-line': {
       background: 'rgba(255,255,255,.2)',
-      marginLeft: '-1rem',
-      marginRight: '-1rem',
+      marginLeft: theme.spacing(-2),
+      marginRight: theme.spacing(-2),
       paddingLeft: '.75rem',
-      paddingRight: '1rem',
+      paddingRight: theme.spacing(2),
       borderLeft: '0.25rem solid rgba(255,255,255, .75)',
       display: 'block',
     },

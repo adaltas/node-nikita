@@ -30,7 +30,7 @@ const useStyles = theme => ({
     color: '#CCC8C7',
   },
   ul: {
-    margin: '1rem 0',
+    margin: theme.spacing(1, 0),
     padding: 0,
     listStyle: 'none',
     color: '#CCC8C7',
@@ -48,7 +48,7 @@ const useStyles = theme => ({
     },
   },
   content: {
-    margin: '1rem 0',
+    margin: theme.spacing(1, 0),
     color: '#CCC8C7',
     '& a': {
       color: '#fff',
