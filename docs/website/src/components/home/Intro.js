@@ -61,20 +61,20 @@ const useStyles = theme => ({
     },
   },
   svg: {
-    paddingTop: '4rem',
+    paddingTop: theme.spacing(8),
   },
   info: {
     [theme.breakpoints.up('md')]: {
       display: 'flex',
       justifyContent: 'space-around',
     },
+    padding: theme.spacing(4, 0),
   },
   buttons: {
     [theme.breakpoints.up('md')]: {
       display: 'flex',
       flexDirection: 'column',
     },
-    paddingBottom: '2rem',
   },
   headlines: {
     [theme.breakpoints.down('sm')]: {
@@ -90,11 +90,11 @@ const useStyles = theme => ({
       // paddingTop: '5rem',
     },
     '> p': {
-      margin: '0rem',
+      margin: 0,
     },
   },
   outlined: {
-    margin: '1rem',
+    margin: theme.spacing(2),
     borderColor: '#fff',
     color: '#fff',
     // backgroundColor: 'rgba(0, 0, 0, 0.2)',

@@ -31,7 +31,7 @@ const useStyles = theme => ({
     },
   },
   body: {
-    paddingBottom: '75px',
+    paddingBottom: theme.spacing(10)
   },
   footer: {
     position: 'absolute',

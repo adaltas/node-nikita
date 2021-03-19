@@ -11,7 +11,7 @@ import { Link } from 'gatsby'
 
 const useStyles = theme => ({
   devider: {
-    margin: '0 10px',
+    margin: theme.spacing(0, 1),
   },
   bottomNav: {
     paddingTop: theme.spacing(1),
@@ -23,7 +23,6 @@ const useStyles = theme => ({
     paddingTop: theme.spacing(4),
     paddingLeft: theme.spacing(2),
     paddingBottom: theme.spacing(1),
-    fontSize: '1rem',
   },
   children: {
     '& a': {

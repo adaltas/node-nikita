@@ -1,11 +1,13 @@
 
 import React, {Fragment} from 'react'
+// Material UI
+import { useTheme } from '@material-ui/core/styles';
 
-const styles = {
+const useStyles = theme => ({
   toc: {
     borderTop: '1px solid #E5E7EA',
     borderBottom: '1px solid #E5E7EA',
-    padding: '5px 0',
+    padding: theme.spacing(2, 0),
     display: 'none',
     '& h2': {
       marginTop: '1rem !important',
@@ -18,13 +20,14 @@ const styles = {
   tocVisible: {
     display: 'block'
   }
-}
-  
+})
+
 const Toc = ({
   startLevel,
   isOpen,
   items,
 }) => {
+  const styles = useStyles(useTheme())
   const renderToc = (level, startLevel, items) => (
     items.map((item) => (
       <Fragment key={item.url}>

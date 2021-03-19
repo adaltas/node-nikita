@@ -10,15 +10,17 @@ import Content from './shared/Content'
 import Footer from './shared/Footer'
 import Menu from './shared/Menu'
 import Nav from './shared/Nav'
+// Material UI
+import { useTheme } from '@material-ui/core/styles';
 
-const styles = {
+const useStyles = theme => ({
   content: {
     backgroundColor: 'rgb(242,242,242)',
   },
   contentNoIntro: {
-    paddingTop: 60,
+    paddingTop: theme.spacing(8),
   },
-}
+})
 
 const Layout = ({
   children,
@@ -27,6 +29,7 @@ const Layout = ({
   home = false,
   page,
 }) => {
+  const styles = useStyles(useTheme())
   const [isOpen, setIsOpen] = useState(home ? false : true)
   const [breakpoint] = useState(960)
   useEffect( () => {

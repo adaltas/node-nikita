@@ -79,7 +79,7 @@ const useStyles = theme => ({
   },
   icon: {
     verticalAlign: 'middle',
-    marginRight: 5,
+    marginRight: theme.spacing(1),
     color: '#777777',
   },
   features: {
