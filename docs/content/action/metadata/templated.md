@@ -38,7 +38,7 @@ nikita
 
 ## Dynamic references
 
-It is not required to refer directly to a property. A property may refer to another property which itself refers to another property. Properties do not need to be set in any particular order. Their value are dynamically resolved and an error is thrown in case of a circular reference.
+It is not required to refer directly to a property. A property may refer to another property which itself refers to another property. Properties do not need to be set in any particular order. Their value is dynamically resolved and an error is thrown in case of a circular reference.
 
 ```js
 nikita({

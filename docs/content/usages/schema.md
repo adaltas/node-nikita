@@ -6,9 +6,9 @@ sort: 12
 
 The configuration schema validates the [configuration properties](/current/action/config) provided to an action. 
 
-While defining a schema is optional, all the action available Nikita define an shema. It is used for validation but it also provide additionnal functionnalities such a default value and coercion. An action can also partially or fully inherit from the properties of other actions. Nikita unifies the declaration of configuration properties using the `schema` metadata property. When the action properties doesn't conform with the schema, the action is rejected with the `NIKITA_SCHEMA_VALIDATION_CONFIG` error.
+While defining a schema is optional, all the actions available Nikita define a schema. It is used for validation but it also provides additional functionalities such as a default value and coercion. An action can also partially or fully inherit from the properties of other actions. Nikita unifies the declaration of configuration properties using the `schema` metadata property. When the action properties don't conform with the schema, the action is rejected with the `NIKITA_SCHEMA_VALIDATION_CONFIG` error.
 
-A schema is defined using the [JSON Schema](https://ajv.js.org/json-schema.html) specfication. Literally it is a JavaScript object with validation keywords. Internally, Nikita uses the [Ajv](https://ajv.js.org/) library.
+A schema is defined using the [JSON Schema](https://ajv.js.org/json-schema.html) specification. Literally, it is a JavaScript object with validation keywords. Internally, Nikita uses the [Ajv](https://ajv.js.org/) library.
 
 ## Basic schema definition
 
@@ -315,7 +315,7 @@ nikita
 
 ## Pattern properties
 
-A object with dynamic keys is validated with the [`patternProperties` keyword](https://ajv.js.org/json-schema.html#patternproperties). The value of this keyword is a map where keys are regular expressions and the values are JSON Schemas.
+An object with dynamic keys is validated with the [`patternProperties` keyword](https://ajv.js.org/json-schema.html#patternproperties). The value of this keyword is a map where keys are regular expressions and the values are JSON Schemas.
 
 In this example, all the keys starting with `my_` must be of type `string`:
  
@@ -342,7 +342,7 @@ nikita
 
 ## Disallowing additional properties
 
-By default, not all properties must be defined in the schema. Additionnal properties are not evaluated and are passed as is. To enforce the schema definition of every properties, use the [`additionalProperties` keyword](https://ajv.js.org/json-schema.html#additionalproperties) with the `false` value.
+By default, not all properties must be defined in the schema. Additional properties are not evaluated and are passed as-is. To enforce the schema definition of every property, use the [`additionalProperties` keyword](https://ajv.js.org/json-schema.html#additionalproperties) with the `false` value.
 
 The following example disallows passing any properties other than `my_config`: 
 
