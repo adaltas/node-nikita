@@ -12,6 +12,8 @@ import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javasc
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
 SyntaxHighlighter.registerLanguage('javascript', javascript)
 const codeString = `
+// Including Nikita
+const nikita = require('nikita')
 // User configuration
 const config = {
   // url: 'http://download.redis.io/redis-stable.tar.gz',
@@ -22,43 +24,43 @@ const config = {
   // }
 }
 // Nikita instantiation
-require('nikita')
+nikita
 // Activate CLI reporting
 .log.cli()
 // Define and execute a custom Redis action
-.call({header: 'Redis'}, config, function({config}){
+.call({$header: 'Redis'}, config, function({config}){
   // Default configuration
   if(!config.url){ config.url = 'http://download.redis.io/redis-stable.tar.gz' }
-  if(!config.config){ config.config = {} }
-  if(!config.config['bind']){ config.config['bind'] = '127.0.0.1' }
-  if(!config.config['protected-mode']){ config.config['protected-mode'] = 'yes' }
-  if(!config.config['port']){ config.config['port'] = 6379 }
+  if(!config.conf){ config.conf = {} }
+  if(!config.conf['bind']){ config.conf['bind'] = '127.0.0.1' }
+  if(!config.conf['protected-mode']){ config.conf['protected-mode'] = 'yes' }
+  if(!config.conf['port']){ config.conf['port'] = 6379 }
   // Do the job
   this
   .file.download({
-    header: 'Download',
+    $header: 'Download',
     source: config.url,
     target: 'cache/redis-stable.tar.gz'
   })
-  .system.execute({
-    header: 'Compilation',
-    unless_exists: 'redis-stable/src/redis-server',
-    cmd: \`
+  .execute({
+    $header: 'Compilation',
+    $unless_exists: 'redis-stable/src/redis-server',
+    command: \`
     tar xzf cache/redis-stable.tar.gz
     cd redis-stable
     make
     \`
   })
   .file.properties({
-    header: 'Configuration',
+    $header: 'Configuration',
     target: 'conf/redis.conf',
     separator: ' ',
     content: config.conf
   })
-  .system.execute({
-    header: 'Startup',
+  .execute({
+    $header: 'Startup',
     code_skipped: 3,
-    cmd: \`
+    command: \`
     ./src/redis-cli ping && exit 3
     nohup ./redis-stable/src/redis-server conf/redis.conf &
     \`
@@ -68,6 +70,7 @@ require('nikita')
 
 const useStyles = theme => ({
   root: {
+    paddingTop: theme.spacing(10),
     flexGrow: 1,
     '& h2': {
       textAlign: 'center',
@@ -76,14 +79,12 @@ const useStyles = theme => ({
       marginTop: 0,
       marginBottom: 0,
     },
+    
   },
   icon: {
     verticalAlign: 'middle',
     marginRight: theme.spacing(1),
     color: '#777777',
-  },
-  features: {
-    paddingBottom: theme.spacing(10)
   },
   feature: {
     paddingBottom: '0 !important',
@@ -104,7 +105,7 @@ const Index = () => {
     >
       <div css={styles.root}>
         <h2>Main library features</h2>
-        <Grid container spacing={10} css={styles.features}>
+        <Grid container spacing={10}>
           <Grid item xs={12} sm={6} css={styles.feature}>
             <h3>
               <SvgIcon css={styles.icon}>
@@ -114,7 +115,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'All the functions share the same API, accepting options and a user callback in a flexible manner. Once you learn the core usage, you only learn the options of the actions you wish to execute.'
+                'All the functions share the same API, accepting configuration in a flexible manner validated by a schema. Once you learn the core usage, you only learn the configuration of the actions you wish to execute.'
               }
             </p>
           </Grid>
@@ -127,7 +128,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'No agent to install, no database to depends on. Your project is just another Node.js package easily versionned in Git and any SCM, easily integrated with your CI and CD DevOps tools.'
+                'No agent to install, no database to depends on. Your project is just another Node.js package easily versioned in Git and any SCM, easily integrated with your CI and CD DevOps tools.'
               }
             </p>
           </Grid>
@@ -140,7 +141,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Call a function multiple times and expect the same result. You’ll be informed of any modifications and can retrieve defailed information.'
+                'Call a function multiple times and expect the same result. You’ll be informed of any modifications and can retrieve detailed information.'
               }
             </p>
           </Grid>
@@ -153,7 +154,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Learn fast. Source code is self-documented with the most commons usages enriched by many examples. Don’t forget to look at the tests as well.'
+                'Learn fast. Source code is self-documented with the most common usages enriched by many examples. Don’t forget to look at the tests as well.'
               }
             </p>
           </Grid>
@@ -166,7 +167,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Deliberatly sacrifying speed for a maximum of strength, ease of use and flexibility. The simple API allows us to constantly add new functionnality without affecting the API.'
+                'Deliberately sacrificing speed for a maximum of strength, ease of use, and flexibility. The simple API built on a plugin architecture allows us to constantly add new functionality without affecting the API.'
               }
             </p>
           </Grid>
@@ -179,7 +180,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Built from small and reusable actions imbricated into complex system. It follows the Unix philosophie of building small small single-building blocks with a clear API.'
+                'Built from small and reusable actions imbricated into a complex system. It follows the Unix philosophy of building small single-building blocks with a clear API.'
               }
             </p>
           </Grid>
@@ -191,7 +192,8 @@ const Index = () => {
               {'SSH native support'}
             </h3>
             <p>
-              All the functions run transparently over SSH. Look at the <a
+              All the functions run transparently over SSH with a possibility to
+              execute as the root user via sudo. Look at the <a
               href="https://github.com/adaltas/node-nikita/tree/master/packages/core/test"
               alt="Nikita unit tests">tests</a>, they are all executed both
               locally and remotely.
@@ -206,7 +208,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Advanced reports can be optained by providing a log function, listening to stdout and stderr streams, generating diffs and backups.'
+                'Advanced reports can be obtained by providing a log function, listening to stdout and stderr streams, generating diffs and backups.'
               }
             </p>
           </Grid>
@@ -231,8 +233,8 @@ const Index = () => {
               {'Suppport'}
             </h3>
             <p>
-              The package is open sourced with one of the least restrictive
-              license. Get involved and contributes to open source
+              The package is open-sourced with one of the least restrictive
+              licenses. Get involved and contribute to open source
               development by sending pull requests and requesting commercial
               support from <a href="http://www.adaltas.com">Adaltas</a>.
             </p>
@@ -240,7 +242,7 @@ const Index = () => {
         </Grid>
       </div>
       <div css={styles.root}>
-        <h2>Example installation of Redis</h2>
+        <h2>Redis installation example </h2>
         <SyntaxHighlighter language="javascript" style={tomorrow}>
           {codeString}
         </SyntaxHighlighter>
