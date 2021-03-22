@@ -8,7 +8,7 @@ Nikita provides a facility to publish and listen to events. An instance of the [
 
 Events messages don't need to respect any particular structure unless you use an event name reserved internally by Nikita. No validation will occur.
 
-Refers to the [`tools.log`](/current/action/tools/log) function for a more sophisticated mechanism, it internally relies on `tools.event`. It provides context information to the event listener such as the module name where the event occurred, the logging level, etc.
+Refers to the [`tools.log`](/current/action/tools/log) function for a more sophisticated mechanism, it internally relies on `tools.events`. It provides context information to the event listener such as the module name where the event occurred, the logging level, etc.
 
 ## Usage
 
