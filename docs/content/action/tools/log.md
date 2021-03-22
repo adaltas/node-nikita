@@ -8,7 +8,7 @@ related:
 
 # Tool "log"
 
-The `log` tool is a function to share information about the state of Nikita's actions.
+The `log` tool is a function to publish information about the state of Nikita's actions.
 
 It is possible to listen to the emitted log objects and to use their information for [logging or debugging](/current/usage/logging_debugging). The [`log.cli`](/current/actions/log/cli) action prints the status of the Nikita session to the console. The [`log.md`](/current/actions/log/md) action dumps the logs into a file using the [Markdown](https://en.wikipedia.org/wiki/Markdown) format.
 
