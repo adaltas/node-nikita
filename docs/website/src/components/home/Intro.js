@@ -249,7 +249,7 @@ const Intro = () => {
           <div css={styles.buttons}>
             <Button
               component={Link}
-              to="/about/tutorial/"
+              to="/current/about/tutorial/"
               size="large"
               variant="outlined"
               css={styles.button}
@@ -259,7 +259,7 @@ const Intro = () => {
             </Button>
             <Button
               component={Link}
-              to="/about/changelog/"
+              to="/current/about/changelog/"
               size="large"
               variant="outlined"
               css={styles.button}
