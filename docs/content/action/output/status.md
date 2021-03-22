@@ -6,7 +6,9 @@ related:
 
 # Output "$status"
 
-The status is information indicating whether an action had any impact supporting the [idempotence of Nikita's actions](/usages/idempotence). It is a boolean value returned to the [action output](/current/action/output) as the `$status` property.
+The status is an information indicating whether an action had any impact. It is a core concept shared by all Nikita actions. It is also used by actions to implement [idempotence](/usages/idempotence).
+
+It is a boolean value returned to the [action output](/current/action/output) as the `$status` property.
 
 The status meaning differs from one action to another, here are a few examples:
 
