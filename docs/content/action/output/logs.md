@@ -11,6 +11,8 @@ related:
 
 Nikita stores the [log objects](/current/action/tools/log) emitted by the [action handler](/current/action/handler). They are available in the `$logs` property of the [action output](/current/action/output) as an array of JavaScript objects.
 
+It contains useful information used for debugging and introspection.
+
 ## Usage
 
 The `$logs` array is returned when the [action Promise](/current/usages/promise) is fulfilled, thus, it is accessed using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await):
