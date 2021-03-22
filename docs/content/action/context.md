@@ -4,7 +4,7 @@ navtitle: Context
 
 # Context
 
-Nikita passes the global session context into the [action handler](/current/action/handler) to support the [JavaScript arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), since they don't provide their own `this` binding. The context is available inside the handler as the `context` property of the first argument.
+When [action handlers](/current/action/handler/) are defined as [traditional function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function), they are executed with an action context. This context is useful to call child actions. [Array function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) does not have their own binding. They share the parent scope. It is impossible to call them with the action context. For this reason, the context is passed as a property named `context` in the first argument of the handler.
 
 ## Usage
 
@@ -19,7 +19,7 @@ nikita
 })
 ```
 
-Alternatively, it is rewritten using the [traditional function expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function), where the `this` object is used:
+Alternatively, with the [traditional function expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function), the `this` scope can be used:
 
 ```js
 nikita
