@@ -1,21 +1,41 @@
 // React
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import Helmet from 'react-helmet'
 // Gatsby
 import { StaticQuery, graphql } from 'gatsby'
 // Local
-import Drawer from './Drawer'
 import AppBar from './shared/AppBar'
 import Content from './shared/Content'
 import Footer from './shared/Footer'
 import Menu from './shared/Menu'
 import Nav from './shared/Nav'
 // Material UI
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme, makeStyles } from '@material-ui/core/styles'
+import Drawer from '@material-ui/core/Drawer'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 
+const drawerWidth = 250
+const useClasses = makeStyles((theme) => ({
+  drawerPaper: {
+    width: drawerWidth,
+  },
+}))
 const useStyles = theme => ({
   content: {
+    width: '100%',
     backgroundColor: 'rgb(242,242,242)',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  shift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   contentNoIntro: {
     paddingTop: theme.spacing(8),
@@ -29,22 +49,17 @@ const Layout = ({
   home = false,
   page,
 }) => {
-  const styles = useStyles(useTheme())
-  const [isOpen, setIsOpen] = useState(home ? false : true)
-  const [breakpoint] = useState(960)
-  useEffect( () => {
-    if (window.innerWidth < breakpoint) {
-      setIsOpen(false)
-    }
-  }, [breakpoint])
+  // Styles
+  const theme = useTheme()
+  const classes = useClasses()
+  const styles = useStyles(theme)
+  // State
+  var isMobile = useMediaQuery(theme.breakpoints.down('xs'), {noSsr: true})
+  const [isOpen, setIsOpen] = useState(home || isMobile ? false : true)
   const onToggle = () => {
     setIsOpen(!isOpen)
   }
-  // const handleClickLink = () => {
-  //   if(window.innerWidth < breakpoint){
-  //     setIsOpen(false)
-  //   }
-  // }
+  // Create menu
   const menu = { children: {} }
   data.menu.edges.forEach(edge => {
     // Filter items for current page
@@ -77,30 +92,29 @@ const Layout = ({
         <html lang="en" />
       </Helmet>
       <Drawer
-        breakpoint={breakpoint}
+        variant={isMobile ? 'temporary' : 'persistent'}
+        anchor='left'
         open={isOpen}
-        onClickModal={onToggle}
-        main={
-          <Fragment>
-            <AppBar
-              onMenuClick={onToggle}
-              site={data.site.siteMetadata}
-              open={isOpen}
-              opacity={home ? 0.3 : 1}
-            />
-            <div css={[styles.content, intro ? null : styles.contentNoIntro]}>
-              { intro }
-              <Content page={page}>{children}</Content>
-              <Footer site={data.site.siteMetadata} />
-            </div>
-          </Fragment>
-        }
-        drawer={
-          <Menu>
-            <Nav menu={menu.children.current.children}/>
-          </Menu>
-        }
+        onClose={onToggle}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <Menu>
+          <Nav menu={menu.children.current.children}/>
+        </Menu>
+      </Drawer>
+      <AppBar
+        onMenuClick={onToggle}
+        site={data.site.siteMetadata}
+        shift={isOpen && !isMobile && styles.shift}
+        opacity={home ? 0.3 : 1}
       />
+      <div css={[styles.content, intro ? null : styles.contentNoIntro, isOpen && !isMobile && styles.shift]}>
+        { intro }
+        <Content page={page}>{children}</Content>
+        <Footer site={data.site.siteMetadata} />
+      </div>
     </div>
   )
 }

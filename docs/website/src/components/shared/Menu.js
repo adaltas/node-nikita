@@ -8,10 +8,8 @@ import { Link } from 'gatsby'
 
 const useStyles = theme => ({
   root: {
+    height: '100%',
     backgroundColor: '#fff',
-    minHeight: '100vh',
-    borderRight: '1px solid #0000001f',
-    position: 'relative',
   },
   toolbar: {
     ...theme.mixins.toolbar,
@@ -31,11 +29,9 @@ const useStyles = theme => ({
     },
   },
   body: {
-    paddingBottom: theme.spacing(10)
+    minHeight: 'calc(100% - 140px)',
   },
   footer: {
-    position: 'absolute',
-    bottom: 0,
     backgroundColor: '#f2f2f2',
     padding: theme.spacing(2),
     borderTop: '1px solid #0000001f',

@@ -13,23 +13,14 @@ import Typography from '@material-ui/core/Typography'
 import SvgIcon from '@material-ui/core/SvgIcon'
 // Gatsby
 import { Link } from 'gatsby'
-// Local
-// import header from './header.png'
 
 const useStyles = theme => ({
   appBar: {
-    left: 0,
-    right: 0,
     '@media print': {
       position: 'absolute',
     },
     backgroundColor: 'rgba(18, 24, 47, 1)',
-  },
-  appBarShift: {
-    left: 250,
-    right: 0,
-    width: 'auto',
-    transition: theme.transitions.create('left', {
+    transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -74,8 +65,8 @@ const useStyles = theme => ({
 
 const MyAppBar = ({
   opacity = 1,
-  open,
   onMenuClick,
+  shift,
   site
 }) => {
   const appbarEl = useRef()
@@ -102,14 +93,14 @@ const MyAppBar = ({
   return (
     <AppBar
       ref={appbarEl}
-      css={[styles.appBar, open && styles.appBarShift]}
+      css={[styles.appBar, shift]}
     >
       <Toolbar>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={onMenuClick}
-          css={styles.icon}
+          css={[styles.icon]}
         >
           <MenuIcon />
         </IconButton>
