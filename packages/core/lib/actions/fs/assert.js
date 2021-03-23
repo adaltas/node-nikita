@@ -35,9 +35,6 @@ var errors, fs, handler, on_action, pad, schema, utils,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    config.target = metadata.argument;
-  }
   if (config.filter instanceof RegExp) {
     return config.filter = [config.filter];
   }
@@ -424,6 +421,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'target',
     schema: schema
   }
 };

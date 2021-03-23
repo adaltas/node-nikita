@@ -37,9 +37,6 @@ var handler, merge, on_action, schema,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
-  if (typeof metadata.argument === 'string') {
-    config.name = metadata.argument;
-  }
   if (typeof config.state === 'string') {
     return config.state = config.state.split(',');
   }
@@ -181,6 +178,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'name',
     schema: schema
   }
 };

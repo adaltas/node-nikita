@@ -25,7 +25,6 @@ console.info(`Stream was created: ${status}`)
         '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, tools: {find}}) ->
-        config.target = metadata.argument if metadata.argument?
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
         metadata.tmpdir = true if config.sudo or config.flags?[0] is 'a'
 
@@ -110,6 +109,7 @@ console.info(`Stream was created: ${status}`)
     module.exports =
       handler: handler
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

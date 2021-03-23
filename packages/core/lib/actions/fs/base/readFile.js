@@ -11,16 +11,9 @@
 // console.info(data)
 // ```
 
-// ## Hook
-var handler, on_action, schema;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -74,10 +67,8 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

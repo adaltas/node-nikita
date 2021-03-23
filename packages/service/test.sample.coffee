@@ -1,9 +1,14 @@
 
 module.exports =
   tags:
+    api: true
     service_install: false
     service_systemctl: false
     service_startup: false
+  service:
+    name: 'nginx-light'
+    srv_name: 'nginx'
+    chk_name: 'nginx'
   config: [
     label: 'local'
   ,

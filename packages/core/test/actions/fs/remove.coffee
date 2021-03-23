@@ -16,7 +16,7 @@ describe 'actions.fs.remove', ->
         target: "#{tmpdir}/a_file"
         content: ''
       @fs.remove
-        source: "#{tmpdir}/a_file"
+        target: "#{tmpdir}/a_file"
       .should.be.finally.containEql $status: true
 
   they 'accept a string', ({ssh}) ->

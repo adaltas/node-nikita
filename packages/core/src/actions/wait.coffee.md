@@ -15,11 +15,6 @@ throw Error 'TOO LATE!' if (Date.now() - before) > 5200
 throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.time ?= metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -42,7 +37,6 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'time'
         schema: schema

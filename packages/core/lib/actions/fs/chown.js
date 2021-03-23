@@ -31,16 +31,9 @@
 // find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 // ```
 
-// ## Hook
-var handler, on_action, schema;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -124,10 +117,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     schema: schema
   }
 };

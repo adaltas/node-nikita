@@ -32,7 +32,6 @@ var handler, on_action, schema, utils,
 
 on_action = function({config, metadata}) {
   if (!config.content) {
-    // config.command = metadata.argument if metadata.argument?
     return config.code != null ? config.code : config.code = [0];
   }
 };

@@ -36,9 +36,6 @@
 var errors, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    config.target = metadata.argument;
-  }
   if (config.parent == null) {
     config.parent = {};
   }
@@ -214,6 +211,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'target',
     schema: schema
   }
 };

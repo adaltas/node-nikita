@@ -36,11 +36,6 @@ for(const file of files){
 }
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -102,11 +97,10 @@ for(const file of files){
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
-        shy: true
+        argument_to_config: 'target'
         schema: schema
+        shy: true
 
 ## Dependencies
 

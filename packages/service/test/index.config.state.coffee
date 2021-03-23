@@ -3,11 +3,10 @@ nikita = require '@nikitajs/core/lib'
 {tags, config, service} = require './test'
 they = require('mocha-they')(config)
 
-return unless tags.service_systemctl
-
 describe 'service#config.state', ->
 
   describe 'schema', ->
+    return unless tags.api
 
     it 'fail on invalid state', ->
       nikita
@@ -38,8 +37,19 @@ describe 'service#config.state', ->
           '#/dependencies/state/anyOf/1/required config should have required property \'srv_name\';'
           '#/dependencies/state/anyOf/2/required config should have required property \'chk_name\'.'
         ].join ' '
+    
+    it 'split multiple states', ->
+      nikita
+      .service
+        name: service.name
+        srv_name: service.srv_name
+        state: 'started,stopped'
+      , ({config}) ->
+        config.state
+      .should.be.fulfilledWith ['started', 'stopped']
 
   describe 'action', ->
+    return unless tags.service_systemctl
     
     @timeout 30000
 

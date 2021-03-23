@@ -7,16 +7,9 @@
 // service will only be restarted if it leads to a change of status. Set the value 
 // to "['start', 'restart']" to ensure the service will be always started.
 
-// ## Hooks
-var handler, on_action, schema;
-
-on_action = function({config, metadata}) {
-  if (typeof metadata.argument === 'string') {
-    return config.name = metadata.argument;
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -130,10 +123,8 @@ fi`,
 // ## Export
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'name',
     schema: schema
   }
 };

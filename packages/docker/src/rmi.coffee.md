@@ -11,11 +11,6 @@ force options is set.
 * `status`   
   True if image was removed.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.image = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -74,8 +69,7 @@ force options is set.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'image'
         global: 'docker'
         schema: schema

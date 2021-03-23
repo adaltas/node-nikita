@@ -18,16 +18,9 @@
 // * `hash`   
 //   The hash of the file or directory identified by the "target" option.
 
-// ## Hook
-var crypto, errors, handler, on_action, schema, utils;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
+var crypto, errors, handler, schema, utils;
+
 schema = {
   type: 'object',
   properties: {
@@ -117,10 +110,8 @@ openssl dgst -${config.algo} ${config.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     shy: true,
     schema: schema
   }

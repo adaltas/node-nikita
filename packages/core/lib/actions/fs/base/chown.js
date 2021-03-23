@@ -7,9 +7,6 @@
 var handler, on_action, schema;
 
 on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    config.target = metadata.argument;
-  }
   if ((typeof config.uid === 'string') && /\d+/.test(config.uid)) {
     // String to integer coercion
     config.uid = parseInt(config.uid);
@@ -62,6 +59,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

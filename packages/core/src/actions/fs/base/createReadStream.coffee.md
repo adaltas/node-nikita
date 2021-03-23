@@ -47,7 +47,6 @@ console.info(Buffer.concat(buffers).toString())
         '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: ({config, metadata, tools: {find, walk}}) ->
-        config.target = metadata.argument if metadata.argument?
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
         metadata.tmpdir ?= true if config.sudo
 ## Schema
@@ -130,6 +129,7 @@ console.info(Buffer.concat(buffers).toString())
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         tmpdir: true

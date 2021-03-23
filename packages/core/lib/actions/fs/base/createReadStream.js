@@ -47,9 +47,6 @@ on_action = {
       metadata,
       tools: {find, walk}
     }) {
-    if (metadata.argument != null) {
-      config.target = metadata.argument;
-    }
     if (config.sudo == null) {
       config.sudo = (await find(function({
           metadata: {sudo}
@@ -191,6 +188,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     tmpdir: true,

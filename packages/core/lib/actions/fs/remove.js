@@ -9,7 +9,7 @@
 // * `err`   
 //   Error object if any.   
 // * `status`   
-//   Value is "true" if files were removed.   
+//   Value is `true` if files were removed.   
 
 // ## Implementation details
 
@@ -42,23 +42,9 @@
 // console.info(`Directories was removed: ${status}`)
 // ```
 
-// ## Hook
-var handler, on_action, schema, utils;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    // Validate parameters
-    config.target = metadata.argument;
-  }
-  if (config.target == null) {
-    config.target = config.source;
-  }
-  if (config.target == null) {
-    throw Error("Missing option: \"target\"");
-  }
-};
-
 // ## Schema
+var handler, schema, utils;
+
 schema = {
   type: 'object',
   properties: {
@@ -66,16 +52,13 @@ schema = {
       type: 'boolean',
       description: `Attempt to remove the file hierarchy rooted in the directory.`
     },
-    'source': {
-      type: 'string',
-      description: `Alias for "target".`
-    },
     'target': {
       type: 'string',
       description: `File, directory or glob (pattern matching based on wildcard
 characters).`
     }
-  }
+  },
+  required: ['target']
 };
 
 // ## Handler
@@ -122,10 +105,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     schema: schema
   }
 };

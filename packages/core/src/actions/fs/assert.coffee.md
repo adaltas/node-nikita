@@ -33,7 +33,6 @@ console.info(`File exists: ${status}`)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
       config.filter = [config.filter] if config.filter instanceof RegExp
 
 ## Schema
@@ -243,6 +242,7 @@ console.info(`File exists: ${status}`)
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'target'
         schema: schema
 
 ## Errors

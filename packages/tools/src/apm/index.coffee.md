@@ -3,12 +3,6 @@
 
 Install Atom packages with APM.
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-      config.name = [config.name] if typeof config.name is 'string'
-
 ## Schema
 
     schema =
@@ -64,7 +58,6 @@ Install Atom packages with APM.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

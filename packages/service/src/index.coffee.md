@@ -35,7 +35,6 @@ console.info(`Service status: ${$status}`)
 ## Hooks
 
     on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
       config.state = config.state.split(',') if typeof config.state is 'string'
 
 ## Schema
@@ -145,6 +144,7 @@ console.info(`Service status: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema
 
 ## Dependencies

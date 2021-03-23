@@ -39,7 +39,6 @@ assert(files[0].isFile(), true)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
       config.extended ?= config.withFileTypes if config.withFileTypes?
 
 ## Schema
@@ -119,6 +118,7 @@ assert(files[0].isFile(), true)
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

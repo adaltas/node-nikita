@@ -3,11 +3,6 @@
 
 Create a directory. Missing parent directories are created as required.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -51,9 +46,8 @@ Create a directory. Missing parent directories are created as required.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

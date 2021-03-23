@@ -29,7 +29,6 @@ console.info(`Stdout was asserted: ${status}`)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      # config.command = metadata.argument if metadata.argument?
       config.code ?= [0] unless config.content
 
 ## Schema

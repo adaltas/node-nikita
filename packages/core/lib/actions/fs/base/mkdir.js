@@ -3,16 +3,9 @@
 
 // Create a directory. Missing parent directories are created as required.
 
-// ## Hook
-var errors, handler, on_action, schema, utils;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
+var errors, handler, schema, utils;
+
 schema = {
   type: 'object',
   properties: {
@@ -56,10 +49,8 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

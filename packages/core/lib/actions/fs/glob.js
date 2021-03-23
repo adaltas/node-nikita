@@ -36,16 +36,9 @@
 // }
 // ```
 
-// ## Hook
-var Minimatch, getprefix, handler, on_action, schema, utils;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
+var Minimatch, getprefix, handler, schema, utils;
+
 schema = {
   type: 'object',
   properties: {
@@ -134,12 +127,10 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
-    shy: true,
-    schema: schema
+    argument_to_config: 'target',
+    schema: schema,
+    shy: true
   }
 };
 

@@ -7,11 +7,6 @@ The option "action" takes 3 possible values: "start", "stop" and "restart". A
 service will only be restarted if it leads to a change of status. Set the value 
 to "['start', 'restart']" to ensure the service will be always started.
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-
 ## Schema
 
     schema =
@@ -113,7 +108,6 @@ to "['start', 'restart']" to ensure the service will be always started.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

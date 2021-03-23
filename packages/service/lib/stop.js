@@ -19,16 +19,9 @@
 // console.info(`Service was stopped: ${$status}`)
 // ```
 
-// ## Hooks
-var handler, on_action, schema;
-
-on_action = function({config, metadata}) {
-  if (typeof metadata.argument === 'string') {
-    return config.name = metadata.argument;
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -93,10 +86,8 @@ fi`,
 // ## Export
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'name',
     schema: schema
   }
 };

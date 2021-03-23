@@ -3,11 +3,6 @@
 
 Read a link to retrieve its destination path.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -31,9 +26,8 @@ Read a link to retrieve its destination path.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

@@ -91,7 +91,6 @@ console.info(stdout)
             # placing a file in the host fs will not expose it inside of chroot
             config.arch_chroot_tmpdir = path.join '/opt', tmpdir
             path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
-        config.command = metadata.argument if metadata.argument?
 
 ## Schema
 
@@ -460,7 +459,7 @@ console.info(stdout)
       hooks:
         on_action: on_action
       metadata:
-        # tmpdir: true
+        argument_to_config: 'command'
         schema: schema
 
 ## Dependencies

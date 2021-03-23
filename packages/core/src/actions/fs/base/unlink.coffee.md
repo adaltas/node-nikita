@@ -3,11 +3,6 @@
 
 Remove a non-directory type file.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -43,9 +38,8 @@ Remove a non-directory type file.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

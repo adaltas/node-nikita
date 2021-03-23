@@ -41,8 +41,6 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Handler
 
     handler = ({metadata, config}) ->
-      config.name = metadata.argument if metadata.argument?
-      throw Error "Option 'name' is required" unless config.name
       @execute
         command: "groupdel #{config.name}"
         code_skipped: 6

@@ -86,21 +86,14 @@ on_action = {
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
     if (config.sudo || config.bash || (env_export && Object.keys(config.env).length)) {
-      if (metadata.tmpdir == null) {
-        metadata.tmpdir = true;
-      }
+      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
     } else if (config.arch_chroot_rootdir) {
-      if (metadata.tmpdir == null) {
-        metadata.tmpdir = function({os_tmpdir, tmpdir}) {
-          // Note, Arch mount `/tmp` with tmpfs in memory
-          // placing a file in the host fs will not expose it inside of chroot
-          config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
-          return path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
-        };
-      }
-    }
-    if (metadata.argument != null) {
-      return config.command = metadata.argument;
+      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = function({os_tmpdir, tmpdir}) {
+        // Note, Arch mount `/tmp` with tmpfs in memory
+        // placing a file in the host fs will not expose it inside of chroot
+        config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
+        return path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
+      };
     }
   }
 };
@@ -599,7 +592,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    // tmpdir: true
+    argument_to_config: 'command',
     schema: schema
   }
 };

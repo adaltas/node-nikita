@@ -18,11 +18,6 @@ used for comparaison.
 * `hash`   
   The hash of the file or directory identified by the "target" option.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -99,9 +94,8 @@ used for comparaison.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         shy: true
         schema: schema
 

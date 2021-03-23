@@ -6,7 +6,6 @@ Change ownership of a file.
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
       # String to integer coercion
       config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
       config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
@@ -53,6 +52,7 @@ Change ownership of a file.
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

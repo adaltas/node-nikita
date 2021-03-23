@@ -35,7 +35,6 @@ console.info(`Directory was created: ${status}`)
 ## Hook
 
     on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
       config.parent ?= {}
       config.parent = {} if config.parent is true
 
@@ -147,6 +146,7 @@ console.info(`Directory was created: ${status}`)
       hooks:
         on_action: on_action
       metadata:
+        argument_to_config: 'target'
         schema: schema
 
 ## Errors

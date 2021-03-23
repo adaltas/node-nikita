@@ -11,16 +11,9 @@
 // * `status`   
 //   True if image was removed.
 
-// ## Hook
-var handler, on_action, schema;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.image = metadata.argument;
-  }
-};
-
 // ## Schema
+var handler, schema;
+
 schema = {
   type: 'object',
   properties: {
@@ -76,10 +69,8 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'image',
     global: 'docker',
     schema: schema
   }

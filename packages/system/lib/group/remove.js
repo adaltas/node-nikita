@@ -42,12 +42,6 @@ schema = {
 
 // ## Handler
 handler = function({metadata, config}) {
-  if (metadata.argument != null) {
-    config.name = metadata.argument;
-  }
-  if (!config.name) {
-    throw Error("Option 'name' is required");
-  }
   return this.execute({
     command: `groupdel ${config.name}`,
     code_skipped: 6

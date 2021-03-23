@@ -19,7 +19,7 @@ module.exports = {
     'nikita:action': function(action) {
       var debug;
       debug = action.metadata.debug || false;
-      if (!(typeof debug === 'boolean' || debug === 'stdout' || debug instanceof stream.Writable)) {
+      if (!(typeof debug === 'boolean' || ['stdout', 'stderr'].includes(debug) || debug instanceof stream.Writable)) {
         throw utils.error('METADATA_DEBUG_INVALID_VALUE', ["configuration `debug` expect a boolean value,", "the string \"stdout\", or a Node.js Stream Writer,", `got ${JSON.stringify(debug)}.`]);
       }
       if (!debug) {
@@ -27,7 +27,7 @@ module.exports = {
         return;
       }
       debug = action.metadata.debug = {
-        ws: debug === 'stdout' ? action.metadata.debug.ws = process.stdout : debug instanceof stream.Writable ? action.metadata.debug.ws = debug : action.metadata.debug.ws = process.stderr,
+        ws: debug === 'stdout' ? action.metadata.debug.ws = process.stdout : debug === 'stderr' ? action.metadata.debug.ws = process.stderr : debug instanceof stream.Writable ? action.metadata.debug.ws = debug : action.metadata.debug.ws = process.stderr,
         listener: function(log) {
           var msg, name, namespace, position, ref, ref1;
           if (!(((ref = log.type) === 'stdout_stream' || ref === 'stderr_stream') && log.message === null)) {

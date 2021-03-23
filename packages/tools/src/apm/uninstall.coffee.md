@@ -3,12 +3,6 @@
 
 Remove one or more apm packages.
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-      config.name = [config.name] if typeof config.name is 'string'
-
 ## Schema
 
     schema =
@@ -41,7 +35,6 @@ Remove one or more apm packages.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

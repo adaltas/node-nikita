@@ -37,15 +37,6 @@
 // a large file with `file.download`, thus the activation of `retry` and `sleep`
 // confguration properties.
 
-// ## Hook
-var errors, handler, on_action, schema, schema_output, utils;
-
-on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    return config.target = metadata.argument;
-  }
-};
-
 // ## Schema
 
 // The parameters include a subset as the one of the Node.js native 
@@ -53,6 +44,8 @@ on_action = function({config, metadata}) {
 
 // TODO: we shall be able to reference this as a `$ref` once schema does apply to
 // returned values.
+var errors, handler, schema, schema_output, utils;
+
 schema_output = {
   type: 'object',
   properties: {
@@ -159,10 +152,8 @@ fi`,
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

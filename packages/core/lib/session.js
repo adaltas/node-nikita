@@ -144,14 +144,19 @@ session = function(args, options = {}) {
   });
   // Execute the action
   result = new Promise(async function(resolve, reject) {
-    var action_from_registry, k, on_result, output, pump, ref4, v;
-    // Hook intented to modify the current action being created
-    action = (await action.plugins.call({
-      name: 'nikita:normalize',
-      args: action,
-      hooks: ((ref4 = action.hooks) != null ? ref4.on_normalize : void 0) || action.on_normalize,
-      handler: normalize
-    }));
+    var action_from_registry, err, k, on_result, output, pump, ref4, v;
+    try {
+      // Hook intented to modify the current action being created
+      action = (await action.plugins.call({
+        name: 'nikita:normalize',
+        args: action,
+        hooks: ((ref4 = action.hooks) != null ? ref4.on_normalize : void 0) || action.on_normalize,
+        handler: normalize
+      }));
+    } catch (error1) {
+      err = error1;
+      reject(err);
+    }
     // Load action from registry
     if (action.metadata.namespace) {
       action_from_registry = (await action.registry.get(action.metadata.namespace));

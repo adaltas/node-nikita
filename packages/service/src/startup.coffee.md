@@ -18,11 +18,6 @@ const {$status} = await nikita.service.startup([{
 console.info(`Service was desactivated on startup: ${$status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-
 ## Schema
 
     schema =
@@ -161,7 +156,6 @@ console.info(`Service was desactivated on startup: ${$status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

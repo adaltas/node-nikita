@@ -107,10 +107,10 @@ module.exports = {
               }
               return ajv.addSchema(schema, name);
             },
-            validate: async function(action) {
+            validate: async function(action, schema) {
               var err, validate;
               try {
-                validate = (await ajv.compileAsync(action.metadata.schema));
+                validate = (await ajv.compileAsync(schema || action.metadata.schema));
               } catch (error) {
                 err = error;
                 if (!err.code) {

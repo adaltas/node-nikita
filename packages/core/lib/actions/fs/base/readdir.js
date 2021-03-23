@@ -40,9 +40,6 @@
 var Dirent, NIKITA_FS_READDIR_TARGET_ENOENT, constants, errors, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
-  if (metadata.argument != null) {
-    config.target = metadata.argument;
-  }
   if (config.withFileTypes != null) {
     return config.extended != null ? config.extended : config.extended = config.withFileTypes;
   }
@@ -153,6 +150,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

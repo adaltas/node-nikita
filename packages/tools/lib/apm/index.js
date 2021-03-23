@@ -3,20 +3,10 @@
 
 // Install Atom packages with APM.
 
-// ## Hooks
-var handler, on_action, schema,
+// ## Schema
+var handler, schema,
   indexOf = [].indexOf;
 
-on_action = function({config, metadata}) {
-  if (typeof metadata.argument === 'string') {
-    config.name = metadata.argument;
-  }
-  if (typeof config.name === 'string') {
-    return config.name = [config.name];
-  }
-};
-
-// ## Schema
 schema = {
   type: 'object',
   properties: {
@@ -98,10 +88,8 @@ handler = async function({
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: on_action
-  },
   metadata: {
+    argument_to_config: 'name',
     schema: schema
   }
 };

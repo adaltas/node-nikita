@@ -15,12 +15,6 @@ const {$status} = await nikita.tools.npm.uninstall({
 console.info(`Package was uninstalled: ${$status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-      config.name = [config.name] if typeof config.name is 'string'
-      
 ## Schema
 
     schema =
@@ -70,7 +64,6 @@ console.info(`Package was uninstalled: ${$status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema

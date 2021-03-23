@@ -26,9 +26,6 @@ on_action = {
       tools: {find}
     }) {
     var ref;
-    if (metadata.argument != null) {
-      config.target = metadata.argument;
-    }
     if (config.sudo == null) {
       config.sudo = (await find(function({
           metadata: {sudo}
@@ -158,6 +155,7 @@ cp '${config.target}' '${config.target_tmp}'`);
 module.exports = {
   handler: handler,
   metadata: {
+    argument_to_config: 'target',
     log: false,
     raw_output: true,
     schema: schema

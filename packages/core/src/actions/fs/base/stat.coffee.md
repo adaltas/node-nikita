@@ -37,11 +37,6 @@ The `stat` command return an empty stdout in some circounstances like uploading
 a large file with `file.download`, thus the activation of `retry` and `sleep`
 confguration properties.
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
 The parameters include a subset as the one of the Node.js native 
@@ -138,9 +133,8 @@ returned values.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

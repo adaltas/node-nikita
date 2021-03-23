@@ -7,6 +7,16 @@ they = require('mocha-they')(config)
 
 describe 'actions.fs.glob', ->
   return unless tags.posix
+  
+  they 'argument is converted to target', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @call ->
+        @fs.glob "#{tmpdir}", ({config}) ->
+          config.target
+        .should.be.fulfilledWith "#{tmpdir}"
 
   they 'should traverse a directory', ({ssh}) ->
     nikita

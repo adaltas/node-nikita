@@ -20,11 +20,6 @@ const {status} = await nikita.fs.chmod({
 console.info(`Permissions was modified: ${status}`)
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -64,9 +59,8 @@ console.info(`Permissions was modified: ${status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         schema: schema
 
 ## Dependencies

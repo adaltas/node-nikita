@@ -17,11 +17,6 @@ const {$status} = await nikita.service.remove([{
 console.info(`Package or service was removed: ${$status}`)
 ```
 
-## Hooks
-
-    on_action = ({config, metadata}) ->
-      config.name = metadata.argument if typeof metadata.argument is 'string'
-
 ## Schema
 
     schema =
@@ -110,9 +105,8 @@ console.info(`Package or service was removed: ${$status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'name'
         schema: schema
 
 ## Dependencies

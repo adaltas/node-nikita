@@ -22,11 +22,6 @@ const {exists} = await nikita.fs.base.exists({
 console.info(`File exists: ${exists}`)
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -59,9 +54,8 @@ console.info(`File exists: ${exists}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema

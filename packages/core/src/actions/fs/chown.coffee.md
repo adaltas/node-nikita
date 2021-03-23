@@ -31,11 +31,6 @@ find /var/tmp -uid 1000
 find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -94,7 +89,6 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         schema: schema

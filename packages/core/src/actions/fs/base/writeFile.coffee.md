@@ -18,11 +18,6 @@ const {status} = await nikita.fs.base.writeFile({
 console.info(`File was written: ${status}`)
 ```
 
-## Hook
-
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
-
 ## Schema
 
     schema =
@@ -96,9 +91,8 @@ console.info(`File was written: ${status}`)
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: on_action
       metadata:
+        argument_to_config: 'target'
         log: false
         raw_output: true
         schema: schema
