@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-nikita = require '../../src'
+{tags} = require '../../test'
+nikita = require '../../../src'
 
 describe 'plugins.argument', ->
   return unless tags.api
-  
+    
   it 'enrich config', ->
     nikita
       $argument_to_config: 'my_key'
