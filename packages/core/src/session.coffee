@@ -83,11 +83,13 @@ session = (args, options={}) ->
   # Execute the action
   result = new Promise (resolve, reject) ->
     # Hook intented to modify the current action being created
-    action = await action.plugins.call
-      name: 'nikita:normalize'
-      args: action
-      hooks: action.hooks?.on_normalize or action.on_normalize
-      handler: normalize
+    try
+      action = await action.plugins.call
+        name: 'nikita:normalize'
+        args: action
+        hooks: action.hooks?.on_normalize or action.on_normalize
+        handler: normalize
+    catch err then reject err
     # Load action from registry
     if action.metadata.namespace
       action_from_registry = await action.registry.get action.metadata.namespace
