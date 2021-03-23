@@ -16,7 +16,7 @@ module.exports =
   hooks:
     'nikita:action': (action) ->
       debug = action.metadata.debug or false
-      unless typeof debug is 'boolean' or debug is 'stdout' or debug instanceof stream.Writable
+      unless typeof debug is 'boolean' or ['stdout', 'stderr'].includes(debug) or debug instanceof stream.Writable
         throw utils.error 'METADATA_DEBUG_INVALID_VALUE', [
           "configuration `debug` expect a boolean value,"
           "the string \"stdout\", or a Node.js Stream Writer,"
@@ -29,6 +29,8 @@ module.exports =
         ws:
           if debug is 'stdout'
             action.metadata.debug.ws = process.stdout
+          else if debug is 'stderr'
+            action.metadata.debug.ws = process.stderr
           else if debug instanceof stream.Writable
             action.metadata.debug.ws = debug
           else
