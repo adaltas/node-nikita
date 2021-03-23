@@ -8,7 +8,7 @@ related:
 
 The `argument_to_config` metadata property maps an argument passed to the action to a [configuration property](/current/action/config) with the given name.
 
-Important, the argument must not be a function nor an object literal. Functions are already interpreted as handlers and object literals as action properties. When multiple argument are provided, only the last one is extracted.
+Important, the argument must not be a function nor an object literal. Functions are already interpreted as handlers and object literals as action properties. When multiple arguments are provided, only the last one is extracted.
 
 * Type: `string`
 
