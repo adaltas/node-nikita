@@ -39,7 +39,7 @@ console.info(`Container was copied: ${$status}`)
       type: 'object'
       properties:
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'source':
           type: 'string'
           description: '''

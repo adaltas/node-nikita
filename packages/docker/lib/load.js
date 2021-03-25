@@ -37,7 +37,7 @@ schema = {
 exist, not native to docker but implemented to get better performance.`
     },
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     },
     'input': {
       type: 'string',

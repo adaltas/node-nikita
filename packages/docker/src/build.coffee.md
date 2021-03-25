@@ -105,7 +105,7 @@ console.info(`Container was built: ${$status}`)
           Change the build working directory.
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'file':
           type: 'string'
           description: '''

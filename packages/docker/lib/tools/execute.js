@@ -4,59 +4,68 @@
 // Execute a docker command.
 
 // ## Schema
-var handler, i, len, property, ref, schema, utils;
+var handler, schema, utils;
 
 schema = {
   type: 'object',
-  properties: {
-    'boot2docker': {
-      $ref: '#/properties/docker/properties/boot2docker'
+  allOf: [
+    {
+      $ref: '#/definitions/docker'
     },
-    'compose': {
-      $ref: '#/properties/docker/properties/compose'
-    },
-    'machine': {
-      $ref: '#/properties/docker/properties/machine'
-    },
-    'bash': {
-      type: ['boolean', 'string'],
-      description: `Serialize the command into a file and execute it with bash.`
-    },
-    // 'rootdir':
-    //   type: 'string'
-    //   description: '''
-    //   Path to the mount point corresponding to the root directory, required
-    //   if the "arch_chroot" option is activated.
-    //   '''
-    'command': {
-      oneOf: [
-        {
-          type: 'string'
+    {
+      properties: {
+        'bash': {
+          type: ['boolean',
+    'string'],
+          description: `Serialize the command into a file and execute it with bash.`
         },
-        {
-          typeof: 'function'
-        }
-      ],
-      description: `String, Object or array; Command to execute. A value provided as a
+        'command': {
+          oneOf: [
+            {
+              type: 'string'
+            },
+            {
+              typeof: 'function'
+            }
+          ],
+          description: `String, Object or array; Command to execute. A value provided as a
 function is interpreted as an action and will be called by forwarding
 the config object. The result is the expected to be the command
 to execute.`
-    },
-    'cwd': {
-      type: 'string',
-      description: `Current working directory from where to execute the command.`
-    },
-    'code': {
-      type: 'array',
-      default: [0],
-      items: {
-        type: 'integer'
-      },
-      description: `Expected code(s) returned by the command, int or array of int, default
+        },
+        'cwd': {
+          type: 'string',
+          description: `Current working directory from where to execute the command.`
+        },
+        'code': {
+          type: 'array',
+          default: [0],
+          items: {
+            type: 'integer'
+          },
+          description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
+        },
+        'docker': {
+          $ref: '#/definitions/docker'
+        }
+      }
     },
+    {
+      $ref: 'module://@nikitajs/core/lib/actions/execute'
+    }
+  ],
+  required: ['command'],
+  // Note, we can't use additionalProperties properties with anyOf for now,
+  // from the doc: "There are some proposals to address this in the next
+  // version of the JSON schema specification."
+  // additionalProperties: false
+  definitions: {
     'docker': {
       type: 'object',
+      description: `Isolate all the parent configuration properties into a docker
+property, used when providing and cascading a docker configuration at
+a global scale.`,
       properties: {
         'boot2docker': {
           type: 'boolean',
@@ -72,49 +81,46 @@ to 0.`
           format: 'hostname',
           description: `Name of the docker-machine, required if using docker-machine.`
         }
-      },
-      description: `Isolate all the parent configuration properties into a docker
-property, used when providing and cascading a docker configuration at
-a global scale.`
+      }
     }
-  },
-  required: ['command'],
-  additionalProperties: false
+  }
 };
 
-ref = ['code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log', 'stdout', 'stdout_return', 'stdout_log', 'stderr', 'stderr_return', 'stderr_log', 'sudo', 'target', 'trap', 'uid'];
-for (i = 0, len = ref.length; i < len; i++) {
-  property = ref[i];
-  (schema.properties[`${property}`] = {
-    $ref: `module://@nikitajs/core/lib/actions/execute#/properties/${property}`
-  });
-}
+// (
+//   schema.properties["#{property}"] =
+//     $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
+// ) for property in [
+//   'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
+//   'stdout', 'stdout_return', 'stdout_log',
+//   'stderr', 'stderr_return', 'stderr_log',
+//   'sudo', 'target', 'trap', 'uid'
+// ]
 
 // ## Handler
 handler = async function({
     config,
     tools: {find}
   }) {
-  var bin, err, k, option, opts, ref1, v, value;
+  var bin, err, k, option, opts, ref, v, value;
   // Global config
   config.docker = (await find(function({
       config: {docker}
     }) {
     return docker;
   }));
-  ref1 = config.docker;
-  for (k in ref1) {
-    v = ref1[k];
+  ref = config.docker;
+  for (k in ref) {
+    v = ref[k];
     if (config[k] == null) {
       config[k] = v;
     }
   }
   opts = (function() {
-    var j, len1, ref2, results;
-    ref2 = utils[!config.compose ? 'options' : 'compose_options'];
+    var i, len, ref1, results;
+    ref1 = utils[!config.compose ? 'options' : 'compose_options'];
     results = [];
-    for (j = 0, len1 = ref2.length; j < len1; j++) {
-      option = ref2[j];
+    for (i = 0, len = ref1.length; i < len; i++) {
+      option = ref1[i];
       value = config[option];
       if (value == null) {
         continue;
@@ -171,10 +177,10 @@ $${bin} ${opts} ${config.command}`
 // ## Exports
 module.exports = {
   handler: handler,
-  hooks: {
-    on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
-  },
+  // hooks:
+  //   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
   metadata: {
+    argument_to_config: 'command',
     schema: schema
   }
 };

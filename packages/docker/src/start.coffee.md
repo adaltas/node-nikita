@@ -41,7 +41,7 @@ console.info(`Container was started: ${$status}`)
           Name/ID of the container, required.
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
       required: ['container']
 
 ## Handler

@@ -25,7 +25,7 @@ console.info(`Volume was created: ${$status}`)
       type: 'object'
       properties:
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'driver':
           type: 'string'
           description: '''

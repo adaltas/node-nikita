@@ -111,7 +111,7 @@ console.info(`Container was run: ${$status}`)
           Set custom DNS search domain(s).
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'entrypoint':
           type: 'string'
           description: '''

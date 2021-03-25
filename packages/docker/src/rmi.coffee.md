@@ -23,7 +23,7 @@ force options is set.
           Change the build working directory.
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'image':
           type: 'string'
           description: '''

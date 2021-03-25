@@ -30,7 +30,7 @@ console.info(`Container was stopped: ${$status}`)
           Name/ID of the container.
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'timeout':
           type: 'integer'
           description: '''

@@ -35,7 +35,7 @@ schema = {
       description: `Pull all tagged images in the repository.`
     },
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     },
     'image': {
       type: 'string',

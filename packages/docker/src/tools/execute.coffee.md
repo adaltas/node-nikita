@@ -7,52 +7,59 @@ Execute a docker command.
 
     schema =
       type: 'object'
-      properties:
-        'boot2docker':
-          $ref: '#/properties/docker/properties/boot2docker'
-        'compose':
-          $ref: '#/properties/docker/properties/compose'
-        'machine':
-          $ref: '#/properties/docker/properties/machine'
-        'bash':
-          type: ['boolean', 'string']
-          description: '''
-          Serialize the command into a file and execute it with bash.
-          '''
-        # 'rootdir':
-        #   type: 'string'
-        #   description: '''
-        #   Path to the mount point corresponding to the root directory, required
-        #   if the "arch_chroot" option is activated.
-        #   '''
-        'command':
-          oneOf: [
+      allOf: [
+        $ref: '#/definitions/docker'
+      ,
+        properties:
+          'bash':
+            type: ['boolean', 'string']
+            description: '''
+            Serialize the command into a file and execute it with bash.
+            '''
+          'command':
+            oneOf: [
+              type: 'string'
+            ,
+              typeof: 'function'
+            ]
+            description: '''
+            String, Object or array; Command to execute. A value provided as a
+            function is interpreted as an action and will be called by forwarding
+            the config object. The result is the expected to be the command
+            to execute.
+            '''
+          'cwd':
             type: 'string'
-          ,
-            typeof: 'function'
-          ]
-          description: '''
-          String, Object or array; Command to execute. A value provided as a
-          function is interpreted as an action and will be called by forwarding
-          the config object. The result is the expected to be the command
-          to execute.
-          '''
-        'cwd':
-          type: 'string'
-          description: '''
-          Current working directory from where to execute the command.
-          '''
-        'code':
-          type: 'array'
-          default: [0]
-          items:
-            type: 'integer'
-          description: '''
-          Expected code(s) returned by the command, int or array of int, default
-          to 0.
-          '''
+            description: '''
+            Current working directory from where to execute the command.
+            '''
+          'code':
+            type: 'array'
+            default: [0]
+            items:
+              type: 'integer'
+            description: '''
+            Expected code(s) returned by the command, int or array of int, default
+            to 0.
+            '''
+          'docker':
+            $ref: '#/definitions/docker'
+        ,
+          $ref: 'module://@nikitajs/core/lib/actions/execute'
+      ]
+      required: ['command']
+      # Note, we can't use additionalProperties properties with anyOf for now,
+      # from the doc: "There are some proposals to address this in the next
+      # version of the JSON schema specification."
+      # additionalProperties: false
+      definitions:
         'docker':
           type: 'object'
+          description: '''
+          Isolate all the parent configuration properties into a docker
+          property, used when providing and cascading a docker configuration at
+          a global scale.
+          '''
           properties:
             'boot2docker':
               type: 'boolean'
@@ -71,22 +78,15 @@ Execute a docker command.
               description: '''
               Name of the docker-machine, required if using docker-machine.
               '''
-          description: '''
-          Isolate all the parent configuration properties into a docker
-          property, used when providing and cascading a docker configuration at
-          a global scale.
-          '''
-      required: ['command']
-      additionalProperties: false
-    (
-      schema.properties["#{property}"] =
-        $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
-    ) for property in [
-      'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
-      'stdout', 'stdout_return', 'stdout_log',
-      'stderr', 'stderr_return', 'stderr_log',
-      'sudo', 'target', 'trap', 'uid'
-    ]
+    # (
+    #   schema.properties["#{property}"] =
+    #     $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
+    # ) for property in [
+    #   'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
+    #   'stdout', 'stdout_return', 'stdout_log',
+    #   'stderr', 'stderr_return', 'stderr_log',
+    #   'sudo', 'target', 'trap', 'uid'
+    # ]
 
 ## Handler
 
@@ -133,9 +133,10 @@ Execute a docker command.
 
     module.exports =
       handler: handler
-      hooks:
-        on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
+      # hooks:
+      #   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
       metadata:
+        argument_to_config: 'command'
         schema: schema
 
 ## Dependencies

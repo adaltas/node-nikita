@@ -26,7 +26,7 @@ schema = {
   type: 'object',
   properties: {
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     },
     'driver': {
       type: 'string',

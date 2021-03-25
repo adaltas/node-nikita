@@ -40,7 +40,7 @@ console.info(`Command was executed: ${$status}`)
           Name/ID of the container
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'gid':
           $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
         'service':

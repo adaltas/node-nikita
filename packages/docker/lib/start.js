@@ -40,7 +40,7 @@ schema = {
       description: `Name/ID of the container, required.`
     },
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     }
   },
   required: ['container']

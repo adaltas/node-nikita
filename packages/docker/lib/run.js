@@ -115,7 +115,7 @@ schema = {
       description: `Set custom DNS search domain(s).`
     },
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     },
     'entrypoint': {
       type: 'string',

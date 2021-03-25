@@ -28,6 +28,8 @@ native docker command.
           description: '''
           Change the build working directory.
           '''
+        'docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'image':
           type: 'string'
           description: '''
@@ -39,12 +41,6 @@ native docker command.
           description: '''
           Tag of the Docker image, default to latest.
           '''
-        'boot2docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
-        'compose':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
-        'machine':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
 
 ## Handler
 

@@ -16,7 +16,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
       type: 'object'
       properties:
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'registry':
           type: 'string'
           description: '''

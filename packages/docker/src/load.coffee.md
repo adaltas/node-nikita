@@ -37,7 +37,7 @@ console.info(`Image was loaded: ${$status}`);
           exist, not native to docker but implemented to get better performance.
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'input':
           type: 'string'
           description: '''

@@ -47,7 +47,7 @@ info.map( (container) =>
           Name/ID of the container (array of containers not yet implemented).
           '''
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
       required: ['container']
 
 ## Handler

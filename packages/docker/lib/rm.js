@@ -31,7 +31,7 @@ schema = {
       description: `Name/ID of the container.`
     },
     'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/docker'
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
     },
     'link': {
       type: 'boolean',

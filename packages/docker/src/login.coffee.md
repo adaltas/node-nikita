@@ -20,7 +20,7 @@ Register or log in to a Docker registry server.
       type: 'object'
       properties:
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'email':
           type: 'string'
           description: '''

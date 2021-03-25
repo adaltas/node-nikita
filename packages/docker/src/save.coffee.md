@@ -35,7 +35,7 @@ console.info(`Container was saved: ${$status}`)
       type: 'object'
       properties:
         'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/docker'
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
         'image':
           type: 'string'
           description: '''
