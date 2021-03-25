@@ -7,6 +7,16 @@ return unless tags.posix
 
 describe 'actions.fs.copy', ->
   
+  describe 'api', ->
+    
+    it 'parent `true` leads to `{}`', ->
+      nikita.fs.copy
+        source: "a_source"
+        target: "a_target"
+        parent: true
+      , ({config}) ->
+        config.parent.should.eql {}
+  
   describe 'options parent', ->
     
     they 'create parent directory', ({ssh}) ->

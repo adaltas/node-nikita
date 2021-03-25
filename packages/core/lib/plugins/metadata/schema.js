@@ -16,6 +16,7 @@ module.exports = {
   hooks: {
     'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/global'],
+      // '@nikitajs/core/lib/plugins/metadata/disabled'
       handler: async function(action, handler) {
         var err;
         if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {

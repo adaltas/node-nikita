@@ -42,7 +42,7 @@ describe 'plugins.schema', ->
   
   describe 'plugins', ->
     
-    it ' with `metadata.disabled` as `true`', ->
+    it 'with `metadata.disabled` as `true`', ->
       # No validation occured when disabled
       nikita
       .call
@@ -55,7 +55,7 @@ describe 'plugins.schema', ->
       , -> throw Error 'KO'
       .should.be.resolved()
         
-    it ' with `metadata.disabled` as `false`', ->
+    it 'with `metadata.disabled` as `false`', ->
       # Validation occured when not disabled
       nikita
       .call

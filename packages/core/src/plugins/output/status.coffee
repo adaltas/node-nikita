@@ -8,6 +8,10 @@ module.exports =
     '@nikitajs/core/src/plugins/history'
     '@nikitajs/core/src/plugins/metadata/raw'
   ]
+  recommand: [
+    # status is set to `false` when action is disabled
+    '@nikitajs/core/src/plugins/metadata/disabled'
+  ]
   hooks:
     # 'nikita:registry:normalize': (action) ->
     #   action.metadata ?= {}
@@ -48,6 +52,11 @@ module.exports =
     'nikita:result':
       before: '@nikitajs/core/src/plugins/history'
       handler: ({action, error, output}) ->
+        # Honors the disabled plugin, status is `false`
+        # when the action is disabled
+        if action.metadata.disabled
+          arguments[0].output = $status: false 
+          return
         inherit = (output) ->
           output ?= {}
           output.$status = action.children.some (child) ->

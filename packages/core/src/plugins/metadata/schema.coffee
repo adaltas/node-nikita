@@ -16,6 +16,7 @@ module.exports =
     'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/global'
+        # '@nikitajs/core/src/plugins/metadata/disabled'
       ]
       handler: (action, handler) ->
         if action.metadata.schema? and not is_object_literal action.metadata.schema

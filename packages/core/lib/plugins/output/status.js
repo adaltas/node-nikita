@@ -8,6 +8,8 @@ utils = require('../../utils');
 module.exports = {
   name: '@nikitajs/core/lib/plugins/output/status',
   require: ['@nikitajs/core/lib/plugins/history', '@nikitajs/core/lib/plugins/metadata/raw'],
+  // status is set to `false` when action is disabled
+  recommand: ['@nikitajs/core/lib/plugins/metadata/disabled'],
   hooks: {
     // 'nikita:registry:normalize': (action) ->
     //   action.metadata ?= {}
@@ -67,6 +69,14 @@ module.exports = {
       before: '@nikitajs/core/lib/plugins/history',
       handler: function({action, error, output}) {
         var inherit;
+        // Honors the disabled plugin, status is `false`
+        // when the action is disabled
+        if (action.metadata.disabled) {
+          arguments[0].output = {
+            $status: false
+          };
+          return;
+        }
         inherit = function(output) {
           if (output == null) {
             output = {};
