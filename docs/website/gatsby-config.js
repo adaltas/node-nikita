@@ -70,6 +70,9 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: 'nikita-pages'
+    },
+    {
       resolve: `gatsby-plugin-material-ui`,
       options: {
         stylesProvider: {

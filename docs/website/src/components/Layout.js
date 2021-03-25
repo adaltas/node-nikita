@@ -61,10 +61,10 @@ const Layout = ({
   }
   // Create menu
   const menu = { children: {} }
-  data.menu.edges.forEach(edge => {
+  data.menu.edges.forEach( edge => {
     // Filter items for current page
-    if((page.slug || '/current/').indexOf(edge.node.fields.slug.replace(/[a-z0-9-_]*\/$/, '')) === -1) return
-    const slugs = edge.node.fields.slug.split('/').filter(part => part)
+    if((page.slug || '/current/').indexOf(edge.node.slug.replace(/[a-z0-9-_]*\/$/, '')) === -1) return
+    const slugs = edge.node.slug.split('/').filter(part => part)
     let parentMenu = menu
     slugs.forEach(slug => {
       if (!parentMenu.children[slug])
@@ -75,7 +75,7 @@ const Layout = ({
       id: slugs.join('/'),
       navtitle: edge.node.frontmatter.navtitle,
       title: edge.node.frontmatter.title,
-      slug: edge.node.fields.slug,
+      slug: edge.node.slug,
       sort: edge.node.frontmatter.sort || 99,
     }
   })
@@ -147,25 +147,22 @@ const WrappedLayout = props => (
             }
           }
         }
-        menu: allMdx(
+        menu: allNikitaPages(
           filter: {
             frontmatter: { disabled: { eq: false } }
-            fields: { slug: { regex: "/^/.+/" } }
+            slug: { regex: "/^/.+/" }
           }
           sort: { order: ASC, fields: [frontmatter___sort, slug] }
         ) {
           edges {
             node {
               id
-              excerpt(pruneLength: 250)
               frontmatter {
                 navtitle
                 title
                 sort
               }
-              fields {
-                slug
-              }
+              slug
             }
           }
         }
