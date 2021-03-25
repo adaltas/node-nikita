@@ -81,7 +81,7 @@ handler = async function({
   })()));
   await this.fs.remove({
     $if: config.clean,
-    source: config.source,
+    target: config.source,
     recursive: true
   });
   return output;

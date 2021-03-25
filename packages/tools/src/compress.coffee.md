@@ -71,7 +71,7 @@ console.info(`File was compressed: ${$status}`)
         when 'zip' then "(cd #{dir} && zip -r #{config.target} #{name} && cd -)"
       await @fs.remove
         $if: config.clean
-        source: config.source
+        target: config.source
         recursive: true
       output
 
