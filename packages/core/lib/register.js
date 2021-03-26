@@ -101,18 +101,6 @@ module.exports = {
     'close': '@nikitajs/core/lib/actions/ssh/close',
     'root': '@nikitajs/core/lib/actions/ssh/root'
   },
-  // 'status':
-  //   metadata: raw: true
-  //   handler: ({parent, args: [position]}) ->
-  //     if typeof position is 'number'
-  //       parent.children.slice(position)[0].output.status
-  //     else unless position?
-  //       parent.children.some (child) -> child.output.status
-  //     else
-  //       throw utils.error 'NIKITA_STATUS_POSITION_INVALID', [
-  //         'argument position must be an integer if defined,'
-  //         "get #{JSON.stringify position}"
-  //       ]
   'wait': '@nikitajs/core/lib/actions/wait'
 };
 
