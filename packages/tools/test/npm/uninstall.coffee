@@ -89,16 +89,13 @@ describe 'tools.npm.uninstall', ->
         await @tools.npm
           name: 'csv-parse'
           global: true
-          # sudo: true
         {$status} = await @tools.npm.uninstall
           name: 'csv-parse'
           global: true
-          # sudo: true
         $status.should.be.true()
         {$status} = await @tools.npm.uninstall
           name: 'csv-parse'
           global: true
-          # sudo: true
         $status.should.be.false()
 
     they 'uninstall multiple packages', ({ssh}) ->

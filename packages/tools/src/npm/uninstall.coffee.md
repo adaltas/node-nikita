@@ -57,7 +57,6 @@ console.info(`Package was uninstalled: ${$status}`)
       await @execute
         command: "npm uninstall #{global} #{uninstall.join ' '}"
         cwd: config.cwd
-        sudo: config.sudo
       log message: "NPM uninstalled packages: #{uninstall.join ', '}"
 
 ## Export
