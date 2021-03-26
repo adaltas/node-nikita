@@ -42,32 +42,26 @@ validate = function(action, args) {
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools/walk',
   hooks: {
-    'nikita:normalize': function(action, handler) {
-      return async function() {
-        // Handler execution
-        action = (await handler.apply(null, arguments));
-        // Register function
-        if (action.tools == null) {
-          action.tools = {};
-        }
-        action.tools.walk = async function() {
-          var walker;
-          [action, walker] = validate(action, arguments);
-          return (await walk(action, walker));
-        };
-        // Register action
-        action.registry.register(['tools', 'walk'], {
-          metadata: {
-            raw: true
-          },
-          handler: async function(action) {
-            var walker;
-            [action, walker] = validate(action, action.args);
-            return (await walk(action.parent, walker));
-          }
-        });
-        return action;
+    'nikita:normalize': function(action) {
+      if (action.tools == null) {
+        action.tools = {};
+      }
+      action.tools.walk = async function() {
+        var walker;
+        [action, walker] = validate(action, arguments);
+        return (await walk(action, walker));
       };
+      // Register action
+      return action.registry.register(['tools', 'walk'], {
+        metadata: {
+          raw: true
+        },
+        handler: async function(action) {
+          var walker;
+          [action, walker] = validate(action, action.args);
+          return (await walk(action.parent, walker));
+        }
+      });
     }
   }
 };

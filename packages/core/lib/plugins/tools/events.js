@@ -6,17 +6,11 @@ var EventEmitter;
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools/events',
   hooks: {
-    'nikita:normalize': function(action, handler) {
-      return async function() {
-        // Handler execution
-        action = (await handler.apply(null, arguments));
-        // Register function
-        if (action.tools == null) {
-          action.tools = {};
-        }
-        action.tools.events = action.parent ? action.parent.tools.events : action.tools.events = new EventEmitter();
-        return action;
-      };
+    'nikita:normalize': function(action) {
+      if (action.tools == null) {
+        action.tools = {};
+      }
+      return action.tools.events = action.parent ? action.parent.tools.events : action.tools.events = new EventEmitter();
     },
     'nikita:action': function(action) {
       return action.tools.events.emit('nikita:action:start', {

@@ -14,55 +14,26 @@ module.exports = {
     // 'nikita:registry:normalize': (action) ->
     //   action.metadata ?= {}
     //   action.metadata.shy ?= false
-    'nikita:normalize': function(action, handler) {
-      // Do not default shy to false or metadata from the registry will be overwritten
-      // Todo: create a test to illutrate it
-      // action.metadata.shy ?= false
-      // Register action
-      action.registry.register(['$status'], {
-        metadata: {
-          raw: true
-        },
-        handler: function({
-            parent,
-            args: [position]
-          }) {
-          if (typeof position === 'number') {
-            return parent.children.slice(position)[0].output.$status;
-          } else if (position == null) {
-            return parent.children.some(function(child) {
-              return child.output.$status;
-            });
-          } else {
-            throw utils.error('NIKITA_STATUS_POSITION_INVALID', ['argument position must be an integer if defined,', `get ${JSON.stringify(position)}`]);
+    'nikita:normalize': function(action) {
+      if (action.tools == null) {
+        action.tools = {};
+      }
+      return action.tools.status = function(index) {
+        var i, l, sibling;
+        if (arguments.length === 0) {
+          return action.children.some(function(sibling) {
+            var ref;
+            return !sibling.metadata.shy && ((ref = sibling.output) != null ? ref.$status : void 0) === true;
+          });
+        } else {
+          l = action.children.length;
+          i = index < 0 ? l + index : index;
+          sibling = action.children[i];
+          if (!sibling) {
+            throw Error(`Invalid Index ${index}`);
           }
+          return sibling.output.$status;
         }
-      });
-      return async function() {
-        // Handler execution
-        action = (await handler.apply(null, arguments));
-        // Register `status` operation
-        if (action.tools == null) {
-          action.tools = {};
-        }
-        action.tools.status = function(index) {
-          var i, l, sibling;
-          if (arguments.length === 0) {
-            return action.children.some(function(sibling) {
-              var ref;
-              return !sibling.metadata.shy && ((ref = sibling.output) != null ? ref.$status : void 0) === true;
-            });
-          } else {
-            l = action.children.length;
-            i = index < 0 ? l + index : index;
-            sibling = action.children[i];
-            if (!sibling) {
-              throw Error(`Invalid Index ${index}`);
-            }
-            return sibling.output.$status;
-          }
-        };
-        return action;
       };
     },
     'nikita:result': {

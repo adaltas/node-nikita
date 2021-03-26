@@ -16,39 +16,18 @@ module.exports =
     # 'nikita:registry:normalize': (action) ->
     #   action.metadata ?= {}
     #   action.metadata.shy ?= false
-    'nikita:normalize': (action, handler) ->
-      # Do not default shy to false or metadata from the registry will be overwritten
-      # Todo: create a test to illutrate it
-      # action.metadata.shy ?= false
-      # Register action
-      action.registry.register ['$status'],
-        metadata: raw: true
-        handler: ({parent, args: [position]}) ->
-          if typeof position is 'number'
-            parent.children.slice(position)[0].output.$status
-          else unless position?
-            parent.children.some (child) -> child.output.$status
-          else
-            throw utils.error 'NIKITA_STATUS_POSITION_INVALID', [
-              'argument position must be an integer if defined,'
-              "get #{JSON.stringify position}"
-            ]
-      ->
-        # Handler execution
-        action = await handler.apply null, arguments
-        # Register `status` operation
-        action.tools ?= {}
-        action.tools.status = (index) ->
-          if arguments.length is 0
-            action.children.some (sibling) ->
-              not sibling.metadata.shy and sibling.output?.$status is true
-          else
-            l = action.children.length
-            i =  if index < 0 then (l + index) else index
-            sibling = action.children[i]
-            throw Error "Invalid Index #{index}" unless sibling
-            sibling.output.$status
-        action
+    'nikita:normalize': (action) ->
+      action.tools ?= {}
+      action.tools.status = (index) ->
+        if arguments.length is 0
+          action.children.some (sibling) ->
+            not sibling.metadata.shy and sibling.output?.$status is true
+        else
+          l = action.children.length
+          i =  if index < 0 then (l + index) else index
+          sibling = action.children[i]
+          throw Error "Invalid Index #{index}" unless sibling
+          sibling.output.$status
     'nikita:result':
       before: '@nikitajs/core/src/plugins/history'
       handler: ({action, error, output}) ->

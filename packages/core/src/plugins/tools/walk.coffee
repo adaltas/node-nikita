@@ -32,19 +32,14 @@ validate = (action, args) ->
 module.exports =
   name: '@nikitajs/core/src/plugins/tools/walk'
   hooks:
-    'nikita:normalize': (action, handler) ->
-      ->
-        # Handler execution
-        action = await handler.apply null, arguments
-        # Register function
-        action.tools ?= {}
-        action.tools.walk = ->
-          [action, walker] = validate action, arguments
-          await walk action, walker
-        # Register action
-        action.registry.register ['tools', 'walk'],
-          metadata: raw: true
-          handler: (action) ->
-            [action, walker] = validate action, action.args
-            await walk action.parent, walker
-        action
+    'nikita:normalize': (action) ->
+      action.tools ?= {}
+      action.tools.walk = ->
+        [action, walker] = validate action, arguments
+        await walk action, walker
+      # Register action
+      action.registry.register ['tools', 'walk'],
+        metadata: raw: true
+        handler: (action) ->
+          [action, walker] = validate action, action.args
+          await walk action.parent, walker

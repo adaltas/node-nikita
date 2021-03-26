@@ -4,16 +4,11 @@
 module.exports =
   name: '@nikitajs/core/src/plugins/tools/events'
   hooks:
-    'nikita:normalize': (action, handler) ->
-      ->
-        # Handler execution
-        action = await handler.apply null, arguments
-        # Register function
-        action.tools ?= {}
-        action.tools.events = if action.parent
-        then action.parent.tools.events
-        else action.tools.events = new EventEmitter()
-        action
+    'nikita:normalize': (action) ->
+      action.tools ?= {}
+      action.tools.events = if action.parent
+      then action.parent.tools.events
+      else action.tools.events = new EventEmitter()
     'nikita:action': (action) ->
       action.tools.events.emit 'nikita:action:start', action: action
     'nikita:result':
