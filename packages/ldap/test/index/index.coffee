@@ -1,8 +1,8 @@
 
 nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require './test'
+{tags, config, ldap} = require '../test'
 they = require('mocha-they')(config)
-utils = require '../src/utils'
+utils = require '../../src/utils'
 
 return unless tags.ldap_index
 
