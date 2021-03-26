@@ -94,7 +94,7 @@ Reload the service daemon provider depending on the os.
       await @execute
         command: 'systemctl daemon-reload;systemctl reset-failed'
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -271,7 +271,7 @@ ${[
   return output;
 };
 
-// # Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

@@ -61,6 +61,8 @@ require('nikita')
           Path to the group definition file, default to "/etc/group".
           '''
 
+## Handler
+
     handler = ({config, metadata, state, tools: {log}}) ->
       config.gid = parseInt config.gid, 10 if typeof config.gid is 'string' and /\d+/.test config.gid
       # Parse the groups output

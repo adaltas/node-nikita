@@ -40,7 +40,7 @@ console.info(`Container was started: ${$status}`)
         """
         code_skipped: 42
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

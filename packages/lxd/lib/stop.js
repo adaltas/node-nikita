@@ -60,7 +60,7 @@ lxc stop ${config.container}`,
   return {};
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

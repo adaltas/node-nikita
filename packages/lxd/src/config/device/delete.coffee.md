@@ -1,5 +1,5 @@
 
-# `nikita.lxc.config.delete`
+# `nikita.lxc.config.device.delete`
 
 Delete a device from a container
 
@@ -47,7 +47,7 @@ console.info(`Device was removed: ${$status}`)
         ].join ' '
       $status: $status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

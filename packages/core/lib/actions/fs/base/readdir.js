@@ -36,7 +36,7 @@
 // assert(files[0].isFile(), true)
 // ```
 
-// ## Hook
+// ## Hooks
 var Dirent, NIKITA_FS_READDIR_TARGET_ENOENT, constants, errors, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {

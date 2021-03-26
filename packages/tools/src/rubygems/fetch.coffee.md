@@ -84,7 +84,7 @@ couldn't find any suitable parser on NPM.
       filename: config.target
       filepath: path.resolve config.cwd, config.target
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

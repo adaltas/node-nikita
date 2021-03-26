@@ -204,7 +204,7 @@ console.info(`Package installed: ${$status}`)
         state['nikita:execute:outdated'] = config.outdated
         $status: true
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

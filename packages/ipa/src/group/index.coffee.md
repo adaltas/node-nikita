@@ -71,7 +71,7 @@ console.info(`Group was updated: ${$status}`)
         output.result = result
       $status: $status, result: output.result
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

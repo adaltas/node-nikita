@@ -104,7 +104,7 @@ to "['start', 'restart']" to ensure the service will be always started.
         throw Error "Service Not Stopped: #{config.srv_name}" if config.stopped and $status
         throw Error "Service Stopped: #{config.srv_name}" if not config.stopped and not $status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -25,7 +25,7 @@ require('nikita')
 });
 ```
 
-## config
+## Hooks
 
     on_action = ({config}) ->
       if typeof config.modules is 'string'

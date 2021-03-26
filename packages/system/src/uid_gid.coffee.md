@@ -1,5 +1,5 @@
 
-# `nikita.uid_gid`
+# `nikita.system.uid_gid`
 
 Normalize the "uid" and "gid" properties. A username defined by the "uid" option will
 be converted to a Unix user ID and a group defined by the "gid" option will

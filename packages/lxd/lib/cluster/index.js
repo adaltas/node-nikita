@@ -387,7 +387,7 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
   }
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

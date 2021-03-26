@@ -150,7 +150,7 @@ console.info(`File was pushed: ${$status}`)
           container: config.container
           command: "chown #{config.uid} #{config.target}"
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

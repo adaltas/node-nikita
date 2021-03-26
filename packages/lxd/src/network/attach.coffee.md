@@ -51,7 +51,7 @@ console.info(`Network was attached: ${$status}`)
         """
         code_skipped: 42
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

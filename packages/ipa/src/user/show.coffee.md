@@ -79,7 +79,7 @@ console.info(`User is ${result.uid[0]}`)
       else
         result: data.result.result
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

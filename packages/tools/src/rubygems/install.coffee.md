@@ -158,7 +158,7 @@ console.info(`Gem installed: ${$status}`)
           code: [0, 2]
           bash: config.bash
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

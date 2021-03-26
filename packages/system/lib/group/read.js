@@ -62,6 +62,7 @@ schema = {
   }
 };
 
+// ## Handler
 handler = async function({
     config,
     metadata,

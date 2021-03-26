@@ -152,7 +152,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
           then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
           else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

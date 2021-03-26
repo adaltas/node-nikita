@@ -1,5 +1,5 @@
 
-# `nikita.db.schema.exists`
+# `nikita.db.schema.list`
 
 List the PostgreSQL schemas of a database.
 

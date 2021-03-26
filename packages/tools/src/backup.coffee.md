@@ -92,7 +92,7 @@ console.info(`File was backed up: ${$status}`)
           '''
       required: ['name', 'target']
 
-# Handler
+## Handler
 
     handler = ({config, tools: {log, path}}) ->
       filename = dayjs()
@@ -131,7 +131,7 @@ console.info(`File was backed up: ${$status}`)
       filename: filename
       target: target
           
-## Handler
+## Exports
 
     module.exports =
       handler: handler

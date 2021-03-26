@@ -3,7 +3,7 @@
 
 Change ownership of a file.
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       # String to integer coercion

@@ -1,5 +1,5 @@
 
-# `nikita.system.runing`
+# `nikita.system.running`
 
 Check if a process is running.
 

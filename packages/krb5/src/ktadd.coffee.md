@@ -110,7 +110,7 @@ console.info(`keytab was created or updated: ${$status}`)
           target: config.keytab
           mode: config.mode
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

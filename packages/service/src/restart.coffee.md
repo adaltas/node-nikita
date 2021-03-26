@@ -40,7 +40,7 @@ console.info(`Service was restarted: ${$status}`)
       state["nikita.service.#{config.name}.status"] = 'started' if status
       status: status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

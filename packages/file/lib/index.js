@@ -147,7 +147,7 @@
 // // username: you\n\nfriends: me
 // ```
 
-// ## Hook
+// ## Hooks
 var handler, on_action, path, schema, utils;
 
 on_action = function({config}) {

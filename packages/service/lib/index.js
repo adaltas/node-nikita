@@ -171,7 +171,7 @@ handler = async function({config, parent, state}) {
   }
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   hooks: {

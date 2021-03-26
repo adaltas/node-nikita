@@ -80,15 +80,14 @@ handler = async function({
   }
   await this.execute({
     command: `npm uninstall ${global} ${uninstall.join(' ')}`,
-    cwd: config.cwd,
-    sudo: config.sudo
+    cwd: config.cwd
   });
   return log({
     message: `NPM uninstalled packages: ${uninstall.join(', ')}`
   });
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

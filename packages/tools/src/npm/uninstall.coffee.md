@@ -59,7 +59,7 @@ console.info(`Package was uninstalled: ${$status}`)
         cwd: config.cwd
       log message: "NPM uninstalled packages: #{uninstall.join ', '}"
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -147,7 +147,7 @@ console.info(data)
 // username: you\n\nfriends: me
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config}) ->
       # Validate parameters

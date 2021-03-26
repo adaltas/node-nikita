@@ -32,7 +32,7 @@ const {status} = await nikita.fs.mkdir({
 console.info(`Directory was created: ${status}`)
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       config.parent ?= {}

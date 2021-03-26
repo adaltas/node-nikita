@@ -1,3 +1,4 @@
+
 # `nikita.lxc.cluster.stop`
 
 Stop a cluster of LXD instances.
@@ -43,7 +44,7 @@ prestop: path/to/action
           wait: config.wait
       {}
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

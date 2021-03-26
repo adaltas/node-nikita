@@ -65,7 +65,7 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
         'this action requires prlimit installed on the host'
       ]
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

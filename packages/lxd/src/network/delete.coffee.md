@@ -45,7 +45,7 @@ console.info(`Network was deleted: ${$status}`)
         """
         code_skipped: 42
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

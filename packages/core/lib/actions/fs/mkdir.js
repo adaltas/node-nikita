@@ -32,7 +32,7 @@
 // console.info(`Directory was created: ${status}`)
 // ```
 
-// ## Hook
+// ## Hooks
 var errors, handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {

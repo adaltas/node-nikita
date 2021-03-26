@@ -4,7 +4,7 @@ related:
 - /api/output/status
 ---
 
-## Idempotence and status
+# Idempotence and status
 
 In the context of software deployment, idempotence means that an action with the same parameters can be executed multiple times without changing the final state of the system. It is a fundamental concept and every action in Nikita follows this principle.
 

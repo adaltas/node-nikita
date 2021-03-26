@@ -117,7 +117,7 @@ handler = async function({
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

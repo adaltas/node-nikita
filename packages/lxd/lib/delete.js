@@ -39,7 +39,7 @@ ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' 
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

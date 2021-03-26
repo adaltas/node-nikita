@@ -301,7 +301,7 @@ exit $code`,
   }
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

@@ -30,7 +30,7 @@
   // console.info(`File exists: ${status}`)
   // ```
 
-// ## Hook
+// ## Hooks
 var errors, fs, handler, on_action, pad, schema, utils,
   indexOf = [].indexOf;
 

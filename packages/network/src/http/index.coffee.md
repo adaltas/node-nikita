@@ -238,7 +238,7 @@ try {
         when 'json' then output.data = JSON.parse output.body
       output
 
-# Export
+## Exports
 
     module.exports =
       handler: handler

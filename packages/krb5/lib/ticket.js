@@ -65,7 +65,7 @@ ${utils.krb5.kinit(config)}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

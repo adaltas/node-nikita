@@ -50,7 +50,7 @@ console.info(`Group was deleted: ${$status}`)
           params: [[config.cn], {}]
           id: 0
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -47,7 +47,7 @@ console.info(`Group exists: ${$status}`)
         $status: false, exists: false
       
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

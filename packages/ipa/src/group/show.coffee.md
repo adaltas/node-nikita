@@ -51,7 +51,7 @@ console.info(`Group is ${result.cn[0]}`)
       else
         result: data.result.result
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

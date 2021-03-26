@@ -1,5 +1,5 @@
 
-# `nikita.system.info.system`
+# `nikita.system.info.os`
 
 Expose system information. Internally, it uses the command `uname` to retrieve
 information.

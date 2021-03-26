@@ -90,7 +90,7 @@ database](https://www.iana.org/time-zones), such as "Asia/Shanghai",
   required: ['name', 'target']
 };
 
-// # Handler
+// ## Handler
 handler = async function({
     config,
     tools: {log, path}
@@ -151,7 +151,7 @@ handler = async function({
 };
 
 
-// ## Handler
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

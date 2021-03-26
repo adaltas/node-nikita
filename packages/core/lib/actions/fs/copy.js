@@ -32,7 +32,7 @@
 // console.info(`File was copied: ${$status}`)
 // ```
 
-// ## Hook
+// ## Hooks
 var handler, on_action, schema, utils;
 
 on_action = function({config, metadata}) {
@@ -320,6 +320,7 @@ handler = async function({
   return {};
 };
 
+// ## Exports
 module.exports = {
   handler: handler,
   hooks: {

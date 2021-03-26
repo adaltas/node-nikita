@@ -32,7 +32,7 @@ const {$status} = await nikita.fs.copy({
 console.info(`File was copied: ${$status}`)
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       config.parent ?= {}
@@ -204,6 +204,8 @@ console.info(`File was copied: ${$status}`)
         stats: target_stats
         mode: config.mode
       {}
+
+## Exports
 
     module.exports =
       handler: handler

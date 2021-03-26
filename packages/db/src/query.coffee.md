@@ -1,7 +1,7 @@
 
-# `nikita.db.user.query`
+# `nikita.db.query`
 
-Check if a user exists in the database. 
+Make requests to a database.
 
 ## Hooks
 

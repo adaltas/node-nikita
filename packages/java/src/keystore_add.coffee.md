@@ -277,7 +277,7 @@ default location of the Oracle JDK installation.
           target: config.keystore
           mode: config.mode
 
-## Export
+## Exports
 
     module.exports =
       handler: handler
