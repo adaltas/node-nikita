@@ -71,8 +71,10 @@ create = function({chain, on_register, parent, plugins} = {}) {
 
   ## Get
 
-  Retrieve an action by name. It will also search the action in the parent
-  registries.
+  Retrieve an action by name or list all actions if the namespace is not provided.
+  It will also search the action in the parent registries.
+
+  The signature is `get([namespace][, options])`.
 
   Options include:
 
@@ -119,7 +121,11 @@ create = function({chain, on_register, parent, plugins} = {}) {
           return results;
         };
         walk(store, []);
-        return actions;
+        if (!parent) {
+          return actions;
+        } else {
+          return [...((await parent.get(options))), ...actions];
+        }
       } else {
         // Tree result
         walk = function(store, keys) {
@@ -141,7 +147,12 @@ create = function({chain, on_register, parent, plugins} = {}) {
           }
           return res;
         };
-        return walk(store, []);
+        actions = walk(store, []);
+        if (!parent) {
+          return actions;
+        } else {
+          return merge((await parent.get(options)), actions);
+        }
       }
     }
     if (typeof namespace === 'string') {

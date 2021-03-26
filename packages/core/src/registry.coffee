@@ -62,8 +62,10 @@ Options include:
 
 ## Get
 
-Retrieve an action by name. It will also search the action in the parent
-registries.
+Retrieve an action by name or list all actions if the namespace is not provided.
+It will also search the action in the parent registries.
+
+The signature is `get([namespace][, options])`.
 
 Options include:
 
@@ -96,7 +98,9 @@ Options include:
             else
               walk v, [keys..., k]
         walk store, []
-        return actions
+        return unless parent
+        then actions
+        else [...(await parent.get(options)), ...actions]
       # Tree result
       else
         walk = (store, keys) ->
@@ -109,7 +113,10 @@ Options include:
               v = walk v, [keys..., k]
               res[k] = v unless Object.values(v).length is 0
           res
-        return walk store, []
+        actions = walk store, []
+        return unless parent
+        then actions
+        else merge await parent.get(options), actions
     # Return one action
     namespace = [namespace] if typeof namespace is 'string'
     action = null

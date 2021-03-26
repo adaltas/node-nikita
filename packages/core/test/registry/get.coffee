@@ -17,13 +17,13 @@ describe 'registry.get', ->
           actions.get
         ).should.eql [ 'first', 'second' ]
 
-    it 'get all with flatten config', ->
+    it 'with `flatten` config', ->
       reg = registry.create()
       reg.register ['my', 'function'], handler: (->)
       actions = await reg.get flatten: true
       actions.some( (action) -> action.action.join('.') is 'my.function').should.be.true()
 
-    it 'get all with flatten config and deprecate', ->
+    it 'with `flatten` and `deprecate` options', ->
       reg = registry.create()
       reg.register ['new', 'function'], handler: (->)
       reg.deprecate ['old', 'function'], ['new', 'function'], handler: (->)
@@ -33,7 +33,39 @@ describe 'registry.get', ->
       actions = await reg.get flatten: true, deprecate: true
       actions.some( (action) -> action.action.join('.') is 'new.function').should.be.true()
       actions.some( (action) -> action.action.join('.') is 'old.function').should.be.true()
+  
+    it 'honors parent actions', ->
+      reg_0 = registry.create()
+      reg_0.register 'level_0', key: 'level_0', handler: (->)
+      reg_1 = registry.create parent: reg_0
+      reg_1.register 'level_1', key: 'level_1', handler: (->)
+      reg_2 = registry.create parent: reg_1
+      reg_2.register 'level_2', key: 'level_2', handler: (->)
+      actions = await reg_2.get()
+      Object.values(actions)
+      .map (action) -> action[''].key
+      .should.eql [
+        'level_0'
+        'level_1'
+        'level_2'
+      ]
     
+    it 'honors parent actions with `flatten` option', ->
+      reg_0 = registry.create()
+      reg_0.register 'level_0', key: 'level_0', handler: (->)
+      reg_1 = registry.create parent: reg_0
+      reg_1.register 'level_1', key: 'level_1', handler: (->)
+      reg_2 = registry.create parent: reg_1
+      reg_2.register 'level_2', key: 'level_2', handler: (->)
+      actions = await reg_2.get flatten: true
+      actions
+      .map (action) -> action.key
+      .should.eql [
+        'level_0'
+        'level_1'
+        'level_2'
+      ]
+  
   describe 'get action', ->
 
     it 'return null when not registered', ->
