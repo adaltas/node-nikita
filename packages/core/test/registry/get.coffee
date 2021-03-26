@@ -58,6 +58,21 @@ describe 'registry.get', ->
     actions.some( (action) -> action.action.join('.') is 'old.function').should.be.true()
 
   it 'return an immutable copy of the action', ->
+    reg = registry.create()
+    reg.register ['new', 'function'],
+      metadata:
+        test_1: 'value 1'
+      handler: (->)
+    # Retrieve the actkon
+    action = await reg.get ['new', 'function']
+    # Attempt to alter the action
+    action.metadata.test_2 = 'value 2'
+    # Ensure the attempt failed
+    action = await reg.get ['new', 'function']
+    action.metadata.should.eql
+      test_1: 'value 1'
+  
+  it 'hook `nikita:registry:normalize` doesnt mutate the action', ->
     reg = registry.create
       plugins: plugandplay
         plugins: [
@@ -76,7 +91,7 @@ describe 'registry.get', ->
       config:
         key: 'new value', new_key: 'new value'
       handler: (val) -> val.should.be.a.Function()
-    # Now, make sure the action is not altered
+    # Now, make sure the stored action is not altered
     action = await reg.get 'action', normalize: false
     action.should.match
       config: key: 'value'
