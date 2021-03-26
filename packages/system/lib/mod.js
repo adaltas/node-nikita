@@ -25,7 +25,7 @@
 // });
 // ```
 
-// ## config
+// ## Hooks
 var handler, on_action, path, quote, schema;
 
 on_action = function({config}) {

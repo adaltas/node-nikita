@@ -40,7 +40,7 @@
 // })
 // ```
 
-// ## Hook
+// ## Hooks
 var on_action, schema, utils;
 
 on_action = function(action) {

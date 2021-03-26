@@ -1,5 +1,5 @@
 
-`nikita.file.types.ceph_conf`
+# `nikita.file.types.ceph_conf`
 
 Ceph is posix-compliant distributed file system. Writes [configuration
 file][ceph-conf] as Ceph daemons expect it.

@@ -1,5 +1,5 @@
 
-# `nikita.tools.apm`
+# `nikita.tools.apm.uninstall`
 
 Remove one or more apm packages.
 

@@ -76,7 +76,7 @@ console.info(`Package was installed: ${$status}`)
         cwd: config.cwd
       log message: "NPM Installed Packages: #{install.join ', '}"
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

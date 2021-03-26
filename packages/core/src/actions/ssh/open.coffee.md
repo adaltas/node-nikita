@@ -182,7 +182,7 @@ pass all the properties through the `ssh` property.
         # state['nikita:ssh:connection'] = conn
         ssh: conn
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

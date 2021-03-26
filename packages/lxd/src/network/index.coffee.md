@@ -89,7 +89,7 @@ console.info(`Network was created: ${$status}`)
       ) for key, value of changes
       $status: $status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

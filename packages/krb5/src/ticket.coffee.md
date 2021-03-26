@@ -57,7 +57,7 @@ console.info(`ticket was renewed: ${$status}`)
         gid: config.gid
         target: config.keytab
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

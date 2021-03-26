@@ -62,7 +62,7 @@ console.info(`Principal was removed: ${$status}`)
         await @fs.remove
           target: config.keytab
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

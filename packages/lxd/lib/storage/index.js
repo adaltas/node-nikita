@@ -110,7 +110,7 @@ ${[
   };
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

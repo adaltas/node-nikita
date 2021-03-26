@@ -49,7 +49,7 @@ console.info(`Network was detached: ${$status}`)
         """
         code_skipped: 42
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

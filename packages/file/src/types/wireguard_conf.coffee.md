@@ -1,5 +1,5 @@
 
-`nikita.file.types.wireguard_conf`
+# `nikita.file.types.wireguard_conf`
 
 Pacman is a package manager utility for Arch Linux. The file is usually located 
 in "/etc/pacman.conf".

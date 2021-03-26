@@ -76,7 +76,7 @@ console.info(stdout)
           'NIKITALXDEXEC'
         ].join '\n'
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

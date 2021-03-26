@@ -106,7 +106,7 @@ now.
         """
         code_skipped: 42
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

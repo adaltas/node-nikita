@@ -65,7 +65,7 @@ console.info(`Service was stopped: ${$status}`)
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

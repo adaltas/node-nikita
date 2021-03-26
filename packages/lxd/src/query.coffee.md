@@ -1,3 +1,4 @@
+
 # `nikita.lxc.query`
 
 Send a raw query to LXD.

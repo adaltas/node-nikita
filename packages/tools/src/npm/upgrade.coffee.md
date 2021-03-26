@@ -70,7 +70,7 @@ console.info(`Packages were upgraded: ${$status}`)
         cwd: config.cwd
       log message: "NPM upgraded packages: #{outdated.join ', '}"
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -1,5 +1,5 @@
 
-`nikita.file.types.locale_gen`
+# `nikita.file.types.locale_gen`
 
 Update the locale definition file located in "/etc/locale.gen".
 

@@ -144,7 +144,7 @@ console.info(`Keytab was created or modified: ${$status}`)
         target: config.keytab
         mode: config.mode
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

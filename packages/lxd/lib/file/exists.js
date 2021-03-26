@@ -49,7 +49,7 @@ handler = async function({config}) {
   };
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

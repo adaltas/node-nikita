@@ -1,3 +1,4 @@
+
 # `nikita.lxc.cluster`
 
 Create a cluster of LXD instances.
@@ -310,7 +311,7 @@ containers:
           , containerConfig
           , config.provision_container
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -1,3 +1,4 @@
+
 # `nikita.lxc.list`
 
 List the instances managed by LXD.

@@ -74,7 +74,7 @@ ${config.gem_bin} uninstall ${config.name} ${version}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

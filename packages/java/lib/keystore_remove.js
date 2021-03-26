@@ -107,7 +107,7 @@ exit 0`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

@@ -93,7 +93,7 @@ echo '' | ${command_init}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

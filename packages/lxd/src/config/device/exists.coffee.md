@@ -40,7 +40,7 @@ console.info($status ? `device exists, type is ${config.type}` : 'device missing
         device: config.device
       exists: !!properties, properties: properties
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

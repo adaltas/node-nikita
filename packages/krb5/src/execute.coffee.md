@@ -74,7 +74,7 @@ console.info(`Command was executed: ${$status}`)
         return stdout: stdout, $status: stdout.split('\n').some (line) -> config.grep.test line
       $status: true, stdout: stdout
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

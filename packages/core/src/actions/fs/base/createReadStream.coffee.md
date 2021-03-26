@@ -36,7 +36,7 @@ await nikita.fs.base.createReadStream({
 console.info(Buffer.concat(buffers).toString())
 ```
 
-## Hook
+## Hooks
 
     on_action =
       after: [

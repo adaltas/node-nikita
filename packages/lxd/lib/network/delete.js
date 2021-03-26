@@ -41,7 +41,7 @@ ${['lxc', 'network', 'delete', config.network].join(' ')}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

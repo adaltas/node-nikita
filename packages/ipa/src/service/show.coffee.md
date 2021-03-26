@@ -60,7 +60,7 @@ catch (err){
       else
         result: data.result.result
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

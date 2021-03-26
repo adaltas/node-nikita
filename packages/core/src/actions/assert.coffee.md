@@ -40,7 +40,7 @@ nikita.assert( () => {
 })
 ```
 
-## Hook
+## Hooks
 
     on_action = (action) ->
       action.handler = ( (handler) -> ({config}) ->

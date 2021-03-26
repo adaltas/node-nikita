@@ -1,4 +1,5 @@
-# `nikita.lxc.cluster.stop`
+
+# `nikita.lxc.cluster.delete`
 
 Delete a cluster of LXD instances.
 
@@ -54,7 +55,7 @@ predelete: path/to/action
           network: networkName
       {}
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

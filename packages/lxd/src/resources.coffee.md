@@ -45,7 +45,7 @@ console.info(config)
         ].join ' '
       config: JSON.parse stdout
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

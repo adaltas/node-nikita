@@ -58,7 +58,7 @@ Store properties in the nikita state object.
         catch err
           throw Error "Undetected Operating System Loader" if err.exit_code is 3 and config.strict
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

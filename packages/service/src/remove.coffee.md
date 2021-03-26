@@ -101,7 +101,7 @@ console.info(`Package or service was removed: ${$status}`)
           log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
           state['nikita:execute:installed'] = installed
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

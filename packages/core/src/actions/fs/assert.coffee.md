@@ -30,7 +30,7 @@ const {status} = await nikita.fs.assert({
 console.info(`File exists: ${status}`)
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       config.filter = [config.filter] if config.filter instanceof RegExp

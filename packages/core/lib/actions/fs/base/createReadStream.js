@@ -36,7 +36,7 @@
 // console.info(Buffer.concat(buffers).toString())
 // ```
 
-// ## Hook
+// ## Hooks
 var errors, fs, handler, on_action, schema, utils;
 
 on_action = {

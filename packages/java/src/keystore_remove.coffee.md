@@ -98,7 +98,7 @@ console.info(`Certificate authority was removed: ${$status}`)
         """
         code_skipped: 3
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -53,7 +53,7 @@ handler = async function({config}) {
   return {};
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

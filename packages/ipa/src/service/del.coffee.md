@@ -50,7 +50,7 @@ console.info(`Service was deleted: ${$status}`)
           params: [[config.principal], {}]
           id: 0
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

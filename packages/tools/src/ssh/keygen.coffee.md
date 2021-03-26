@@ -1,5 +1,5 @@
 
-# SSH keygen
+# `nikita.ssh.keygen`
 
 Generates keys for use by SSH protocol version 2.
 

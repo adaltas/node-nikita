@@ -137,7 +137,7 @@ console.info(`Service status: ${$status}`)
           await @service.restart
             name: srvname
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

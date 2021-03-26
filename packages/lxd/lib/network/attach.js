@@ -48,7 +48,7 @@ ${command_attach}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

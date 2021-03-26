@@ -57,7 +57,7 @@ console.info(`User exists: ${$status}`)
         throw err if err.code isnt 4001 # user not found
         $status: false, exists: false
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -1,3 +1,4 @@
+
 # `nikita.lxc.stop`
 
 Stop a running Linux Container.
@@ -57,7 +58,7 @@ console.info(`The container was stopped: ${$status}`);
           interval: config.wait_interval
       {}
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -44,7 +44,7 @@ console.info(`File exists: ${$status}`)
         code_skipped: 1
       exists: $status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

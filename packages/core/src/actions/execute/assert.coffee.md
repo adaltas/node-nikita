@@ -26,7 +26,7 @@ const {status} = await nikita.execute.assert({
 console.info(`Stdout was asserted: ${status}`)
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       config.code ?= [0] unless config.content

@@ -36,7 +36,7 @@ assert(files[0].name, 'a_file')
 assert(files[0].isFile(), true)
 ```
 
-## Hook
+## Hooks
 
     on_action = ({config, metadata}) ->
       config.extended ?= config.withFileTypes if config.withFileTypes?

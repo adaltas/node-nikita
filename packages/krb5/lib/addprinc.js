@@ -106,7 +106,7 @@ handler = async function({config}) {
   return (await this.krb5.ktadd(config));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

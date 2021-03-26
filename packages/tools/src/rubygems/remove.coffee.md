@@ -64,7 +64,7 @@ uninstall -i /usr/share/gems json"
         code_skipped: 3
         bash: config.bash
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

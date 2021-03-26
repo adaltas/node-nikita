@@ -3,7 +3,7 @@
 
 // Change ownership of a file.
 
-// ## Hook
+// ## Hooks
 var handler, on_action, schema;
 
 on_action = function({config, metadata}) {

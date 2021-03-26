@@ -45,7 +45,7 @@ ${['lxc', 'network', 'detach', config.network, config.container].join(' ')}`,
   }));
 };
 
-// ## Export
+// ## Exports
 module.exports = {
   handler: handler,
   metadata: {

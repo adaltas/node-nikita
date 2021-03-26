@@ -26,7 +26,7 @@
   // console.info(`Stdout was asserted: ${status}`)
   // ```
 
-// ## Hook
+// ## Hooks
 var handler, on_action, schema, utils,
   indexOf = [].indexOf;
 

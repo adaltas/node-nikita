@@ -287,7 +287,7 @@ console.info(`Disk was created: ${$status}`)
         utils.stderr_to_error_message err, err.stderr
         throw err
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

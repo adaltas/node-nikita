@@ -75,7 +75,7 @@ We might think about re-integrating them.
       catch err
         throw Error "Unsupported Loader" if err.exit_code is 2
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

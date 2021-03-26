@@ -82,7 +82,7 @@ console.info(`Storage was created or config updated: ${$status}`)
       ) for key, value of changes
       $status: $status
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

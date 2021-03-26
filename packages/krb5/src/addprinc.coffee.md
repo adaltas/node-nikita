@@ -91,7 +91,7 @@ console.info(`Principal was created or modified: ${$status}`)
       return unless !!config.keytab
       await @krb5.ktadd config
 
-## Export
+## Exports
 
     module.exports =
       handler: handler

@@ -62,7 +62,7 @@ console.info(`Member was added to the group: ${$status}`)
       else
         $status: true, result: data.result.result
 
-## Export
+## Exports
 
     module.exports =
       handler: handler
