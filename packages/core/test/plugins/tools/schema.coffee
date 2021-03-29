@@ -47,6 +47,22 @@ describe 'plugins.tools.schema', ->
     
     it 'invalid ref definition', ->
       nikita
+      .call
+        $schema:
+          type: 'object'
+          properties:
+            'an_object': $ref: 'malformed/uri'
+        an_object: 'abc'
+      , (->)
+      .should.be.rejectedWith [
+        'SCHEMA_MALFORMED_URI:'
+        'uri must start with a valid protocol'
+        'such as "module://" or "registry://",'
+        'got "malformed/uri".'
+      ].join ' '
+    
+    it 'invalid ref definition', ->
+      nikita
       .registry.register ['test', 'schema'],
         metadata: schema:
           type: 'object'

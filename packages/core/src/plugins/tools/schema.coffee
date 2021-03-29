@@ -11,10 +11,10 @@ ajv_formats = require "ajv-formats"
 
 parse = (uri) ->
   matches = /^(\w+:)\/\/(.*)/.exec uri
-  throw utils.error 'SCHEMA_URI_INVALID_PROTOCOL', [
+  throw utils.error 'SCHEMA_MALFORMED_URI', [
     'uri must start with a valid protocol'
     'such as "module://" or "registry://",'
-    "got #{uri}."
+    "got #{JSON.stringify uri}."
   ] unless matches
   protocol: matches[1]
   pathname: matches[2]
@@ -40,7 +40,9 @@ module.exports =
           coerceTypes: 'array'
           loadSchema: (uri) ->
             new Promise (accept, reject) ->
-              {protocol, pathname} = parse uri
+              try
+                {protocol, pathname} = parse uri
+              catch err then return reject err
               switch protocol
                 when 'module:'
                   try

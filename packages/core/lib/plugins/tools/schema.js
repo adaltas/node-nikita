@@ -18,7 +18,7 @@ parse = function(uri) {
   var matches;
   matches = /^(\w+:)\/\/(.*)/.exec(uri);
   if (!matches) {
-    throw utils.error('SCHEMA_URI_INVALID_PROTOCOL', ['uri must start with a valid protocol', 'such as "module://" or "registry://",', `got ${uri}.`]);
+    throw utils.error('SCHEMA_MALFORMED_URI', ['uri must start with a valid protocol', 'such as "module://" or "registry://",', `got ${JSON.stringify(uri)}.`]);
   }
   return {
     protocol: matches[1],
@@ -52,7 +52,12 @@ module.exports = {
           loadSchema: function(uri) {
             return new Promise(async function(accept, reject) {
               var err, module, pathname, protocol;
-              ({protocol, pathname} = parse(uri));
+              try {
+                ({protocol, pathname} = parse(uri));
+              } catch (error) {
+                err = error;
+                return reject(err);
+              }
               switch (protocol) {
                 case 'module:':
                   try {
