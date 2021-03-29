@@ -55,7 +55,7 @@ session = (args, options={}) ->
     parent: if options.parent then options.parent.plugins else undefined
   # Normalize arguments
   action = plugins.call_sync
-    name: 'nikita:arguments',
+    name: 'nikita:arguments'
     plugins: options.plugins
     args: {args: args, ...options}
     handler: ({args, namespace}) ->

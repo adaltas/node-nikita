@@ -2,25 +2,11 @@
 var normalize, properties;
 
 module.exports = normalize = function(action) {
-  // action
-  // console.log '>>>>', action
   if (Array.isArray(action)) {
     return action.map(function(action) {
       return normalize(action);
     });
   }
-  // action.metadata ?= {}
-  // action.config ?= {}
-  // action.hooks ?= {}
-  // for property, value of action
-  //   continue if property in properties
-  //   if /^on_/.test property
-  //     action.hooks[property] = value
-  //     delete action[property]
-  //   else
-  //     action.config[property] = value
-  //     delete action[property]
-  // console.log '<<<<', action
   return action;
 };
 
