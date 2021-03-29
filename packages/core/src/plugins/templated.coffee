@@ -17,5 +17,7 @@ module.exports =
           compile: false
           mutate: true
           partial:
-            metadata: true
+            assertions: true
+            conditions: true
             config: true
+            metadata: true

@@ -22,8 +22,10 @@ module.exports = {
           compile: false,
           mutate: true,
           partial: {
-            metadata: true,
-            config: true
+            assertions: true,
+            conditions: true,
+            config: true,
+            metadata: true
           }
         });
       }

@@ -48,10 +48,7 @@ describe 'plugins.history', ->
         @call -> 'send'
         @call -> 'mayday'
         @call $raw_output: true, ({sibling, siblings}) ->
-          # For same reason, their are not the same instance
-          # Note sure why but it doesn't really matter
-          should(sibling is siblings[siblings.length - 1]).be.false()
-          # As long as the content is the same
+          should(sibling is siblings[siblings.length - 1]).be.true()
           sibling.should.eql siblings[siblings.length - 1]
 
     it 'get previous action', ->
