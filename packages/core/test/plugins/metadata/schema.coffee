@@ -2,7 +2,7 @@
 {tags} = require '../../test'
 nikita = require '../../../src'
 
-describe 'plugins.schema', ->
+describe 'plugins.metadata.schema', ->
   return unless tags.api
 
   it 'expose ajv', ->
@@ -21,10 +21,6 @@ describe 'plugins.schema', ->
             required: ['child']
     , ->
       console.log 'called but why, the doc say the contrary'
-
-  # it 'declaration is valid', ->
-  #   TODO: ensure an invalid schema definition error
-  #   is catched and handled by nikita
 
   it 'config is valid', ->
     nikita ->
@@ -91,8 +87,41 @@ describe 'plugins.schema', ->
       , -> throw Error 'KO'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+    
+    it 'disabled when `false`', ->
+      nikita
+      .registry.register ['test', 'schema'],
+        metadata: schema: config:
+          type: 'object'
+          properties:
+            'a_key': type: 'string'
+          required: ['a_key']
+        handler: (->)
+      .test.schema
+        $schema: false
+        $handler: (->)
   
   describe 'errors', ->
+
+    it 'ensure schema is an object in root action', ->
+      nikita
+        $schema: true
+        $handler: (->)
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_INVALID_DEFINITION:'
+        'schema is invalid:'
+        'data/definitions should be object'
+      ].join ' '
+
+    it 'ensure schema is an object in child action', ->
+      nikita.call
+        $schema: true
+        $handler: (->)
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_INVALID_DEFINITION:'
+        'schema is invalid:'
+        'data/definitions should be object'
+      ].join ' '
 
     it 'invalid with one error', ->
       nikita.call
@@ -125,26 +154,6 @@ describe 'plugins.schema', ->
         'one error was found in the configuration of action `call`:'
         '#/definitions/config/additionalProperties config should NOT have additional properties,'
         'additionalProperty is "lonely_duck".'
-      ].join ' '
-    
-    it 'ensure schema is an object in root action', ->
-      nikita
-        $schema: true
-        $handler: (->)
-      .should.be.rejectedWith [
-        'METADATA_SCHEMA_INVALID_VALUE:'
-        'option `schema` expect an object literal value,'
-        'got true in root action.'
-      ].join ' '
-
-    it 'ensure schema is an object in child action', ->
-      nikita.call
-        $schema: true
-        $handler: (->)
-      .should.be.rejectedWith [
-        'METADATA_SCHEMA_INVALID_VALUE:'
-        'option `schema` expect an object literal value,'
-        'got true in action `call`.'
       ].join ' '
   
   describe 'constructor', ->

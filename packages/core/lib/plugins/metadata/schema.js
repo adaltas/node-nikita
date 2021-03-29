@@ -4,24 +4,38 @@ The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
 object.
 */
-var is_object_literal, utils;
+var mutate, utils;
 
 utils = require('../../utils');
 
-({is_object_literal} = require('mixme'));
+({mutate} = require('mixme'));
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/metadata/schema',
   require: ['@nikitajs/core/lib/plugins/tools/schema'],
   hooks: {
+    'nikita:schema': function({schema}) {
+      return mutate(schema.definitions.metadata.properties, {
+        schema: {
+          oneOf: [
+            {
+              type: 'boolean',
+              const: false
+            },
+            {
+              type: 'object'
+            }
+          ],
+          description: `Schema definition or \`false\` to disable schema validation in the
+current action.`
+        }
+      });
+    },
     'nikita:action': {
       after: ['@nikitajs/core/lib/plugins/global', '@nikitajs/core/lib/plugins/metadata/disabled'],
       handler: async function(action) {
         var err;
-        if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {
-          throw utils.error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)} in`, action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`.` : "root action."]);
-        }
-        if (!action.metadata.schema) {
+        if (action.metadata.schema === false) {
           return;
         }
         err = (await action.tools.schema.validate(action));

@@ -90,15 +90,6 @@ module.exports =
           metaSchema:
             type: 'boolean'
             enum: [true]
-        ajv.addSchema
-          type: 'object'
-          properties: {}
-          definitions:
-            metadata: {
-              type: 'object'
-              properties: {}
-            }
-        , 'nikita'
         action.tools.schema =
           ajv: ajv
           add: (schema, name) ->
@@ -118,7 +109,6 @@ module.exports =
               schema =
                 definitions: schema
                 type: 'object'
-                # properties: schema
                 allOf: [
                   properties: ( (obj={}) ->
                     obj[k] = $ref: "#/definitions/#{k}" for k, v of schema
@@ -155,4 +145,18 @@ module.exports =
               .sort()
               .join('; ')+'.'
             ]
+        await action.plugins.call
+          name: 'nikita:schema'
+          args: action: action, ajv: ajv, schema:
+            definitions:
+              metadata:
+                type: 'object'
+                properties: {}
+              tools:
+                type: 'object'
+                properties: {}
+          # TODO: write a test and document before activation
+          # hooks: action.hooks['nikita:schema']
+          handler: ({action, ajv, schema}) ->
+            ajv.addSchema schema, 'nikita'
         action

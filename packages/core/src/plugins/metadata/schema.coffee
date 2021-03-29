@@ -5,7 +5,7 @@ object.
 ###
 
 utils = require '../../utils'
-{is_object_literal} = require 'mixme'
+{mutate} = require 'mixme'
 
 module.exports =
   name: '@nikitajs/core/src/plugins/metadata/schema'
@@ -13,21 +13,26 @@ module.exports =
     '@nikitajs/core/src/plugins/tools/schema'
   ]
   hooks:
+    'nikita:schema': ({schema}) ->
+      mutate schema.definitions.metadata.properties,
+        schema:
+          oneOf: [
+            type: 'boolean'
+            const: false
+          ,
+            type: 'object'
+          ]
+          description: '''
+          Schema definition or `false` to disable schema validation in the
+          current action.
+          '''
     'nikita:action':
       after: [
         '@nikitajs/core/src/plugins/global'
         '@nikitajs/core/src/plugins/metadata/disabled'
       ]
       handler: (action) ->
-        if action.metadata.schema? and not is_object_literal action.metadata.schema
-          throw utils.error 'METADATA_SCHEMA_INVALID_VALUE', [
-            "option `schema` expect an object literal value,"
-            "got #{JSON.stringify action.metadata.schema} in"
-            if action.metadata.namespace.length
-            then "action `#{action.metadata.namespace.join('.')}`."
-            else "root action."
-          ]
-        return unless action.metadata.schema
+        return if action.metadata.schema is false
         err = await action.tools.schema.validate action
         throw err if err
   

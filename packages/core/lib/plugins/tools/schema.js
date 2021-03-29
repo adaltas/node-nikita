@@ -32,7 +32,7 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/tools/schema',
   hooks: {
     'nikita:normalize': {
-      handler: function(action) {
+      handler: async function(action) {
         var ajv, ref;
         // Handler execution
         // action = await handler.apply null, arguments
@@ -115,16 +115,6 @@ module.exports = {
             enum: [true]
           }
         });
-        ajv.addSchema({
-          type: 'object',
-          properties: {},
-          definitions: {
-            metadata: {
-              type: 'object',
-              properties: {}
-            }
-          }
-        }, 'nikita');
         action.tools.schema = {
           ajv: ajv,
           add: function(schema, name) {
@@ -162,7 +152,6 @@ module.exports = {
               schema = {
                 definitions: schema,
                 type: 'object',
-                // properties: schema
                 allOf: [
                   {
                     properties: (function(obj = {}) {
@@ -228,6 +217,30 @@ module.exports = {
             ]);
           }
         };
+        await action.plugins.call({
+          name: 'nikita:schema',
+          args: {
+            action: action,
+            ajv: ajv,
+            schema: {
+              definitions: {
+                metadata: {
+                  type: 'object',
+                  properties: {}
+                },
+                tools: {
+                  type: 'object',
+                  properties: {}
+                }
+              }
+            }
+          },
+          // TODO: write a test and document before activation
+          // hooks: action.hooks['nikita:schema']
+          handler: function({action, ajv, schema}) {
+            return ajv.addSchema(schema, 'nikita');
+          }
+        });
         return action;
       }
     }
