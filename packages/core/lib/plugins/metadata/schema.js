@@ -15,23 +15,19 @@ module.exports = {
   require: ['@nikitajs/core/lib/plugins/tools/schema'],
   hooks: {
     'nikita:action': {
-      after: ['@nikitajs/core/lib/plugins/global'],
-      // '@nikitajs/core/lib/plugins/metadata/disabled'
-      handler: async function(action, handler) {
+      after: ['@nikitajs/core/lib/plugins/global', '@nikitajs/core/lib/plugins/metadata/disabled'],
+      handler: async function(action) {
         var err;
         if ((action.metadata.schema != null) && !is_object_literal(action.metadata.schema)) {
           throw utils.error('METADATA_SCHEMA_INVALID_VALUE', ["option `schema` expect an object literal value,", `got ${JSON.stringify(action.metadata.schema)} in`, action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`.` : "root action."]);
         }
         if (!action.metadata.schema) {
-          return handler;
+          return;
         }
         err = (await action.tools.schema.validate(action));
-        return function() {
-          if (err) {
-            throw err;
-          }
-          return handler.apply(null, arguments);
-        };
+        if (err) {
+          throw err;
+        }
       }
     }
   }
