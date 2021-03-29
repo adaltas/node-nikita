@@ -62,18 +62,18 @@
     "xmldom": "^0.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/preset-env": "^7.13.10",
+    "@babel/core": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
     "@nikitajs/log": "^1.0.0-alpha.1",
     "coffeescript": "^2.5.1",
-    "eslint": "^7.21.0",
+    "eslint": "^7.23.0",
     "eslint-plugin-coffee": "^0.1.14",
-    "mocha": "^8.3.1",
+    "mocha": "^8.3.2",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
   },
   "peerDependencies": {
-    "@nikitajs/core": "^1.0.0-alpha"
+    "@nikitajs/core": "^1.0.0-alpha.1"
   },
   "engines": {
     "node": ">= 10.0.0"
