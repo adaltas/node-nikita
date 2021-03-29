@@ -11,6 +11,7 @@ describe 'actions.fs.base.lstat', ->
   they 'with a file link', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -28,6 +29,7 @@ describe 'actions.fs.base.lstat', ->
   they 'with a directory link', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -44,6 +46,7 @@ describe 'actions.fs.base.lstat', ->
   they 'option argument default to target', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

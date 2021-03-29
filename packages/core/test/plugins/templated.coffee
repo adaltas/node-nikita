@@ -7,6 +7,7 @@ describe 'plugins.templated', ->
 
   it 'access config', ->
     nikita
+      $templated: true
       key_1: 'value 1'
       key_2: 'value 2 and {{config.key_1}}'
       $handler: ({config}) -> config
@@ -16,6 +17,7 @@ describe 'plugins.templated', ->
   
   it 'access parent', ->
     nikita
+      $templated: true
       key: 'value'
     , ->
       @call
@@ -23,34 +25,38 @@ describe 'plugins.templated', ->
       , ({config}) -> config
       .should.be.finally.containEql
         key: 'get value from parent'
+  
+  describe 'disabled with value `false`', ->
 
-  it 'when `false`', ->
-    nikita.call
-      $templated: false
-    , ({metadata: {templated}}) ->
-      templated.should.be.false()
-
-  it 'disabled in current', ->
-    nikita
-      $templated: false
-      key_1: 'value 1'
-      key_2: 'value 2 and {{config.key_1}}'
-    , ({config}) -> config
-    .should.be.finally.containEql
-      key_1: 'value 1'
-      key_2: 'value 2 and {{config.key_1}}'
-
-  it 'disabled in parent', ->
-    nikita ->
-      @call
+    it 'access value in metadata', ->
+      nikita.call
         $templated: false
+      , ({metadata: {templated}}) ->
+        templated.should.be.false()
+
+    it 'disabled in current', ->
+      nikita
+        $templated: false
+        key_1: 'value 1'
+        key_2: 'value 2 and {{config.key_1}}'
+      , ({config}) -> config
+      .should.be.finally.containEql
+        key_1: 'value 1'
+        key_2: 'value 2 and {{config.key_1}}'
+
+    it 'disabled from parent', ->
+      nikita
+        $templated: true
       , ->
-        @call ->
+        @call
+          $templated: false
+        , ->
           @call ->
-            key_1: 'value 1'
-            key_2: 'value 2 and {{config.key_1}}'
-            handler: ({config}) -> config
-          .should.be.finally.containEql
-            key_1: 'value 1'
-            key_2: 'value 2 and {{config.key_1}}'
-        
+            @call ->
+              key_1: 'value 1'
+              key_2: 'value 2 and {{config.key_1}}'
+              handler: ({config}) -> config
+            .should.be.finally.containEql
+              key_1: 'value 1'
+              key_2: 'value 2 and {{config.key_1}}'
+          

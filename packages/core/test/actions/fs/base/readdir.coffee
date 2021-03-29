@@ -36,6 +36,7 @@ describe 'actions.fs.base.readdir', ->
   they 'target option as argument', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
@@ -49,6 +50,7 @@ describe 'actions.fs.base.readdir', ->
   they 'target does not exist', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.readdir "{{parent.metadata.tmpdir}}/missing"
@@ -59,6 +61,7 @@ describe 'actions.fs.base.readdir', ->
   they 'handle missing file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"

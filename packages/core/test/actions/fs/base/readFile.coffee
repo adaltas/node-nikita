@@ -11,6 +11,7 @@ describe 'actions.fs.base.readFile', ->
   they 'config `encoding`', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -24,6 +25,7 @@ describe 'actions.fs.base.readFile', ->
   they 'argument `target`', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

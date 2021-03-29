@@ -35,6 +35,7 @@ describe 'actions.fs.base.exists', ->
   they 'option argument default to target', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

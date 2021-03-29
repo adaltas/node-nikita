@@ -97,6 +97,7 @@ describe 'plugins.metadata.tmpdir', ->
     they 'is true', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
       , ->
         try
           @call $tmpdir: true, $dirty: true, (->)
@@ -108,6 +109,7 @@ describe 'plugins.metadata.tmpdir', ->
     they 'is false', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
       , ->
         @call $tmpdir: true, $dirty: false, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'

@@ -10,6 +10,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'content is a string', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -21,6 +22,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'content is empty', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -32,6 +34,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'option append on missing file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -46,6 +49,7 @@ describe 'actions.fs.base.writeFile', ->
   they 'option append on existing file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

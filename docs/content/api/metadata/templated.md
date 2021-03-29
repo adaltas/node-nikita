@@ -4,9 +4,12 @@ navtitle: templated
 
 # Metadata "templated"
 
-Nikita provides templating in configuration properties using the [Handlebars](https://handlebarsjs.com/) templating engine. It traverses properties recursively and uses the same self-referenced object as a context. The `templated` metadata enables or disables templating. It is enabled by default.
+Nikita provides templating in configuration properties using the [Handlebars](https://handlebarsjs.com/) templating engine. It traverses properties recursively and uses the same self-referenced object as a context. The `templated` metadata enables or disables templating.
+
+Templating is disabled by default. Set `metadata.templating` to `true` to enable it. There is a performance penality to expect.
 
 * Type: `boolean`
+  Default: `false`, inherited from parent
 
 All the properties from the current action are available including [`config`](/current/api/config/) and [`metadata`](/current/api/config/).
 
@@ -27,7 +30,8 @@ nikita
   return `My secret is "${config.secret}"`
 })
 .call({
-  // highlight-next-line
+  // highlight-range{1-2}
+  $templated: true,
   secret: '{{{sibling.output}}}',
 }, function({config}) {
   // highlight-next-line
@@ -42,7 +46,9 @@ It is not required to refer directly to a property. A property may refer to anot
 
 ```js
 nikita({
-  secret: 'my precious'
+  secret: 'my precious',
+  // highlight-next-line
+  $templated: true
 }, function(){
   this.call({
     // highlight-next-line
@@ -74,6 +80,8 @@ nikita
 .call(function({config}) {
   // Call a child action
   this.call({
+    // highlight-next-line
+    $templated: true,
     // Note the usage of triple-stash to avoid escaping html entities
     // highlight-next-line
     secret: '{{{parent.parent.children.[0].output}}}',
@@ -86,10 +94,13 @@ nikita
 
 ## Desactivation
 
-Templating is enabled by default. To disable templating, set the `templated` metadata to the value `false`:
+Templating is not enabled by default. If a parent action enables it, it can be desactivated with the value `false`:
 
 ```js
-nikita
+nikita({
+  // highlight-next-line
+  $templated: true
+})
 // Call an action with templating (by default)
 .call({
   // highlight-next-line
@@ -102,3 +113,5 @@ nikita
   // Print "value 2 and {{config.key_1}}"
 })
 ```
+
+Note, the value applies to the action and all its children.

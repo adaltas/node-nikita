@@ -67,6 +67,7 @@ describe 'plugin.conditions if', ->
       nikita
       .call
         $if: '{{config.db.test}}'
+        $templated: true
         db: test: 'abc'
       , ->
         count++
@@ -81,6 +82,7 @@ describe 'plugin.conditions if', ->
     it 'skip if `{{""}}`',->
       nikita.call
         $if: '{{config.db.test}}'
+        $templated: true
         $handler: -> throw Error 'forbidden'
         db: test: ''
 

@@ -10,6 +10,7 @@ describe 'actions.fs.base.readlink', ->
   they 'get value', ({ssh}) ->
     await nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile

@@ -52,6 +52,7 @@ describe 'actions.fs.base.createWriteStream', ->
     they 'write a file', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
         $tmpdir: true
       , ->
         await @fs.base.createWriteStream
@@ -66,6 +67,7 @@ describe 'actions.fs.base.createWriteStream', ->
     they 'argument `target`', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
         $tmpdir: true
       , ->
         await @fs.base.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
@@ -91,6 +93,7 @@ describe 'actions.fs.base.createWriteStream', ->
     they.skip 'config `flags` equal "a"', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
         tmpdir: true
       , ->
         await @fs.base.createWriteStream

@@ -7,14 +7,14 @@ module.exports = {
   name: '@nikitajs/core/lib/plugins/templated',
   hooks: {
     'nikita:action': {
-      after: ['@nikitajs/core/lib/plugins/metadata/schema'],
-      // '@nikitajs/core/lib/plugins/metadata/tmpdir'
+      // Note, conditions plugins define templated as a dependency
+      before: ['@nikitajs/core/lib/plugins/metadata/schema'],
       handler: async function(action) {
         var templated;
         templated = (await action.tools.find(function(action) {
           return action.metadata.templated;
         }));
-        if (templated === false) {
+        if (templated !== true) {
           return;
         }
         return selfTemplated(action, {

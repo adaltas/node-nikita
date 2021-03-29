@@ -11,6 +11,7 @@ describe 'actions.fs.base.mkdir', ->
   they 'a new directory', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -23,6 +24,7 @@ describe 'actions.fs.base.mkdir', ->
   they 'over an existing directory', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir

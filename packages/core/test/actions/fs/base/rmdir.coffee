@@ -11,6 +11,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'dir is removed', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -24,6 +25,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'config recursive false, default', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -39,6 +41,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'config recursive true', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -56,6 +59,7 @@ describe 'actions.fs.base.rmdir', ->
   they 'NIKITA_FS_RMDIR_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.rmdir

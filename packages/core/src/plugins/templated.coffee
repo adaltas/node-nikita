@@ -5,13 +5,13 @@ module.exports =
   name: '@nikitajs/core/src/plugins/templated'
   hooks:
     'nikita:action':
-      after: [
+      # Note, conditions plugins define templated as a dependency
+      before: [
         '@nikitajs/core/src/plugins/metadata/schema'
-        # '@nikitajs/core/src/plugins/metadata/tmpdir'
       ]
       handler: (action) ->
         templated = await action.tools.find (action) -> action.metadata.templated
-        return if templated is false
+        return unless templated is true
         selfTemplated action,
           array: true
           compile: false

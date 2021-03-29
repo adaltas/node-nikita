@@ -98,6 +98,7 @@ describe 'plugin.assertions unassert', ->
   
     it 'success if string match template `{{"abc"}}`',->
       nikita.call
+        $templated: true
         $unassert: result: '{{config.db.test}}'
         $handler: -> result: 'abc'
         db: test: 'abc'
@@ -105,6 +106,7 @@ describe 'plugin.assertions unassert', ->
   
     it 'success if empty string match template `{{""}}`',->
       nikita.call
+        $templated: true
         $unassert: result: '{{config.db.test}}'
         $handler: -> result: ''
         db: test: ''

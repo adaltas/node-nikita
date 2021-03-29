@@ -10,6 +10,7 @@ describe 'actions.fs.base.copy', ->
   they 'a file to a directory', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -28,6 +29,7 @@ describe 'actions.fs.base.copy', ->
   they 'a file to a file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -47,6 +49,7 @@ describe 'actions.fs.base.copy', ->
   they 'option argument default to target', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -62,6 +65,7 @@ describe 'actions.fs.base.copy', ->
   they 'NIKITA_FS_COPY_TARGET_ENOENT target does not exits', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile

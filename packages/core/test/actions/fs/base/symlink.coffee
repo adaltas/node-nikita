@@ -11,6 +11,7 @@ describe 'actions.fs.base.symlink', ->
   they 'create', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

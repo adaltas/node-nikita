@@ -86,6 +86,7 @@ describe 'plugin.assertions assert', ->
       nikita.call
         $assert: result: '{{config.db.test}}'
         $handler: -> result: 'abc'
+        $templated: true
         db: test: 'abc'
       .should.be.resolved()
 
@@ -93,6 +94,7 @@ describe 'plugin.assertions assert', ->
       nikita.call
         $assert: result: '{{config.db.test}}'
         $handler: -> result: ''
+        $templated: true
         db: test: ''
       .should.be.resolved()
 

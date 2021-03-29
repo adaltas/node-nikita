@@ -11,6 +11,7 @@ describe 'actions.fs.base.createReadStream', ->
     buffers = []
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -27,6 +28,7 @@ describe 'actions.fs.base.createReadStream', ->
     buffers = []
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile

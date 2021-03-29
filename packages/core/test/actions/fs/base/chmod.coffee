@@ -36,6 +36,7 @@ describe 'actions.fs.base.chmod', ->
     they 'create', ({ssh}) ->
       nikita
         $ssh: ssh
+        $templated: true
         $tmpdir: true
       , ->
         await @fs.base.writeFile

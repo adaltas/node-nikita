@@ -11,6 +11,7 @@ describe 'actions.fs.base.unlink', ->
   they 'a file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -25,6 +26,7 @@ describe 'actions.fs.base.unlink', ->
   they 'a link referencing a directory', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ({metadata: {tmpdir}})->
       await @fs.base.mkdir
@@ -44,6 +46,7 @@ describe 'actions.fs.base.unlink', ->
   they 'error ENOENT', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.unlink
@@ -55,6 +58,7 @@ describe 'actions.fs.base.unlink', ->
   they 'error EPERM', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.mkdir

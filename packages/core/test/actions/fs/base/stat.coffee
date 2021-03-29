@@ -11,6 +11,7 @@ describe 'actions.fs.base.stat', ->
   they 'NIKITA_FS_STAT_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.stat
@@ -22,6 +23,7 @@ describe 'actions.fs.base.stat', ->
   they 'with a file', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.writeFile
@@ -40,6 +42,7 @@ describe 'actions.fs.base.stat', ->
   they 'with a directory', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       await @fs.base.mkdir
@@ -51,6 +54,7 @@ describe 'actions.fs.base.stat', ->
   they 'with a file link', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.writeFile
@@ -67,6 +71,7 @@ describe 'actions.fs.base.stat', ->
   they 'with a directory link', ({ssh}) ->
     nikita
       $ssh: ssh
+      $templated: true
       $tmpdir: true
     , ->
       @fs.base.mkdir
