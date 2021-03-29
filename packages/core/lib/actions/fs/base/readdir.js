@@ -47,22 +47,24 @@ on_action = function({config, metadata}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    extended: {
-      type: 'boolean',
-      description: `Result contain fs.Dirent objects.`
+  config: {
+    type: 'object',
+    properties: {
+      extended: {
+        type: 'boolean',
+        description: `Result contain fs.Dirent objects.`
+      },
+      target: {
+        type: 'string',
+        description: `Path of the directory to read.`
+      },
+      withFileTypes: {
+        type: 'boolean',
+        description: `Alias of \`extended\` named after the Node.js native function.`
+      }
     },
-    target: {
-      type: 'string',
-      description: `Path of the directory to read.`
-    },
-    withFileTypes: {
-      type: 'boolean',
-      description: `Alias of \`extended\` named after the Node.js native function.`
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

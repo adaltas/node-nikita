@@ -27,25 +27,27 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'source': {
-      type: 'string',
-      description: `Referenced file to be linked.`
+  config: {
+    type: 'object',
+    properties: {
+      'source': {
+        type: 'string',
+        description: `Referenced file to be linked.`
+      },
+      'target': {
+        type: 'string',
+        description: `Symbolic link to be created.`
+      },
+      'exec': {
+        type: 'boolean',
+        description: `Create an executable file with an \`exec\` command.`
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/definitions/config/properties/mode'
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Symbolic link to be created.`
-    },
-    'exec': {
-      type: 'boolean',
-      description: `Create an executable file with an \`exec\` command.`
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

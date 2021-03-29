@@ -34,58 +34,60 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'quorum': {
-      type: ['integer', 'boolean'],
-      description: `Number of minimal successful connection, 50%+1 if "true".`
-    },
-    'command': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'quorum': {
+        type: ['integer', 'boolean'],
+        description: `Number of minimal successful connection, 50%+1 if "true".`
       },
-      description: `The commands to be executed.`
-    },
-    'interval': {
-      type: 'integer',
-      default: 2000,
-      description: `Time interval between which we should wait before re-executing the
+      'command': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `The commands to be executed.`
+      },
+      'interval': {
+        type: 'integer',
+        default: 2000,
+        description: `Time interval between which we should wait before re-executing the
 command, default to 2s.`
-    },
-    'code': {
-      type: 'array',
-      items: {
-        type: 'integer'
       },
-      description: `Expected exit code to recieve to exit and call the user callback,
+      'code': {
+        type: 'array',
+        items: {
+          type: 'integer'
+        },
+        description: `Expected exit code to recieve to exit and call the user callback,
 default to "0".`
-    },
-    'code_skipped': {
-      type: 'array',
-      items: {
-        type: 'integer'
       },
-      // default: [1]
-      description: `Expected code to be returned when the command failed and should be
+      'code_skipped': {
+        type: 'array',
+        items: {
+          type: 'integer'
+        },
+        // default: [1]
+        description: `Expected code to be returned when the command failed and should be
 scheduled for later execution, default to "1".`
+      },
+      'retry': {
+        type: 'integer',
+        default: -1,
+        description: `Maximum number of attempts.`
+      },
+      'stdin_log': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/stdin_log'
+      },
+      'stdout_log': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/stdout_log'
+      },
+      'stderr_log': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/stderr_log'
+      }
     },
-    'retry': {
-      type: 'integer',
-      default: -1,
-      description: `Maximum number of attempts.`
-    },
-    'stdin_log': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/stdin_log'
-    },
-    'stdout_log': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/stdout_log'
-    },
-    'stderr_log': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/stderr_log'
-    }
-  },
-  required: ['command']
+    required: ['command']
+  }
 };
 
 // ## Handler

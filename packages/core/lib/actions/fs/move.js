@@ -25,32 +25,34 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'force': {
-      type: 'boolean',
-      default: false,
-      description: `Force the replacement of the file without checksum verification, speed
+  config: {
+    type: 'object',
+    properties: {
+      'force': {
+        type: 'boolean',
+        default: false,
+        description: `Force the replacement of the file without checksum verification, speed
 up the action and disable the \`moved\` indicator in the callback.`
+      },
+      'source': {
+        type: 'string',
+        description: `File or directory to move.`
+      },
+      'source_md5': {
+        type: 'string',
+        description: `Source md5 checkum if known, otherwise computed.`
+      },
+      'target': {
+        type: 'string',
+        description: `Final name of the moved resource.`
+      },
+      'target_md5': {
+        type: 'string',
+        description: `Destination md5 checkum if known, otherwise computed if target exists.`
+      }
     },
-    'source': {
-      type: 'string',
-      description: `File or directory to move.`
-    },
-    'source_md5': {
-      type: 'string',
-      description: `Source md5 checkum if known, otherwise computed.`
-    },
-    'target': {
-      type: 'string',
-      description: `Final name of the moved resource.`
-    },
-    'target_md5': {
-      type: 'string',
-      description: `Destination md5 checkum if known, otherwise computed if target exists.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

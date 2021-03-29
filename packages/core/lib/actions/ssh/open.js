@@ -101,57 +101,59 @@ on_action = function({config}) {
 // Only will they be converted from snake case to came case. It is also possible to
 // pass all the properties through the `ssh` property.
 schema = {
-  type: 'object',
-  properties: {
-    'host': {
-      type: 'string',
-      anyOf: [
-        {
-          format: 'ipv4'
-        },
-        {
-          format: 'hostname'
-        }
-      ],
-      default: '127.0.0.1',
-      description: `Hostname or IP address of the remote server.`
-    },
-    'ip': {
-      type: 'string',
-      description: `IP address of the remote server, used if \`host\` isn't already defined.`
-    },
-    'password': {
-      type: 'string',
-      description: `Password of the user used to authenticate and create the SSH
+  config: {
+    type: 'object',
+    properties: {
+      'host': {
+        type: 'string',
+        anyOf: [
+          {
+            format: 'ipv4'
+          },
+          {
+            format: 'hostname'
+          }
+        ],
+        default: '127.0.0.1',
+        description: `Hostname or IP address of the remote server.`
+      },
+      'ip': {
+        type: 'string',
+        description: `IP address of the remote server, used if \`host\` isn't already defined.`
+      },
+      'password': {
+        type: 'string',
+        description: `Password of the user used to authenticate and create the SSH
 connection.`
-    },
-    'port': {
-      type: 'integer',
-      default: 22,
-      description: `Port of the remote server.`
-    },
-    'private_key': {
-      type: 'string',
-      description: `Content of the private key used to authenticate the user and create
+      },
+      'port': {
+        type: 'integer',
+        default: 22,
+        description: `Port of the remote server.`
+      },
+      'private_key': {
+        type: 'string',
+        description: `Content of the private key used to authenticate the user and create
 the SSH connection. It is only used if \`password\` is not provided.`
-    },
-    'private_key_path': {
-      type: 'string',
-      default: '~/.ssh/id_rsa',
-      description: `Local file location of the private key used to authenticate the user
+      },
+      'private_key_path': {
+        type: 'string',
+        default: '~/.ssh/id_rsa',
+        description: `Local file location of the private key used to authenticate the user
 and create the SSH connection. It is only used if \`password\` and
 \`private_key\` are not provided.`
-    },
-    'root': {
-      $ref: 'module://@nikitajs/core/lib/actions/ssh/root',
-      description: `Configuration passed to \`nikita.ssh.root\` to enable password-less root
+      },
+      'root': {
+        $ref: 'module://@nikitajs/core/lib/actions/ssh/root',
+        description: `Configuration passed to \`nikita.ssh.root\` to enable password-less root
 login.`
-    },
-    'username': {
-      type: 'string',
-      default: 'root',
-      description: `Username of the user used to authenticate and create the SSH
+      },
+      'username': {
+        type: 'string',
+        default: 'root',
+        description: `Username of the user used to authenticate and create the SSH
 connection.`
+      }
     }
   }
 };

@@ -18,22 +18,24 @@ on_action = function({config, metadata}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      type: ['integer', 'string'],
-      description: `Unix group name or id who owns the target file.`
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        type: ['integer', 'string'],
+        description: `Unix group name or id who owns the target file.`
+      },
+      'target': {
+        type: 'string',
+        description: `Location of the file which permissions will change.`
+      },
+      'uid': {
+        type: ['integer', 'string'],
+        description: `Unix user name or id who owns the target file.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Location of the file which permissions will change.`
-    },
-    'uid': {
-      type: ['integer', 'string'],
-      description: `Unix user name or id who owns the target file.`
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

@@ -35,25 +35,27 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/gid'
-    },
-    'stats': {
-      typeof: 'object',
-      description: `Stat object of the target file. Short-circuit to avoid fetching the
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/gid'
+      },
+      'stats': {
+        typeof: 'object',
+        description: `Stat object of the target file. Short-circuit to avoid fetching the
 stat object associated with the target if one is already available.`
+      },
+      'target': {
+        type: 'string',
+        description: `Location of the file which permissions will change.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid'
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Location of the file which permissions will change.`
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

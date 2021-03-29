@@ -41,63 +41,64 @@ console.info(`File was copied: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/gid'
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/properties/mode'
-        'parent':
-          oneOf: [
+      config:
+        type: 'object'
+        properties:
+          'gid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/gid'
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/definitions/config/properties/mode'
+          'parent':
+            oneOf: [
+              type: 'boolean'
+            ,
+              type: 'object'
+              properties:
+                'gid':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/gid'
+                'mode':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/mode'
+                'uid':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/uid'
+            ]
+            description: '''
+            Create parent directory with provided attributes if an object or
+            default system config if "true", supported attributes include 'mode',
+            'uid', 'gid', 'size', 'atime', and 'mtime'.
+            '''
+          'preserve':
             type: 'boolean'
-          ,
+            default: false
+            description: '''
+            Preserve file ownerships and permissions.
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            The file or directory to copy.
+            '''
+          'source_stats':
             type: 'object'
-            properties:
-              'gid':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/gid'
-              'mode':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/mode'
-              'uid':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
-          ]
-          description: '''
-          Create parent directory with provided attributes if an object or
-          default system config if "true", supported attributes include 'mode',
-          'uid', 'gid', 'size', 'atime', and 'mtime'.
-          '''
-        'preserve':
-          type: 'boolean'
-          default: false
-          description: '''
-          Preserve file ownerships and permissions.
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          The file or directory to copy.
-          '''
-        'source_stats':
-          type: 'object'
-          description: '''
-          Short-circuit to prevent source stat retrieval if already at our
-          disposal.
-          '''
-          properties: require('./base/stat').schema_output.properties.stats.properties
-        'target':
-          type: 'string'
-          description: '''
-          Where the file or directory is copied.
-          '''
-        'target_stats':
-          type: 'object'
-          description: '''
-          Short-circuit to prevent target stat retrieval if already at our
-          disposal.
-          '''
-          properties: require('./base/stat').schema_output.properties.stats.properties
-        'uid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'
-      required: ['source', 'target']
+            description: '''
+            Short-circuit to prevent source stat retrieval if already at our
+            disposal.
+            '''
+            properties: require('./base/stat').schema_output.properties.stats.properties
+          'target':
+            type: 'string'
+            description: '''
+            Where the file or directory is copied.
+            '''
+          'target_stats':
+            type: 'object'
+            description: '''
+            Short-circuit to prevent target stat retrieval if already at our
+            disposal.
+            '''
+            properties: require('./base/stat').schema_output.properties.stats.properties
+          'uid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/uid'
+        required: ['source', 'target']
 
 ## Handler
 

@@ -95,17 +95,19 @@ on_action = function(action) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'not': {
-      type: 'boolean',
-      default: false,
-      description: `Negates the validation.`
-    },
-    'strict': {
-      type: 'boolean',
-      default: false,
-      description: `Cancel the casting of output into a boolean value.`
+  config: {
+    type: 'object',
+    properties: {
+      'not': {
+        type: 'boolean',
+        default: false,
+        description: `Negates the validation.`
+      },
+      'strict': {
+        type: 'boolean',
+        default: false,
+        description: `Cancel the casting of output into a boolean value.`
+      }
     }
   }
 };

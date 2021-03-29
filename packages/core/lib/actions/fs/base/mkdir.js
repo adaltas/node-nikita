@@ -7,23 +7,25 @@
 var errors, handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/gid'
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/gid'
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/definitions/config/properties/mode'
+      },
+      'target': {
+        type: 'string',
+        description: `Location of the directory to create.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid'
+      }
     },
-    'mode': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chmod#/properties/mode'
-    },
-    'target': {
-      type: 'string',
-      description: `Location of the directory to create.`
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

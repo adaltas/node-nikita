@@ -55,7 +55,8 @@ describe 'actions.fs.base.createReadStream', ->
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'one error was found in the configuration of action `fs.base.createReadStream`:'
-            '#/required config should have required property \'target\'.'
+            '#/definitions/config/required'
+            'config should have required property \'target\'.'
           ].join ' '
     
     they 'NIKITA_FS_CRS_TARGET_ENOENT if file does not exist', ({ssh}) ->

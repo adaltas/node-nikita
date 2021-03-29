@@ -40,27 +40,29 @@
 var Minimatch, getprefix, handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'dot': {
-      type: 'boolean',
-      description: `Minimatch option to handle files starting with a ".".`
+  config: {
+    type: 'object',
+    properties: {
+      'dot': {
+        type: 'boolean',
+        description: `Minimatch option to handle files starting with a ".".`
+      },
+      'target': {
+        type: 'string',
+        description: `Globbing expression of the directory tree to match.`
+      },
+      'trailing': {
+        type: 'boolean',
+        default: false,
+        description: `Leave a slash at the end of directories.`
+      },
+      'minimatch': {
+        type: 'object',
+        description: `Pass any additionnal config to Minimatch.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Globbing expression of the directory tree to match.`
-    },
-    'trailing': {
-      type: 'boolean',
-      default: false,
-      description: `Leave a slash at the end of directories.`
-    },
-    'minimatch': {
-      type: 'object',
-      description: `Pass any additionnal config to Minimatch.`
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

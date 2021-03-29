@@ -7,18 +7,20 @@
 var errors, handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'source': {
-      type: 'string',
-      description: `Source file to be copied.`
+  config: {
+    type: 'object',
+    properties: {
+      'source': {
+        type: 'string',
+        description: `Source file to be copied.`
+      },
+      'target': {
+        type: 'string',
+        description: `Destination file where to copy the source file.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Destination file where to copy the source file.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

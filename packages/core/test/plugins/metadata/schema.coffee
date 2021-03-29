@@ -14,7 +14,7 @@ describe 'plugins.schema', ->
     # This generates a log and execute the handler
     # instead of raising an error
     nikita
-      $schema:
+      $schema: config:
         type: 'object'
         properties:
           'parent':
@@ -29,7 +29,7 @@ describe 'plugins.schema', ->
   it 'config is valid', ->
     nikita ->
       {a_string, an_integer} = await @call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -47,7 +47,7 @@ describe 'plugins.schema', ->
       nikita
       .call
         $disabled: true
-        $schema: 
+        $schema: config:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -60,7 +60,7 @@ describe 'plugins.schema', ->
       nikita
       .call
         $disabled: false
-        $schema: 
+        $schema: config:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -71,10 +71,11 @@ describe 'plugins.schema', ->
     
     it 'run after the condition plugin', ->
       schema =
-        type: 'object'
-        properties:
-          'a_string': type: 'string'
-        required: ['a_string']
+        config:
+          type: 'object'
+          properties:
+            'a_string': type: 'string'
+          required: ['a_string']
       # No validation occured when condition failed
       nikita
       .call
@@ -95,7 +96,7 @@ describe 'plugins.schema', ->
 
     it 'invalid with one error', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'an_integer': type: 'integer', 'minimum': 1
@@ -105,13 +106,13 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/properties/an_integer/minimum config/an_integer should be >= 1,'
+        '#/definitions/config/properties/an_integer/minimum config/an_integer should be >= 1,'
         'comparison is ">=", limit is 1.'
       ].join ' '
 
     it 'nice message with additionalProperties', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'a_string': type: 'string'
@@ -122,7 +123,7 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/additionalProperties config should NOT have additional properties,'
+        '#/definitions/config/additionalProperties config should NOT have additional properties,'
         'additionalProperty is "lonely_duck".'
       ].join ' '
     
@@ -150,7 +151,7 @@ describe 'plugins.schema', ->
 
     it 'useDefaults', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'a_string':
@@ -164,7 +165,7 @@ describe 'plugins.schema', ->
       # accept its rule or create ours. For example, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'int_to_string':
@@ -181,7 +182,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof valid', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
@@ -191,7 +192,7 @@ describe 'plugins.schema', ->
 
     it 'instanceof invalid', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
@@ -200,14 +201,14 @@ describe 'plugins.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/properties/a_regexp/instanceof config/a_regexp should pass "instanceof" keyword validation.'
+        '#/definitions/config/properties/a_regexp/instanceof config/a_regexp should pass "instanceof" keyword validation.'
       ].join ' '
 
   describe 'custom keywords', ->
 
     it 'filemode true with string casted to octal', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'mode':
@@ -219,7 +220,7 @@ describe 'plugins.schema', ->
 
     it 'filemode false is invalid', ->
       nikita.call
-        $schema:
+        $schema: config:
           type: 'object'
           properties:
             'mode':

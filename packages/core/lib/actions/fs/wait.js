@@ -28,23 +28,25 @@ on_action = {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'target': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'target': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `Paths to the files and directories.`
       },
-      description: `Paths to the files and directories.`
-    },
-    'interval': {
-      type: 'integer',
-      default: 2000,
-      description: `Time interval between which we should wait before re-executing the
+      'interval': {
+        type: 'integer',
+        default: 2000,
+        description: `Time interval between which we should wait before re-executing the
 check, default to 2s.`
-    }
-  },
-  required: ['target']
+      }
+    },
+    required: ['target']
+  }
 };
 
 // ## Handler

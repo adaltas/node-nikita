@@ -18,14 +18,15 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'time':
-          type: 'integer'
-          description: '''
-          Time in millisecond to wait for.
-          '''
-      required: ['time']
+      config:
+        type: 'object'
+        properties:
+          'time':
+            type: 'integer'
+            description: '''
+            Time in millisecond to wait for.
+            '''
+        required: ['time']
 
 ## Handler
 

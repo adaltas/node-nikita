@@ -41,51 +41,52 @@ console.info(`Directory was created: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'cwd':
-          type: ['boolean', 'string']
-          description: '''
-          Current working directory for relative paths. A boolean value only
-          apply without an SSH connection and default to `process.cwd()`.
-          '''
-        'exclude':
-          instanceof: 'RegExp'
-          description: '''
-          Exclude directories matching a regular expression. For example, the
-          expression `/\${/` on './var/cache/${user}' exclude the directories
-          containing a variables and only apply to `./var/cache/`.
-          '''
-        'gid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/gid'
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/properties/mode'
-        'parent':
-          oneOf: [
-            type: 'boolean'
-          ,
-            type: 'object'
-            properties:
-              'gid':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/gid'
-              'mode':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/mode'
-              'uid':
-                $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/properties/uid'
-          ]
-          description: '''
-          Create parent directory with provided attributes if an object or
-          default system options if "true", supported attributes include 'mode',
-          'uid', 'gid', 'size', 'atime', and 'mtime'.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Location of the directory to create.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/chown#/properties/uid'
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'cwd':
+            type: ['boolean', 'string']
+            description: '''
+            Current working directory for relative paths. A boolean value only
+            apply without an SSH connection and default to `process.cwd()`.
+            '''
+          'exclude':
+            instanceof: 'RegExp'
+            description: '''
+            Exclude directories matching a regular expression. For example, the
+            expression `/\${/` on './var/cache/${user}' exclude the directories
+            containing a variables and only apply to `./var/cache/`.
+            '''
+          'gid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/gid'
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chmod#/definitions/config/properties/mode'
+          'parent':
+            oneOf: [
+              type: 'boolean'
+            ,
+              type: 'object'
+              properties:
+                'gid':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/gid'
+                'mode':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/mode'
+                'uid':
+                  $ref: 'module://@nikitajs/core/src/actions/fs/mkdir#/definitions/config/properties/uid'
+            ]
+            description: '''
+            Create parent directory with provided attributes if an object or
+            default system options if "true", supported attributes include 'mode',
+            'uid', 'gid', 'size', 'atime', and 'mtime'.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Location of the directory to create.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/uid'
+        required: ['target']
         
 ## Handler
 

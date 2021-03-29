@@ -7,21 +7,23 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'mode': {
-      type: ['string', 'integer'],
-      filemode: true,
-      description: `File mode. Modes may be absolute or symbolic. An absolute mode is
+  config: {
+    type: 'object',
+    properties: {
+      'mode': {
+        type: ['string', 'integer'],
+        filemode: true,
+        description: `File mode. Modes may be absolute or symbolic. An absolute mode is
 an octal number. A symbolic mode is a string with a particular syntax
 describing \`who\`, \`op\` and \`perm\` symbols.`
+      },
+      'target': {
+        type: 'string',
+        description: `Location of the file which permission will change.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Location of the file which permission will change.`
-    }
-  },
-  required: ['mode', 'target']
+    required: ['mode', 'target']
+  }
 };
 
 // ## Handler

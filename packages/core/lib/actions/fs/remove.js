@@ -46,19 +46,21 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'recursive': {
-      type: 'boolean',
-      description: `Attempt to remove the file hierarchy rooted in the directory.`
-    },
-    'target': {
-      type: 'string',
-      description: `File, directory or glob (pattern matching based on wildcard
+  config: {
+    type: 'object',
+    properties: {
+      'recursive': {
+        type: 'boolean',
+        description: `Attempt to remove the file hierarchy rooted in the directory.`
+      },
+      'target': {
+        type: 'string',
+        description: `File, directory or glob (pattern matching based on wildcard
 characters).`
-    }
-  },
-  required: ['target']
+      }
+    },
+    required: ['target']
+  }
 };
 
 // ## Handler

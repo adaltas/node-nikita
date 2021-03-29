@@ -25,14 +25,15 @@ console.info(`File exists: ${exists}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'target':
-          type: 'string'
-          description: '''
-          Destination file to check existance.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'target':
+            type: 'string'
+            description: '''
+            Destination file to check existance.
+            '''
+        required: ['target']
 
 ## Handler
 

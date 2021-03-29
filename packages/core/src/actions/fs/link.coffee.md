@@ -26,26 +26,27 @@ console.info(`Link was created: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'source':
-          type: 'string'
-          description: '''
-          Referenced file to be linked.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Symbolic link to be created.
-          '''
-        'exec':
-          type: 'boolean'
-          description: '''
-          Create an executable file with an `exec` command.
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
-      required: ['source', 'target']
+      config:
+        type: 'object'
+        properties:
+          'source':
+            type: 'string'
+            description: '''
+            Referenced file to be linked.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Symbolic link to be created.
+            '''
+          'exec':
+            type: 'boolean'
+            description: '''
+            Create an executable file with an `exec` command.
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/definitions/config/properties/mode'
+        required: ['source', 'target']
 
 ## Handler
 

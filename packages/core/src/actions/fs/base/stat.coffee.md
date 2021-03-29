@@ -52,7 +52,7 @@ returned values.
           type: 'object'
           properties:
             'mode':
-              $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
+              $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/definitions/config/properties/mode'
             'uid':
               type: 'integer'
               description: '''
@@ -84,21 +84,22 @@ returned values.
               '''
 
     schema =
-      type: 'object'
-      properties:
-        'dereference':
-          type: 'boolean'
-          description: '''
-          Follow links, similar to `lstat`, default is "true", just like in the
-          native Node.js `fs.stat` function, use `nikita.fs.lstat` to retrive
-          link information.
-          '''
-        'target':
-          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: '''
-          Location of the file to analyse
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'dereference':
+            type: 'boolean'
+            description: '''
+            Follow links, similar to `lstat`, default is "true", just like in the
+            native Node.js `fs.stat` function, use `nikita.fs.lstat` to retrive
+            link information.
+            '''
+          'target':
+            oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
+            description: '''
+            Location of the file to analyse
+            '''
+        required: ['target']
 
 ## Handler
 

@@ -45,20 +45,21 @@ console.info(`Directories was removed: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'recursive':
-          type: 'boolean'
-          description: '''
-          Attempt to remove the file hierarchy rooted in the directory.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          File, directory or glob (pattern matching based on wildcard
-          characters).
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'recursive':
+            type: 'boolean'
+            description: '''
+            Attempt to remove the file hierarchy rooted in the directory.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            File, directory or glob (pattern matching based on wildcard
+            characters).
+            '''
+        required: ['target']
 
 ## Handler
 

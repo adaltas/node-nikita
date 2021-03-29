@@ -6,20 +6,21 @@ Create a directory. Missing parent directories are created as required.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/gid'
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
-        'target':
-          type: 'string'
-          description: '''
-          Location of the directory to create.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/uid'
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'gid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/definitions/config/properties/gid'
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/definitions/config/properties/mode'
+          'target':
+            type: 'string'
+            description: '''
+            Location of the directory to create.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/definitions/config/properties/uid'
+        required: ['target']
 
 ## Handler
 

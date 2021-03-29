@@ -38,83 +38,84 @@ console.info(`File exists: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'content':
-          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
-          description: '''
-          Text to validate.
-          '''
-        'encoding':
-          type: 'string'
-          default: 'utf8'
-          description: '''
-          Content encoding, see the Node.js supported Buffer encoding.
-          '''
-        'filetype':
-          type: 'array'
-          items:
+      config:
+        type: 'object'
+        properties:
+          'content':
+            oneOf: [{type: 'string'}, {instanceof: 'Buffer'}, {instanceof: 'RegExp'}]
+            description: '''
+            Text to validate.
+            '''
+          'encoding':
+            type: 'string'
+            default: 'utf8'
+            description: '''
+            Content encoding, see the Node.js supported Buffer encoding.
+            '''
+          'filetype':
+            type: 'array'
+            items:
+              type: ['integer', 'string']
+            description: '''
+            Validate the file, could be any [file type
+            constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
+            one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
+            'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
+            'ifsock',  'socket'.
+            '''
+          'filter':
+            type: 'array'
+            items:
+              instanceof: 'RegExp'
+            description: '''
+            Text to filter in actual content before matching.
+            '''
+          'gid':
             type: ['integer', 'string']
-          description: '''
-          Validate the file, could be any [file type
-          constants](https://nodejs.org/api/fs.html#fs_file_type_constants) or
-          one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
-          'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink',
-          'ifsock',  'socket'.
-          '''
-        'filter':
-          type: 'array'
-          items:
-            instanceof: 'RegExp'
-          description: '''
-          Text to filter in actual content before matching.
-          '''
-        'gid':
-          type: ['integer', 'string']
-          description: '''
-          Group ID to assert.
-          '''
-        'md5':
-          type: 'string'
-          description: '''
-          Validate signature.
-          '''
-        'mode':
-          type: 'array'
-          items:
-            $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
-          description: '''
-          Validate file permissions.
-          '''
-        'not':
-          $ref: 'module://@nikitajs/core/src/actions/assert#/properties/not'
-        'sha1':
-          type: 'string'
-          description: '''
-          Validate signature.
-          '''
-        'sha256':
-          type: 'string'
-          description: '''
-          Validate signature.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Location of the file to assert.
-          '''
-        'trim':
-          type: 'boolean'
-          default: false
-          description: '''
-          Trim the actual and expected content before matching.
-          '''
-        'uid':
-          type: ['integer', 'string']
-          description: '''
-          User ID to assert.
-          '''
-      required: ['target']
+            description: '''
+            Group ID to assert.
+            '''
+          'md5':
+            type: 'string'
+            description: '''
+            Validate signature.
+            '''
+          'mode':
+            type: 'array'
+            items:
+              $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/definitions/config/properties/mode'
+            description: '''
+            Validate file permissions.
+            '''
+          'not':
+            $ref: 'module://@nikitajs/core/src/actions/assert#/definitions/config/properties/not'
+          'sha1':
+            type: 'string'
+            description: '''
+            Validate signature.
+            '''
+          'sha256':
+            type: 'string'
+            description: '''
+            Validate signature.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Location of the file to assert.
+            '''
+          'trim':
+            type: 'boolean'
+            default: false
+            description: '''
+            Trim the actual and expected content before matching.
+            '''
+          'uid':
+            type: ['integer', 'string']
+            description: '''
+            User ID to assert.
+            '''
+        required: ['target']
 
 ## Handler
 

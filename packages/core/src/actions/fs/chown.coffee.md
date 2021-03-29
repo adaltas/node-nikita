@@ -34,24 +34,25 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/gid'
-        'stats':
-          typeof: 'object'
-          description: '''
-          Stat object of the target file. Short-circuit to avoid fetching the
-          stat object associated with the target if one is already available.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Location of the file which permissions will change.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/properties/uid'
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'gid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/definitions/config/properties/gid'
+          'stats':
+            typeof: 'object'
+            description: '''
+            Stat object of the target file. Short-circuit to avoid fetching the
+            stat object associated with the target if one is already available.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Location of the file which permissions will change.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chown#/definitions/config/properties/uid'
+        required: ['target']
 
 ## Handler
 

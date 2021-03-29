@@ -7,32 +7,34 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'source': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'Buffer'
-        }
-      ],
-      description: `Location of the file to reference.`
+  config: {
+    type: 'object',
+    properties: {
+      'source': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'Buffer'
+          }
+        ],
+        description: `Location of the file to reference.`
+      },
+      'target': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'Buffer'
+          }
+        ],
+        description: `Destination of the link to create.`
+      }
     },
-    'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'Buffer'
-        }
-      ],
-      description: `Destination of the link to create.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

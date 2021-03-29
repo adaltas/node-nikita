@@ -24,22 +24,23 @@ console.info(`File was created: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'target':
-          type: 'array'
-          items: type: 'string'
-          description: '''
-          Paths to the files and directories.
-          '''
-        'interval':
-          type: 'integer'
-          default: 2000
-          description: '''
-          Time interval between which we should wait before re-executing the
-          check, default to 2s.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'target':
+            type: 'array'
+            items: type: 'string'
+            description: '''
+            Paths to the files and directories.
+            '''
+          'interval':
+            type: 'integer'
+            default: 2000
+            description: '''
+            Time interval between which we should wait before re-executing the
+            check, default to 2s.
+            '''
+        required: ['target']
 
 ## Handler
 

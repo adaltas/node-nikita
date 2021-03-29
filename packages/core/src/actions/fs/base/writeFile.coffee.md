@@ -21,41 +21,42 @@ console.info(`File was written: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'content':
-          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: '''
-          Content to write.
-          '''
-        'cwd':
-          type: 'string'
-          description: '''
-          Current working directory used to resolve a relative target path.
-          '''
-        'flags':
-          type: 'string'
-          default: 'w'
-          description: '''
-          File system flag as defined in the [Node.js
-          documentation](https://nodejs.org/api/fs.html#fs_file_system_flags)
-          and [open(2)](http://man7.org/linux/man-pages/man2/open.2.html)
-          '''
-        'target_tmp':
-          type: 'string'
-          description: '''
-          Location where to write the temporary uploaded file before it is
-          copied into its final destination, default to
-          "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/createWriteStream#/properties/mode'
-        'target':
-          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: '''
-          Final destination path.
-          '''
-      required: ['content', 'target']
+      config:
+        type: 'object'
+        properties:
+          'content':
+            oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
+            description: '''
+            Content to write.
+            '''
+          'cwd':
+            type: 'string'
+            description: '''
+            Current working directory used to resolve a relative target path.
+            '''
+          'flags':
+            type: 'string'
+            default: 'w'
+            description: '''
+            File system flag as defined in the [Node.js
+            documentation](https://nodejs.org/api/fs.html#fs_file_system_flags)
+            and [open(2)](http://man7.org/linux/man-pages/man2/open.2.html)
+            '''
+          'target_tmp':
+            type: 'string'
+            description: '''
+            Location where to write the temporary uploaded file before it is
+            copied into its final destination, default to
+            "{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}"
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/createWriteStream#/definitions/config/properties/mode'
+          'target':
+            oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
+            description: '''
+            Final destination path.
+            '''
+        required: ['content', 'target']
 
 ## Handler
 

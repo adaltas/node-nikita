@@ -38,41 +38,43 @@ on_action = function({config, metadata}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'code': {
-      type: 'array',
-      items: {
-        type: 'integer'
+  config: {
+    type: 'object',
+    properties: {
+      'code': {
+        type: 'array',
+        items: {
+          type: 'integer'
+        },
+        description: `Expected exit code, activated by default unless content is provided.`
       },
-      description: `Expected exit code, activated by default unless content is provided.`
-    },
-    'content': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'Buffer'
-        },
-        {
-          instanceof: 'RegExp'
-        }
-      ],
-      description: `Content to match, optional.`
-    },
-    'error': {
-      type: 'string',
-      description: `The error message to throw if assert failed.`
-    },
-    'not': {
-      $ref: 'module://@nikitajs/core/lib/actions/assert#/properties/not'
-    },
-    'trim': {
-      type: 'boolean',
-      default: false,
-      description: `Trim the expected content as well as the command output before
+      'content': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'Buffer'
+          },
+          {
+            instanceof: 'RegExp'
+          }
+        ],
+        description: `Content to match, optional.`
+      },
+      'error': {
+        type: 'string',
+        description: `The error message to throw if assert failed.`
+      },
+      'not': {
+        $ref: 'module://@nikitajs/core/lib/actions/assert#/definitions/config/properties/not'
+      },
+      'trim': {
+        type: 'boolean',
+        default: false,
+        description: `Trim the expected content as well as the command output before
 matching.`
+      }
     }
   }
 };

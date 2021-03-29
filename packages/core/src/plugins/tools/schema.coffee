@@ -4,14 +4,15 @@ schema. Thus, it mst be defined after every module which modify the config
 object.
 ###
 
-utils = require '../../utils'
+{merge} = require 'mixme'
 Ajv = require('ajv').default
 ajv_keywords = require 'ajv-keywords'
 ajv_formats = require "ajv-formats"
+utils = require '../../utils'
 
 parse = (uri) ->
   matches = /^(\w+:)\/\/(.*)/.exec uri
-  throw utils.error 'SCHEMA_MALFORMED_URI', [
+  throw utils.error 'NIKITA_SCHEMA_MALFORMED_URI', [
     'uri must start with a valid protocol'
     'such as "module://" or "registry://",'
     "got #{JSON.stringify uri}."
@@ -24,6 +25,8 @@ module.exports =
   hooks:
     'nikita:normalize':
       handler: (action) ->
+        # Handler execution
+        # action = await handler.apply null, arguments
         action.tools ?= {}
         # Get schema from parent action
         if action.parent?.tools.schema
@@ -36,7 +39,6 @@ module.exports =
           useDefaults: true
           allowUnionTypes: true # eg type: ['boolean', 'integer']
           strict: true
-          # extendRefs: true
           coerceTypes: 'array'
           loadSchema: (uri) ->
             new Promise (accept, reject) ->
@@ -47,7 +49,9 @@ module.exports =
                 when 'module:'
                   try
                     action = require.main.require pathname
-                    accept action.metadata.schema
+                    schema = action.metadata.schema
+                    schema = definitions: action.metadata.schema
+                    accept schema
                   catch err
                     reject utils.error 'NIKITA_SCHEMA_INVALID_MODULE', [
                       'the module location is not resolvable,'
@@ -57,7 +61,12 @@ module.exports =
                   module = pathname.split '/'
                   action = await action.registry.get module
                   if action
-                    accept action.metadata.schema
+                    schema = action.metadata.schema
+                    schema = definitions: action.metadata.schema
+                    # schema =
+                    #   type: 'object'
+                    #   properties: action.metadata.schema
+                    accept schema
                   else
                     reject utils.error 'NIKITA_SCHEMA_UNREGISTERED_ACTION', [
                       'the action is not registered inside the Nikita registry,'
@@ -81,20 +90,52 @@ module.exports =
           metaSchema:
             type: 'boolean'
             enum: [true]
+        ajv.addSchema
+          type: 'object'
+          properties: {}
+          definitions:
+            metadata: {
+              type: 'object'
+              properties: {}
+            }
+        , 'nikita'
         action.tools.schema =
           ajv: ajv
           add: (schema, name) ->
             return unless schema
             ajv.addSchema schema, name
+          addMetadata: (name, future) ->
+            schema = ajv.getSchema('nikita').schema
+            current = schema.definitions.metadata.properties[name]
+            return false if utils.object.match current, future
+            ajv.removeSchema('nikita')
+            schema = merge schema, definitions: metadata: properties: [name]: future
+            ajv.addSchema(schema, 'nikita')
+            true
           validate: (action, schema) ->
             try
-              validate = await ajv.compileAsync schema or action.metadata.schema
+              schema ?= action.metadata.schema
+              schema =
+                definitions: schema
+                type: 'object'
+                # properties: schema
+                allOf: [
+                  properties: ( (obj={}) ->
+                    obj[k] = $ref: "#/definitions/#{k}" for k, v of schema
+                    obj
+                  )()
+                ,
+                  properties: 
+                    metadata:
+                      $ref: 'nikita#/definitions/metadata'
+                ]
+              validate = await ajv.compileAsync schema
             catch err
               unless err.code
                 err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION'
                 err.message = "#{err.code}: #{err.message}"
               throw err
-            return if validate action.config
+            return if validate utils.object.filter action, ['error', 'output']
             utils.error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
               if validate.errors.length is 1
               then 'one error was found in the configuration of'
@@ -104,7 +145,7 @@ module.exports =
               else "root action:"
               validate.errors
               .map (err) ->
-                msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
+                msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data\//, ''
                 msg += (
                   for key, value of err.params
                     continue if key is 'missingProperty'
@@ -114,3 +155,4 @@ module.exports =
               .sort()
               .join('; ')+'.'
             ]
+        action

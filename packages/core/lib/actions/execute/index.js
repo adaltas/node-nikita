@@ -100,179 +100,181 @@ on_action = {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'arch_chroot': {
-      type: ['boolean', 'string'],
-      description: `Run this command inside a root directory with the arc-chroot command
+  config: {
+    type: 'object',
+    properties: {
+      'arch_chroot': {
+        type: ['boolean', 'string'],
+        description: `Run this command inside a root directory with the arc-chroot command
 or any provided string, require the "arch_chroot_rootdir" option if activated.`
-    },
-    'arch_chroot_rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, required
+      },
+      'arch_chroot_rootdir': {
+        type: 'string',
+        description: `Path to the mount point corresponding to the root directory, required
 if the "arch_chroot" option is activated.`
-    },
-    'bash': {
-      type: ['boolean', 'string'],
-      description: `Serialize the command into a file and execute it with bash.`
-    },
-    'command': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'function'
-        }
-      ],
-      description: `String, Object or array; Command to execute. A value provided as a
+      },
+      'bash': {
+        type: ['boolean', 'string'],
+        description: `Serialize the command into a file and execute it with bash.`
+      },
+      'command': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            typeof: 'function'
+          }
+        ],
+        description: `String, Object or array; Command to execute. A value provided as a
 function is interpreted as an action and will be called by forwarding
 the config object. The result is the expected to be the command
 to execute.`
-    },
-    'cwd': {
-      type: 'string',
-      description: `Current working directory from where to execute the command.`
-    },
-    'code': {
-      type: 'array',
-      items: {
-        type: 'integer'
       },
-      default: [0],
-      description: `Expected code(s) returned by the command, int or array of int, default
+      'cwd': {
+        type: 'string',
+        description: `Current working directory from where to execute the command.`
+      },
+      'code': {
+        type: 'array',
+        items: {
+          type: 'integer'
+        },
+        default: [0],
+        description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
-    },
-    'code_skipped': {
-      type: 'array',
-      items: {
-        type: 'integer'
       },
-      default: [],
-      description: `Expected code(s) returned by the command if it has no effect, executed
+      'code_skipped': {
+        type: 'array',
+        items: {
+          type: 'integer'
+        },
+        default: [],
+        description: `Expected code(s) returned by the command if it has no effect, executed
 will not be incremented, int or array of int.`
-    },
-    'dirty': {
-      type: 'boolean',
-      default: false,
-      description: `Leave temporary files on the filesystem.`
-    },
-    'dry': {
-      type: 'boolean',
-      description: `Run the action without executing any real command.`
-    },
-    'env': {
-      type: 'object',
-      description: `Environment variables as key-value pairs. With local execution, it
+      },
+      'dirty': {
+        type: 'boolean',
+        default: false,
+        description: `Leave temporary files on the filesystem.`
+      },
+      'dry': {
+        type: 'boolean',
+        description: `Run the action without executing any real command.`
+      },
+      'env': {
+        type: 'object',
+        description: `Environment variables as key-value pairs. With local execution, it
 default to \`process.env\`. With remote execution over SSH, the accepted
 environment variables is determined by the AcceptEnv server setting
 and default to "LANG,LC_*". See the \`env_export\` property to get
 around this limitation.`,
-      patternProperties: {
-        '': {
-          type: "string"
+        patternProperties: {
+          '': {
+            type: "string"
+          }
         }
-      }
-    },
-    'env_export': {
-      type: 'boolean',
-      description: `Write a temporary file which exports the the environment variables
+      },
+      'env_export': {
+        type: 'boolean',
+        description: `Write a temporary file which exports the the environment variables
 defined in the \`env\` property. The value is always \`true\` when
 environment variables must be used with SSH.`
-    },
-    'format': {
-      type: 'string',
-      enum: ['json', 'yaml'],
-      description: `Convert the stdout to a Javascript value or object.`
-    },
-    'gid': {
-      type: 'integer',
-      description: `Unix group id.`
-    },
-    'stdin_log': {
-      type: 'boolean',
-      default: true,
-      description: `Log the executed command of type stdin, default is \`true\`.`
-    },
-    'stdout': {
-      instanceof: 'Object', // must be `stream.Writable`
-      description: `Writable EventEmitter in which the standard output of executed
+      },
+      'format': {
+        type: 'string',
+        enum: ['json', 'yaml'],
+        description: `Convert the stdout to a Javascript value or object.`
+      },
+      'gid': {
+        type: 'integer',
+        description: `Unix group id.`
+      },
+      'stdin_log': {
+        type: 'boolean',
+        default: true,
+        description: `Log the executed command of type stdin, default is \`true\`.`
+      },
+      'stdout': {
+        instanceof: 'Object', // must be `stream.Writable`
+        description: `Writable EventEmitter in which the standard output of executed
 commands will be piped.`
-    },
-    'stdout_return': {
-      type: 'boolean',
-      default: true,
-      description: `Return the stderr content in the output, default is \`true\`.  It is
+      },
+      'stdout_return': {
+        type: 'boolean',
+        default: true,
+        description: `Return the stderr content in the output, default is \`true\`.  It is
 preferable to set this property to \`false\` and to use the \`stdout\`
 property when expecting a large stdout output.`
-    },
-    'stdout_log': {
-      type: 'boolean',
-      default: true,
-      description: `Pass stdout output to the logs of type "stdout_stream", default is
+      },
+      'stdout_log': {
+        type: 'boolean',
+        default: true,
+        description: `Pass stdout output to the logs of type "stdout_stream", default is
 \`true\`.`
-    },
-    'stdout_trim': {
-      type: 'boolean',
-      default: false,
-      description: `Trim the stdout output.`
-    },
-    'stderr': {
-      instanceof: 'Object', // must be `stream.Writable`
-      description: `Writable EventEmitter in which the standard error output of executed
+      },
+      'stdout_trim': {
+        type: 'boolean',
+        default: false,
+        description: `Trim the stdout output.`
+      },
+      'stderr': {
+        instanceof: 'Object', // must be `stream.Writable`
+        description: `Writable EventEmitter in which the standard error output of executed
 command will be piped.`
-    },
-    'stderr_return': {
-      type: 'boolean',
-      default: true,
-      description: `Return the stderr content in the output, default is \`true\`. It is
+      },
+      'stderr_return': {
+        type: 'boolean',
+        default: true,
+        description: `Return the stderr content in the output, default is \`true\`. It is
 preferable to set this property to \`false\` and to use the \`stderr\`
 property when expecting a large stderr output.`
-    },
-    'stderr_log': {
-      type: 'boolean',
-      default: true,
-      description: `Pass stdout output to the logs of type "stdout_stream", default is
+      },
+      'stderr_log': {
+        type: 'boolean',
+        default: true,
+        description: `Pass stdout output to the logs of type "stdout_stream", default is
 \`true\`.`
-    },
-    'stderr_trim': {
-      type: 'boolean',
-      default: false,
-      description: `Trim the stderr output.`
-    },
-    'sudo': {
-      type: 'boolean',
-      // default: false
-      description: `Run a command as sudo, desactivated if user is "root".`
-    },
-    'target': {
-      type: 'string',
-      description: `Temporary path storing the script, only apply with the \`bash\` and
+      },
+      'stderr_trim': {
+        type: 'boolean',
+        default: false,
+        description: `Trim the stderr output.`
+      },
+      'sudo': {
+        type: 'boolean',
+        // default: false
+        description: `Run a command as sudo, desactivated if user is "root".`
+      },
+      'target': {
+        type: 'string',
+        description: `Temporary path storing the script, only apply with the \`bash\` and
 \`arch_chroot\` properties, always disposed once executed. Unless
 provided, the default location is \`{metadata.tmpdir}/{string.hash
 config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
+      },
+      'trap': {
+        type: 'boolean',
+        default: false,
+        description: `Exit immediately if a commands exits with a non-zero status.`
+      },
+      'trim': {
+        type: 'boolean',
+        default: false,
+        description: `Trim both the stdout and stderr outputs.`
+      },
+      'uid': {
+        type: 'integer',
+        description: `Unix user id.`
+      }
     },
-    'trap': {
-      type: 'boolean',
-      default: false,
-      description: `Exit immediately if a commands exits with a non-zero status.`
+    dependencies: {
+      arch_chroot: {
+        required: ['arch_chroot_rootdir']
+      }
     },
-    'trim': {
-      type: 'boolean',
-      default: false,
-      description: `Trim both the stdout and stderr outputs.`
-    },
-    'uid': {
-      type: 'integer',
-      description: `Unix user id.`
-    }
-  },
-  dependencies: {
-    arch_chroot: {
-      required: ['arch_chroot_rootdir']
-    }
-  },
-  required: ['command']
+    required: ['command']
+  }
 };
 
 

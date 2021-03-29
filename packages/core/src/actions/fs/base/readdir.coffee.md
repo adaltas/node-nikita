@@ -44,24 +44,25 @@ assert(files[0].isFile(), true)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        extended:
-          type: 'boolean'
-          description: '''
-          Result contain fs.Dirent objects.
-          '''
-        target:
-          type: 'string'
-          description: '''
-          Path of the directory to read.
-          '''
-        withFileTypes:
-          type: 'boolean'
-          description: '''
-          Alias of `extended` named after the Node.js native function.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          extended:
+            type: 'boolean'
+            description: '''
+            Result contain fs.Dirent objects.
+            '''
+          target:
+            type: 'string'
+            description: '''
+            Path of the directory to read.
+            '''
+          withFileTypes:
+            type: 'boolean'
+            description: '''
+            Alias of `extended` named after the Node.js native function.
+            '''
+        required: ['target']
 
 ## Handler
 

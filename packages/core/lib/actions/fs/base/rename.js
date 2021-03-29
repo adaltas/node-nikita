@@ -7,18 +7,20 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'source': {
-      type: 'string',
-      description: `Location of the file to rename.`
+  config: {
+    type: 'object',
+    properties: {
+      'source': {
+        type: 'string',
+        description: `Location of the file to rename.`
+      },
+      'target': {
+        type: 'string',
+        description: `New name of the file.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `New name of the file.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

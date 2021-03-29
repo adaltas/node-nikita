@@ -6,19 +6,20 @@ Change permissions of a file.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'source':
-          type: 'string'
-          description: '''
-          Source file to be copied.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Destination file where to copy the source file.
-          '''
-      required: ['source', 'target']
+      config:
+        type: 'object'
+        properties:
+          'source':
+            type: 'string'
+            description: '''
+            Source file to be copied.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Destination file where to copy the source file.
+            '''
+        required: ['source', 'target']
 
 ## Handler
 

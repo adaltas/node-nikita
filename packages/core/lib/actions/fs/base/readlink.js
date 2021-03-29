@@ -7,21 +7,23 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'Buffer'
-        }
-      ],
-      description: `Location of the link to read.`
-    }
-  },
-  required: ['target']
+  config: {
+    type: 'object',
+    properties: {
+      'target': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'Buffer'
+          }
+        ],
+        description: `Location of the link to read.`
+      }
+    },
+    required: ['target']
+  }
 };
 
 // ## Handler

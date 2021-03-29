@@ -8,14 +8,16 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'target': {
-      type: 'string',
-      description: `Location of the file from where to obtain information.`
-    }
-  },
-  required: ['target']
+  config: {
+    type: 'object',
+    properties: {
+      'target': {
+        type: 'string',
+        description: `Location of the file from where to obtain information.`
+      }
+    },
+    required: ['target']
+  }
 };
 
 // ## Handler

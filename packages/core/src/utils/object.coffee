@@ -46,6 +46,18 @@ module.exports =
   #   for k in keys
   #     return false if obj1[k] isnt obj2[k]
   #   return true
+  insert: (source, keys, value) ->
+    for key, i in keys
+      source = source[key]
+      source = source[key] = {} if source is undefined
+      throw error 'NIKITA_UTILS_INSERT', [
+        "Invalid source at path #{keys[0...i]},"
+        'it must be an object or undefined,'
+        "got #{JSON.stringify source}"
+      ] unless is_object_literal source
+      if i is keys.length -1
+        source[key] = merge source[key], value
+        return
   match: (source, target) ->
     if is_object_literal target
       return false unless is_object_literal source

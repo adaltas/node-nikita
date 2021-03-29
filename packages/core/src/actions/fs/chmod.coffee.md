@@ -23,22 +23,23 @@ console.info(`Permissions was modified: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'mode':
-          $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/properties/mode'
-        'stats':
-          typeof: 'object'
-          description: '''
-          Stat object of the target file. Short-circuit to avoid fetching the
-          stat object associated with the target if one is already available.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Location of the file which permission will change.
-          '''
-      required: ['mode']
+      config:
+        type: 'object'
+        properties:
+          'mode':
+            $ref: 'module://@nikitajs/core/src/actions/fs/base/chmod#/definitions/config/properties/mode'
+          'stats':
+            typeof: 'object'
+            description: '''
+            Stat object of the target file. Short-circuit to avoid fetching the
+            stat object associated with the target if one is already available.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Location of the file which permission will change.
+            '''
+        required: ['mode']
 
 ## Handler
 

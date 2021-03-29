@@ -6,14 +6,15 @@ Delete a directory.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'target':
-          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
-          description: '''
-          Location of the directory to remove.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'target':
+            oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
+            description: '''
+            Location of the directory to remove.
+            '''
+        required: ['target']
 
 ## Handler
 

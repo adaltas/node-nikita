@@ -6,14 +6,15 @@ Remove a non-directory type file.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'target':
-          type: 'string'
-          description: '''
-          Location of the file to remove.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'target':
+            type: 'string'
+            description: '''
+            Location of the file to remove.
+            '''
+        required: ['target']
 
 ## Handler
 

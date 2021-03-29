@@ -12,12 +12,14 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'ssh': {
-      instanceof: 'Object',
-      description: `The SSH connection to close, default to currently active SSH
+  config: {
+    type: 'object',
+    properties: {
+      'ssh': {
+        instanceof: 'Object',
+        description: `The SSH connection to close, default to currently active SSH
 connection avaible to the action.`
+      }
     }
   }
 };

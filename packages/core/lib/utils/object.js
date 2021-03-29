@@ -83,6 +83,23 @@ module.exports = {
   //   for k in keys
   //     return false if obj1[k] isnt obj2[k]
   //   return true
+  insert: function(source, keys, value) {
+    var i, j, key, len;
+    for (i = j = 0, len = keys.length; j < len; i = ++j) {
+      key = keys[i];
+      source = source[key];
+      if (source === void 0) {
+        source = source[key] = {};
+      }
+      if (!is_object_literal(source)) {
+        throw error('NIKITA_UTILS_INSERT', [`Invalid source at path ${keys.slice(0, i)},`, 'it must be an object or undefined,', `got ${JSON.stringify(source)}`]);
+      }
+      if (i === keys.length(-1)) {
+        source[key] = merge(source[key], value);
+        return;
+      }
+    }
+  },
   match: function(source, target) {
     var i, j, k, len, v;
     if (is_object_literal(target)) {
