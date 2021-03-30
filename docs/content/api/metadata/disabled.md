@@ -4,7 +4,7 @@ navtitle: disabled
 
 # Metadata "disabled"
 
-The `disabled` metadata property disables the execution of the action and consequently the execution of its child actions.
+The `disabled` metadata property disables the execution of the current action and consequently the execution of its child actions.
 
 * Type: `boolean`
 * Default: `false`
