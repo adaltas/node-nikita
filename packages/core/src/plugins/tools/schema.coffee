@@ -4,11 +4,17 @@ schema. Thus, it mst be defined after every module which modify the config
 object.
 ###
 
+stream = require 'stream'
 {merge} = require 'mixme'
 Ajv = require('ajv').default
 ajv_keywords = require 'ajv-keywords'
 ajv_formats = require "ajv-formats"
 utils = require '../../utils'
+
+instanceofDef = require 'ajv-keywords/dist/definitions/instanceof'
+instanceofDef.CONSTRUCTORS['Error'] = Error
+instanceofDef.CONSTRUCTORS['stream.Writable'] = stream.Writable
+instanceofDef.CONSTRUCTORS['stream.Readable'] = stream.Readable
 
 parse = (uri) ->
   matches = /^(\w+:)\/\/(.*)/.exec uri

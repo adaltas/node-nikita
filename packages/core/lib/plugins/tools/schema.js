@@ -4,7 +4,9 @@ The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
 object.
 */
-var Ajv, ajv_formats, ajv_keywords, merge, parse, utils;
+var Ajv, ajv_formats, ajv_keywords, instanceofDef, merge, parse, stream, utils;
+
+stream = require('stream');
 
 ({merge} = require('mixme'));
 
@@ -15,6 +17,14 @@ ajv_keywords = require('ajv-keywords');
 ajv_formats = require("ajv-formats");
 
 utils = require('../../utils');
+
+instanceofDef = require('ajv-keywords/dist/definitions/instanceof');
+
+instanceofDef.CONSTRUCTORS['Error'] = Error;
+
+instanceofDef.CONSTRUCTORS['stream.Writable'] = stream.Writable;
+
+instanceofDef.CONSTRUCTORS['stream.Readable'] = stream.Readable;
 
 parse = function(uri) {
   var matches;
