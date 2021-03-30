@@ -2,21 +2,17 @@
 module.exports = {
   name: '@nikitajs/core/lib/plugins/history',
   hooks: {
-    'nikita:normalize': function(action, handler) {
-      return async function() {
-        action = (await handler.call(null, ...arguments));
-        action.children = [];
-        if (action.siblings == null) {
-          action.siblings = [];
-        }
-        if (action.parent) {
-          action.siblings = action.parent.children;
-        }
-        if (action.parent) {
-          action.sibling = action.siblings.slice(-1)[0];
-        }
-        return action;
-      };
+    'nikita:normalize': function(action) {
+      action.children = [];
+      if (action.siblings == null) {
+        action.siblings = [];
+      }
+      if (action.parent) {
+        action.siblings = action.parent.children;
+      }
+      if (action.parent) {
+        return action.sibling = action.siblings.slice(-1)[0];
+      }
     },
     'nikita:result': function({action, error, output}) {
       if (!action.parent) {
