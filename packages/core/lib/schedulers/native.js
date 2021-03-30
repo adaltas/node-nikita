@@ -181,6 +181,17 @@ module.exports = function(tasks, options = {}) {
       pause: function() {
         return state.pause = true;
       },
+      broadcast: function(err, result) {
+        // this is a terrible hack, see session/plugins/on_normalize
+        // for a test illustrating it when an error is throw in parent
+        // and children are still registered for execution
+        options.strict = true; // and not task.managed and state.error
+        state.pause = false;
+        state.error = err;
+        if (state.stack.length) {
+          return scheduler.pump();
+        }
+      },
       resume: function() {
         if (!state.pause) {
           return;

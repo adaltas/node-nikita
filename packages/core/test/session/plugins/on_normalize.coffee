@@ -21,4 +21,20 @@ describe 'session.plugins.on_normalize', ->
       $hooks: on_normalize: ({config}, handler) ->
         throw Error 'catchme'
     .should.be.rejectedWith 'catchme'
+
+  it 'errors in parent are cascaded to children', ->
+    # Error is throw at level 0
+    nikita
+      $hooks: on_normalize:
+        handler: ({metadata}, handler) ->
+          # Plugins tools.events was complaining that tools did not exists (for
+          # some weird reasons, only when executing all the tests`), by throwing
+          # the error after the executed handler, we ensure most the normalize
+          # events are already executed
+          ->
+            handler.apply null, arguments
+            throw Error 'catchme'
+    # But we want it to be returned by level 1
+    .call (-> console.log 'oh no')
+    .should.be.rejectedWith 'catchme'
         

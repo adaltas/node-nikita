@@ -155,6 +155,7 @@ session = function(args, options = {}) {
       }));
     } catch (error1) {
       err = error1;
+      action.scheduler.broadcast(err);
       return reject(err);
     }
     // Load action from registry

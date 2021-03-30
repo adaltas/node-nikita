@@ -115,6 +115,14 @@ module.exports = (tasks, options = {}) ->
             ).reverse()).then resolve, reject
       pause: ->
         state.pause = true
+      broadcast: (err, result) ->
+        # this is a terrible hack, see session/plugins/on_normalize
+        # for a test illustrating it when an error is throw in parent
+        # and children are still registered for execution
+        options.strict = true # and not task.managed and state.error
+        state.pause = false
+        state.error = err
+        scheduler.pump() if state.stack.length
       resume: ->
         return unless state.pause
         state.pause = false
