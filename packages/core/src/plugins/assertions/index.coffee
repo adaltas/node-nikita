@@ -49,7 +49,11 @@ handlers =
           config: action.config
           error: error
           output: output
-        throw Error unless typeof run is 'boolean'
+        throw utils.error 'NIKITA_ASSERTION_INVALID_OUTPUT', [
+          'invalid assertion output,'
+          'expect a boolean value,'
+          "got #{JSON.stringify run}."
+        ] unless typeof run is 'boolean'
       else
         run = utils.object.match output, assertion
       final_run = false if run is false
@@ -67,7 +71,11 @@ handlers =
           config: action.config
           error: error
           output: output
-        throw Error unless typeof run is 'boolean'
+        throw utils.error 'NIKITA_ASSERTION_INVALID_OUTPUT', [
+          'invalid assertion output,'
+          'expect a boolean value,'
+          "got #{JSON.stringify run}."
+        ] unless typeof run is 'boolean'
       else
         run = utils.object.match output, assertion
       final_run = false if run is true

@@ -153,6 +153,17 @@ describe 'plugin.assertions unassert', ->
       .should.be.resolved()
   
   describe 'function', ->
+
+    it 'function must return a boolean', ->
+      nikita.call
+        $unassert: -> 'ko'
+        $handler: (->)
+      .should.be.rejectedWith [
+        'NIKITA_ASSERTION_INVALID_OUTPUT:'
+        'invalid assertion output,'
+        'expect a boolean value,'
+        'got "ko".'
+      ].join ' '
   
     it 'success when action returns true', ->
       nikita.call

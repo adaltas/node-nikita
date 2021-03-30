@@ -73,7 +73,7 @@ handlers = {
           output: output
         }));
         if (typeof run !== 'boolean') {
-          throw Error;
+          throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
         }
       } else {
         run = utils.object.match(output, assertion);
@@ -102,7 +102,7 @@ handlers = {
           output: output
         }));
         if (typeof run !== 'boolean') {
-          throw Error;
+          throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
         }
       } else {
         run = utils.object.match(output, assertion);
