@@ -6,6 +6,32 @@ nikita = require '../../../src'
 describe 'metadata "debug"', ->
   return unless tags.api
   
+  describe 'validation', ->
+  
+    it 'invalid string', ->
+      nikita
+        $debug: 'invalid'
+        $handler: -> throw Error 'ohno'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: /metadata\/debug should be equal to one of the allowed values, allowedValues is \["stdout","stderr"\]/
+    
+    it 'valid string', ->
+      await nikita
+        $debug: 'stdout'
+        $handler: -> 'ok'
+      .should.be.fulfilledWith 'ok'
+      await nikita
+        $debug: 'stderr'
+        $handler: -> 'ok'
+      .should.be.fulfilledWith 'ok'
+  
+    it 'valid stream.Writer', ->
+      await nikita
+        $debug: new stream.Writable()
+        $handler: -> 'ok'
+      .should.be.fulfilledWith 'ok'
+
   describe 'type', ->
   
     it 'text', ->
@@ -37,8 +63,9 @@ describe 'metadata "debug"', ->
       data = []
       write = process.stderr.write
       process.stderr.write = (chunk) -> data.push chunk
-      await nikita.call $debug: true, ({tools: {log}}) ->
-        log 'Some message'
+      await nikita.call
+        $debug: true
+        $handler: ({tools: {log}}) -> log 'Some message'
       process.stderr.write = write
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
@@ -46,8 +73,9 @@ describe 'metadata "debug"', ->
       data = []
       write = process.stdout.write
       process.stdout.write = (chunk) -> data.push chunk
-      await nikita.call $debug: 'stdout', ({tools: {log}}) ->
-        log 'Some message'
+      await nikita.call
+        $debug: 'stdout'
+        $handler: ({tools: {log}}) -> log 'Some message'
       process.stdout.write = write
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
       
@@ -55,8 +83,9 @@ describe 'metadata "debug"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita.call $debug: ws, ({tools: {log}}) ->
-        log 'Some message'
+      await nikita.call
+        $debug: ws
+        $handler: ({tools: {log}}) -> log 'Some message'
       data.join().should.eql '\u001b[32m[1.1.INFO call] Some message\u001b[39m\n'
     
   describe 'cascade', ->
@@ -98,15 +127,4 @@ describe 'metadata "debug"', ->
         log 'Sibling message'
       data.join().should.eql '\u001b[32m[1.1.2.INFO call] Child message\u001b[39m\n'
   
-  describe 'error', ->
-      
-    it 'invalid string', ->
-      nikita
-      .call $debug: 'oh no', (->)
-      .should.be.rejectedWith [
-        'METADATA_DEBUG_INVALID_VALUE:'
-        'configuration `debug` expect a boolean value,'
-        'the string "stdout", or a Node.js Stream Writer,'
-        'got "oh no".'
-      ].join ' '
   
