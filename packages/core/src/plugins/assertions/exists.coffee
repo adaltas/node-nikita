@@ -47,10 +47,8 @@ handlers =
     for assertion in action.assertions.assert_exists
       run = await session
         $bastard: true
-        $depth: action.metadata.depth
-        $raw_output: true
-        $raw_input: true
         $parent: action
+        $raw_output: true
       , ({parent}) ->
         {exists} = await @fs.base.exists target: assertion
         exists
@@ -61,11 +59,8 @@ handlers =
     for assertion in action.assertions.unassert_exists
       run = await session
         $bastard: true
-        $depth: action.metadata.depth
         $parent: action
         $raw_output: true
-        $raw_input: true
-        $parent: action
       , ->
         {exists} = await @fs.base.exists target: assertion
         exists

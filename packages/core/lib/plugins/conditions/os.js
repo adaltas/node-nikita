@@ -93,7 +93,6 @@ handlers = {
     final_run = true;
     await session({
       $bastard: true,
-      $depth: action.metadata.depth,
       $parent: action
     }, async function() {
       var $status, arch, distribution, linux_version, match, stdout, version;
@@ -161,7 +160,6 @@ handlers = {
     final_run = true;
     await session({
       $bastard: true,
-      $depth: action.metadata.depth,
       $parent: action
     }, async function() {
       var $status, arch, distribution, linux_version, match, stdout, version;

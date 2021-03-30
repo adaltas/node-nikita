@@ -25,7 +25,6 @@ handlers =
       try
         await session
           $bastard: true
-          $depth: action.metadata.depth
           $parent: action
         , ->
           await @fs.base.stat target: condition
@@ -40,7 +39,6 @@ handlers =
       try
         await session
           $bastard: true
-          $depth: action.metadata.depth
           $parent: action
         , ->
           await @fs.base.stat target: condition

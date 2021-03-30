@@ -2,6 +2,31 @@
 module.exports = {
   name: '@nikitajs/core/lib/plugins/metadata/raw',
   hooks: {
+    // 'nikita:schema': ({schema}) ->
+    //   mutate schema.definitions.metadata.properties,
+    //     raw:
+    //       type: 'boolean'
+    //       description: '''
+    //       Indicates the level number of the action in the Nikita session tree.
+    //       '''
+    //       default: 0
+    //       readOnly: true
+    //     raw_input:
+    //       type: 'boolean'
+    //       description: '''
+    //       Indicates the index of an action relative to its sibling actions in
+    //       the Nikita session tree.
+    //       '''
+    //       default: 0
+    //       readOnly: true
+    //     raw_output:
+    //       type: 'boolean'
+    //       description: '''
+    //       Indicates the position of the action relative to its parent and
+    //       sibling action. It is unique to each action.
+    //       '''
+    //       default: [0]
+    //       readOnly: true
     'nikita:registry:normalize': function(action) {
       var base, base1, base2;
       // TODO: Validation

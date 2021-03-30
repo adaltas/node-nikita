@@ -42,7 +42,6 @@ handlers = {
       try {
         await session({
           $bastard: true,
-          $depth: action.metadata.depth,
           $parent: action
         }, async function() {
           return (await this.fs.base.stat({
@@ -69,7 +68,6 @@ handlers = {
       try {
         await session({
           $bastard: true,
-          $depth: action.metadata.depth,
           $parent: action
         }, async function() {
           return (await this.fs.base.stat({

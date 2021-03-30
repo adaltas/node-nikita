@@ -43,10 +43,9 @@ handlers =
       if typeof condition is 'function'
         condition = await session
           $bastard: true
-          $depth: action.metadata.depth
+          $handler: condition
           $parent: action
           $raw_output: true
-          $handler: condition
         ,
           action.config
       run = switch typeof condition
@@ -69,10 +68,9 @@ handlers =
       if typeof condition is 'function'
         condition = await session
           $bastard: true
-          $depth: action.metadata.depth
+          $handler: condition
           $parent: action
           $raw_output: true
-          $handler: condition
         ,
           action.config
       run = switch typeof condition

@@ -68,10 +68,9 @@ handlers = {
       if (typeof condition === 'function') {
         condition = (await session({
           $bastard: true,
-          $depth: action.metadata.depth,
+          $handler: condition,
           $parent: action,
-          $raw_output: true,
-          $handler: condition
+          $raw_output: true
         }, action.config));
       }
       run = (function() {
@@ -112,10 +111,9 @@ handlers = {
       if (typeof condition === 'function') {
         condition = (await session({
           $bastard: true,
-          $depth: action.metadata.depth,
+          $handler: condition,
           $parent: action,
-          $raw_output: true,
-          $handler: condition
+          $raw_output: true
         }, action.config));
       }
       run = (function() {

@@ -42,11 +42,9 @@ handlers =
       if typeof assertion is 'function'
         run = await session
           $bastard: true
-          $depth: action.metadata.depth
-          $raw_output: true
-          $raw_input: true
           $handler: assertion
           $parent: action
+          $raw_output: true
         ,
           config: action.config
           error: error
@@ -62,11 +60,9 @@ handlers =
       if typeof assertion is 'function'
         run = await session
           $bastard: true
-          $depth: action.metadata.depth
-          $raw_output: true
-          $raw_input: true
           $handler: assertion
           $parent: action
+          $raw_output: true
         ,
           config: action.config
           error: error

@@ -71,10 +71,8 @@ handlers = {
       assertion = ref[i];
       run = (await session({
         $bastard: true,
-        $depth: action.metadata.depth,
-        $raw_output: true,
-        $raw_input: true,
-        $parent: action
+        $parent: action,
+        $raw_output: true
       }, async function({parent}) {
         var exists;
         ({exists} = (await this.fs.base.exists({
@@ -96,11 +94,8 @@ handlers = {
       assertion = ref[i];
       run = (await session({
         $bastard: true,
-        $depth: action.metadata.depth,
         $parent: action,
-        $raw_output: true,
-        $raw_input: true,
-        $parent: action
+        $raw_output: true
       }, async function() {
         var exists;
         ({exists} = (await this.fs.base.exists({

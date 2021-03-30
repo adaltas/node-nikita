@@ -64,11 +64,9 @@ handlers = {
       if (typeof assertion === 'function') {
         run = (await session({
           $bastard: true,
-          $depth: action.metadata.depth,
-          $raw_output: true,
-          $raw_input: true,
           $handler: assertion,
-          $parent: action
+          $parent: action,
+          $raw_output: true
         }, {
           config: action.config,
           error: error,
@@ -95,11 +93,9 @@ handlers = {
       if (typeof assertion === 'function') {
         run = (await session({
           $bastard: true,
-          $depth: action.metadata.depth,
-          $raw_output: true,
-          $raw_input: true,
           $handler: assertion,
-          $parent: action
+          $parent: action,
+          $raw_output: true
         }, {
           config: action.config,
           error: error,

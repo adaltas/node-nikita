@@ -26,7 +26,6 @@ handlers =
       try
         {$status} = await session
           $bastard: true
-          $depth: action.metadata.depth
           $namespace: ['execute']
           $parent: action
         ,
@@ -43,7 +42,6 @@ handlers =
       try
         {$status} = await session
           $bastard: true
-          $depth: action.metadata.depth
           $namespace: ['execute']
           $parent: action
         ,

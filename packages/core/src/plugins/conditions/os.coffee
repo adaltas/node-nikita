@@ -48,7 +48,6 @@ handlers =
     final_run = true
     await session
       $bastard: true
-      $depth: action.metadata.depth
       $parent: action
     , ->
       {$status, stdout} = await @execute
@@ -81,7 +80,6 @@ handlers =
     final_run = true
     await session
       $bastard: true
-      $depth: action.metadata.depth
       $parent: action
     , ->
       {$status, stdout} = await @execute
