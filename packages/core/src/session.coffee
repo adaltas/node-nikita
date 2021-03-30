@@ -89,7 +89,7 @@ session = (args, options={}) ->
         args: action
         hooks: action.hooks?.on_normalize or action.on_normalize
         handler: normalize
-    catch err then reject err
+    catch err then return reject err
     # Load action from registry
     if action.metadata.namespace
       action_from_registry = await action.registry.get action.metadata.namespace

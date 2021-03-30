@@ -155,7 +155,7 @@ session = function(args, options = {}) {
       }));
     } catch (error1) {
       err = error1;
-      reject(err);
+      return reject(err);
     }
     // Load action from registry
     if (action.metadata.namespace) {
