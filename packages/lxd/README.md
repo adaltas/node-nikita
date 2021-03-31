@@ -1,5 +1,7 @@
 
-# Nikita actions for LXD
+# Nikita "lxd" package
+
+The "lxd" package provides Nikita actions for various LXD operations.
 
 ## Running the test
 

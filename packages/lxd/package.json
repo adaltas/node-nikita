@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/lxd",
-  "description": "Nikita LXD actions.",
+  "description": "Provides Nikita actions for various LXD operations.",
   "keywords": [
     "nikita",
     "automation",

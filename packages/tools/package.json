@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/tools",
-  "description": "Nikita tools actions.",
+  "description": "Provides Nikita actions for various CLI tools.",
   "keywords": [
     "nikita",
     "build",

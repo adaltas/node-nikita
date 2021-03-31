@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/ipa",
-  "description": "Nikita FreeIPA actions.",
+  "description": "Provides Nikita actions for various FreeIPA operations.",
   "keywords": [
     "nikita",
     "FreeIPA",

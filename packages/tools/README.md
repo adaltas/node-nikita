@@ -1,4 +1,4 @@
 
-# Nikita tools actions
+# Nikita "tools" package
 
-This is a repository for various tools integrated as Nikita actions.
+The "tools" package provides Nikita actions for various CLI tools.

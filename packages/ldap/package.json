@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/ldap",
-  "description": "Nikita LDAP actions.",
+  "description": "Provides Nikita actions for various OpenLDAP operations.",
   "keywords": [
     "nikita",
     "automation",

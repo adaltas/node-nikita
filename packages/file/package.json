@@ -1,7 +1,7 @@
 {
   "name": "@nikitajs/file",
   "version": "1.0.0-alpha.1",
-  "description": "Automation and deployment solution of applications and infrastructures.",
+  "description": "Provides Nikita actions to work with files.",
   "keywords": [
     "nikita",
     "build",
