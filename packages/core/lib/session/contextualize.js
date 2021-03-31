@@ -7,7 +7,7 @@ var is_object_literal, mutate, properties, utils,
 utils = require('../utils');
 
 module.exports = function(args) {
-  var arg, default_action, i, k, len, new_action, prop, v;
+  var arg, default_action, i, k, kk, len, new_action, prop, v, vv;
   // args_is_array = args.some (arg) -> Array.isArray arg
   // # Multiply the arguments
   // actions = utils.array.multiply ...args
@@ -56,7 +56,15 @@ module.exports = function(args) {
           for (k in arg) {
             v = arg[k];
             if (k === '$') {
-              mutate(new_action, v);
+// mutate new_action, v
+              for (kk in v) {
+                vv = v[kk];
+                if (['config', 'metadata'].includes(kk)) {
+                  new_action[kk] = {...new_action[kk], ...vv};
+                } else {
+                  new_action[kk] = vv;
+                }
+              }
             } else if (k[0] === '$') {
               if (k === '$$') {
                 mutate(new_action.metadata, v);

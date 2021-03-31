@@ -34,7 +34,12 @@ module.exports = (args) ->
       else if is_object_literal arg
         for k, v of arg
           if k is '$'
-            mutate new_action, v
+            # mutate new_action, v
+            for kk, vv of v
+              if ['config', 'metadata'].includes kk
+                new_action[kk] = {...new_action[kk], ...vv}
+              else
+                new_action[kk] = vv
           else if k[0] is '$'
             if k is '$$'
               mutate new_action.metadata, v
