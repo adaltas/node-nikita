@@ -73,6 +73,13 @@ module.exports = {
       resolve: 'nikita-pages'
     },
     {
+      resolve: 'nikita-packages',
+      options: {
+        path: `${__dirname}/../../packages`,
+        ignore: ['nikita'],
+      },
+    },
+    {
       resolve: `gatsby-plugin-material-ui`,
       options: {
         stylesProvider: {
@@ -91,14 +98,14 @@ module.exports = {
         name: 'pages',
       },
     },
-    // {
-    //   resolve: `gatsby-source-filesystem`,
-    //   options: {
-    //     path: `${__dirname}/../nikita/packages`,
-    //     name: 'actions',
-    //     ignore: ['**/assets', '**/env', '**/lib', '**/test']
-    //   },
-    // },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/../../packages`,
+        name: 'actions',
+        ignore: ['**/assets', '**/env', '**/lib', '**/test']
+      },
+    },
     {
       resolve: "gatsby-plugin-mdx",
       options: {
