@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/db",
-  "description": "Nikita databases actions.",
+  "description": "Provides Nikita actions for various database operations. Currently supports PostgreSQL, MySQL and MariaDB.",
   "keywords": [
     "nikita",
     "build",

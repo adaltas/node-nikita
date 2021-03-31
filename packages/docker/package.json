@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/docker",
-  "description": "Nikita docker actions.",
+  "description": "Provides Nikita actions for various Docker operations.",
   "keywords": [
     "nikita",
     "build",

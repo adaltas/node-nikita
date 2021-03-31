@@ -1,7 +1,7 @@
 {
   "name": "@nikitajs/core",
   "version": "1.0.0-alpha.1",
-  "description": "Automation and deployment solution of applications and infrastructures.",
+  "description": "provides the Nikita engine and the core Nikita actions.",
   "keywords": [
     "nikita",
     "build",

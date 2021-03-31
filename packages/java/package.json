@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/java",
-  "description": "Nikita Java actions.",
+  "description": "Provides Nikita actions to work with Java keystores and truststores.",
   "keywords": [
     "nikita",
     "build",

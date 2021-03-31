@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/krb5",
-  "description": "Nikita Kerberos actions.",
+  "description": "Provides Nikita actions for various Kerberos 5 operations.",
   "keywords": [
     "nikita",
     "build",

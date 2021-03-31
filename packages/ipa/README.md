@@ -1,5 +1,8 @@
 
-# Nikita actions for FreeIPA
+# Nikita "ipa" package
+
+The "ipa" package provides Nikita actions for various FreeIPA operations.
+
 
 ## Running the test
 

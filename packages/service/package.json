@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/service",
-  "description": "Nikita service actions.",
+  "description": "Provides Nikita actions for various service management operations.",
   "keywords": [
     "nikita",
     "build",

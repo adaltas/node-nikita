@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/network",
-  "description": "Nikita network actions.",
+  "description": "Provides Nikita actions for networking operations.",
   "keywords": [
     "nikita",
     "build",
