@@ -41,14 +41,15 @@ handlers =
     for assertion in action.assertions.assert
       if typeof assertion is 'function'
         run = await session
-          $bastard: true
-          $handler: assertion
-          $parent: action
-          $raw_output: true
-        ,
-          config: action.config
-          error: error
-          output: output
+          $:
+            handler: assertion
+            metadata:
+              bastard: true
+              raw_output: true
+            parent: action
+            config: action.config
+            error: error
+            output: output
         throw utils.error 'NIKITA_ASSERTION_INVALID_OUTPUT', [
           'invalid assertion output,'
           'expect a boolean value,'
@@ -63,14 +64,15 @@ handlers =
     for assertion in action.assertions.unassert
       if typeof assertion is 'function'
         run = await session
-          $bastard: true
-          $handler: assertion
-          $parent: action
-          $raw_output: true
-        ,
-          config: action.config
-          error: error
-          output: output
+          $:
+            handler: assertion
+            metadata:
+              bastard: true
+              raw_output: true
+            parent: action
+            config: action.config
+            error: error
+            output: output
         throw utils.error 'NIKITA_ASSERTION_INVALID_OUTPUT', [
           'invalid assertion output,'
           'expect a boolean value,'

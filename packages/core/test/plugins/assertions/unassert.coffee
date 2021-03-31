@@ -153,6 +153,29 @@ describe 'plugin.assertions unassert', ->
       .should.be.resolved()
   
   describe 'function', ->
+    
+    it 'arguments contains `config`', ->
+      nikita.call
+        $unassert: ({config}) ->
+          config.get.should.eql 'me'
+          false
+        $handler: -> 'ok'
+        get: 'me'
+          
+    it 'arguments contains `output`', ->
+      nikita.call
+        $unassert: ({output}) ->
+          output.should.eql 'ok'
+          false
+        $handler: -> 'ok'
+          
+    it 'arguments contains `error`', ->
+      nikita.call
+        $unassert: ({error}) ->
+          error.message.should.eql 'ok'
+          false
+        $handler: -> throw Error 'ok'
+      .should.be.rejectedWith 'ok'
 
     it 'function must return a boolean', ->
       nikita.call

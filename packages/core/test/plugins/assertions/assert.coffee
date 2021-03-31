@@ -139,6 +139,29 @@ describe 'plugin.assertions assert', ->
       .should.be.rejected()
   
   describe 'function', ->
+    
+    it 'arguments contains `config`', ->
+      nikita.call
+        $assert: ({config}) ->
+          config.get.should.eql 'me'
+          true
+        $handler: -> 'ok'
+        get: 'me'
+          
+    it 'arguments contains `output`', ->
+      nikita.call
+        $assert: ({output}) ->
+          output.should.eql 'ok'
+          true
+        $handler: -> 'ok'
+          
+    it 'arguments contains `error`', ->
+      nikita.call
+        $assert: ({error}) ->
+          error.message.should.eql 'ok'
+          true
+        $handler: -> throw Error 'ok'
+      .should.be.rejectedWith 'ok'
 
     it 'function must return a boolean', ->
       nikita.call

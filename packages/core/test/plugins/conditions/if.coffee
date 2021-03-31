@@ -111,6 +111,20 @@ describe 'plugin.conditions if', ->
         $handler: -> throw Error 'forbidden'
   
   describe 'function', ->
+    
+    it 'check arguments', ->
+      nikita.call
+        $if: () ->
+          console.log arguments
+        $handler: -> 'success'
+
+    it 'function pass config', ->
+      nikita.call
+        $if: ({config}) ->
+          config.a_key.should.eql 'a value'
+        $handler: -> 'success'
+        a_key: 'a value'
+      .should.be.finally.eql 'success'
 
     it 'run if function casts to true', ->
       {$status, value} = await nikita.call
@@ -148,12 +162,4 @@ describe 'plugin.conditions if', ->
           new Promise (accept, reject) -> accept false
         $handler: -> throw Error 'You are not welcome here'
       $status.should.be.false()
-
-    it 'function pass config', ->
-      nikita.call
-        $if: ({config}) ->
-          config.a_key.should.eql 'a value'
-        $handler: -> 'success'
-        a_key: 'a value'
-      .should.be.finally.eql 'success'
     
