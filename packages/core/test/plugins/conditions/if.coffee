@@ -112,19 +112,20 @@ describe 'plugin.conditions if', ->
   
   describe 'function', ->
     
-    it 'check arguments', ->
+    it.only 'contains metadata depth', ->
       nikita.call
-        $if: () ->
-          console.log arguments
-        $handler: -> 'success'
+        $if: ({metadata}) ->
+          metadata.depth.should.eql 2
+        $handler: -> 'ok'
+      .should.be.finally.eql 'ok'
 
-    it 'function pass config', ->
+    it 'contains config', ->
       nikita.call
         $if: ({config}) ->
           config.a_key.should.eql 'a value'
-        $handler: -> 'success'
+        $handler: -> 'ok'
         a_key: 'a value'
-      .should.be.finally.eql 'success'
+      .should.be.finally.eql 'ok'
 
     it 'run if function casts to true', ->
       {$status, value} = await nikita.call
