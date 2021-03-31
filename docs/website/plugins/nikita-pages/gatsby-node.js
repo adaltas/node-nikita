@@ -54,7 +54,7 @@ exports.onCreateNode = (args) => {
     parent: node.id,
     children: [],
     internal: {
-      type: `NikitaPages`,
+      type: 'NikitaPages',
       // // An optional field. This is rarely used. It is used when a source plugin sources data it doesn’t know how to transform 
       // content: content,
       // the digest for the content of this node. Helps Gatsby avoid doing extra work on data that hasn’t changed.
@@ -71,7 +71,7 @@ exports.createPages = ({ actions, graphql }) => {
   const template = path.resolve(`src/templates/page.js`)
   return graphql(`
     {
-      allNikitaPages {
+      pages: allNikitaPages {
         edges {
           node {
             frontmatter {
@@ -86,7 +86,7 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
-    result.data.allNikitaPages.edges.forEach(({ node }) => {
+    result.data.pages.edges.forEach(({ node }) => {
       if (node.frontmatter.disabled) return
       createPage({
         path: node.slug,
