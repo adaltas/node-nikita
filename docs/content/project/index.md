@@ -12,8 +12,6 @@ You will find across this website resources to get familiar with Nikita's purpos
 
 * [Introduction](/current/project/introduction/)   
   Learn the motivations of software automation and its promises.
-* [Tutorial](/current/project/tutorial/)   
-  Get started with Nikita's core concepts from installing to using advanced concepts.
 * [Contribute](/current/project/contribute/)   
   Make this project become a success. Help us by providing feedback, reporting issues, improving the documentation, and submitting patches.
 * [Developer](/current/project/developers/)   

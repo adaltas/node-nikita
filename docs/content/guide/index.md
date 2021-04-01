@@ -8,12 +8,14 @@ The Nikita API is simple and concise. It also powerful and comes with a lot of f
 
 ## Recommendation
 
-Before going through the documentation, you must be familiar with the core concept of Nikita described in the [tutorial](/current/project/tutorial/).
+Before going through the documentation, you must be familiar with the core concept of Nikita described in the [tutorial](/current/guide/tutorial/).
 
 ## Content
 
 The topics of this section are organized by relevance, the first ones being considered as the most relevant ones. 
 
+* [Tutorial](/current/guide/tutorial/)   
+  Get started with Nikita's core concepts from installing to using advanced concepts.
 * [Call and user-defined handlers](/current/guide/call/)   
   Nikita gives you the choice between calling your own function, which we call handlers, or calling a registered function by its name.
 * [Action promise](/current/guide/promise/)   
