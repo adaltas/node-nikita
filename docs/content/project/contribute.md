@@ -6,7 +6,7 @@ sort: 4
 
 # Contributing
 
-Nikita is an open source project hosted on [GitHub](https://github.com/adaltas/node-nikita) originally written by [Adaltas](http://www.adaltas.com).
+Nikita is an open source project hosted on [GitHub](https://github.com/adaltas/node-nikita) originally written by [Adaltas](https://www.adaltas.com).
 
 Contributions go far beyond pull requests and commits. we are thrilled to receive a variety of other contributions including the following:
 
@@ -32,7 +32,7 @@ If you send a pull request, please do it against the master branch. We maintain 
 
 Nikita follows [Semantic Versioning](https://semver.org/) (aka SemVer). We release patch versions for bug fixes, minor versions for new features, and major versions for any breaking changes. When we make breaking changes, we also introduce deprecation warnings in a minor version so that our users learn about the upcoming changes and migrate their code in advance.
 
-Every significant change is documented in the [Changelog](changelog) file.
+Every significant change is documented in the [Changelog](/current/project/changelog) file.
 
 ## Documentation
 
