@@ -1,6 +1,6 @@
 ---
 description: Instructions on how to get up and running
-sort: 2
+sort: 1
 ---
 
 # Tutorial
@@ -91,7 +91,7 @@ cat > README.md <<MD
 You will learn how to create a new project as well as the fundamentals of using
 Nikita to automate the deployment of systems.
 
-Please refer to the [official project documentation](http://nikita.adaltas.com/current/project/tutorial/)
+Please refer to the [official project documentation](http://nikita.adaltas.com/current/guide/tutorial/)
 for additional information.
 MD
 # Commit to git the project description
