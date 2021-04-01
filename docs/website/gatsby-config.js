@@ -80,6 +80,12 @@ module.exports = {
       },
     },
     {
+      resolve: 'nikita-actions',
+      options: {
+        path: `${__dirname}/../../packages`,
+      },
+    },
+    {
       resolve: `gatsby-plugin-material-ui`,
       options: {
         stylesProvider: {
