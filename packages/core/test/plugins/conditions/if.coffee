@@ -112,7 +112,7 @@ describe 'plugin.conditions if', ->
   
   describe 'function', ->
     
-    it.only 'contains metadata depth', ->
+    it 'contains metadata depth', ->
       nikita.call
         $if: ({metadata}) ->
           metadata.depth.should.eql 2
