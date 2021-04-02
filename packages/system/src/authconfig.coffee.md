@@ -7,7 +7,7 @@ authconfig provides a simple method of configuring /etc/sysconfig/network to han
 
 Example of a group object
 
-```cson
+```js
 const {$status} = await nikita.system.authconfig({
   properties: {
     mkhomedir: true

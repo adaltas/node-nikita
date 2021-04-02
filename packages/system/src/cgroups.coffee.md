@@ -19,7 +19,7 @@ printed, that's why all path under  docker/* are ignored.
 
 Example of a group object:
 
-```cson
+```
 bibi:
   perm:
     admin:

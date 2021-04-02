@@ -19,7 +19,7 @@
 
 // Example of a group object:
 
-// ```cson
+// ```
   // bibi:
   //   perm:
   //     admin:

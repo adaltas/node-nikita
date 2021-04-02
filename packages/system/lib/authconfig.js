@@ -7,7 +7,7 @@
 
 // Example of a group object
 
-// ```cson
+// ```js
 // const {$status} = await nikita.system.authconfig({
 //   properties: {
 //     mkhomedir: true
