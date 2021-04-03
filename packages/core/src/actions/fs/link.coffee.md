@@ -57,7 +57,7 @@ console.info(`Link was created: ${status}`)
       # have the same parent directory
       await @fs.base.mkdir
         target: path.dirname config.target
-        $relax: 'EEXIST'
+        $relax: 'NIKITA_FS_MKDIR_TARGET_EEXIST'
       if config.exec
         exists = await @call $raw_output: true, ->
           {exists} = await @fs.base.exists target: config.target

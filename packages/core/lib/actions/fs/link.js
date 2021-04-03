@@ -64,7 +64,7 @@ handler = async function({
   // have the same parent directory
   await this.fs.base.mkdir({
     target: path.dirname(config.target),
-    $relax: 'EEXIST'
+    $relax: 'NIKITA_FS_MKDIR_TARGET_EEXIST'
   });
   if (config.exec) {
     exists = (await this.call({
