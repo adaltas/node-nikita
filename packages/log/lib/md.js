@@ -21,33 +21,35 @@
 var handler, log_fs, merge, schema;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      properties: {
-        divider: {
-          type: 'string',
-          default: ' : ',
-          description: `The characters used to join the hierarchy of headers to create a
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        properties: {
+          divider: {
+            type: 'string',
+            default: ' : ',
+            description: `The characters used to join the hierarchy of headers to create a
 markdown header.`
-        },
-        enter: {
-          type: 'boolean',
-          default: true,
-          description: `Enable or disable the entering messages.`
-        },
-        serializer: {
-          type: 'object',
-          default: {},
-          description: `Internal property, expose access to the serializer object passed
+          },
+          enter: {
+            type: 'boolean',
+            default: true,
+            description: `Enable or disable the entering messages.`
+          },
+          serializer: {
+            type: 'object',
+            default: {},
+            description: `Internal property, expose access to the serializer object passed
 to the \`log.fs\` action.`
+          }
         }
+      },
+      {
+        $ref: 'module://@nikitajs/log/lib/fs#/definitions/config'
       }
-    },
-    {
-      $ref: 'module://@nikitajs/log/lib/fs'
-    }
-  ]
+    ]
+  }
 };
 
 // ## Handler
@@ -164,11 +166,12 @@ module.exports = {
   handler: handler,
   metadata: {
     schema: schema
-  },
-  ssh: false
+  }
 };
 
-// ## Dependencies
+// ssh: false
+
+  // ## Dependencies
 ({merge} = require('mixme'));
 
 log_fs = require('./fs');

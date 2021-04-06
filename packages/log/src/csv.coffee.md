@@ -22,19 +22,20 @@ Global config can be alternatively set with the "log_csv" property.
 ## Schema
 
     schema =
-      type: 'object'
-      allOf: [
-        properties:
-          serializer:
-            type: 'object'
-            default: {}
-            description: '''
-            Internal property, expose access to the serializer object passed
-            to the `log.fs` action.
-            '''
-      ,
-        $ref: 'module://@nikitajs/log/src/fs'
-      ]
+      config:
+        type: 'object'
+        allOf: [
+          properties:
+            serializer:
+              type: 'object'
+              default: {}
+              description: '''
+              Internal property, expose access to the serializer object passed
+              to the `log.fs` action.
+              '''
+        ,
+          $ref: 'module://@nikitajs/log/src/fs#/definitions/config'
+        ]
 
 ## Handler
 
@@ -59,7 +60,7 @@ Global config can be alternatively set with the "log_csv" property.
 ## Exports
 
     module.exports =
-      ssh: false
+      # ssh: false
       handler: handler
       metadata:
         schema: schema

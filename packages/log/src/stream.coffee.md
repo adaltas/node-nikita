@@ -6,31 +6,32 @@ Write log to custom destinations in a user provided format.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'end':
-          type: 'boolean'
-          default: true
-          description: '''
-          Close the writable stream with the session is finished or stoped on
-          error.
-          '''
-        'serializer':
-          type: 'object'
-          description: '''
-          An object of key value pairs where keys are the event types and the
-          value is a function which must be implemented to serialize the
-          information.
-          '''
-          patternProperties:
-            '.*': typeof: 'function'
-          additionalProperties: false
-        'stream':
-          instanceof: 'Object' # WritableStream
-          description: '''
-          The writable stream where to print the logs.
-          '''
-      required: ['serializer', 'stream']
+      config:
+        type: 'object'
+        properties:
+          'end':
+            type: 'boolean'
+            default: true
+            description: '''
+            Close the writable stream with the session is finished or stoped on
+            error.
+            '''
+          'serializer':
+            type: 'object'
+            description: '''
+            An object of key value pairs where keys are the event types and the
+            value is a function which must be implemented to serialize the
+            information.
+            '''
+            patternProperties:
+              '.*': typeof: 'function'
+            additionalProperties: false
+          'stream':
+            instanceof: 'Object' # WritableStream
+            description: '''
+            The writable stream where to print the logs.
+            '''
+        required: ['serializer', 'stream']
 
 ## Handler
 

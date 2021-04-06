@@ -27,7 +27,7 @@ describe 'log.cli', ->
         
     they 'default options', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -49,7 +49,7 @@ describe 'log.cli', ->
     
     they 'pass over actions without header', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -71,7 +71,7 @@ describe 'log.cli', ->
 
     they 'status boolean', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -88,7 +88,7 @@ describe 'log.cli', ->
 
     they 'status with shy', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -106,7 +106,7 @@ describe 'log.cli', ->
     they.skip 'status with relax', ({ssh}) ->
       # TODO: see relax tests
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -126,7 +126,7 @@ describe 'log.cli', ->
 
     they 'bypass disabled', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -146,7 +146,7 @@ describe 'log.cli', ->
 
     they 'bypass conditionnal', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -166,7 +166,7 @@ describe 'log.cli', ->
 
     they 'option depth', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -187,7 +187,7 @@ describe 'log.cli', ->
 
     they 'option divider', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -209,7 +209,7 @@ describe 'log.cli', ->
 
     they 'option pad', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -223,15 +223,15 @@ describe 'log.cli', ->
           @call $header: 'h3', ->
       .call ->
         data.should.eql [
-          "#{host}      h1 : h2a           -\n"
-          "#{host}      h1 : h2b : h3      -\n"
-          "#{host}      h1 : h2b           -\n"
-          "#{host}      h1                 -\n"
+          "#{host}#{' '.repeat(14 - host.length)} h1 : h2a           -\n"
+          "#{host}#{' '.repeat(14 - host.length)} h1 : h2b : h3      -\n"
+          "#{host}#{' '.repeat(14 - host.length)} h1 : h2b           -\n"
+          "#{host}#{' '.repeat(14 - host.length)} h1                 -\n"
         ]
 
     they 'option colors', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       nikita
         $ssh: ssh
       .log.cli
@@ -271,7 +271,7 @@ describe 'log.cli', ->
           
     they 'when resolved', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       await nikita
         $ssh: ssh
       , ->
@@ -287,7 +287,7 @@ describe 'log.cli', ->
               
     they 'when rejected', ({ssh}) ->
       data = []
-      host = ssh?.host or 'localhost'
+      host = ssh?.host or 'local'
       try
         await nikita
           $ssh: ssh

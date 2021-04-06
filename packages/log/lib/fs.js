@@ -5,53 +5,65 @@
 
 // ## Layout
 
-// By default, a file name "{{basename}}.log" will be created inside the base
-// directory defined by the option "basedir". 
-// The path looks like "{config.basedir}/{hostname}.log".
+// By default, a file name "{ssh.host}.log" over SSH or "local.log" will be created
+// inside the base directory defined by the option "basedir". The path looks like
+// "{config.basedir}/{config.filename}.log".
 
 // If the option "archive" is activated, a folder named after the current time is
 // created inside the base directory. A symbolic link named as "latest" will point
-// this is direction. The paths look like "{config.basedir}/{time}/{hostname}.log"
-// and "{config.basedir}/latest".
+// this is direction. The paths look like
+// "{config.basedir}/{time}/{config.filename}.log" and "{config.basedir}/latest".
+
+// ## Hooks
+var fs, handler, on_action, path, schema;
+
+on_action = {
+  before: ['@nikitajs/core/lib/plugins/metadata/schema'],
+  after: ['@nikitajs/core/lib/plugins/ssh'],
+  handler: function({config, ssh}) {
+    var ref;
+    // With ssh, filename contain the host or ip address
+    if (config.filename == null) {
+      config.filename = `${(ssh != null ? (ref = ssh.config) != null ? ref.host : void 0 : void 0) || 'local'}.log`;
+    }
+    // Log is always local
+    return config.ssh = false;
+  }
+};
 
 // ## Schema
-var fs, handler, path, schema;
-
 schema = {
-  type: 'object',
-  properties: {
-    'archive': {
-      type: 'boolean',
-      default: false,
-      description: `Save a copy of the previous logs inside a dedicated directory.`
-    },
-    'basedir': {
-      type: 'string',
-      default: './log',
-      description: `Directory where to store logs relative to the process working
+  config: {
+    type: 'object',
+    properties: {
+      'archive': {
+        type: 'boolean',
+        default: false,
+        description: `Save a copy of the previous logs inside a dedicated directory.`
+      },
+      'basedir': {
+        type: 'string',
+        default: './log',
+        description: `Directory where to store logs relative to the process working
 directory. Default to the "log" directory. Note, when the \`archive\`
 option is activated, the log files will be stored accessible from
 "./log/latest".`
-    },
-    'filename': {
-      type: 'string',
-      default: '{{config.basename}}.log',
-      description: `Name of the log file. The default behavior rely on the templated
+      },
+      'filename': {
+        type: 'string',
+        // default: 'local.log'
+        description: `Name of the log file. The default behavior rely on the templated
 plugin to contextually render the filename.`
-    },
-    'basename': {
-      type: 'string',
-      default: 'localhost',
-      description: `Default variable used by the filename rendering.`
-    },
-    'serializer': {
-      type: 'object',
-      description: `An object of key value pairs where keys are the event types and the
+      },
+      'serializer': {
+        type: 'object',
+        description: `An object of key value pairs where keys are the event types and the
 value is a function which must be implemented to serialize the
 information.`
-    }
-  },
-  required: ['serializer']
+      }
+    },
+    required: ['serializer']
+  }
 };
 
 // ## Handler
@@ -71,7 +83,9 @@ handler = async function({config}) {
     logdir = path.resolve(config.basedir, config.archive);
   }
   try {
-    await this.fs.base.mkdir(logdir);
+    await this.fs.base.mkdir(logdir, {
+      ssh: false
+    });
   } catch (error) {
     err = error;
     if (err.code !== 'NIKITA_FS_MKDIR_TARGET_EEXIST') {
@@ -94,11 +108,16 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
-  ssh: false,
+  hooks: {
+    on_action: on_action
+  },
+  // ssh: false
   metadata: {
     schema: schema
   }
 };
+
+// templated: true
 
 // ## Dependencies
 fs = require('fs');

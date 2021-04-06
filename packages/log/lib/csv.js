@@ -23,22 +23,24 @@
 var handler, merge, schema;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      properties: {
-        serializer: {
-          type: 'object',
-          default: {},
-          description: `Internal property, expose access to the serializer object passed
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        properties: {
+          serializer: {
+            type: 'object',
+            default: {},
+            description: `Internal property, expose access to the serializer object passed
 to the \`log.fs\` action.`
+          }
         }
+      },
+      {
+        $ref: 'module://@nikitajs/log/lib/fs#/definitions/config'
       }
-    },
-    {
-      $ref: 'module://@nikitajs/log/lib/fs'
-    }
-  ]
+    ]
+  }
 };
 
 // ## Handler
@@ -76,7 +78,7 @@ handler = function({config}) {
 
 // ## Exports
 module.exports = {
-  ssh: false,
+  // ssh: false
   handler: handler,
   metadata: {
     schema: schema

@@ -19,7 +19,7 @@ describe 'log.fs', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `log.fs`:'
-          '#/required config should have required property \'serializer\'.'
+          '#/definitions/config/required config should have required property \'serializer\'.'
         ].join ' '
 
   they 'serializer can be empty', ({ssh}) ->
@@ -27,17 +27,13 @@ describe 'log.fs', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @log.fs
+      await @log.fs
         basedir: tmpdir
         serializer: {}
-      @call ({tools: {log}}) ->
+      await @call ({tools: {log}}) ->
         log message: 'ok'
-      # .file.assert
-      #   source: "#{tmpdir}/localhost.log"
-      #   content: ''
-      #   log: false
-      @fs.assert
-        target: "#{tmpdir}/localhost.log"
+      await @fs.assert
+        target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: ''
 
   they 'default options', ({ssh}) ->
@@ -52,7 +48,7 @@ describe 'log.fs', ->
       @call ({tools: {events, log}}) ->
         log message: 'ok'
       @fs.assert
-        target: "#{tmpdir}/localhost.log"
+        target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: 'ok\n'
 
   describe 'archive', ->
@@ -71,26 +67,23 @@ describe 'log.fs', ->
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
         @fs.assert
-          target: "#{tmpdir}/#{dir}/localhost.log"
+          target: "#{tmpdir}/#{dir}/#{ssh?.host or 'local'}.log"
           content: 'ok\n'
 
     they 'latest', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
+        # $dirty: true
       , ({metadata: {tmpdir}})->
-        @log.fs
+        await @log.fs
           basedir: tmpdir
           serializer: text: (log) -> "#{log.message}\n"
           archive: true
-        @call ({tools: {log}})->
+        await @call ({tools: {log}})->
           log message: 'ok'
         {stats} = await @fs.base.lstat "#{tmpdir}/latest"
         utils.stats.isSymbolicLink(stats.mode).should.be.true()
-        # @file.assert
-        #   source: "#{tmpdir}/latest/localhost.log"
-        #   content: /ok/m
-        #   log: false
         @fs.assert
-          target: "#{tmpdir}/latest/localhost.log"
+          target: "#{tmpdir}/latest/#{ssh?.host or 'local'}.log"
           content: 'ok\n'

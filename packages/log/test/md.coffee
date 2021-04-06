@@ -14,7 +14,7 @@ describe 'log.md', ->
     , ({metadata: {tmpdir}}) ->
       await @log.md basedir: tmpdir
       await @fs.assert
-        target: "#{tmpdir}/localhost.log"
+        target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: /^Entering.*$/mg
 
   they 'write message', ({ssh}) ->
@@ -30,7 +30,7 @@ describe 'log.md', ->
         filter: [
           /^Entering.*$/mg
         ]
-        target: "#{tmpdir}/localhost.log"
+        target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: 'ok'
   
   they 'write message and module', ({ssh}) ->
@@ -46,7 +46,7 @@ describe 'log.md', ->
         filter: [
           /^Entering.*$/mg
         ]
-        target: "#{tmpdir}/localhost.log"
+        target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: 'ok (1.INFO, written by nikita/test/log/md)'
 
   describe 'config `serializer`', ->
@@ -69,7 +69,7 @@ describe 'log.md', ->
           @call $header: 'h2', (->)
         @fs.assert
           trim: true
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           content: """
           0.1 h1
           0.1.0 h2
@@ -91,7 +91,7 @@ describe 'log.md', ->
           filter: [
             /^Entering.*fs\/assert.*$/mg
           ]
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           content: /^# header\n\nEntering.*actions\/call.*$/
           
     they 'honors header', ({ssh}) ->
@@ -113,7 +113,7 @@ describe 'log.md', ->
             /^Entering.*$/mg
             /^\n$/mg
           ]
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           content: """
           # h1
           
@@ -139,7 +139,7 @@ describe 'log.md', ->
             /^Entering.*$/mg
             /^\n$/mg
           ]
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           content: """
           # h1
           
@@ -160,7 +160,7 @@ describe 'log.md', ->
         echo 'this is a one line output'
         """
         {data} = await @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
           ```stdout
@@ -179,7 +179,7 @@ describe 'log.md', ->
         echo 'this is a first line'
         """
         {data} = await @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
           Running Command: `echo 'this is a first line'`
@@ -196,7 +196,7 @@ describe 'log.md', ->
         echo 'this is a second line'
         """
         {data} = await @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
           ```stdin
@@ -216,7 +216,7 @@ describe 'log.md', ->
         await @call ({tools: {log}}) ->
           log message: '1 + new line', type: 'diff'
         @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
           data: '\n```diff\n1 + new line```\n'
@@ -233,7 +233,7 @@ describe 'log.md', ->
         await @call (->)
         await @call (->)
         @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
           data: ''
@@ -248,7 +248,7 @@ describe 'log.md', ->
         await @call (->)
         await @call $log: false, (->)
         @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
           data: "\nEntering @nikitajs/core/lib/actions/call (1.3)\n"
@@ -264,7 +264,7 @@ describe 'log.md', ->
           $if: -> @call -> false
         , (->)
         @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
           data: "\nEntering @nikitajs/core/lib/actions/call (1.2)\n"

@@ -20,32 +20,33 @@ nikita(async function(){
 ## Schema
 
     schema =
-      type: 'object'
-      allOf: [
-        properties:
-          divider:
-            type: 'string'
-            default: ' : '
-            description: '''
-            The characters used to join the hierarchy of headers to create a
-            markdown header.
-            '''
-          enter:
-            type: 'boolean'
-            default: true
-            description: '''
-            Enable or disable the entering messages.
-            '''
-          serializer:
-            type: 'object'
-            default: {}
-            description: '''
-            Internal property, expose access to the serializer object passed
-            to the `log.fs` action.
-            '''
-      ,
-        $ref: 'module://@nikitajs/log/src/fs'
-      ]
+      config:
+        type: 'object'
+        allOf: [
+          properties:
+            divider:
+              type: 'string'
+              default: ' : '
+              description: '''
+              The characters used to join the hierarchy of headers to create a
+              markdown header.
+              '''
+            enter:
+              type: 'boolean'
+              default: true
+              description: '''
+              Enable or disable the entering messages.
+              '''
+            serializer:
+              type: 'object'
+              default: {}
+              description: '''
+              Internal property, expose access to the serializer object passed
+              to the `log.fs` action.
+              '''
+        ,
+          $ref: 'module://@nikitajs/log/src/fs#/definitions/config'
+        ]
 
 ## Handler
 
@@ -124,7 +125,7 @@ nikita(async function(){
       handler: handler
       metadata:
         schema: schema
-      ssh: false
+      # ssh: false
 
 ## Dependencies
 
