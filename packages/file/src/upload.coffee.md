@@ -22,64 +22,65 @@ console.info(`File was uploaded: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'content':
-          oneOf:[
+      config:
+        type: 'object'
+        properties:
+          'content':
+            oneOf:[
+              type: 'string'
+            ,
+              typeof: 'function'
+            ]
+            description: '''
+            Text to be written.
+            '''
+          'from':
+            oneOf:[
+              type: 'string'
+            ,
+              instanceof: 'RegExp'
+            ]
+            description: '''
+            Name of the marker from where the content will be replaced.
+            '''
+          'gid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid'
+          'md5':
+            type: ['boolean', 'string']
+            default: false
+            description: '''
+            Validate uploaded file with md5 checksum (only for binary upload for
+            now), may be the string checksum or will be deduced from source if
+            "true".
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode'
+          'sha1':
+            default: false
+            type: ['boolean', 'string']
+            description: '''
+            Validate uploaded file with sha1 checksum (only for binary upload for
+            now), may be the string checksum or will be deduced from source if
+            "true".
+            '''
+          'source':
             type: 'string'
-          ,
-            typeof: 'function'
-          ]
-          description: '''
-          Text to be written.
-          '''
-        'from':
-          oneOf:[
-            type: 'string'
-          ,
-            instanceof: 'RegExp'
-          ]
-          description: '''
-          Name of the marker from where the content will be replaced.
-          '''
-        'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
-        'md5':
-          type: ['boolean', 'string']
-          default: false
-          description: '''
-          Validate uploaded file with md5 checksum (only for binary upload for
-          now), may be the string checksum or will be deduced from source if
-          "true".
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
-        'sha1':
-          default: false
-          type: ['boolean', 'string']
-          description: '''
-          Validate uploaded file with sha1 checksum (only for binary upload for
-          now), may be the string checksum or will be deduced from source if
-          "true".
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          File path from where to extract the content, do not use conjointly
-          with content.
-          '''
-        'target':
-          oneOf: [
-            type: 'string'
-          ,
-            typeof: 'function'
-          ]
-          description: '''
-          File path where to write content to. Pass the content.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
-      required: ['source', 'target']
+            description: '''
+            File path from where to extract the content, do not use conjointly
+            with content.
+            '''
+          'target':
+            oneOf: [
+              type: 'string'
+            ,
+              typeof: 'function'
+            ]
+            description: '''
+            File path where to write content to. Pass the content.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
+        required: ['source', 'target']
 
 ## Handler
 

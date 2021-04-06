@@ -23,105 +23,106 @@ console.info(`File downloaded: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'cache_dir':
-          type: 'string'
-          description: '''
-          Path of the cache directory.
-          '''
-        'cache_file':
-          type:[ 'boolean', 'string']
-          description: '''
-          Alias for 'target'.
-          '''
-        'cache_local':
-          type: 'boolean'
-          description: '''
-          Apply to SSH mode, treat the cache file and directories as local from
-          where the command is used instead of over SSH.
-          '''
-        'cookies':
-          type: 'array'
-          items: type: 'string'
-          default: []
-          description: '''
-          Extra cookies  to include in the request when sending HTTP to a
-          server.
-          '''
-        'fail':
-          type: 'boolean'
-          description: '''
-          Send an error if the HTTP response code is invalid. Similar to the
-          curl option of the same name.
-          '''
-        'force':
-          type: 'boolean'
-          description: '''
-          Overwrite the target file if it exists, bypass md5 verification.
-          '''
-        'http_headers':
-          type: 'array'
-          items: type: 'string'
-          default: []
-          description: '''
-          Extra header to include in the request when sending HTTP to a server.
-          '''
-        'location':
-          type: 'boolean'
-          description: '''
-          If the server reports that the requested page has moved to a different
-          location (indicated with a Location: header and a 3XX response code),
-          this option will make curl redo the request on the new place.
-          '''
-        'md5':
-          type: ['boolean', 'string']
-          default: false
-          description: '''
-          Validate file with md5 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
-          '''
-        'proxy':
-          type: 'string'
-          description: '''
-          Use the specified HTTP proxy. If the port number is not specified, it
-          is assumed at port 1080. See curl(1) man page.
-          '''
-        'sha1':
-          default: false
-          type: ['boolean', 'string']
-          description: '''
-          Validate file with sha1 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
-          '''
-        'sha256':
-          default: false
-          type: ['boolean', 'string']
-          description: '''
-          Validate file with sha256 checksum (only for binary upload for now),
-          may be the string checksum or will be deduced from source if "true".
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          File, HTTP URL, FTP, GIT repository. File is the default protocol if
-          source is provided without any.
-          '''
-        'target':
-          type: ['boolean', 'string']
-          description: '''
-          Cache the file on the executing machine, equivalent to cache unless an
-          ssh connection is provided. If a string is provided, it will be the
-          cache path. Default to the basename of source.
-          '''
-      required: ['source']
-      anyOf: [
-        required: ['target']
-      ,
-        required: ['cache_file']
-      ,
-        required: ['cache_dir']
-      ]
+      config:
+        type: 'object'
+        properties:
+          'cache_dir':
+            type: 'string'
+            description: '''
+            Path of the cache directory.
+            '''
+          'cache_file':
+            type:[ 'boolean', 'string']
+            description: '''
+            Alias for 'target'.
+            '''
+          'cache_local':
+            type: 'boolean'
+            description: '''
+            Apply to SSH mode, treat the cache file and directories as local from
+            where the command is used instead of over SSH.
+            '''
+          'cookies':
+            type: 'array'
+            items: type: 'string'
+            default: []
+            description: '''
+            Extra cookies  to include in the request when sending HTTP to a
+            server.
+            '''
+          'fail':
+            type: 'boolean'
+            description: '''
+            Send an error if the HTTP response code is invalid. Similar to the
+            curl option of the same name.
+            '''
+          'force':
+            type: 'boolean'
+            description: '''
+            Overwrite the target file if it exists, bypass md5 verification.
+            '''
+          'http_headers':
+            type: 'array'
+            items: type: 'string'
+            default: []
+            description: '''
+            Extra header to include in the request when sending HTTP to a server.
+            '''
+          'location':
+            type: 'boolean'
+            description: '''
+            If the server reports that the requested page has moved to a different
+            location (indicated with a Location: header and a 3XX response code),
+            this option will make curl redo the request on the new place.
+            '''
+          'md5':
+            type: ['boolean', 'string']
+            default: false
+            description: '''
+            Validate file with md5 checksum (only for binary upload for now),
+            may be the string checksum or will be deduced from source if "true".
+            '''
+          'proxy':
+            type: 'string'
+            description: '''
+            Use the specified HTTP proxy. If the port number is not specified, it
+            is assumed at port 1080. See curl(1) man page.
+            '''
+          'sha1':
+            default: false
+            type: ['boolean', 'string']
+            description: '''
+            Validate file with sha1 checksum (only for binary upload for now),
+            may be the string checksum or will be deduced from source if "true".
+            '''
+          'sha256':
+            default: false
+            type: ['boolean', 'string']
+            description: '''
+            Validate file with sha256 checksum (only for binary upload for now),
+            may be the string checksum or will be deduced from source if "true".
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            File, HTTP URL, FTP, GIT repository. File is the default protocol if
+            source is provided without any.
+            '''
+          'target':
+            type: ['boolean', 'string']
+            description: '''
+            Cache the file on the executing machine, equivalent to cache unless an
+            ssh connection is provided. If a string is provided, it will be the
+            cache path. Default to the basename of source.
+            '''
+        required: ['source']
+        anyOf: [
+          required: ['target']
+        ,
+          required: ['cache_file']
+        ,
+          required: ['cache_dir']
+        ]
 
 ## Handler
 

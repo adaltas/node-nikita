@@ -25,31 +25,33 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-    },
-    'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'function'
-        }
-      ],
-      description: `File path where to write file or a function that returns a valid file
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+      },
+      'target': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            typeof: 'function'
+          }
+        ],
+        description: `File path where to write file or a function that returns a valid file
 path.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+      }
     },
-    'uid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

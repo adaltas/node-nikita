@@ -18,34 +18,35 @@ console.info(`Properties:`, properties)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'comment':
-          type: 'boolean'
-          default: false
-          description: '''
-          Preserve comments, key is the comment while value is "null".
-          '''
-        'encoding':
-          $ref: 'module://@nikitajs/file/src/index#/properties/encoding'
-          default: 'utf8'
-        'separator':
-          type: 'string'
-          default: '='
-          description: '''
-          The caracter to use for separating property and value. '=' by default.
-          '''
-        'target':
-          oneOf: [{type: 'string'}, {typeof: 'function'}]
-          description: '''
-          File to read and parse.
-          '''
-        'trim':
-          type: 'boolean'
-          description: '''
-          Trim keys and value.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'comment':
+            type: 'boolean'
+            default: false
+            description: '''
+            Preserve comments, key is the comment while value is "null".
+            '''
+          'encoding':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/encoding'
+            default: 'utf8'
+          'separator':
+            type: 'string'
+            default: '='
+            description: '''
+            The caracter to use for separating property and value. '=' by default.
+            '''
+          'target':
+            oneOf: [{type: 'string'}, {typeof: 'function'}]
+            description: '''
+            File to read and parse.
+            '''
+          'trim':
+            type: 'boolean'
+            description: '''
+            Trim keys and value.
+            '''
+        required: ['target']
 
 ## Handler
 

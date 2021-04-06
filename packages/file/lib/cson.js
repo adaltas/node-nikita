@@ -24,39 +24,41 @@
 var cson, handler, merge, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'backup': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
-    },
-    'content': {
-      type: 'object',
-      description: `Object to stringify.`
-    },
-    'encoding': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/encoding',
-      default: 'utf8'
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-    },
-    'merge': {
-      type: 'boolean',
-      description: `Read the target if it exists and merge its content.`
-    },
-    'target': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/target',
-      description: `File path where to write content to or a function that returns a valid
+  config: {
+    type: 'object',
+    properties: {
+      'backup': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/backup'
+      },
+      'content': {
+        type: 'object',
+        description: `Object to stringify.`
+      },
+      'encoding': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/encoding',
+        default: 'utf8'
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+      },
+      'merge': {
+        type: 'boolean',
+        description: `Read the target if it exists and merge its content.`
+      },
+      'target': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/target',
+        description: `File path where to write content to or a function that returns a valid
 file path.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+      },
+      'gid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+      }
     },
-    'uid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-    },
-    'gid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
-    }
-  },
-  required: ['target', 'content']
+    required: ['target', 'content']
+  }
 };
 
 // ## Handler

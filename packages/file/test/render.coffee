@@ -50,6 +50,21 @@ describe 'file.render', ->
         .should.be.rejectedWith
           message: "Invalid Option: extension '.et' is not supported"
 
+    they 'disable templated', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $templated: true
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @file.render
+          content: 'Got {{ config.test }}'
+          target: "#{tmpdir}/output"
+          context: config: test: 'from context'
+          test: 'from action'
+        await @fs.assert
+          target: "#{tmpdir}/output"
+          content: 'Got from context'
+  
   describe 'handlebars', ->
 
     they 'detect `source`', ({ssh}) ->
@@ -58,11 +73,9 @@ describe 'file.render', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
-          $templated: false
           target: "#{tmpdir}/source.hbs"
           content: 'Hello {{ who }}'
         @file.render
-          $templated: false
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context: who: 'you'
@@ -77,11 +90,9 @@ describe 'file.render', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @fs.base.writeFile
-          $templated: false
           target: "#{tmpdir}/source.hbs"
           content: 'Hello "{{ who }}" \'{{ anInt }}\''
         @file.render
-          $templated: false
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context:

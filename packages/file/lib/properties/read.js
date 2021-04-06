@@ -19,39 +19,41 @@
 var handler, quote, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'comment': {
-      type: 'boolean',
-      default: false,
-      description: `Preserve comments, key is the comment while value is "null".`
+  config: {
+    type: 'object',
+    properties: {
+      'comment': {
+        type: 'boolean',
+        default: false,
+        description: `Preserve comments, key is the comment while value is "null".`
+      },
+      'encoding': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/encoding',
+        default: 'utf8'
+      },
+      'separator': {
+        type: 'string',
+        default: '=',
+        description: `The caracter to use for separating property and value. '=' by default.`
+      },
+      'target': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            typeof: 'function'
+          }
+        ],
+        description: `File to read and parse.`
+      },
+      'trim': {
+        type: 'boolean',
+        description: `Trim keys and value.`
+      }
     },
-    'encoding': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/encoding',
-      default: 'utf8'
-    },
-    'separator': {
-      type: 'string',
-      default: '=',
-      description: `The caracter to use for separating property and value. '=' by default.`
-    },
-    'target': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          typeof: 'function'
-        }
-      ],
-      description: `File to read and parse.`
-    },
-    'trim': {
-      type: 'boolean',
-      description: `Trim keys and value.`
-    }
-  },
-  required: ['target']
+    required: ['target']
+  }
 };
 
 // ## Handler

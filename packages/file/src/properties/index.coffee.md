@@ -20,40 +20,41 @@ console.info(`File was written: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'backup':
-          $ref: 'module://@nikitajs/file/src/index#/properties/backup'
-        'comment':
-          $ref: 'module://@nikitajs/file/src/properties/read#/properties/comment'
-        'content':
-          type: 'object'
-          default: {}
-          description: '''
-          List of properties to write.
-          '''
-        'merge':
-          type: 'boolean'
-          default: false
-          description: '''
-          Merges content properties with target file.
-          '''
-        'local':
-          $ref: 'module://@nikitajs/file/src/index#/properties/local'
-        'separator':
-          default: '='
-          $ref: 'module://@nikitajs/file/src/properties/read#/properties/separator'
-        'sort':
-          type: 'boolean'
-          default: false
-          description: '''
-          Sort the properties before writting them.
-          '''
-        'target':
-          $ref: 'module://@nikitajs/file/src/index#/properties/target'
-        'trim':
-          $ref: 'module://@nikitajs/file/src/properties/read#/properties/trim'
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'backup':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/backup'
+          'comment':
+            $ref: 'module://@nikitajs/file/src/properties/read#/definitions/config/properties/comment'
+          'content':
+            type: 'object'
+            default: {}
+            description: '''
+            List of properties to write.
+            '''
+          'merge':
+            type: 'boolean'
+            default: false
+            description: '''
+            Merges content properties with target file.
+            '''
+          'local':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/local'
+          'separator':
+            default: '='
+            $ref: 'module://@nikitajs/file/src/properties/read#/definitions/config/properties/separator'
+          'sort':
+            type: 'boolean'
+            default: false
+            description: '''
+            Sort the properties before writting them.
+            '''
+          'target':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/target'
+          'trim':
+            $ref: 'module://@nikitajs/file/src/properties/read#/definitions/config/properties/trim'
+        required: ['target']
 
 ## Handler
 

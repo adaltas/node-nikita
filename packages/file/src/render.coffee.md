@@ -43,29 +43,30 @@ console.info(`File was rendered: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'content':
-          $ref: 'module://@nikitajs/file/src/index#/properties/content'
-        'context':
-          $ref: 'module://@nikitajs/file/src/index#/properties/context'
-        'engine':
-          $ref: 'module://@nikitajs/file/src/index#/properties/engine'
-        'gid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
-        'mode':
-          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
-        'local':
-          $ref: 'module://@nikitajs/file/src/index#/properties/local'
-        'remove_empty_lines':
-          $ref: 'module://@nikitajs/file/src/index#/properties/remove_empty_lines'
-        'source':
-          $ref: 'module://@nikitajs/file/src/index#/properties/source'
-        'target':
-          $ref: 'module://@nikitajs/file/src/index#/properties/target'
-        'uid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
-      required: ['target', 'context']
+      config:
+        type: 'object'
+        properties:
+          'content':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/content'
+          'context':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/context'
+          'engine':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/engine'
+          'gid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/gid'
+          'mode':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/mode'
+          'local':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/local'
+          'remove_empty_lines':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/remove_empty_lines'
+          'source':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/source'
+          'target':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/target'
+          'uid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/uid'
+        required: ['target', 'context']
 
 ## Handler
 
@@ -95,6 +96,7 @@ console.info(`File was rendered: ${$status}`)
         on_action: on_action
       metadata:
         schema: schema
+        templated: false
 
 ## Dependencies
 

@@ -9,33 +9,35 @@
 var handler, path, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      type: 'string',
-      description: `File group name or group id.`
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        type: 'string',
+        description: `File group name or group id.`
+      },
+      'keys': {
+        type: 'array',
+        description: `Array containing the public keys.`
+      },
+      'merge': {
+        type: 'boolean',
+        description: `Read the target if it exists and merge its content.`
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+      },
+      'target': {
+        type: 'string',
+        description: `File to write, default to "/etc/pacman.conf".`
+      },
+      'uid': {
+        type: 'string',
+        description: `File user name or user id.`
+      }
     },
-    'keys': {
-      type: 'array',
-      description: `Array containing the public keys.`
-    },
-    'merge': {
-      type: 'boolean',
-      description: `Read the target if it exists and merge its content.`
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-    },
-    'target': {
-      type: 'string',
-      description: `File to write, default to "/etc/pacman.conf".`
-    },
-    'uid': {
-      type: 'string',
-      description: `File user name or user id.`
-    }
-  },
-  required: ['target', 'keys']
+    required: ['target', 'keys']
+  }
 };
 
 // ## Handler

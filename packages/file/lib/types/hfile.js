@@ -8,65 +8,67 @@
 var builder, handler, parse, schema, stringify, xmldom;
 
 schema = {
-  type: 'object',
-  properties: {
-    'merge': {
-      type: 'boolean',
-      description: `Read the target if it exists and merge its content, optional.`
-    },
-    'source': {
-      type: ['object', 'string'],
-      description: `Default configuration properties or the path to a default
+  config: {
+    type: 'object',
+    properties: {
+      'merge': {
+        type: 'boolean',
+        description: `Read the target if it exists and merge its content, optional.`
+      },
+      'source': {
+        type: ['object', 'string'],
+        description: `Default configuration properties or the path to a default
 configuration file to get initial value from, optional.`
-    },
-    'target': {
-      type: 'string',
-      description: `Configuration file where to write, required.`
-    },
-    'properties': {
-      type: 'object',
-      description: `Configuration properties to write, required.`
-    },
-    'transform': {
-      oneOf: [
-        {
-          typeof: 'function'
-        },
-        {
-          type: 'null'
-        }
-      ],
-      default: null,
-      description: `User defined function used to transform properties.`
-    },
-    // File configuration properties
-    'backup': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
-    },
-    'backup_mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/backup_mode'
-    },
-    'eof': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/eof'
-    },
-    'encoding': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/encoding',
-      default: 'utf8'
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-    },
-    'gid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-    },
-    'local': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
-    },
-    'unlink': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/unlink'
+      },
+      'target': {
+        type: 'string',
+        description: `Configuration file where to write, required.`
+      },
+      'properties': {
+        type: 'object',
+        description: `Configuration properties to write, required.`
+      },
+      'transform': {
+        oneOf: [
+          {
+            typeof: 'function'
+          },
+          {
+            type: 'null'
+          }
+        ],
+        default: null,
+        description: `User defined function used to transform properties.`
+      },
+      // File configuration properties
+      'backup': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/backup'
+      },
+      'backup_mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/backup_mode'
+      },
+      'eof': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/eof'
+      },
+      'encoding': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/encoding',
+        default: 'utf8'
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+      },
+      'gid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+      },
+      'local': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local'
+      },
+      'unlink': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/unlink'
+      }
     }
   }
 };

@@ -28,38 +28,35 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    // 'rootdir':
-    //   type: 'string'
-    //   description: '''
-    //   Path to the mount point corresponding to the root directory, optional.
-    //   '''
-    'backup': {
-      type: ['string', 'boolean'],
-      description: `Create a backup, append a provided string to the filename extension or
+  config: {
+    type: 'object',
+    properties: {
+      'backup': {
+        type: ['string', 'boolean'],
+        description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
 exists and is modified.`
+      },
+      'clean': {
+        type: 'boolean',
+        description: `Remove all the lines whithout a key and a value, default to "true".`
+      },
+      'content': {
+        type: 'object',
+        description: `Object to stringify.`
+      },
+      'merge': {
+        type: 'boolean',
+        description: `Read the target if it exists and merge its content.`
+      },
+      'target': {
+        type: 'string',
+        default: '/etc/krb5.conf',
+        description: `Destination file.`
+      }
     },
-    'clean': {
-      type: 'boolean',
-      description: `Remove all the lines whithout a key and a value, default to "true".`
-    },
-    'content': {
-      type: 'object',
-      description: `Object to stringify.`
-    },
-    'merge': {
-      type: 'boolean',
-      description: `Read the target if it exists and merge its content.`
-    },
-    'target': {
-      type: 'string',
-      default: '/etc/krb5.conf',
-      description: `Destination file.`
-    }
-  },
-  required: ['content']
+    required: ['content']
+  }
 };
 
 // ## Handler

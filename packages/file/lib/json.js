@@ -30,46 +30,48 @@ on_action = function({config, metadata}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'backup': {
-      type: ['boolean', 'string'],
-      default: false,
-      description: `Create a backup, append a provided string to the filename extension or
+  config: {
+    type: 'object',
+    properties: {
+      'backup': {
+        type: ['boolean', 'string'],
+        default: false,
+        description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
 exists and is modified.`
-    },
-    'content': {
-      type: 'object',
-      default: {},
-      description: `The javascript code to stringify.`
-    },
-    'merge': {
-      type: 'boolean',
-      description: `Merge the user content with the content of the destination file if it
+      },
+      'content': {
+        type: 'object',
+        default: {},
+        description: `The javascript code to stringify.`
+      },
+      'merge': {
+        type: 'boolean',
+        description: `Merge the user content with the content of the destination file if it
 exists.`
-    },
-    'pretty': {
-      type: ['boolean', 'integer'],
-      default: false,
-      description: `Prettify the JSON output, accept the number of spaces as an integer,
+      },
+      'pretty': {
+        type: ['boolean', 'integer'],
+        default: false,
+        description: `Prettify the JSON output, accept the number of spaces as an integer,
 default to none if false or to 2 spaces indentation if true.`
-    },
-    'source': {
-      type: 'string',
-      description: `Path to a JSON file providing default values.`
-    },
-    'target': {
-      type: 'string',
-      description: `Path to the destination file.`
-    },
-    'transform': {
-      typeof: 'function',
-      description: `User provided function to modify the javascript before it is
+      },
+      'source': {
+        type: 'string',
+        description: `Path to a JSON file providing default values.`
+      },
+      'target': {
+        type: 'string',
+        description: `Path to the destination file.`
+      },
+      'transform': {
+        typeof: 'function',
+        description: `User provided function to modify the javascript before it is
 stringified into JSON.`
-    }
-  },
-  required: ['target']
+      }
+    },
+    required: ['target']
+  }
 };
 
 // ## Handler

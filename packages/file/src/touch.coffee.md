@@ -24,25 +24,26 @@ console.info(`File was touched: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
-        'mode':
-          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
-        'target':
-          oneOf: [
-            type: 'string'
-          ,
-            typeof: 'function'
-          ]
-          description: '''
-          File path where to write file or a function that returns a valid file
-          path.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'gid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/gid'
+          'mode':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/mode'
+          'target':
+            oneOf: [
+              type: 'string'
+            ,
+              typeof: 'function'
+            ]
+            description: '''
+            File path where to write file or a function that returns a valid file
+            path.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/uid'
+        required: ['target']
 
 ## Handler
 

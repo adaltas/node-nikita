@@ -8,8 +8,10 @@
 var handler, path, schema, utils;
 
 schema = {
-  type: 'object',
-  required: ['target']
+  config: {
+    type: 'object',
+    required: ['target']
+  }
 };
 
 // This action honors all the config from "nikita.file.ini".

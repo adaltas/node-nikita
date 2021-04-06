@@ -8,19 +8,21 @@
 var handler, path, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'rootdir': {
-      type: 'string',
-      description: `Path to the mount point corresponding to the root directory, optional.`
-    },
-    'interface': {
-      type: 'string',
-      description: `Interface`
-    },
-    'target': {
-      type: 'string',
-      description: `Destination file.`
+  config: {
+    type: 'object',
+    properties: {
+      'rootdir': {
+        type: 'string',
+        description: `Path to the mount point corresponding to the root directory, optional.`
+      },
+      'interface': {
+        type: 'string',
+        description: `Interface`
+      },
+      'target': {
+        type: 'string',
+        description: `Destination file.`
+      }
     }
   }
 };

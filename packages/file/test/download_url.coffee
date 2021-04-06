@@ -81,15 +81,16 @@ describe 'file.download url', ->
       # Download a non existing file
       nikita
         $ssh: ssh
+        $templated: true
         $tmpdir: true
         cache_file: "{{metadata.tmpdir}}/cache_file"
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           $ssh: ssh
           source: 'http://localhost:12345'
           target: "#{tmpdir}/download"
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           $ssh: null
           target: "#{tmpdir}/cache_file"
           content: 'okay'
@@ -130,7 +131,7 @@ describe 'file.download url', ->
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql $status: false
         {data} = await @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes "[INFO] Destination with valid signature, download aborted").should.be.true()
 

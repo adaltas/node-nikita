@@ -174,7 +174,7 @@ describe 'file.download file', ->
           md5: true
         .should.be.finally.containEql $status: false
         {data} = await @fs.base.readFile
-          target: "#{tmpdir}/localhost.log"
+          target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes "[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'null'").should.be.true()
         (data.includes "[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'").should.be.true()

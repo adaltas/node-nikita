@@ -106,7 +106,7 @@ describe 'file.cache http', ->
             md5: 'df8fede7ff71608e24a5576326e41c75'
           .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
-            target: "#{tmpdir}/localhost.log"
+            target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
             encoding: 'utf8'
           (data.includes 'Hashes match, skipping').should.be.true()
       finally
@@ -168,7 +168,7 @@ describe 'file.cache http', ->
             md5: true
           .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
-            target: "#{tmpdir}/localhost.log"
+            target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
             encoding: 'utf8'
           (data.includes "[WARN] Bypass source hash computation for non-file protocols").should.be.true()
           @file.cache
@@ -177,7 +177,7 @@ describe 'file.cache http', ->
             md5: 'df8fede7ff71608e24a5576326e41c75'
           .should.be.finally.containEql $status: false
           {data} = await @fs.base.readFile
-            target: "#{tmpdir}/localhost.log"
+            target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
             encoding: 'utf8'
           (data.includes "[DEBUG] Hashes match, skipping").should.be.true()
           @file.cache

@@ -53,40 +53,42 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'content': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/content'
+  config: {
+    type: 'object',
+    properties: {
+      'content': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/content'
+      },
+      'context': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/context'
+      },
+      'engine': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/engine'
+      },
+      'gid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+      },
+      'local': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local'
+      },
+      'remove_empty_lines': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/remove_empty_lines'
+      },
+      'source': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/source'
+      },
+      'target': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/target'
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+      }
     },
-    'context': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/context'
-    },
-    'engine': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
-    },
-    'gid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-    },
-    'local': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/local'
-    },
-    'remove_empty_lines': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/remove_empty_lines'
-    },
-    'source': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/source'
-    },
-    'target': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/target'
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-    }
-  },
-  required: ['target', 'context']
+    required: ['target', 'context']
+  }
 };
 
 // ## Handler
@@ -128,7 +130,8 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    schema: schema,
+    templated: false
   }
 };
 

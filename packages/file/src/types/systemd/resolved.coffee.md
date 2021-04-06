@@ -35,25 +35,26 @@ console.info(`File was written: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'rootdir':
-          type: 'string'
-          description: '''
-          Path to the mount point corresponding to the root directory, optional.
-          '''
-        'reload':
-          type: 'boolean', default: null
-          description: '''
-          Defaults to true. If set to true the following command will be
-          executed `systemctl daemon-reload && systemctl restart
-          systemd-resolved` after having wrote the configuration file.
-          '''
-        'target':
-          type: 'string', default: '/usr/lib/systemd/resolved.conf.d/resolved.conf'
-          description: '''
-          File to write.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'rootdir':
+            type: 'string'
+            description: '''
+            Path to the mount point corresponding to the root directory, optional.
+            '''
+          'reload':
+            type: 'boolean', default: null
+            description: '''
+            Defaults to true. If set to true the following command will be
+            executed `systemctl daemon-reload && systemctl restart
+            systemd-resolved` after having wrote the configuration file.
+            '''
+          'target':
+            type: 'string', default: '/usr/lib/systemd/resolved.conf.d/resolved.conf'
+            description: '''
+            File to write.
+            '''
 
 This action uses `file.ini` internally, therefore it honors all
 arguments it provides. `backup` is true by default and `separator` is

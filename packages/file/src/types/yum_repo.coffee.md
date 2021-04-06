@@ -7,8 +7,9 @@ Yum is a packet manager for centos/redhat. It uses .repo file located in
 ## Schema
 
     schema =
-      type: 'object'
-      required: ['target']
+      config:
+        type: 'object'
+        required: ['target']
 
 This action honors all the config from "nikita.file.ini".
 
