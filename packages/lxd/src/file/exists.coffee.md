@@ -23,16 +23,17 @@ console.info(`File exists: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'target':
-          type: 'string'
-          description: '''
-          File destination in the form of "<path>".
-          '''
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'target':
+            type: 'string'
+            description: '''
+            File destination in the form of "<path>".
+            '''
+        required: ['container']
 
 ## Handler
 

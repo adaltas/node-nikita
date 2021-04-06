@@ -16,13 +16,15 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'filter': {
-      type: 'string',
-      enum: ['containers', 'virtual-machines', 'instances'],
-      default: 'instances',
-      description: `Display only one type of instances.`
+  config: {
+    type: 'object',
+    properties: {
+      'filter': {
+        type: 'string',
+        enum: ['containers', 'virtual-machines', 'instances'],
+        default: 'instances',
+        description: `Display only one type of instances.`
+      }
     }
   }
 };

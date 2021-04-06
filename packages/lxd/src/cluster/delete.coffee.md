@@ -18,24 +18,25 @@ predelete: path/to/action
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'containers':
-          $ref: 'module://@nikitajs/lxd/src/cluster#/properties/containers'
-        'networks':
-          type: 'object'
-          default: {}
-          patternProperties: '.*':
-            $ref: 'module://@nikitajs/lxd/src/network#/properties/properties'
-        'force':
-          type: 'boolean'
-          default: false
-          description: """
-          If true, the containers will be deleted even if running.
-          """
-        'pre_delete':
-          typeof: 'function'
-      required: ['containers']
+      config:
+        type: 'object'
+        properties:
+          'containers':
+            $ref: 'module://@nikitajs/lxd/src/cluster#/definitions/config/properties/containers'
+          'networks':
+            type: 'object'
+            default: {}
+            patternProperties: '.*':
+              $ref: 'module://@nikitajs/lxd/src/network#/definitions/config/properties/properties'
+          'force':
+            type: 'boolean'
+            default: false
+            description: """
+            If true, the containers will be deleted even if running.
+            """
+          'pre_delete':
+            typeof: 'function'
+        required: ['containers']
 
 ## Handler
 

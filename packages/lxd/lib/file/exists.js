@@ -24,17 +24,19 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      },
+      'target': {
+        type: 'string',
+        description: `File destination in the form of "<path>".`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `File destination in the form of "<path>".`
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

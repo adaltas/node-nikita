@@ -22,17 +22,19 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'network': {
-      type: 'string',
-      description: `The network name to attach.`
+  config: {
+    type: 'object',
+    properties: {
+      'network': {
+        type: 'string',
+        description: `The network name to attach.`
+      },
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      }
     },
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
-    }
-  },
-  required: ['network', 'container']
+    required: ['network', 'container']
+  }
 };
 
 // ## Handler

@@ -17,29 +17,30 @@ console.info(`The container was stopped: ${$status}`);
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'wait':
-          type: 'boolean'
-          default: false
-          description: """
-          Wait for container to be stopped before finishing action.
-          """
-        'wait_retry':
-          type: 'integer'
-          default: 3
-          description: """
-          Maximum number of checks on container state, default to 3.
-          """
-        'wait_interval':
-          type: 'integer'
-          default: 2000
-          description: """
-          Time interval between each container state check in ms, default to 2s.
-          """
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'wait':
+            type: 'boolean'
+            default: false
+            description: """
+            Wait for container to be stopped before finishing action.
+            """
+          'wait_retry':
+            type: 'integer'
+            default: 3
+            description: """
+            Maximum number of checks on container state, default to 3.
+            """
+          'wait_interval':
+            type: 'integer'
+            default: 2000
+            description: """
+            Time interval between each container state check in ms, default to 2s.
+            """
+        required: ['container']
 
 ## Handler
 

@@ -56,121 +56,123 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'containers': {
-      type: 'object',
-      description: `Initialize a Linux Container with given image name, container name and
+  config: {
+    type: 'object',
+    properties: {
+      'containers': {
+        type: 'object',
+        description: `Initialize a Linux Container with given image name, container name and
 config.`,
-      patternProperties: {
-        '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)': {
-          type: 'object',
-          properties: {
-            'properties': {
-              $ref: 'module://@nikitajs/lxd/lib/config/set#/properties/properties'
-            },
-            'disk': {
-              type: 'object',
-              default: {},
-              patternProperties: {
-                '.*': { // Device name of disk
-                  $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties'
+        patternProperties: {
+          '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)': {
+            type: 'object',
+            properties: {
+              'properties': {
+                $ref: 'module://@nikitajs/lxd/lib/config/set#/definitions/config/properties/properties'
+              },
+              'disk': {
+                type: 'object',
+                default: {},
+                patternProperties: {
+                  '.*': { // Device name of disk
+                    $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties'
+                  }
                 }
-              }
-            },
-            'image': {
-              $ref: 'module://@nikitajs/lxd/lib/init#/properties/image'
-            },
-            'nic': {
-              type: 'object',
-              default: {},
-              patternProperties: {
-                '.*': {
-                  type: 'object',
-                  allOf: [
-                    {
-                      properties: {
-                        'ip': {
-                          type: 'string',
-                          format: 'ipv4'
-                        },
-                        'netmask': {
-                          type: 'string',
-                          default: '255.255.255.0',
-                          format: 'ipv4'
+              },
+              'image': {
+                $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/image'
+              },
+              'nic': {
+                type: 'object',
+                default: {},
+                patternProperties: {
+                  '.*': {
+                    type: 'object',
+                    allOf: [
+                      {
+                        properties: {
+                          'ip': {
+                            type: 'string',
+                            format: 'ipv4'
+                          },
+                          'netmask': {
+                            type: 'string',
+                            default: '255.255.255.0',
+                            format: 'ipv4'
+                          }
                         }
+                      },
+                      {
+                        $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties'
                       }
-                    },
-                    {
-                      $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties'
-                    }
-                  ]
+                    ]
+                  }
                 }
-              }
-            },
-            'proxy': {
-              type: 'object',
-              default: {},
-              patternProperties: {
-                '.*': {
-                  $ref: 'module://@nikitajs/lxd/lib/config/device#/properties/properties'
+              },
+              'proxy': {
+                type: 'object',
+                default: {},
+                patternProperties: {
+                  '.*': {
+                    $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/proxy/properties/properties'
+                  }
                 }
-              }
-            },
-            'user': {
-              type: 'object',
-              default: {},
-              patternProperties: {
-                '.*': {
-                  type: 'object',
-                  properties: {
-                    'sudo': {
-                      type: 'boolean',
-                      default: false,
-                      description: `Enable sudo access for the user.`
-                    },
-                    'authorized_keys': {
-                      type: 'string',
-                      description: `Path to file with SSH public key to be added to
+              },
+              'user': {
+                type: 'object',
+                default: {},
+                patternProperties: {
+                  '.*': {
+                    type: 'object',
+                    properties: {
+                      'sudo': {
+                        type: 'boolean',
+                        default: false,
+                        description: `Enable sudo access for the user.`
+                      },
+                      'authorized_keys': {
+                        type: 'string',
+                        description: `Path to file with SSH public key to be added to
 authorized_keys file.`
+                      }
                     }
+                  }
+                }
+              },
+              'ssh': {
+                type: 'object',
+                default: {},
+                properties: {
+                  'enabled': {
+                    type: 'boolean',
+                    default: false,
+                    description: `Enable SSH connection.`
                   }
                 }
               }
             },
-            'ssh': {
-              type: 'object',
-              default: {},
-              properties: {
-                'enabled': {
-                  type: 'boolean',
-                  default: false,
-                  description: `Enable SSH connection.`
-                }
-              }
-            }
-          },
-          required: ['image']
+            required: ['image']
+          }
         }
-      }
-    },
-    'networks': {
-      type: 'object',
-      default: {},
-      patternProperties: {
-        '.*': {
-          $ref: 'module://@nikitajs/lxd/lib/network#/properties/properties'
+      },
+      'networks': {
+        type: 'object',
+        default: {},
+        patternProperties: {
+          '.*': {
+            $ref: 'module://@nikitajs/lxd/lib/network#/definitions/config/properties/properties'
+          }
         }
+      },
+      'prevision': {
+        typeof: 'function'
+      },
+      'provision': {
+        typeof: 'function'
+      },
+      'provision_container': {
+        typeof: 'function'
       }
-    },
-    'prevision': {
-      typeof: 'function'
-    },
-    'provision': {
-      typeof: 'function'
-    },
-    'provision_container': {
-      typeof: 'function'
     }
   }
 };

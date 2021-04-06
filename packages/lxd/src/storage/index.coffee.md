@@ -24,28 +24,29 @@ console.info(`Storage was created or config updated: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'string'
-          description: '''
-          The storage name to create or update.
-          '''
-        'driver':
-          type: 'string'
-          enum: ["btrfs", "ceph", "cephfs", "dir", "lvm", "zfs"]
-          description: '''
-          The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs.
-          '''
-        'properties':
-          type: 'object',
-          patternProperties: '': type: ['string', 'boolean', 'number']
-          description: '''
-          The configuration to use to configure this storage, depends on the
-          driver. See [available
-          fields](https://lxc.readthedocs.io/en/latest/storage/).
-          '''
-      required: ['name', 'driver']
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'string'
+            description: '''
+            The storage name to create or update.
+            '''
+          'driver':
+            type: 'string'
+            enum: ["btrfs", "ceph", "cephfs", "dir", "lvm", "zfs"]
+            description: '''
+            The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs.
+            '''
+          'properties':
+            type: 'object',
+            patternProperties: '': type: ['string', 'boolean', 'number']
+            description: '''
+            The configuration to use to configure this storage, depends on the
+            driver. See [available
+            fields](https://lxc.readthedocs.io/en/latest/storage/).
+            '''
+        required: ['name', 'driver']
 
 ## Handler
 

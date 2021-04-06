@@ -20,14 +20,15 @@ console.info(`Storage was deleted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'string'
-          description: '''
-          The storage name to delete.
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'string'
+            description: '''
+            The storage name to delete.
+            '''
+        required: ['name']
 
 ## Handler
 

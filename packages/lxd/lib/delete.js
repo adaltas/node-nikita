@@ -16,18 +16,20 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      },
+      'force': {
+        type: 'boolean',
+        default: false,
+        description: `If true, the container will be deleted even if running.`
+      }
     },
-    'force': {
-      type: 'boolean',
-      default: false,
-      description: `If true, the container will be deleted even if running.`
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

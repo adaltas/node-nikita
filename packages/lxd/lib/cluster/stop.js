@@ -17,21 +17,23 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'containers': {
-      $ref: 'module://@nikitajs/lxd/lib/cluster#/properties/containers'
+  config: {
+    type: 'object',
+    properties: {
+      'containers': {
+        $ref: 'module://@nikitajs/lxd/lib/cluster#/definitions/config/properties/containers'
+      },
+      'wait': {
+        type: 'boolean',
+        default: false,
+        description: `Wait for containers to be stopped before finishing action`
+      },
+      'pre_stop': {
+        typeof: 'function'
+      }
     },
-    'wait': {
-      type: 'boolean',
-      default: false,
-      description: `Wait for containers to be stopped before finishing action`
-    },
-    'pre_stop': {
-      typeof: 'function'
-    }
-  },
-  required: ['containers']
+    required: ['containers']
+  }
 };
 
 // ## Handler

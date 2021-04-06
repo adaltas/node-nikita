@@ -21,13 +21,15 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
-    }
-  },
-  required: ['container']
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      }
+    },
+    required: ['container']
+  }
 };
 
 // ## Handler

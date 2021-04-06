@@ -20,11 +20,12 @@ console.info(`Container was started: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+        required: ['container']
 
 ## Handler
 

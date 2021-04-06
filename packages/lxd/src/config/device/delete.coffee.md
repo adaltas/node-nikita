@@ -21,16 +21,17 @@ console.info(`Device was removed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'device':
-          type: 'string'
-          description: '''
-          Name of the device in LXD configuration, for example "eth0".
-          '''
-      required: ['container', 'device']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'device':
+            type: 'string'
+            description: '''
+            Name of the device in LXD configuration, for example "eth0".
+            '''
+        required: ['container', 'device']
 
 ## Handler
 

@@ -5,12 +5,14 @@ nikita = require('@nikitajs/core/lib');
 
 require('@nikitajs/lxd/lib/register');
 
+require('@nikitajs/log/src/register');
+
 path = require('path');
 
 key = path.relative(process.cwd(), `${__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key`);
 
-module.exports = function({params}) {
-  return nikita({
+module.exports = async function({params}) {
+  return (await nikita({
     $debug: params.debug
   }).log.cli({
     pad: {
@@ -56,5 +58,5 @@ lxc remote switch nikita`
       $header: 'Connection'
     });
     return process.stdout.write(`ssh -i ${key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n`);
-  });
+  }));
 };

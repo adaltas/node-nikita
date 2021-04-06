@@ -18,18 +18,19 @@ console.info(`Property was set: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'properties':
-          type: 'object'
-          patternProperties:
-            '': type: ['string', 'boolean', 'number']
-          description: '''
-          One or multiple keys to set.
-          '''
-      required: ['container', 'properties']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'properties':
+            type: 'object'
+            patternProperties:
+              '': type: ['string', 'boolean', 'number']
+            description: '''
+            One or multiple keys to set.
+            '''
+        required: ['container', 'properties']
 
 ## Handler
 

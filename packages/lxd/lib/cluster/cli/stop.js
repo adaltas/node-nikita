@@ -5,6 +5,8 @@ nikita = require('@nikitajs/core/lib');
 
 require('@nikitajs/lxd/lib/register');
 
+require('@nikitajs/log/src/register');
+
 module.exports = function({params}) {
   return nikita({
     $debug: params.debug

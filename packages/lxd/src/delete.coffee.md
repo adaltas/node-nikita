@@ -15,17 +15,18 @@ console.info(`Container was deleted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'force':
-          type: 'boolean'
-          default: false
-          description: '''
-          If true, the container will be deleted even if running.
-          '''
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'force':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, the container will be deleted even if running.
+            '''
+        required: ['container']
 
 ## Handler
 

@@ -21,16 +21,17 @@ console.info(`Network was detached: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'network':
-          type: 'string'
-          description: '''
-          The network name to detach.
-          '''
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-      required: ['network', 'container']
+      config:
+        type: 'object'
+        properties:
+          'network':
+            type: 'string'
+            description: '''
+            The network name to detach.
+            '''
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+        required: ['network', 'container']
 
 ## Handler
 

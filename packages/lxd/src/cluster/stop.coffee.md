@@ -16,19 +16,20 @@ prestop: path/to/action
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'containers':
-          $ref: 'module://@nikitajs/lxd/src/cluster#/properties/containers'
-        'wait':
-          type: 'boolean'
-          default: false
-          description: """
-          Wait for containers to be stopped before finishing action
-          """
-        'pre_stop':
-          typeof: 'function'
-      required: ['containers']
+      config:
+        type: 'object'
+        properties:
+          'containers':
+            $ref: 'module://@nikitajs/lxd/src/cluster#/definitions/config/properties/containers'
+          'wait':
+            type: 'boolean'
+            default: false
+            description: """
+            Wait for containers to be stopped before finishing action
+            """
+          'pre_stop':
+            typeof: 'function'
+        required: ['containers']
 
 ## Handler
 

@@ -19,7 +19,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container should match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -34,7 +34,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container should match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -48,7 +48,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container should match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -62,7 +62,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container should match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -77,7 +77,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container should match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '

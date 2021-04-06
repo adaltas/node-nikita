@@ -24,31 +24,32 @@ console.info(`Network was created: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'network':
-          type: 'string'
-          description: '''
-          The network name to create.
-          '''
-        'properties':
-          type: 'object'
-          patternProperties:
-            'dns\\.domain':
-              type: 'string'
-              format: 'hostname'
-              description: '''
-              Domain to advertise to DHCP clients and use for DNS resolution.
-              Note, single label domains like `nikita` are supported by LXD but
-              are not valid. For exemple, FreeIPA will fail to Initialize. Use
-              `nikita.local` instead.
-              '''
-            '.*': type: ['string', 'boolean', 'number']
-          description: '''
-          The network configuration, see [available
-          fields](https://lxc.readthedocs.io/en/latest/networks/).
-          '''
-      required: ['network']
+      config:
+        type: 'object'
+        properties:
+          'network':
+            type: 'string'
+            description: '''
+            The network name to create.
+            '''
+          'properties':
+            type: 'object'
+            patternProperties:
+              'dns\\.domain':
+                type: 'string'
+                format: 'hostname'
+                description: '''
+                Domain to advertise to DHCP clients and use for DNS resolution.
+                Note, single label domains like `nikita` are supported by LXD but
+                are not valid. For exemple, FreeIPA will fail to Initialize. Use
+                `nikita.local` instead.
+                '''
+              '.*': type: ['string', 'boolean', 'number']
+            description: '''
+            The network configuration, see [available
+            fields](https://lxc.readthedocs.io/en/latest/networks/).
+            '''
+        required: ['network']
 
 ## Handler
 

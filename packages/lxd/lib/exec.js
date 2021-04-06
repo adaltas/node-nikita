@@ -22,42 +22,44 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
-    },
-    'command': {
-      type: 'string',
-      description: `The command to execute.`
-    },
-    'cwd': {
-      type: 'string',
-      description: `Directory to run the command in (default /root).`
-    },
-    'env': {
-      type: 'object',
-      default: {},
-      description: `Environment variable to set (e.g. HOME=/home/foo).`
-    },
-    'shell': {
-      type: 'string',
-      default: 'sh',
-      description: `The shell in which to execute commands, for example \`sh\`, \`bash\` or
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      },
+      'command': {
+        type: 'string',
+        description: `The command to execute.`
+      },
+      'cwd': {
+        type: 'string',
+        description: `Directory to run the command in (default /root).`
+      },
+      'env': {
+        type: 'object',
+        default: {},
+        description: `Environment variable to set (e.g. HOME=/home/foo).`
+      },
+      'shell': {
+        type: 'string',
+        default: 'sh',
+        description: `The shell in which to execute commands, for example \`sh\`, \`bash\` or
 \`zsh\`.`
+      },
+      'trim': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/trim'
+      },
+      'trap': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/trap'
+      },
+      'user': {
+        type: 'integer',
+        description: `User ID to run the command as (default 0).`
+      }
     },
-    'trim': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trim'
-    },
-    'trap': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/trap'
-    },
-    'user': {
-      type: 'integer',
-      description: `User ID to run the command as (default 0).`
-    }
-  },
-  required: ['container', 'command']
+    required: ['container', 'command']
+  }
 };
 
 // ## Handler

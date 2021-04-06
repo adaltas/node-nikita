@@ -33,57 +33,58 @@ now.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'image':
-          type: 'string'
-          description: '''
-          The image the container will use, name:[version] (e.g: ubuntu:16.04.).
-          '''
-        'container':
-          type: 'string'
-          pattern: '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)'
-          description: '''
-          The name of the container. Must:
-          - be between 1 and 63 characters long
-          - be made up exclusively of letters, numbers and dashes from the ASCII table
-          - not start with a digit or a dash
-          - not end with a dash
-          '''
-        'network':
-          type: 'string'
-          description: '''
-          Network name to add to the container (see lxc.network).
-          '''
-        'storage':
-          type: 'string'
-          description: '''
-          Storage name where to store the container, [default_storage] by
-          default.
-          '''
-        'profile':
-          type: 'string'
-          description: '''
-          Profile to set this container up.
-          '''
-        'ephemeral':
-          type: 'boolean'
-          default: false
-          description: '''
-          If true, the container will be deleted when stopped.
-          '''
-        'vm':
-          type: 'boolean'
-          default: false
-          description: '''
-          If true, instantiate a VM instead of a container.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          If the LXC is clustered, instantiate the container on a specific node.
-          '''
-      required: ['image', 'container']
+      config:
+        type: 'object'
+        properties:
+          'image':
+            type: 'string'
+            description: '''
+            The image the container will use, name:[version] (e.g: ubuntu:16.04.).
+            '''
+          'container':
+            type: 'string'
+            pattern: '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)'
+            description: '''
+            The name of the container. Must:
+            - be between 1 and 63 characters long
+            - be made up exclusively of letters, numbers and dashes from the ASCII table
+            - not start with a digit or a dash
+            - not end with a dash
+            '''
+          'network':
+            type: 'string'
+            description: '''
+            Network name to add to the container (see lxc.network).
+            '''
+          'storage':
+            type: 'string'
+            description: '''
+            Storage name where to store the container, [default_storage] by
+            default.
+            '''
+          'profile':
+            type: 'string'
+            description: '''
+            Profile to set this container up.
+            '''
+          'ephemeral':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, the container will be deleted when stopped.
+            '''
+          'vm':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, instantiate a VM instead of a container.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            If the LXC is clustered, instantiate the container on a specific node.
+            '''
+        required: ['image', 'container']
 
 ## Handler
 

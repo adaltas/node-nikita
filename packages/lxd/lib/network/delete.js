@@ -21,14 +21,16 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'network': {
-      type: 'string',
-      description: `The network name to delete.`
-    }
-  },
-  required: ['network']
+  config: {
+    type: 'object',
+    properties: {
+      'network': {
+        type: 'string',
+        description: `The network name to delete.`
+      }
+    },
+    required: ['network']
+  }
 };
 
 // ## Handler

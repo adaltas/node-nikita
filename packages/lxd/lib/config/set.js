@@ -19,22 +19,24 @@
 var diff, handler, merge, schema, yaml;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
-    },
-    'properties': {
-      type: 'object',
-      patternProperties: {
-        '': {
-          type: ['string', 'boolean', 'number']
-        }
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
       },
-      description: `One or multiple keys to set.`
-    }
-  },
-  required: ['container', 'properties']
+      'properties': {
+        type: 'object',
+        patternProperties: {
+          '': {
+            type: ['string', 'boolean', 'number']
+          }
+        },
+        description: `One or multiple keys to set.`
+      }
+    },
+    required: ['container', 'properties']
+  }
 };
 
 // ## Handler

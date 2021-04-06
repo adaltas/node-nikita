@@ -23,17 +23,19 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      $ref: 'module://@nikitajs/lxd/lib/init#/properties/container'
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
+      },
+      'device': {
+        enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy'],
+        description: `Name of the device in LXD configuration, for example "eth0".`
+      }
     },
-    'device': {
-      enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy'],
-      description: `Name of the device in LXD configuration, for example "eth0".`
-    }
-  },
-  required: ['container', 'device']
+    required: ['container', 'device']
+  }
 };
 
 // ## Handler

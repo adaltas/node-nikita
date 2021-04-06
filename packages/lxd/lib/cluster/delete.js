@@ -19,30 +19,32 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'containers': {
-      $ref: 'module://@nikitajs/lxd/lib/cluster#/properties/containers'
-    },
-    'networks': {
-      type: 'object',
-      default: {},
-      patternProperties: {
-        '.*': {
-          $ref: 'module://@nikitajs/lxd/lib/network#/properties/properties'
+  config: {
+    type: 'object',
+    properties: {
+      'containers': {
+        $ref: 'module://@nikitajs/lxd/lib/cluster#/definitions/config/properties/containers'
+      },
+      'networks': {
+        type: 'object',
+        default: {},
+        patternProperties: {
+          '.*': {
+            $ref: 'module://@nikitajs/lxd/lib/network#/definitions/config/properties/properties'
+          }
         }
+      },
+      'force': {
+        type: 'boolean',
+        default: false,
+        description: `If true, the containers will be deleted even if running.`
+      },
+      'pre_delete': {
+        typeof: 'function'
       }
     },
-    'force': {
-      type: 'boolean',
-      default: false,
-      description: `If true, the containers will be deleted even if running.`
-    },
-    'pre_delete': {
-      typeof: 'function'
-    }
-  },
-  required: ['containers']
+    required: ['containers']
+  }
 };
 
 // ## Handler

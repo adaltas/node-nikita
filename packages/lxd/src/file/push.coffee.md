@@ -24,64 +24,65 @@ console.info(`File was pushed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'algo':
-          default: 'md5'
-          $ref: 'module://@nikitajs/core/lib/actions/fs/hash#/properties/algo'
-        'container':
-          $ref: 'module://@nikitajs/lxd/src/init#/properties/container'
-        'content':
-          type: 'string'
-          description: '''
-          Content of the target file.
-          '''
-        'create_dirs':
-          type: 'boolean'
-          default: false
-          description: '''
-          Create any directories necessary.
-          '''
-        'gid':
-          type: ['integer', 'string']
-          description: '''
-          Set the file's gid on push, overwrite the `source` option.
-          '''
-        'lxd_target':
-          type: 'string'
-          description: '''
-          File destination in the form of "[<remote>:]<container>/<path>",
-          overwrite the `target` option.
-          '''
-        'mode':
-          type: ['integer', 'string']
-          pattern: "^\\d+$"
-          filemode: true
-          description: '''
-          Set the file's perms on push. LXD only support the absolute
-          representation. When passing a string, an integer is casted to its
-          octal value and passing a symbolic value will throw an error.
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          File to push in the form of "<path>".
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          File destination in the form of "<path>".
-          '''
-        'uid':
-          type: ['integer', 'string']
-          description: '''
-          Set the file's uid on push.
-          '''
-      required: ['container', 'target']
-      oneOf: [
-        {required: ['content']}
-        {required: ['source']}
-      ]
+      config:
+        type: 'object'
+        properties:
+          'algo':
+            default: 'md5'
+            $ref: 'module://@nikitajs/core/lib/actions/fs/hash#/definitions/config/properties/algo'
+          'container':
+            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+          'content':
+            type: 'string'
+            description: '''
+            Content of the target file.
+            '''
+          'create_dirs':
+            type: 'boolean'
+            default: false
+            description: '''
+            Create any directories necessary.
+            '''
+          'gid':
+            type: ['integer', 'string']
+            description: '''
+            Set the file's gid on push, overwrite the `source` option.
+            '''
+          'lxd_target':
+            type: 'string'
+            description: '''
+            File destination in the form of "[<remote>:]<container>/<path>",
+            overwrite the `target` option.
+            '''
+          'mode':
+            type: ['integer', 'string']
+            pattern: "^\\d+$"
+            filemode: true
+            description: '''
+            Set the file's perms on push. LXD only support the absolute
+            representation. When passing a string, an integer is casted to its
+            octal value and passing a symbolic value will throw an error.
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            File to push in the form of "<path>".
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            File destination in the form of "<path>".
+            '''
+          'uid':
+            type: ['integer', 'string']
+            description: '''
+            Set the file's uid on push.
+            '''
+        required: ['container', 'target']
+        oneOf: [
+          {required: ['content']}
+          {required: ['source']}
+        ]
 
 ## Handler
 
