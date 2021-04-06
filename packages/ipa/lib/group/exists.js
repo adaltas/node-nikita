@@ -21,19 +21,21 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cn': {
-      type: 'string',
-      description: `Name of the group to check for existence.`
+  config: {
+    type: 'object',
+    properties: {
+      'cn': {
+        type: 'string',
+        description: `Name of the group to check for existence.`
+      },
+      'connection': {
+        type: 'object',
+        $ref: 'module://@nikitajs/network/lib/http#/definitions/config',
+        required: ['principal', 'password']
+      }
     },
-    'connection': {
-      type: 'object',
-      $ref: 'module://@nikitajs/network/lib/http',
-      required: ['principal', 'password']
-    }
-  },
-  required: ['cn', 'connection']
+    required: ['cn', 'connection']
+  }
 };
 
 // ## Handler

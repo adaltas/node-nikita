@@ -26,23 +26,24 @@ console.info(`User was deleted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'uid':
-          type: 'string'
-          description: '''
-          Name of the user to delete, same as the `username`.
-          '''
-        'username':
-          type: 'string'
-          description: '''
-          Name of the user to delete, alias of `uid`.
-          '''
-        'connection':
-          type: 'object'
-          $ref: 'module://@nikitajs/network/lib/http'
-          required: ['principal', 'password']
-      required: ['connection', 'uid']
+      config:
+        type: 'object'
+        properties:
+          'uid':
+            type: 'string'
+            description: '''
+            Name of the user to delete, same as the `username`.
+            '''
+          'username':
+            type: 'string'
+            description: '''
+            Name of the user to delete, alias of `uid`.
+            '''
+          'connection':
+            type: 'object'
+            $ref: 'module://@nikitajs/network/lib/http#/definitions/config'
+            required: ['principal', 'password']
+        required: ['connection', 'uid']
 
 ## Handler
 

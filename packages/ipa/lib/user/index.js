@@ -45,50 +45,52 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'uid': {
-      type: 'string',
-      description: `Name of the user to add or modify, same as the \`username\`.`
-    },
-    'username': {
-      type: 'string',
-      description: `Name of the user to add or modify, alias of \`uid\`.`
-    },
-    'attributes': {
-      type: 'object',
-      properties: {
-        'givenname': {
-          type: 'string' // Firstname
-        },
-        'sn': {
-          type: 'string' // Lastname
-        },
-        'mail': {
-          type: 'array',
-          minItems: 1,
-          uniqueItems: true,
-          items: {
+  config: {
+    type: 'object',
+    properties: {
+      'uid': {
+        type: 'string',
+        description: `Name of the user to add or modify, same as the \`username\`.`
+      },
+      'username': {
+        type: 'string',
+        description: `Name of the user to add or modify, alias of \`uid\`.`
+      },
+      'attributes': {
+        type: 'object',
+        properties: {
+          'givenname': {
+            type: 'string' // Firstname
+          },
+          'sn': {
+            type: 'string' // Lastname
+          },
+          'mail': {
+            type: 'array',
+            minItems: 1,
+            uniqueItems: true,
+            items: {
+              type: 'string'
+            }
+          },
+          'userpassword': {
             type: 'string'
           }
         },
-        'userpassword': {
-          type: 'string'
-        }
+        description: `Attributes associated with the user to add or modify.`
       },
-      description: `Attributes associated with the user to add or modify.`
+      'force_userpassword': {
+        type: 'boolean',
+        description: `Force the password to be re-initialized on user update.`
+      },
+      'connection': {
+        type: 'object',
+        $ref: 'module://@nikitajs/network/lib/http#/definitions/config',
+        required: ['principal', 'password']
+      }
     },
-    'force_userpassword': {
-      type: 'boolean',
-      description: `Force the password to be re-initialized on user update.`
-    },
-    'connection': {
-      type: 'object',
-      $ref: 'module://@nikitajs/network/lib/http',
-      required: ['principal', 'password']
-    }
-  },
-  required: ['attributes', 'connection', 'uid']
+    required: ['attributes', 'connection', 'uid']
+  }
 };
 
 // ## Handler

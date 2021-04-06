@@ -26,23 +26,24 @@ console.info(`User exists: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'uid':
-          type: 'string'
-          description: '''
-          Name of the user to check for existence, same as the `username`.
-          '''
-        'username':
-          type: 'string'
-          description: '''
-          Name of the user to check for existence, alias of `uid`.
-          '''
-        'connection':
-          type: 'object'
-          $ref: 'module://@nikitajs/network/lib/http'
-          required: ['principal', 'password']
-      required: ['connection', 'uid']
+      config:
+        type: 'object'
+        properties:
+          'uid':
+            type: 'string'
+            description: '''
+            Name of the user to check for existence, same as the `username`.
+            '''
+          'username':
+            type: 'string'
+            description: '''
+            Name of the user to check for existence, alias of `uid`.
+            '''
+          'connection':
+            type: 'object'
+            $ref: 'module://@nikitajs/network/lib/http#/definitions/config'
+            required: ['principal', 'password']
+        required: ['connection', 'uid']
 
 ## Handler
 

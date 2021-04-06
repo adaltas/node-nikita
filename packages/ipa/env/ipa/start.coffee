@@ -5,12 +5,30 @@ require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
 
 # Note:
+
 # Jan 20th, 2020: upgrading ubuntu to 19.10 on the host vm
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
 # solution involve to run on the host machine
 # Temporary: `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
 # Permanently: `echo 'fs.protected_regular = 0' >> /etc/sysctl.conf && sysctl -p`
+
+# Error starting IPA
+# command:
+#    ipactl start
+#    Starting Directory Service
+#    Failed to start Directory Service: Command '/bin/systemctl start dirsrv@NIKITA-LOCAL.service' returned non-zero exit status 1
+# Solution:
+# Check available space on host machine
+
+# When adding principal, got Error
+# Host 'ipa.nikita.local' does not have corresponding DNS A/AAAA record
+# Short term solution:
+# Reset the DNS server in resolv.conf with the IPA DNS
+# echo 'search nikita.local' > /etc/resolv.conf
+# echo 'nameserver 10.10.11.2' > /etc/resolv.conf
+# Long term solution:
+# Disable the re-generation of resolv.conf by /usr/sbin/dhclient-script
 
 # console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
 # parameters({

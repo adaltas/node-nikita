@@ -20,18 +20,19 @@ console.info(`Group exists: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'cn':
-          type: 'string'
-          description: '''
-          Name of the group to check for existence.
-          '''
-        'connection':
-          type: 'object'
-          $ref: 'module://@nikitajs/network/lib/http'
-          required: ['principal', 'password']
-      required: ['cn', 'connection']
+      config:
+        type: 'object'
+        properties:
+          'cn':
+            type: 'string'
+            description: '''
+            Name of the group to check for existence.
+            '''
+          'connection':
+            type: 'object'
+            $ref: 'module://@nikitajs/network/lib/http#/definitions/config'
+            required: ['principal', 'password']
+        required: ['cn', 'connection']
 
 ## Handler
 

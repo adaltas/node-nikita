@@ -24,34 +24,36 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cn': {
-      type: 'string',
-      description: `Name of the group to add.`
-    },
-    'attributes': {
-      type: 'object',
-      properties: {
-        'user': {
-          type: 'array',
-          minItems: 1,
-          uniqueItems: true,
-          items: {
-            type: 'string'
-          }
-        }
+  config: {
+    type: 'object',
+    properties: {
+      'cn': {
+        type: 'string',
+        description: `Name of the group to add.`
       },
-      description: `Attributes associated with the group such as \`ipaexternalmember\`,
+      'attributes': {
+        type: 'object',
+        properties: {
+          'user': {
+            type: 'array',
+            minItems: 1,
+            uniqueItems: true,
+            items: {
+              type: 'string'
+            }
+          }
+        },
+        description: `Attributes associated with the group such as \`ipaexternalmember\`,
 \`no_members\`, \`user\` and \`group\`.`
+      },
+      'connection': {
+        type: 'object',
+        $ref: 'module://@nikitajs/network/lib/http#/definitions/config',
+        required: ['principal', 'password']
+      }
     },
-    'connection': {
-      type: 'object',
-      $ref: 'module://@nikitajs/network/lib/http',
-      required: ['principal', 'password']
-    }
-  },
-  required: ['cn', 'connection']
+    required: ['cn', 'connection']
+  }
 };
 
 // ## Handler

@@ -29,23 +29,25 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'uid': {
-      type: 'string',
-      description: `Name of the user to check for existence, same as the \`username\`.`
+  config: {
+    type: 'object',
+    properties: {
+      'uid': {
+        type: 'string',
+        description: `Name of the user to check for existence, same as the \`username\`.`
+      },
+      'username': {
+        type: 'string',
+        description: `Name of the user to check for existence, alias of \`uid\`.`
+      },
+      'connection': {
+        type: 'object',
+        $ref: 'module://@nikitajs/network/lib/http#/definitions/config',
+        required: ['principal', 'password']
+      }
     },
-    'username': {
-      type: 'string',
-      description: `Name of the user to check for existence, alias of \`uid\`.`
-    },
-    'connection': {
-      type: 'object',
-      $ref: 'module://@nikitajs/network/lib/http',
-      required: ['principal', 'password']
-    }
-  },
-  required: ['connection', 'uid']
+    required: ['connection', 'uid']
+  }
 };
 
 // ## Handler

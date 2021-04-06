@@ -29,18 +29,19 @@ catch (err){
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'principal':
-          type: 'string'
-          description: '''
-          Name of the service to show.
-          '''
-        'connection':
-          type: 'object'
-          $ref: 'module://@nikitajs/network/lib/http'
-          required: ['principal', 'password']
-      required: ['connection', 'principal']
+      config:
+        type: 'object'
+        properties:
+          'principal':
+            type: 'string'
+            description: '''
+            Name of the service to show.
+            '''
+          'connection':
+            type: 'object'
+            $ref: 'module://@nikitajs/network/lib/http#/definitions/config'
+            required: ['principal', 'password']
+        required: ['connection', 'principal']
 
 ## Handler
 

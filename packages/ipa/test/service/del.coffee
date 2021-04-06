@@ -11,7 +11,7 @@ describe 'ipa.service.del', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service.del connection: ipa,
+      await @ipa.service.del connection: ipa,
         principal: 'test_service_del'
       {$status} = await @ipa.service.del connection: ipa,
         principal: 'test_service_del'
@@ -21,7 +21,7 @@ describe 'ipa.service.del', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service connection: ipa,
+      await @ipa.service connection: ipa,
         principal: 'test_service_del/ipa.nikita.local'
       {$status} = await @ipa.service.del connection: ipa,
         principal: 'test_service_del/ipa.nikita.local'
