@@ -6,34 +6,35 @@ Create a user for the destination database.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'username':
-          type: 'string'
-          description: '''
-          The username of a user with privileges on the database, used unless
-          admin_username is provided.
-          '''
-        'password':
-          type: 'string'
-          description: '''
-          The password of a user with privileges on the database, used unless
-          admin_password is provided.
-          '''
-        'admin_username':
-          $ref: 'module://@nikitajs/db/src/query#/properties/admin_username'
-        'admin_password':
-          $ref: 'module://@nikitajs/db/src/query#/properties/admin_password'
-        'engine':
-          $ref: 'module://@nikitajs/db/src/query#/properties/engine'
-        'host':
-          $ref: 'module://@nikitajs/db/src/query#/properties/host'
-        'port':
-          $ref: 'module://@nikitajs/db/src/query#/properties/port'
-      required: [
-        'username', 'password'
-        'admin_username', 'admin_password', 'engine', 'host'
-      ]
+      config:
+        type: 'object'
+        properties:
+          'username':
+            type: 'string'
+            description: '''
+            The username of a user with privileges on the database, used unless
+            admin_username is provided.
+            '''
+          'password':
+            type: 'string'
+            description: '''
+            The password of a user with privileges on the database, used unless
+            admin_password is provided.
+            '''
+          'admin_username':
+            $ref: 'module://@nikitajs/db/src/query#/definitions/config/properties/admin_username'
+          'admin_password':
+            $ref: 'module://@nikitajs/db/src/query#/definitions/config/properties/admin_password'
+          'engine':
+            $ref: 'module://@nikitajs/db/src/query#/definitions/config/properties/engine'
+          'host':
+            $ref: 'module://@nikitajs/db/src/query#/definitions/config/properties/host'
+          'port':
+            $ref: 'module://@nikitajs/db/src/query#/definitions/config/properties/port'
+        required: [
+          'username', 'password'
+          'admin_username', 'admin_password', 'engine', 'host'
+        ]
 
 ## Hander
 

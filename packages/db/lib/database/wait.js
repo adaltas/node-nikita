@@ -18,29 +18,31 @@
 var command, handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'admin_username': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_username'
+  config: {
+    type: 'object',
+    properties: {
+      'admin_username': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/admin_username'
+      },
+      'admin_password': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/admin_password'
+      },
+      'database': {
+        type: 'string',
+        description: `The database name to wait for.`
+      },
+      'engine': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/engine'
+      },
+      'host': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/host'
+      },
+      'port': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/port'
+      }
     },
-    'admin_password': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_password'
-    },
-    'database': {
-      type: 'string',
-      description: `The database name to wait for.`
-    },
-    'engine': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
-    },
-    'host': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/host'
-    },
-    'port': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/port'
-    }
-  },
-  required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
+    required: ['admin_username', 'admin_password', 'database', 'engine', 'host']
+  }
 };
 
 // ## Handler

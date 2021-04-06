@@ -6,17 +6,18 @@ Remove a user for the destination database.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'username':
-          type: 'string'
-          description: '''
-          The name of the user to remove.
-          '''
-      required: [
-        'username'
-        'admin_username', 'admin_password', 'engine', 'host'
-      ]
+      config:
+        type: 'object'
+        properties:
+          'username':
+            type: 'string'
+            description: '''
+            The name of the user to remove.
+            '''
+        required: [
+          'username'
+          'admin_username', 'admin_password', 'engine', 'host'
+        ]
 
 ## Handler
 

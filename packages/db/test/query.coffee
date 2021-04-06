@@ -20,10 +20,10 @@ describe "db.query", ->
         .should.be.rejectedWith [
           "NIKITA_SCHEMA_VALIDATION_CONFIG:"
           "multiple errors where found in the configuration of action `db.query`:"
-          "#/required config should have required property 'admin_password';"
-          "#/required config should have required property 'admin_username';"
-          "#/required config should have required property 'engine';"
-          "#/required config should have required property 'host'."
+          "#/definitions/config/required config should have required property 'admin_password';"
+          "#/definitions/config/required config should have required property 'admin_username';"
+          "#/definitions/config/required config should have required property 'engine';"
+          "#/definitions/config/required config should have required property 'host'."
         ].join ' '
 
       they 'config command', ({ssh}) ->

@@ -24,18 +24,19 @@ Check if a user exists in the database.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # $ref: 'module://@nikitajs/db/src/query'
-        'username':
-          type: 'string'
-          description: '''
-          Name of the user to check for existance.
-          '''
-      required: [
-        'username'
-        'admin_username', 'admin_password', 'engine', 'host'
-      ]
+      config:
+        type: 'object'
+        properties:
+          # $ref: 'module://@nikitajs/db/src/query'
+          'username':
+            type: 'string'
+            description: '''
+            Name of the user to check for existance.
+            '''
+        required: [
+          'username'
+          'admin_username', 'admin_password', 'engine', 'host'
+        ]
 
 ## Handler
 

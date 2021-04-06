@@ -7,35 +7,37 @@
 var command, handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'username': {
-      type: 'string',
-      description: `The username of a user with privileges on the database, used unless
+  config: {
+    type: 'object',
+    properties: {
+      'username': {
+        type: 'string',
+        description: `The username of a user with privileges on the database, used unless
 admin_username is provided.`
-    },
-    'password': {
-      type: 'string',
-      description: `The password of a user with privileges on the database, used unless
+      },
+      'password': {
+        type: 'string',
+        description: `The password of a user with privileges on the database, used unless
 admin_password is provided.`
+      },
+      'admin_username': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/admin_username'
+      },
+      'admin_password': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/admin_password'
+      },
+      'engine': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/engine'
+      },
+      'host': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/host'
+      },
+      'port': {
+        $ref: 'module://@nikitajs/db/lib/query#/definitions/config/properties/port'
+      }
     },
-    'admin_username': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_username'
-    },
-    'admin_password': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/admin_password'
-    },
-    'engine': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/engine'
-    },
-    'host': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/host'
-    },
-    'port': {
-      $ref: 'module://@nikitajs/db/lib/query#/properties/port'
-    }
-  },
-  required: ['username', 'password', 'admin_username', 'admin_password', 'engine', 'host']
+    required: ['username', 'password', 'admin_username', 'admin_password', 'engine', 'host']
+  }
 };
 
 // ## Hander

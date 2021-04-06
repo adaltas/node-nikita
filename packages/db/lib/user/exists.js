@@ -25,15 +25,17 @@
 var connection_config, handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    // $ref: 'module://@nikitajs/db/lib/query'
-    'username': {
-      type: 'string',
-      description: `Name of the user to check for existance.`
-    }
-  },
-  required: ['username', 'admin_username', 'admin_password', 'engine', 'host']
+  config: {
+    type: 'object',
+    properties: {
+      // $ref: 'module://@nikitajs/db/lib/query'
+      'username': {
+        type: 'string',
+        description: `Name of the user to check for existance.`
+      }
+    },
+    required: ['username', 'admin_username', 'admin_password', 'engine', 'host']
+  }
 };
 
 // ## Handler
