@@ -69,74 +69,74 @@ default location of the Oracle JDK installation.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'string'
-          description: '''
-          Name of the certificate.
-          '''
-        'caname':
-          type: 'string'
-          description: '''
-          Name of the certificate authority (CA).
-          '''
-        'cacert':
-          type: 'string'
-          description: '''
-          Path to the certificate authority (CA).
-          '''
-        'cert':
-          type: 'string'
-          description: '''
-          Path to the certificate.
-          '''
-        'keytool':
-          type: 'string'
-          default: 'keytool'
-          description: '''
-          Path to the `keytool` command, detetected from `$PATH` by default.
-          '''
-        'local':
-          type: 'boolean'
-          default: false
-          description: '''
-          Treat the source file (key, cert or cacert) as a local file present on
-          the host, only apply with remote actions over SSH.
-          '''
-        'openssl':
-          type: 'string'
-          default: 'openssl'
-          description: '''
-          Path to OpenSSl command line tool.
-          '''
-        'parent':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/parent'
-        'keystore':
-          type: 'string'
-          description: '''
-          Path to the keystore.
-          '''
-        'storepass':
-          type: 'string'
-          description: '''
-          Password to manage the keystore.
-          '''
-      required: ['keystore', 'storepass']
-      anyOf: [
-        {required: ['cacert', 'caname']}
-        {required: ['cert', 'name', 'key', 'keypass']}
-      ]
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'string'
+            description: '''
+            Name of the certificate.
+            '''
+          'caname':
+            type: 'string'
+            description: '''
+            Name of the certificate authority (CA).
+            '''
+          'cacert':
+            type: 'string'
+            description: '''
+            Path to the certificate authority (CA).
+            '''
+          'cert':
+            type: 'string'
+            description: '''
+            Path to the certificate.
+            '''
+          'keytool':
+            type: 'string'
+            default: 'keytool'
+            description: '''
+            Path to the `keytool` command, detetected from `$PATH` by default.
+            '''
+          'local':
+            type: 'boolean'
+            default: false
+            description: '''
+            Treat the source file (key, cert or cacert) as a local file present on
+            the host, only apply with remote actions over SSH.
+            '''
+          'openssl':
+            type: 'string'
+            default: 'openssl'
+            description: '''
+            Path to OpenSSl command line tool.
+            '''
+          'parent':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/parent'
+          'keystore':
+            type: 'string'
+            description: '''
+            Path to the keystore.
+            '''
+          'storepass':
+            type: 'string'
+            description: '''
+            Password to manage the keystore.
+            '''
+        required: ['keystore', 'storepass']
+        anyOf: [
+          {required: ['cacert', 'caname']}
+          {required: ['cert', 'name', 'key', 'keypass']}
+        ]
 
 ## Handler
 
-    handler = ({config, ssh, metadata: {tmpdir}}) ->
-      p = if ssh then path.posix else path
+    handler = ({config, ssh, metadata: {tmpdir}, tools: {path}}) ->
       # Update paths in case of download
       files =
-        cert: if ssh and config.local and config.cert? then "#{tmpdir}/#{path.basename config.cert}" else config.cert
-        cacert: if ssh and config.local and config.cacert? then "#{tmpdir}/#{path.basename config.cacert}" else config.cacert
-        key: if ssh and config.local and config.key? then "#{tmpdir}/#{path.basename config.key}" else config.key
+        cert: if ssh and config.local and config.cert? then "#{tmpdir}/#{path.local.basename config.cert}" else config.cert
+        cacert: if ssh and config.local and config.cacert? then "#{tmpdir}/#{path.local.basename config.cacert}" else config.cacert
+        key: if ssh and config.local and config.key? then "#{tmpdir}/#{path.local.basename config.key}" else config.key
       # Temporary directory
       # Used to upload certificates and to isolate certificates from their file
       if tmpdir
@@ -166,7 +166,7 @@ default location of the Oracle JDK installation.
       # Prepare parent directory
       await @fs.mkdir
         parent: config.parent
-        target: p.dirname config.keystore
+        target: path.dirname config.keystore
       # Deal with key and certificate
       try if !!config.cert
         await @execute
@@ -284,7 +284,3 @@ default location of the Oracle JDK installation.
       metadata:
         tmpdir: true
         schema: schema
-
-## Dependencies
-
-    path = require('path').posix

@@ -67,83 +67,85 @@
 // default location of the Oracle JDK installation.
 
 // ## Schema
-var handler, path, schema;
+var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'name': {
-      type: 'string',
-      description: `Name of the certificate.`
-    },
-    'caname': {
-      type: 'string',
-      description: `Name of the certificate authority (CA).`
-    },
-    'cacert': {
-      type: 'string',
-      description: `Path to the certificate authority (CA).`
-    },
-    'cert': {
-      type: 'string',
-      description: `Path to the certificate.`
-    },
-    'keytool': {
-      type: 'string',
-      default: 'keytool',
-      description: `Path to the \`keytool\` command, detetected from \`$PATH\` by default.`
-    },
-    'local': {
-      type: 'boolean',
-      default: false,
-      description: `Treat the source file (key, cert or cacert) as a local file present on
+  config: {
+    type: 'object',
+    properties: {
+      'name': {
+        type: 'string',
+        description: `Name of the certificate.`
+      },
+      'caname': {
+        type: 'string',
+        description: `Name of the certificate authority (CA).`
+      },
+      'cacert': {
+        type: 'string',
+        description: `Path to the certificate authority (CA).`
+      },
+      'cert': {
+        type: 'string',
+        description: `Path to the certificate.`
+      },
+      'keytool': {
+        type: 'string',
+        default: 'keytool',
+        description: `Path to the \`keytool\` command, detetected from \`$PATH\` by default.`
+      },
+      'local': {
+        type: 'boolean',
+        default: false,
+        description: `Treat the source file (key, cert or cacert) as a local file present on
 the host, only apply with remote actions over SSH.`
+      },
+      'openssl': {
+        type: 'string',
+        default: 'openssl',
+        description: `Path to OpenSSl command line tool.`
+      },
+      'parent': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/parent'
+      },
+      'keystore': {
+        type: 'string',
+        description: `Path to the keystore.`
+      },
+      'storepass': {
+        type: 'string',
+        description: `Password to manage the keystore.`
+      }
     },
-    'openssl': {
-      type: 'string',
-      default: 'openssl',
-      description: `Path to OpenSSl command line tool.`
-    },
-    'parent': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/mkdir#/properties/parent'
-    },
-    'keystore': {
-      type: 'string',
-      description: `Path to the keystore.`
-    },
-    'storepass': {
-      type: 'string',
-      description: `Password to manage the keystore.`
-    }
-  },
-  required: ['keystore', 'storepass'],
-  anyOf: [
-    {
-      required: ['cacert',
-    'caname']
-    },
-    {
-      required: ['cert',
-    'name',
-    'key',
-    'keypass']
-    }
-  ]
+    required: ['keystore', 'storepass'],
+    anyOf: [
+      {
+        required: ['cacert',
+      'caname']
+      },
+      {
+        required: ['cert',
+      'name',
+      'key',
+      'keypass']
+      }
+    ]
+  }
 };
 
 // ## Handler
 handler = async function({
     config,
     ssh,
-    metadata: {tmpdir}
+    metadata: {tmpdir},
+    tools: {path}
   }) {
-  var err, files, p;
-  p = ssh ? path.posix : path;
+  var err, files;
   // Update paths in case of download
   files = {
-    cert: ssh && config.local && (config.cert != null) ? `${tmpdir}/${path.basename(config.cert)}` : config.cert,
-    cacert: ssh && config.local && (config.cacert != null) ? `${tmpdir}/${path.basename(config.cacert)}` : config.cacert,
-    key: ssh && config.local && (config.key != null) ? `${tmpdir}/${path.basename(config.key)}` : config.key
+    cert: ssh && config.local && (config.cert != null) ? `${tmpdir}/${path.local.basename(config.cert)}` : config.cert,
+    cacert: ssh && config.local && (config.cacert != null) ? `${tmpdir}/${path.local.basename(config.cacert)}` : config.cacert,
+    key: ssh && config.local && (config.key != null) ? `${tmpdir}/${path.local.basename(config.key)}` : config.key
   };
   // Temporary directory
   // Used to upload certificates and to isolate certificates from their file
@@ -182,7 +184,7 @@ handler = async function({
   // Prepare parent directory
   await this.fs.mkdir({
     parent: config.parent,
-    target: p.dirname(config.keystore)
+    target: path.dirname(config.keystore)
   });
   try {
     if (!!config.cert) {
@@ -309,6 +311,3 @@ module.exports = {
     schema: schema
   }
 };
-
-// ## Dependencies
-path = require('path').posix;

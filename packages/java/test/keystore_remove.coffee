@@ -32,9 +32,9 @@ describe 'java.keystore_remove', ->
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors where found in the configuration of action `java.keystore_remove`:'
-            '#/anyOf config should match some schema in anyOf;'
-            '#/anyOf/0/required config should have required property \'name\';'
-            '#/anyOf/1/required config should have required property \'caname\'.'
+            '#/definitions/config/anyOf config should match some schema in anyOf;'
+            '#/definitions/config/anyOf/0/required config should have required property \'name\';'
+            '#/definitions/config/anyOf/1/required config should have required property \'caname\'.'
           ].join ' '
           
     they 'caname and name are provided', ({ssh}) ->

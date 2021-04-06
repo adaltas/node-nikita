@@ -31,42 +31,43 @@ console.info(`Certificate authority was removed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'array'
-          items: type: 'string'
-          default: []
-          description: '''
-          Alias of the key and the certificate.
-          '''
-        'caname':
-          type: 'array'
-          items: type: 'string'
-          default: []
-          description: '''
-          Alias of the certificate authority (CA).
-          '''
-        'keytool':
-          type: 'boolean'
-          description: '''
-          Path to the `keytool` command, detetected from `$PATH` by default.
-          '''
-        'keystore':
-          type: 'string'
-          description: '''
-          Path to the keystore (doesn't need to exists).
-          '''
-        'storepass':
-          type: 'string'
-          description: '''
-          Password to manage the keystore.
-          '''
-      required: ['keystore', 'storepass']
-      anyOf: [
-        {required: ['name']}
-        {required: ['caname']}
-      ]
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'array'
+            items: type: 'string'
+            default: []
+            description: '''
+            Alias of the key and the certificate.
+            '''
+          'caname':
+            type: 'array'
+            items: type: 'string'
+            default: []
+            description: '''
+            Alias of the certificate authority (CA).
+            '''
+          'keytool':
+            type: 'boolean'
+            description: '''
+            Path to the `keytool` command, detetected from `$PATH` by default.
+            '''
+          'keystore':
+            type: 'string'
+            description: '''
+            Path to the keystore (doesn't need to exists).
+            '''
+          'storepass':
+            type: 'string'
+            description: '''
+            Password to manage the keystore.
+            '''
+        required: ['keystore', 'storepass']
+        anyOf: [
+          {required: ['name']}
+          {required: ['caname']}
+        ]
       
 ## Handler
 
