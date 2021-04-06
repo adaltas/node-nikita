@@ -23,47 +23,49 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'admin': {
-      type: 'object',
-      properties: {
-        'realm': {
-          type: 'string',
-          description: `The realm the principal belongs to.`
-        },
-        'principal': {
-          type: 'string',
-          description: `KAdmin principal name unless \`kadmin.local\` is used.`
-        },
-        'server': {
-          type: 'string',
-          description: `Address of the kadmin server; optional, use "kadmin.local" if
+  config: {
+    type: 'object',
+    properties: {
+      'admin': {
+        type: 'object',
+        properties: {
+          'realm': {
+            type: 'string',
+            description: `The realm the principal belongs to.`
+          },
+          'principal': {
+            type: 'string',
+            description: `KAdmin principal name unless \`kadmin.local\` is used.`
+          },
+          'server': {
+            type: 'string',
+            description: `Address of the kadmin server; optional, use "kadmin.local" if
 missing.`
-        },
-        'password': {
-          type: 'string',
-          description: `Password associated to the KAdmin principal.`
+          },
+          'password': {
+            type: 'string',
+            description: `Password associated to the KAdmin principal.`
+          }
         }
+      },
+      'command': {
+        type: 'string',
+        description: `            `
+      },
+      'grep': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'RegExp'
+          }
+        ],
+        description: `Ensure the execute output match a string or a regular expression.`
       }
     },
-    'command': {
-      type: 'string',
-      description: `          `
-    },
-    'grep': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'RegExp'
-        }
-      ],
-      description: `Ensure the execute output match a string or a regular expression.`
-    }
-  },
-  required: ['admin', 'command']
+    required: ['admin', 'command']
+  }
 };
 
 // ## Handler

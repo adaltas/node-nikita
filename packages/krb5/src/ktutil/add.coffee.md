@@ -18,44 +18,45 @@ console.info(`Keytab was created or modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'admin':
-          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
-        'enctypes':
-          type: 'array', items: type: 'string'
-          default: ['aes256-cts-hmac-sha1-96', 'aes128-cts-hmac-sha1-96', 'des3-cbc-sha1','arcfour-hmac']
-          description: '''
-          The enctypes used by krb5_server.
-          '''
-        'gid':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
-        'keytab':
-          type: 'string'
-          description: '''
-          Path to the file storing key entries.
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/mode'
-        'password':
-          type: 'string'
-          description: '''
-          Password associated to this principal; required if no randkey is
-          provided.
-          '''
-        'principal':
-          type: 'string'
-          description: '''
-          Principal to be created.
-          '''
-        'realm':
-          type: 'string'
-          description: '''
-          The realm the principal belongs to.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-      required: ['keytab', 'password', 'principal']
+      config:
+        type: 'object'
+        properties:
+          'admin':
+            $ref: 'module://@nikitajs/krb5/src/execute#/definitions/config/properties/admin'
+          'enctypes':
+            type: 'array', items: type: 'string'
+            default: ['aes256-cts-hmac-sha1-96', 'aes128-cts-hmac-sha1-96', 'des3-cbc-sha1','arcfour-hmac']
+            description: '''
+            The enctypes used by krb5_server.
+            '''
+          'gid':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+          'keytab':
+            type: 'string'
+            description: '''
+            Path to the file storing key entries.
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
+          'password':
+            type: 'string'
+            description: '''
+            Password associated to this principal; required if no randkey is
+            provided.
+            '''
+          'principal':
+            type: 'string'
+            description: '''
+            Principal to be created.
+            '''
+          'realm':
+            type: 'string'
+            description: '''
+            The realm the principal belongs to.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+        required: ['keytab', 'password', 'principal']
 
 ## Handler
 

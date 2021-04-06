@@ -18,34 +18,36 @@
 var handler, mutate, path, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'admin': {
-      $ref: 'module://@nikitajs/krb5/lib/execute#/properties/admin'
+  config: {
+    type: 'object',
+    properties: {
+      'admin': {
+        $ref: 'module://@nikitajs/krb5/lib/execute#/definitions/config/properties/admin'
+      },
+      'gid': {
+        $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/gid'
+      },
+      'keytab': {
+        type: 'string',
+        description: `Path to the file storing key entries.`
+      },
+      'mode': {
+        $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/mode'
+      },
+      'principal': {
+        type: 'string',
+        description: `Principal to be created.`
+      },
+      'realm': {
+        type: 'string',
+        description: `The realm the principal belongs to.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/uid'
+      }
     },
-    'gid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/gid'
-    },
-    'keytab': {
-      type: 'string',
-      description: `Path to the file storing key entries.`
-    },
-    'mode': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/mode'
-    },
-    'principal': {
-      type: 'string',
-      description: `Principal to be created.`
-    },
-    'realm': {
-      type: 'string',
-      description: `The realm the principal belongs to.`
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/file/src/index#/properties/uid'
-    }
-  },
-  required: ['keytab', 'principal']
+    required: ['keytab', 'principal']
+  }
 };
 
 // ## Handler

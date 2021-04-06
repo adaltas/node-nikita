@@ -24,41 +24,42 @@ console.info(`Principal was created or modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'admin':
-          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
-        'keytab':
-          type: 'string'
-          description: '''
-          Path to the file storing key entries.
-          '''
-        'password':
-          type: 'string'
-          description: '''
-          Password associated to this principal.
-          '''
-        'password_sync':
-          type: 'boolean'
-          default: false
-          description: '''
-          Wether the password should be created if the principal already exists.
-          '''
-        'principal':
-          type: 'string'
-          description: '''
-          Principal to be created.
-          '''
-        'randkey':
-          type: 'boolean'
-          description: '''
-          Generate a random key.
-          '''
-      required: ['admin', 'principal']
-      oneOf: [
-        {required: ['password']}
-        {required: ['randkey']}
-      ]
+      config:
+        type: 'object'
+        properties:
+          'admin':
+            $ref: 'module://@nikitajs/krb5/src/execute#/definitions/config/properties/admin'
+          'keytab':
+            type: 'string'
+            description: '''
+            Path to the file storing key entries.
+            '''
+          'password':
+            type: 'string'
+            description: '''
+            Password associated to this principal.
+            '''
+          'password_sync':
+            type: 'boolean'
+            default: false
+            description: '''
+            Wether the password should be created if the principal already exists.
+            '''
+          'principal':
+            type: 'string'
+            description: '''
+            Principal to be created.
+            '''
+          'randkey':
+            type: 'boolean'
+            description: '''
+            Generate a random key.
+            '''
+        required: ['admin', 'principal']
+        oneOf: [
+          {required: ['password']}
+          {required: ['randkey']}
+        ]
 
 ## Handler
 

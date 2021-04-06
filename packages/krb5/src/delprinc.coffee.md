@@ -21,26 +21,27 @@ console.info(`Principal was removed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'admin':
-          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
-        'keytab':
-          type: 'string'
-          description: '''
-          Path to the file storing key entries.
-          '''
-        'principal':
-          type: 'string'
-          description: '''
-          Principal to be created.
-          '''
-        'realm':
-          type: 'string'
-          description: '''
-          The realm the principal belongs to.
-          '''
-      required: ['principal']
+      config:
+        type: 'object'
+        properties:
+          'admin':
+            $ref: 'module://@nikitajs/krb5/src/execute#/definitions/config/properties/admin'
+          'keytab':
+            type: 'string'
+            description: '''
+            Path to the file storing key entries.
+            '''
+          'principal':
+            type: 'string'
+            description: '''
+            Principal to be created.
+            '''
+          'realm':
+            type: 'string'
+            description: '''
+            The realm the principal belongs to.
+            '''
+        required: ['principal']
 
 ## Handler
 

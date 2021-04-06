@@ -22,25 +22,27 @@
 var handler, mutate, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'admin': {
-      $ref: 'module://@nikitajs/krb5/lib/execute#/properties/admin'
+  config: {
+    type: 'object',
+    properties: {
+      'admin': {
+        $ref: 'module://@nikitajs/krb5/lib/execute#/definitions/config/properties/admin'
+      },
+      'keytab': {
+        type: 'string',
+        description: `Path to the file storing key entries.`
+      },
+      'principal': {
+        type: 'string',
+        description: `Principal to be created.`
+      },
+      'realm': {
+        type: 'string',
+        description: `The realm the principal belongs to.`
+      }
     },
-    'keytab': {
-      type: 'string',
-      description: `Path to the file storing key entries.`
-    },
-    'principal': {
-      type: 'string',
-      description: `Principal to be created.`
-    },
-    'realm': {
-      type: 'string',
-      description: `The realm the principal belongs to.`
-    }
-  },
-  required: ['principal']
+    required: ['principal']
+  }
 };
 
 // ## Handler

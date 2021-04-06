@@ -17,35 +17,37 @@
 var handler, mutate, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/gid'
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
+      },
+      'principal': {
+        type: 'string',
+        description: `The principal the ticket to be renewed.`
+      },
+      'password': {
+        type: 'string',
+        description: `Password associated to this principal.`
+      },
+      'keytab': {
+        type: 'string',
+        description: `Path to the file storing key entries.`
+      },
+      'uid': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/uid'
+      }
     },
-    'principal': {
-      type: 'string',
-      description: `The principal the ticket to be renewed.`
-    },
-    'password': {
-      type: 'string',
-      description: `Password associated to this principal.`
-    },
-    'keytab': {
-      type: 'string',
-      description: `Path to the file storing key entries.`
-    },
-    'uid': {
-      $ref: 'module://@nikitajs/file/lib/index#/properties/uid'
-    }
-  },
-  oneOf: [
-    {
-      required: ['keytab']
-    },
-    {
-      required: ['password']
-    }
-  ]
+    oneOf: [
+      {
+        required: ['keytab']
+      },
+      {
+        required: ['password']
+      }
+    ]
+  }
 };
 
 // ## Handler

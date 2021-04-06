@@ -17,32 +17,33 @@ console.info(`keytab was created or updated: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'admin':
-          $ref: 'module://@nikitajs/krb5/src/execute#/properties/admin'
-        'gid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/gid'
-        'keytab':
-          type: 'string'
-          description: '''
-          Path to the file storing key entries.
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/file/src/index#/properties/mode'
-        'principal':
-          type: 'string'
-          description: '''
-          Principal to be created.
-          '''
-        'realm':
-          type: 'string'
-          description: '''
-          The realm the principal belongs to.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/file/src/index#/properties/uid'
-      required: ['keytab', 'principal']
+      config:
+        type: 'object'
+        properties:
+          'admin':
+            $ref: 'module://@nikitajs/krb5/src/execute#/definitions/config/properties/admin'
+          'gid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/gid'
+          'keytab':
+            type: 'string'
+            description: '''
+            Path to the file storing key entries.
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/mode'
+          'principal':
+            type: 'string'
+            description: '''
+            Principal to be created.
+            '''
+          'realm':
+            type: 'string'
+            description: '''
+            The realm the principal belongs to.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/uid'
+        required: ['keytab', 'principal']
 
 ## Handler
 
