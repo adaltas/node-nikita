@@ -22,15 +22,16 @@ console.info(`Volume was removed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'name':
-          type: 'string'
-          description: '''
-          Specify volume name.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'name':
+            type: 'string'
+            description: '''
+            Specify volume name.
+            '''
 
 ## Handler
 

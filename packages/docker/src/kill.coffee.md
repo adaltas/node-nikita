@@ -26,21 +26,22 @@ console.info(`Container was killed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          type: 'string'
-          description: '''
-          Name/ID of the container.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'signal':
-          type: ['integer', 'string']
-          description: '''
-          Use a specified signal. SIGKILL by default.
-          '''
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            type: 'string'
+            description: '''
+            Name/ID of the container.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'signal':
+            type: ['integer', 'string']
+            description: '''
+            Use a specified signal. SIGKILL by default.
+            '''
+        required: ['container']
 
 ## Handler
 

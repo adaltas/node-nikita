@@ -23,14 +23,16 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'name': {
-      type: 'string',
-      description: `Specify volume name.`
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'name': {
+        type: 'string',
+        description: `Specify volume name.`
+      }
     }
   }
 };

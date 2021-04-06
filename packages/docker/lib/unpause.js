@@ -23,17 +23,19 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      type: 'string',
-      description: `Name/ID of the container`
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        type: 'string',
+        description: `Name/ID of the container`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      }
     },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

@@ -22,21 +22,22 @@ console.info(`Container was started or restarted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          type: 'string'
-          description: '''
-          Name/ID of the container.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'timeout':
-          type: 'integer'
-          description: '''
-          Seconds to wait for stop before killing it.
-          '''
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            type: 'string'
+            description: '''
+            Name/ID of the container.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'timeout':
+            type: 'integer'
+            description: '''
+            Seconds to wait for stop before killing it.
+            '''
+        required: ['container']
 
 ## Handler
 

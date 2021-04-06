@@ -24,29 +24,31 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      type: 'string',
-      description: `Name/ID of the container.`
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        type: 'string',
+        description: `Name/ID of the container.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'link': {
+        type: 'boolean',
+        description: `Remove the specified link.`
+      },
+      'volumes': {
+        type: 'boolean',
+        description: `Remove the volumes associated with the container.`
+      },
+      'force': {
+        type: 'boolean',
+        description: `Force the removal of a running container (uses SIGKILL).`
+      }
     },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'link': {
-      type: 'boolean',
-      description: `Remove the specified link.`
-    },
-    'volumes': {
-      type: 'boolean',
-      description: `Remove the volumes associated with the container.`
-    },
-    'force': {
-      type: 'boolean',
-      description: `Force the removal of a running container (uses SIGKILL).`
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

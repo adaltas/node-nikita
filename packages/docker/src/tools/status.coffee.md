@@ -26,17 +26,18 @@ console.info(`Container is running: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          type: 'array'
-          items: type: 'string'
-          description: '''
-          Name or Id of the container.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            type: 'array'
+            items: type: 'string'
+            description: '''
+            Name or Id of the container.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+        required: ['container']
 
 ## Handler
 

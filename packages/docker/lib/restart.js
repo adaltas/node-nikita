@@ -23,21 +23,23 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      type: 'string',
-      description: `Name/ID of the container.`
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        type: 'string',
+        description: `Name/ID of the container.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'timeout': {
+        type: 'integer',
+        description: `Seconds to wait for stop before killing it.`
+      }
     },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'timeout': {
-      type: 'integer',
-      description: `Seconds to wait for stop before killing it.`
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

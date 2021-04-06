@@ -33,29 +33,31 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'image': {
+        type: 'string',
+        description: `Name/ID of base image.`
+      },
+      'tag': {
+        type: 'string',
+        description: `Tag of the image.`
+      },
+      'output': {
+        type: 'string',
+        description: `TAR archive output path.`
+      },
+      'target': {
+        type: 'string',
+        description: `Shortcut for "output" option, required.`
+      }
     },
-    'image': {
-      type: 'string',
-      description: `Name/ID of base image.`
-    },
-    'tag': {
-      type: 'string',
-      description: `Tag of the image.`
-    },
-    'output': {
-      type: 'string',
-      description: `TAR archive output path.`
-    },
-    'target': {
-      type: 'string',
-      description: `Shortcut for "output" option, required.`
-    }
-  },
-  required: ['image', 'output']
+    required: ['image', 'output']
+  }
 };
 
 // ## Handler

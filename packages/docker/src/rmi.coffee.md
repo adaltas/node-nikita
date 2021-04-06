@@ -14,32 +14,32 @@ force options is set.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # ...docker.wrap_schema
-        'cwd':
-          type: 'string'
-          description: '''
-          Change the build working directory.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'image':
-          type: 'string'
-          description: '''
-          Name of the Docker image present in the registry.
-          '''
-        'no_prune':
-          type: 'boolean'
-          description: '''
-          Do not delete untagged parents.
-          '''
-        'tag':
-          type: 'string'
-          description: '''
-          Tag of the Docker image, default to latest.
-          '''
-      required: ['image']
+      config:
+        type: 'object'
+        properties:
+          'cwd':
+            type: 'string'
+            description: '''
+            Change the build working directory.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'image':
+            type: 'string'
+            description: '''
+            Name of the Docker image present in the registry.
+            '''
+          'no_prune':
+            type: 'boolean'
+            description: '''
+            Do not delete untagged parents.
+            '''
+          'tag':
+            type: 'string'
+            description: '''
+            Tag of the Docker image, default to latest.
+            '''
+        required: ['image']
 
 ## Handler
 

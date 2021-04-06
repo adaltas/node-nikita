@@ -37,21 +37,23 @@
 var handler, path, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'source': {
+        type: 'string',
+        description: `The path to upload or the container followed by the path to download.`
+      },
+      'target': {
+        type: 'string',
+        description: `The path to download or the container followed by the path to upload.`
+      }
     },
-    'source': {
-      type: 'string',
-      description: `The path to upload or the container followed by the path to download.`
-    },
-    'target': {
-      type: 'string',
-      description: `The path to download or the container followed by the path to upload.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

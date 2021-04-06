@@ -17,25 +17,26 @@ Register or log in to a Docker registry server.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'email':
-          type: 'string'
-          description: '''
-          User email.
-          '''
-        'password':
-          type: 'string'
-          description: '''
-          User password.
-          '''
-        'user':
-          type: 'string'
-          description: '''
-          Username of the user.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'email':
+            type: 'string'
+            description: '''
+            User email.
+            '''
+          'password':
+            type: 'string'
+            description: '''
+            User password.
+            '''
+          'user':
+            type: 'string'
+            description: '''
+            Username of the user.
+            '''
 
 ## Handler
 

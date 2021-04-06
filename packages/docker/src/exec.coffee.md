@@ -27,32 +27,33 @@ console.info(`Command was executed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'code_skipped':
-          type: 'array', items: type: 'integer'
-          description: '''
-          The exit code(s) to skip.
-          '''
-        'container':
-          type: 'string'
-          description: '''
-          Name/ID of the container
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
-        'service':
-          type: 'boolean'
-          default: false
-          description: '''
-          If true, run container as a service, else run as a command, true by
-          default.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/properties/uid'
-      required: ['container', 'command']
+      config:
+        type: 'object'
+        properties:
+          'code_skipped':
+            type: 'array', items: type: 'integer'
+            description: '''
+            The exit code(s) to skip.
+            '''
+          'container':
+            type: 'string'
+            description: '''
+            Name/ID of the container
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'gid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid'
+          'service':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, run container as a service, else run as a command, true by
+            default.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid'
+        required: ['container', 'command']
 
 ## Handler
 

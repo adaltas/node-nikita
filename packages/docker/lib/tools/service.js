@@ -12,23 +12,25 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      properties: {
-        'detach': {
-          default: true
-        },
-        'rm': {
-          default: false
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        properties: {
+          'detach': {
+            default: true
+          },
+          'rm': {
+            default: false
+          }
         }
+      },
+      {
+        $ref: 'module://@nikitajs/docker/lib/run'
       }
-    },
-    {
-      $ref: 'module://@nikitajs/docker/lib/run'
-    }
-  ],
-  required: ['container', 'image']
+    ],
+    required: ['container', 'image']
+  }
 };
 
 // ## Handler

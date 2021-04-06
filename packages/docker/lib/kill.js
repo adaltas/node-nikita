@@ -27,21 +27,23 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      type: 'string',
-      description: `Name/ID of the container.`
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        type: 'string',
+        description: `Name/ID of the container.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'signal': {
+        type: ['integer', 'string'],
+        description: `Use a specified signal. SIGKILL by default.`
+      }
     },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'signal': {
-      type: ['integer', 'string'],
-      description: `Use a specified signal. SIGKILL by default.`
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

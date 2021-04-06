@@ -7,80 +7,80 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      $ref: '#/definitions/docker'
-    },
-    {
-      properties: {
-        'bash': {
-          type: ['boolean',
-    'string'],
-          description: `Serialize the command into a file and execute it with bash.`
-        },
-        'command': {
-          oneOf: [
-            {
-              type: 'string'
-            },
-            {
-              typeof: 'function'
-            }
-          ],
-          description: `String, Object or array; Command to execute. A value provided as a
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        $ref: '#/definitions/docker'
+      },
+      {
+        properties: {
+          'bash': {
+            type: ['boolean',
+      'string'],
+            description: `Serialize the command into a file and execute it with bash.`
+          },
+          'command': {
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                typeof: 'function'
+              }
+            ],
+            description: `String, Object or array; Command to execute. A value provided as a
 function is interpreted as an action and will be called by forwarding
 the config object. The result is the expected to be the command
 to execute.`
-        },
-        'cwd': {
-          type: 'string',
-          description: `Current working directory from where to execute the command.`
-        },
-        'code': {
-          type: 'array',
-          default: [0],
-          items: {
-            type: 'integer'
           },
-          description: `Expected code(s) returned by the command, int or array of int, default
+          'cwd': {
+            type: 'string',
+            description: `Current working directory from where to execute the command.`
+          },
+          'code': {
+            type: 'array',
+            default: [0],
+            items: {
+              type: 'integer'
+            },
+            description: `Expected code(s) returned by the command, int or array of int, default
 to 0.`
-        },
-        'docker': {
-          $ref: '#/definitions/docker'
+          },
+          'docker': {
+            $ref: '#/definitions/docker'
+          }
         }
+      },
+      {
+        $ref: 'module://@nikitajs/core/lib/actions/execute'
       }
-    },
-    {
-      $ref: 'module://@nikitajs/core/lib/actions/execute'
-    }
-  ],
-  required: ['command'],
+    ],
+    required: ['command']
+  },
   // Note, we can't use additionalProperties properties with anyOf for now,
   // from the doc: "There are some proposals to address this in the next
   // version of the JSON schema specification."
   // additionalProperties: false
-  definitions: {
-    'docker': {
-      type: 'object',
-      description: `Isolate all the parent configuration properties into a docker
+  'docker': {
+    type: 'object',
+    description: `Isolate all the parent configuration properties into a docker
 property, used when providing and cascading a docker configuration at
 a global scale.`,
-      properties: {
-        'boot2docker': {
-          type: 'boolean',
-          default: false,
-          description: `Whether to use boot2docker or not.`
-        },
-        'compose': {
-          type: 'boolean',
-          description: `Use the \`docker-compose\` command instead of \`docker\`.`
-        },
-        'machine': {
-          type: 'string',
-          format: 'hostname',
-          description: `Name of the docker-machine, required if using docker-machine.`
-        }
+    properties: {
+      'boot2docker': {
+        type: 'boolean',
+        default: false,
+        description: `Whether to use boot2docker or not.`
+      },
+      'compose': {
+        type: 'boolean',
+        description: `Use the \`docker-compose\` command instead of \`docker\`.`
+      },
+      'machine': {
+        type: 'string',
+        format: 'hostname',
+        description: `Name of the docker-machine, required if using docker-machine.`
       }
     }
   }

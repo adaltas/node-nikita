@@ -18,22 +18,24 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'email': {
-      type: 'string',
-      description: `User email.`
-    },
-    'password': {
-      type: 'string',
-      description: `User password.`
-    },
-    'user': {
-      type: 'string',
-      description: `Username of the user.`
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'email': {
+        type: 'string',
+        description: `User email.`
+      },
+      'password': {
+        type: 'string',
+        description: `User password.`
+      },
+      'user': {
+        type: 'string',
+        description: `Username of the user.`
+      }
     }
   }
 };

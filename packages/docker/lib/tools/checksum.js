@@ -24,23 +24,25 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'cwd': {
-      type: 'string',
-      description: `Change the build working directory.`
-    },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'image': {
-      type: 'string',
-      description: `Name of the Docker image present in the registry.`
-    },
-    'tag': {
-      type: 'string',
-      default: 'latest',
-      description: `Tag of the Docker image, default to latest.`
+  config: {
+    type: 'object',
+    properties: {
+      'cwd': {
+        type: 'string',
+        description: `Change the build working directory.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'image': {
+        type: 'string',
+        description: `Name of the Docker image present in the registry.`
+      },
+      'tag': {
+        type: 'string',
+        default: 'latest',
+        description: `Tag of the Docker image, default to latest.`
+      }
     }
   }
 };

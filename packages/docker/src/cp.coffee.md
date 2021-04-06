@@ -36,21 +36,22 @@ console.info(`Container was copied: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'source':
-          type: 'string'
-          description: '''
-          The path to upload or the container followed by the path to download.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          The path to download or the container followed by the path to upload.
-          '''
-      required: ['source', 'target']
+      config:
+        type: 'object'
+        properties:
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'source':
+            type: 'string'
+            description: '''
+            The path to upload or the container followed by the path to download.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            The path to download or the container followed by the path to upload.
+            '''
+        required: ['source', 'target']
 
 ## Handler
 

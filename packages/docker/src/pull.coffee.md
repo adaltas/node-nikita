@@ -26,26 +26,27 @@ console.info(`Image was pulled: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'all':
-          type: 'boolean'
-          default: false
-          description: '''
-          Pull all tagged images in the repository.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'image':
-          type: 'string'
-          description: '''
-          Name of an image or a repository to pull. It can contain `tag`.
-          '''
-        'tag':
-          type: 'string'
-          description: '''
-          Specific image tag within a repository to pull. Default to `latest`.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'all':
+            type: 'boolean'
+            default: false
+            description: '''
+            Pull all tagged images in the repository.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'image':
+            type: 'string'
+            description: '''
+            Name of an image or a repository to pull. It can contain `tag`.
+            '''
+          'tag':
+            type: 'string'
+            description: '''
+            Specific image tag within a repository to pull. Default to `latest`.
+            '''
 
 ## Handler
 

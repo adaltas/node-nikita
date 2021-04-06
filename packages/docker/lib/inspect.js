@@ -39,20 +39,22 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'container': {
-      type: ['array', 'string'],
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'container': {
+        type: ['array', 'string'],
+        items: {
+          type: 'string'
+        },
+        description: `Name/ID of the container (array of containers not yet implemented).`
       },
-      description: `Name/ID of the container (array of containers not yet implemented).`
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      }
     },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

@@ -14,14 +14,16 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'registry': {
-      type: 'string',
-      description: `Address of the registry server, default to "https://index.docker.io/v1/".`
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'registry': {
+        type: 'string',
+        description: `Address of the registry server, default to "https://index.docker.io/v1/".`
+      }
     }
   }
 };

@@ -22,32 +22,33 @@ console.info(`Volume was created: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-        'driver':
-          type: 'string'
-          description: '''
-          Specify volume driver name.
-          '''
-        'label':
-          type: 'array'
-          items: type: 'string'
-          description: '''
-          Set metadata for a volume.
-          '''
-        'name':
-          type: 'string'
-          description: '''
-          Specify volume name.
-          '''
-        'opt':
-          type: 'array'
-          items: type: 'string'
-          description: '''
-          Set driver specific options.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+          'driver':
+            type: 'string'
+            description: '''
+            Specify volume driver name.
+            '''
+          'label':
+            type: 'array'
+            items: type: 'string'
+            description: '''
+            Set metadata for a volume.
+            '''
+          'name':
+            type: 'string'
+            description: '''
+            Specify volume name.
+            '''
+          'opt':
+            type: 'array'
+            items: type: 'string'
+            description: '''
+            Set driver specific options.
+            '''
 
 ## Handler
 

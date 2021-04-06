@@ -38,17 +38,18 @@ info.map( (container) =>
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'container':
-          type: ['array', 'string']
-          items: type: 'string'
-          description: '''
-          Name/ID of the container (array of containers not yet implemented).
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'container':
+            type: ['array', 'string']
+            items: type: 'string'
+            description: '''
+            Name/ID of the container (array of containers not yet implemented).
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+        required: ['container']
 
 ## Handler
 

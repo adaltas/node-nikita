@@ -28,22 +28,24 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'attach': {
-      type: 'boolean',
-      default: false,
-      description: `Attach STDOUT/STDERR.`
+  config: {
+    type: 'object',
+    properties: {
+      'attach': {
+        type: 'boolean',
+        default: false,
+        description: `Attach STDOUT/STDERR.`
+      },
+      'container': {
+        type: 'string',
+        description: `Name/ID of the container, required.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      }
     },
-    'container': {
-      type: 'string',
-      description: `Name/ID of the container, required.`
-    },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    }
-  },
-  required: ['container']
+    required: ['container']
+  }
 };
 
 // ## Handler

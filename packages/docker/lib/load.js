@@ -29,23 +29,25 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'checksum': {
-      type: 'string',
-      description: `If provided, will check if attached input archive to checksum already
+  config: {
+    type: 'object',
+    properties: {
+      'checksum': {
+        type: 'string',
+        description: `If provided, will check if attached input archive to checksum already
 exist, not native to docker but implemented to get better performance.`
-    },
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'input': {
-      type: 'string',
-      description: `TAR archive file to read from.`
-    },
-    'source': {
-      type: 'string',
-      description: `Alias for the "input" option.`
+      },
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
+      },
+      'input': {
+        type: 'string',
+        description: `TAR archive file to read from.`
+      },
+      'source': {
+        type: 'string',
+        description: `Alias for the "input" option.`
+      }
     }
   }
 };

@@ -23,32 +23,34 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'docker': {
-      $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
-    },
-    'driver': {
-      type: 'string',
-      description: `Specify volume driver name.`
-    },
-    'label': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'docker': {
+        $ref: 'module://@nikitajs/docker/lib/tools/execute#/definitions/docker'
       },
-      description: `Set metadata for a volume.`
-    },
-    'name': {
-      type: 'string',
-      description: `Specify volume name.`
-    },
-    'opt': {
-      type: 'array',
-      items: {
-        type: 'string'
+      'driver': {
+        type: 'string',
+        description: `Specify volume driver name.`
       },
-      description: `Set driver specific options.`
+      'label': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `Set metadata for a volume.`
+      },
+      'name': {
+        type: 'string',
+        description: `Specify volume name.`
+      },
+      'opt': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `Set driver specific options.`
+      }
     }
   }
 };

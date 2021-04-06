@@ -27,22 +27,23 @@ console.info(`Container was started: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'attach':
-          type: 'boolean'
-          default: false
-          description: '''
-          Attach STDOUT/STDERR.
-          '''
-        'container':
-          type: 'string'
-          description: '''
-          Name/ID of the container, required.
-          '''
-        'docker':
-          $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
-      required: ['container']
+      config:
+        type: 'object'
+        properties:
+          'attach':
+            type: 'boolean'
+            default: false
+            description: '''
+            Attach STDOUT/STDERR.
+            '''
+          'container':
+            type: 'string'
+            description: '''
+            Name/ID of the container, required.
+            '''
+          'docker':
+            $ref: 'module://@nikitajs/docker/src/tools/execute#/definitions/docker'
+        required: ['container']
 
 ## Handler
 

@@ -69,8 +69,7 @@ describe 'docker.tools.service', ->
       .should.be.rejectedWith
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `docker.tools.service`:'
-          '#/required config should have required property \'image\';'
+          'one error was found in the configuration of action `docker.tools.service`:'
           '#/required config should have required property \'image\'.'
         ].join ' '
 
