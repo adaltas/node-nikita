@@ -17,6 +17,10 @@ module.exports =
           else path.posix
         else
           path.posix
+        # Local is agnostic of ssh
+        action.tools.path.local = if os.platform is 'win32'
+        then path.win32
+        else path.posix
         # Reinject posix and win32 path for conveniency
         action.tools.path.posix = path.posix
         action.tools.path.win32 = path.win32

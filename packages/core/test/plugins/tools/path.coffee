@@ -31,4 +31,10 @@ describe 'plugins.tools.path', ->
       path.win32.should.eql p.win32
       path.posix.should.eql p.posix
 
+  they 'inject local', ({ssh}) ->
+    nikita
+      ssh: ssh
+    , ({tools: {path}}) ->
+      path.local.should.eql p
+
   
