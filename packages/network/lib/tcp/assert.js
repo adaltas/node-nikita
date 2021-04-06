@@ -66,21 +66,23 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'host': {
-      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/host',
-      description: `Host of the targeted server, could be a FQDN, a hostname or an IP.`
-    },
-    'port': {
-      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/port',
-      description: `Port of the targeted server.`
-    },
-    'server': {
-      $ref: 'module://@nikitajs/network/lib/tcp/wait#/properties/server'
-    },
-    'not': {
-      $ref: 'module://@nikitajs/core/lib/actions/assert#/properties/not'
+  config: {
+    type: 'object',
+    properties: {
+      'host': {
+        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/host',
+        description: `Host of the targeted server, could be a FQDN, a hostname or an IP.`
+      },
+      'port': {
+        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/port',
+        description: `Port of the targeted server.`
+      },
+      'server': {
+        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/server'
+      },
+      'not': {
+        $ref: 'module://@nikitajs/core/lib/actions/assert#/definitions/config/properties/not'
+      }
     }
   }
 };

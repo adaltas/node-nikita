@@ -112,80 +112,82 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'host': {
-      type: 'array',
-      items: {
-        type: 'string'
-      },
-      description: `One or multiple hosts, used to build or enrich the 'server' option.`
-    },
-    'interval': {
-      type: 'number',
-      description: `Time in millisecond between each connection attempt.`
-    },
-    'quorum': {
-      type: ['boolean', 'integer'],
-      description: `Number of minimal successful connection, 50%+1 if "true".`
-    },
-    'port': {
-      type: 'array',
-      items: {
-        type: 'integer'
-      },
-      description: `One or multiple ports, used to build or enrich the 'server' option.`
-    },
-    'randdir': {
-      type: 'string',
-      description: `Directory where to write temporary file used internally to store state
-information. It default to a temporary location.`
-    },
-    'server': {
-      oneOf: [
-        {
+  config: {
+    type: 'object',
+    properties: {
+      'host': {
+        type: 'array',
+        items: {
           type: 'string'
         },
-        {
-          type: 'object',
-          properties: {
-            host: {
-              $ref: '#/properties/host'
-            },
-            port: {
-              $ref: '#/properties/port'
-            }
-          }
+        description: `One or multiple hosts, used to build or enrich the 'server' option.`
+      },
+      'interval': {
+        type: 'number',
+        description: `Time in millisecond between each connection attempt.`
+      },
+      'quorum': {
+        type: ['boolean', 'integer'],
+        description: `Number of minimal successful connection, 50%+1 if "true".`
+      },
+      'port': {
+        type: 'array',
+        items: {
+          type: 'integer'
         },
-        {
-          type: 'array',
-          items: {
-            oneOf: [
-              {
-                type: 'string'
+        description: `One or multiple ports, used to build or enrich the 'server' option.`
+      },
+      'randdir': {
+        type: 'string',
+        description: `Directory where to write temporary file used internally to store state
+information. It default to a temporary location.`
+      },
+      'server': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            type: 'object',
+            properties: {
+              host: {
+                $ref: '#/definitions/config/properties/host'
               },
-              {
-                type: 'object',
-                properties: {
-                  host: {
-                    $ref: '#/properties/host'
-                  },
-                  port: {
-                    $ref: '#/properties/port'
+              port: {
+                $ref: '#/definitions/config/properties/port'
+              }
+            }
+          },
+          {
+            type: 'array',
+            items: {
+              oneOf: [
+                {
+                  type: 'string'
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    host: {
+                      $ref: '#/definitions/config/properties/host'
+                    },
+                    port: {
+                      $ref: '#/definitions/config/properties/port'
+                    }
                   }
                 }
-              }
-            ]
+              ]
+            }
           }
-        }
-      ],
-      description: `One or multiple servers, string must be in the form of
+        ],
+        description: `One or multiple servers, string must be in the form of
 "{host}:{port}", object must have the properties "host" and "port".`
-    },
-    'timeout': {
-      type: 'integer',
-      description: `Maximum time in millisecond to wait until this function is considered
+      },
+      'timeout': {
+        type: 'integer',
+        description: `Maximum time in millisecond to wait until this function is considered
 to have failed.`
+      }
     }
   }
 };
