@@ -8,7 +8,6 @@ import AppBar from './shared/AppBar'
 import Content from './shared/Content'
 import Footer from './shared/Footer'
 import Menu from './shared/Menu'
-import Nav from './shared/Nav'
 // Material UI
 import { useTheme, makeStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
@@ -48,6 +47,7 @@ const Layout = ({
   intro,
   home = false,
   page,
+  path
 }) => {
   // Styles
   const theme = useTheme()
@@ -59,26 +59,8 @@ const Layout = ({
   const onToggle = () => {
     setIsOpen(!isOpen)
   }
-  // Create menu
-  const menu = { children: {} }
-  data.menu.edges.forEach( edge => {
-    // Filter items for current page
-    if((page.slug || '/current/').indexOf(edge.node.slug.replace(/[a-z0-9-_]*\/$/, '')) === -1) return
-    const slugs = edge.node.slug.split('/').filter(part => part)
-    let parentMenu = menu
-    slugs.forEach(slug => {
-      if (!parentMenu.children[slug])
-        parentMenu.children[slug] = { data: {}, children: {} }
-      parentMenu = parentMenu.children[slug]
-    })
-    parentMenu.data = {
-      id: slugs.join('/'),
-      navtitle: edge.node.frontmatter.navtitle,
-      title: edge.node.frontmatter.title,
-      slug: edge.node.slug,
-      sort: edge.node.frontmatter.sort || 99,
-    }
-  })
+  if(page.slug == null) page.slug = '/'
+  if(page.version === undefined) page.version = null
   return (
     <div>
       <Helmet
@@ -100,9 +82,7 @@ const Layout = ({
           paper: classes.drawerPaper,
         }}
       >
-        <Menu>
-          <Nav menu={menu.children.current.children}/>
-        </Menu>
+        <Menu page={page} />
       </Drawer>
       <AppBar
         onMenuClick={onToggle}
@@ -144,25 +124,6 @@ const WrappedLayout = props => (
               }
               xs
               sm
-            }
-          }
-        }
-        menu: allNikitaPages(
-          filter: {
-            frontmatter: { disabled: { eq: false } }
-            slug: { regex: "/^/.+/" }
-          }
-          sort: { order: ASC, fields: [frontmatter___sort, slug] }
-        ) {
-          edges {
-            node {
-              id
-              frontmatter {
-                navtitle
-                title
-                sort
-              }
-              slug
             }
           }
         }

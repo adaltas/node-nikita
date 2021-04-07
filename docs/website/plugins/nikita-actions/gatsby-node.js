@@ -14,17 +14,23 @@ exports.createSchemaCustomization = ({ actions }) => {
     type NikitaAction implements Node @dontInfer {
       name: String!
       action: [String]!
-      version: String!
+      version: NikitaActionVersion!
       slug: String!
       edit_url: String!
       packageName: String!
       srcPath: String
     }
+    type NikitaActionVersion {
+      name: String!
+      alias: String!
+    }
   `)
 }
 
-exports.sourceNodes = async ({ actions, createNodeId }, pluginOptions) => {
-  const { createNode } = actions
+exports.sourceNodes = async (
+  { actions: {createNode}, createNodeId },
+  { include }
+) => {
   const nikitaActions = await nikita.registry.get({flatten: true})
   nikitaActions.forEach( async (action) => {
     // Filter actions without modules
@@ -32,25 +38,24 @@ exports.sourceNodes = async ({ actions, createNodeId }, pluginOptions) => {
     // Get custom fields
     const name = action.action.join('.')
     const packageName = action.metadata.module.split('/')[1]
-    const currentVersion = 1, version = 1 // Currently only 1 version
-    const actionPath = action.action[0] === packageName ? action.action.join('/') : [packageName, action.action.join('/')].join('/')
-    var slug = [
-      currentVersion == version ? 'current' : `v${version}`,
-      'actions',
-      actionPath
-    ].join('/')
-    slug = `/${slug}/`
+    const currentVersion = '1', version = '1' // Currently only 1 version
+    var versionAlias = currentVersion == version ? 'current' : `v${version}`
+    const actionPath = action.action[0] === packageName
+      ? action.action.join('/')
+      : `${packageName}/${action.action.join('/')}` // for core actions
+    const slug = `/${versionAlias}/actions/${actionPath}/`
+    // Find the source markdown file
     var srcPath = action.metadata.module
       .replace('@nikitajs/','')
       .replace(/\/lib$/,'/src')
       .replace('/lib/','/src/')
-    pluginOptions.path = path.resolve(pluginOptions.path)
-    srcPath = path.join(path.basename(pluginOptions.path), srcPath)
+    include = path.resolve(include)
+    srcPath = path.join(path.basename(include), srcPath)
     try {
-      await fs.access(path.resolve(pluginOptions.path, '../', `${srcPath}.coffee.md`), constants.R_OK)  // check if exists
+      await fs.access(path.resolve(include, '../', `${srcPath}.coffee.md`), constants.R_OK)  // check if exists
       srcPath = `${srcPath}.coffee.md`
     } catch (err) {
-      await fs.access(path.resolve(pluginOptions.path, '../', `${srcPath}/index.coffee.md`), constants.R_OK)  // check if exists
+      await fs.access(path.resolve(include, '../', `${srcPath}/index.coffee.md`), constants.R_OK)  // check if exists
       srcPath = `${srcPath}/index.coffee.md`
     }
     const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${srcPath}`
@@ -59,7 +64,10 @@ exports.sourceNodes = async ({ actions, createNodeId }, pluginOptions) => {
       // Custom fields
       name: name,
       action: action.action,
-      version: version,
+      version: {
+        name: version,
+        alias: versionAlias
+      },
       packageName: packageName,
       metadata: action.metadata,
       srcPath: srcPath, // needed to filter Mdx
@@ -96,7 +104,7 @@ exports.createResolvers = ({ createResolvers, createNodeId }) => {
             { connectionType: 'NikitaPackage' }
           )
           .filter( target =>
-            source.packageName == target.name
+            source.packageName == target.name && source.version.name == target.version.name
           )[0]
         }
       },
@@ -124,10 +132,8 @@ exports.createPages = ({ actions, graphql }) => {
   return graphql(`
     {
       actions: allNikitaAction {
-        edges {
-          node {
-            slug
-          }
+        nodes {
+          slug
         }
       }
     }
@@ -135,7 +141,7 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
-    result.data.actions.edges.forEach(({ node }) => {
+    result.data.actions.nodes.forEach( node => {
       createPage({
         path: node.slug,
         component: template,

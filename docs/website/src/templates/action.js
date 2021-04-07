@@ -11,17 +11,18 @@ import Layout from '../components/Layout'
 const Template = ({
   data
 }) => {
-  const { action } = data
+  const { page } = data
   return (
     <Layout page={{
-        keywords: action.package.keywords,
-        description: action.parent.excerpt,
-        ...action.parent.frontmatter,
-        slug: action.slug,
-        edit_url: action.edit_url,
-        tableOfContents: action.parent.tableOfContents}}>
+        keywords: page.package.keywords,
+        description: page.parent.excerpt,
+        title: `Action "${page.name}"`,
+        slug: page.slug,
+        version: page.version.alias,
+        edit_url: page.edit_url,
+        tableOfContents: page.parent.tableOfContents}}>
       <MDXProvider>
-        <MDXRenderer>{action.parent.body}</MDXRenderer>
+        <MDXRenderer>{page.parent.body}</MDXRenderer>
       </MDXProvider>
     </Layout>
   )
@@ -30,19 +31,19 @@ export default Template
 
 export const pageQuery = graphql`
   query($path: String!) {
-    action: nikitaAction(slug: { eq: $path }) {
+    page: nikitaAction(slug: { eq: $path }) {
       slug
       edit_url
       package {
         id
         keywords
       }
+      name
+      version {
+        alias
+      }
       parent {
         ... on Mdx {
-          frontmatter {
-            title
-            titleHtml
-          }
           body
           tableOfContents(maxDepth: 2)
           excerpt(truncate: true, pruneLength: 200)

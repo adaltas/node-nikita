@@ -17,7 +17,13 @@ const Template = ({
 }) => {
   const { page } = data // data.markdownRemark holds our post data
   return (
-    <Layout page={{...page.frontmatter, slug: page.slug, edit_url: page.edit_url, tableOfContents: page.parent.tableOfContents}}>
+    <Layout page={{
+        ...page.frontmatter,
+        slug: page.slug,
+        edit_url: page.edit_url,
+        version: page.version.alias,
+        tableOfContents: page.parent.tableOfContents
+      }}>
       <MDXProvider>
         <MDXRenderer>{page.parent.body}</MDXRenderer>
       </MDXProvider>
@@ -28,9 +34,12 @@ export default withStyles(styles, { withTheme: true })(Template)
 
 export const pageQuery = graphql`
   query($path: String!) {
-    page: nikitaPages(slug: { eq: $path }) {
+    page: nikitaPage(slug: { eq: $path }) {
       slug
       edit_url
+      version {
+        alias
+      }
       frontmatter {
         title
         titleHtml

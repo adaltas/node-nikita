@@ -82,9 +82,10 @@ const BottomNav = ({
 const Nav = ({
   menu
 }) => {
+  // Styles
   const styles = useStyles(useTheme())
   var current
-  const pages = Object.values(menu)
+  const pages = Object.values(menu.children)
   .sort((p1, p2) => p1.data.sort > p2.data.sort)
   .map(page => {
     if(Object.keys(page.children).length !== 0)
