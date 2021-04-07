@@ -112,16 +112,18 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'output': {
-      type: 'array',
-      default: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'],
-      items: {
-        type: 'string',
-        enum: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'] //todo use and test $ref /properties/output/default
-      },
-      description: `The list of properties to be returned, default to all of them.`
+  config: {
+    type: 'object',
+    properties: {
+      'output': {
+        type: 'array',
+        default: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'],
+        items: {
+          type: 'string',
+          enum: ['source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail', 'pcent', 'target'] //todo use and test $ref /properties/output/default
+        },
+        description: `The list of properties to be returned, default to all of them.`
+      }
     }
   }
 };

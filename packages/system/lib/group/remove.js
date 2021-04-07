@@ -30,14 +30,16 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string',
-      description: `Name of the group to remove.`
-    }
-  },
-  required: ['name']
+  config: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        description: `Name of the group to remove.`
+      }
+    },
+    required: ['name']
+  }
 };
 
 // ## Handler

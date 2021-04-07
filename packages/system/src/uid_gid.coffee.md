@@ -29,22 +29,23 @@ console.info(`Group gid is ${config.gid}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
-        'group_target':
-          type: 'string'
-          description: '''
-          Path to the group definition file, default to "/etc/group"
-          '''
-        'passwd_target':
-          type: 'string'
-          description: '''
-          Path to the passwd definition file, default to "/etc/passwd".
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
+      config:
+        type: 'object'
+        properties:
+          'gid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid'
+          'group_target':
+            type: 'string'
+            description: '''
+            Path to the group definition file, default to "/etc/group"
+            '''
+          'passwd_target':
+            type: 'string'
+            description: '''
+            Path to the passwd definition file, default to "/etc/passwd".
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
 
 ## Handler
 

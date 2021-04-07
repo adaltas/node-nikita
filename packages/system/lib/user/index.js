@@ -51,83 +51,85 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'comment': {
-      type: 'string',
-      description: `Short description of the login.`
-    },
-    'expiredate': {
-      type: 'integer',
-      description: `The date on which the user account is disabled.`
-    },
-    'gid': {
-      type: 'integer',
-      description: `Group name or number of the user´s initial login group.`
-    },
-    'groups': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'comment': {
+        type: 'string',
+        description: `Short description of the login.`
       },
-      description: `List of supplementary groups which the user is also a member of.`
-    },
-    'home': {
-      type: 'string',
-      description: `Value for the user´s login directory, default to the login name
+      'expiredate': {
+        type: 'integer',
+        description: `The date on which the user account is disabled.`
+      },
+      'gid': {
+        type: 'integer',
+        description: `Group name or number of the user´s initial login group.`
+      },
+      'groups': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `List of supplementary groups which the user is also a member of.`
+      },
+      'home': {
+        type: 'string',
+        description: `Value for the user´s login directory, default to the login name
 appended to "BASE_DIR".`
-    },
-    'inactive': {
-      type: 'integer',
-      description: `The number of days after a password has expired before the account
+      },
+      'inactive': {
+        type: 'integer',
+        description: `The number of days after a password has expired before the account
 will be disabled.`
-    },
-    'name': {
-      type: 'string',
-      description: `Login name of the user.`
-    },
-    'no_home_ownership': {
-      type: 'boolean',
-      description: `Disable ownership on home directory which default to the "uid" and
+      },
+      'name': {
+        type: 'string',
+        description: `Login name of the user.`
+      },
+      'no_home_ownership': {
+        type: 'boolean',
+        description: `Disable ownership on home directory which default to the "uid" and
 "gid" config, default is "false".`
-    },
-    'password': {
-      type: 'string',
-      description: `The unencrypted password.`
-    },
-    'password_sync': {
-      type: 'boolean',
-      default: true,
-      description: `Synchronize password`
-    },
-    'shell': {
-      // oneOf: [
-      //   type: 'boolean'
-      // ,
-      //   type: 'string'
-      // ]
-      type: ['boolean', 'string'],
-      default: '/bin/sh',
-      description: `Path to the user shell, set to "/sbin/nologin" if \`false\` and "/bin/sh"
+      },
+      'password': {
+        type: 'string',
+        description: `The unencrypted password.`
+      },
+      'password_sync': {
+        type: 'boolean',
+        default: true,
+        description: `Synchronize password`
+      },
+      'shell': {
+        // oneOf: [
+        //   type: 'boolean'
+        // ,
+        //   type: 'string'
+        // ]
+        type: ['boolean', 'string'],
+        default: '/bin/sh',
+        description: `Path to the user shell, set to "/sbin/nologin" if \`false\` and "/bin/sh"
 if \`true\` or \`undefined\`.`
-    },
-    'skel': {
-      type: 'string',
-      description: `The skeleton directory, which contains files and directories to be
+      },
+      'skel': {
+        type: 'string',
+        description: `The skeleton directory, which contains files and directories to be
 copied in the user´s home directory, when the home directory is
 created by useradd.`
-    },
-    'system': {
-      type: 'boolean',
-      description: `Create a system account, such user are not created with a home by
+      },
+      'system': {
+        type: 'boolean',
+        description: `Create a system account, such user are not created with a home by
 default, set the "home" option if we it to be created.`
+      },
+      'uid': {
+        type: 'integer',
+        description: `Numerical value of the user´s ID, must not exist.`
+      }
     },
-    'uid': {
-      type: 'integer',
-      description: `Numerical value of the user´s ID, must not exist.`
-    }
-  },
-  required: ['name']
+    required: ['name']
+  }
 };
 
 // ## Handler

@@ -19,17 +19,18 @@ console.info(`Was the configudation updated ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'properties':
-          type: 'object'
-          patternProperties:
-            '.*': type: 'boolean'
-          additionalProperties: false
-          description: '''
-          Key/value pairs of the properties to manage.
-          '''
-      required: ['properties']
+      config:
+        type: 'object'
+        properties:
+          'properties':
+            type: 'object'
+            patternProperties:
+              '.*': type: 'boolean'
+            additionalProperties: false
+            description: '''
+            Key/value pairs of the properties to manage.
+            '''
+        required: ['properties']
 
 ## Handler
 

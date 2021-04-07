@@ -44,25 +44,27 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'pid': {
-      type: 'integer',
-      description: `The PID of the process to inspect, required if \`target\` is not provided.`
+  config: {
+    type: 'object',
+    properties: {
+      'pid': {
+        type: 'integer',
+        description: `The PID of the process to inspect, required if \`target\` is not provided.`
+      },
+      'target': {
+        type: 'string',
+        description: `Path to the file storing the PID value, required if \`pid\` is not provided.`
+      }
     },
-    'target': {
-      type: 'string',
-      description: `Path to the file storing the PID value, required if \`pid\` is not provided.`
-    }
-  },
-  anyOf: [
-    {
-      required: ['pid']
-    },
-    {
-      required: ['target']
-    }
-  ]
+    anyOf: [
+      {
+        required: ['pid']
+      },
+      {
+        required: ['target']
+      }
+    ]
+  }
 };
 
 // ## Handler

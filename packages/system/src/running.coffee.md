@@ -41,23 +41,24 @@ require('@nikitajs/core')
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'pid':
-          type: 'integer'
-          description: '''
-          The PID of the process to inspect, required if `target` is not provided.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Path to the file storing the PID value, required if `pid` is not provided.
-          '''
-      anyOf: [
-        required: ['pid']
-      ,
-        required: ['target']
-      ]
+      config:
+        type: 'object'
+        properties:
+          'pid':
+            type: 'integer'
+            description: '''
+            The PID of the process to inspect, required if `target` is not provided.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Path to the file storing the PID value, required if `pid` is not provided.
+            '''
+        anyOf: [
+          required: ['pid']
+        ,
+          required: ['target']
+        ]
 
 ## Handler
 

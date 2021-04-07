@@ -29,14 +29,15 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        name:
-          type: 'string'
-          description: '''
-          Name of the group to remove.
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          name:
+            type: 'string'
+            description: '''
+            Name of the group to remove.
+            '''
+        required: ['name']
 
 ## Handler
 

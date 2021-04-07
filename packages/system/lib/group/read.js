@@ -48,16 +48,18 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid',
-      description: `Retrieve the information for a specific group name or gid.`
-    },
-    'target': {
-      type: 'string',
-      default: '/etc/group',
-      description: `Path to the group definition file, default to "/etc/group".`
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid',
+        description: `Retrieve the information for a specific group name or gid.`
+      },
+      'target': {
+        type: 'string',
+        default: '/etc/group',
+        description: `Path to the group definition file, default to "/etc/group".`
+      }
     }
   }
 };

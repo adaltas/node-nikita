@@ -50,19 +50,20 @@ targeted file.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'target':
-          type: 'string'
-          description: '''
-          Path to the passwd definition file, use the `getent passwd` command by
-          default which use to "/etc/passwd".
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
-          description: '''
-          Retrieve the information for a specific username or uid.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'target':
+            type: 'string'
+            description: '''
+            Path to the passwd definition file, use the `getent passwd` command by
+            default which use to "/etc/passwd".
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
+            description: '''
+            Retrieve the information for a specific username or uid.
+            '''
 
 ## Handler
 

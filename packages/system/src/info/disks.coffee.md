@@ -111,23 +111,24 @@ Here is how the output may look like:
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'output':
-          type: 'array'
-          default: [
-            'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size',
-            'used', 'avail', 'pcent', 'target'
-          ]
-          items:
-            type: 'string'
-            enum: [ #todo use and test $ref /properties/output/default
+      config:
+        type: 'object'
+        properties:
+          'output':
+            type: 'array'
+            default: [
               'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size',
               'used', 'avail', 'pcent', 'target'
             ]
-          description: '''
-          The list of properties to be returned, default to all of them.
-          '''
+            items:
+              type: 'string'
+              enum: [ #todo use and test $ref /properties/output/default
+                'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size',
+                'used', 'avail', 'pcent', 'target'
+              ]
+            description: '''
+            The list of properties to be returned, default to all of them.
+            '''
 
 ## Handler
 

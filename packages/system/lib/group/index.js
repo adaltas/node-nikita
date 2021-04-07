@@ -34,24 +34,26 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'gid': {
-      type: 'integer',
-      description: `Group name or number of the user´s initial login group.`
-    },
-    'name': {
-      type: 'string',
-      description: `Login name of the group.`
-    },
-    'system': {
-      type: 'boolean',
-      default: false,
-      description: `Create a system account, such user are not created with ahome by
+  config: {
+    type: 'object',
+    properties: {
+      'gid': {
+        type: 'integer',
+        description: `Group name or number of the user´s initial login group.`
+      },
+      'name': {
+        type: 'string',
+        description: `Login name of the group.`
+      },
+      'system': {
+        type: 'boolean',
+        default: false,
+        description: `Create a system account, such user are not created with ahome by
 default, set the "home" option if we it to be created.`
-    }
-  },
-  required: ['name']
+      }
+    },
+    required: ['name']
+  }
 };
 
 // ## Handler

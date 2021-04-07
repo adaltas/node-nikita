@@ -18,73 +18,74 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'age':
-          type: 'string'
-          description: '''
-          Used to decide what files to delete when cleaning.
-          '''
-        'argument':
-          type: 'string'
-          description: '''
-          The destination path of the symlink if type is `L`.
-          '''
-        'backup':
-          type: ['boolean', 'string']
-          default: true
-          description: '''
-          Create a backup, append a provided string to the filename extension or
-          a timestamp if value is not a string, only apply if the target file
-          exists and is modified.
-          '''
-        'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
-          description: '''
-          File group name or group id.
-          '''
-        'merge':
-          type: 'boolean'
-          default: true
-          description: '''
-          Overrides properties if already exits.
-          '''
-        'mount':
-          type: 'string'
-          description: '''
-          The mount point dir to create on system startup.
-          '''
-        'mode':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
-          description: '''
-          Mode of the target configuration file
-          '''
-        'name':
-          type: 'string'
-          description: '''
-          The file name, can not be used with target. If only `name` is set, it
-          writes the content to default configuration directory and creates the
-          file  as '`name`.conf'.
-          '''
-        'perm':
-          type: 'string'
-          default: '0644'
-          description: '''
-          Mount path mode in string format like `"0644"`.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          File path where to write content to. Defined to
-          /etc/tmpfiles.d/{config.uid}.conf if uid is defined or
-          /etc/tmpfiles.d/default.conf.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
-          description: '''
-          File user name or user id.
-          '''
-      required: ['mount']
+      config:
+        type: 'object'
+        properties:
+          'age':
+            type: 'string'
+            description: '''
+            Used to decide what files to delete when cleaning.
+            '''
+          'argument':
+            type: 'string'
+            description: '''
+            The destination path of the symlink if type is `L`.
+            '''
+          'backup':
+            type: ['boolean', 'string']
+            default: true
+            description: '''
+            Create a backup, append a provided string to the filename extension or
+            a timestamp if value is not a string, only apply if the target file
+            exists and is modified.
+            '''
+          'gid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid'
+            description: '''
+            File group name or group id.
+            '''
+          'merge':
+            type: 'boolean'
+            default: true
+            description: '''
+            Overrides properties if already exits.
+            '''
+          'mount':
+            type: 'string'
+            description: '''
+            The mount point dir to create on system startup.
+            '''
+          'mode':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode'
+            description: '''
+            Mode of the target configuration file
+            '''
+          'name':
+            type: 'string'
+            description: '''
+            The file name, can not be used with target. If only `name` is set, it
+            writes the content to default configuration directory and creates the
+            file  as '`name`.conf'.
+            '''
+          'perm':
+            type: 'string'
+            default: '0644'
+            description: '''
+            Mount path mode in string format like `"0644"`.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            File path where to write content to. Defined to
+            /etc/tmpfiles.d/{config.uid}.conf if uid is defined or
+            /etc/tmpfiles.d/default.conf.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
+            description: '''
+            File user name or user id.
+            '''
+        required: ['mount']
 
 ## Handler
 

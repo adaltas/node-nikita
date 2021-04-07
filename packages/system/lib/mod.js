@@ -38,43 +38,45 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'load': {
-      type: 'boolean',
-      default: true,
-      description: `Load the module with \`modprobe\`.`
-    },
-    'modules': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'object',
-          patternProperties: {
-            '.*': {
-              type: 'boolean'
-            }
+  config: {
+    type: 'object',
+    properties: {
+      'load': {
+        type: 'boolean',
+        default: true,
+        description: `Load the module with \`modprobe\`.`
+      },
+      'modules': {
+        oneOf: [
+          {
+            type: 'string'
           },
-          additionalProperties: false
-        }
-      ],
-      description: `Names of the modules.`
-    },
-    'persist': {
-      type: 'boolean',
-      default: true,
-      description: `Load the module on startup by placing a file, see \`target\`.`
-    },
-    'target': {
-      type: 'string',
-      description: `Path of the file to write the module, relative to
+          {
+            type: 'object',
+            patternProperties: {
+              '.*': {
+                type: 'boolean'
+              }
+            },
+            additionalProperties: false
+          }
+        ],
+        description: `Names of the modules.`
+      },
+      'persist': {
+        type: 'boolean',
+        default: true,
+        description: `Load the module on startup by placing a file, see \`target\`.`
+      },
+      'target': {
+        type: 'string',
+        description: `Path of the file to write the module, relative to
 "/etc/modules-load.d" unless absolute, default to
 "/etc/modules-load.d/{config.modules}.conf".`
-    }
-  },
-  required: ['modules']
+      }
+    },
+    required: ['modules']
+  }
 };
 
 // ## Handler

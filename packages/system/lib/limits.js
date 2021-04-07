@@ -133,167 +133,167 @@
 var handler, regexp, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'as': {
-      $ref: '#/definitions/limits',
-      description: `Address space limit (KB).`
-    },
-    'core': {
-      $ref: '#/definitions/limits',
-      description: `Limits the core file size (KB).`
-    },
-    'cpu': {
-      $ref: '#/definitions/limits',
-      description: `CPU time limit (in seconds). When the process reaches the soft limit,
+  config: {
+    type: 'object',
+    properties: {
+      'as': {
+        $ref: '#/definitions/limits',
+        description: `Address space limit (KB).`
+      },
+      'core': {
+        $ref: '#/definitions/limits',
+        description: `Limits the core file size (KB).`
+      },
+      'cpu': {
+        $ref: '#/definitions/limits',
+        description: `CPU time limit (in seconds). When the process reaches the soft limit,
 it receives a SIGXCPU every second. When it reaches the hard limit, it
 receives SIGKILL.`
-    },
-    'data': {
-      $ref: '#/definitions/limits',
-      description: `Max data size (KB).`
-    },
-    'fsize': {
-      $ref: '#/definitions/limits',
-      description: `Maximum filesize (KB).`
-    },
-    'locks': {
-      $ref: '#/definitions/limits',
-      description: `Max number of file locks the user can hold.`
-    },
-    'maxlogins': {
-      $ref: '#/definitions/limits',
-      description: `Max number of logins for this user.`
-    },
-    'maxsyslogins': {
-      $ref: '#/definitions/limits',
-      description: `Max number of logins on the system.`
-    },
-    'memlock': {
-      $ref: '#/definitions/limits',
-      description: `Max locked-in-memory address space (KB).`
-    },
-    'msgqueue': {
-      $ref: '#/definitions/limits',
-      description: `Max memory used by POSIX message queues (bytes).`
-    },
-    'nice': {
-      oneOf: [
-        {
-          type: 'integer',
-          minimum: -20,
-          maximum: 19
-        },
-        {
-          type: 'object',
-          patternProperties: {
-            '^-|soft|hard$': {
-              type: 'integer',
-              minimum: -20,
-              maximum: 19
-            }
+      },
+      'data': {
+        $ref: '#/definitions/limits',
+        description: `Max data size (KB).`
+      },
+      'fsize': {
+        $ref: '#/definitions/limits',
+        description: `Maximum filesize (KB).`
+      },
+      'locks': {
+        $ref: '#/definitions/limits',
+        description: `Max number of file locks the user can hold.`
+      },
+      'maxlogins': {
+        $ref: '#/definitions/limits',
+        description: `Max number of logins for this user.`
+      },
+      'maxsyslogins': {
+        $ref: '#/definitions/limits',
+        description: `Max number of logins on the system.`
+      },
+      'memlock': {
+        $ref: '#/definitions/limits',
+        description: `Max locked-in-memory address space (KB).`
+      },
+      'msgqueue': {
+        $ref: '#/definitions/limits',
+        description: `Max memory used by POSIX message queues (bytes).`
+      },
+      'nice': {
+        oneOf: [
+          {
+            type: 'integer',
+            minimum: -20,
+            maximum: 19
           },
-          additionalProperties: false
-        }
-      ],
-      description: `Max nice priority allowed to raise to values.`
-    },
-    'nofile': {
-      $ref: '#/definitions/limits',
-      description: `Max number of open file descriptors.`
-    },
-    'nproc': {
-      $ref: '#/definitions/limits',
-      description: `Max number of processes.`
-    },
-    'priority': {
-      oneOf: [
-        {
-          type: 'integer'
-        },
-        {
-          type: 'object',
-          patternProperties: {
-            '^-|soft|hard$': {
-              type: 'integer'
-            }
+          {
+            type: 'object',
+            patternProperties: {
+              '^-|soft|hard$': {
+                type: 'integer',
+                minimum: -20,
+                maximum: 19
+              }
+            },
+            additionalProperties: false
+          }
+        ],
+        description: `Max nice priority allowed to raise to values.`
+      },
+      'nofile': {
+        $ref: '#/definitions/limits',
+        description: `Max number of open file descriptors.`
+      },
+      'nproc': {
+        $ref: '#/definitions/limits',
+        description: `Max number of processes.`
+      },
+      'priority': {
+        oneOf: [
+          {
+            type: 'integer'
           },
-          additionalProperties: false
-        }
-      ],
-      description: `Priority to run user process with.`
-    },
-    'rss': {
-      $ref: '#/definitions/limits',
-      description: `Max resident set size (KB).`
-    },
-    'sigpending': {
-      $ref: '#/definitions/limits',
-      description: `Max number of pending signals.`
-    },
-    'stack': {
-      $ref: '#/definitions/limits',
-      description: `Max stack size (KB).`
-    },
-    'rtprio': {
-      $ref: '#/definitions/limits',
-      description: `Max realtime priority..`
-    },
-    'system': {
-      type: 'boolean',
-      description: `Apply the limits at the system level.`
-    },
-    'target': {
-      type: 'string',
-      description: `Where to write the file, default to "/etc/security/limits.conf" for
+          {
+            type: 'object',
+            patternProperties: {
+              '^-|soft|hard$': {
+                type: 'integer'
+              }
+            },
+            additionalProperties: false
+          }
+        ],
+        description: `Priority to run user process with.`
+      },
+      'rss': {
+        $ref: '#/definitions/limits',
+        description: `Max resident set size (KB).`
+      },
+      'sigpending': {
+        $ref: '#/definitions/limits',
+        description: `Max number of pending signals.`
+      },
+      'stack': {
+        $ref: '#/definitions/limits',
+        description: `Max stack size (KB).`
+      },
+      'rtprio': {
+        $ref: '#/definitions/limits',
+        description: `Max realtime priority..`
+      },
+      'system': {
+        type: 'boolean',
+        description: `Apply the limits at the system level.`
+      },
+      'target': {
+        type: 'string',
+        description: `Where to write the file, default to "/etc/security/limits.conf" for
 system limits and "/etc/security/limits.d/#{config.user}.conf" for
 user limits.`
-    },
-    'user': {
-      type: 'string',
-      description: `The username to who the limit apply, also used for the default target
+      },
+      'user': {
+        type: 'string',
+        description: `The username to who the limit apply, also used for the default target
 name.`
-    }
-  },
-  oneOf: [
-    {
-      required: ['system']
+      }
     },
-    {
-      required: ['user']
-    }
-  ],
-  definitions: {
-    'limits': {
-      anyOf: [
-        {
-          type: ['boolean',
-        'integer']
+    oneOf: [
+      {
+        required: ['system']
+      },
+      {
+        required: ['user']
+      }
+    ]
+  },
+  'limits': {
+    anyOf: [
+      {
+        type: ['boolean',
+      'integer']
+      },
+      {
+        type: 'object',
+        patternProperties: {
+          '^-|soft|hard$': {
+            anyOf: [
+              {
+                type: ['boolean',
+              'integer']
+              },
+              {
+                type: 'string',
+                enum: ['unlimited']
+              }
+            ]
+          }
         },
-        {
-          type: 'object',
-          patternProperties: {
-            '^-|soft|hard$': {
-              anyOf: [
-                {
-                  type: ['boolean',
-                'integer']
-                },
-                {
-                  type: 'string',
-                  enum: ['unlimited']
-                }
-              ]
-            }
-          },
-          additionalProperties: false
-        },
-        {
-          type: 'string',
-          enum: ['unlimited']
-        }
-      ]
-    }
+        additionalProperties: false
+      },
+      {
+        type: 'string',
+        enum: ['unlimited']
+      }
+    ]
   }
 };
 

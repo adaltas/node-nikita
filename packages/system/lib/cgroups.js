@@ -62,159 +62,159 @@ var handler, merge, path, schema, utils,
   indexOf = [].indexOf;
 
 schema = {
-  type: 'object',
-  properties: {
-    'default': {
-      $ref: '#/definitions/group',
-      description: `The default object of cgconfig file.`
-    },
-    'groups': {
-      type: 'object',
-      description: `Object of cgroups to add to cgconfig file. The keys are the
+  config: {
+    type: 'object',
+    properties: {
+      'default': {
+        $ref: '#/definitions/group',
+        description: `The default object of cgconfig file.`
+      },
+      'groups': {
+        type: 'object',
+        description: `Object of cgroups to add to cgconfig file. The keys are the
 cgroup name, and the values are the cgroup configuration.`,
-      patternProperties: {
-        '.*': { // cgroup name
-          $ref: '#/definitions/group'
-        }
-      },
-      additionalProperties: false
-    },
-    'ignore': {
-      type: 'array',
-      items: {
-        type: 'string'
-      },
-      description: `List of group path to ignore. Only used when merging.`
-    },
-    'mounts': {
-      type: 'array',
-      description: `List of mount object to add to cgconfig file.`
-    },
-    'merge': {
-      type: 'boolean',
-      default: true,
-      description: `Default to true. Read the config from cgsnapshot command and merge
-mounts part of the cgroups.`
-    },
-    'target': {
-      type: 'string',
-      description: `The cgconfig configuration file. By default nikita detects provider
-based on  os.`
-    }
-  },
-  anyOf: [
-    {
-      required: ['groups']
-    },
-    {
-      required: ['mounts']
-    },
-    {
-      required: ['default']
-    }
-  ],
-  definitions: {
-    group: {
-      type: 'object',
-      description: `Controllers in the cgroup where the keys represent the name of the
-controler.`,
-      properties: {
-        perm: {
-          type: 'object',
-          description: `Object to describe the taks and limits permissions.`,
-          properties: {
-            'admin': {
-              $ref: '#/definitions/group_perm',
-              description: `Who can manage limits`
-            },
-            'task': {
-              $ref: '#/definitions/group_perm',
-              description: `Who can add tasks to this group`
-            }
+        patternProperties: {
+          '.*': { // cgroup name
+            $ref: '#/definitions/group'
           }
         },
-        cpuset: {
-          $ref: '#/definitions/group_controller'
+        additionalProperties: false
+      },
+      'ignore': {
+        type: 'array',
+        items: {
+          type: 'string'
         },
-        cpu: {
-          $ref: '#/definitions/group_controller'
-        },
-        cpuacct: {
-          $ref: '#/definitions/group_controller'
-        },
-        blkio: {
-          $ref: '#/definitions/group_controller'
-        },
-        memory: {
-          $ref: '#/definitions/group_controller'
-        },
-        devices: {
-          $ref: '#/definitions/group_controller'
-        },
-        freezer: {
-          $ref: '#/definitions/group_controller'
-        },
-        net_cls: {
-          $ref: '#/definitions/group_controller'
-        },
-        perf_event: {
-          $ref: '#/definitions/group_controller'
-        },
-        net_prio: {
-          $ref: '#/definitions/group_controller'
-        },
-        hugetlb: {
-          $ref: '#/definitions/group_controller'
-        },
-        pids: {
-          $ref: '#/definitions/group_controller'
-        },
-        rdma: {
-          $ref: '#/definitions/group_controller'
-        }
+        description: `List of group path to ignore. Only used when merging.`
+      },
+      'mounts': {
+        type: 'array',
+        description: `List of mount object to add to cgconfig file.`
+      },
+      'merge': {
+        type: 'boolean',
+        default: true,
+        description: `Default to true. Read the config from cgsnapshot command and merge
+mounts part of the cgroups.`
+      },
+      'target': {
+        type: 'string',
+        description: `The cgconfig configuration file. By default nikita detects provider
+based on  os.`
       }
     },
-    group_perm: {
-      type: 'object',
-      properties: {
-        'uid': {
-          oneOf: [
-            {
-              type: 'integer'
-            },
-            {
-              type: 'string'
-            }
-          ]
-        },
-        'gid': {
-          oneOf: [
-            {
-              type: 'integer'
-            },
-            {
-              type: 'string'
-            }
-          ]
-        }
+    anyOf: [
+      {
+        required: ['groups']
+      },
+      {
+        required: ['mounts']
+      },
+      {
+        required: ['default']
       }
-    },
-    group_controller: {
-      type: 'object',
-      patternProperties: {
-        '.*': {
-          oneOf: [
-            {
-              type: 'integer'
-            },
-            {
-              type: 'string'
-            }
-          ]
+    ]
+  },
+  group: {
+    type: 'object',
+    description: `Controllers in the cgroup where the keys represent the name of the
+controler.`,
+    properties: {
+      perm: {
+        type: 'object',
+        description: `Object to describe the taks and limits permissions.`,
+        properties: {
+          'admin': {
+            $ref: '#/definitions/group_perm',
+            description: `Who can manage limits`
+          },
+          'task': {
+            $ref: '#/definitions/group_perm',
+            description: `Who can add tasks to this group`
+          }
         }
       },
-      additionalProperties: false
+      cpuset: {
+        $ref: '#/definitions/group_controller'
+      },
+      cpu: {
+        $ref: '#/definitions/group_controller'
+      },
+      cpuacct: {
+        $ref: '#/definitions/group_controller'
+      },
+      blkio: {
+        $ref: '#/definitions/group_controller'
+      },
+      memory: {
+        $ref: '#/definitions/group_controller'
+      },
+      devices: {
+        $ref: '#/definitions/group_controller'
+      },
+      freezer: {
+        $ref: '#/definitions/group_controller'
+      },
+      net_cls: {
+        $ref: '#/definitions/group_controller'
+      },
+      perf_event: {
+        $ref: '#/definitions/group_controller'
+      },
+      net_prio: {
+        $ref: '#/definitions/group_controller'
+      },
+      hugetlb: {
+        $ref: '#/definitions/group_controller'
+      },
+      pids: {
+        $ref: '#/definitions/group_controller'
+      },
+      rdma: {
+        $ref: '#/definitions/group_controller'
+      }
     }
+  },
+  group_perm: {
+    type: 'object',
+    properties: {
+      'uid': {
+        oneOf: [
+          {
+            type: 'integer'
+          },
+          {
+            type: 'string'
+          }
+        ]
+      },
+      'gid': {
+        oneOf: [
+          {
+            type: 'integer'
+          },
+          {
+            type: 'string'
+          }
+        ]
+      }
+    }
+  },
+  group_controller: {
+    type: 'object',
+    patternProperties: {
+      '.*': {
+        oneOf: [
+          {
+            type: 'integer'
+          },
+          {
+            type: 'string'
+          }
+        ]
+      }
+    },
+    additionalProperties: false
   }
 };
 
