@@ -18,23 +18,25 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'command': {
-      type: 'string',
-      description: `The shell command of the job. By default all jobs will match.`
-    },
-    'user': {
-      type: 'string',
-      description: `The user of the crontab. The SSH user by default.`
-    },
-    'when': {
-      type: 'string',
-      description: `Cron-styled time string. Defines the frequency of the cron job. By
+  config: {
+    type: 'object',
+    properties: {
+      'command': {
+        type: 'string',
+        description: `The shell command of the job. By default all jobs will match.`
+      },
+      'user': {
+        type: 'string',
+        description: `The user of the crontab. The SSH user by default.`
+      },
+      'when': {
+        type: 'string',
+        description: `Cron-styled time string. Defines the frequency of the cron job. By
 default all frequency will match.`
-    }
-  },
-  required: ['command']
+      }
+    },
+    required: ['command']
+  }
 };
 
 // ## Handler

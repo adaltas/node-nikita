@@ -28,7 +28,7 @@ describe 'tools.cron.add', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/required config should have required property \'when\'.'
+          '#/definitions/config/required config should have required property \'when\'.'
         ].join ' '
 
     it 'invalid job: invalid time', ->
@@ -38,7 +38,7 @@ describe 'tools.cron.add', ->
         when: true
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /#\/properties\/when\/pattern config\/when should match pattern/
+        message: /#\/definitions\/config\/properties\/when\/pattern config\/when should match pattern/
 
     it 'invalid job: no command', ->
       nikita
@@ -47,7 +47,7 @@ describe 'tools.cron.add', ->
         when: '1 2 3 4 5'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /#\/required config should have required property 'command'/
+        message: /#\/definitions\/config\/required config should have required property 'command'/
 
     it 'invalid job: invalid command', ->
       nikita
@@ -60,7 +60,7 @@ describe 'tools.cron.add', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.add`:'
-          '#/properties/command/minLength config/command should NOT have fewer than 1 characters, limit is 1.'
+          '#/definitions/config/properties/command/minLength config/command should NOT have fewer than 1 characters, limit is 1.'
         ].join ' '
 
   describe 'action', ->

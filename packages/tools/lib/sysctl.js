@@ -40,36 +40,38 @@ var handler, schema, utils,
   indexOf = [].indexOf;
 
 schema = {
-  type: 'object',
-  properties: {
-    'backup': {
-      type: ['string', 'boolean'],
-      description: `Create a backup, append a provided string to the filename extension or
+  config: {
+    type: 'object',
+    properties: {
+      'backup': {
+        type: ['string', 'boolean'],
+        description: `Create a backup, append a provided string to the filename extension or
 a timestamp if value is not a string, only apply if the target file
 exists and is modified.`
-    },
-    'comment': {
-      type: 'boolean',
-      description: `Preserve comments.`
-    },
-    'load': {
-      type: 'boolean',
-      default: true,
-      description: `Load properties if target is modified.`
-    },
-    'merge': {
-      type: 'boolean',
-      description: `Preserve existing variables in the target file.`
-    },
-    'properties': {
-      type: 'object',
-      description: `Key/value object representing sysctl properties and values.`
-    },
-    'target': {
-      type: 'string',
-      default: '/etc/sysctl.conf',
-      description: `Destination to write properties and load in sysctl settings, default
+      },
+      'comment': {
+        type: 'boolean',
+        description: `Preserve comments.`
+      },
+      'load': {
+        type: 'boolean',
+        default: true,
+        description: `Load properties if target is modified.`
+      },
+      'merge': {
+        type: 'boolean',
+        description: `Preserve existing variables in the target file.`
+      },
+      'properties': {
+        type: 'object',
+        description: `Key/value object representing sysctl properties and values.`
+      },
+      'target': {
+        type: 'string',
+        default: '/etc/sysctl.conf',
+        description: `Destination to write properties and load in sysctl settings, default
 to "/etc/sysctl.conf" if none given.`
+      }
     }
   }
 };

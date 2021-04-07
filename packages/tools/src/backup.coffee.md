@@ -35,62 +35,63 @@ console.info(`File was backed up: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        name:
-          type: 'string'
-          description: '''
-          Backup file name, required.
-          '''
-        command:
-          type: 'string'
-          description: '''
-          Command from which to pipe the ouptut or generating a file if the
-          "target" option is defined.
-          '''
-        format:
-          type: 'string'
-          description: '''
-          Format used to name the backup directory, used by [Moment.js], default
-          to "ISO-8601".
-          '''
-        locale:
-          type: 'string'
-          description: '''
-          Locale used to name the backup directory, used by [Moment.js], default
-          to  UTC.
-          '''
-        compress:
-          oneOf: [
-            $ref: 'module://@nikitajs/tools/src/compress#/properties/format'
-          ,
-            type: 'boolean'
-          ]
-          description: '''
-          One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or
-          a directory otherwise no compression.
-          '''
-        source:
-          type: ['string', 'boolean']
-          description: '''
-          Path to a file or a directory to backup.
-          '''
-        target:
-          type: 'string'
-          description: '''
-          Directory storing the backup, required.
-          '''
-        timezone:
-          type: 'string'
-          default: 'UTC'
-          description: '''
-          The time zone to use. The only value implementations must recognize is
-          "UTC"; the default is the runtime's default time zone. Implementations
-          may also recognize the time zone names of the [IANA time zone
-          database](https://www.iana.org/time-zones), such as "Asia/Shanghai",
-          "Asia/Kolkata", "America/New_York".
-          '''
-      required: ['name', 'target']
+      config:
+        type: 'object'
+        properties:
+          name:
+            type: 'string'
+            description: '''
+            Backup file name, required.
+            '''
+          command:
+            type: 'string'
+            description: '''
+            Command from which to pipe the ouptut or generating a file if the
+            "target" option is defined.
+            '''
+          format:
+            type: 'string'
+            description: '''
+            Format used to name the backup directory, used by [Moment.js], default
+            to "ISO-8601".
+            '''
+          locale:
+            type: 'string'
+            description: '''
+            Locale used to name the backup directory, used by [Moment.js], default
+            to  UTC.
+            '''
+          compress:
+            oneOf: [
+              $ref: 'module://@nikitajs/tools/src/compress#/definitions/config/properties/format'
+            ,
+              type: 'boolean'
+            ]
+            description: '''
+            One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or
+            a directory otherwise no compression.
+            '''
+          source:
+            type: ['string', 'boolean']
+            description: '''
+            Path to a file or a directory to backup.
+            '''
+          target:
+            type: 'string'
+            description: '''
+            Directory storing the backup, required.
+            '''
+          timezone:
+            type: 'string'
+            default: 'UTC'
+            description: '''
+            The time zone to use. The only value implementations must recognize is
+            "UTC"; the default is the runtime's default time zone. Implementations
+            may also recognize the time zone names of the [IANA time zone
+            database](https://www.iana.org/time-zones), such as "Asia/Shanghai",
+            "Asia/Kolkata", "America/New_York".
+            '''
+        required: ['name', 'target']
 
 ## Handler
 

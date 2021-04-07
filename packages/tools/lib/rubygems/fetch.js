@@ -32,27 +32,29 @@
 var handler, path, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cwd': {
-      type: 'string',
-      description: `Directory storing gems.`
+  config: {
+    type: 'object',
+    properties: {
+      'cwd': {
+        type: 'string',
+        description: `Directory storing gems.`
+      },
+      'gem_bin': {
+        type: 'string',
+        default: 'gem',
+        description: `Path to the gem command.`
+      },
+      'name': {
+        type: 'string',
+        description: `Name of the gem.`
+      },
+      'version': {
+        type: 'string',
+        description: `Version of the gem.`
+      }
     },
-    'gem_bin': {
-      type: 'string',
-      default: 'gem',
-      description: `Path to the gem command.`
-    },
-    'name': {
-      type: 'string',
-      description: `Name of the gem.`
-    },
-    'version': {
-      type: 'string',
-      description: `Version of the gem.`
-    }
-  },
-  required: ['name']
+    required: ['name']
+  }
 };
 
 // ## Handler

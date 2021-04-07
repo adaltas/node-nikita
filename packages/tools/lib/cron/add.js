@@ -18,42 +18,44 @@
 var handler, schema, util, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'command': {
-      type: 'string',
-      minLength: 1,
-      description: `The shell command of the job.`
-    },
-    'exec': {
-      type: 'boolean',
-      description: `If true, then command will be executed just after if added to crontab.`
-    },
-    'match': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          instanceof: 'RegExp'
-        }
-      ],
-      description: `The cron entry to match, a string will be converted to a regexp and an
+  config: {
+    type: 'object',
+    properties: {
+      'command': {
+        type: 'string',
+        minLength: 1,
+        description: `The shell command of the job.`
+      },
+      'exec': {
+        type: 'boolean',
+        description: `If true, then command will be executed just after if added to crontab.`
+      },
+      'match': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            instanceof: 'RegExp'
+          }
+        ],
+        description: `The cron entry to match, a string will be converted to a regexp and an
 undefined or null value will match the exact command.`
+      },
+      'user': {
+        type: 'string',
+        description: `The user of the crontab. The SSH user by default.`
+      },
+      'when': {
+        type: 'string',
+        pattern: '^(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})$',
+        // noBooleanCoercion: true
+        // noNumberCoercion: true
+        description: `Cron-styled time string. Defines the frequency of the cron job.`
+      }
     },
-    'user': {
-      type: 'string',
-      description: `The user of the crontab. The SSH user by default.`
-    },
-    'when': {
-      type: 'string',
-      pattern: '^(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})$',
-      // noBooleanCoercion: true
-      // noNumberCoercion: true
-      description: `Cron-styled time string. Defines the frequency of the cron job.`
-    }
-  },
-  required: ['command', 'when']
+    required: ['command', 'when']
+  }
 };
 
 // ## Handler

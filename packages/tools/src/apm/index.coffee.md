@@ -6,19 +6,20 @@ Install Atom packages with APM.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'array', items: type: 'string'
-          description: '''
-          Name of the package(s) to install.
-          '''
-        'upgrade':
-          type: 'boolean'
-          default: false
-          description: '''
-          Upgrade all packages.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'array', items: type: 'string'
+            description: '''
+            Name of the package(s) to install.
+            '''
+          'upgrade':
+            type: 'boolean'
+            default: false
+            description: '''
+            Upgrade all packages.
+            '''
 
 ## Handler
 

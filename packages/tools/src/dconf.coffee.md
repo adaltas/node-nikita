@@ -23,18 +23,19 @@ Run the command "dconf-editor" to navigate the database with a UI.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'properties':
-          type: 'object'
-          patternProperties:
-            '^/.*$':
-              type: ['string', 'boolean', 'number']
-              description: '''
-              A value of a key.
-              '''
-          additionalProperties: false
-      required: ['properties']
+      config:
+        type: 'object'
+        properties:
+          'properties':
+            type: 'object'
+            patternProperties:
+              '^/.*$':
+                type: ['string', 'boolean', 'number']
+                description: '''
+                A value of a key.
+                '''
+            additionalProperties: false
+        required: ['properties']
 
 ## Handler
 
@@ -51,7 +52,7 @@ Run the command "dconf-editor" to navigate the database with a UI.
         """
         code_skipped: 3
       ) for key, value of config.properties
-      null
+      undefined
 
 ## Exports
 

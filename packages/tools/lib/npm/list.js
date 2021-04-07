@@ -7,26 +7,28 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cwd': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
-    },
-    'global': {
-      type: 'boolean',
-      default: false,
-      description: `Upgrades global packages.`
-    }
-  },
-  if: {
+  config: {
+    type: 'object',
     properties: {
+      'cwd': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/cwd'
+      },
       'global': {
-        const: false
+        type: 'boolean',
+        default: false,
+        description: `Upgrades global packages.`
       }
+    },
+    if: {
+      properties: {
+        'global': {
+          const: false
+        }
+      }
+    },
+    then: {
+      required: ['cwd']
     }
-  },
-  then: {
-    required: ['cwd']
   }
 };
 

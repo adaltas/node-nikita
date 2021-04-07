@@ -6,13 +6,14 @@ Remove one or more apm packages.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'array', items: type: 'string'
-          description: '''
-          Name of the package(s) to install.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'array', items: type: 'string'
+            description: '''
+            Name of the package(s) to install.
+            '''
 
 ## Handler
 

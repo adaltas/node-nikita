@@ -21,44 +21,45 @@ console.info(`Key was generated: ${status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'bits':
-          type: 'number'
-          default: 4096
-          description: '''
-          Specifies the number of bits in the key to create.
-          '''
-        'comment':
-          type: 'string'
-          description: '''
-          Comment such as a name or email.
-          '''
-        'key_format':
-          type: 'string'
-          description: '''
-          Specify a key format. The supported key formats are: `RFC4716` (RFC
-          4716/SSH2 public or private key), `PKCS8` (PEM PKCS8 public key) or
-          `PEM` (PEM public key).
-          '''
-        'passphrase':
-          type: 'string'
-          default: ''
-          description: '''
-          Key passphrase, empty string for no passphrase.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Path of the generated private key.
-          '''
-        'type':
-          type: 'string'
-          default: 'rsa'
-          description: '''
-          Type of key to create.
-          '''
-      required: ['target']
+      config:
+        type: 'object'
+        properties:
+          'bits':
+            type: 'number'
+            default: 4096
+            description: '''
+            Specifies the number of bits in the key to create.
+            '''
+          'comment':
+            type: 'string'
+            description: '''
+            Comment such as a name or email.
+            '''
+          'key_format':
+            type: 'string'
+            description: '''
+            Specify a key format. The supported key formats are: `RFC4716` (RFC
+            4716/SSH2 public or private key), `PKCS8` (PEM PKCS8 public key) or
+            `PEM` (PEM public key).
+            '''
+          'passphrase':
+            type: 'string'
+            default: ''
+            description: '''
+            Key passphrase, empty string for no passphrase.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Path of the generated private key.
+            '''
+          'type':
+            type: 'string'
+            default: 'rsa'
+            description: '''
+            Type of key to create.
+            '''
+        required: ['target']
 
 ## Handler
 

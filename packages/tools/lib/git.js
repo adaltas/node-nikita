@@ -25,23 +25,25 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'revision': {
-      type: 'string',
-      default: 'HEAD',
-      description: `Git revision, branch or tag.`
+  config: {
+    type: 'object',
+    properties: {
+      'revision': {
+        type: 'string',
+        default: 'HEAD',
+        description: `Git revision, branch or tag.`
+      },
+      'source': {
+        type: 'string',
+        description: `Git source repository address.`
+      },
+      'target': {
+        type: 'string',
+        description: `Directory where to clone the repository.`
+      }
     },
-    'source': {
-      type: 'string',
-      description: `Git source repository address.`
-    },
-    'target': {
-      type: 'string',
-      description: `Directory where to clone the repository.`
-    }
-  },
-  required: ['source', 'target']
+    required: ['source', 'target']
+  }
 };
 
 // ## Handler

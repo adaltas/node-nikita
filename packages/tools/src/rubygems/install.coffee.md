@@ -43,47 +43,48 @@ console.info(`Gem installed: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'bindir':
-          type: 'string'
-          description: '''
-          Directory where binary files are located.
-          '''
-        'build_flags':
-          type: 'string'
-          description: '''
-          Pass flags to the compiler.
-          '''
-        'bash':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/bash'
-        'gem_bin':
-          type: 'string'
-          default: 'gem'
-          description: '''
-          Path to the gem command.
-          '''
-        'name':
-          type: 'string'
-          description: '''
-          Name of the gem.
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          Path to the gem package.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Install directory.
-          '''
-        'version':
-          type: 'string'
-          description: '''
-          Version of the gem.
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'bindir':
+            type: 'string'
+            description: '''
+            Directory where binary files are located.
+            '''
+          'build_flags':
+            type: 'string'
+            description: '''
+            Pass flags to the compiler.
+            '''
+          'bash':
+            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/bash'
+          'gem_bin':
+            type: 'string'
+            default: 'gem'
+            description: '''
+            Path to the gem command.
+            '''
+          'name':
+            type: 'string'
+            description: '''
+            Name of the gem.
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            Path to the gem package.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Install directory.
+            '''
+          'version':
+            type: 'string'
+            description: '''
+            Version of the gem.
+            '''
+        required: ['name']
 
 ## Handler
 

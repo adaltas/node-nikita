@@ -6,18 +6,19 @@ List all Node.js packages with NPM.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'cwd':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
-        'global':
-          type: 'boolean'
-          default: false
-          description: '''
-          Upgrades global packages.
-          '''
-      if: properties: 'global': const: false
-      then: required: ['cwd']
+      config:
+        type: 'object'
+        properties:
+          'cwd':
+            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/cwd'
+          'global':
+            type: 'boolean'
+            default: false
+            description: '''
+            Upgrades global packages.
+            '''
+        if: properties: 'global': const: false
+        then: required: ['cwd']
 
 ## Handler
 

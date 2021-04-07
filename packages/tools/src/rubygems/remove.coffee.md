@@ -27,25 +27,26 @@ uninstall -i /usr/share/gems json"
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'gem_bin':
-          type: 'string'
-          default: 'gem'
-          description: '''
-          Path to the gem command.
-          '''
-        'name':
-          type: 'string'
-          description: '''
-          Name of the gem, required.
-          '''
-        'version':
-          type: 'string'
-          description: '''
-          Version of the gem.
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'gem_bin':
+            type: 'string'
+            default: 'gem'
+            description: '''
+            Path to the gem command.
+            '''
+          'name':
+            type: 'string'
+            description: '''
+            Name of the gem, required.
+            '''
+          'version':
+            type: 'string'
+            description: '''
+            Version of the gem.
+            '''
+        required: ['name']
 
 ## Handler
 

@@ -30,47 +30,48 @@ console.info(`File was extracted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'creates':
-          type: 'string'
-          description: '''
-          Ensure the given file is created or an error is send in the callback.
-          '''
-        'format':
-          type: 'string'
-          description: '''
-          One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.
-          '''
-        'preserve_owner':
-          type: 'boolean'
-          description: '''
-          Preserve ownership when extracting. True by default if runned as root,
-          else false.
-          '''
-        'preserve_mode':
-          type: 'boolean'
-          description: '''
-          Preserve permissions when extracting. True by default if runned as
-          root, else false.
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          Archive to decompress.
-          '''
-        'strip':
-          type: 'number'
-          description: '''
-          Remove the specified number of leading path elements. Apply only to
-          tar(s) formats.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Default to the source parent directory.
-          '''
-      required: ['source']
+      config:
+        type: 'object'
+        properties:
+          'creates':
+            type: 'string'
+            description: '''
+            Ensure the given file is created or an error is send in the callback.
+            '''
+          'format':
+            type: 'string'
+            description: '''
+            One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.
+            '''
+          'preserve_owner':
+            type: 'boolean'
+            description: '''
+            Preserve ownership when extracting. True by default if runned as root,
+            else false.
+            '''
+          'preserve_mode':
+            type: 'boolean'
+            description: '''
+            Preserve permissions when extracting. True by default if runned as
+            root, else false.
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            Archive to decompress.
+            '''
+          'strip':
+            type: 'number'
+            description: '''
+            Remove the specified number of leading path elements. Apply only to
+            tar(s) formats.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Default to the source parent directory.
+            '''
+        required: ['source']
 
 ## Handler
 

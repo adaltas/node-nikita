@@ -52,107 +52,107 @@ console.info(`Iptables was updated: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'rules':
-          type: 'array'
-          items:
-            $ref: '#/definitions/rule'
-          description: '''
-          One or more objects containing iptables rule definitions.
-          '''
-        'sudo':
-          $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
-      definitions:
-        'rule':
-          allOf: [
-            $ref: '#/definitions/rule-config'
-          ,
-            type: 'object'
-            properties:
-              'after':
-                $ref: '#/definitions/rule-config'
-              'before':
-                $ref: '#/definitions/rule-config'
-              'comment':
-                type: 'string'
-                maxLength: 256
-                description: '''
-                Allows you to add comments (up to 256 characters) to any rule.
-                '''
-              'limit':
-                type: 'string'
-                description: '''
-                The protocol of the rule or of the packet to check.
-                '''
-              'state':
-                type: 'string'
-                description: '''
-                This module, when combined with connection tracking, allows
-                access to the connection tracking state for this packet.
-                '''
-              'tcp':
-                type: ['string', 'integer']
-                description: '''
-                Used if protocol is set to "tcp", the supported properties are
-                "dport" and "sport".
-                '''
-              'udp':
-                type: ['string', 'integer']
-                description: '''
-                Used if protocol is set to "udp", the supported properties are
-                "dport" and "sport".
-                '''
-          ]
-        'rule-config':
+      config:
+        type: 'object'
+        properties:
+          'rules':
+            type: 'array'
+            items:
+              $ref: '#/definitions/rule'
+            description: '''
+            One or more objects containing iptables rule definitions.
+            '''
+          'sudo':
+            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/sudo'
+        required: ['rules']
+      'rule':
+        allOf: [
+          $ref: '#/definitions/rule-config'
+        ,
           type: 'object'
           properties:
-            'chain':
+            'after':
+              $ref: '#/definitions/rule-config'
+            'before':
+              $ref: '#/definitions/rule-config'
+            'comment':
               type: 'string'
-            'dport':
-              type: ['string', 'integer']
+              maxLength: 256
               description: '''
-              Destination port or port range specification, see the "tcp" and
-              "udp" modules.
+              Allows you to add comments (up to 256 characters) to any rule.
               '''
-            'jump': type: 'string'
-            'in-interface':
+            'limit':
               type: 'string'
-              description: '''
-              Name of an interface via which a packet was received.
-              '''
-            'out-interface':
-              type: 'string'
-              description: '''
-              Name of an interface via which a packet is going to be sent.
-              '''
-            'protocol':
-              type: 'string'
-              enum: ['tcp', 'udp', 'udplite', 'icmp', 'esp', 'ah', 'sctp', 'all']
               description: '''
               The protocol of the rule or of the packet to check.
               '''
-            'rulenum': type: 'string'
-            'source':
+            'state':
               type: 'string'
               description: '''
-              Source specification. Address can be either a network name, a
-              hostname, a network IP address (with /mask), or a plain IP
-              address.
+              This module, when combined with connection tracking, allows
+              access to the connection tracking state for this packet.
               '''
-            'sport':
+            'tcp':
               type: ['string', 'integer']
               description: '''
-              Source port or port range specification, see the "tcp" and "udp"
-              modules.
+              Used if protocol is set to "tcp", the supported properties are
+              "dport" and "sport".
               '''
-            'target':
-              type: 'string'
+            'udp':
+              type: ['string', 'integer']
               description: '''
-              Destination specification. See the description of the -s (source)
-              flag for a detailed description of the syntax.
+              Used if protocol is set to "udp", the supported properties are
+              "dport" and "sport".
               '''
-      required: ['rules']
+        ]
+      'rule-config':
+        type: 'object'
+        properties:
+          'chain':
+            type: 'string'
+          'dport':
+            type: ['string', 'integer']
+            description: '''
+            Destination port or port range specification, see the "tcp" and
+            "udp" modules.
+            '''
+          'jump': type: 'string'
+          'in-interface':
+            type: 'string'
+            description: '''
+            Name of an interface via which a packet was received.
+            '''
+          'out-interface':
+            type: 'string'
+            description: '''
+            Name of an interface via which a packet is going to be sent.
+            '''
+          'protocol':
+            type: 'string'
+            enum: ['tcp', 'udp', 'udplite', 'icmp', 'esp', 'ah', 'sctp', 'all']
+            description: '''
+            The protocol of the rule or of the packet to check.
+            '''
+          'rulenum': type: 'string'
+          'source':
+            type: 'string'
+            description: '''
+            Source specification. Address can be either a network name, a
+            hostname, a network IP address (with /mask), or a plain IP
+            address.
+            '''
+          'sport':
+            type: ['string', 'integer']
+            description: '''
+            Source port or port range specification, see the "tcp" and "udp"
+            modules.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Destination specification. See the description of the -s (source)
+            flag for a detailed description of the syntax.
+            '''
 
 ## Handler
 

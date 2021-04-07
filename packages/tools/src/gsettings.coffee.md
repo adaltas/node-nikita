@@ -17,13 +17,14 @@ console.log(`Property was modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'properties':
-          type: 'object'
-          description: '''
-          List of properties to set.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'properties':
+            type: 'object'
+            description: '''
+            List of properties to set.
+            '''
 
 ## Handler
 

@@ -24,20 +24,22 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'properties': {
-      type: 'object',
-      patternProperties: {
-        '^/.*$': {
-          type: ['string', 'boolean', 'number'],
-          description: `A value of a key.`
-        }
-      },
-      additionalProperties: false
-    }
-  },
-  required: ['properties']
+  config: {
+    type: 'object',
+    properties: {
+      'properties': {
+        type: 'object',
+        patternProperties: {
+          '^/.*$': {
+            type: ['string', 'boolean', 'number'],
+            description: `A value of a key.`
+          }
+        },
+        additionalProperties: false
+      }
+    },
+    required: ['properties']
+  }
 };
 
 // ## Handler
@@ -62,7 +64,7 @@ dconf write ${key} "${value}"`,
       code_skipped: 3
     });
   }
-  return null;
+  return void 0;
 };
 
 // ## Exports

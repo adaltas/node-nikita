@@ -21,43 +21,45 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cwd': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/cwd'
-    },
-    'global': {
-      type: 'boolean',
-      default: false,
-      description: `Installs the current package context as a global package.`
-    },
-    'name': {
-      type: 'array',
-      items: {
-        type: 'string'
-      },
-      description: `Name of the package(s) to install or upgrade if config "upgrade" is
-"true".`
-    },
-    'sudo': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/sudo'
-    },
-    'upgrade': {
-      default: false,
-      type: 'boolean',
-      description: `Upgrade outdated packages.`
-    }
-  },
-  required: ['name'],
-  if: {
+  config: {
+    type: 'object',
     properties: {
+      'cwd': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/cwd'
+      },
       'global': {
-        const: false
+        type: 'boolean',
+        default: false,
+        description: `Installs the current package context as a global package.`
+      },
+      'name': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `Name of the package(s) to install or upgrade if config "upgrade" is
+"true".`
+      },
+      'sudo': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/sudo'
+      },
+      'upgrade': {
+        default: false,
+        type: 'boolean',
+        description: `Upgrade outdated packages.`
       }
+    },
+    required: ['name'],
+    if: {
+      properties: {
+        'global': {
+          const: false
+        }
+      }
+    },
+    then: {
+      required: ['cwd']
     }
-  },
-  then: {
-    required: ['cwd']
   }
 };
 

@@ -24,25 +24,26 @@ console.info(`Repo was synchronized: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'revision':
-          type: 'string'
-          default: 'HEAD'
-          description: '''
-          Git revision, branch or tag.
-          '''
-        'source':
-          type: 'string'
-          description: '''
-          Git source repository address.
-          '''
-        'target':
-          type: 'string'
-          description: '''
-          Directory where to clone the repository.
-          '''
-      required: ['source', 'target']
+      config:
+        type: 'object'
+        properties:
+          'revision':
+            type: 'string'
+            default: 'HEAD'
+            description: '''
+            Git revision, branch or tag.
+            '''
+          'source':
+            type: 'string'
+            description: '''
+            Git source repository address.
+            '''
+          'target':
+            type: 'string'
+            description: '''
+            Directory where to clone the repository.
+            '''
+        required: ['source', 'target']
 
 ## Handler
 
