@@ -20,21 +20,22 @@ databases.map( database => {
 ## Schema
 
     schema =
-      type: 'object'
-      allOf: [
-        properties:
-          'base':
-            const: 'cn=config'
-            default: 'cn=config'
-          'suffix':
-            type: 'string'
-            description: '''
-            The suffix associated with the database.
-            '''
-        required: ['suffix']
-      ,
-        $ref: 'module://@nikitajs/ldap/src/search'
-      ]
+      config:
+        type: 'object'
+        allOf: [
+          properties:
+            'base':
+              const: 'cn=config'
+              default: 'cn=config'
+            'suffix':
+              type: 'string'
+              description: '''
+              The suffix associated with the database.
+              '''
+          required: ['suffix']
+        ,
+          $ref: 'module://@nikitajs/ldap/src/search'
+        ]
 
 ## Handler
 

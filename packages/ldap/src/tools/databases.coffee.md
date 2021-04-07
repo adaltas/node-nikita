@@ -20,15 +20,16 @@ databases.map( database => {
 ## Schema
 
     schema =
-      type: 'object'
-      allOf: [
-        properties:
-          'base':
-            const: 'cn=config'
-            default: 'cn=config'
-      ,
-        $ref: 'module://@nikitajs/ldap/src/search'
-      ]
+      config:
+        type: 'object'
+        allOf: [
+          properties:
+            'base':
+              const: 'cn=config'
+              default: 'cn=config'
+        ,
+          $ref: 'module://@nikitajs/ldap/src/search'
+        ]
 
 ## Handler
 

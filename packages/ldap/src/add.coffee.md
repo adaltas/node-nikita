@@ -29,48 +29,49 @@ console.info(`Entry modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'entry':
-          type: 'array'
-          items:
-            type: 'object'
-            properties:
-              'dn':
-                type: 'string'
-                description: '''
-                Distinguish name of the entry
-                '''
-            required: ['dn']
-          description: '''
-          Object to be inserted or modified.
-          '''
-        # General LDAP connection information
-        'binddn':
-          type: 'string'
-          description: '''
-          Distinguished Name to bind to the LDAP directory.
-          '''
-        'mesh':
-          type: 'string'
-          description: '''
-          Specify the SASL mechanism to be used for authentication. If it's not
-          specified, the program will choose the best  mechanism  the  server
-          knows.
-          '''
-        'passwd':
-          type: 'string'
-          description: '''
-          Password for simple authentication.
-          '''
-        'uri':
-          type: 'string'
-          description: '''
-          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
-          false in which case it will use your openldap client environment
-          configuration.
-          '''
-      required: ['entry']
+      config:
+        type: 'object'
+        properties:
+          'entry':
+            type: 'array'
+            items:
+              type: 'object'
+              properties:
+                'dn':
+                  type: 'string'
+                  description: '''
+                  Distinguish name of the entry
+                  '''
+              required: ['dn']
+            description: '''
+            Object to be inserted or modified.
+            '''
+          # General LDAP connection information
+          'binddn':
+            type: 'string'
+            description: '''
+            Distinguished Name to bind to the LDAP directory.
+            '''
+          'mesh':
+            type: 'string'
+            description: '''
+            Specify the SASL mechanism to be used for authentication. If it's not
+            specified, the program will choose the best  mechanism  the  server
+            knows.
+            '''
+          'passwd':
+            type: 'string'
+            description: '''
+            Password for simple authentication.
+            '''
+          'uri':
+            type: 'string'
+            description: '''
+            LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+            false in which case it will use your openldap client environment
+            configuration.
+            '''
+        required: ['entry']
 
 ## Handler
 

@@ -38,43 +38,44 @@ console.info(`Index created or modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'indexes':
-          type: 'object'
-          description: '''
-          List of "olcDbIndex" values provided as key/value pairs.
-          '''
-        'dn':
-          type: 'string'
-          description: '''
-          Distinguish name storing the "olcDbIndex" property, using the database
-          address (eg: "olcDatabase={2}bdb,cn=config").
-          '''
-        'suffix':
-          type: 'string'
-          description: '''
-          The suffix associated with the database (eg: "dc=example,dc=org"),
-          used as an alternative to the `dn` configuration.
-          '''
-        # General LDAP connection information
-        'binddn':
-          type: 'string'
-          description: '''
-          Distinguished Name to bind to the LDAP directory.
-          '''
-        'passwd':
-          type: 'string'
-          description: '''
-          Password for simple authentication.
-          '''
-        'uri':
-          type: 'string'
-          description: '''
-          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
-          false in which case it will use your openldap client environment
-          configuration.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'indexes':
+            type: 'object'
+            description: '''
+            List of "olcDbIndex" values provided as key/value pairs.
+            '''
+          'dn':
+            type: 'string'
+            description: '''
+            Distinguish name storing the "olcDbIndex" property, using the database
+            address (eg: "olcDatabase={2}bdb,cn=config").
+            '''
+          'suffix':
+            type: 'string'
+            description: '''
+            The suffix associated with the database (eg: "dc=example,dc=org"),
+            used as an alternative to the `dn` configuration.
+            '''
+          # General LDAP connection information
+          'binddn':
+            type: 'string'
+            description: '''
+            Distinguished Name to bind to the LDAP directory.
+            '''
+          'passwd':
+            type: 'string'
+            description: '''
+            Password for simple authentication.
+            '''
+          'uri':
+            type: 'string'
+            description: '''
+            LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+            false in which case it will use your openldap client environment
+            configuration.
+            '''
 
 ## Handler
 

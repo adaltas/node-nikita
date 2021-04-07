@@ -19,36 +19,37 @@ console.info(`Schema created or modified: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          type: 'string'
-          description: '''
-          Common name of the schema.
-          '''
-        'schema':
-          type: 'string'
-          description: '''
-          Path to the schema definition.
-          '''
-        # General LDAP connection information
-        'binddn':
-          type: 'string'
-          description: '''
-          Distinguished Name to bind to the LDAP directory.
-          '''
-        'passwd':
-          type: 'string'
-          description: '''
-          Password for simple authentication.
-          '''
-        'uri':
-          type: 'string'
-          description: '''
-          LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
-          false in which case it will use your openldap client environment
-          configuration.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'name':
+            type: 'string'
+            description: '''
+            Common name of the schema.
+            '''
+          'schema':
+            type: 'string'
+            description: '''
+            Path to the schema definition.
+            '''
+          # General LDAP connection information
+          'binddn':
+            type: 'string'
+            description: '''
+            Distinguished Name to bind to the LDAP directory.
+            '''
+          'passwd':
+            type: 'string'
+            description: '''
+            Password for simple authentication.
+            '''
+          'uri':
+            type: 'string'
+            description: '''
+            LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+            false in which case it will use your openldap client environment
+            configuration.
+            '''
 
 ## Handler
 
