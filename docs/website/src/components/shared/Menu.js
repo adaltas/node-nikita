@@ -4,7 +4,9 @@ import React from 'react'
 import { useTheme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 // Gatsby
-import { Link } from 'gatsby'
+import { Link, StaticQuery, graphql } from 'gatsby'
+// Local
+import Nav from './Nav'
 
 const useStyles = theme => ({
   root: {
@@ -43,9 +45,60 @@ const useStyles = theme => ({
   },
 })
 
+const createMenu = (menu, page, nodes, maxDepth = 3) => {
+  const pageSlugs = page.slug.split('/').filter(part => part)
+  if (page.version !== null) // Don't count root version pages (eg. "/current/")
+    pageSlugs.shift()
+  const limitPageSlugs = pageSlugs.slice(0, maxDepth - 1)
+  nodes.forEach( node => {
+    const slugs = node.slug.split('/').filter(part => part)
+    if(node.version.alias) slugs.shift() // Don't count root version pages (eg. "/current/")
+    // Filter items for current page
+    var flag = false
+    if(slugs.length === 1)
+      flag = true // pass all root pages
+    if(page.slug.indexOf(node.slug.replace(/[a-z0-9-_]*\/$/, '')) === 0)
+      flag = true // pass same and lower level pages with the same path
+    if(slugs.slice(0, maxDepth - 1).toString() === limitPageSlugs.toString())
+      flag = true
+    if(!flag) return
+    let parentMenu = menu
+    // Get menu hierarchy
+    slugs.forEach((slug, i) => {
+      if (i > maxDepth - 1) return
+      if (i === maxDepth - 1)
+        slug = slugs.slice(maxDepth - 1, slugs.length).join('/')
+      if (!parentMenu.children[slug]){
+        parentMenu.children[slug] = { data: {}, children: {} }
+      }
+      parentMenu = parentMenu.children[slug]  
+    })
+    parentMenu.data = {
+      navtitle: node.navtitle || (node.frontmatter ? node.frontmatter.navtitle : ''),
+      title: node.title || (node.frontmatter ? node.frontmatter.title : ''),
+      slug: node.slug,
+      sort: (node.frontmatter ? node.frontmatter.sort || 99 : '') || 99,
+    }
+  })
+}
+
 const Menu = ({
-  children
+  page,
+  data
 }) => {
+  const menu = { children: {} }
+  createMenu(menu, page, data.pages.nodes) // Pages
+  // Actions root page
+  menu.children.actions = {
+    children: {},
+    data: {
+      title: 'Actions',
+      slug: '/current/actions/',
+      sort: 10,
+    }
+  }
+  createMenu(menu, page, data.packages.nodes) // Packages
+  createMenu(menu, page, data.actions.nodes) // Actions
   const styles = useStyles(useTheme())
   return (
     <div css={styles.root}>
@@ -53,10 +106,10 @@ const Menu = ({
         <Link to="/">
           Documentation
         </Link>
-        <Typography variant="caption">{'current version'}</Typography>
+        <Typography variant="caption">{page.version ? `${page.version} version` : 'current version'}</Typography>
       </div>
       <div css={styles.body}>
-        {children}
+        <Nav menu={menu}/>
       </div>
       <div css={styles.footer}>
         <Typography variant="caption">
@@ -74,4 +127,48 @@ const Menu = ({
   )
 }
 
-export default Menu
+const WrappedMenu = props => (
+  <StaticQuery
+    query={graphql`
+      query NavQuery {
+        pages: allNikitaPage(
+          filter: { frontmatter: { disabled: { eq: false } } }
+          sort: { order: ASC, fields: [frontmatter___sort, slug] }
+        ) {
+          nodes {
+            frontmatter {
+              navtitle
+              title
+              sort
+            }
+            version {
+              alias
+            }
+            slug
+          }
+        }
+        packages: allNikitaPackage(sort: {fields: slug, order: ASC}) {
+          nodes {
+            slug
+            title: name
+            version {
+              alias
+            }
+          }
+        }
+        actions: allNikitaAction(sort: {fields: slug, order: ASC}) {
+          nodes {
+            slug
+            title: name
+            version {
+              alias
+            }
+          }
+        }
+      }
+    `}
+    render={data => <Menu data={data} {...props} />}
+  />
+)
+
+export default WrappedMenu

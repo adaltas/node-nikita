@@ -13,27 +13,32 @@ exports.createSchemaCustomization = ({ actions }) => {
     type NikitaPackage implements Node @infer {
       name: String!
       fullName: String!
-      version: String!
-      fullVersion: String!
+      version: NikitaPackageVersion!
       slug: String!
       edit_url: String!
-      description: String,
-      keywords: [String],
+      description: String
+      keywords: [String]
+    }
+    type NikitaPackageVersion {
+      name: String!
+      alias: String!
+      fullName: String!
     }
   `)
 }
 
-exports.onCreateNode = async (args, pluginOptions) => {
-  if (!pluginOptions.path) return
-  const { actions, createNodeId, node, getNode, loadNodeContent, store, cache } = args
-  const { createNode } = actions
+exports.onCreateNode = async (
+  { actions: {createNode}, createNodeId, node },
+  { include, ignore }
+) => {
+  if (!include) return
   if (node.internal.type !== `Mdx`) return
   // Filter non-readme files
-  const regexp = new RegExp(`${path.resolve(pluginOptions.path)}/.*/README.md$`)
+  const regexp = new RegExp(`${path.resolve(include)}/.*/README.md$`)
   if (!regexp.test(node.fileAbsolutePath)) return 
   // Filter ignored packages
-  if (pluginOptions.ignore && pluginOptions.ignore.length > 0) {
-    const regexpIgnore = new RegExp(pluginOptions.ignore.map(item => path.resolve(pluginOptions.path, item)).join('|'))
+  if (ignore && ignore.length > 0) {
+    const regexpIgnore = new RegExp(ignore.map(item => path.resolve(include, item)).join('|'))
     if (regexpIgnore.test(node.fileAbsolutePath)) return
   }
   // Get package.json
@@ -42,27 +47,27 @@ exports.onCreateNode = async (args, pluginOptions) => {
   const packageJson = require(packageJsonPath)
   // Get custom fields
   const name = packageJson.name.replace('@nikitajs/', '')
-  const currentVersion = 1, version = 1 // Currently only 1 version
-  var slug = [
-    currentVersion == version ? 'current' : `v${version}`,
-    'actions',
-    name
-  ].join('/')
-  slug = `/${slug}/`
-  const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${path.relative(path.join(pluginOptions.path, '../'), node.fileAbsolutePath)}`
+  const currentVersion = '1', version = '1' // Currently only 1 version
+  var versionAlias = currentVersion == version ? 'current' : `v${version}`
+  const slug = `/${versionAlias}/actions/${name}/`
+  const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${path.relative(path.join(include, '../'), node.fileAbsolutePath)}`
   // Inherit fields
   createNode({
     // Custom fields
     name: name,
     fullName: packageJson.name,
-    version: version,
-    fullVersion: packageJson.version,
+    version: {
+      name: version,
+      alias: versionAlias,
+      fullName: packageJson.version
+    },
     description: packageJson.description,
     keywords: packageJson.keywords,
     slug: slug,
     edit_url: edit_url,
     // Gatsby fields
     id: createNodeId(slug),
+    parent: node.id,
     children: [],
     internal: {
       type: 'NikitaPackage',
@@ -90,7 +95,7 @@ exports.createResolvers = ({ createResolvers, createNodeId }) => {
             { connectionType: 'NikitaAction' }
           )
           .filter( target =>
-            source.name == target.packageName
+            source.name == target.packageName && source.version.name == target.version.name
           )
         }
       }
@@ -104,10 +109,8 @@ exports.createPages = ({ actions, graphql }) => {
   return graphql(`
     {
       packages: allNikitaPackage {
-        edges {
-          node {
-            slug
-          }
+        nodes {
+          slug
         }
       }
     }
@@ -115,7 +118,7 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
-    result.data.packages.edges.forEach(({ node }) => {
+    result.data.packages.nodes.forEach( node => {
       createPage({
         path: node.slug,
         component: template,

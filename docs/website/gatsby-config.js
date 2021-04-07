@@ -1,3 +1,6 @@
+const contentPath = `${__dirname}/../content`
+const packagesPath = `${__dirname}/../../packages`
+
 module.exports = {
   // Seems it is not used, leave commented until published
   // pathPrefix: `/node-nikita`,
@@ -21,20 +24,20 @@ module.exports = {
         title: 'Navigate',
         links: [
           {
-            label: 'Getting started',
-            url: '/current/about/',
+            label: 'Project',
+            url: '/project/',
           },
           {
-            label: 'Usages',
-            url: '/current/usages/',
+            label: 'API',
+            url: '/current/api/',
           },
           {
-            label: 'Metadata',
-            url: '/current/metadata/',
+            label: 'Guide',
+            url: '/current/guide/',
           },
           {
-            label: 'Action',
-            url: '/current/action/',
+            label: 'Actions',
+            url: '/current/actions/',
           },
         ],
         xs: 6,
@@ -70,19 +73,23 @@ module.exports = {
   },
   plugins: [
     {
-      resolve: 'nikita-pages'
+      resolve: 'nikita-pages',
+      options: {
+        include: contentPath,
+        doNotVersion: ['./project'],
+      },
     },
     {
       resolve: 'nikita-packages',
       options: {
-        path: `${__dirname}/../../packages`,
-        ignore: ['nikita'],
+        include: packagesPath,
+        ignore: [`./nikita`],
       },
     },
     {
       resolve: 'nikita-actions',
       options: {
-        path: `${__dirname}/../../packages`,
+        include: packagesPath,
       },
     },
     {
@@ -91,6 +98,7 @@ module.exports = {
         stylesProvider: {
           injectFirst: true,
         },
+        disableAutoprefixing: true, // fixes issue https://github.com/hupe1980/gatsby-plugin-material-ui/issues/65, even after updating "gatsby-plugin-material-ui": "^3.0.0"
       },
     },
     `gatsby-plugin-react-helmet`,
@@ -100,14 +108,14 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/../content`,
+        path: contentPath,
         name: 'pages',
       },
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/../../packages`,
+        path: packagesPath,
         name: 'actions',
         ignore: ['**/assets', '**/env', '**/lib', '**/test']
       },

@@ -33,7 +33,7 @@ const Toc = ({
       <Fragment key={item.url}>
         {(level >= startLevel) && (
           <li>
-            <a href={`${item.url}`}>{item.title}</a>
+            <a href={item.url}>{item.title}</a>
           </li>
         )}
         {item.items && renderToc(++level, startLevel, item.items)}

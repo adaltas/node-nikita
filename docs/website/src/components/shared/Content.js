@@ -157,7 +157,7 @@ const Content = ({
               </Tooltip>
             )}
           </div>
-          <div dangerouslySetInnerHTML={{__html: page.titleHtml}} />
+          <h1>{page.title}</h1>
           {page.tableOfContents && page.tableOfContents.items && (
             <Toc
               startLevel={1}
