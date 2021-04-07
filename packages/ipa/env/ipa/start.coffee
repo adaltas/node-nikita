@@ -25,8 +25,9 @@ require '@nikitajs/tools/lib/register'
 # Host 'ipa.nikita.local' does not have corresponding DNS A/AAAA record
 # Short term solution:
 # Reset the DNS server in resolv.conf with the IPA DNS
-# echo 'search nikita.local' > /etc/resolv.conf
-# echo 'nameserver 10.10.11.2' > /etc/resolv.conf
+#     echo 'search nikita.local' > /etc/resolv.conf
+#     echo 'nameserver 10.10.11.2' >> /etc/resolv.conf
+#     ipactl restart
 # Long term solution:
 # Disable the re-generation of resolv.conf by /usr/sbin/dhclient-script
 
