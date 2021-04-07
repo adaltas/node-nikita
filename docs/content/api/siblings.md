@@ -6,7 +6,7 @@ related:
 - /api/children
 ---
 
-# Siblings action
+# Siblings
 
 Nikita stores the hierarchical tree of the actions running in a Nikita session. The siblings are the actions at the same hierarchical level executed before the current action.
 
