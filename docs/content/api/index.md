@@ -17,9 +17,25 @@ Remember, in the end, an action is a JavaScript object with the mandatory proper
 
 ## Composition
 
+* [Arguments](/current/api/args/) (array)   
+  Original arguments passed on an action call.
+* [Children](/current/api/children/) (array)   
+  Actions executed in the handler of a parent action.
 * [Config](/current/api/config/) (object)   
   Configuration properties are used to contextualize the handler function.
+* [Context](/current/api/context/) (function)   
+  When action handlers are defined as traditional function expressions, they are executed with an action context. This context is useful to call child actions.
 * [Handler](/current/api/handler/) (function, required)   
   Define the function that an action implements to get things done.
-* [Output](/current/api/output/)   
+* [Metadata](/current/api/metadata/) (object)   
+  Contextualize or modify the execution of Nikita's action.
+* [Output](/current/api/output/) (object)   
   Action output is the result returned by Nikita's actions.
+* [Parent action](/current/api/parent/) (object)   
+  An action of the higher level in the session tree.
+* [Sibling action](/current/api/sibling/) (object)   
+  An action with the same parent and which was executed just before the current action.
+* [Siblings](/current/api/siblings/) (array)   
+  Actions at the same hierarchical level executed before the current action.
+* [Tools](/current/api/tools/) (object)   
+  Provide additional functionalities to Nikita's actions.
