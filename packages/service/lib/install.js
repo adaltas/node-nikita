@@ -21,68 +21,66 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    // 'arch_chroot':
-    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    // 'arch_chroot_rootdir':
-    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
-    'cache': {
-      type: 'boolean',
-      description: `Cache the list of installed and outdated packages.`
-    },
-    'cacheonly': {
-      type: 'boolean',
-      description: `Run the yum command entirely from system cache, don't update cache.`
-    },
-    'code_skipped': {
-      $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/code_skipped',
-      description: `Error code to skip when using nikita.service.`
-    },
-    'installed': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'cache': {
+        type: 'boolean',
+        description: `Cache the list of installed and outdated packages.`
       },
-      description: `Cache a list of installed services. If an array, the service will be
+      'cacheonly': {
+        type: 'boolean',
+        description: `Run the yum command entirely from system cache, don't update cache.`
+      },
+      'code_skipped': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code_skipped',
+        description: `Error code to skip when using nikita.service.`
+      },
+      'installed': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `Cache a list of installed services. If an array, the service will be
 installed if a key of the same name exists; if anything else
 (default), no caching will take place.`
-    },
-    'name': {
-      type: 'string',
-      description: `Package name, required unless provided as main argument.`
-    },
-    'outdated': {
-      type: 'array',
-      items: {
-        type: 'string'
       },
-      // oneOf: [
-      //   {type: 'boolean'}
-      //   {type: 'array', items: type: 'string'}
-      // ]
-      description: `Cache a list of outdated services. If an array, the service will be
+      'name': {
+        type: 'string',
+        description: `Package name, required unless provided as main argument.`
+      },
+      'outdated': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        // oneOf: [
+        //   {type: 'boolean'}
+        //   {type: 'array', items: type: 'string'}
+        // ]
+        description: `Cache a list of outdated services. If an array, the service will be
 updated if a key of the same name exists; If true, the option will be
 converted to an array with all the outdated service names as keys; if
 anything else (default), no caching will take place.`
+      },
+      'pacman_flags': {
+        type: 'array',
+        default: [],
+        description: `Additionnal flags passed to the \`pacman -S\` command.`
+      },
+      'yaourt_flags': {
+        type: 'array',
+        default: [],
+        description: `Additionnal flags passed to the \`yaourt -S\` command.`
+      },
+      'yay_flags': {
+        type: 'array',
+        default: [],
+        description: `Additionnal flags passed to the \`yay -S\` command.`
+      }
     },
-    'pacman_flags': {
-      type: 'array',
-      default: [],
-      description: `Additionnal flags passed to the \`pacman -S\` command.`
-    },
-    'yaourt_flags': {
-      type: 'array',
-      default: [],
-      description: `Additionnal flags passed to the \`yaourt -S\` command.`
-    },
-    'yay_flags': {
-      type: 'array',
-      default: [],
-      description: `Additionnal flags passed to the \`yay -S\` command.`
-    }
-  },
-  required: ['name']
+    required: ['name']
+  }
 };
 
 // ## Handler

@@ -10,35 +10,32 @@ to "['start', 'restart']" to ensure the service will be always started.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # 'arch_chroot':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-        # 'arch_chroot_rootdir':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
-        'installed':
-          type: 'boolean'
-          description: '''
-          Assert the package is installed.
-          '''
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'srv_name':
-          type: 'string'
-          description: '''
-          Name used by the service utility, default to "name".
-          '''
-        'started':
-          type: 'boolean'
-          description: '''
-          Assert if started.
-          '''
-        'stopped':
-          type: 'boolean'
-          description: '''
-          Assert if stopped.
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'installed':
+            type: 'boolean'
+            description: '''
+            Assert the package is installed.
+            '''
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+          'srv_name':
+            type: 'string'
+            description: '''
+            Name used by the service utility, default to "name".
+            '''
+          'started':
+            type: 'boolean'
+            description: '''
+            Assert if started.
+            '''
+          'stopped':
+            type: 'boolean'
+            description: '''
+            Assert if stopped.
+            '''
+        required: ['name']
 
 ## Handler
 

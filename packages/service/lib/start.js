@@ -23,17 +23,15 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    // 'arch_chroot':
-    //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-    'name': {
-      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    }
-  },
-  // 'rootdir':
-  //   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
-  required: ['name']
+  config: {
+    type: 'object',
+    properties: {
+      'name': {
+        $ref: 'module://@nikitajs/service/lib/install#/definitions/config/properties/name'
+      }
+    },
+    required: ['name']
+  }
 };
 
 // ## Handler

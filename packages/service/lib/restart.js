@@ -21,13 +21,15 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'name': {
-      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    }
-  },
-  required: ['name']
+  config: {
+    type: 'object',
+    properties: {
+      'name': {
+        $ref: 'module://@nikitajs/service/lib/install#/definitions/config/properties/name'
+      }
+    },
+    required: ['name']
+  }
 };
 
 // ## Handler

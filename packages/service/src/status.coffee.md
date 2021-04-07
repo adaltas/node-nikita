@@ -34,15 +34,12 @@ We might think about re-integrating them.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # 'arch_chroot':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-        # 'arch_chroot_rootdir':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+        required: ['name']
 
 ## Handler
 

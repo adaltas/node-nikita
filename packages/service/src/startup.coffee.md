@@ -21,25 +21,26 @@ console.info(`Service was desactivated on startup: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # 'arch_chroot':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-        # 'arch_chroot_rootdir':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot_rootdir'
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'startup':
-          type: ['boolean', 'string']
-          default: true
-          description: '''
-          Run service daemon on startup, required. A string represent a list of
-          activated levels, for example '2345' or 'multi-user'. An empty
-          string to not define any run level. Note: String argument is only
-          used if SysVinit runlevel is installed on the OS (automatically
-          detected by nikita).
-          '''
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          # 'arch_chroot':
+          #   $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/arch_chroot'
+          # 'arch_chroot_rootdir':
+          #   $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/arch_chroot_rootdir'
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+          'startup':
+            type: ['boolean', 'string']
+            default: true
+            description: '''
+            Run service daemon on startup, required. A string represent a list of
+            activated levels, for example '2345' or 'multi-user'. An empty
+            string to not define any run level. Note: String argument is only
+            used if SysVinit runlevel is installed on the OS (automatically
+            detected by nikita).
+            '''
+        required: ['name']
 
 ## Handler
 

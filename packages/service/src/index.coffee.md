@@ -40,68 +40,69 @@ console.info(`Service status: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'cache':
-          $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
-        'cacheonly':
-          $ref: 'module://@nikitajs/service/src/install#/properties/cacheonly'
-        'chk_name':
-          type: 'string'
-          description: '''
-          Name used by the chkconfig utility, default to "srv_name" and "name".
-          '''
-        'installed':
-          $ref: 'module://@nikitajs/service/src/install#/properties/installed'
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        'outdated':
-          $ref: 'module://@nikitajs/service/src/install#/properties/outdated'
-        'pacman_flags':
-          $ref: 'module://@nikitajs/service/src/install#/properties/pacman_flags'
-        'srv_name':
-          type: 'string'
-          description: '''
-          Name used by the service utility, default to "name".
-          '''
-        'startup':
-          type: ['boolean', 'string']
-          description: '''
-          Run service daemon on startup. If true, startup will be set to '2345',
-          use an empty string to not define any run level.
-          '''
-        'state':
-          type: 'array'
-          items:
+      config:
+        type: 'object'
+        properties:
+          'cache':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/cacheonly'
+          'cacheonly':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/cacheonly'
+          'chk_name':
             type: 'string'
-            enum: ['started', 'stopped', 'restarted']
-          description: '''
-          Ensure the service in the requested state.
-          '''
-        'yaourt_flags':
-          $ref: 'module://@nikitajs/service/src/install#/properties/yaourt_flags'
-        'yum_name':
-          type: 'string'
-          description: '''
-          Name used by the yum utility, default to "name".
-          '''
-      dependencies:
-        'state':
-          anyOf: [
-            required: ['name']
-          ,
-            required: ['srv_name']
-          ,
-            required: ['chk_name']
-          ]
-        'startup':
-          anyOf: [
-            required: ['name']
-          ,
-            required: ['srv_name']
-          ,
-            required: ['chk_name']
-          ]
+            description: '''
+            Name used by the chkconfig utility, default to "srv_name" and "name".
+            '''
+          'installed':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/installed'
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+          'outdated':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/outdated'
+          'pacman_flags':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/pacman_flags'
+          'srv_name':
+            type: 'string'
+            description: '''
+            Name used by the service utility, default to "name".
+            '''
+          'startup':
+            type: ['boolean', 'string']
+            description: '''
+            Run service daemon on startup. If true, startup will be set to '2345',
+            use an empty string to not define any run level.
+            '''
+          'state':
+            type: 'array'
+            items:
+              type: 'string'
+              enum: ['started', 'stopped', 'restarted']
+            description: '''
+            Ensure the service in the requested state.
+            '''
+          'yaourt_flags':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/yaourt_flags'
+          'yum_name':
+            type: 'string'
+            description: '''
+            Name used by the yum utility, default to "name".
+            '''
+        dependencies:
+          'state':
+            anyOf: [
+              required: ['name']
+            ,
+              required: ['srv_name']
+            ,
+              required: ['chk_name']
+            ]
+          'startup':
+            anyOf: [
+              required: ['name']
+            ,
+              required: ['srv_name']
+            ,
+              required: ['chk_name']
+            ]
         
 ## Handler
 

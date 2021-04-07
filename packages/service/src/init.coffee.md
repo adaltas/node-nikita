@@ -12,55 +12,52 @@ Reload the service daemon provider depending on the os.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'backup':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/backup'
-        'context':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/context'
-          default: {}
-          description: '''
-          The context object used to render the scripts file; templating is
-          disabled if no context is provided.
-          '''
-        'engine':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/engine'
-        'filters':
-          typeof: 'function'
-          description: '''
-          Filter function to extend the nunjucks engine.
-          '''
-        'gid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/gid'
-        'local':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/local'
-        'mode':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/properties/mode'
-          default: '755'
-        'name':
-          type: 'string'
-          description: '''
-          The name of the destination file. Uses the name of the template if
-          missing.
-          '''
-        # 'skip_empty_lines': # not supported
-        #   type: 'boolean'
-        #   description: '''
-        #   Remove empty lines.
-        #   '''
-        'source':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/source'
-        'target':
-          $ref: 'module://@nikitajs/file/lib/index#/properties/target'
-          description: '''
-          The destination file. `/etc/init.d/crond` or
-          `/etc/systemd/system/crond.service` for example. If no provided,
-          nikita put it on the default folder based on the service daemon
-          provider,the OS and use the source filename as the name.
-          '''
-        'uid':
-          $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/properties/uid'
-      required: ['source']
+      config:
+        type: 'object'
+        properties:
+          'backup':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/backup'
+          'context':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/context'
+            default: {}
+            description: '''
+            The context object used to render the scripts file; templating is
+            disabled if no context is provided.
+            '''
+          'engine':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/engine'
+          'filters':
+            typeof: 'function'
+            description: '''
+            Filter function to extend the nunjucks engine.
+            '''
+          'gid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid'
+          'local':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local'
+          'mode':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode'
+            default: '755'
+          'name':
+            type: 'string'
+            description: '''
+            The name of the destination file. Uses the name of the template if
+            missing.
+            '''
+          'source':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/source'
+          'target':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/target'
+            description: '''
+            The destination file. `/etc/init.d/crond` or
+            `/etc/systemd/system/crond.service` for example. If no provided,
+            nikita put it on the default folder based on the service daemon
+            provider,the OS and use the source filename as the name.
+            '''
+          'uid':
+            $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
+        required: ['source']
+
 ## Handler
 
     handler = ({config, tools: {path}}) ->

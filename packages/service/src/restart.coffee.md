@@ -20,11 +20,12 @@ console.info(`Service was restarted: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+        required: ['name']
 
 ## Handler
 

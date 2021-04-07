@@ -21,27 +21,23 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'cache': {
-      type: 'boolean',
-      description: `Run entirely from system cache to list installed and outdated
+  config: {
+    type: 'object',
+    properties: {
+      'cache': {
+        type: 'boolean',
+        description: `Run entirely from system cache to list installed and outdated
 packages.`
+      },
+      'cacheonly': {
+        $ref: 'module://@nikitajs/service/lib/install#/definitions/config/properties/cacheonly'
+      },
+      'name': {
+        $ref: 'module://@nikitajs/service/lib/install#/definitions/config/properties/name'
+      }
     },
-    'cacheonly': {
-      $ref: 'module://@nikitajs/service/lib/install#/properties/cacheonly'
-    },
-    'name': {
-      $ref: 'module://@nikitajs/service/lib/install#/properties/name'
-    }
-  },
-  // 'ssh':  # not supported
-  //   type: 'object'
-  //   description: '''
-  //   Run the action on a remote server using SSH, an ssh2 instance or an
-  //   configuration object used to initialize the SSH connection.
-  //   '''
-  required: ['name']
+    required: ['name']
+  }
 };
 
 // ## Handler

@@ -22,15 +22,12 @@ console.info(`Service was started: ${$status}`)
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        # 'arch_chroot':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/arch_chroot'
-        'name':
-          $ref: 'module://@nikitajs/service/src/install#/properties/name'
-        # 'rootdir':
-        #   $ref: 'module://@nikitajs/core/lib/actions/execute#/properties/rootdir'
-      required: ['name']
+      config:
+        type: 'object'
+        properties:
+          'name':
+            $ref: 'module://@nikitajs/service/src/install#/definitions/config/properties/name'
+        required: ['name']
 
 ## Handler
 

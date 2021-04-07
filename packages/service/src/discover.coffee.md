@@ -16,23 +16,24 @@ Store properties in the nikita state object.
 ## Schema
 
     schema =
-      type: 'object'
-      properties:
-        'strict':
-          type: 'boolean'
-          default: false
-          description: '''
-          Throw an error if the OS is not supported.
-          '''
-        'shy':
-          type: 'boolean'
-          default: true
-        'cache':
-          type: 'boolean'
-          default: true
-          description: '''
-          Disable cache.
-          '''
+      config:
+        type: 'object'
+        properties:
+          'strict':
+            type: 'boolean'
+            default: false
+            description: '''
+            Throw an error if the OS is not supported.
+            '''
+          'shy':
+            type: 'boolean'
+            default: true
+          'cache':
+            type: 'boolean'
+            default: true
+            description: '''
+            Disable cache.
+            '''
 
 ## Handler
 
