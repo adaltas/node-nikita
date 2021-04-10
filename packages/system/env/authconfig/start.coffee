@@ -48,3 +48,4 @@ nikita
       $header: 'Package'
       container: config.container
       command: 'yum install -y authconfig'
+.catch console.error

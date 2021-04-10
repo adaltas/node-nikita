@@ -52,3 +52,4 @@ nikita
       """
       trap: true
       code_skipped: 42
+.catch console.error

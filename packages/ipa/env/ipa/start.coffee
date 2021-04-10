@@ -144,3 +144,4 @@ nikita
       """
       # ipa-server-install --uninstall
       # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
+.catch console.error

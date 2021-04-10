@@ -51,3 +51,4 @@ nikita
       fi
       """
       trap: true
+.catch console.error
