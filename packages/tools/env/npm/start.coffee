@@ -13,20 +13,14 @@ nikita
     'nikita-tools-npm':
       image: 'images:centos/7'
       properties:
-        'environment.NIKITA_TEST_MODULE': "/nikita/packages/tools/env/npm/test.coffee"
-        'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
-        then 'both 1000 0'
-        else "both #{process.getuid()} 0"
-        # files in "/nikita" with vagrant user 1000 on host are mapped to root
+        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
         'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
         then 'both 1000 0'
         else "both #{process.getuid()} 0"
       disk:
         nikitadir:
           path: '/nikita'
-          source: if process.env['NIKITA_LXD_IN_VAGRANT']
-          then '/nikita'
-          else path.join(__dirname, '../../../../')
+          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       ssh: enabled: true
   provision_container: ({config}) ->
     await @lxc.exec
