@@ -28,15 +28,6 @@ console.info(`Packages were upgraded: ${$status}`)
             description: '''
             Upgrades global packages.
             '''
-          'major':
-            type: 'boolean'
-            default: false
-            description: '''
-            Upgrade global package to major, simply global to be `true`. By
-            default, globally installed packages are treated as if they are
-            installed with a caret semver range specified. Internal, we use `npm
-            install -g [pkg...]` instead of `npm update -g`.
-            '''
           'name':
             type: 'array', items: type: 'string'
             description: '''
