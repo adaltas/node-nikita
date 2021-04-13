@@ -4,27 +4,6 @@
 // Expose system information. Internally, it uses the command `uname` to retrieve
 // information.
 
-// ## Options
-
-// There are no user option to this action.
-
-// ## Callback
-
-// The following properties are available:
-
-// - `system.kernel_name` (string)   
-//   The kernel name.
-// - `system.nodename` (string)   
-//   The network node hostname.
-// - `system.kernel_release` (string)   
-//   The kernel release.
-// - `system.kernel_version` (string)   
-//   The kernel version.
-// - `system.properties` (string)   
-//   The processor type (non-portable).
-// - `system.operating_system` (string)   
-//   The operating system.
-
 // ## Todo
 
 // There are more properties exposed by `uname` such as the machine hardware name
@@ -42,22 +21,47 @@
 // console.info('Linux version:', info.linux_version)
 // ```
 
-// ## Handler
-var handler, utils;
+// ## Schema
 
-handler = async function({options}, callback) {
+// There is no config for this action.
+var handler, schema, utils;
+
+schema = {
+  'output': {
+    type: 'object',
+    properties: {
+      'os': {
+        type: 'object',
+        properties: {
+          'arch': {
+            type: 'string',
+            description: `Print the machine architecte, eg \`x86_64\`, same as \`uname -m\`.`
+          },
+          'distribution': {
+            type: 'string',
+            description: `Linux distribution. Current values include 'rhel', 'centos',
+'ubuntu', 'debian' and 'arch'.`
+          },
+          'version': {
+            type: 'string',
+            description: `Version of the distribution, for example '6.10' on CENTOS 6 or
+\`7.9.2009\` on CENTOS 7.`
+          },
+          'linux_version': {
+            type: 'string',
+            description: `Linux kernel version, extracted from \`uname -r\`.`
+          }
+        }
+      }
+    }
+  }
+};
+
+// ## Handler
+handler = async function() {
   var arch, distribution, linux_version, stdout, version;
-  // TODO enrich those information with the output of
-  // @execute  """
-  //     . /etc/lsb-release
-  //     echo "$DISTRIB_ID,$DISTRIB_RELEASE"
-  //   """
-  // @execute  """
-  //   cat /etc/redhat-release
-  //   """
-  ({stdout} = (await this.execute({
-    command: utils.os.command
-  })));
+  // Using `utils.os.command` to be consistant with OS conditions from core
+  ({stdout} = (await this.execute(utils.os.command)));
   [arch, distribution, version, linux_version] = stdout.split('|');
   return {
     os: {
@@ -73,6 +77,7 @@ handler = async function({options}, callback) {
 module.exports = {
   handler: handler,
   metadata: {
+    schema: schema,
     shy: true
   }
 };
