@@ -51,7 +51,7 @@ describe 'tools.npm.upgrade', ->
       nikita
         $ssh: ssh
       , ->
-        @tools.npm.uninstall
+        await @tools.npm.uninstall
           name: 'csv-parse'
           global: true
         {$status} = await @tools.npm

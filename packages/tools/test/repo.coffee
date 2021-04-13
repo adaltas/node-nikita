@@ -84,14 +84,14 @@ describe 'tools.repo', ->
         target: "#{tmpdir}/target/CentOS.repo"
         clean: 'test*'
       $status.should.be.false()
-      @file.touch
+      await @file.touch
         target: "#{tmpdir}/target/test.repo"
       {$status} = await @tools.repo
         source: "#{tmpdir}/source/CentOS.repo"
         target: "#{tmpdir}/target/CentOS.repo"
         clean: "test*"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target/test.repo"
         not: true
   
@@ -100,7 +100,7 @@ describe 'tools.repo', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/linuxtech.repo"
         content: """
         [linuxtech-release]
@@ -112,31 +112,31 @@ describe 'tools.repo', ->
         gpgcheck=1
         gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
         """
-      @tools.repo
+      await @tools.repo
         source: "#{tmpdir}/linuxtech.repo"
         gpg_dir: "#{tmpdir}"
         update: false
-      @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
+      await @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
   
   they 'Download repo from remote location', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @fs.remove '/etc/yum.repos.d/linuxtech.repo'
+      await @fs.remove '/etc/yum.repos.d/linuxtech.repo'
       {$status} = await @tools.repo
         source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
       $status.should.be.true()
       {$status} = await @tools.repo
         source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
       $status.should.be.false()
-      @fs.assert '/etc/yum.repos.d/linuxtech.repo'
+      await @fs.assert '/etc/yum.repos.d/linuxtech.repo'
 
   they 'Do Not update Package', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      @service.remove 'mongodb-org-shell'
+      await @fs.remove '/etc/yum.repos.d/mongodb.repo'
+      await @service.remove 'mongodb-org-shell'
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
@@ -148,7 +148,7 @@ describe 'tools.repo', ->
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
       await @service.install
         name: 'mongodb-org-shell'
-      @execute
+      await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
@@ -170,18 +170,18 @@ describe 'tools.repo', ->
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
       $status.should.be.false()
-      @execute
+      await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
 
   they 'Update Package', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
-      @fs.remove '/etc/pki/rpm-gpg/server-3.4.asc'
-      @service.remove 'mongodb-org-shell'
-      @tools.repo
+      await @fs.remove '/etc/yum.repos.d/mongodb.repo'
+      await @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
+      await @fs.remove '/etc/pki/rpm-gpg/server-3.4.asc'
+      await @service.remove 'mongodb-org-shell'
+      await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
           'mongodb-org-3.2':
@@ -190,9 +190,9 @@ describe 'tools.repo', ->
             'gpgcheck':'1'
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
-      @service.install
+      await @service.install
         name: 'mongodb-org-shell'
-      @execute
+      await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
@@ -216,5 +216,5 @@ describe 'tools.repo', ->
             'enabled':'1'
             'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
       $status.should.be.false()
-      @execute
+      await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
