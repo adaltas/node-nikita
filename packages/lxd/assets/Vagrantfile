@@ -58,12 +58,11 @@ Vagrant.configure("2") do |config|
     lxd init --auto --storage-backend=zfs --storage-pool=lxd
     # wdavidw: nov 12th, 2019: throw the error `chmod: cannot access '/usr/local/bin/*': No such file or directory`
     # chmod a+rx /usr/local/bin/*
-    # If we keep this VM around, let's keep images up to date but not nuke them so fast.
     lxc config set core.https_address '[::]:8443'
     lxc config set core.trust_password "secret"
     lxc config set images.remote_cache_expiry 30
     lxc config set images.auto_update_interval 24
-    lxc config set images.auto_update_cached true
+    lxc config set images.auto_update_cached false
     # Start out by preloading/caching some container images
     # lxc launch -e images:centos/7 preload
     # lxc delete --force preload
