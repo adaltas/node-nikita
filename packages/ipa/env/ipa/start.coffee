@@ -10,6 +10,7 @@ require '@nikitajs/tools/lib/register'
 # lead to an error while installing freeipa
 # complaining that it cannot write into /tmp
 # solution involve to run on the host machine
+# check: `cat /proc/sys/fs/protected_regular`
 # Temporary: `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
 # Permanently: `echo 'fs.protected_regular = 0' >> /etc/sysctl.conf && sysctl -p`
 
