@@ -32,25 +32,6 @@ require '@nikitajs/tools/lib/register'
 # Long term solution:
 # Disable the re-generation of resolv.conf by /usr/sbin/dhclient-script
 
-# console.info path.join os.tmpdir(), 'nikita_ipa_lxd_install'
-# parameters({
-#   name: 'nikita_lxd'
-#   description: 'Nikita LXD tests'
-#   commands:
-#     enter:
-#       description: 'Run all the tests'
-#       options:
-#         debug:
-#           description: 'Print debug information to the console'
-#           shortcut: 'd'
-#     exec:
-#       description: 'Run all or a subset of the tests'
-#       options:
-#         debug:
-#           description: 'Print debug information to the console'
-#           shortcut: 'd'
-# })
-
 nikita
 .log.cli pad: host: 20, header: 60
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
@@ -89,18 +70,18 @@ nikita
   provision_container: ({config}) ->
     await @lxc.exec
       $header: 'Node.js'
-      container: config.container
+      code_skipped: 42
       command: '''
       bash -l -c "command -v node" && exit 42
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
       . ~/.bashrc
       nvm install node
       '''
-      code_skipped: 42
+      container: config.container
       trap: true
     await @lxc.exec
       $header: 'SSH keys'
-      container: config.container
+      code_skipped: 42
       command: """
       grep "`cat /root/.ssh/id_rsa.pub`" /root/.ssh/authorized_keys && exit 42
       mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -109,11 +90,10 @@ nikita
         cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
       fi
       """
-      code_skipped: 42
+      container: config.container
       trap: true
     await @lxc.exec
       $header: 'Install FreeIPA'
-      container: config.container
       code_skipped: 42
       # Other possibilities to check ipa status:
       # echo > /dev/tcp/localhost/443
@@ -143,6 +123,16 @@ nikita
         "-r NIKITA.LOCAL"
       ].join ' '}
       """
+      container: config.container
       # ipa-server-install --uninstall
       # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
+    await @lxc.exec
+      $header: 'Immutable DNS'
+      code_skipped: 42
+      command: '''
+      cat /etc/sysconfig/network-scripts/ifcfg-eth0 | egrep '^PEERDNS=no' && exit 42
+      echo 'PEERDNS=no' >> /etc/sysconfig/network-scripts/ifcfg-eth0
+      '''
+      container: config.container
+      trap: true
 .catch console.error
