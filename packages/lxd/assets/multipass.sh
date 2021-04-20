@@ -4,8 +4,8 @@ set -e
 # MacOS crash and image cant start, 
 # see https://github.com/canonical/multipass/issues/1924
 
-brew install bash-completion
-brew install --cask multipass
+brew list | grep -x "bash-completion" || brew install bash-completion
+brew list | grep -x "multipass" || brew install --cask multipass
 
 multipass launch \
   --name nikita \
@@ -17,7 +17,6 @@ multipass exec nikita -- sudo apt-get update
 multipass exec nikita -- sudo snap install multipass-sshfs
 multipass mount $HOME nikita
 multipass exec nikita -- sudo apt-get install -y zfsutils-linux
-# multipass exec nikita -- sudo modprobe zfs
 multipass exec nikita -- sudo truncate -s 100G /opt/zfs.img
 multipass exec nikita -- sudo zpool create lxd /opt/zfs.img
 multipass exec nikita -- lxd init --auto --storage-backend=zfs --storage-pool=lxd
