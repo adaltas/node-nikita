@@ -21,25 +21,27 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      properties: {
-        'base': {
-          const: 'cn=config',
-          default: 'cn=config'
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        properties: {
+          'base': {
+            const: 'cn=config',
+            default: 'cn=config'
+          },
+          'suffix': {
+            type: 'string',
+            description: `The suffix associated with the database.`
+          }
         },
-        'suffix': {
-          type: 'string',
-          description: `The suffix associated with the database.`
-        }
+        required: ['suffix']
       },
-      required: ['suffix']
-    },
-    {
-      $ref: 'module://@nikitajs/ldap/lib/search'
-    }
-  ]
+      {
+        $ref: 'module://@nikitajs/ldap/lib/search'
+      }
+    ]
+  }
 };
 
 // ## Handler

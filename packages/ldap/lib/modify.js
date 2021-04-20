@@ -33,76 +33,78 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'operations': {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          'changetype': {
-            type: 'string',
-            enum: ['add', 'modify', 'remove'],
-            description: `Valid operation type`
-          },
-          'attributes': {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                'type': {
-                  type: 'string',
-                  enum: ['add', 'delete', 'replace'],
-                  description: `Operation type.`
-                },
-                'name': {
-                  type: 'string',
-                  description: `Attribute name.`
-                },
-                'value': {
-                  type: 'string',
-                  description: `Attribute value.`
-                }
-              },
-              required: ['type', 'name']
+  config: {
+    type: 'object',
+    properties: {
+      'operations': {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            'changetype': {
+              type: 'string',
+              enum: ['add', 'modify', 'remove'],
+              description: `Valid operation type`
             },
-            description: `List of attribute operations`
+            'attributes': {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  'type': {
+                    type: 'string',
+                    enum: ['add', 'delete', 'replace'],
+                    description: `Operation type.`
+                  },
+                  'name': {
+                    type: 'string',
+                    description: `Attribute name.`
+                  },
+                  'value': {
+                    type: 'string',
+                    description: `Attribute value.`
+                  }
+                },
+                required: ['type', 'name']
+              },
+              description: `List of attribute operations`
+            }
           }
-        }
+        },
+        description: `Object to be inserted, modified or removed.`
       },
-      description: `Object to be inserted, modified or removed.`
-    },
-    exclude: {
-      type: 'array',
-      items: {
-        type: 'string'
+      exclude: {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        default: [],
+        description: `List of attribute to not compare, eg \`userPassword\`.`
       },
-      default: [],
-      description: `List of attribute to not compare, eg \`userPassword\`.`
-    },
-    // General LDAP connection information
-    'binddn': {
-      type: 'string',
-      description: `Distinguished Name to bind to the LDAP directory.`
-    },
-    'mesh': {
-      type: 'string',
-      description: `Specify the SASL mechanism to be used for authentication. If it's not
+      // General LDAP connection information
+      'binddn': {
+        type: 'string',
+        description: `Distinguished Name to bind to the LDAP directory.`
+      },
+      'mesh': {
+        type: 'string',
+        description: `Specify the SASL mechanism to be used for authentication. If it's not
 specified, the program will choose the best  mechanism  the  server
 knows.`
-    },
-    'passwd': {
-      type: 'string',
-      description: `Password for simple authentication.`
-    },
-    'uri': {
-      type: 'string',
-      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+      },
+      'passwd': {
+        type: 'string',
+        description: `Password for simple authentication.`
+      },
+      'uri': {
+        type: 'string',
+        description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
 false in which case it will use your openldap client environment
 configuration.`
-    }
-  },
-  required: ['operations']
+      }
+    },
+    required: ['operations']
+  }
 };
 
 // ## Handler

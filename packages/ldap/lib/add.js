@@ -32,45 +32,47 @@ on_action = function({config}) {
 
 // ## Schema
 schema = {
-  type: 'object',
-  properties: {
-    'entry': {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          'dn': {
-            type: 'string',
-            description: `Distinguish name of the entry`
-          }
+  config: {
+    type: 'object',
+    properties: {
+      'entry': {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            'dn': {
+              type: 'string',
+              description: `Distinguish name of the entry`
+            }
+          },
+          required: ['dn']
         },
-        required: ['dn']
+        description: `Object to be inserted or modified.`
       },
-      description: `Object to be inserted or modified.`
-    },
-    // General LDAP connection information
-    'binddn': {
-      type: 'string',
-      description: `Distinguished Name to bind to the LDAP directory.`
-    },
-    'mesh': {
-      type: 'string',
-      description: `Specify the SASL mechanism to be used for authentication. If it's not
+      // General LDAP connection information
+      'binddn': {
+        type: 'string',
+        description: `Distinguished Name to bind to the LDAP directory.`
+      },
+      'mesh': {
+        type: 'string',
+        description: `Specify the SASL mechanism to be used for authentication. If it's not
 specified, the program will choose the best  mechanism  the  server
 knows.`
-    },
-    'passwd': {
-      type: 'string',
-      description: `Password for simple authentication.`
-    },
-    'uri': {
-      type: 'string',
-      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+      },
+      'passwd': {
+        type: 'string',
+        description: `Password for simple authentication.`
+      },
+      'uri': {
+        type: 'string',
+        description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
 false in which case it will use your openldap client environment
 configuration.`
-    }
-  },
-  required: ['entry']
+      }
+    },
+    required: ['entry']
+  }
 };
 
 // ## Handler

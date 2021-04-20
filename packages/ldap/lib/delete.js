@@ -19,37 +19,39 @@
 var handler, schema;
 
 schema = {
-  type: 'object',
-  properties: {
-    'dn': {
-      type: 'array',
-      items: {
-        type: 'string'
+  config: {
+    type: 'object',
+    properties: {
+      'dn': {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: `One or multiple DN to remove.`
       },
-      description: `One or multiple DN to remove.`
-    },
-    'name': {
-      type: 'string',
-      description: `Distinguish name storing the "olcAccess" property, using the database
+      'name': {
+        type: 'string',
+        description: `Distinguish name storing the "olcAccess" property, using the database
 address (eg: "olcDatabase={2}bdb,cn=config").`
-    },
-    // General LDAP connection information
-    'binddn': {
-      type: 'string',
-      description: `Distinguished Name to bind to the LDAP directory.`
-    },
-    'passwd': {
-      type: 'string',
-      description: `Password for simple authentication.`
-    },
-    'uri': {
-      type: 'string',
-      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+      },
+      // General LDAP connection information
+      'binddn': {
+        type: 'string',
+        description: `Distinguished Name to bind to the LDAP directory.`
+      },
+      'passwd': {
+        type: 'string',
+        description: `Password for simple authentication.`
+      },
+      'uri': {
+        type: 'string',
+        description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
 false in which case it will use your openldap client environment
 configuration.`
-    }
-  },
-  required: ['dn']
+      }
+    },
+    required: ['dn']
+  }
 };
 
 // ## Handler

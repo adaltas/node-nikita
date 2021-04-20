@@ -19,46 +19,48 @@
 var handler, merge, schema, utils;
 
 schema = {
-  type: 'object',
-  properties: {
-    'name': {
-      type: 'string',
-      description: `Distinguish name storing the "olcAccess" property, using the database
+  config: {
+    type: 'object',
+    properties: {
+      'name': {
+        type: 'string',
+        description: `Distinguish name storing the "olcAccess" property, using the database
 address (eg: "olcDatabase={2}bdb,cn=config").`
-    },
-    'user': {
-      oneOf: [
-        {
-          type: 'object'
-        },
-        {
-          type: 'array'
-        }
-      ],
-      description: `User object.`
-    },
-    // General LDAP connection information
-    'binddn': {
-      type: 'string',
-      description: `Distinguished Name to bind to the LDAP directory.`
-    },
-    'passwd': {
-      type: 'string',
-      description: `Password for simple authentication.`
-    },
-    'uri': {
-      oneOf: [
-        {
-          type: 'string'
-        },
-        {
-          type: 'boolean',
-          default: 'ldapi:///'
-        }
-      ],
-      description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
+      },
+      'user': {
+        oneOf: [
+          {
+            type: 'object'
+          },
+          {
+            type: 'array'
+          }
+        ],
+        description: `User object.`
+      },
+      // General LDAP connection information
+      'binddn': {
+        type: 'string',
+        description: `Distinguished Name to bind to the LDAP directory.`
+      },
+      'passwd': {
+        type: 'string',
+        description: `Password for simple authentication.`
+      },
+      'uri': {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            type: 'boolean',
+            default: 'ldapi:///'
+          }
+        ],
+        description: `LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to
 false in which case it will use your openldap client environment
 configuration.`
+      }
     }
   }
 };

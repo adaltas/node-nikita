@@ -21,20 +21,22 @@
 var handler, schema, utils;
 
 schema = {
-  type: 'object',
-  allOf: [
-    {
-      properties: {
-        'base': {
-          const: 'cn=config',
-          default: 'cn=config'
+  config: {
+    type: 'object',
+    allOf: [
+      {
+        properties: {
+          'base': {
+            const: 'cn=config',
+            default: 'cn=config'
+          }
         }
+      },
+      {
+        $ref: 'module://@nikitajs/ldap/lib/search'
       }
-    },
-    {
-      $ref: 'module://@nikitajs/ldap/lib/search'
-    }
-  ]
+    ]
+  }
 };
 
 // ## Handler
