@@ -1,6 +1,7 @@
 
 path = require 'path'
 nikita = require '@nikitajs/core/lib'
+require '@nikitajs/log/lib/register'
 require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
 
