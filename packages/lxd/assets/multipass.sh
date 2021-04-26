@@ -7,6 +7,9 @@ set -e
 brew list | grep -x "bash-completion" || brew install bash-completion
 brew list | grep -x "multipass" || brew install --cask multipass
 
+# sudo pkill multipassd
+# multipass start nikita
+
 multipass launch \
   --name nikita \
   --cpus 8 \
