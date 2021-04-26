@@ -49,7 +49,7 @@
     "@nikitajs/lxd": "^1.0.0-alpha.1",
     "@nikitajs/tools": "^1.0.0-alpha.1",
     "coffeescript": "^2.5.1",
-    "mixme": "^0.5.0",
+    "mixme": "^0.5.1",
     "mocha": "^8.3.2",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
