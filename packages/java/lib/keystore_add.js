@@ -279,7 +279,6 @@ for N in $(seq 0 $(($CERTS - 1))); do
   \${keytoolbin} -noprompt -import -trustcacerts -keystore ${config.keystore} -storepass ${config.storepass} -alias $ALIAS -file ${tmpdir}/$ALIAS
   code=0
 done
-echo "final code: $code"
 exit $code`,
         trap: true,
         code_skipped: 5
