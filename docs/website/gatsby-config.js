@@ -65,7 +65,7 @@ module.exports = {
       {
         title: 'About',
         content:
-          'Nikita is an open source product hosted on <a href="https://www.github.com" target="_blank" rel="noopener">GitHub</a> and developed by <a href="http://www.adaltas.com" target="_blank" rel="noopener">Adaltas</a>.',
+          'Nikita is an open source project hosted on <a href="https://github.com/adaltas/node-nikita/" target="_blank" rel="noopener">GitHub</a> and developed by <a href="http://www.adaltas.com" target="_blank" rel="noopener">Adaltas</a>.',
         xs: 12,
         sm: 6,
       },
