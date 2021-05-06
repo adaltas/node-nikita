@@ -92,7 +92,7 @@ const Layout = ({
       />
       <div css={[styles.content, intro ? null : styles.contentNoIntro, isOpen && !isMobile && styles.shift]}>
         { intro }
-        <Content page={page}>{children}</Content>
+        <Content page={{...page, ...{home: home}}}>{children}</Content>
         <Footer site={data.site.siteMetadata} />
       </div>
     </div>

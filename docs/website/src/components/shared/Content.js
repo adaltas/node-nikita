@@ -129,7 +129,7 @@ const Content = ({
   }
   return (
     <main css={styles.content}>
-      {page && (
+      { page && !page.home && (
         <Fragment>
           <div css={styles.tools}>
             {page.tableOfContents && page.tableOfContents.items && (
