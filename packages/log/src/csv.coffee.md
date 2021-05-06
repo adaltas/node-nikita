@@ -1,25 +1,12 @@
 
 # `nikita.log.csv`
 
-Write log to the host filesystem in CSV.
-
-## Config
-
-* `archive` (boolean)   
-  Save a copy of the previous logs inside a dedicated directory, default is
-  "false".   
-* `basedir` (string)    
-  Directory where to store logs relative to the process working directory.
-  Default to the "log" directory. Note, if the "archive" option is activated
-  log file will be stored accessible from "./log/latest".   
-* `filename` (string)   
-  Name of the log file, contextually rendered with all config passed to
-  the mustache templating engine. Default to "{{shortname}}.log", where 
-  "shortname" is the ssh host or localhost.   
-
-Global config can be alternatively set with the "log_csv" property.
+Write logs to the host filesystem in the CSV format.
 
 ## Schema
+
+The `log.csv` action leverages the [`log.fs` action](/current/actions/log/fs/)
+and honors all its configuration properties.
 
     schema =
       config:
