@@ -19,7 +19,7 @@ describe 'tools.cron.remove', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `tools.cron.remove`:'
-          '#/definitions/config/required config should have required property \'command\'.'
+          '#/definitions/config/required config must have required property \'command\'.'
         ].join ' '
 
   describe 'action', ->

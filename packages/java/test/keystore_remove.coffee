@@ -6,8 +6,32 @@ they = require('mocha-they')(config)
 return unless tags.posix
 
 describe 'java.keystore_remove', ->
-
-  describe 'config', ->
+  
+  describe 'schema and config', ->
+    
+    it 'either name of cname is required', ->
+      await nikita.java.keystore_remove
+        $handler: (->)
+        keystore: "ok"
+        storepass: "ok"
+        caname: "ok"
+      .should.be.fulfilled()
+      await nikita.java.keystore_remove
+        $handler: (->)
+        keystore: "ok"
+        storepass: "ok"
+        name: "ok"
+      .should.be.fulfilled()
+      await nikita.java.keystore_remove
+        keystore: "ok"
+        storepass: "ok"
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'multiple errors were found in the configuration of action `java.keystore_remove`:'
+        '#/definitions/config/anyOf config must match a schema in anyOf;'
+        '#/definitions/config/anyOf/0/required config must have required property \'name\';'
+        '#/definitions/config/anyOf/1/required config must have required property \'caname\'.'
+      ].join ' '
 
     they 'keystore doesnt need to exists', ({ssh}) ->
       nikita
@@ -19,23 +43,6 @@ describe 'java.keystore_remove', ->
           storepass: "invalid"
           caname: "invalid"
         $status.should.be.false()
-
-    they 'caname or name must be provided', ({ssh}) ->
-      nikita
-        $ssh: ssh
-      , ->
-        @java.keystore_remove
-          keystore: "invalid"
-          storepass: "invalid"
-        .should.be.rejectedWith
-          code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-          message: [
-            'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `java.keystore_remove`:'
-            '#/definitions/config/anyOf config should match some schema in anyOf;'
-            '#/definitions/config/anyOf/0/required config should have required property \'name\';'
-            '#/definitions/config/anyOf/1/required config should have required property \'caname\'.'
-          ].join ' '
           
     they 'caname and name are provided', ({ssh}) ->
       nikita

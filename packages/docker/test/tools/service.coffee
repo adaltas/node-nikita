@@ -59,7 +59,7 @@ describe 'docker.tools.service', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `docker.tools.service`:'
-          '#/required config should have required property \'container\'.'
+          '#/required config must have required property \'container\'.'
         ].join ' '
 
     it 'config.image required', ->
@@ -70,7 +70,7 @@ describe 'docker.tools.service', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `docker.tools.service`:'
-          '#/required config should have required property \'image\'.'
+          '#/required config must have required property \'image\'.'
         ].join ' '
 
   they 'status not modified', ({ssh}) ->

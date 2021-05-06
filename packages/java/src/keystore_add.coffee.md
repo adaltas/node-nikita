@@ -72,16 +72,6 @@ default location of the Oracle JDK installation.
       config:
         type: 'object'
         properties:
-          'name':
-            type: 'string'
-            description: '''
-            Name of the certificate.
-            '''
-          'caname':
-            type: 'string'
-            description: '''
-            Name of the certificate authority (CA).
-            '''
           'cacert':
             type: 'string'
             description: '''
@@ -124,10 +114,34 @@ default location of the Oracle JDK installation.
             Password to manage the keystore.
             '''
         required: ['keystore', 'storepass']
-        anyOf: [
-          {required: ['cacert', 'caname']}
-          {required: ['cert', 'name', 'key', 'keypass']}
-        ]
+        dependencies:
+          'cacert':
+            properties:
+              'caname':
+                type: 'string'
+                description: '''
+                Name of the certificate authority (CA).
+                '''
+            required: ['caname']
+          'cert':
+            properties:
+              'key':
+                type: 'string'
+                description: '''
+                Location of the private key.
+                '''
+              'keypass':
+                type: 'string'
+                description: '''
+                Password used to protect the certigficate and its key access
+                inside the keystore.
+                '''
+              'name':
+                type: 'string'
+                description: '''
+                Name (aka alias) to reference the certificate inside the keystore.
+                '''
+            required: ['key', 'keypass', 'name']
 
 ## Handler
 
@@ -172,24 +186,20 @@ default location of the Oracle JDK installation.
         await @execute
           bash: true
           command: """
-          cleanup () {
-            [ -n "#{if config.cacert then '1' else ''}" ] || rm -rf #{tmpdir};
-          }
-          if ! command -v #{config.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
+          if ! command -v #{config.openssl}; then echo 'OpenSSL command line tool not detected'; exit 4; fi
           # Detect keytool command
           keytoolbin=#{config.keytool}
           command -v $keytoolbin >/dev/null || {
             if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
             else exit 7; fi
           }
-          [ -f #{files.cert} ] || (cleanup; exit 6)
-          # mkdir -p -m 700 #{tmpdir}
+          [ -f #{files.cert} ] || (exit 6)
           user=`#{config.openssl} x509  -noout -in "#{files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
           # We are only retrieving the first certificate found in the chain with `head -n 1`
           keystore=`${keytoolbin} -list -v -keystore #{config.keystore} -storepass #{config.storepass} -alias #{config.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'`
           echo "User Certificate: $user"
           echo "Keystore Certificate: $keystore"
-          if [ "$user" = "$keystore" ]; then cleanup; exit 5; fi
+          if [ "$user" = "$keystore" ]; then exit 5; fi
           # Create a PKCS12 file that contains key and certificate
           #{config.openssl} pkcs12 -export \
             -in "#{files.cert}" -inkey "#{files.key}" \
@@ -206,16 +216,15 @@ default location of the Oracle JDK installation.
           trap: true
           code_skipped: 5 # OpenSSL exit 3 if file does not exists
       catch err
-        throw Error "OpenSSL command line tool not detected" if err?.exit_code is 4
-        throw Error "Keystore file does not exists" if err?.exit_code is 6
-        throw Error "Missing Requirement: command keytool is not detected" if err?.exit_code is 6
+        throw Error "OpenSSL command line tool not detected" if err.exit_code is 4
+        throw Error "Keystore file does not exists" if err.exit_code is 6
+        throw Error "Missing Requirement: command keytool is not detected" if err.exit_code is 6
+        throw err
       # Deal with CACert
       try if config.cacert
         await @execute
           bash: true
           command: """
-          # cleanup () { rm -rf #{tmpdir}; }
-          cleanup () { echo 'clean'; }
           # Detect keytool command
           keytoolbin=#{config.keytool}
           command -v $keytoolbin >/dev/null || {
@@ -226,9 +235,9 @@ default location of the Oracle JDK installation.
           if [ -f #{config.keystore} ] && ! ${keytoolbin} -list -keystore #{config.keystore} -storepass #{config.storepass} >/dev/null; then
             # Keystore password is invalid, change it manually with:
             # keytool -storepasswd -keystore #{config.keystore} -storepass ${old_pasword} -new #{config.storepass}
-            cleanup; exit 2
+            exit 2
           fi
-          [ -f #{files.cacert} ] || (echo 'CA file doesnt not exists: #{files.cacert} 1>&2'; cleanup; exit 3)
+          [ -f #{files.cacert} ] || (echo 'CA file doesnt not exists: #{files.cacert} 1>&2'; exit 3)
           # Import CACert
           PEM_FILE=#{files.cacert}
           CERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)
@@ -259,13 +268,13 @@ default location of the Oracle JDK installation.
             ${keytoolbin} -noprompt -import -trustcacerts -keystore #{config.keystore} -storepass #{config.storepass} -alias $ALIAS -file #{tmpdir}/$ALIAS
             code=0
           done
-          cleanup
           exit $code
           """
           trap: true
           code_skipped: 5
       catch err
         throw Error "CA file does not exist: #{files.cacert}" if err.exit_code is 3
+        throw err
       # Ensure ownerships and permissions
       if config.uid? or config.gid?
         await @fs.chown
@@ -276,6 +285,7 @@ default location of the Oracle JDK installation.
         await @fs.chmod
           target: config.keystore
           mode: config.mode
+      undefined
 
 ## Exports
 

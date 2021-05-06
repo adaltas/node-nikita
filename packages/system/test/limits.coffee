@@ -19,10 +19,10 @@ describe 'system.limits', ->
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `system.limits`:'
-            '#/oneOf config should match exactly one schema in oneOf, passingSchemas is null;'
-            '#/oneOf/0/required config should have required property \'system\';'
-            '#/oneOf/1/required config should have required property \'user\'.'
+            'multiple errors were found in the configuration of action `system.limits`:'
+            '#/oneOf config must match exactly one schema in oneOf, passingSchemas is null;'
+            '#/oneOf/0/required config must have required property \'system\';'
+            '#/oneOf/1/required config must have required property \'user\'.'
           ].join ' '
 
     it 'error if both system and user are defined', ->

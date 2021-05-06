@@ -35,7 +35,7 @@ describe 'file.render', ->
         .should.be.rejectedWith [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `file.render`:'
-          '#/required config should have required property \'context\'.'
+          '#/required config must have required property \'context\'.'
         ].join ' '
 
     they 'unsupported source extension', ({ssh}) ->

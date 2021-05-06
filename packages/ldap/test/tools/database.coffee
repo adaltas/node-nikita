@@ -14,7 +14,7 @@ describe 'ldap.database', ->
         uri: ldap.uri
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /config should have required property 'suffix'/
+        message: /config must have required property 'suffix'/
     
     it 'extends ldap.search', ->
       nikita.ldap.tools.database
@@ -22,7 +22,7 @@ describe 'ldap.database', ->
         suffix: ldap.suffix_dn
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /config\/uri should be string/
+        message: /config\/uri must be string/
     
     it 'provide an immutable value to `base`', ->
       nikita.ldap.tools.database
@@ -30,7 +30,7 @@ describe 'ldap.database', ->
         suffix: ldap.suffix_dn
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /config\/base should be equal to constant, allowedValue is "cn=config"/
+        message: /config\/base must be equal to constant, allowedValue is "cn=config"/
       
   
   describe 'usage', ->

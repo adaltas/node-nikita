@@ -45,6 +45,7 @@ module.exports =
           useDefaults: true
           allowUnionTypes: true # eg type: ['boolean', 'integer']
           strict: true
+          strictRequired: false # see https://github.com/ajv-validator/ajv/issues/1571
           coerceTypes: 'array'
           loadSchema: (uri) ->
             new Promise (accept, reject) ->
@@ -135,7 +136,7 @@ module.exports =
             utils.error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
               if validate.errors.length is 1
               then 'one error was found in the configuration of'
-              else 'multiple errors where found in the configuration of'
+              else 'multiple errors were found in the configuration of'
               if action.metadata.namespace.length
               then "action `#{action.metadata.namespace.join('.')}`:"
               else "root action:"

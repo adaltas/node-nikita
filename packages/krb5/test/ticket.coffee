@@ -18,10 +18,10 @@ describe 'krb5.ticket', ->
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `krb5.ticket`:'
-            '#/oneOf config should match exactly one schema in oneOf, passingSchemas is null;'
-            '#/oneOf/0/required config should have required property \'keytab\';'
-            '#/oneOf/1/required config should have required property \'password\'.'
+            'multiple errors were found in the configuration of action `krb5.ticket`:'
+            '#/oneOf config must match exactly one schema in oneOf, passingSchemas is null;'
+            '#/oneOf/0/required config must have required property \'keytab\';'
+            '#/oneOf/1/required config must have required property \'password\'.'
           ].join ' '
 
   describe 'action', ->

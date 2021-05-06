@@ -19,7 +19,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/definitions/config/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container must match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -34,12 +34,12 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/definitions/config/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container must match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
   
-    it 'Container name should not start with a digit', ->
+    it 'Container name must not start with a digit', ->
       nikita.lxc.init
         image: "images:#{images.alpine}"
         container: '1u'
@@ -48,12 +48,12 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/definitions/config/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container must match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
     
-    it 'Container name should not start with a dash', ->
+    it 'Container name must not start with a dash', ->
       nikita.lxc.init
         image: "images:#{images.alpine}"
         container: '-u1'
@@ -62,7 +62,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/definitions/config/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container must match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
@@ -77,7 +77,7 @@ describe 'lxc.init', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `lxc.init`:'
-          '#/definitions/config/properties/container/pattern config/container should match pattern'
+          '#/definitions/config/properties/container/pattern config/container must match pattern'
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '

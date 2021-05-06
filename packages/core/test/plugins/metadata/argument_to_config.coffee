@@ -15,7 +15,7 @@ describe 'plugins.argument', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of root action:'
         'nikita#/definitions/metadata/properties/argument_to_config/type'
-        'metadata/argument_to_config should be string,'
+        'metadata/argument_to_config must be string,'
         'type is "string".'
       ].join ' '
     

@@ -17,7 +17,7 @@ describe 'actions.fs.move', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `fs.move`:'
-        '#/definitions/config/required config should have required property \'target\'.'
+        '#/definitions/config/required config must have required property \'target\'.'
       ].join ' '
 
   they 'error missing source', ({ssh}) ->
@@ -30,7 +30,7 @@ describe 'actions.fs.move', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `fs.move`:'
-        '#/definitions/config/required config should have required property \'source\'.'
+        '#/definitions/config/required config must have required property \'source\'.'
       ].join ' '
 
   they 'rename a file', ({ssh}) ->

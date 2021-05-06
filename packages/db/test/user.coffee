@@ -22,10 +22,10 @@ for engine, _ of db
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `db.user`:'
-            '#/required config should have required property \'host\';'
-            '#/required config should have required property \'password\';'
-            '#/required config should have required property \'username\'.'
+            'multiple errors were found in the configuration of action `db.user`:'
+            '#/required config must have required property \'host\';'
+            '#/required config must have required property \'password\';'
+            '#/required config must have required property \'username\'.'
           ].join ' '
     
     they 'requires admin_username, password, username', ({ssh}) ->
@@ -40,10 +40,10 @@ for engine, _ of db
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `db.user`:'
-            '#/required config should have required property \'admin_username\';'
-            '#/required config should have required property \'password\';'
-            '#/required config should have required property \'username\'.'
+            'multiple errors were found in the configuration of action `db.user`:'
+            '#/required config must have required property \'admin_username\';'
+            '#/required config must have required property \'password\';'
+            '#/required config must have required property \'username\'.'
           ].join ' '
 
     they 'add new user', ({ssh}) ->

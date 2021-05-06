@@ -136,7 +136,7 @@ describe 'plugins.tools.schema', ->
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `test`:'
+            'multiple errors were found in the configuration of action `test`:'
             '#/definitions/config/properties/readable/instanceof config/readable should pass "instanceof" keyword validation;'
             '#/definitions/config/properties/writable/instanceof'
             'config/writable should pass "instanceof" keyword validation.'
@@ -179,7 +179,7 @@ describe 'plugins.tools.schema', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
         'registry://test/schema#/definitions/config/properties/an_integer/type'
-        'config/an_object/an_integer should be integer,'
+        'config/an_object/an_integer must be integer,'
         'type is "integer".'
       ].join ' '
         

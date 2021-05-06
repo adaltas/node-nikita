@@ -18,7 +18,7 @@ describe 'file.upload', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `file.upload`:'
-        '#/required config should have required property \'source\'.'
+        '#/required config must have required property \'source\'.'
       ].join ' '
 
   they 'target is missing', ({ssh}) ->
@@ -31,7 +31,7 @@ describe 'file.upload', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `file.upload`:'
-        '#/required config should have required property \'target\'.'
+        '#/required config must have required property \'target\'.'
       ].join ' '
 
   they 'file into a file', ({ssh}) ->

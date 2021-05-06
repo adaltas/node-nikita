@@ -19,7 +19,7 @@ describe 'service#config.state', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `service`:'
-          '#/properties/state/items/enum config/state/0 should be equal to one of the allowed values,'
+          '#/properties/state/items/enum config/state/0 must be equal to one of the allowed values,'
           'allowedValues is ["started","stopped","restarted"].'
         ].join ' '
     
@@ -31,11 +31,11 @@ describe 'service#config.state', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `service`:'
-          '#/dependencies/state/anyOf config should match some schema in anyOf;'
-          '#/dependencies/state/anyOf/0/required config should have required property \'name\';'
-          '#/dependencies/state/anyOf/1/required config should have required property \'srv_name\';'
-          '#/dependencies/state/anyOf/2/required config should have required property \'chk_name\'.'
+          'multiple errors were found in the configuration of action `service`:'
+          '#/dependencies/state/anyOf config must match some schema in anyOf;'
+          '#/dependencies/state/anyOf/0/required config must have required property \'name\';'
+          '#/dependencies/state/anyOf/1/required config must have required property \'srv_name\';'
+          '#/dependencies/state/anyOf/2/required config must have required property \'chk_name\'.'
         ].join ' '
     
     it 'split multiple states', ->

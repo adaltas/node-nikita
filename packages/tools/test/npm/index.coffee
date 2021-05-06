@@ -20,7 +20,7 @@ describe 'tools.npm', ->
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'one error was found in the configuration of action `tools.npm`:'
-            '#/required config should have required property \'name\'.'
+            '#/required config must have required property \'name\'.'
           ].join ' '
 
     it 'cwd or global is true are required', ->
@@ -30,9 +30,9 @@ describe 'tools.npm', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `tools.npm`:'
-          '#/if config should match "then" schema, failingKeyword is "then";'
-          '#/then/required config should have required property \'cwd\'.'
+          'multiple errors were found in the configuration of action `tools.npm`:'
+          '#/if config must match "then" schema, failingKeyword is "then";'
+          '#/then/required config must have required property \'cwd\'.'
         ].join ' '
 
     it 'global is `true`', ->
@@ -47,7 +47,7 @@ describe 'tools.npm', ->
         global: false
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /#\/then\/required config should have required property 'cwd'/
+        message: /#\/then\/required config must have required property 'cwd'/
 
   describe 'action', ->
 

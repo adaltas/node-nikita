@@ -17,7 +17,7 @@ describe 'actions.fs.link', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `fs.link`:'
-          '#/required config should have required property \'source\'.'
+          '#/required config must have required property \'source\'.'
         ].join ' '
     
     it 'missing target', ->
@@ -28,7 +28,7 @@ describe 'actions.fs.link', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `fs.link`:'
-          '#/required config should have required property \'target\'.'
+          '#/required config must have required property \'target\'.'
         ].join ' '
   
   describe 'usage', ->

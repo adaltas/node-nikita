@@ -14,7 +14,7 @@ describe 'metadata "debug"', ->
         $handler: -> throw Error 'ohno'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /metadata\/debug should be equal to one of the allowed values, allowedValues is \["stdout","stderr"\]/
+        message: /metadata\/debug must be equal to one of the allowed values, allowedValues is \["stdout","stderr"\]/
     
     it 'valid string', ->
       await nikita

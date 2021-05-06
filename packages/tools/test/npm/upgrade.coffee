@@ -15,9 +15,9 @@ describe 'tools.npm.upgrade', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `tools.npm.upgrade`:'
-          '#/if config should match "then" schema, failingKeyword is "then";'
-          '#/then/required config should have required property \'cwd\'.'
+          'multiple errors were found in the configuration of action `tools.npm.upgrade`:'
+          '#/if config must match "then" schema, failingKeyword is "then";'
+          '#/then/required config must have required property \'cwd\'.'
         ].join ' '
     
     it 'global is `true`', ->

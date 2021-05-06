@@ -110,7 +110,7 @@ describe 'plugins.metadata.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_INVALID_DEFINITION:'
         'schema is invalid:'
-        'data/definitions should be object'
+        'data/definitions must be object'
       ].join ' '
 
     it 'ensure schema is an object in child action', ->
@@ -120,7 +120,7 @@ describe 'plugins.metadata.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_INVALID_DEFINITION:'
         'schema is invalid:'
-        'data/definitions should be object'
+        'data/definitions must be object'
       ].join ' '
 
     it 'invalid with one error', ->
@@ -135,7 +135,7 @@ describe 'plugins.metadata.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/definitions/config/properties/an_integer/minimum config/an_integer should be >= 1,'
+        '#/definitions/config/properties/an_integer/minimum config/an_integer must be >= 1,'
         'comparison is ">=", limit is 1.'
       ].join ' '
 
@@ -152,7 +152,7 @@ describe 'plugins.metadata.schema', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/definitions/config/additionalProperties config should NOT have additional properties,'
+        '#/definitions/config/additionalProperties config must NOT have additional properties,'
         'additionalProperty is "lonely_duck".'
       ].join ' '
   

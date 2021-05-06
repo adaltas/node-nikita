@@ -22,7 +22,7 @@ describe 'docker.build', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `docker.build`:'
-          '#/required config should have required property \'image\'.'
+          '#/required config must have required property \'image\'.'
         ].join ' '
 
     they 'fail with exclusive parameters', ({ssh}) ->

@@ -104,12 +104,6 @@ console.info(stdout)
             Run this command inside a root directory with the arc-chroot command
             or any provided string, require the "arch_chroot_rootdir" option if activated.
             '''
-          'arch_chroot_rootdir':
-            type: 'string'
-            description: '''
-            Path to the mount point corresponding to the root directory, required
-            if the "arch_chroot" option is activated.
-            '''
           'bash':
             type: ['boolean', 'string']
             description: '''
@@ -279,7 +273,15 @@ console.info(stdout)
             Unix user id.
             '''
         dependencies:
-          arch_chroot: required: ['arch_chroot_rootdir']
+          arch_chroot:
+            properties:
+              'arch_chroot_rootdir':
+                type: 'string'
+                description: '''
+                Path to the mount point corresponding to the root directory, required
+                if the "arch_chroot" option is activated.
+                '''
+            required: ['arch_chroot_rootdir']
         required: ['command']
           
 ## Handler

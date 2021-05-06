@@ -20,7 +20,7 @@ describe 'docker.tools.execute', ->
       .docker.tools.execute()
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /#\/required config should have required property 'command'/
+        message: /#\/required config must have required property 'command'/
 
     it 'machine is validated', ->
       nikita
@@ -29,7 +29,7 @@ describe 'docker.tools.execute', ->
         machine: '_'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: /#\/definitions\/docker\/properties\/machine\/format config\/machine should match format "hostname"/
+        message: /#\/definitions\/docker\/properties\/machine\/format config\/machine must match format "hostname"/
 
     it.skip 'no additionnal properties', ->
       # Not possible with the current implementation

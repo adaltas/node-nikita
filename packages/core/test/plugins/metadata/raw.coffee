@@ -15,7 +15,7 @@ describe 'plugins.metadata.raw', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of root action:'
         'nikita#/definitions/metadata/properties/raw/type'
-        'metadata/raw should be boolean,'
+        'metadata/raw must be boolean,'
         'type is "boolean".'
       ].join ' '
     

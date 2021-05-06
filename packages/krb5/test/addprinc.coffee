@@ -17,9 +17,9 @@ describe 'krb5.addprinc', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `krb5.addprinc`:'
-          '#/required config should have required property \'admin\';'
-          '#/required config should have required property \'principal\'.'
+          'multiple errors were found in the configuration of action `krb5.addprinc`:'
+          '#/required config must have required property \'admin\';'
+          '#/required config must have required property \'principal\'.'
         ].join ' '
 
     it 'one of password or randkey must be provided', ->
@@ -31,10 +31,10 @@ describe 'krb5.addprinc', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `krb5.addprinc`:'
-          '#/oneOf config should match exactly one schema in oneOf, passingSchemas is null;'
-          '#/oneOf/0/required config should have required property \'password\';'
-          '#/oneOf/1/required config should have required property \'randkey\'.'
+          'multiple errors were found in the configuration of action `krb5.addprinc`:'
+          '#/oneOf config must match exactly one schema in oneOf, passingSchemas is null;'
+          '#/oneOf/0/required config must have required property \'password\';'
+          '#/oneOf/1/required config must have required property \'randkey\'.'
         ].join ' '
 
   describe 'action', ->

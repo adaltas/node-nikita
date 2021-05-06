@@ -14,8 +14,8 @@ describe 'plugins.metadata.disabled', ->
       message: [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of root action:'
-        'nikita#/definitions/metadata/properties/disabled/type metadata/disabled'
-        'should be boolean, type is "boolean".'
+        'nikita#/definitions/metadata/properties/disabled/type'
+        'metadata/disabled must be boolean, type is "boolean".'
       ].join ' '
   
   it 'default', ->

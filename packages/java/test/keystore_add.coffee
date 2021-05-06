@@ -6,7 +6,47 @@ they = require('mocha-they')(config)
 return unless tags.posix
 
 describe 'java.keystore_add', ->
-
+  
+  describe 'schema', ->
+    
+    it 'cacert implies caname', ->
+      await nikita.java.keystore_add
+        $handler: (->)
+        keystore: "ok"
+        storepass: "ok"
+        cacert: "ok"
+        caname: 'ok'
+      await nikita.java.keystore_add
+        keystore: "ok"
+        storepass: "ok"
+        cacert: "implies caname"
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action `java.keystore_add`:'
+        '#/dependencies/cacert/required config must have required property \'caname\'.'
+      ].join ' '
+        
+    it 'cert implies key, keypass and name', ->
+      await nikita.java.keystore_add
+        $handler: (->)
+        keystore: "ok"
+        storepass: "ok"
+        cert: "ok"
+        key: "ok"
+        keypass: "ok"
+        name: 'ok'
+      await nikita.java.keystore_add
+        keystore: "ok"
+        storepass: "ok"
+        cert: "implies key, keypass and name"
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'multiple errors were found in the configuration of action `java.keystore_add`:'
+        '#/dependencies/cert/required config must have required property \'key\';'
+        '#/dependencies/cert/required config must have required property \'keypass\';'
+        '#/dependencies/cert/required config must have required property \'name\'.'
+      ].join ' '
+  
   describe 'config', ->
 
     they 'caname, cacert, cert, name, key, keypass are provided', ({ssh}) ->

@@ -65,5 +65,5 @@ describe 'file.properties.read', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `file.properties.read`:'
-        '#/required config should have required property \'target\'.'
+        '#/required config must have required property \'target\'.'
       ].join ' '

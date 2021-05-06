@@ -20,7 +20,7 @@ describe 'tools.npm.uninstall', ->
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'one error was found in the configuration of action `tools.npm.uninstall`:'
-            '#/required config should have required property \'name\'.'
+            '#/required config must have required property \'name\'.'
           ].join ' '
 
     it 'cwd or global is true are required', ->
@@ -30,9 +30,9 @@ describe 'tools.npm.uninstall', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `tools.npm.uninstall`:'
-          '#/if config should match "then" schema, failingKeyword is "then";'
-          '#/then/required config should have required property \'cwd\'.'
+          'multiple errors were found in the configuration of action `tools.npm.uninstall`:'
+          '#/if config must match "then" schema, failingKeyword is "then";'
+          '#/then/required config must have required property \'cwd\'.'
         ].join ' '
 
     it 'global is `true`', ->

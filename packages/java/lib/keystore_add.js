@@ -73,14 +73,6 @@ schema = {
   config: {
     type: 'object',
     properties: {
-      'name': {
-        type: 'string',
-        description: `Name of the certificate.`
-      },
-      'caname': {
-        type: 'string',
-        description: `Name of the certificate authority (CA).`
-      },
       'cacert': {
         type: 'string',
         description: `Path to the certificate authority (CA).`
@@ -118,18 +110,35 @@ the host, only apply with remote actions over SSH.`
       }
     },
     required: ['keystore', 'storepass'],
-    anyOf: [
-      {
-        required: ['cacert',
-      'caname']
+    dependencies: {
+      'cacert': {
+        properties: {
+          'caname': {
+            type: 'string',
+            description: `Name of the certificate authority (CA).`
+          }
+        },
+        required: ['caname']
       },
-      {
-        required: ['cert',
-      'name',
-      'key',
-      'keypass']
+      'cert': {
+        properties: {
+          'key': {
+            type: 'string',
+            description: `Location of the private key.`
+          },
+          'keypass': {
+            type: 'string',
+            description: `Password used to protect the certigficate and its key access
+inside the keystore.`
+          },
+          'name': {
+            type: 'string',
+            description: `Name (aka alias) to reference the certificate inside the keystore.`
+          }
+        },
+        required: ['key', 'keypass', 'name']
       }
-    ]
+    }
   }
 };
 
@@ -190,24 +199,20 @@ handler = async function({
     if (!!config.cert) {
       await this.execute({
         bash: true,
-        command: `cleanup () {
-  [ -n "${config.cacert ? '1' : ''}" ] || rm -rf ${tmpdir};
-}
-if ! command -v ${config.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
+        command: `if ! command -v ${config.openssl}; then echo 'OpenSSL command line tool not detected'; exit 4; fi
 # Detect keytool command
 keytoolbin=${config.keytool}
 command -v $keytoolbin >/dev/null || {
   if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
   else exit 7; fi
 }
-[ -f ${files.cert} ] || (cleanup; exit 6)
-# mkdir -p -m 700 ${tmpdir}
+[ -f ${files.cert} ] || (exit 6)
 user=\`${config.openssl} x509  -noout -in "${files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat\`
 # We are only retrieving the first certificate found in the chain with \`head -n 1\`
 keystore=\`\${keytoolbin} -list -v -keystore ${config.keystore} -storepass ${config.storepass} -alias ${config.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'\`
 echo "User Certificate: $user"
 echo "Keystore Certificate: $keystore"
-if [ "$user" = "$keystore" ]; then cleanup; exit 5; fi
+if [ "$user" = "$keystore" ]; then exit 5; fi
 # Create a PKCS12 file that contains key and certificate
 ${config.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out "${tmpdir}/pkcs12" -name ${config.name} -password pass:${config.keypass}
 # Import PKCS12 into keystore
@@ -218,24 +223,23 @@ ${config.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out 
     }
   } catch (error) {
     err = error;
-    if ((err != null ? err.exit_code : void 0) === 4) {
+    if (err.exit_code === 4) {
       throw Error("OpenSSL command line tool not detected");
     }
-    if ((err != null ? err.exit_code : void 0) === 6) {
+    if (err.exit_code === 6) {
       throw Error("Keystore file does not exists");
     }
-    if ((err != null ? err.exit_code : void 0) === 6) {
+    if (err.exit_code === 6) {
       throw Error("Missing Requirement: command keytool is not detected");
     }
+    throw err;
   }
   try {
     // Deal with CACert
     if (config.cacert) {
       await this.execute({
         bash: true,
-        command: `# cleanup () { rm -rf ${tmpdir}; }
-cleanup () { echo 'clean'; }
-# Detect keytool command
+        command: `# Detect keytool command
 keytoolbin=${config.keytool}
 command -v $keytoolbin >/dev/null || {
   if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
@@ -245,9 +249,9 @@ command -v $keytoolbin >/dev/null || {
 if [ -f ${config.keystore} ] && ! \${keytoolbin} -list -keystore ${config.keystore} -storepass ${config.storepass} >/dev/null; then
   # Keystore password is invalid, change it manually with:
   # keytool -storepasswd -keystore ${config.keystore} -storepass \${old_pasword} -new ${config.storepass}
-  cleanup; exit 2
+  exit 2
 fi
-[ -f ${files.cacert} ] || (echo 'CA file doesnt not exists: ${files.cacert} 1>&2'; cleanup; exit 3)
+[ -f ${files.cacert} ] || (echo 'CA file doesnt not exists: ${files.cacert} 1>&2'; exit 3)
 # Import CACert
 PEM_FILE=${files.cacert}
 CERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)
@@ -275,7 +279,7 @@ for N in $(seq 0 $(($CERTS - 1))); do
   \${keytoolbin} -noprompt -import -trustcacerts -keystore ${config.keystore} -storepass ${config.storepass} -alias $ALIAS -file ${tmpdir}/$ALIAS
   code=0
 done
-cleanup
+echo "final code: $code"
 exit $code`,
         trap: true,
         code_skipped: 5
@@ -286,6 +290,7 @@ exit $code`,
     if (err.exit_code === 3) {
       throw Error(`CA file does not exist: ${files.cacert}`);
     }
+    throw err;
   }
   // Ensure ownerships and permissions
   if ((config.uid != null) || (config.gid != null)) {
@@ -296,11 +301,12 @@ exit $code`,
     });
   }
   if (config.mode != null) {
-    return (await this.fs.chmod({
+    await this.fs.chmod({
       target: config.keystore,
       mode: config.mode
-    }));
+    });
   }
+  return void 0;
 };
 
 // ## Exports

@@ -16,7 +16,7 @@ describe 'actions.execute.config.env', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `execute`:'
-          '#/definitions/config/properties/env/type config/env should be object,'
+          '#/definitions/config/properties/env/type config/env must be object,'
           'type is "object".'
         ].join ' '
 

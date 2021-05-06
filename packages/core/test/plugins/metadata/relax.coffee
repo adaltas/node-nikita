@@ -103,7 +103,7 @@ describe 'plugins.metadata.relax', ->
       $status.should.be.true() unless err
     .promise()
 
-  it 'value should be of type boolean, string, array or regexp', ->
+  it 'value must be of type boolean, string, array or regexp', ->
     nikita
     .call $relax: 1, (->)
     .should.be.rejectedWith

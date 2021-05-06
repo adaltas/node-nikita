@@ -16,9 +16,9 @@ describe 'krb5.execute', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'multiple errors where found in the configuration of action `krb5.execute`:'
-          '#/definitions/config/required config should have required property \'admin\';'
-          '#/definitions/config/required config should have required property \'command\'.'
+          'multiple errors were found in the configuration of action `krb5.execute`:'
+          '#/definitions/config/required config must have required property \'admin\';'
+          '#/definitions/config/required config must have required property \'command\'.'
         ].join ' '
 
   describe 'action', ->

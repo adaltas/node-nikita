@@ -15,7 +15,7 @@ describe 'plugins.metadata.raw_input', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of root action:'
         'nikita#/definitions/metadata/properties/raw_input/type'
-        'metadata/raw_input should be boolean,'
+        'metadata/raw_input must be boolean,'
         'type is "boolean".'
       ].join ' '
     

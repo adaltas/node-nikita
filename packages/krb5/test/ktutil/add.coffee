@@ -18,10 +18,10 @@ describe 'krb5.kutil.add', ->
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'multiple errors where found in the configuration of action `krb5.ktutil.add`:'
-            '#/required config should have required property \'keytab\';'
-            '#/required config should have required property \'password\';'
-            '#/required config should have required property \'principal\'.'
+            'multiple errors were found in the configuration of action `krb5.ktutil.add`:'
+            '#/required config must have required property \'keytab\';'
+            '#/required config must have required property \'password\';'
+            '#/required config must have required property \'principal\'.'
           ].join ' '
 
   describe 'action', ->

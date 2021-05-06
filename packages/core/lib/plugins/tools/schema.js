@@ -61,6 +61,7 @@ module.exports = {
           useDefaults: true,
           allowUnionTypes: true, // eg type: ['boolean', 'integer']
           strict: true,
+          strictRequired: false, // see https://github.com/ajv-validator/ajv/issues/1571
           coerceTypes: 'array',
           loadSchema: function(uri) {
             return new Promise(async function(accept, reject) {
@@ -198,7 +199,7 @@ module.exports = {
               return;
             }
             return utils.error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
-              validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors where found in the configuration of',
+              validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors were found in the configuration of',
               action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "root action:",
               validate.errors.map(function(err) {
                 var key,

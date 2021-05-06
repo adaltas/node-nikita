@@ -15,7 +15,7 @@ describe 'plugins.metadata.raw_output', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of root action:'
         'nikita#/definitions/metadata/properties/raw_output/type'
-        'metadata/raw_output should be boolean,'
+        'metadata/raw_output must be boolean,'
         'type is "boolean".'
       ].join ' '
     
