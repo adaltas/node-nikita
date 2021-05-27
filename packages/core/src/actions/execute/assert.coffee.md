@@ -31,9 +31,9 @@ console.info(`Stdout was asserted: ${status}`)
     on_action = ({config, metadata}) ->
       config.code ?= [0] unless config.content
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -134,7 +134,7 @@ console.info(`Stdout was asserted: ${status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

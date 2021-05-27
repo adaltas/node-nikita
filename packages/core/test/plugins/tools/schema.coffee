@@ -36,7 +36,7 @@ describe 'plugins.tools.schema', ->
     it '`addMetadata` with incorrect value', ->
       nikita key: 'value', $meta: 'invalid', (action) ->
         action.tools.schema.addMetadata 'meta', type: 'boolean'
-        action.metadata.schema =
+        action.metadata.definitions =
           config:
             type: 'object'
             properties: {}
@@ -46,7 +46,7 @@ describe 'plugins.tools.schema', ->
     it '`addMetadata` with coercion', ->
       nikita key: 'value', $meta: 1, (action) ->
         action.tools.schema.addMetadata 'meta', type: 'boolean'
-        action.metadata.schema =
+        action.metadata.definitions =
           config:
             type: 'object'
             properties: {}
@@ -56,7 +56,7 @@ describe 'plugins.tools.schema', ->
 
     it '`validate` return error', ->
       nikita key: 'value', (action) ->
-        action.metadata.schema =
+        action.metadata.definitions =
           config:
             type: 'object'
             properties:
@@ -70,7 +70,7 @@ describe 'plugins.tools.schema', ->
       nikita ({registry}) ->
         await registry.register ['test'],
           metadata:
-            schema:
+            definitions:
               config:
                 type: 'object'
                 properties:
@@ -84,7 +84,7 @@ describe 'plugins.tools.schema', ->
       nikita ({registry}) ->
         await registry.register ['test'],
           metadata:
-            schema:
+            definitions:
               config:
                 type: 'object'
                 properties:
@@ -103,7 +103,7 @@ describe 'plugins.tools.schema', ->
       nikita ({registry}) ->
         await registry.register ['test'],
           metadata:
-            schema:
+            definitions:
               config:
                 type: 'object'
                 properties:
@@ -121,7 +121,7 @@ describe 'plugins.tools.schema', ->
       nikita ({registry}) ->
         await registry.register ['test'],
           metadata:
-            schema:
+            definitions:
               config:
                 type: 'object'
                 properties:
@@ -147,7 +147,7 @@ describe 'plugins.tools.schema', ->
     it 'invalid ref definition', ->
       nikita
       .call
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'an_object': $ref: 'malformed/uri'
@@ -163,13 +163,13 @@ describe 'plugins.tools.schema', ->
     it 'invalid ref definition', ->
       nikita
       .registry.register ['test', 'schema'],
-        metadata: schema: config:
+        metadata: definitions: config:
           type: 'object'
           properties:
             'an_integer': type: 'integer'
         handler: (->)
       .call
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://test/schema#/definitions/config'
@@ -186,7 +186,7 @@ describe 'plugins.tools.schema', ->
     it 'invalid protocol', ->
       nikita
       .call
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'a_key': $ref: 'invalid://protocol'
@@ -203,7 +203,7 @@ describe 'plugins.tools.schema', ->
     it 'valid', ->
       nikita
       .call
-        $schema:
+        $definitions:
           config:
             type: 'object'
             properties:
@@ -223,7 +223,7 @@ describe 'plugins.tools.schema', ->
     it 'invalid ref location', ->
       nikita.call
         an_object: an_integer: 'abc'
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'an_object': $ref: 'module://invalid/action'
@@ -245,7 +245,7 @@ describe 'plugins.tools.schema', ->
           content: '''
           module.exports = {
             metadata: {
-              schema: {
+              definitions: {
                 config: {
                   type: 'object',
                   properties: {
@@ -260,7 +260,7 @@ describe 'plugins.tools.schema', ->
           '''
         # Valid schema
         {config} = await @call
-          $schema:
+          $definitions:
             config:
               type: 'object'
               properties:
@@ -275,7 +275,7 @@ describe 'plugins.tools.schema', ->
     it 'invalid ref location', ->
       nikita.call
         an_object: an_integer: 'abc'
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://invalid/action'
@@ -291,7 +291,7 @@ describe 'plugins.tools.schema', ->
     it 'valid ref location', ->
       nikita
       .registry.register ['test', 'schema'],
-        metadata: schema:
+        metadata: definitions:
           config:
             type: 'object'
             properties:
@@ -300,7 +300,7 @@ describe 'plugins.tools.schema', ->
         handler: (->)
       # Valid schema
       .call
-        $schema:
+        $definitions:
           config:
             type: 'object'
             properties:
@@ -312,7 +312,7 @@ describe 'plugins.tools.schema', ->
 
     it 'invalid ref location', ->
       nikita.call
-        $schema: config:
+        $definitions: config:
           type: 'object'
           properties:
             'an_object': $ref: 'registry://invalid/action'

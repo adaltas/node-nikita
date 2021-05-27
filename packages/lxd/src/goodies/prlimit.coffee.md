@@ -26,9 +26,9 @@ const {stdout, limits} = await nikita.lxc.goodies.prlimit({
 console.info( `${stdout} ${JSON.decode(limits)}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -71,7 +71,7 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true
 
 ## Dependencies

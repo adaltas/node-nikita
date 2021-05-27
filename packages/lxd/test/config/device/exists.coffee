@@ -12,13 +12,13 @@ describe 'lxc.config.device.exists', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-exists-1'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-device-exists-1'
       {exists} = await @lxc.config.device.exists
-        container: 'c1'
+        container: 'nikita-config-device-exists-1'
         device: 'test'
       exists.should.be.false()
 
@@ -27,19 +27,19 @@ describe 'lxc.config.device.exists', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-exists-2'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-device-exists-2'
       @lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-device-exists-2'
         device: 'test'
         type: 'unix-char'
         properties:
           source: '/dev/urandom'
           path: '/testrandom'
       {exists} = await @lxc.config.device.exists
-        container: 'c1'
+        container: 'nikita-config-device-exists-2'
         device: 'test'
       exists.should.be.true()

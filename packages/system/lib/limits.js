@@ -126,13 +126,13 @@
 // * `$status`   
 //   Value is "true" if limits configuration file has been modified.
 
-// ## Schema
+// ## Schema definitions
 
 // Refer to the [limits.conf(5)](https://linux.die.net/man/5/limits.conf) Linux man
 // page for further information.
-var handler, regexp, schema;
+var definitions, handler, regexp;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -410,7 +410,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

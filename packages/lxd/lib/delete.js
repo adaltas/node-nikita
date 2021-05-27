@@ -12,10 +12,10 @@
 // console.info(`Container was deleted: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -46,6 +46,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'container',
-    schema: schema
+    definitions: definitions
   }
 };

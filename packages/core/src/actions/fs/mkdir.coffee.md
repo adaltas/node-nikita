@@ -38,9 +38,9 @@ console.info(`Directory was created: ${status}`)
       config.parent ?= {}
       config.parent = {} if config.parent is true
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -148,7 +148,7 @@ console.info(`Directory was created: ${status}`)
         on_action: on_action
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

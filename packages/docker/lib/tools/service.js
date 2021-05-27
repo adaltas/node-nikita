@@ -8,10 +8,10 @@
 // Indeed, in a service mode, the container must be detached and NOT removed by default
 // after execution. 
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     allOf: [
@@ -67,6 +67,6 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

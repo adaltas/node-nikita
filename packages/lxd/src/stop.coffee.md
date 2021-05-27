@@ -14,9 +14,9 @@ const { $status } = await nikita.lxc.stop({
 console.info(`The container was stopped: ${$status}`);
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -64,4 +64,4 @@ console.info(`The container was stopped: ${$status}`);
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

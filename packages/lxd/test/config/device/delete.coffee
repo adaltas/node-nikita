@@ -12,14 +12,14 @@ describe 'lxc.config.device.delete', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-delete-1'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-device-delete-1'
       {$status} = await @lxc.config.device.delete
         device: 'nondevice'
-        container: 'c1'
+        container: 'nikita-config-device-delete-1'
       $status.should.be.false()
 
   they 'Delete a device', ({ssh}) ->
@@ -27,13 +27,13 @@ describe 'lxc.config.device.delete', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-delete-2'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-device-delete-2'
       @lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-device-delete-2'
         device: 'test'
         type: 'unix-char'
         properties:
@@ -41,5 +41,5 @@ describe 'lxc.config.device.delete', ->
           path: '/testrandom'
       {$status} = await @lxc.config.device.delete
         device: 'test'
-        container: 'c1'
+        container: 'nikita-config-device-delete-2'
       $status.should.be.true()

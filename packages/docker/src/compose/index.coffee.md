@@ -15,9 +15,9 @@ Create and start containers according to a docker-compose file
 *   `stderr`   
     Stderr value(s) unless `stderr` option is provided.   
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -122,7 +122,7 @@ Create and start containers according to a docker-compose file
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -52,9 +52,9 @@ containers:
     provision_container: path/to/action
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -317,7 +317,7 @@ containers:
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

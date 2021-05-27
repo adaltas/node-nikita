@@ -18,10 +18,10 @@
 // console.info(`Network was detached: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -51,6 +51,6 @@ ${['lxc', 'network', 'detach', config.network, config.container].join(' ')}`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

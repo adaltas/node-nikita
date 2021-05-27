@@ -20,11 +20,11 @@
   // console.info(`File downloaded: ${$status}`)
   // ```
 
-// ## Schema
-var errors, handler, path, protocols_ftp, protocols_http, schema, url, utils,
+// ## Schema definitions
+var definitions, errors, handler, path, protocols_ftp, protocols_http, url, utils,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -317,7 +317,7 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'source',
-    schema: schema
+    definitions: definitions
   }
 };
 

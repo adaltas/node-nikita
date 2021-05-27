@@ -15,10 +15,10 @@
 // console.info(`Properties:`, properties)
 // ```
 
-// ## Schema
-var handler, quote, schema;
+// ## Schema definitions
+var definitions, handler, quote;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -95,7 +95,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

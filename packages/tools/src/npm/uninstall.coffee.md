@@ -15,9 +15,9 @@ const {$status} = await nikita.tools.npm.uninstall({
 console.info(`Package was uninstalled: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -66,4 +66,4 @@ console.info(`Package was uninstalled: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

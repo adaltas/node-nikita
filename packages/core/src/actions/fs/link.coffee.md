@@ -23,9 +23,9 @@ const {status} = await nikita.fs.link({
 console.info(`Link was created: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,4 +98,4 @@ console.info(`Link was created: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

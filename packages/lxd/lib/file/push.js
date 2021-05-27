@@ -21,10 +21,10 @@
 // * Handle unmatched target ownerships
 // * Detect name from lxd_target
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -168,7 +168,7 @@ module.exports = {
   handler: handler,
   metadata: {
     tmpdir: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

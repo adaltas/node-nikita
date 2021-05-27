@@ -17,9 +17,9 @@ const {$status} = await nikita.service.remove([{
 console.info(`Package or service was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -102,7 +102,7 @@ console.info(`Package or service was removed: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

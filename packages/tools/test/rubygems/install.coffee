@@ -70,15 +70,15 @@ describe 'tools.rubygems.install', ->
         name: 'execjs'
       await @tools.rubygems.fetch
         name: 'execjs'
-        version: '2.7.0'
+        version: '2.8.1'
         cwd: "#{tmpdir}"
       {$status} = await @tools.rubygems.install
         name: 'execjs'
-        source: "#{tmpdir}/execjs-2.7.0.gem"
+        source: "#{tmpdir}/execjs-2.8.1.gem"
       $status.should.be.true()
       {$status} = await @tools.rubygems.install
         name: 'execjs'
-        version: '2.7.0'
+        version: '2.8.1'
       $status.should.be.false()
       await @tools.rubygems.remove
         name: 'execjs'

@@ -3,10 +3,10 @@
 
 // Write log to custom destinations in a user provided format.
 
-// ## Schema
-var fs, handler, path, schema;
+// ## Schema definitions
+var definitions, fs, handler, path;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -138,7 +138,7 @@ module.exports = {
   ssh: false,
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

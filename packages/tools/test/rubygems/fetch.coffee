@@ -33,7 +33,7 @@ describe 'tools.rubygems.fetch', ->
         name: 'execjs'
         cwd: "#{tmpdir}"
       $status.should.be.true()
-      filename.should.eql 'execjs-2.7.0.gem'
-      filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
+      filename.should.eql 'execjs-2.8.1.gem'
+      filepath.should.eql "#{tmpdir}/execjs-2.8.1.gem"
       @fs.assert
-        target: "#{tmpdir}/execjs-2.7.0.gem"
+        target: "#{tmpdir}/execjs-2.8.1.gem"

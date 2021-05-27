@@ -16,9 +16,9 @@ const {$status} = await nikita.system.authconfig({
 console.info(`Was the configudation updated ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -62,7 +62,7 @@ console.info(`Was the configudation updated ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -41,9 +41,9 @@ assert(files[0].isFile(), true)
     on_action = ({config, metadata}) ->
       config.extended ?= config.withFileTypes if config.withFileTypes?
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -122,7 +122,7 @@ assert(files[0].isFile(), true)
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

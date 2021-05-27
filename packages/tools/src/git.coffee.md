@@ -21,9 +21,9 @@ const {$status} = await nikita.tools.git({
 console.info(`Repo was synchronized: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -84,4 +84,4 @@ console.info(`Repo was synchronized: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

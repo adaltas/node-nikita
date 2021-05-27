@@ -9,9 +9,9 @@ Reload the service daemon provider depending on the os.
 * `$status`   
   Indicates if the init script was reloaded.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -96,6 +96,6 @@ Reload the service daemon provider depending on the os.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 [sysvinit vs systemd]:(https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference)

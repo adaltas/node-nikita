@@ -10,10 +10,10 @@
 // console.info(`LXD networks: ${list}`);
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {};
+definitions = {};
 
 // ## Handler
 handler = async function({config}) {
@@ -39,7 +39,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema,
+    definitions: definitions,
     shy: true
   }
 };

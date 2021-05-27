@@ -47,9 +47,9 @@ The default implementation use the `getent passwd` command. It is possible to
 read an alternative `/etc/passwd` file by setting the `target` option to the
 targeted file.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -105,7 +105,7 @@ targeted file.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true
 
 ## Dependencies

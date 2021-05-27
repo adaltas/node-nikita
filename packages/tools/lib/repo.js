@@ -13,10 +13,10 @@
 // console.info(`Repo was updated: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -198,7 +198,7 @@ yum repolist`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

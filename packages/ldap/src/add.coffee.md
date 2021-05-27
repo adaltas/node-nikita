@@ -26,9 +26,9 @@ console.info(`Entry modified: ${$status}`)
     on_action = ({config}) ->
       config.entry = [config.entry] unless Array.isArray config.entry
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -134,7 +134,7 @@ console.info(`Entry modified: ${$status}`)
         on_action: on_action
       metadata:
         global: 'ldap'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

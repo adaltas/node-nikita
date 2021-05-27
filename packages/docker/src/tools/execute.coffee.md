@@ -3,9 +3,9 @@
 
 Execute a docker command.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         allOf: [
@@ -137,7 +137,7 @@ Execute a docker command.
       #   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
       metadata:
         argument_to_config: 'command'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

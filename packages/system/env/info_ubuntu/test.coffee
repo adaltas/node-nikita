@@ -7,7 +7,7 @@ module.exports =
     os:
       arch: 'x86_64'
       distribution: 'ubuntu'
-      linux_version: /4\.19\.\d+/
+      linux_version: /5\.10\.\d+/
       version: '20.10'
   config: [
     label: 'local'

@@ -19,9 +19,9 @@ const {$status} = await nikita.service.stop([{
 console.info(`Service was stopped: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -68,4 +68,4 @@ console.info(`Service was stopped: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

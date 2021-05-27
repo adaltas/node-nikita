@@ -17,9 +17,9 @@ const {config} = await nikita.lxc.state({
 console.info(config)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -44,7 +44,7 @@ console.info(config)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Output example
 

@@ -4,9 +4,9 @@
 Ceph is posix-compliant distributed file system. Writes [configuration
 file][ceph-conf] as Ceph daemons expect it.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -64,7 +64,7 @@ file][ceph-conf] as Ceph daemons expect it.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

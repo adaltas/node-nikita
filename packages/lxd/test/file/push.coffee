@@ -10,7 +10,7 @@ describe 'lxc.file.push', ->
 
     it 'mode symbolic', ->
       nikita.lxc.file.push
-        container: 'c1'
+        container: 'nikita-file-push'
         target: '/root/a_file'
         content: 'something'
         mode: 'u=rwx'
@@ -19,7 +19,7 @@ describe 'lxc.file.push', ->
 
     it 'mode coercion', ->
       nikita.lxc.file.push
-        container: 'c1'
+        container: 'nikita-file-push'
         target: '/root/a_file'
         content: 'something'
         mode: '700'

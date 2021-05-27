@@ -18,9 +18,9 @@ used for comparaison.
 * `hash`   
   The hash of the file or directory identified by the "target" option.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,7 +98,7 @@ used for comparaison.
       metadata:
         argument_to_config: 'target'
         shy: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

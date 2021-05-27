@@ -14,10 +14,10 @@
 // console.info(`Did database existed initially: ${!$status}`)
 // ```
 
-// ## Schema
-var command, handler, schema;
+// ## Schema definitions
+var command, definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -71,7 +71,7 @@ module.exports = {
   metadata: {
     argument_to_config: 'database',
     global: 'db',
-    schema: schema
+    definitions: definitions
   }
 };
 

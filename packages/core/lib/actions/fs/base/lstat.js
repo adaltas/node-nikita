@@ -4,10 +4,10 @@
 // Retrieve file information. If path is a symbolic link, then the link itself is
 // stated, not the file that it refers to.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -35,6 +35,6 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   }
 };

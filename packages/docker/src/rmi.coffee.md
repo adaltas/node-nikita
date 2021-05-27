@@ -11,9 +11,9 @@ force options is set.
 * `status`   
   True if image was removed.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -72,4 +72,4 @@ force options is set.
       metadata:
         argument_to_config: 'image'
         global: 'docker'
-        schema: schema
+        definitions: definitions

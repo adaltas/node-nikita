@@ -12,20 +12,20 @@ describe 'lxc.config.device.show', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-show-1'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-show-1'
       @lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-show-1'
         device: 'test'
         type: 'unix-char'
         properties:
           source: '/dev/urandom'
           path: '/testrandom'
       {$status, properties} = await @lxc.config.device.show
-        container: 'c1'
+        container: 'nikita-config-show-1'
         device: 'test'
       $status.should.be.true()
       properties.should.eql

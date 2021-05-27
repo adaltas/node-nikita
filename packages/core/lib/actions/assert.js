@@ -41,7 +41,7 @@
 // ```
 
 // ## Hooks
-var on_action, schema, utils;
+var definitions, on_action, utils;
 
 on_action = function(action) {
   return action.handler = (function(handler) {
@@ -93,8 +93,8 @@ on_action = function(action) {
   })(action.handler);
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -118,7 +118,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -21,9 +21,9 @@ const {$status} = await nikita.lxc.storage({
 console.info(`Storage was created or config updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -88,7 +88,7 @@ console.info(`Storage was created or config updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

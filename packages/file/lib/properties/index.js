@@ -17,10 +17,10 @@
 // console.info(`File was written: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -182,6 +182,6 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

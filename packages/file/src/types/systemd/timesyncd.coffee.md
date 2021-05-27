@@ -33,9 +33,9 @@ const {$status} = await nikita.file.types.systemd.timesyncd({
 console.info(`File was written: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -108,7 +108,7 @@ under a "Time" key so that the user doesn't have to do it manually.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -11,9 +11,9 @@ const {data} = await nikita.fs.base.readFile({
 console.info(data)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -54,4 +54,4 @@ console.info(data)
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

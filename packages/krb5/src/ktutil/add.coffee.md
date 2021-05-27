@@ -15,9 +15,9 @@ const {$status} = await nikita.krb5.ktutil.add({
 console.info(`Keytab was created or modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -151,7 +151,7 @@ console.info(`Keytab was created or modified: ${$status}`)
       handler: handler
       metadata:
         global: 'krb5'
-        schema: schema
+        definitions: definitions
 
 ## Fields in 'getprinc -terse' output
 

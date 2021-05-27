@@ -2,17 +2,21 @@
 sort: 12
 ---
 
-# Configuration schema
+# Schema definitions
 
-The configuration schema validates the [configuration properties](/current/api/config) provided to an action. 
+The configuration schema validates the [properties](/current/api/config) provided to and returned by an action. 
 
-While defining a schema is optional, all the actions available Nikita define a schema. It is used for validation but it also provides additional functionalities such as a default value and coercion. An action can also partially or fully inherit from the properties of other actions. Nikita unifies the declaration of configuration properties using the `schema` metadata property. When the action properties don't conform with the schema, the action is rejected with the `NIKITA_SCHEMA_VALIDATION_CONFIG` error.
+Schema definition is optional but all the actions available in Nikita define a schema. It is used for validation but it also provides additional functionalities such as default values and coercion.
 
-A schema is defined using the [JSON Schema](https://ajv.js.org/json-schema.html) specification. Literally, it is a JavaScript object with validation keywords. Internally, Nikita uses the [Ajv](https://ajv.js.org/) library.
+An action can partially or fully inherit from the properties of other actions. Nikita unifies the declaration of schemas using the `definitions` metadata property.
+
+When the action properties don't conform with the schema, the action is rejected with the `NIKITA_SCHEMA_VALIDATION_CONFIG` error.
+
+Schema leverages the [JSON Schema](https://ajv.js.org/json-schema.html) specification. Literally, it is a JavaScript object with validation keywords. Internally, the [Ajv](https://ajv.js.org/) library is used.
 
 ## Basic schema definition
 
-To define a schema, pass its configuration to the `schema` metadata. For example, when registering an action:
+To define a schema, use to the `definitions` metadata. For example, when registering an action:
 
 ```js
 nikita
@@ -20,13 +24,15 @@ nikita
 .registry.register('my_action', {
   metadata: {
     // highlight-range{1-10}
-    schema: {
-      type: 'object',
-      properties: {
-        'my_config': {
-          type: 'string',
-          default: 'my value',
-          description: 'My configuration property.'
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          'my_config': {
+            type: 'string',
+            default: 'my value',
+            description: 'My configuration property.'
+          }
         }
       }
     }
@@ -44,20 +50,22 @@ nikita
 
 The above example defines the configuration property `my_config`. It is of type `string`, the default value is `my value` and it has a description. 
 
-It is also possible to provide the `schema` metadata when calling the action. The same action as above could be written as:
+It is also possible to provide the `definition` metadata when calling the action. The same action as above could be written as:
 
 ```js
 nikita
 // Call an action
 .call({
   // highlight-range{1-10}
-  $schema: {
-    type: 'object',
-    properties: {
-      'my_config': {
-        type: 'string',
-        default: 'my value',
-        description: 'My configuration property.'
+  $definitions: {
+    'config': {
+      type: 'object',
+      properties: {
+        'my_config': {
+          type: 'string',
+          default: 'my value',
+          description: 'My configuration property.'
+        }
       }
     }
   }
@@ -78,16 +86,18 @@ nikita
 // Registering an action with a required property
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        // highlight-range{1-3}
-        'my_config': {
-          type: 'string'
-        }
-      },
-      // highlight-next-line
-      required: ['my_config']
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          // highlight-range{1-3}
+          'my_config': {
+            type: 'string'
+          }
+        },
+        // highlight-next-line
+        required: ['my_config']
+      }
     }
   },
   handler: () => {
@@ -107,20 +117,22 @@ nikita
 // Registering an action with a conditionally required property
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        // highlight-range{1-3}
-        'my_flag': {
-          type: 'boolean',
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          // highlight-range{1-3}
+          'my_flag': {
+            type: 'boolean',
+          },
+          'my_config': {
+            type: 'string'
+          }
         },
-        'my_config': {
-          type: 'string'
-        }
-      },
-      // highlight-range{1-2}
-      if: {properties: {'my_flag': {const: true}}},
-      then: {required: ['my_config']}
+        // highlight-range{1-2}
+        if: {properties: {'my_flag': {const: true}}},
+        then: {required: ['my_config']}
+      }
     }
   },
   handler: ({config}) => {
@@ -139,19 +151,23 @@ nikita
 
 ## Coercing data types
 
-The data types of the passed properties are coerced to the types specified in the action schema. For example, when passing a number value to a string-type property, it is coerced to a string:
+Type coercion is about changing a value from one data type to another. For example a integer could be converted to a string with numeric characters.
+
+Based on the schema definitions, the action arguments are automatically converted to the targeted types before executing the action handler. In this example, the `my_config` configuration is defined as a string. If a user call the action with an integer, it is coerced to a string:
 
 ```js
 nikita
 // Registering an action with schema
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        'my_config': {
-          // highlight-next-line
-          type: 'string'
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          'my_config': {
+            // highlight-next-line
+            type: 'string'
+          }
         }
       }
     }
@@ -181,14 +197,16 @@ nikita
 // Registering an action with pattern properties
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        'my_config': {
-          // highlight-next-line
-          type: ['string', 'number']
-        }
-      },
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          'my_config': {
+            // highlight-next-line
+            type: ['string', 'number']
+          }
+        },
+      }
     }
   },
   handler: ({config}) => {
@@ -213,7 +231,7 @@ Be careful when using the alternative [`oneOf` keyword](https://ajv.js.org/json-
 
 Refers the [Ajv documentation](https://ajv.js.org/coercion.html#coercion-from-string-values) to learn more.
 
-## Referencing properties
+## Referencing internal properties
 
 To reference a property defined in another action, use the `$ref` keyword.
 
@@ -224,19 +242,19 @@ nikita
 // Registering an action with a referenced properties
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        'my_config': {
-          // highlight-next-line
-          $ref: '#/definitions/my_referenced_config',
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          'my_config': {
+            // highlight-next-line
+            $ref: '#/definitions/config/my_referenced_config',
+          },
         },
       },
       // highlight-range{1-5}
-      definitions: {
-        my_referenced_config: {
-          type: 'string'
-        }
+      my_referenced_config: {
+        type: 'string'
       }
     }
   },
@@ -246,6 +264,8 @@ nikita
 })
 ```
 
+## Referencing external properties
+
 To reference a property in an external action, Nikita introduces two discovery mechanisms.
 
 The `module://` prefix search for the action exported in the location defined after the prefix. It uses the [Node.js module discovery algorithm](https://nodejs.org/api/modules.html#modules_all_together).
@@ -253,22 +273,27 @@ The `module://` prefix search for the action exported in the location defined af
 ```js
 nikita
 // Registering an action with referenced properties
-.registry.register('ls', {
+.registry.register('ping', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        // highlight-range{1-3}
-        'target': {
-          $ref: 'module://@nikitajs/core/lib/actions/fs/base/readdir#/properties/target'
-        }
-      },
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          // highlight-range{1-3}
+          'target': {
+            $ref: 'module://@nikitajs/core/lib/actions/fs/base/readdir#/definitions/config/properties/target'
+          }
+        },
+      }
     }
   },
   handler: ({config}) => {
     // Do something
+    return typeof config.message
   }
 })
+// Calling `ping` return "string"
+.ping({ target: 'pong' })
 ```
 
 The `registry://` prefix search for an action present in the [registry](/current/guide/registry/):
@@ -278,13 +303,15 @@ nikita
 // Registering an action
 .registry.register(['my', 'first', 'action'], {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        // highlight-range{1-4}
-        'my_config': {
-          type: 'string',
-          default: 'my value'
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          // highlight-range{1-4}
+          'my_config': {
+            type: 'string',
+            default: 'my value'
+          }
         }
       }
     }
@@ -296,13 +323,15 @@ nikita
 // Registering an action with referenced properties
 .registry.register(['my', 'second', 'action'], {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        // Referencing via registry
-        // highlight-range{1-3}
-        'my_config': {
-          $ref: 'registry://my/first/action#/properties/my_config'
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          // Referencing via registry
+          // highlight-range{1-3}
+          'my_config': {
+            $ref: 'registry://my/first/action#/definitions/config/properties/my_config'
+          }
         }
       }
     }
@@ -324,12 +353,14 @@ nikita
 // Registering an action with a referenced properties
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      // highlight-range{1-5}
-      patternProperties: {
-        'my_.*': {
-          type: 'string'
+    definitions: {
+      'config': {
+        type: 'object',
+        // highlight-range{1-5}
+        patternProperties: {
+          'my_.*': {
+            type: 'string'
+          }
         }
       }
     }
@@ -351,15 +382,17 @@ nikita
 // Registering an action with pattern properties
 .registry.register('my_action', {
   metadata: {
-    schema: {
-      type: 'object',
-      properties: {
-        'my_config': {
-          type: 'string'
-        }
-      },
-      // highlight-next-line
-      additionalProperties: false
+    definitions: {
+      'config': {
+        type: 'object',
+        properties: {
+          'my_config': {
+            type: 'string'
+          }
+        },
+        // highlight-next-line
+        additionalProperties: false
+      }
     }
   },
   handler: ({config}) => {

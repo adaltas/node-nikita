@@ -17,9 +17,9 @@ nikita(async function(){
 })
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         allOf: [
@@ -124,8 +124,7 @@ nikita(async function(){
     module.exports =
       handler: handler
       metadata:
-        schema: schema
-      # ssh: false
+        definitions: definitions
 
 ## Dependencies
 

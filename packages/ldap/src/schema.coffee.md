@@ -16,9 +16,9 @@ const {$status} = await nikita.ldap.schema({
 console.info(`Schema created or modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -136,4 +136,4 @@ console.info(`Schema created or modified: ${$status}`)
       metadata:
         tmpdir: true
         global: 'ldap'
-        schema: schema
+        definitions: definitions

@@ -35,11 +35,11 @@
   // console.info(`Systcl was reloaded: ${$status}`)
   // ```
 
-// ## Schema
-var handler, schema, utils,
+// ## Schema definitions
+var definitions, handler, utils,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -184,7 +184,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

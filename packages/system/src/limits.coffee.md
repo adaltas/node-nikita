@@ -126,12 +126,12 @@ console.log(`Limits modified: ${$status}`);
 * `$status`   
   Value is "true" if limits configuration file has been modified.
 
-## Schema
+## Schema definitions
 
 Refer to the [limits.conf(5)](https://linux.die.net/man/5/limits.conf) Linux man
 page for further information.
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -346,7 +346,7 @@ page for further information.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

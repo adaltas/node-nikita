@@ -31,9 +31,9 @@ int, default to 3.
 
 We might think about re-integrating them.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,4 +78,4 @@ We might think about re-integrating them.
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

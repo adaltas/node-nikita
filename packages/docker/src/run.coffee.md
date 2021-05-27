@@ -34,9 +34,9 @@ console.info(`Container was run: ${$status}`)
       config.name ?= config.container
       config.expose = parseInt config.expose if typeof config.expose is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -278,4 +278,4 @@ console.info(`Container was run: ${$status}`)
         on_action: on_action
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

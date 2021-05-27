@@ -33,9 +33,9 @@ const {$status} = await nikita.docker.cp({
 console.info(`Container was copied: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,7 +98,7 @@ console.info(`Container was copied: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

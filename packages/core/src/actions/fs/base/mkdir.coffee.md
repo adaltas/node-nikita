@@ -3,9 +3,9 @@
 
 Create a directory. Missing parent directories are created as required.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -51,7 +51,7 @@ Create a directory. Missing parent directories are created as required.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

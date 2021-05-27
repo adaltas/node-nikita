@@ -14,10 +14,10 @@
 // console.info(`Cron entry created or modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema, util, utils;
+// ## Schema definitions
+var definitions, handler, util, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -152,7 +152,7 @@ ${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}`
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

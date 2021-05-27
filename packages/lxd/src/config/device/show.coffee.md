@@ -23,9 +23,9 @@ console.info(properties)
 // type: proxy } }
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -53,5 +53,5 @@ console.info(properties)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

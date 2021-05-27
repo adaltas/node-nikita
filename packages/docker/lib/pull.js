@@ -23,10 +23,10 @@
 // console.info(`Image was pulled: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -83,6 +83,6 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };

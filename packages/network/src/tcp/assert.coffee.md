@@ -30,9 +30,9 @@ Assert a TCP or HTTP server is listening.
       config.server = srvs
       config.server = utils.array.flatten config.server
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,7 +78,7 @@ Assert a TCP or HTTP server is listening.
         on_action: require('./wait').hooks.on_action
       metadata:
         shy: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

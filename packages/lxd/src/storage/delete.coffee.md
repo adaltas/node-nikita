@@ -17,9 +17,9 @@ const {$status} = await nikita.lxc.storage.delete({
 console.info(`Storage was deleted: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -53,4 +53,4 @@ console.info(`Storage was deleted: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

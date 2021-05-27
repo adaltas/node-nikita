@@ -108,9 +108,9 @@ Here is how the output may look like:
     mountpoint: '/dev/shm' } ]
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -156,7 +156,7 @@ Here is how the output may look like:
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true
 
 ## Dependencies

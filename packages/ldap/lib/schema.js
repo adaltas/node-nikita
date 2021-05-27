@@ -16,10 +16,10 @@
 // console.info(`Schema created or modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -56,7 +56,7 @@ handler = async function({
     metadata: {tmpdir},
     tools: {log}
   }) {
-  var $status, binddn, conf, ldif, passwd, uri;
+  var $status, binddn, conf, ldif, passwd, schema, uri;
   // Auth related config
   binddn = config.binddn ? `-D ${config.binddn}` : '';
   passwd = config.passwd ? `-w ${config.passwd}` : '';
@@ -185,6 +185,6 @@ module.exports = {
   metadata: {
     tmpdir: true,
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };

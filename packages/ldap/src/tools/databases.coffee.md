@@ -17,9 +17,9 @@ databases.map( database => {
 })
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         allOf: [
@@ -50,7 +50,7 @@ databases.map( database => {
       handler: handler
       metadata:
         global: 'ldap'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

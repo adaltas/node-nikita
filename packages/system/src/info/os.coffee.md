@@ -21,11 +21,11 @@ console.info('Version:', info.version)
 console.info('Linux version:', info.linux_version)
 ```
 
-## Schema
+## Schema definitions
 
 There is no config for this action.
 
-    schema =
+    definitions =
       'output':
         type: 'object'
         properties:
@@ -72,7 +72,7 @@ There is no config for this action.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true
 
 ## Dependencies

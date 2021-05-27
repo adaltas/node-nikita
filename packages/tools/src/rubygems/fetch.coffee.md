@@ -28,9 +28,9 @@ console.info(`Gem fetched: ${$status}`)
 We do not support gem returning specification with binary strings because we
 couldn't find any suitable parser on NPM.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -91,7 +91,7 @@ couldn't find any suitable parser on NPM.
       handler: handler
       metadata:
         global: 'ruby'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

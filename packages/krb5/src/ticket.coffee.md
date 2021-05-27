@@ -13,9 +13,9 @@ const {$status} = await nikita.krb5.ticket({
 console.info(`ticket was renewed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -64,7 +64,7 @@ console.info(`ticket was renewed: ${$status}`)
       handler: handler
       metadata:
         global: 'krb5'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

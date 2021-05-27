@@ -25,9 +25,9 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
         config.command = [config.command] if typeof config.command is 'string'
         config.quorum = config.command.length
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -120,7 +120,7 @@ console.info(`Command succeed, the file "/tmp/sth" now exists: ${$status}`)
         on_action: on_action
       metadata:
         argument_to_config: 'command'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

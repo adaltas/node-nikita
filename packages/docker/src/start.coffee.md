@@ -24,9 +24,9 @@ const {$status} = await nikita.docker.start({
 console.info(`Container was started: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -66,4 +66,4 @@ console.info(`Container was started: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

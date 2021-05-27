@@ -21,9 +21,9 @@ console.info(`File was compressed: ${$status}`)
 ```
 
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -95,6 +95,6 @@ type.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
       tools:
         ext_to_type: ext_to_type

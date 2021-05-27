@@ -4,9 +4,9 @@
 Yum is a packet manager for centos/redhat. It uses .repo file located in 
 "/etc/yum.repos.d/" directory to configure the list of available mirrors.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         required: ['target']
@@ -28,7 +28,7 @@ This action honors all the config from "nikita.file.ini".
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

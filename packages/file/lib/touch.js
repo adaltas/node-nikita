@@ -21,10 +21,10 @@
 // console.info(`File was touched: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -102,6 +102,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'target',
-    schema: schema
+    definitions: definitions
   }
 };

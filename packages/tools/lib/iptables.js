@@ -45,7 +45,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema, utils;
+var definitions, handler, on_action, utils;
 
 on_action = function({config}) {
   if (!Array.isArray(config.rules)) {
@@ -53,8 +53,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -210,7 +210,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

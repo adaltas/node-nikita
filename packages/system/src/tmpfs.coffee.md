@@ -15,9 +15,9 @@ the undefined value as '-', which does apply the os default behavior.
 
 Setting uid/gid to '-', make the os creating the target owned by root:root. 
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -128,7 +128,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

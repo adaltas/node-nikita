@@ -13,10 +13,10 @@
 // * `loader`   
 //   the init loader name   
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -86,6 +86,6 @@ exit 3 ;`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

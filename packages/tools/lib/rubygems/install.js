@@ -40,11 +40,11 @@
   // console.info(`Gem installed: ${$status}`)
   // ```
 
-// ## Schema
-var handler, schema, semver, utils,
+// ## Schema definitions
+var definitions, handler, semver, utils,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -198,7 +198,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ruby',
-    schema: schema
+    definitions: definitions
   }
 };
 

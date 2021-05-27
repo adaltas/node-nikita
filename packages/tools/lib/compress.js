@@ -20,10 +20,10 @@
 // console.info(`File was compressed: ${$status}`)
 // ```
 
-// ## Schema
-var ext_to_type, handler, schema;
+// ## Schema definitions
+var definitions, ext_to_type, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -113,7 +113,7 @@ ext_to_type = function(name, path) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   },
   tools: {
     ext_to_type: ext_to_type

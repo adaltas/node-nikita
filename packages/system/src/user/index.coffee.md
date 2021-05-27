@@ -43,9 +43,9 @@ you are a member of the "wheel" group (gid of "10") with the command
           config.shell = '/sbin/nologin'
       config.groups = config.groups.split ',' if typeof config.groups is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -243,7 +243,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         on_action: on_action
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

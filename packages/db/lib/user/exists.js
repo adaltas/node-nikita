@@ -21,10 +21,10 @@
 // * `port`   
 //   Port to the associated database.   
 
-// ## Schema
-var connection_config, handler, schema;
+// ## Schema definitions
+var connection_config, definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -66,7 +66,7 @@ module.exports = {
     argument_to_config: 'username',
     global: 'db',
     shy: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -15,7 +15,7 @@
 // "{config.basedir}/{time}/{config.filename}.log" and "{config.basedir}/latest".
 
 // ## Hooks
-var fs, handler, on_action, path, schema;
+var definitions, fs, handler, on_action, path;
 
 on_action = {
   before: ['@nikitajs/core/lib/plugins/metadata/schema'],
@@ -31,8 +31,8 @@ on_action = {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -111,13 +111,10 @@ module.exports = {
   hooks: {
     on_action: on_action
   },
-  // ssh: false
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
-
-// templated: true
 
 // ## Dependencies
 fs = require('fs');

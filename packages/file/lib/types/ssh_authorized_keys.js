@@ -5,10 +5,10 @@
 // this action will not attempt to create nor modify the parent directory and will
 // throw an Error if it does not exists.
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -85,7 +85,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

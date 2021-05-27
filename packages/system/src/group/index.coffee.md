@@ -28,9 +28,9 @@ The result of the above action can be viewed with the command
     on_action = ({config}) ->
       config.gid = parseInt config.gid, 10 if typeof config.gid is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -95,4 +95,4 @@ The result of the above action can be viewed with the command
         on_action: on_action
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

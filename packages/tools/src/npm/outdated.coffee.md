@@ -3,9 +3,9 @@
 
 List outdated Node.js packages with NPM.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -39,5 +39,5 @@ List outdated Node.js packages with NPM.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

@@ -35,9 +35,9 @@ console.info(`File exists: ${status}`)
     on_action = ({config, metadata}) ->
       config.filter = [config.filter] if config.filter instanceof RegExp
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -244,7 +244,7 @@ console.info(`File exists: ${status}`)
         on_action: on_action
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

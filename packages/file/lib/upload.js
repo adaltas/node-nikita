@@ -19,10 +19,10 @@
 // console.info(`File was uploaded: ${$status}`)
 // ```
 
-// ## Schema
-var fs, handler, path, schema, utils;
+// ## Schema definitions
+var definitions, fs, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -240,7 +240,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -14,9 +14,9 @@ const {$status} = await nikita.tools.npm.upgrade({
 console.info(`Packages were upgraded: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -67,7 +67,7 @@ console.info(`Packages were upgraded: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Note
 

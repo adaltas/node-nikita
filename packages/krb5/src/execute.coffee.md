@@ -17,9 +17,9 @@ console.info(`Command was executed: ${$status}`)
     on_action = ({config}) ->
       throw Error 'Deprecated config `egrep`' if config.egrep?
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -83,7 +83,7 @@ console.info(`Command was executed: ${$status}`)
         on_action: on_action
       metadata:
         global: 'krb5'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

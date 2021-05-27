@@ -50,9 +50,9 @@ console.info(Buffer.concat(buffers).toString())
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
         metadata.tmpdir ?= true if config.sudo
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -135,7 +135,7 @@ console.info(Buffer.concat(buffers).toString())
         log: false
         raw_output: true
         tmpdir: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

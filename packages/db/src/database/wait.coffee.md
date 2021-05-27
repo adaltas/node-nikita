@@ -14,9 +14,9 @@ const {$status} = await nikita.db.wait({
 console.info(`Did database existed initially: ${!$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -55,7 +55,7 @@ console.info(`Did database existed initially: ${!$status}`)
       metadata:
         argument_to_config: 'database'
         global: 'db'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

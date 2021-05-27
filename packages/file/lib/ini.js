@@ -41,10 +41,10 @@
 // console.info(`Content was updated: ${$status}`)
 // ```
 
-// ## Schema
-var handler, merge, schema, utils;
+// ## Schema definitions
+var definitions, handler, merge, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -207,7 +207,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

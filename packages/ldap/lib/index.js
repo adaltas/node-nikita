@@ -35,10 +35,10 @@
 // console.info(`Index created or modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -167,7 +167,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };
 

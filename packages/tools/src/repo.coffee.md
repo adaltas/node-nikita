@@ -13,9 +13,9 @@ const {$status} = await nikita.tools.repo({
 console.info(`Repo was updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -150,7 +150,7 @@ console.info(`Repo was updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

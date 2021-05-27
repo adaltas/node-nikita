@@ -4,11 +4,11 @@ The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
 object.
 */
-var Ajv, ajv_formats, ajv_keywords, instanceofDef, merge, parse, stream, utils;
+var Ajv, ajv_formats, ajv_keywords, instanceofDef, merge, mutate, parse, stream, utils;
 
 stream = require('stream');
 
-({merge} = require('mixme'));
+({merge, mutate} = require('mixme'));
 
 Ajv = require('ajv').default;
 
@@ -65,7 +65,7 @@ module.exports = {
           coerceTypes: 'array',
           loadSchema: function(uri) {
             return new Promise(async function(accept, reject) {
-              var err, module, pathname, protocol, schema;
+              var err, module, pathname, protocol;
               try {
                 ({protocol, pathname} = parse(uri));
               } catch (error) {
@@ -76,11 +76,9 @@ module.exports = {
                 case 'module:':
                   try {
                     action = require.main.require(pathname);
-                    schema = action.metadata.schema;
-                    schema = {
-                      definitions: action.metadata.schema
-                    };
-                    return accept(schema);
+                    return accept({
+                      definitions: action.metadata.definitions
+                    });
                   } catch (error) {
                     err = error;
                     return reject(utils.error('NIKITA_SCHEMA_INVALID_MODULE', ['the module location is not resolvable,', `module name is ${JSON.stringify(pathname)}.`]));
@@ -90,14 +88,9 @@ module.exports = {
                   module = pathname.split('/');
                   action = (await action.registry.get(module));
                   if (action) {
-                    schema = action.metadata.schema;
-                    schema = {
-                      definitions: action.metadata.schema
-                    };
-                    // schema =
-                    //   type: 'object'
-                    //   properties: action.metadata.schema
-                    return accept(schema);
+                    return accept({
+                      definitions: action.metadata.definitions
+                    });
                   } else {
                     return reject(utils.error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
                   }
@@ -158,7 +151,7 @@ module.exports = {
             var err, validate;
             try {
               if (schema == null) {
-                schema = action.metadata.schema;
+                schema = action.metadata.definitions;
               }
               schema = {
                 definitions: schema,
@@ -254,6 +247,16 @@ module.exports = {
         });
         return action;
       }
+    },
+    'nikita:schema': function({schema}) {
+      return mutate(schema.definitions.metadata.properties, {
+        schema: {
+          type: 'boolean',
+          default: true,
+          description: `Set to \`false\` to disable schema validation in the
+current action.`
+        }
+      });
     }
   }
 };

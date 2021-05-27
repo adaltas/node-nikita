@@ -15,13 +15,8 @@ module.exports =
   hooks:
     'nikita:schema': ({schema}) ->
       mutate schema.definitions.metadata.properties,
-        schema:
-          oneOf: [
-            type: 'boolean'
-            const: false
-          ,
-            type: 'object'
-          ]
+        definitions:
+          type: 'object'
           description: '''
           Schema definition or `false` to disable schema validation in the
           current action.

@@ -21,9 +21,9 @@ const {$status} = await nikita.file.touch({
 console.info(`File was touched: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -75,4 +75,4 @@ console.info(`File was touched: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions

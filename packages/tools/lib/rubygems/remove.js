@@ -24,10 +24,10 @@
 // will result with the error "{gem} is not installed in GEM_HOME, try: gem 
 // uninstall -i /usr/share/gems json"
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -81,6 +81,6 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ruby',
-    schema: schema
+    definitions: definitions
   }
 };

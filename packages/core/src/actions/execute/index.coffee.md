@@ -92,9 +92,9 @@ console.info(stdout)
             config.arch_chroot_tmpdir = path.join '/opt', tmpdir
             path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -463,7 +463,7 @@ console.info(stdout)
         on_action: on_action
       metadata:
         argument_to_config: 'command'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

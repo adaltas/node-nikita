@@ -23,9 +23,9 @@ const {$status} = await nikita.docker.kill({
 console.info(`Container was killed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -63,4 +63,4 @@ console.info(`Container was killed: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

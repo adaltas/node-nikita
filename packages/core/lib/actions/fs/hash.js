@@ -18,10 +18,10 @@
 // * `hash`   
 //   The hash of the file or directory identified by the "target" option.
 
-// ## Schema
-var crypto, errors, handler, schema, utils;
+// ## Schema definitions
+var crypto, definitions, errors, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -115,7 +115,7 @@ module.exports = {
   metadata: {
     argument_to_config: 'target',
     shy: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

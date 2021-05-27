@@ -13,7 +13,7 @@
 // ```
 
 // ## Hooks
-var handler, mutate, on_action, schema, utils;
+var definitions, handler, mutate, on_action, utils;
 
 on_action = function({config}) {
   if (config.egrep != null) {
@@ -21,8 +21,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -105,7 +105,7 @@ module.exports = {
   },
   metadata: {
     global: 'krb5',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -19,9 +19,9 @@ const {$status} = await nikita.docker.unpause({
 console.info(`Container was unpaused: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,4 +46,4 @@ console.info(`Container was unpaused: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

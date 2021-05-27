@@ -13,13 +13,13 @@ describe 'lxc.config.device', ->
     it 'Fail for invalid device type', ->
       nikita
       .lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-1'
         force: true
       .lxc.init
-        container: 'c1'
+        container: 'nikita-config-device-1'
         image: "images:#{images.alpine}"
       .lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-device-1'
         device: 'test'
         type: 'invalid'
         properties:
@@ -30,13 +30,13 @@ describe 'lxc.config.device', ->
     it 'Fail for absence of required config properties', ->
       nikita
       .lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-2'
         force: true
       .lxc.init
-        container: 'c1'
+        container: 'nikita-config-device-2'
         image: "images:#{images.alpine}"
       .lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-device-2'
         device: 'test'
         type: 'disk'
         properties:
@@ -47,13 +47,13 @@ describe 'lxc.config.device', ->
     it 'Fail for wrong type of config properties', ->
       nikita
       .lxc.delete
-        container: 'c1'
+        container: 'nikita-config-device-3'
         force: true
       .lxc.init
-        container: 'c1'
+        container: 'nikita-config-device-3'
         image: "images:#{images.alpine}"
       .lxc.config.device
-        container: 'c1'
+        container: 'nikita-config-device-3'
         device: 'test'
         type: 'disk'
         properties:
@@ -69,13 +69,13 @@ describe 'lxc.config.device', ->
         $ssh: ssh
       , ->
         @lxc.delete
-          container: 'c1'
+          container: 'nikita-config-device-4'
           force: true
         @lxc.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-config-device-4'
         {$status} = await @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-4'
           device: 'test'
           type: 'unix-char'
           properties:
@@ -83,7 +83,7 @@ describe 'lxc.config.device', ->
             path: '/testrandom'
         $status.should.be.true()
         {$status} = await @execute
-          command: "lxc config device list c1 | grep test"
+          command: "lxc config device list nikita-config-device-4 | grep test"
         $status.should.be.true()
 
     they 'Device already created', ({ssh}) ->
@@ -91,20 +91,20 @@ describe 'lxc.config.device', ->
         $ssh: ssh
       , ->
         @lxc.delete
-          container: 'c1'
+          container: 'nikita-config-device-5'
           force: true
         @lxc.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-config-device-5'
         @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom'
             path: '/testrandom'
         {$status} = await @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
           properties:
@@ -117,27 +117,27 @@ describe 'lxc.config.device', ->
         $ssh: ssh
       , ->
         @lxc.delete
-          container: 'c1'
+          container: 'nikita-config-device-5'
           force: true
         @lxc.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-config-device-5'
         @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/urandom1'
             path: '/testrandom1'
         {$status} = await @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
           properties:
             source: '/dev/null'
         $status.should.be.true()
         {$status} = await @execute
-          command: "lxc config device show c1 | grep 'source: /dev/null'"
+          command: "lxc config device show nikita-config-device-5 | grep 'source: /dev/null'"
         $status.should.be.true()
 
     they 'Catch and format error when creating device', ({ssh}) ->
@@ -145,13 +145,13 @@ describe 'lxc.config.device', ->
         $ssh: ssh
       , ->
         @lxc.delete
-          container: 'c1'
+          container: 'nikita-config-device-7'
           force: true
         @lxc.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-config-device-7'
         @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-7'
           device: 'vpn'
           type: 'proxy'
           properties:
@@ -170,20 +170,20 @@ describe 'lxc.config.device', ->
         $ssh: ssh
       , ->
         @lxc.delete
-          container: 'c1'
+          container: 'nikita-config-device-8'
           force: true
         @lxc.init
           image: "images:#{images.alpine}"
-          container: 'c1'
+          container: 'nikita-config-device-8'
         @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-8'
           device: 'vpn'
           type: 'proxy'
           properties:
             listen: 'udp:127.0.0.1:1195'
             connect: 'udp:127.0.0.1:1194'
         @lxc.config.device
-          container: 'c1'
+          container: 'nikita-config-device-8'
           device: 'vpn'
           type: 'proxy'
           properties:

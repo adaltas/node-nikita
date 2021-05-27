@@ -25,14 +25,14 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config}) {
   return config.output != null ? config.output : config.output = config.target;
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -83,6 +83,6 @@ module.exports = {
   },
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };

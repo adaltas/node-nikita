@@ -34,7 +34,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config}) {
   if (typeof config.pid === 'string') {
@@ -42,8 +42,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -160,6 +160,6 @@ module.exports = {
   },
   metadata: {
     // raw_output: true
-    schema: schema
+    definitions: definitions
   }
 };

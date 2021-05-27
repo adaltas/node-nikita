@@ -14,10 +14,10 @@
 // console.log(`Property was modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -62,6 +62,6 @@ gsettings set ${path} ${key} "${value}"`, {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

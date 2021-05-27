@@ -20,10 +20,10 @@
 
 // Run the command "dconf-editor" to navigate the database with a UI.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -71,6 +71,6 @@ dconf write ${key} "${value}"`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

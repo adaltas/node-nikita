@@ -18,9 +18,9 @@ const {$status} = await nikita.service.startup([{
 console.info(`Service was desactivated on startup: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -159,4 +159,4 @@ console.info(`Service was desactivated on startup: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

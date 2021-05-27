@@ -21,9 +21,9 @@ Check if a user exists in the database.
 * `port`   
   Port to the associated database.   
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -59,7 +59,7 @@ Check if a user exists in the database.
         argument_to_config: 'username'
         global: 'db'
         shy: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

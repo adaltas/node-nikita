@@ -35,9 +35,9 @@ const {$status} = await nikita.tools.sysctl({
 console.info(`Systcl was reloaded: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -139,7 +139,7 @@ console.info(`Systcl was reloaded: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

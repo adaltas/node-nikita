@@ -15,9 +15,9 @@ containers:
 predelete: path/to/action
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -61,4 +61,4 @@ predelete: path/to/action
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

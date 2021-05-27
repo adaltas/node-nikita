@@ -3,9 +3,9 @@
 
 Delete a name and possibly the file it refers to.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -37,4 +37,4 @@ Delete a name and possibly the file it refers to.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

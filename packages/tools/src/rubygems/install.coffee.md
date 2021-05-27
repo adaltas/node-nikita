@@ -40,9 +40,9 @@ const {$status} = await nikita.tools.rubygems.install({
 console.info(`Gem installed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -165,7 +165,7 @@ console.info(`Gem installed: ${$status}`)
       handler: handler
       metadata:
         global: 'ruby'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

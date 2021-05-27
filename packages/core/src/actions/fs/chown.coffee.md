@@ -31,9 +31,9 @@ find /var/tmp -uid 1000
 find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -92,4 +92,4 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       handler: handler
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions

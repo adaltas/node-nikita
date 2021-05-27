@@ -21,9 +21,9 @@ const {$status} = await nikita.krb5.addprinc({
 console.info(`Principal was created or modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,7 +98,7 @@ console.info(`Principal was created or modified: ${$status}`)
       handler: handler
       metadata:
         global: 'krb5'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

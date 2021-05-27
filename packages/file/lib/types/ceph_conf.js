@@ -4,10 +4,10 @@
 // Ceph is posix-compliant distributed file system. Writes [configuration
 // file][ceph-conf] as Ceph daemons expect it.
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -62,7 +62,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

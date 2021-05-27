@@ -12,25 +12,25 @@ describe 'lxc.config.set', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-set-1'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-set-1'
       {$status} = await @lxc.config.set
-        container: 'c1'
+        container: 'nikita-config-set-1'
         properties:
           'environment.MY_KEY_1': 'my value 1'
           'environment.MY_KEY_2': 'my value 2'
       $status.should.be.true()
       await @lxc.start
-        container: 'c1'
+        container: 'nikita-config-set-1'
       {stdout} = await @execute
-        command: "lxc exec c1 -- env | grep MY_KEY_1"
+        command: "lxc exec nikita-config-set-1 -- env | grep MY_KEY_1"
         trim: true
       stdout.should.eql 'MY_KEY_1=my value 1'
       {stdout} = await @execute
-        command: "lxc exec c1 -- env | grep MY_KEY_2"
+        command: "lxc exec nikita-config-set-1 -- env | grep MY_KEY_2"
         trim: true
       stdout.should.eql 'MY_KEY_2=my value 2'
 
@@ -39,18 +39,18 @@ describe 'lxc.config.set', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-config-set-2'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-config-set-2'
       {$status} = await @lxc.config.set
-        container: 'c1'
+        container: 'nikita-config-set-2'
         properties:
           'environment.MY_KEY_1': 'my value 1'
       $status.should.be.true()
       {$status} = await @lxc.config.set
-        container: 'c1'
+        container: 'nikita-config-set-2'
         properties:
           'environment.MY_KEY_1': 'my value 1'
       $status.should.be.false()

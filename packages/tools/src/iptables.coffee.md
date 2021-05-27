@@ -49,9 +49,9 @@ console.info(`Iptables was updated: ${$status}`)
     on_action = ({config}) ->
       config.rules = [config.rules] unless Array.isArray config.rules
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -182,7 +182,7 @@ console.info(`Iptables was updated: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

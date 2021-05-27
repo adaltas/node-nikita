@@ -76,9 +76,9 @@ console.info(`Servers listening: ${$status}`)
       config.server = srvs
       config.server = utils.array.flatten config.server
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -255,7 +255,7 @@ console.info(`Servers listening: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

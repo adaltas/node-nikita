@@ -17,9 +17,9 @@ const {$status} = await nikita.file.properties({
 console.info(`File was written: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -123,4 +123,4 @@ console.info(`File was written: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

@@ -19,9 +19,9 @@ const {$status} = await nikita.docker.volume_create({
 console.info(`Volume was created: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,4 +78,4 @@ console.info(`Volume was created: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

@@ -26,9 +26,9 @@ you are a member of the "wheel" group (gid of "10") with the command
 `id a\_user` producing an output similar to 
 "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -52,4 +52,4 @@ you are a member of the "wheel" group (gid of "10") with the command
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

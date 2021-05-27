@@ -19,9 +19,9 @@ const {$status} = await nikita.docker.volume_rm({
 console.info(`Volume was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -49,4 +49,4 @@ console.info(`Volume was removed: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

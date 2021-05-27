@@ -3,13 +3,13 @@
 
 // Write logs to the host filesystem in the CSV format.
 
-// ## Schema
+// ## Schema definitions
 
 // The `log.csv` action leverages the [`log.fs` action](/current/actions/log/fs/)
 // and honors all its configuration properties.
-var handler, merge, schema;
+var definitions, handler, merge;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     allOf: [
@@ -65,10 +65,9 @@ handler = function({config}) {
 
 // ## Exports
 module.exports = {
-  // ssh: false
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -30,9 +30,9 @@ fix is to prepend the init command with `echo '' | `.
 We do not honors the configuration (`-c`) argument. Use the `lxc.config.set` for
 now.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -112,4 +112,4 @@ now.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

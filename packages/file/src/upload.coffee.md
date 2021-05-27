@@ -19,9 +19,9 @@ const {$status} = await nikita.file.upload({
 console.info(`File was uploaded: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -174,7 +174,7 @@ console.info(`File was uploaded: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

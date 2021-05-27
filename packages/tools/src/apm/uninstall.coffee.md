@@ -3,9 +3,9 @@
 
 Remove one or more apm packages.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -38,4 +38,4 @@ Remove one or more apm packages.
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

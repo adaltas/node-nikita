@@ -15,7 +15,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = {
   after: '@nikitajs/core/lib/plugins/metadata/argument_to_config',
@@ -26,8 +26,8 @@ on_action = {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -86,6 +86,6 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'target',
-    schema: schema
+    definitions: definitions
   }
 };

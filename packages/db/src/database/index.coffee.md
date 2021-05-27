@@ -14,9 +14,9 @@ const {$status} = await nikita.database.db({
 console.info(`Database created or modified: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -107,7 +107,7 @@ console.info(`Database created or modified: ${status}`)
       metadata:
         argument_to_config: 'database'
         global: 'db'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

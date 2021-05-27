@@ -4,9 +4,9 @@
 HFile is an XML format used accros Hadoop components which contains keys and
 value properties.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -133,7 +133,7 @@ value properties.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## `parse(xml, [property])`
 

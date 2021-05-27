@@ -35,9 +35,9 @@ const {$status} = await nikita.ldap.index({
 console.info(`Index created or modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -135,7 +135,7 @@ console.info(`Index created or modified: ${$status}`)
       handler: handler
       metadata:
         global: 'ldap'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

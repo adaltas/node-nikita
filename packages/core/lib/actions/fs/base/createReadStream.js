@@ -37,7 +37,7 @@
 // ```
 
 // ## Hooks
-var errors, fs, handler, on_action, schema, utils;
+var definitions, errors, fs, handler, on_action, utils;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute'],
@@ -60,8 +60,8 @@ on_action = {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -194,7 +194,7 @@ module.exports = {
     log: false,
     raw_output: true,
     tmpdir: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

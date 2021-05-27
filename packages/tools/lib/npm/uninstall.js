@@ -15,11 +15,11 @@
   // console.info(`Package was uninstalled: ${$status}`)
   // ```
 
-// ## Schema
-var handler, schema,
+// ## Schema definitions
+var definitions, handler,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -94,6 +94,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };

@@ -57,11 +57,11 @@
   // }
   // ```
 
-// ## Schema
-var handler, merge, path, schema, utils,
+// ## Schema definitions
+var definitions, handler, merge, path, utils,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -324,7 +324,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

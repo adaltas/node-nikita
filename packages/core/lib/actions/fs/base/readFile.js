@@ -11,10 +11,10 @@
 // console.info(data)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -73,6 +73,6 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   }
 };

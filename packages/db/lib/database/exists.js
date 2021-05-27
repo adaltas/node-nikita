@@ -3,10 +3,10 @@
 
 // Check if a database exists.
 
-// ## Schema
-var command, handler, schema;
+// ## Schema definitions
+var command, definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -63,7 +63,7 @@ module.exports = {
     argument_to_config: 'database',
     global: 'db',
     shy: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

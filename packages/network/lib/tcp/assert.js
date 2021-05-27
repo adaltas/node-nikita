@@ -4,7 +4,7 @@
 // Assert a TCP or HTTP server is listening.
 
 // ## Hooks
-var handler, on_action, schema, utils;
+var definitions, handler, on_action, utils;
 
 on_action = function({config}) {
   var extract_servers, i, len, ref, srv, srvs;
@@ -64,8 +64,8 @@ on_action = function({config}) {
   return config.server = utils.array.flatten(config.server);
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -124,7 +124,7 @@ module.exports = {
   },
   metadata: {
     shy: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

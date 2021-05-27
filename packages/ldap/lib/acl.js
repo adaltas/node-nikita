@@ -27,7 +27,7 @@
 // ```
 
 // ## Hooks
-var handler, is_object_literal, merge, on_action, schema, utils;
+var definitions, handler, is_object_literal, merge, on_action, utils;
 
 on_action = function({config}) {
   if (is_object_literal(config.acls)) {
@@ -35,8 +35,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -278,7 +278,7 @@ module.exports = {
   },
   metadata: {
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };
 

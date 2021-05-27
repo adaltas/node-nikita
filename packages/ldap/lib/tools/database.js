@@ -17,10 +17,10 @@
 // })
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     allOf: [
@@ -66,7 +66,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };
 

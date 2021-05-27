@@ -20,10 +20,10 @@
 // console.info(`Content was updated: ${$status}`)
 // ```
 
-// ## Schema
-var cson, handler, merge, schema;
+// ## Schema definitions
+var cson, definitions, handler, merge;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -115,7 +115,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

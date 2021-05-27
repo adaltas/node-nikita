@@ -8,10 +8,10 @@
 // * `ssh` (boolean)   
 //   Return the SSH connection if any and if true, null if false.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -55,6 +55,6 @@ handler = function({config, siblings}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

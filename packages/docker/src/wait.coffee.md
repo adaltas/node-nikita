@@ -19,9 +19,9 @@ const {$status} = await nikita.docker.wait({
 console.info(`Did we really had to wait: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,4 +46,4 @@ console.info(`Did we really had to wait: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

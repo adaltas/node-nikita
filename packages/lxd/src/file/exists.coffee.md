@@ -20,9 +20,9 @@ console.info(`File exists: ${$status}`)
 * Handle unmatched target ownerships
 * Detect name from lxd_target
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -50,5 +50,5 @@ console.info(`File exists: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

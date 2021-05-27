@@ -27,7 +27,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config}) {
   // throw Error 'Property "container" no longer exists' if config.container
@@ -40,8 +40,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -364,6 +364,6 @@ module.exports = {
   },
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };

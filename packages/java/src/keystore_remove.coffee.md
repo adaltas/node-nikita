@@ -28,9 +28,9 @@ const {$status} = await nikita.java.keystore_remove([{
 console.info(`Certificate authority was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -104,4 +104,4 @@ console.info(`Certificate authority was removed: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

@@ -4,9 +4,9 @@
 Retrieve file information. If path is a symbolic link, then the link itself is
 stated, not the file that it refers to.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -32,4 +32,4 @@ stated, not the file that it refers to.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

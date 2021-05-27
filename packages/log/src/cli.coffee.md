@@ -46,9 +46,9 @@ nikita
 })
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -256,7 +256,7 @@ Global config can be alternatively set with the "log_cli" property.
       handler: handler
       metadata:
         argument_to_config: 'enabled'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

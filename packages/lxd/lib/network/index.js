@@ -21,10 +21,10 @@
 // console.info(`Network was created: ${$status}`)
 // ```
 
-// ## Schema
-var diff, handler, merge, schema, yaml;
+// ## Schema definitions
+var definitions, diff, handler, merge, yaml;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -121,7 +121,7 @@ ${[
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -28,7 +28,7 @@
 // ```
 
 // ## Hooks
-var handlebars, handler, on_action, path, schema;
+var definitions, handlebars, handler, on_action, path;
 
 on_action = function({config}) {
   var extension;
@@ -51,8 +51,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -130,7 +130,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema,
+    definitions: definitions,
     templated: false
   }
 };

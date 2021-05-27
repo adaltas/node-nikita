@@ -20,9 +20,9 @@ console.info(`Property was modified: ${$status}`)
 
 Run the command "dconf-editor" to navigate the database with a UI.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -59,4 +59,4 @@ Run the command "dconf-editor" to navigate the database with a UI.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

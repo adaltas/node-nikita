@@ -15,9 +15,9 @@ throw Error 'TOO LATE!' if (Date.now() - before) > 5200
 throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -40,4 +40,4 @@ throw Error 'TOO SOON!' if (Date.now() - before) < 5000
       handler: handler
       metadata:
         argument_to_config: 'time'
-        schema: schema
+        definitions: definitions

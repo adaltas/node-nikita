@@ -32,10 +32,10 @@
 // console.info(`File was backed up: ${$status}`)
 // ```
 
-// ## Schema
-var dayjs, handler, schema;
+// ## Schema definitions
+var dayjs, definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -157,7 +157,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

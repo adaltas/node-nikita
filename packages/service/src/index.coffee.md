@@ -37,9 +37,9 @@ console.info(`Service status: ${$status}`)
     on_action = ({config, metadata}) ->
       config.state = config.state.split(',') if typeof config.state is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -146,7 +146,7 @@ console.info(`Service status: ${$status}`)
         on_action: on_action
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

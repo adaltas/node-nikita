@@ -20,9 +20,9 @@ const {$status} = await nikita.file.yaml({
 console.info(`Content was updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -87,7 +87,7 @@ console.info(`Content was updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

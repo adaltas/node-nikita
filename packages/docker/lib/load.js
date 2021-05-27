@@ -25,10 +25,10 @@
 // console.info(`Image was loaded: ${$status}`);
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -174,7 +174,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };
 

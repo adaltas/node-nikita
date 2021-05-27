@@ -18,9 +18,9 @@ const {$status} = await nikita.lxc.network.detach({
 console.info(`Network was detached: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -55,4 +55,4 @@ console.info(`Network was detached: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

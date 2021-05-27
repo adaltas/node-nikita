@@ -33,7 +33,7 @@
 // ```
 
 // ## Hooks
-var errors, handler, on_action, schema, utils;
+var definitions, errors, handler, on_action, utils;
 
 on_action = function({config, metadata}) {
   if (config.parent == null) {
@@ -44,8 +44,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -214,7 +214,7 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'target',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -32,10 +32,10 @@
 // console.info(`File was written: ${$status}`)
 // ```
 
-// ## Schema
-var handler, path, schema;
+// ## Schema definitions
+var definitions, handler, path;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -111,7 +111,7 @@ systemctl restart systemd-resolved`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

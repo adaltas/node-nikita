@@ -15,9 +15,9 @@ const {properties} = await nikita.file.properties.read({
 console.info(`Properties:`, properties)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -73,7 +73,7 @@ console.info(`Properties:`, properties)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

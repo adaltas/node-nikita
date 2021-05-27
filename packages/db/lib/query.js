@@ -4,15 +4,15 @@
 // Make requests to a database.
 
 // ## Hooks
-var command, connection_config, escape, handler, jdbc, on_action, schema, utils;
+var command, connection_config, definitions, escape, handler, jdbc, on_action, utils;
 
 on_action = function({config}) {
   var ref;
   return config.engine = (ref = config.engine) != null ? ref.toLowerCase() : void 0;
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -247,7 +247,7 @@ module.exports = {
   },
   metadata: {
     global: 'db',
-    schema: schema
+    definitions: definitions
   },
   // Utils
   command: command,

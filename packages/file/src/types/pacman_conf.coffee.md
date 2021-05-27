@@ -4,9 +4,9 @@
 Pacman is a package manager utility for Arch Linux. The file is usually located 
 in "/etc/pacman.conf".
   
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -56,7 +56,7 @@ in "/etc/pacman.conf".
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

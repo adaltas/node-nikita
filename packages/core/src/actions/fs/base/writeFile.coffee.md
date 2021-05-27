@@ -18,9 +18,9 @@ const {status} = await nikita.fs.base.writeFile({
 console.info(`File was written: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -96,7 +96,7 @@ console.info(`File was written: ${status}`)
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

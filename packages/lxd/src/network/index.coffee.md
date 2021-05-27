@@ -21,9 +21,9 @@ const {$status} = await nikita.lxc.network({
 console.info(`Network was created: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -95,7 +95,7 @@ console.info(`Network was created: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

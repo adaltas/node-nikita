@@ -3,9 +3,9 @@
 
 Write log to custom destinations in a user provided format.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -81,7 +81,7 @@ Write log to custom destinations in a user provided format.
       ssh: false
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

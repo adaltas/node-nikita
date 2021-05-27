@@ -23,10 +23,10 @@
 // console.info(`Public key was updoaded for root user: ${status}`)
 // ```
 
-// ## Schema
-var connect, exec, fs, handler, schema, utils;
+// ## Schema definitions
+var connect, definitions, exec, fs, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -280,7 +280,7 @@ fi;`);
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

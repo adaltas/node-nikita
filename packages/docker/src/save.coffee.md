@@ -29,9 +29,9 @@ console.info(`Container was saved: ${$status}`)
     on_action = ({config}) ->
       config.output ?= config.target
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,4 +78,4 @@ console.info(`Container was saved: ${$status}`)
         on_action: on_action
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

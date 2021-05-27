@@ -15,10 +15,10 @@
 // console.info(`Property was set: ${$status}`)
 // ```
 
-// ## Schema
-var diff, handler, merge, schema, yaml;
+// ## Schema definitions
+var definitions, diff, handler, merge, yaml;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -78,7 +78,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

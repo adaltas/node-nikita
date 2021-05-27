@@ -14,10 +14,10 @@
 // // dn: dc=example,dc=org
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -109,7 +109,7 @@ module.exports = {
   metadata: {
     global: 'ldap',
     shy: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

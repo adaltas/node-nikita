@@ -18,9 +18,9 @@ const {$status} = await nikita.krb5.delrinc({
 console.info(`Principal was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -69,7 +69,7 @@ console.info(`Principal was removed: ${$status}`)
       handler: handler
       metadata:
         global: 'krb5'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

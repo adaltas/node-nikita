@@ -13,9 +13,9 @@ wait: true
 prestop: path/to/action
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -50,4 +50,4 @@ prestop: path/to/action
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

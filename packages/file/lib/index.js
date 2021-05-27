@@ -148,7 +148,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, path, schema, utils;
+var definitions, handler, on_action, path, utils;
 
 on_action = function({config}) {
   if (!((config.source || (config.content != null)) || (config.replace != null) || (config.write != null))) {
@@ -168,8 +168,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -725,7 +725,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

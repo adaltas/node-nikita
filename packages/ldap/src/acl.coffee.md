@@ -31,9 +31,9 @@ console.info(`ACL modified: ${$status}`)
     on_action = ({config}) ->
       config.acls = [config.acls] if is_object_literal config.acls
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -191,7 +191,7 @@ console.info(`ACL modified: ${$status}`)
         on_action: on_action
       metadata:
         global: 'ldap'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

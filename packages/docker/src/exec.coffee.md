@@ -24,9 +24,9 @@ const {$status} = await nikita.docker.exec({
 console.info(`Command was executed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,4 +78,4 @@ console.info(`Command was executed: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

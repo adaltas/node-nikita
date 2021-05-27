@@ -3,9 +3,9 @@
 
 Read a link to retrieve its destination path.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -31,4 +31,4 @@ Read a link to retrieve its destination path.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

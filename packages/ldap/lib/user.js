@@ -15,10 +15,10 @@
 // console.info(`User created or modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, merge, schema, utils;
+// ## Schema definitions
+var definitions, handler, merge, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -156,7 +156,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -19,9 +19,9 @@ const {$status} = await nikita.docker.stop({
 console.info(`Container was stopped: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -62,4 +62,4 @@ console.info(`Container was stopped: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

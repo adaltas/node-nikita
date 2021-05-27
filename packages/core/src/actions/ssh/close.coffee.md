@@ -8,9 +8,9 @@ Close the existing connection if any.
 * `ssh` (boolean)   
   Return the SSH connection if any and if true, null if false.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,4 +46,4 @@ Close the existing connection if any.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

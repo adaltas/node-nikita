@@ -18,10 +18,10 @@
 // console.info(`Service was desactivated on startup: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -227,6 +227,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };

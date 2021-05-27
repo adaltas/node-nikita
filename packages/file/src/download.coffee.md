@@ -65,9 +65,9 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       config.cache_dir = await find ({config: {cache_dir}}) -> cache_dir
       config.source = config.source.substr 7 if /^file:\/\//.test config.source
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -356,7 +356,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Module Dependencies
 

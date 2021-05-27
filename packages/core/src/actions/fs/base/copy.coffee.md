@@ -3,9 +3,9 @@
 
 Change permissions of a file.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -42,7 +42,7 @@ Change permissions of a file.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

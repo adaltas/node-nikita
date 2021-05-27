@@ -15,10 +15,10 @@
 // throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -43,6 +43,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'time',
-    schema: schema
+    definitions: definitions
   }
 };

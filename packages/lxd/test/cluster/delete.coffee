@@ -27,13 +27,16 @@ describe 'lxc.cluster.delete', ->
           'nikita-cluster-del-2':
             image: "images:#{images.alpine}"
             nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
+      # Create a 2 nodes cluster and stop it
       await @lxc.cluster cluster
       await @wait time: 200
       await @lxc.cluster.stop {...cluster, wait: true}
+      # Status modified if cluster deleted
       {$status} = await @lxc.cluster.delete cluster
       $status.should.be.true()
       {list} = await @lxc.list
         filter: 'containers'
+      # Containers and network shall no longer exist
       list.should.not.containEql 'nikita-cluster-del-1'
       list.should.not.containEql 'nikita-cluster-del-2'
       {list} = await @lxc.network.list()

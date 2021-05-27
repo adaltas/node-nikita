@@ -24,9 +24,9 @@ const {$status} = await nikita.file.types.krb_conf({
 console.info(`Configuration was updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -72,7 +72,7 @@ console.info(`Configuration was updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

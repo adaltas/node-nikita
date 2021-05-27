@@ -69,7 +69,7 @@
 // ```
 
 // ## Hooks
-var exec, handler, on_action, schema, utils, yaml;
+var definitions, exec, handler, on_action, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path'],
@@ -98,8 +98,8 @@ on_action = {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -597,7 +597,7 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'command',
-    schema: schema
+    definitions: definitions
   }
 };
 

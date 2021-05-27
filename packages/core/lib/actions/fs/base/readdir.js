@@ -37,7 +37,7 @@
 // ```
 
 // ## Hooks
-var Dirent, NIKITA_FS_READDIR_TARGET_ENOENT, constants, errors, handler, on_action, schema, utils;
+var Dirent, NIKITA_FS_READDIR_TARGET_ENOENT, constants, definitions, errors, handler, on_action, utils;
 
 on_action = function({config, metadata}) {
   if (config.withFileTypes != null) {
@@ -45,8 +45,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -155,7 +155,7 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

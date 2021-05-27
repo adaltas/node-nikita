@@ -37,10 +37,10 @@
 // }
 // ```
 
-// ## Schema
-var handler, schema, url, utils;
+// ## Schema definitions
+var definitions, handler, url, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -277,7 +277,7 @@ ${[
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

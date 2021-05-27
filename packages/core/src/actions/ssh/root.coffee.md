@@ -23,9 +23,9 @@ const {status} = await nikita.ssh.root({
 console.info(`Public key was updoaded for root user: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -186,7 +186,7 @@ console.info(`Public key was updoaded for root user: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

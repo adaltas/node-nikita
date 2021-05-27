@@ -8,9 +8,9 @@ properties `detach` and `rm` which respectively default to `true` and `false`.
 Indeed, in a service mode, the container must be detached and NOT removed by default
 after execution. 
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         allOf: [
@@ -41,4 +41,4 @@ after execution.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

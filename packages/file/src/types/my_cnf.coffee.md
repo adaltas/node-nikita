@@ -3,9 +3,9 @@
 
 Write file in the mysql ini format by default located in "/etc/my.cnf".
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -55,7 +55,7 @@ Write file in the mysql ini format by default located in "/etc/my.cnf".
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

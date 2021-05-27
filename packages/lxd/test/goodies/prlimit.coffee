@@ -12,15 +12,15 @@ describe 'lxc.goodie.prlimit', ->
       $ssh: ssh
     , ->
       @lxc.delete
-        container: 'c1'
+        container: 'nikita-goodies-prlimit-1'
         force: true
       @lxc.init
         image: "images:#{images.alpine}"
-        container: 'c1'
+        container: 'nikita-goodies-prlimit-1'
       @lxc.start
-        container: 'c1'
+        container: 'nikita-goodies-prlimit-1'
       try
         await @lxc.goodies.prlimit
-          container: 'c1'
+          container: 'nikita-goodies-prlimit-1'
       catch err
         throw err unless err.code is 'NIKITA_LXC_PRLIMIT_MISSING'

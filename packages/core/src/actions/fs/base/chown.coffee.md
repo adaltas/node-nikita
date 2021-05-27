@@ -10,9 +10,9 @@ Change ownership of a file.
       config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
       config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -56,4 +56,4 @@ Change ownership of a file.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

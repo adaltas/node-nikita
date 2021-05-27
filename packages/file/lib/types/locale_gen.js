@@ -14,11 +14,11 @@
   // console.info(`File was updated: ${$status}`)
   // ```
 
-// ## Schema
-var handler, path, schema,
+// ## Schema definitions
+var definitions, handler, path,
   indexOf = [].indexOf;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -99,7 +99,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

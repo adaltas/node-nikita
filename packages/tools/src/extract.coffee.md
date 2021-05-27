@@ -27,9 +27,9 @@ console.info(`File was extracted: ${$status}`)
         config.preserve_mode = config.preserve_permissions
         console.warn 'Deprecated property: "preserve_permissions" is renamed "preserve_mode"'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -134,7 +134,7 @@ console.info(`File was extracted: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

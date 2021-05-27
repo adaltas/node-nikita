@@ -23,10 +23,10 @@
 // console.info(`Disk was created: ${$status}`)
 // ```
 
-// ## Schema
-var diff, handler, schema, utils;
+// ## Schema definitions
+var definitions, diff, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -409,7 +409,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

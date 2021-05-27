@@ -15,9 +15,9 @@ const {$status} = await nikita.lxc.config.set({
 console.info(`Property was set: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -67,7 +67,7 @@ console.info(`Property was set: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -23,9 +23,9 @@ const {$status} = await nikita.lxc.config.device({
 console.info(`Disk was created: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -292,7 +292,7 @@ console.info(`Disk was created: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

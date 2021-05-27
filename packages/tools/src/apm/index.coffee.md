@@ -3,9 +3,9 @@
 
 Install Atom packages with APM.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -61,4 +61,4 @@ Install Atom packages with APM.
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

@@ -17,9 +17,9 @@ const {$status} = await nikita.service.install({
 console.info(`Package installed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -207,7 +207,7 @@ console.info(`Package installed: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -52,10 +52,10 @@
 //     provision_container: path/to/action
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -393,7 +393,7 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

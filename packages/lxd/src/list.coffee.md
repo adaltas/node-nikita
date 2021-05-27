@@ -12,9 +12,9 @@ const { list } = await nikita.lxc.list({
 console.info(`LXD containers: ${list}`);
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -39,5 +39,5 @@ console.info(`LXD containers: ${list}`);
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

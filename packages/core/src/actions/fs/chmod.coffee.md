@@ -20,9 +20,9 @@ const {status} = await nikita.fs.chmod({
 console.info(`Permissions was modified: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -62,7 +62,7 @@ console.info(`Permissions was modified: ${status}`)
       handler: handler
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

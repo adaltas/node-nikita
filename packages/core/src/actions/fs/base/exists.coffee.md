@@ -22,9 +22,9 @@ const {exists} = await nikita.fs.base.exists({
 console.info(`File exists: ${exists}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -59,4 +59,4 @@ console.info(`File exists: ${exists}`)
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

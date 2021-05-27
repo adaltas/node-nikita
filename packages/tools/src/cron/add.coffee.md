@@ -14,9 +14,9 @@ const {$status} = await nikita.cron.add({
 console.info(`Cron entry created or modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -106,7 +106,7 @@ console.info(`Cron entry created or modified: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

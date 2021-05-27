@@ -26,10 +26,10 @@
 // `id a\_user` producing an output similar to 
 // "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -56,5 +56,5 @@ module.exports = {
   metadata: {
     argument_to_config: 'name'
   },
-  schema: schema
+  definitions: definitions
 };

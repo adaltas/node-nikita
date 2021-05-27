@@ -18,9 +18,9 @@ const {status} = await nikita.tools.ssh.keygen({
 console.info(`Key was generated: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -85,4 +85,4 @@ console.info(`Key was generated: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

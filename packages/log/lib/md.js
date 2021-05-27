@@ -17,10 +17,10 @@
 // })
 // ```
 
-// ## Schema
-var handler, log_fs, merge, schema;
+// ## Schema definitions
+var definitions, handler, log_fs, merge;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     allOf: [
@@ -165,13 +165,11 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 
-// ssh: false
-
-  // ## Dependencies
+// ## Dependencies
 ({merge} = require('mixme'));
 
 log_fs = require('./fs');

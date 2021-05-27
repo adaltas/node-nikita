@@ -23,7 +23,7 @@ describe 'service#config.state', ->
           'allowedValues is ["started","stopped","restarted"].'
         ].join ' '
     
-    it 'requires config `name`, `srv_name` or `chk_name`', ->
+    it.only 'requires config `name`, `srv_name` or `chk_name`', ->
       nikita
       .service
         state: 'started'
@@ -32,7 +32,7 @@ describe 'service#config.state', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors were found in the configuration of action `service`:'
-          '#/dependencies/state/anyOf config must match some schema in anyOf;'
+          '#/dependencies/state/anyOf config must match a schema in anyOf;'
           '#/dependencies/state/anyOf/0/required config must have required property \'name\';'
           '#/dependencies/state/anyOf/1/required config must have required property \'srv_name\';'
           '#/dependencies/state/anyOf/2/required config must have required property \'chk_name\'.'

@@ -79,9 +79,9 @@ console.info(`Container was built: ${$status}`)
     on_action = ({config}) ->
       throw errors.NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED() if config.content? and config.file?
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -245,7 +245,7 @@ console.info(`Container was built: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions
       hooks:
         on_action: on_action
 

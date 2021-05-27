@@ -3,9 +3,9 @@
 
 Remove a non-directory type file.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -43,7 +43,7 @@ Remove a non-directory type file.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

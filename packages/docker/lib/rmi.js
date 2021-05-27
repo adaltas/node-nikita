@@ -11,10 +11,10 @@
 // * `status`   
 //   True if image was removed.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -73,6 +73,6 @@ module.exports = {
   metadata: {
     argument_to_config: 'image',
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };

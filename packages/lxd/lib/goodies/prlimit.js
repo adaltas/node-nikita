@@ -26,10 +26,10 @@
 // console.info( `${stdout} ${JSON.decode(limits)}`)
 // ```
 
-// ## Schema
-var errors, handler, schema, utils;
+// ## Schema definitions
+var definitions, errors, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -93,7 +93,7 @@ errors = {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema,
+    definitions: definitions,
     shy: true
   }
 };

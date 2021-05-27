@@ -5,7 +5,7 @@ object.
 ###
 
 stream = require 'stream'
-{merge} = require 'mixme'
+{merge, mutate} = require 'mixme'
 Ajv = require('ajv').default
 ajv_keywords = require 'ajv-keywords'
 ajv_formats = require "ajv-formats"
@@ -56,9 +56,7 @@ module.exports =
                 when 'module:'
                   try
                     action = require.main.require pathname
-                    schema = action.metadata.schema
-                    schema = definitions: action.metadata.schema
-                    accept schema
+                    accept definitions: action.metadata.definitions
                   catch err
                     reject utils.error 'NIKITA_SCHEMA_INVALID_MODULE', [
                       'the module location is not resolvable,'
@@ -68,12 +66,7 @@ module.exports =
                   module = pathname.split '/'
                   action = await action.registry.get module
                   if action
-                    schema = action.metadata.schema
-                    schema = definitions: action.metadata.schema
-                    # schema =
-                    #   type: 'object'
-                    #   properties: action.metadata.schema
-                    accept schema
+                    accept definitions: action.metadata.definitions
                   else
                     reject utils.error 'NIKITA_SCHEMA_UNREGISTERED_ACTION', [
                       'the action is not registered inside the Nikita registry,'
@@ -112,7 +105,7 @@ module.exports =
             true
           validate: (action, schema) ->
             try
-              schema ?= action.metadata.schema
+              schema ?= action.metadata.definitions
               schema =
                 definitions: schema
                 type: 'object'
@@ -167,3 +160,12 @@ module.exports =
           handler: ({action, ajv, schema}) ->
             ajv.addSchema schema, 'nikita'
         action
+    'nikita:schema': ({schema}) ->
+      mutate schema.definitions.metadata.properties,
+        schema:
+          type: 'boolean'
+          default: true
+          description: '''
+          Set to `false` to disable schema validation in the
+          current action.
+          '''

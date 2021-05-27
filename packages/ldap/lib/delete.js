@@ -15,10 +15,10 @@
 // console.log(`Entry deleted: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -89,6 +89,6 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ldap',
-    schema: schema
+    definitions: definitions
   }
 };

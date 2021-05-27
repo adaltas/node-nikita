@@ -13,9 +13,9 @@ Store properties in the nikita state object.
 * `loader`   
   the init loader name   
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -64,4 +64,4 @@ Store properties in the nikita state object.
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

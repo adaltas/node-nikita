@@ -46,10 +46,10 @@
 // })
 // ```
 
-// ## Schema
-var colors, get_headers, handler, merge, pad, schema, utils;
+// ## Schema definitions
+var colors, definitions, get_headers, handler, merge, pad, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -315,7 +315,7 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'enabled',
-    schema: schema
+    definitions: definitions
   }
 };
 

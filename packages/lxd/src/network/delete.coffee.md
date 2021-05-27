@@ -17,9 +17,9 @@ const {$status} = await nikita.lxc.network.delete({
 console.info(`Network was deleted: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -51,4 +51,4 @@ console.info(`Network was deleted: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

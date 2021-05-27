@@ -3,9 +3,9 @@
 
 Change the name or location of a file.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -36,4 +36,4 @@ Change the name or location of a file.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions

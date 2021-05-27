@@ -3,9 +3,9 @@
 
 Remove a user for the destination database.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -32,7 +32,7 @@ Remove a user for the destination database.
       metadata:
         argument_to_config: 'username'
         global: 'db'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

@@ -3,9 +3,9 @@
 
 Delete a directory.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -42,7 +42,7 @@ Delete a directory.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
 
 ## Errors
 

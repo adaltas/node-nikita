@@ -18,9 +18,9 @@ const {$status, config} = await nikita.lxc.config.device.exists({
 console.info($status ? `device exists, type is ${config.type}` : 'device missing')
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,4 +46,4 @@ console.info($status ? `device exists, type is ${config.type}` : 'device missing
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

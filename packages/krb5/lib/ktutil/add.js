@@ -15,10 +15,10 @@
 // console.info(`Keytab was created or modified: ${$status}`)
 // ```
 
-// ## Schema
-var handler, mutate, schema, utils;
+// ## Schema definitions
+var definitions, handler, mutate, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -222,7 +222,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'krb5',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -3,12 +3,12 @@
 
 Write logs to the host filesystem in the CSV format.
 
-## Schema
+## Schema definitions
 
 The `log.csv` action leverages the [`log.fs` action](/current/actions/log/fs/)
 and honors all its configuration properties.
 
-    schema =
+    definitions =
       config:
         type: 'object'
         allOf: [
@@ -47,10 +47,9 @@ and honors all its configuration properties.
 ## Exports
 
     module.exports =
-      # ssh: false
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

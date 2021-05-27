@@ -3,10 +3,10 @@
 
 // Execute a docker command.
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     allOf: [
@@ -181,7 +181,7 @@ module.exports = {
   //   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
   metadata: {
     argument_to_config: 'command',
-    schema: schema
+    definitions: definitions
   }
 };
 

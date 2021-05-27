@@ -16,10 +16,10 @@
 // console.info(`Was the configudation updated ${$status}`)
 // ```
 
-// ## Schema
-var diff, handler, schema;
+// ## Schema definitions
+var definitions, diff, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -81,7 +81,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

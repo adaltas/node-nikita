@@ -20,9 +20,9 @@ const {$status} = await nikita.docker.rm({
 console.info(`Container was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -78,4 +78,4 @@ console.info(`Container was removed: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

@@ -14,9 +14,9 @@ Register or log in to a Docker registry server.
 * `stderr`   
   Stderr value(s) unless `stderr` option is provided.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -60,7 +60,7 @@ Register or log in to a Docker registry server.
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

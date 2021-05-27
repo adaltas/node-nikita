@@ -26,13 +26,17 @@ nikita.call('my value', ({metadata}) => {
 })
 ```
 
-When [writing and registering](/current/guide/register) Nikita actions, the behavior is similar. It is usually a good practice to handle its value before the handler is executed, for example inside the `on_action` hook. This way, other plugins can honors it such as the `schema` plugin in case the argument is converted to a configuration property:
+## Recommandation
+
+When [writing and registering](/current/guide/register) Nikita actions, the behavior is similar. When an action make use of `argument`, it is usually a good practice to handle its associated value before the handler is executed, commonly inside the `on_action` hook. This way, other plugins can honors it.
+
+For example, consider an action which make use of a `value` configuration declared in the schema definition. For the schema to validate when `value` is not provided as a configuration property but as a string argument, it must be converted before the schema plugin validate the action:
 
 ```js
 const value = await nikita
 // Register an action
 .registry.register('ping', {
-  // Registered the `on_action` hook
+  // Register the `on_action` hook
   hooks: {
     on_action: ({config, metadata}) => {
       if(config.value === undefined){
@@ -40,14 +44,14 @@ const value = await nikita
       }
     }
   },
-  // Validate the configuration
+  // Define the configuration schema definition
   metadata: {
-    schema: {
+    definitions: {
       type: 'object',
       required: ['value']
     }
   },
-  // Implement our action
+  // Implement the action, it simply return `value`
   handler: ({config}) => {
     return config.value
   }

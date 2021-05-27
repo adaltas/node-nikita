@@ -71,7 +71,7 @@
 // ```
 
 // ## Hooks
-var connect, fs, handler, on_action, schema, utils;
+var connect, definitions, fs, handler, on_action, utils;
 
 on_action = function({config}) {
   var base, base1;
@@ -95,12 +95,12 @@ on_action = function({config}) {
   return (base1 = config.root).port != null ? base1.port : base1.port = config.port;
 };
 
-// ## Schema
+// ## Schema definitions
 
 // Configuration propeties are transfered as is to the ssh2 module to create a new SSH connection.
 // Only will they be converted from snake case to came case. It is also possible to
 // pass all the properties through the `ssh` property.
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -240,7 +240,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

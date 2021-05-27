@@ -21,12 +21,12 @@
 // console.info('Linux version:', info.linux_version)
 // ```
 
-// ## Schema
+// ## Schema definitions
 
 // There is no config for this action.
-var handler, schema, utils;
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   'output': {
     type: 'object',
     properties: {
@@ -77,7 +77,7 @@ handler = async function() {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema,
+    definitions: definitions,
     shy: true
   }
 };

@@ -24,9 +24,9 @@ Flags:
       --wait      Wait for the operation to complete
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -52,5 +52,5 @@ Flags:
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

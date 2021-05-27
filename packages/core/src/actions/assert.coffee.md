@@ -73,9 +73,9 @@ nikita.assert( () => {
         ] unless result is true
       )(action.handler)
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,7 +98,7 @@ nikita.assert( () => {
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

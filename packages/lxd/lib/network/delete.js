@@ -17,10 +17,10 @@
 // console.info(`Network was deleted: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -47,6 +47,6 @@ ${['lxc', 'network', 'delete', config.network].join(' ')}`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

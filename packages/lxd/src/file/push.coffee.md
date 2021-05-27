@@ -21,9 +21,9 @@ console.info(`File was pushed: ${$status}`)
 * Handle unmatched target ownerships
 * Detect name from lxd_target
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -157,7 +157,7 @@ console.info(`File was pushed: ${$status}`)
       handler: handler
       metadata:
         tmpdir: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

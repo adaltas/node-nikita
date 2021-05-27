@@ -21,9 +21,9 @@ const {status} = await nikita.fs.move({
 console.info(`Directory was moved: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -95,4 +95,4 @@ console.info(`Directory was moved: ${status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

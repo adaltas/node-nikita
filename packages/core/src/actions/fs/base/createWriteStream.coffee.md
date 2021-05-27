@@ -28,9 +28,9 @@ console.info(`Stream was created: ${status}`)
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
         metadata.tmpdir = true if config.sudo or config.flags?[0] is 'a'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -113,7 +113,7 @@ console.info(`Stream was created: ${status}`)
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
+        definitions: definitions
       hooks:
         on_action: on_action
 

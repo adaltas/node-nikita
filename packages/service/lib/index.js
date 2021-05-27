@@ -33,7 +33,7 @@
   // ```
 
 // ## Hooks
-var handler, merge, on_action, schema,
+var definitions, handler, merge, on_action,
   indexOf = [].indexOf;
 
 on_action = function({config, metadata}) {
@@ -42,8 +42,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -181,7 +181,7 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };
 

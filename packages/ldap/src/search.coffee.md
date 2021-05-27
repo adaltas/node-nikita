@@ -14,9 +14,9 @@ console.info(stdout)
 // dn: dc=example,dc=org
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -112,7 +112,7 @@ console.info(stdout)
       metadata:
         global: 'ldap'
         shy: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

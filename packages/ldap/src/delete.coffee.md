@@ -15,9 +15,9 @@ const {$status} = await nikita.ldap.delete({
 console.log(`Entry deleted: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -80,4 +80,4 @@ console.log(`Entry deleted: ${$status}`)
       handler: handler
       metadata:
         global: 'ldap'
-        schema: schema
+        definitions: definitions

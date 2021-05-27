@@ -18,9 +18,9 @@ native docker command.
     on_action = ({config}) ->
       throw Error 'Configuration `repository` is deprecated, use `image` instead' if config.repository
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -69,4 +69,4 @@ native docker command.
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions

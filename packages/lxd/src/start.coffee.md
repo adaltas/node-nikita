@@ -17,9 +17,9 @@ const {$status} = await nikita.lxc.start({
 console.info(`Container was started: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,4 +46,4 @@ console.info(`Container was started: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

@@ -4,10 +4,10 @@
 // Yum is a packet manager for centos/redhat. It uses .repo file located in 
 // "/etc/yum.repos.d/" directory to configure the list of available mirrors.
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     required: ['target']
@@ -30,7 +30,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -25,9 +25,9 @@ const {$status} = await nikita.docker.load({
 console.info(`Image was loaded: ${$status}`);
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -110,7 +110,7 @@ console.info(`Image was loaded: ${$status}`);
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

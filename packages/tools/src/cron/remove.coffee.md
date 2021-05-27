@@ -14,9 +14,9 @@ const {$status} = await nikita.cron.remove({
 console.info(`Cron entry was removed: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -75,7 +75,7 @@ console.info(`Cron entry was removed: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

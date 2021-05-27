@@ -8,9 +8,9 @@ Make requests to a database.
     on_action = ({config}) ->
       config.engine = config.engine?.toLowerCase()
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -188,7 +188,7 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
         on_action: on_action
       metadata:
         global: 'db'
-        schema: schema
+        definitions: definitions
       # Utils
       command: command
       connection_config: connection_config

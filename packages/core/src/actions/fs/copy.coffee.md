@@ -38,9 +38,9 @@ console.info(`File was copied: ${$status}`)
       config.parent ?= {}
       config.parent = {} if config.parent is true
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -83,7 +83,7 @@ console.info(`File was copied: ${$status}`)
             Short-circuit to prevent source stat retrieval if already at our
             disposal.
             '''
-            properties: require('./base/stat').schema_output.properties.stats.properties
+            properties: require('./base/stat').definitions_output.properties.stats.properties
           'target':
             type: 'string'
             description: '''
@@ -95,7 +95,7 @@ console.info(`File was copied: ${$status}`)
             Short-circuit to prevent target stat retrieval if already at our
             disposal.
             '''
-            properties: require('./base/stat').schema_output.properties.stats.properties
+            properties: require('./base/stat').definitions_output.properties.stats.properties
           'uid':
             $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/uid'
         required: ['source', 'target']
@@ -213,7 +213,7 @@ console.info(`File was copied: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

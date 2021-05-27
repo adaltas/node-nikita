@@ -23,9 +23,9 @@ const {$status} = await nikita.docker.pull({
 console.info(`Image was pulled: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -84,4 +84,4 @@ console.info(`Image was pulled: ${$status}`)
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

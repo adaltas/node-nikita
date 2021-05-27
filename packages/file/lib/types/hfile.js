@@ -4,10 +4,10 @@
 // HFile is an XML format used accros Hadoop components which contains keys and
 // value properties.
 
-// ## Schema
-var builder, handler, parse, schema, stringify, xmldom;
+// ## Schema definitions
+var builder, definitions, handler, parse, stringify, xmldom;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -215,7 +215,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

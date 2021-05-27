@@ -23,7 +23,7 @@
 // ```
 
 // ## Hooks
-var compare, handler, on_action, schema, utils;
+var compare, definitions, handler, on_action, utils;
 
 on_action = function({config}) {
   if (!Array.isArray(config.operations)) {
@@ -31,8 +31,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -185,7 +185,7 @@ module.exports = {
   metadata: {
     global: 'ldap'
   },
-  schema: schema
+  definitions: definitions
 };
 
 // ## Dependencies

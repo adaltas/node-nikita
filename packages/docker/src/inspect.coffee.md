@@ -35,9 +35,9 @@ info.map( (container) =>
 )
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -71,4 +71,4 @@ info.map( (container) =>
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions

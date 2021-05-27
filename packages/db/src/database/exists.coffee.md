@@ -3,9 +3,9 @@
 
 Check if a database exists.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -48,7 +48,7 @@ Check if a database exists.
         argument_to_config: 'database'
         global: 'db'
         shy: true
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

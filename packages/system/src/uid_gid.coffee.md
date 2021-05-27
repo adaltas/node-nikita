@@ -26,9 +26,9 @@ console.info(`Group gid is ${config.gid}`)
       config.uid = parseInt config.uid, 10 if typeof config.uid is 'string' and /^\d+$/.test config.uid
       config.gid = parseInt config.gid, 10 if typeof config.gid is 'string' and /^\d+$/.test config.gid
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -72,4 +72,4 @@ console.info(`Group gid is ${config.gid}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions

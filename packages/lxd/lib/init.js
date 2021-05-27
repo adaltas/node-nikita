@@ -30,10 +30,10 @@
 // We do not honors the configuration (`-c`) argument. Use the `lxc.config.set` for
 // now.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -99,6 +99,6 @@ echo '' | ${command_init}`,
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };

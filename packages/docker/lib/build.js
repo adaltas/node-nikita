@@ -75,7 +75,7 @@
   // ```
 
 // ## Hooks
-var errors, handler, on_action, path, schema, utils,
+var definitions, errors, handler, on_action, path, utils,
   indexOf = [].indexOf;
 
 on_action = function({config}) {
@@ -84,8 +84,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -308,7 +308,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   },
   hooks: {
     on_action: on_action

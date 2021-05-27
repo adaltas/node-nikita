@@ -3,9 +3,9 @@
 
 Create a user for the destination database.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -86,7 +86,7 @@ Create a user for the destination database.
       handler: handler
       metadata:
         global: 'db'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

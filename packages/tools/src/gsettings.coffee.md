@@ -14,9 +14,9 @@ const {$status} = await nikita.tools.gsettings({
 console.log(`Property was modified: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -43,4 +43,4 @@ console.log(`Property was modified: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

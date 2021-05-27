@@ -28,10 +28,10 @@
 // We do not support gem returning specification with binary strings because we
 // couldn't find any suitable parser on NPM.
 
-// ## Schema
-var handler, path, schema;
+// ## Schema definitions
+var definitions, handler, path;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -102,7 +102,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'ruby',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -66,9 +66,9 @@ This action relies on the `openssl` and `keytool` commands. If not detected
 from the path, Nikita will look for "/usr/java/default/bin/keytool" which is the
 default location of the Oracle JDK installation.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -293,4 +293,4 @@ default location of the Oracle JDK installation.
       handler: handler
       metadata:
         tmpdir: true
-        schema: schema
+        definitions: definitions

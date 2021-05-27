@@ -24,9 +24,9 @@ Any attempt to remove a gem installed globally and not in the user repository
 will result with the error "{gem} is not installed in GEM_HOME, try: gem 
 uninstall -i /usr/share/gems json"
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -71,4 +71,4 @@ uninstall -i /usr/share/gems json"
       handler: handler
       metadata:
         global: 'ruby'
-        schema: schema
+        definitions: definitions

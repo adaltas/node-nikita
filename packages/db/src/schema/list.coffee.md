@@ -16,9 +16,9 @@ schemas.map( ({name, owner}) => {
 })
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -60,7 +60,7 @@ schemas.map( ({name, owner}) => {
       metadata:
         argument_to_config: 'database'
         global: 'db'
-        schema: schema
+        definitions: definitions
       
 ## Dependencies
 

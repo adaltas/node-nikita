@@ -66,10 +66,10 @@
 // from the path, Nikita will look for "/usr/java/default/bin/keytool" which is the
 // default location of the Oracle JDK installation.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -313,6 +313,6 @@ module.exports = {
   handler: handler,
   metadata: {
     tmpdir: true,
-    schema: schema
+    definitions: definitions
   }
 };

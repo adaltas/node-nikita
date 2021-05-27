@@ -36,9 +36,9 @@ for(const file of files){
 }
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -100,7 +100,7 @@ for(const file of files){
       handler: handler
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions
         shy: true
 
 ## Dependencies

@@ -47,10 +47,10 @@
 // read an alternative `/etc/passwd` file by setting the `target` option to the
 // targeted file.
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -141,7 +141,7 @@ handler = async function({config}) {
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema,
+    definitions: definitions,
     shy: true
   }
 };

@@ -3,10 +3,10 @@
 
 // Create a user for the destination database.
 
-// ## Schema
-var command, connection_config, handler, schema;
+// ## Schema definitions
+var command, connection_config, definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -59,7 +59,7 @@ module.exports = {
   metadata: {
     argument_to_config: 'database',
     global: 'db',
-    schema: schema
+    definitions: definitions
   }
 };
 

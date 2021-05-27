@@ -21,10 +21,10 @@
 // console.info(`Storage was created or config updated: ${$status}`)
 // ```
 
-// ## Schema
-var diff, handler, schema, yaml;
+// ## Schema definitions
+var definitions, diff, handler, yaml;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -116,7 +116,7 @@ ${[
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

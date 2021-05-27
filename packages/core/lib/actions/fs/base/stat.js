@@ -37,16 +37,16 @@
 // a large file with `file.download`, thus the activation of `retry` and `sleep`
 // confguration properties.
 
-// ## Schema
+// ## Schema definitions
 
 // The parameters include a subset as the one of the Node.js native 
 // [`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object.
 
 // TODO: we shall be able to reference this as a `$ref` once schema does apply to
 // returned values.
-var errors, handler, schema, schema_output, utils;
+var definitions, definitions_output, errors, handler, utils;
 
-schema_output = {
+definitions_output = {
   type: 'object',
   properties: {
     'stats': {
@@ -84,7 +84,7 @@ expressed in milliseconds since the POSIX Epoch.`
   }
 };
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -158,9 +158,9 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   },
-  schema_output: schema_output
+  definitions_output: definitions_output
 };
 
 // ## Errors

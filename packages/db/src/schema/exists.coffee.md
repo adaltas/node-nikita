@@ -14,9 +14,9 @@ const {exists} = await nikita.db.schema.exists({
 console.info(`Schema exists: ${exists}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -61,7 +61,7 @@ console.info(`Schema exists: ${exists}`)
       handler: handler
       metadata:
         global: 'db'
-        schema: schema
+        definitions: definitions
       
 ## Dependencies
 

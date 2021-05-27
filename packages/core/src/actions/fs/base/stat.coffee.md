@@ -37,7 +37,7 @@ The `stat` command return an empty stdout in some circounstances like uploading
 a large file with `file.download`, thus the activation of `retry` and `sleep`
 confguration properties.
 
-## Schema
+## Schema definitions
 
 The parameters include a subset as the one of the Node.js native 
 [`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object.
@@ -45,7 +45,7 @@ The parameters include a subset as the one of the Node.js native
 TODO: we shall be able to reference this as a `$ref` once schema does apply to
 returned values.
 
-    schema_output =
+    definitions_output =
       type: 'object'
       properties:
         'stats':
@@ -83,7 +83,7 @@ returned values.
               expressed in milliseconds since the POSIX Epoch.
               '''
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -138,8 +138,8 @@ returned values.
         argument_to_config: 'target'
         log: false
         raw_output: true
-        schema: schema
-      schema_output: schema_output
+        definitions: definitions
+      definitions_output: definitions_output
 
 ## Errors
 

@@ -29,9 +29,9 @@ this is direction. The paths look like
         # Log is always local
         config.ssh = false
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -98,10 +98,8 @@ this is direction. The paths look like
       handler: handler
       hooks:
         on_action: on_action
-      # ssh: false
       metadata:
-        schema: schema
-        # templated: true
+        definitions: definitions
 
 ## Dependencies
 

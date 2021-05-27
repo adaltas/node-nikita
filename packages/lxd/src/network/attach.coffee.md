@@ -18,9 +18,9 @@ const {$status} = await nikita.lxc.network.attach({
 console.info(`Network was attached: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -57,4 +57,4 @@ console.info(`Network was attached: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

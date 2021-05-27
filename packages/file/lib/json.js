@@ -20,7 +20,7 @@
 // ```
 
 // ## Hooks
-var handler, merge, on_action, schema;
+var definitions, handler, merge, on_action;
 
 on_action = function({config, metadata}) {
   if (config.pretty === true) {
@@ -28,8 +28,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -125,7 +125,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

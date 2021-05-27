@@ -12,9 +12,9 @@ const {$status} = await nikita.lxc.delete({
 console.info(`Container was deleted: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -49,4 +49,4 @@ console.info(`Container was deleted: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'container'
-        schema: schema
+        definitions: definitions

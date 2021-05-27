@@ -38,9 +38,9 @@ require('@nikitajs/core')
     on_action = ({config}) ->
       config.pid = parseInt config.pid, 10 if typeof config.pid is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -104,4 +104,4 @@ require('@nikitajs/core')
         on_action: on_action
       metadata:
         # raw_output: true
-        schema: schema
+        definitions: definitions

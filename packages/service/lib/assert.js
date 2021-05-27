@@ -7,10 +7,10 @@
 // service will only be restarted if it leads to a change of status. Set the value 
 // to "['start', 'restart']" to ensure the service will be always started.
 
-// ## Schema
-var handler, schema;
+// ## Schema definitions
+var definitions, handler;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -123,6 +123,6 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };

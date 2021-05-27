@@ -24,7 +24,7 @@
 // "myself:x:490:".
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config}) {
   if (typeof config.gid === 'string') {
@@ -32,8 +32,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -120,6 +120,6 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };

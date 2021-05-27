@@ -7,9 +7,9 @@ The option "action" takes 3 possible values: "start", "stop" and "restart". A
 service will only be restarted if it leads to a change of status. Set the value 
 to "['start', 'restart']" to ensure the service will be always started.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -107,4 +107,4 @@ to "['start', 'restart']" to ensure the service will be always started.
       handler: handler
       metadata:
         argument_to_config: 'name'
-        schema: schema
+        definitions: definitions

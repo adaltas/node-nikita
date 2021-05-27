@@ -3,10 +3,10 @@
 
 // Change permissions of a file.
 
-// ## Schema
-var errors, handler, schema, utils;
+// ## Schema definitions
+var definitions, errors, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -48,7 +48,7 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   }
 };
 

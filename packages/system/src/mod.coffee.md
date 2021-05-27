@@ -31,9 +31,9 @@ require('nikita')
       if typeof config.modules is 'string'
         config.modules = [config.modules]: true
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -107,7 +107,7 @@ require('nikita')
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
         argument_to_config: 'modules'
 
 ## Dependencies

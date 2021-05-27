@@ -40,9 +40,9 @@ console.info(`File was rendered: ${$status}`)
           when '.hbs' then config.engine = 'handlebars'
           else throw Error "Invalid Option: extension '#{extension}' is not supported"
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -95,7 +95,7 @@ console.info(`File was rendered: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
         templated: false
 
 ## Dependencies

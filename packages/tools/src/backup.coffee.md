@@ -32,9 +32,9 @@ const {$status} = await nikita.tools.backup({
 console.info(`File was backed up: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -137,7 +137,7 @@ console.info(`File was backed up: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

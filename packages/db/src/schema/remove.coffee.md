@@ -3,9 +3,9 @@
 
 Remove a schema from a database.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -46,7 +46,7 @@ Remove a schema from a database.
       metadata:
         argument_to_config: 'schema'
         global: 'db'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

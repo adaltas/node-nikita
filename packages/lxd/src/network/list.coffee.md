@@ -10,9 +10,9 @@ const { list } = await nikita.lxc.network.list();
 console.info(`LXD networks: ${list}`);
 ```
 
-## Schema
+## Schema definitions
 
-    schema = {}
+    definitions = {}
 
 ## Handler
 
@@ -27,5 +27,5 @@ console.info(`LXD networks: ${list}`);
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions
         shy: true

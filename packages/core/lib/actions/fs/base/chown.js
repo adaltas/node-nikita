@@ -4,7 +4,7 @@
 // Change ownership of a file.
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config, metadata}) {
   if ((typeof config.uid === 'string') && /\d+/.test(config.uid)) {
@@ -16,8 +16,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -64,6 +64,6 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    schema: schema
+    definitions: definitions
   }
 };

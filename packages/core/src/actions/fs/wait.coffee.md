@@ -21,9 +21,9 @@ console.info(`File was created: ${status}`)
       handler: ({config}) ->
         config.target = [config.target] if typeof config.target is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -67,4 +67,4 @@ console.info(`File was created: ${status}`)
         on_action: on_action
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions

@@ -34,7 +34,7 @@
 // "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
 // ## Hooks
-var handler, on_action, path, schema, utils;
+var definitions, handler, on_action, path, utils;
 
 on_action = function({config}) {
   switch (config.shell) {
@@ -49,8 +49,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -297,7 +297,7 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };
 

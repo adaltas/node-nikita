@@ -20,9 +20,9 @@ const {$status} = await nikita.file.download({
 console.info(`File downloaded: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -225,7 +225,7 @@ console.info(`File downloaded: ${$status}`)
       handler: handler
       metadata:
         argument_to_config: 'source'
-        schema: schema
+        definitions: definitions
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']
 

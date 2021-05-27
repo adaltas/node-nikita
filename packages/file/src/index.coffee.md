@@ -160,9 +160,9 @@ console.info(data)
         else if Buffer.isBuffer config.content
           config.content = config.content.toString()
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -549,7 +549,7 @@ console.info(data)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

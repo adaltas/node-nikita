@@ -15,7 +15,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema, utils;
+var definitions, handler, on_action, utils;
 
 on_action = function({config}) {
   if (!config.command) {
@@ -32,8 +32,8 @@ on_action = function({config}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -151,7 +151,7 @@ module.exports = {
   },
   metadata: {
     argument_to_config: 'command',
-    schema: schema
+    definitions: definitions
   }
 };
 

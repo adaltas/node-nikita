@@ -15,10 +15,10 @@
 // *   `stderr`   
 //     Stderr value(s) unless `stderr` option is provided.   
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -150,7 +150,7 @@ handler = async function({
 module.exports = {
   handler: handler,
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

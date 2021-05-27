@@ -33,10 +33,10 @@
 // console.info(`Container was copied: ${$status}`)
 // ```
 
-// ## Schema
-var handler, path, schema, utils;
+// ## Schema definitions
+var definitions, handler, path, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -128,7 +128,7 @@ module.exports = {
   handler: handler,
   metadata: {
     global: 'docker',
-    schema: schema
+    definitions: definitions
   }
 };
 

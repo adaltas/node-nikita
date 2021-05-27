@@ -17,10 +17,10 @@
 // console.info(`Package installed: ${$status}`)
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -299,7 +299,7 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'name',
-    schema: schema
+    definitions: definitions
   }
 };
 

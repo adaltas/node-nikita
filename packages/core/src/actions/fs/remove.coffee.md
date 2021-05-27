@@ -42,9 +42,9 @@ const {status} = await nikita.fs.remove([
 console.info(`Directories was removed: ${status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -92,7 +92,7 @@ console.info(`Directories was removed: ${status}`)
       handler: handler
       metadata:
         argument_to_config: 'target'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

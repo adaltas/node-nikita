@@ -36,10 +36,10 @@
 // }
 // ```
 
-// ## Schema
-var Minimatch, getprefix, handler, schema, utils;
+// ## Schema definitions
+var Minimatch, definitions, getprefix, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -131,7 +131,7 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'target',
-    schema: schema,
+    definitions: definitions,
     shy: true
   }
 };

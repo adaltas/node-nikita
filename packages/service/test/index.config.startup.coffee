@@ -18,7 +18,7 @@ describe 'service#config.startup', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors were found in the configuration of action `service`:'
-          '#/dependencies/startup/anyOf config must match some schema in anyOf;'
+          '#/dependencies/startup/anyOf config must match a schema in anyOf;'
           '#/dependencies/startup/anyOf/0/required config must have required property \'name\';'
           '#/dependencies/startup/anyOf/1/required config must have required property \'srv_name\';'
           '#/dependencies/startup/anyOf/2/required config must have required property \'chk_name\'.'

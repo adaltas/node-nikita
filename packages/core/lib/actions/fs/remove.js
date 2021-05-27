@@ -42,10 +42,10 @@
 // console.info(`Directories was removed: ${status}`)
 // ```
 
-// ## Schema
-var handler, schema, utils;
+// ## Schema definitions
+var definitions, handler, utils;
 
-schema = {
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -109,7 +109,7 @@ module.exports = {
   handler: handler,
   metadata: {
     argument_to_config: 'target',
-    schema: schema
+    definitions: definitions
   }
 };
 

@@ -10,9 +10,9 @@ Log out from a Docker registry or the one defined by the `registry` option.
 * `$status`   
   True if logout.
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -42,7 +42,7 @@ Log out from a Docker registry or the one defined by the `registry` option.
       handler: handler
       metadata:
         global: 'docker'
-        schema: schema
+        definitions: definitions
 
 ## Dependencies
 

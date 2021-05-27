@@ -33,7 +33,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema, utils;
+var definitions, handler, on_action, utils;
 
 on_action = function({config, metadata}) {
   if (config.parent == null) {
@@ -44,8 +44,8 @@ on_action = function({config, metadata}) {
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -92,7 +92,7 @@ default system config if "true", supported attributes include 'mode',
         type: 'object',
         description: `Short-circuit to prevent source stat retrieval if already at our
 disposal.`,
-        properties: require('./base/stat').schema_output.properties.stats.properties
+        properties: require('./base/stat').definitions_output.properties.stats.properties
       },
       'target': {
         type: 'string',
@@ -102,7 +102,7 @@ disposal.`,
         type: 'object',
         description: `Short-circuit to prevent target stat retrieval if already at our
 disposal.`,
-        properties: require('./base/stat').schema_output.properties.stats.properties
+        properties: require('./base/stat').definitions_output.properties.stats.properties
       },
       'uid': {
         $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
@@ -329,7 +329,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 

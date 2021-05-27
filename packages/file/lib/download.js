@@ -58,7 +58,7 @@
 // It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 // ## Hooks
-var fs, handler, on_action, path, schema, url, utils,
+var definitions, fs, handler, on_action, path, url, utils,
   indexOf = [].indexOf;
 
 on_action = async function({
@@ -85,8 +85,8 @@ on_action = async function({
   }
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -549,7 +549,7 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
 
