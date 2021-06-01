@@ -104,7 +104,7 @@ const useStyles = theme => ({
     },
   }),
   tools: {
-    float: 'right',
+    textAlign: 'right'
   },
   icons: {
     color: '#cccccc',
@@ -131,6 +131,7 @@ const Content = ({
     <main css={styles.content}>
       { page && !page.home && (
         <Fragment>
+          <h1>{page.title}</h1>
           <div css={styles.tools}>
             {page.tableOfContents && page.tableOfContents.items && (
                 <Tooltip id="content-toc" title="Toggle table of content">
@@ -157,7 +158,6 @@ const Content = ({
               </Tooltip>
             )}
           </div>
-          <h1>{page.title}</h1>
           {page.tableOfContents && page.tableOfContents.items && (
             <Toc
               startLevel={1}

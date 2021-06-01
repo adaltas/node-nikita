@@ -1,33 +1,27 @@
 
 import React, {Fragment} from 'react'
 // Material UI
-import { useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import Collapse from '@material-ui/core/Collapse';
 
-const useStyles = theme => ({
-  toc: {
+const useClasses = makeStyles((theme) => ({
+  wrapperInner: {
     borderTop: '1px solid #E5E7EA',
     borderBottom: '1px solid #E5E7EA',
     padding: theme.spacing(2, 0),
-    display: 'none',
+    margin: theme.spacing(2, 0),
     '& h2': {
-      marginTop: '1rem !important',
-    },
-    '& ul': {
-      marginTop: 0,
-      marginBottom: 0,
+      marginTop: theme.spacing(2, '!important'),
     },
   },
-  tocVisible: {
-    display: 'block'
-  }
-})
+}))
 
 const Toc = ({
   startLevel,
   isOpen,
   items,
 }) => {
-  const styles = useStyles(useTheme())
+  const classes = useClasses()
   const renderToc = (level, startLevel, items) => (
     items.map((item) => (
       <Fragment key={item.url}>
@@ -41,12 +35,16 @@ const Toc = ({
     ))
   )
   return (
-    <div css={[styles.toc, isOpen && styles.tocVisible]}>
+    <Collapse in={isOpen}
+       classes={{
+         wrapperInner: classes.wrapperInner,
+       }}
+       >
       <h2>Table of Contents</h2>
       <ul>
         {renderToc(0, startLevel, items)}
       </ul>
-    </div>
+    </Collapse>
   )
 }
 
