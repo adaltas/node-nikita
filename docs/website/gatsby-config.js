@@ -56,7 +56,7 @@ module.exports = {
           },
           {
             label: 'License',
-            url: '/current/about/license',
+            url: '/project/license/',
           },
         ],
         xs: 6,
