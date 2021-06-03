@@ -22,7 +22,7 @@ nikita
 .call({
   key: 'value',
   $handler: ({config}) => {
-    // Do something
+    // Print the config value
     console.info(config.key)
   }
 })
@@ -37,7 +37,7 @@ nikita
 .call({
   key: 'value'
 }, ({config}) => {
-  // Do something
+  // Print the config value
   console.info(config.key)
 })
 ```

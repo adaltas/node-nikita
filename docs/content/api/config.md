@@ -24,6 +24,7 @@ nikita
 // Call an action with a configuration property and a custom handler
 .call({key: 'value'}, ({config}) => {
   // Configuration properties are passed to the handler
+  // Print the config value
   console.info(config.key)
 })
 ```

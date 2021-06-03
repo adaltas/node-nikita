@@ -14,7 +14,8 @@ In its simplest form, user defined handler is just a function passed to "call". 
 ```js
 nikita
 .call(() => {
-  // Do something...
+  // Print 'Hello world!' message
+  console.info('Hello world!')
 })
 ```
 
@@ -24,7 +25,8 @@ This is internally converted to:
 nikita
 .call({
   $handler: () => {
-    // Do something...
+    // Print 'Hello world!' message
+    console.info('Hello world!')
   }
 })
 ```
@@ -38,7 +40,8 @@ nikita
   $retry: 2,
   my_config: 'my_value',
   $handler: ({config}) => {
-    // Passing config.my_config
+    // Print the config value
+    console.info(config.my_config)
   }
 })
 ```

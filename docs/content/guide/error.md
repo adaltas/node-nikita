@@ -74,9 +74,11 @@ nikita
   // Catch and handle an error
   // highlight-range{1-6}
   .then(
-    (result) => { /* Do something */ }, // Run when fulfilled
+    (result) => {
+      console.info(result) // Run when fulfilled
+    },
     (err) => {
-      console.info(err.message)         // Run when rejected 
+      console.info(err.message) // Run when rejected 
     }
   )
   // Run next commands
@@ -134,7 +136,7 @@ nikita
 
 ## Action arguments as an array
 
-When an action is called with an array, it is executed for each element of the array. In such case, the execution flow is managed by Nikita. Actions are called sequentially and the flow is interupted with the first action to reject an Error:
+When an action is called with an array, it is executed for each element of the array. In such case, the execution flow is managed by Nikita. Actions are called sequentially and the flow is interrupted with the first action to reject an Error:
 
 ```js
 try {

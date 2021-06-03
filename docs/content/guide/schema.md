@@ -100,14 +100,24 @@ nikita
       }
     }
   },
-  handler: () => {
-    // Do something
+  handler: ({config}) => {
+    // Print config
+    console.info(config)
   }
 })
-// Action fulfilled
-.my_action({
-  my_config: 'my value'
+// Calling `my_action` with `my_config` fulfills
+.my_action({my_config: 'my value'})
+// Prints:
+// { my_config: 'my value' }
+// Calling `my_action` without `my_config` rejects an error
+.my_action()
+// Catch error
+.catch(err => {
+  // Print the error message
+  console.info(err.message)
 })
+// Prints:
+// NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `my_action`: #/definitions/config/required config should have required property 'my_config'.
 ```
 
 To define a property as conditionally required property, use the [`if`/`then`/`else` properties](https://ajv.js.org/json-schema.html#if-then-else). The following example defines the `my_config` property required only when the value of `my_flag` is `true`:
@@ -136,28 +146,42 @@ nikita
     }
   },
   handler: ({config}) => {
-    // Do something
+    // Print config
+    console.info(config)
   }
 })
-// Action fulfilled
+// Calling `my_action` with `my_flag: false` fulfills
 .my_action({
   my_flag: false
 })
-// Action fulfilled
+// Prints:
+// { my_flag: false }
+// Calling `my_action` with `my_config` defined fulfills
 .my_action({
   my_config: 'my value'
 })
+// Prints:
+// { my_config: 'my value' }
+// Calling `my_action` without `my_flag: true` rejects an error
+.my_action({my_flag: true})
+// Catch error
+.catch(err => {
+  // Print the error message
+  console.info(err.message)
+})
+// Prints:
+// NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors were found in the configuration of action `my_action`: #/definitions/config/if config should match "then" schema, failingKeyword is "then"; #/definitions/config/then/required config should have required property 'my_config'.
 ```
 
 ## Coercing data types
 
-Type coercion is about changing a value from one data type to another. For example a integer could be converted to a string with numeric characters.
+Type coercion is about changing a value from one data type to another. For example, an integer could be converted to a string with numeric characters.
 
 Based on the schema definitions, the action arguments are automatically converted to the targeted types before executing the action handler. In this example, the `my_config` configuration is defined as a string. If a user call the action with an integer, it is coerced to a string:
 
 ```js
 nikita
-// Registering an action with schema
+// Registering an action
 .registry.register('my_action', {
   metadata: {
     definitions: {
@@ -173,11 +197,11 @@ nikita
     }
   },
   handler: ({config}) => {
-    // Print type
+    // Print the config type
     console.info(typeof config.my_config)
   }
 })
-// Pass a number to my_config
+// Pass a number to `my_config`
 .my_action({
   // highlight-next-line
   my_config: 100
@@ -194,7 +218,8 @@ Multiple types can be defined by setting the `type` property as an array:
 
 ```js
 nikita
-// Registering an action with pattern properties
+nikita
+// Registering an action with multiple data types properties
 .registry.register('my_action', {
   metadata: {
     definitions: {
@@ -210,9 +235,14 @@ nikita
     }
   },
   handler: ({config}) => {
-    // Do something
+    // Print the config type
+    console.info(typeof config.my_config)
   }
 })
+// Calling `my_action` passing a number to `my_config` prints "number"
+.my_action({my_config: 10})
+// Calling `my_action` passing a string to `my_config` prints "string"
+.my_action({my_config: 'my value'})
 ```
 
 Be careful when using the alternative [`oneOf` keyword](https://ajv.js.org/json-schema.html#oneof). Because coercion is activated, the rule will fail if the value is compatible with multiple types. For example, the following declaration will fail if the property can be converted to both a `string` and a `number`:
@@ -235,11 +265,11 @@ Refers the [Ajv documentation](https://ajv.js.org/coercion.html#coercion-from-st
 
 To reference a property defined in another action, use the `$ref` keyword.
 
-To reference a property of the current action, use the `$ref` keyword in a combination with  `definitions`:
+To reference a property of the current action, use the `$ref` keyword in a combination with `definitions`:
 
 ```js
 nikita
-// Registering an action with a referenced properties
+// Registering an action with referenced properties
 .registry.register('my_action', {
   metadata: {
     definitions: {
@@ -248,20 +278,23 @@ nikita
         properties: {
           'my_config': {
             // highlight-next-line
-            $ref: '#/definitions/config/my_referenced_config',
-          },
-        },
+            $ref: '#/definitions/my_referenced_config'
+          }
+        }
       },
-      // highlight-range{1-5}
-      my_referenced_config: {
+      // highlight-range{1-3}
+      'my_referenced_config': {
         type: 'string'
       }
     }
   },
   handler: ({config}) => {
-    // Do something
+    // Print the config type
+    console.info(typeof config.my_config)
   }
 })
+// Calling `my_action` prints "string", because the number type coerced to string.
+.my_action({my_config: 10})
 ```
 
 ## Referencing external properties
@@ -273,27 +306,27 @@ The `module://` prefix search for the action exported in the location defined af
 ```js
 nikita
 // Registering an action with referenced properties
-.registry.register('ping', {
+.registry.register('my_action', {
   metadata: {
     definitions: {
       'config': {
         type: 'object',
         properties: {
           // highlight-range{1-3}
-          'target': {
+          'my_config': {
             $ref: 'module://@nikitajs/core/lib/actions/fs/base/readdir#/definitions/config/properties/target'
           }
-        },
+        }
       }
     }
   },
   handler: ({config}) => {
-    // Do something
-    return typeof config.message
+    // Print the config type
+    console.info(typeof config.my_config)
   }
 })
-// Calling `ping` return "string"
-.ping({ target: 'pong' })
+// Calling `my_action` prints "string", because the number type coerced to string.
+.my_action({my_config: 10})
 ```
 
 The `registry://` prefix search for an action present in the [registry](/current/guide/registry/):
@@ -307,17 +340,13 @@ nikita
       'config': {
         type: 'object',
         properties: {
-          // highlight-range{1-4}
+          // highlight-range{1-3}
           'my_config': {
-            type: 'string',
-            default: 'my value'
+            type: 'string'
           }
         }
       }
     }
-  },
-  handler: () => {
-    // Do something
   }
 })
 // Registering an action with referenced properties
@@ -336,10 +365,13 @@ nikita
       }
     }
   },
-  handler: () => {
-    // Do something
+  handler: ({config}) => {
+    // Print the config type
+    console.info(typeof config.my_config)
   }
 })
+// Calling `my.second.action` prints "string", because the number type coerced to string.
+.my.second.action({my_config: 10})
 ```
 
 ## Pattern properties
@@ -350,7 +382,7 @@ In this example, all the keys starting with `my_` must be of type `string`:
  
 ```js
 nikita
-// Registering an action with a referenced properties
+// Registering an action with the pattern property
 .registry.register('my_action', {
   metadata: {
     definitions: {
@@ -366,9 +398,12 @@ nikita
     }
   },
   handler: ({config}) => {
-    // Do something
+    // Print the config type
+    console.info(typeof config.my_config)
   }
 })
+// Calling `my_action` prints "string", because the number type coerced to string.
+.my_action({my_config: 10})
 ```
 
 ## Disallowing additional properties
@@ -379,7 +414,7 @@ The following example disallows passing any properties other than `my_config`:
 
 ```js
 nikita
-// Registering an action with pattern properties
+// Registering an action disallowing additional properties
 .registry.register('my_action', {
   metadata: {
     definitions: {
@@ -390,13 +425,20 @@ nikita
             type: 'string'
           }
         },
+        // Disallow additional properties
         // highlight-next-line
         additionalProperties: false
       }
     }
-  },
-  handler: ({config}) => {
-    // Do something
   }
 })
+// Calling `my_action` with the `my_another_config` config will not be fulfilled
+.my_action({my_another_config: 10})
+// Catch error
+.catch(err => {
+  // Print error message
+  console.info(err.message)
+})
+// Prints:
+// NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `my_action`: #/definitions/config/additionalProperties config should NOT have additional properties, additionalProperty is "my_another_config".
 ```
