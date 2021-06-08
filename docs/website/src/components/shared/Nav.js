@@ -1,106 +1,140 @@
 // React
-import React, {Fragment} from 'react'
+import React, {Fragment, useState} from 'react'
 // Material UI
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme, makeStyles} from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText'
+import IconButton from '@material-ui/core/IconButton'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import MenuItem from '@material-ui/core/MenuItem'
-import MenuList from '@material-ui/core/MenuList'
-import Divider from '@material-ui/core/Divider'
+import List from '@material-ui/core/List'
+import Collapse from '@material-ui/core/Collapse'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
 // Gatsby
 import { Link } from 'gatsby'
 
 const useStyles = theme => ({
-  devider: {
-    margin: theme.spacing(0, 1),
-  },
-  bottomNav: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  },
-  bottomNavTitle: {
-    opacity: 0.35,
-    textTransform: 'uppercase',
-    paddingTop: theme.spacing(4),
-    paddingLeft: theme.spacing(2),
-    paddingBottom: theme.spacing(1),
-  },
-  children: {
+  nested: {
     '& a': {
-      paddingLeft: theme.spacing(4),
+      paddingLeft: theme.spacing(3)
+    },
+    '& ul a': {
+      paddingLeft: theme.spacing(4)
     }
   },
-  active: {
-    color: theme.link.normal,
-  },
+  child: {
+    '& div': {
+      margin: 0,
+      '& span': {
+        fontSize: '.9rem',
+        color: '#777777',
+      }
+    }
+  }
 })
 
-const Item = ({
-  page,
-  styles
-}) => (
-  <MenuItem
-    component={Link}
-    to={page.data.slug}
-    activeStyle={styles.active}
-    partiallyActive={true}
-  >
-    <ListItemText primary={page.data.navtitle || page.data.title} />
-  </MenuItem>
-)
+const useClasses = makeStyles((theme) => ({
+  active: {
+    '& span': {
+      color: `${theme.link.normal} !important`,
+    },
+  },
+}))
 
-const BottomNav = ({
-  menu,
-  styles
+const CollapsedNav = ({
+  page,
+  styles,
+  classes,
+  activePage,
+  depth
 }) => {
-  const pages = Object.values(menu.children)
-  .sort((p1, p2) => p1.data.sort > p2.data.sort)
-  .map(page => {
-    return (
-      <Fragment key={page.data.slug}>
-        <Item page={page} styles={styles} />
-        {Object.keys(page.children).length !== 0 && (
-          <MenuList css={styles.children}>
-            {Object.values(page.children)
-              .sort((p1, p2) => p1.data.sort > p2.data.sort)
-              .map(child => (
-                <Item key={child.data.slug} page={child} styles={styles} />
-              ))}
-          </MenuList>
-        )}
-      </Fragment>
-    )
-  })
+  
+  const activeSlug = activePage.slug.replace('/packages', '/actions') // Support packages pages
+  const pageSlug = page.data.slug.replace('/packages', '/actions') // Support packages pages
+  const [open, setOpen] = useState(activeSlug.indexOf(pageSlug) === 0)
+  const onToggle = () => setOpen(!open)
   return (
-    <div css={styles.bottomNav}>
-      <Divider css={styles.devider}/>
-      <div css={styles.bottomNavTitle}>{menu.data.navtitle || menu.data.title}</div>
-      {pages}
-    </div>
+    <Fragment>
+      <MenuItem
+        component={Link}
+        to={page.data.slug}
+        css={depth > 0 ? styles.child : ''}
+        activeClassName={classes.active}
+      >
+        <ListItemText primary={page.data.navtitle || page.data.title} />
+        <ListItemSecondaryAction>
+          <IconButton size={depth > 0 ? 'small' : 'medium'} onClick={onToggle}>
+            {open ? <ExpandLess /> : <ExpandMore />}
+          </IconButton>
+        </ListItemSecondaryAction>
+      </MenuItem>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List css={styles.nested}>
+          <BuildNav
+            styles={styles}
+            depth={++depth}
+            classes={classes}
+            menu={page.children}
+            activePage={activePage}
+            />
+        </List>
+      </Collapse>
+    </Fragment>
   )
 }
 
-const Nav = ({
-  menu
+const BuildNav = ({
+  menu,
+  styles,
+  classes,
+  activePage,
+  depth
 }) => {
-  // Styles
-  const styles = useStyles(useTheme())
-  var current
-  const pages = Object.values(menu.children)
+  return Object.values(menu)
   .sort((p1, p2) => p1.data.sort > p2.data.sort)
-  .map(page => {
-    if(Object.keys(page.children).length !== 0)
-      current = page
+  .map((page, index) => {
+    if (Object.keys(page.children).length === 0)
+      return (
+        <MenuItem
+          key={`link-${index}`} 
+          component={Link}
+          activeClassName={classes.active}
+          to={page.data.slug}
+          css={depth > 0 ? styles.child : ''}
+        >
+          <ListItemText primary={page.data.navtitle || page.data.title} />
+        </MenuItem>
+      )
     return (
-      <Item key={page.data.slug} page={page} styles={styles} />
+      <CollapsedNav
+        key={`list-${index}`}
+        depth={depth}
+        page={page}
+        styles={styles}
+        classes={classes}
+        activePage={activePage}
+        />
     )
   })
+}
+
+const Nav = ({
+  menu,
+  page
+}) => {
+  const theme = useTheme()
+  const classes = useClasses(theme)
+  const styles = useStyles(theme)
   return (
-    <MenuList component="nav">
-      {pages}
-      {current && current.children && (
-        <BottomNav styles={styles} menu={current} />
-      )}
-    </MenuList>
+    <List component="nav">
+      <BuildNav
+        styles={styles}
+        classes={classes}
+        menu={menu.children}
+        depth={0}
+        activePage={page}
+        />
+    </List>
   )
 }
 
