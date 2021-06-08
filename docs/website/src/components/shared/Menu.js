@@ -45,23 +45,19 @@ const useStyles = theme => ({
   },
 })
 
-const createMenu = (menu, page, nodes, maxDepth = 3) => {
-  const pageSlugs = page.slug.split('/').filter(part => part)
-  if (page.version !== null) // Don't count root version pages (eg. "/current/")
-    pageSlugs.shift()
-  const limitPageSlugs = pageSlugs.slice(0, maxDepth - 1)
+const getMenuData = (node) => {
+  return {
+    navtitle: node.navtitle || (node.frontmatter ? node.frontmatter.navtitle : ''),
+    title: node.title || (node.frontmatter ? node.frontmatter.title : ''),
+    slug: node.slug,
+    sort: (node.frontmatter ? node.frontmatter.sort || 99 : '') || 99,
+  }
+}
+
+const createPageMenu = (menu, page, nodes, maxDepth = 3) => {
   nodes.forEach( node => {
     const slugs = node.slug.split('/').filter(part => part)
     if(node.version.alias) slugs.shift() // Don't count root version pages (eg. "/current/")
-    // Filter items for current page
-    var flag = false
-    if(slugs.length === 1)
-      flag = true // pass all root pages
-    if(page.slug.indexOf(node.slug.replace(/[a-z0-9-_]*\/$/, '')) === 0)
-      flag = true // pass same and lower level pages with the same path
-    if(slugs.slice(0, maxDepth - 1).toString() === limitPageSlugs.toString())
-      flag = true
-    if(!flag) return
     let parentMenu = menu
     // Get menu hierarchy
     slugs.forEach((slug, i) => {
@@ -71,24 +67,13 @@ const createMenu = (menu, page, nodes, maxDepth = 3) => {
       if (!parentMenu.children[slug]){
         parentMenu.children[slug] = { data: {}, children: {} }
       }
-      parentMenu = parentMenu.children[slug]  
+      parentMenu = parentMenu.children[slug] 
     })
-    parentMenu.data = {
-      navtitle: node.navtitle || (node.frontmatter ? node.frontmatter.navtitle : ''),
-      title: node.title || (node.frontmatter ? node.frontmatter.title : ''),
-      slug: node.slug,
-      sort: (node.frontmatter ? node.frontmatter.sort || 99 : '') || 99,
-    }
+    parentMenu.data = getMenuData(node)
   })
 }
 
-const Menu = ({
-  page,
-  data
-}) => {
-  const menu = { children: {} }
-  createMenu(menu, page, data.pages.nodes) // Pages
-  // Actions root page
+const createActionMenu = (menu, page, nodes) => {
   menu.children.actions = {
     children: {},
     data: {
@@ -97,9 +82,30 @@ const Menu = ({
       sort: 10,
     }
   }
-  createMenu(menu, page, data.packages.nodes) // Packages
-  createMenu(menu, page, data.actions.nodes) // Actions
+  let actionMenu = {}
+  nodes.forEach( (pckg, i) => {
+    actionMenu[i] = { children: {}, data: {} }
+    pckg.actions.forEach( (action, j) => {
+      actionMenu[i].children[j] = {
+        children: {},
+        data: getMenuData(action)
+      }
+    })
+    actionMenu[i].data = getMenuData(pckg)
+  })
+  menu.children.actions.children = actionMenu
+}
+
+const Menu = ({
+  page,
+  data
+}) => {
+  const menu = { children: {} }
+  createPageMenu(menu, page, data.pages.nodes) // Pages
+  createActionMenu(menu, page, data.packages.nodes) // Actions
+  // Actions root page
   const styles = useStyles(useTheme())
+  
   return (
     <div css={styles.root}>
       <div css={styles.toolbar}>
@@ -109,7 +115,7 @@ const Menu = ({
         <Typography variant="caption">{page.version ? `${page.version} version` : 'current version'}</Typography>
       </div>
       <div css={styles.body}>
-        <Nav menu={menu}/>
+        <Nav menu={menu} page={page}/>
       </div>
       <div css={styles.footer}>
         <Typography variant="caption">
@@ -154,14 +160,12 @@ const WrappedMenu = props => (
             version {
               alias
             }
-          }
-        }
-        actions: allNikitaAction(sort: {fields: slug, order: ASC}) {
-          nodes {
-            slug
-            title: name
-            version {
-              alias
+            actions {
+              slug
+              title: name
+              version {
+                alias
+              }
             }
           }
         }

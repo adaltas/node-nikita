@@ -49,7 +49,7 @@ exports.onCreateNode = async (
   const name = packageJson.name.replace('@nikitajs/', '')
   const currentVersion = '1', version = '1' // Currently only 1 version
   var versionAlias = currentVersion == version ? 'current' : `v${version}`
-  const slug = `/${versionAlias}/actions/${name}/`
+  const slug = `/${versionAlias}/packages/${name}/`
   const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${path.relative(path.join(include, '../'), node.fileAbsolutePath)}`
   // Inherit fields
   createNode({
