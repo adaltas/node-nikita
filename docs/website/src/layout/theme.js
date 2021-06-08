@@ -44,13 +44,14 @@ let theme = createMuiTheme({
     ].join(','),
     fontSize: 14,
     h1: {
-      fontSize: '4rem',
+      fontSize: '3rem',
+      wordWrap: 'break-word',
     },
     h2: {
-      fontSize: '3rem',
+      fontSize: '2rem',
     },
     h3: {
-      fontSize: '2rem',
+      fontSize: '1.5rem',
     },
   },
 });
