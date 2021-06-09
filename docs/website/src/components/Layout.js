@@ -22,11 +22,11 @@ const useClasses = makeStyles((theme) => ({
 const useStyles = theme => ({
   content: {
     width: '100%',
-    backgroundColor: 'rgb(242,242,242)',
+    backgroundColor: '#fff',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
-    }),
+    })
   },
   shift: {
     width: `calc(100% - ${drawerWidth}px)`,

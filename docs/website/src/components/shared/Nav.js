@@ -36,7 +36,7 @@ const useStyles = theme => ({
 const useClasses = makeStyles((theme) => ({
   active: {
     '& span': {
-      color: `${theme.link.normal} !important`,
+      color: `${theme.link.main} !important`,
     },
   },
 }))

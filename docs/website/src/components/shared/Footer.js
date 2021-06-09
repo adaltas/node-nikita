@@ -10,7 +10,7 @@ import { Link } from 'gatsby'
 const useStyles = theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: 'rgba(18, 24, 47, 1)',
+    backgroundColor: theme.palette.primary.main,
   },
   rootInner: theme.mixins.gutters({
     // ...theme.typography,
@@ -44,7 +44,7 @@ const useStyles = theme => ({
       textDecoration: 'none',
     },
     '& a:hover': {
-      color: theme.link.normal,
+      color: theme.link.main,
     },
   },
   content: {
@@ -55,7 +55,7 @@ const useStyles = theme => ({
       textDecoration: 'none',
     },
     '& a:hover': {
-      color: theme.link.normal,
+      color: theme.link.main,
     },
   },
 })

@@ -1,7 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
 import lightBlue from '@material-ui/core/colors/lightBlue';
-import green from '@material-ui/core/colors/green';
 import {styles} from '@material-ui/core/Typography/Typography';
 
 // A custom theme for this app
@@ -15,19 +13,14 @@ let theme = createMuiTheme({
     color: '#000',
   },
   link: {
-    normal: lightBlue[500],
+    light: lightBlue[500],
+    main: lightBlue[700]
+  },
   },
   palette: {
     primary: {
-      light: purple[300],
-      main: purple[500],
-      dark: purple[700],
-    },
-    secondary: {
-      light: green[300],
-      main: green[500],
-      dark: green[700],
-    },
+      main: '#12182f',
+    }
   },
   typography: {
     fontFamily: [
@@ -46,12 +39,15 @@ let theme = createMuiTheme({
     h1: {
       fontSize: '3rem',
       wordWrap: 'break-word',
+      color: '#777777',
     },
     h2: {
       fontSize: '2rem',
+      color: '#777777',
     },
     h3: {
       fontSize: '1.5rem',
+      color: '#777777',
     },
   },
 });

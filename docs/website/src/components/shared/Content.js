@@ -23,14 +23,12 @@ const useStyles = theme => ({
       ...theme.typography.root,
       ...theme.typography.h1,
       ...theme.typography.gutterBottom,
-      color: '#777777',
       fontWeight: 'normal',
     },
     '& h2': {
       ...theme.typography.root,
       ...theme.typography.h2,
       ...theme.typography.gutterBottom,
-      color: '#777777',
       fontWeight: 'normal',
       marginTop: theme.spacing(4),
     },
@@ -38,13 +36,9 @@ const useStyles = theme => ({
       ...theme.typography.root,
       ...theme.typography.h3,
       ...theme.typography.gutterBottom,
-      color: '#777777',
       fontWeight: 'normal',
       marginTop: theme.spacing(3),
     },
-    // '& em': {
-    //   color: '#2D2D2D',
-    // },
     '& blockquote': {
       borderLeft: '3px solid #777777',
       margin: 0,
@@ -56,24 +50,8 @@ const useStyles = theme => ({
     '& blockquote p > code[class*="language-"]': {
       color: '#646464',
     },
-    '& p': {
-      // ...theme.typography.body1,
-      // color: '#000',
-      // textAlign: 'justify',
-    },
-    '& ul p': {
-      // margin: 0,
-    },
     '& ul': {
       paddingLeft: theme.spacing(2),
-      // listStylePosition: 'inside',
-    },
-    '& li': {
-      // color: '#2D2D2D',
-      // textAlign: 'justify',
-    },
-    '& pre > code[class*="language-"]': {
-      // fontSize: '1rem',
     },
     '& :not(pre) > code': {
       padding: '.1em .3em',
@@ -92,11 +70,11 @@ const useStyles = theme => ({
     '& a': {
       textDecoration: 'none',
       '&:link,&:visited,& > code': {
-        color: '#00618E',
+        color: theme.link.main,
       },
       '&:hover,&:hover > code': {
         textDecoration: 'none',
-        color: theme.link.normal,
+        color: theme.link.light,
       },
     },
     [theme.breakpoints.up(900 + theme.spacing(6))]: {
@@ -113,7 +91,7 @@ const useStyles = theme => ({
     },
     '&:hover': {
       textDecoration: 'none',
-      color: theme.link.normal + ' !important',
+      color: theme.link.main + ' !important',
     }
   },
 })

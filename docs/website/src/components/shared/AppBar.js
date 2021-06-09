@@ -19,7 +19,7 @@ const useStyles = theme => ({
     '@media print': {
       position: 'absolute',
     },
-    backgroundColor: 'rgba(18, 24, 47, 1)',
+    backgroundColor: theme.palette.primary.main,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
