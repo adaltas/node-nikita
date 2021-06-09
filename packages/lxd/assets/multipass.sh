@@ -1,14 +1,16 @@
 #/bin/bash
 set -e
 
-# MacOS crash and image cant start, 
+# Logs: `ll /Library/Logs/Multipass`
+
+# MacOS crash and image cant start:
 # see https://github.com/canonical/multipass/issues/1924
+# Restart multipass:
+# sudo pkill multipassd
+# multipass start nikita
 
 brew list | grep -x "bash-completion" || brew install bash-completion
 brew list | grep -x "multipass" || brew install --cask multipass
-
-# sudo pkill multipassd
-# multipass start nikita
 
 multipass launch \
   --name nikita \
