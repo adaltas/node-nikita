@@ -16,6 +16,9 @@ let theme = createMuiTheme({
     light: lightBlue[500],
     main: lightBlue[700]
   },
+  code: {
+    main: '#f0f0f5'
+  },
   palette: {
     primary: {
       main: '#12182f',
