@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 // Material UI
 import { useTheme } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
@@ -121,16 +122,19 @@ const MyAppBar = ({
           </Typography>
         </Link>
         <div css={styles.grow} />
-        <Tooltip id="appbar-bug" title={site.issues.title} enterDelay={300}>
-          <IconButton
-            color="inherit"
-            href={site.issues.url}
-            aria-labelledby="appbar-bug"
-            css={styles.icon}
-          >
-            <BugReportOutlined />
-          </IconButton>
-        </Tooltip>
+        {/* Hide the GitHub Issue button on mobile screens because it is useless */}
+        <Box display={{ xs: 'none', md: 'block' }}>
+          <Tooltip id="appbar-bug" title={site.issues.title} enterDelay={300}>
+            <IconButton
+              color="inherit"
+              href={site.issues.url}
+              aria-labelledby="appbar-bug"
+              css={styles.icon}
+            >
+              <BugReportOutlined />
+            </IconButton>
+          </Tooltip>
+        </Box>
         <Tooltip
           id="appbar-github"
           title={site.github.title}
