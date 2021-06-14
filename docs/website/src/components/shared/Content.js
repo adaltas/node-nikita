@@ -9,7 +9,7 @@ import EditIcon from '@material-ui/icons/EditOutlined'
 import ListIcon from '@material-ui/icons/ListOutlined'
 import Toc from "./Toc"
 
-require('prismjs/themes/prism-tomorrow.css')
+require('prismjs/themes/prism.css')
 
 const useStyles = theme => ({
   content: theme.mixins.gutters({
@@ -77,17 +77,8 @@ const useStyles = theme => ({
     },
     '& :not(pre) > code': {
       padding: '.1em .3em',
-      background: '#DFDEDE',
+      background: theme.code.main,
       color: '#000',
-    },
-    '& .gatsby-highlight-code-line': {
-      background: 'rgba(255,255,255,.2)',
-      marginLeft: theme.spacing(-2),
-      marginRight: theme.spacing(-2),
-      paddingLeft: '.75rem',
-      paddingRight: theme.spacing(2),
-      borderLeft: '0.25rem solid rgba(255,255,255, .75)',
-      display: 'block',
     },
     '& a': {
       textDecoration: 'none',
@@ -98,6 +89,18 @@ const useStyles = theme => ({
         textDecoration: 'none',
         color: theme.link.normal,
       },
+    },
+    '& .gatsby-highlight pre': {
+      background: theme.code.main,  // Apply a better background color for code snippets
+      // Remove ugly colors for characters like "=;:"
+      '& .token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string': {
+        color: 'inherit',
+        background: 'inherit',
+      },
+    },
+    '& .gatsby-highlight-code-line': {
+      background: 'rgba(255,255,255,.7)',
+      display: 'block',
     },
     [theme.breakpoints.up(900 + theme.spacing(6))]: {
       maxWidth: 900,

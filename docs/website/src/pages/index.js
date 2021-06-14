@@ -9,7 +9,8 @@ import SvgIcon from '@material-ui/core/SvgIcon'
 // Syntax
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-light'
 import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript'
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
 SyntaxHighlighter.registerLanguage('javascript', javascript)
 const codeString = `
 // Including Nikita
@@ -89,6 +90,18 @@ const useStyles = theme => ({
   feature: {
     paddingBottom: '0 !important',
   },
+  code: {
+    // Apply a better background color and styles for code snippets
+    background: theme.code.main,
+    padding: '1em',
+    margin: '.5em 0',
+    overflow: 'auto',
+    // Remove ugly colors for characters like "=;:"
+    '& .token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string': {
+      color: 'inherit',
+      background: 'inherit',
+    },
+  }
 })
 
 const Index = () => {
@@ -243,7 +256,11 @@ const Index = () => {
       </div>
       <div css={styles.root}>
         <h2>Redis installation example </h2>
-        <SyntaxHighlighter language="javascript" style={tomorrow}>
+        <SyntaxHighlighter
+          language="javascript"
+          style={prism}
+          css={styles.code}
+          useInlineStyles={false}>
           {codeString}
         </SyntaxHighlighter>
       </div>
