@@ -91,6 +91,7 @@ const BuildNav = ({
   depth
 }) => {
   return Object.values(menu)
+  .sort((p1, p2) => p1.data.title > p2.data.title) // First, sort by name, it is useful for actions
   .sort((p1, p2) => p1.data.sort > p2.data.sort)
   .map((page, index) => {
     if (Object.keys(page.children).length === 0)
