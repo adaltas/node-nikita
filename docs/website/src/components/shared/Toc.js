@@ -2,38 +2,46 @@
 import React, {Fragment} from 'react'
 // Material UI
 import { useTheme } from '@material-ui/core/styles';
+import { Link } from 'gatsby'
 
 const useStyles = theme => ({
-  toc: {
-    borderTop: '1px solid #E5E7EA',
-    borderBottom: '1px solid #E5E7EA',
-    padding: theme.spacing(2, 0),
-    display: 'none',
-    '& h2': {
-      marginTop: '1rem !important',
-    },
-    '& ul': {
-      marginTop: 0,
-      marginBottom: 0,
-    },
+  head: {
+    color: '#777777',
+    fontSize: theme.typography.fontSize,
+    fontWeight: 500,
+    textTransform: 'uppercase'
   },
-  tocVisible: {
-    display: 'block'
+  list: {
+    margin: theme.spacing(3, 0),
+    paddingLeft: 0,
+    '& li': {
+      listStyle: 'none',
+      marginBottom: theme.spacing(1),
+    },
+    '& a': {
+      fontSize: '.9rem',
+      textDecoration: 'none',
+      '&:link,&:visited': {
+        color: '#777777',
+      },
+      '&:hover': {
+        color: theme.link.light,
+      },
+    },
   }
 })
 
 const Toc = ({
   startLevel,
-  isOpen,
   items,
 }) => {
   const styles = useStyles(useTheme())
   const renderToc = (level, startLevel, items) => (
     items.map((item) => (
-      <Fragment key={item.url}>
+      <Fragment key={item.url} >
         {(level >= startLevel) && (
           <li>
-            <a href={item.url}>{item.title}</a>
+            <Link to={item.url}>{item.title}</Link>
           </li>
         )}
         {item.items && renderToc(++level, startLevel, item.items)}
@@ -41,12 +49,12 @@ const Toc = ({
     ))
   )
   return (
-    <div css={[styles.toc, isOpen && styles.tocVisible]}>
-      <h2>Table of Contents</h2>
-      <ul>
+    <nav>
+      <span css={styles.head}>Table of Contents</span>
+      <ul css={styles.list}>
         {renderToc(0, startLevel, items)}
       </ul>
-    </div>
+    </nav>
   )
 }
 
