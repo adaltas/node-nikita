@@ -1,9 +1,9 @@
 ---
 sort: 6
 related:
-- /api/siblings
-- /api/parent
-- /api/children
+- /api/siblings/
+- /api/parent/
+- /api/children/
 ---
 
 # Sibling action
@@ -17,19 +17,19 @@ The `sibling` property is an alias of `siblings[siblings.length-1]`.
 It is an object with the following properties:
 
 - `children`   
-  The [child actions](/current/api/children) relative to the current action.
+  The [child actions](/current/api/children/) relative to the current action.
 - `metadata`   
-  The [metadata properties](/current/api/metadata) of the action.
+  The [metadata properties](/current/api/metadata/) of the action.
 - `config`   
-  The [configuration properties](/current/api/config) passed to an action call.
+  The [configuration properties](/current/api/config/)/ passed to an action call.
 - `error`   
-  The [error object](/current/guide/error) in a rejected action.
+  The [error object](/current/guide/error/) in a rejected action.
 - `output`   
-  The [returned output](/current/api/output) in a resolved action.
+  The [returned output](/current/api/output/) in a resolved action.
 
 ## Usage
 
-The properties are available in the [action handler](/current/api/handler) under the `sibling` property in the first argument:
+The properties are available in the [action handler](/current/api/handler/) under the `sibling` property in the first argument:
 
 ```js
 nikita

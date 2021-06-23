@@ -1,7 +1,7 @@
 ---
 navtitle: time_start
 related:
-- /api/metadata/time_end
+- /api/metadata/time_end/
 ---
 
 # Metadata "time_start"
@@ -13,7 +13,7 @@ The `time_start` metadata property stores the Unix timestamp at the time when th
 
 ## Usage
 
-The value is accessible inside the [action handler](/current/api/handler).
+The value is accessible inside the [action handler](/current/api/handler/).
 
 ```js
 nikita

@@ -25,12 +25,12 @@ The topics of this section are organized by relevance, the first ones being cons
 * [Local and remote (SSH) execution](/current/guide/local_remote/)   
   Actions are designed to run transparently either locally or remotely through SSH.
 * [Conditions](/current/guide/conditions/)   
-  Conditions are executed before the [action handlers](/current/api/handler) to control and guarantee its execution.
+  Conditions are executed before the [action handlers](/current/api/handler/) to control and guarantee its execution.
 * [Assertions](/current/guide/assertions/)   
-  Assertions are executed after the [action handlers](/current/api/handler) to validate the result of its execution.
+  Assertions are executed after the [action handlers](/current/api/handler/) to validate the result of its execution.
 * [Debugging and Logging](/current/guide/logging_debugging/)   
   Nikita provides multiple mechanisms to report, dive into the logs and intercept instructions. Most of them can be instantaneously activated and you are provided with simple building blocks to quickly write your own.
 * [Control Flow](/current/guide/control_flow/)   
   Nikita runs every action sequentially. This behavior ensures there are no conflicts between two commands executed simultaneously. Moreover, this sequential nature is aligned with SSH which executes one command at a time over a given connection.
 * [Error handling](/current/guide/error/)   
-  Nikita rejects errors when they occur with the [action promise](/current/guide/promise). When a promise rejects, the control jumps to the closest rejection handler.
+  Nikita rejects errors when they occur with the [action promise](/current/guide/promise/). When a promise rejects, the control jumps to the closest rejection handler.

@@ -1,18 +1,18 @@
 ---
 navtitle: tmpdir
 related:
-- /api/metadata/dirty
+- /api/metadata/dirty/
 ---
 
 # Metadata "tmpdir"
 
-The `tmpdir` metadata creates a temporary directory for the duration of the action execution.  The directory is decommissioned right before the action finishes its execution unless the [`dirty` metadata](/current/api/metadata/dirty) is enabled.
+The `tmpdir` metadata creates a temporary directory for the duration of the action execution.  The directory is decommissioned right before the action finishes its execution unless the [`dirty` metadata](/current/api/metadata/dirty/) is enabled.
 
 * Type: `boolean|string|function`
 
 ## Usage
 
-To create a temporary directory pass `true` to the metadata. The pathname of the created directory is available inside the [action handler](/current/api/handler):
+To create a temporary directory pass `true` to the metadata. The pathname of the created directory is available inside the [action handler](/current/api/handler/):
 
 ```js
 nikita
@@ -26,9 +26,9 @@ nikita
 })
 ```
 
-When actions are [running over SSH](/current/guide/local_remote), the temporary directory is always created inside the `/tmp` folder. Otherwise, it is inside the default OS temporary directory returned by the Node.js native function [`os.tmpdir()`](https://nodejs.org/api/os.html#os_os_tmpdir).
+When actions are [running over SSH](/current/guide/local_remote/), the temporary directory is always created inside the `/tmp` folder. Otherwise, it is inside the default OS temporary directory returned by the Node.js native function [`os.tmpdir()`](https://nodejs.org/api/os.html#os_os_tmpdir).
 
-The directory name is generated basing on the [`uuid` metadata](/current/api/metadata/uuid). When it is created with boolean `true`, the directory is unique for the entire Nikita's session and shared between all child actions. Thus, enabling the metadata in children doesn't make sense when it is already enabled in the parent action. The following example asserts this behavior:
+The directory name is generated basing on the [`uuid` metadata](/current/api/metadata/uuid/). When it is created with boolean `true`, the directory is unique for the entire Nikita's session and shared between all child actions. Thus, enabling the metadata in children doesn't make sense when it is already enabled in the parent action. The following example asserts this behavior:
 
 ```js
 const assert = require('assert');
@@ -89,7 +89,7 @@ To provide a custom logic on creating a directory pathname, associate a function
 - `tmpdir`   
   Generated directory name basing on the `uuid` metadata.
   
-The following example demonstrates creating a directory basing on a [configuration property](/current/api/config):
+The following example demonstrates creating a directory basing on a [configuration property](/current/api/config/):
 
 ```js
 nikita

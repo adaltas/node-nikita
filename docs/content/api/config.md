@@ -5,7 +5,7 @@ sort: 1
 
 # Configuration properties
 
-Configuration properties are used to contextualize the [action handler](/current/api/handler) and they are specific to every action.
+Configuration properties are used to contextualize the [action handler](/current/api/handler/) and they are specific to every action.
 
 ## Usage
 
@@ -39,7 +39,7 @@ nikita
 .execute('whoami')
 ```
 
-The string configuration is here for convenience. Internally, the handler of the `nikita.execute` action receives the configuration as an object and search for the [`argument` metadata](/current/api/metadata/argument) property. Here's an example of how it can be implemented into an action:
+The string configuration is here for convenience. Internally, the handler of the `nikita.execute` action receives the configuration as an object and search for the [`argument` metadata](/current/api/metadata/argument/) property. Here's an example of how it can be implemented into an action:
 
 ```js
 nikita
@@ -52,7 +52,7 @@ nikita
 })
 ```
 
-To make it more generic, Nikita provides the [`argument_to_config` metadata](/current/api/metadata/argument_to_config) property which maps an argument into a configuration property with the desired name.
+To make it more generic, Nikita provides the [`argument_to_config` metadata](/current/api/metadata/argument_to_config/) property which maps an argument into a configuration property with the desired name.
 
 ## Merging properties
 

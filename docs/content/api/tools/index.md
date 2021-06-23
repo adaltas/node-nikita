@@ -4,11 +4,11 @@ sort: 5
 
 # Tools
 
-Tools provide additional functionalities to Nikita's actions. They are available inside the [action handler](/current/api/handler) under the `tools` property of the first argument.
+Tools provide additional functionalities to Nikita's actions. They are available inside the [action handler](/current/api/handler/) under the `tools` property of the first argument.
 
 ## Usage
 
-Tool functions are called inside the [action handler](/current/api/handler): 
+Tool functions are called inside the [action handler](/current/api/handler/): 
 
 ```js
 nikita

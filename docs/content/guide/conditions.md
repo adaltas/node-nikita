@@ -4,7 +4,7 @@ sort: 5
 
 # Conditions
 
-Conditions are executed before the [action handlers](/current/api/handler) to control and guarantee its execution.
+Conditions are executed before the [action handlers](/current/api/handler/) to control and guarantee its execution.
 
 Conditions `if` and `unless` determine the execution of the handler by their values or the result of its resolving in case of function. Other conditions exist and are prefixed with `if_` or `unless_` for their negation. Multiple conditions can be combined, in which case, all of them must pass. 
 
@@ -36,7 +36,7 @@ The following example represents updating a file. It contains 2 conditions appli
 
 ## `if`
 
-Condition the execution of the [action handlers](/current/api/handler) to a user defined condition interpreted as `true`. 
+Condition the execution of the [action handlers](/current/api/handler/) to a user defined condition interpreted as `true`. 
 
 When the `if` value is:
 

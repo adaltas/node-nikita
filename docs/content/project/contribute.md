@@ -32,7 +32,7 @@ If you send a pull request, please do it against the master branch. We maintain 
 
 Nikita follows [Semantic Versioning](https://semver.org/) (aka SemVer). We release patch versions for bug fixes, minor versions for new features, and major versions for any breaking changes. When we make breaking changes, we also introduce deprecation warnings in a minor version so that our users learn about the upcoming changes and migrate their code in advance.
 
-Every significant change is documented in the [Changelog](/current/project/changelog) file.
+Every significant change is documented in the [Changelog](/project/changelog/) file.
 
 ## Documentation
 

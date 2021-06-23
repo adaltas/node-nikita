@@ -1,19 +1,19 @@
 ---
 navtitle: argument_to_config
 related:
-- /api/metadata/argument
+- /api/metadata/argument/
 ---
 
 # Metadata "argument_to_config"
 
-The `argument_to_config` metadata property maps an argument passed to the action to a [configuration property](/current/api/config) with the given name.
+The `argument_to_config` metadata property maps an argument passed to the action to a [configuration property](/current/api/config/) with the given name.
 
 Important, the argument must not be a function nor an object literal. Functions are already interpreted as handlers and object literals as action properties. When multiple arguments are provided, only the last one is extracted.
 
 * Type: `string`
 
 
-When [writing and registering](/current/guide/register) Nikita's actions, it is sometimes interesting to simplify how arguments are provided. Instead of passing an object literal with a configuration property inside it as a string, it is potentially more convenient to directly provide this property.
+When [writing and registering](/current/guide/register/) Nikita's actions, it is sometimes interesting to simplify how arguments are provided. Instead of passing an object literal with a configuration property inside it as a string, it is potentially more convenient to directly provide this property.
 
 For example, the `file.touch` action accept a `target` configuration property. An example to use it is:
 
@@ -57,7 +57,7 @@ nikita
 
 ## Manual alternative
 
-The manual implementation of this functionality implies adding to the [action handler](/current/api/handler) a few lines of code:
+The manual implementation of this functionality implies adding to the [action handler](/current/api/handler/) a few lines of code:
 
 ```js
 nikita

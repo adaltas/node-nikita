@@ -1,7 +1,7 @@
 ---
 navtitle: module
 related:
-- /api/metadata/namespace
+- /api/metadata/namespace/
 ---
 
 # Metadata "module"
@@ -11,11 +11,11 @@ The `module` metadata identifies the location of the Node.js module defining the
 * Type: `string`
 * Read-only
 
-The value of the metadata is defined when [registering an action](/current/guide/registry) and is primarily used internally to indicate the module location in functionality such as [logging and debugging](/current/guide/logging_debugging).
+The value of the metadata is defined when [registering an action](/current/guide/registry/) and is primarily used internally to indicate the module location in functionality such as [logging and debugging](/current/guide/logging_debugging/).
 
 ## Usage
 
-Its value is accessed inside the [action handler](/current/api/handler).
+Its value is accessed inside the [action handler](/current/api/handler/).
 
 ```js
 nikita

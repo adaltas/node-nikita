@@ -1,18 +1,18 @@
 ---
 navtitle: raw_output
 related:
-- /api/metadata/raw
-- /api/metadata/raw_input
+- /api/metadata/raw/
+- /api/metadata/raw_input/
 ---
 
 # Metadata "raw_output"
 
-The `raw_output` metadata preserves the value returned by an action from modifications. Thus, the value returned inside the [action handler](/current/api/handler) is not altered.
+The `raw_output` metadata preserves the value returned by an action from modifications. Thus, the value returned inside the [action handler](/current/api/handler/) is not altered.
 
 * Type: `boolean`
 * Default: `false`
 
-For example, an object literal returned by the handler is not enriched with the `$status` and `$log` properties as it is by [default](/current/api/handler#return):
+For example, an object literal returned by the handler is not enriched with the `$status` and `$log` properties as it is by [default](/current/api/handler/#return):
 
 ```js
 nikita

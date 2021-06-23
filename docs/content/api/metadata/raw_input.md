@@ -1,13 +1,13 @@
 ---
 navtitle: raw_input
 related:
-- /api/metadata/raw
-- /api/metadata/raw_output
+- /api/metadata/raw/
+- /api/metadata/raw_output/
 ---
 
 # Metadata "raw_input"
 
-The `raw_input` metadata enables preventing arguments passed to an action to move into the ['config' property](/current/api/config). It is only used when [registering an action](/current/guide/registry) and shall be considered as an advanced usage.
+The `raw_input` metadata enables preventing arguments passed to an action to move into the ['config' property](/current/api/config/). It is only used when [registering an action](/current/guide/registry/) and shall be considered as an advanced usage.
 
 * Type: `boolean`
 * Default: `false`

@@ -1,7 +1,7 @@
 ---
 navtitle: time_end
 related:
-- /api/metadata/time_start
+- /api/metadata/time_start/
 ---
 
 # Metadata "time_end"
@@ -11,7 +11,7 @@ The `time_end` metadata property stores the Unix timestamp at the time when the 
 * Type: `number`
 * Read-only
 
-The value does not yet exists when the handler function is executed. It is however accessible inside the [action handler](/current/api/handler) of the next sibling action:
+The value does not yet exists when the handler function is executed. It is however accessible inside the [action handler](/current/api/handler/) of the next sibling action:
 
 ```js
 nikita

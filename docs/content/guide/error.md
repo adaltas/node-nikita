@@ -4,7 +4,7 @@ sort: 8
 
 # Error handling
 
-Nikita rejects errors when they occur. Remember, [an action always returns a promise](/current/guide/promise) and there are multiple ways of handling errors with promises.
+Nikita rejects errors when they occur. Remember, [an action always returns a promise](/current/guide/promise/) and there are multiple ways of handling errors with promises.
 
 By default, errors are not managed by Nikita. It is your responsibility to handle errors and alter the flow of execution.
 
@@ -112,7 +112,7 @@ nikita
 
 ## Relax behavior
 
-To disable the session interruption in case of failure of an action and to treat an error as non-destructive, you can use the [`relax` metadata](/current/api/metadata/relax). In such a case, the error object will be available as a property in the [action output](/current/api/output). 
+To disable the session interruption in case of failure of an action and to treat an error as non-destructive, you can use the [`relax` metadata](/current/api/metadata/relax/). In such a case, the error object will be available as a property in the [action output](/current/api/output/). 
 
 ```js
 nikita

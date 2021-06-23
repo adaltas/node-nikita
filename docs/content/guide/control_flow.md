@@ -31,7 +31,7 @@ The actions will be executed in this sequence:
 * `service` for `my_pkg_2`
 * `file.yaml`
 
-This tree-like traversal is leverage by the [`header` metadata](/current/api/metadata/header) and the `log.cli` action to display a report to the terminal.
+This tree-like traversal is leverage by the [`header` metadata](/current/api/metadata/header/) and the `log.cli` action to display a report to the terminal.
 
 ```js
 nikita
@@ -107,7 +107,7 @@ nikita
 
 ## Condition and status
 
-The execution flow can be controlled by mixing [conditions](/current/guide/conditions/) and [output](/current/api/output) such as [`status`](/current/guide/status/) and [`error`](/current/guide/error/) returned with Promise.
+The execution flow can be controlled by mixing [conditions](/current/guide/conditions/) and [output](/current/api/output/) such as [`status`](/current/api/output/status/) and [`error`](/current/guide/error/) returned with Promise.
 
 > Note, Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to call an asynchronous function and "await" for the result of Promise.
 

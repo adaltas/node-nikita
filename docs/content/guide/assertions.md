@@ -4,7 +4,7 @@ sort: 6
 
 # Assertions
 
-Assertions are executed after the [action handler](/current/api/handler) to validate the result of its execution.
+Assertions are executed after the [action handler](/current/api/handler/) to validate the result of its execution.
 
 Assertions `assert` and `unassert` validate the [output](/current/api/output/) returned by the action. Other assertions exist and are prefixed with `assert_` or `unassert_` for their negation. On failure, an [error](/current/guide/error/) is thrown with the `NIKITA_INVALID_ASSERTION` code. 
 

@@ -1,12 +1,12 @@
 ---
 navtitle: dirty
 related:
-- /api/metadata/tmpdir
+- /api/metadata/tmpdir/
 ---
 
 # Metadata "dirty"
 
-The `dirty` metadata disables decommissioning a [temporary directory](/current/api/metadata/tmpdir) after action execution.
+The `dirty` metadata disables decommissioning a [temporary directory](/current/api/metadata/tmpdir/) after action execution.
 
 * Type: `boolean`
 

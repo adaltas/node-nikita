@@ -4,13 +4,13 @@ navtitle: global
 
 # Metadata "global"
 
-The `global` metadata provides a solution to share [configuration properties](/current/api/config) between a group of actions. For example, database actions may share the same database name and connection information, or Docker actions share information on how to connect to the Docker daemon.
+The `global` metadata provides a solution to share [configuration properties](/current/api/config/) between a group of actions. For example, database actions may share the same database name and connection information, or Docker actions share information on how to connect to the Docker daemon.
 
 * Type: `string`
 
 ## Usage
 
-Global properties are inherited from the [parent actions](/current/api/parent), for example:
+Global properties are inherited from the [parent actions](/current/api/parent/), for example:
 
 ```js
 nikita

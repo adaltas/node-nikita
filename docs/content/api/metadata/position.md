@@ -1,8 +1,8 @@
 ---
 navtitle: position
 related:
-- /api/metadata/depth
-- /api/metadata/index
+- /api/metadata/depth/
+- /api/metadata/index/
 ---
 
 # Metadata "position"
@@ -14,11 +14,11 @@ The `position` metadata indicates the position of the action relative to its par
 
 It is constructed as an array of numbers. The length of the array is the number of parent actions. To each element of the array correspond the action index relative to its siblings.
 
-It is primarily used internally in functionality such as [logging and debugging](/current/guide/logging_debugging).
+It is primarily used internally in functionality such as [logging and debugging](/current/guide/logging_debugging/).
 
 ## Usage
 
-Its value is accessed inside the [action handler](/current/api/handler) as the `metadata.position` property.
+Its value is accessed inside the [action handler](/current/api/handler/) as the `metadata.position` property.
 
 ```js
 nikita

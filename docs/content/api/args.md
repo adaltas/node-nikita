@@ -4,7 +4,7 @@ sort: 4
 
 # Arguments
 
-Nikita stores the original arguments passed on an action call. They are accessible inside the [action handler](/current/api/handler) in the `args` property as an array with the preserved order:
+Nikita stores the original arguments passed on an action call. They are accessible inside the [action handler](/current/api/handler/) in the `args` property as an array with the preserved order:
 
 ```js
 nikita
