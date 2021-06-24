@@ -1,30 +1,59 @@
 // React
-import React, { Fragment, useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 // Material UI
-import { useTheme } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import { useTheme } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
 import EditIcon from '@material-ui/icons/EditOutlined'
-import ListIcon from '@material-ui/icons/ListOutlined'
 import Toc from "./Toc"
 
 require('prismjs/themes/prism.css')
 
 const useStyles = theme => ({
-  content: theme.mixins.gutters({
-    ...theme.typography.body1,
+  root: theme.mixins.gutters({
     paddingTop: theme.spacing(5),
-    flex: '1 1 100%',
-    maxWidth: '100%',
     margin: theme.spacing(0, 'auto', 5),
-    lineHeight: '1.6rem',
-    '& h1': {
-      ...theme.typography.root,
-      ...theme.typography.h1,
-      ...theme.typography.gutterBottom,
-      fontWeight: 'normal',
+    [theme.breakpoints.up(900 + theme.spacing(6))]: {
+      maxWidth: 1000,
     },
+  }),
+  title: {
+    ...theme.typography.root,
+    ...theme.typography.h1,
+    ...theme.typography.gutterBottom,
+    fontWeight: 'normal',
+  },
+  editButton: {
+    marginTop: theme.spacing(5),
+    textTransform: 'inherit',
+    color: '#777777 !important',
+    '& svg': {
+      marginRight: theme.spacing(1)
+    }
+  },
+  container: {
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      lignItems: 'flex-start',
+    },
+  },
+  nav: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    [theme.breakpoints.up('md')]: {
+      verticalAlign: 'top',
+      display: 'inline-block',
+      position: 'sticky',
+      top: '100px',
+      paddingLeft: theme.spacing(6),
+      order: 2,
+      height: '100%',
+      overflow: 'auto',
+    },
+  },
+  content: {
+    ...theme.typography.body1,
+    lineHeight: '1.6rem',
     '& h2': {
       ...theme.typography.root,
       ...theme.typography.h2,
@@ -80,22 +109,10 @@ const useStyles = theme => ({
       background: 'rgba(255,255,255,.7)',
       display: 'block',
     },
-    [theme.breakpoints.up(900 + theme.spacing(6))]: {
-      maxWidth: 900,
+    [theme.breakpoints.up('md')]: {
+      display: 'inline-block',
+      maxWidth: 'calc(100% - 200px)',
     },
-  }),
-  tools: {
-    float: 'right',
-  },
-  icons: {
-    color: '#cccccc',
-    '&:link,&:visited': {
-      color: '#cccccc !important',
-    },
-    '&:hover': {
-      textDecoration: 'none',
-      color: theme.link.main + ' !important',
-    }
   },
 })
 
@@ -104,51 +121,34 @@ const Content = ({
   page
 }) => {
   const styles = useStyles(useTheme())
-  const [isOpen, setIsOpen] = useState(false)
-  const onToggle = () => {
-    setIsOpen(!isOpen)
-  }
   return (
-    <main css={styles.content}>
-      { page && !page.home && (
-        <Fragment>
-          <div css={styles.tools}>
-            {page.tableOfContents && page.tableOfContents.items && (
-                <Tooltip id="content-toc" title="Toggle table of content">
-                  <IconButton
-                    color="inherit"
-                    aria-labelledby="content-toc"
-                    css={styles.icons}
-                    onClick={onToggle}
-                  >
-                    <ListIcon />
-                  </IconButton>
-                </Tooltip>
-            )}
-            {page.edit_url && (
-              <Tooltip id="content-edit" title="Edit on GitHub">
-                <IconButton
-                  color="inherit"
-                  href={page.edit_url}
-                  aria-labelledby="content-edit"
-                  css={styles.icons}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-          </div>
-          <h1>{page.title}</h1>
-          {page.tableOfContents && page.tableOfContents.items && (
+    <main css={styles.root}>
+      {page && !page.home && (
+        <h1 css={styles.title}>{page.title}</h1>
+      )}
+      <div css={styles.container}>
+        {page.tableOfContents
+          && page.tableOfContents.items
+          && page.tableOfContents.items[0]
+          && page.tableOfContents.items[0].items 
+          && (
+          <div css={styles.nav}>
             <Toc
               startLevel={1}
-              isOpen={isOpen}
               items={page.tableOfContents.items}
             />
-          )}
-        </Fragment>
+          </div>
+        )}
+        <div css={styles.content}>
+          {children}
+        </div>
+      </div>
+      {page.edit_url && (
+        <Button href={page.edit_url} css={styles.editButton}>
+          <EditIcon />
+          Edit on GitHub
+        </Button>
       )}
-      {children}
     </main>
   )
 }
