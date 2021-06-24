@@ -5,7 +5,7 @@ sort: 3
 
 # Developer information
 
-You are encouraged to [contribute](/current/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
+You are encouraged to [contribute](/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
 
 ## Project layout
 

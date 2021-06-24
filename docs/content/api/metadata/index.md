@@ -36,7 +36,7 @@ nikita
 })
 ```
 
-The metadata values are available inside the [action handler](/current/api/handler) under the `metadata` property of the first argument:
+The metadata values are available inside the [action handler](/current/api/handler/) under the `metadata` property of the first argument:
 
 ```js
 nikita

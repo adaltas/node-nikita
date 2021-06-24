@@ -15,7 +15,7 @@ However, you should not be afraid to write your own handler, it is as easy as wr
 
 You can pass the `$handler` property name when calling an action along with its configuration.
 
-The [configuration properties](/current/api/config) passed to the `call` action are available in the `config` property of the first argument of the handler:
+The [configuration properties](/current/api/config/) passed to the `call` action are available in the `config` property of the first argument of the handler:
 
 ```js
 nikita
@@ -44,11 +44,11 @@ nikita
 
 ## Returned output
 
-The value returned by the handler is a value set to the [action output](/current/api/output). It can be of any type.
+The value returned by the handler is a value set to the [action output](/current/api/output/). It can be of any type.
 
 Some plugins may alter its content:
 
-- a **boolean**, it is interpreted as the [`status` property](/current/guide/status) of the output object.
+- a **boolean**, it is interpreted as the [`status` property](/current/guide/status/) of the output object.
   ```js
   const assert = require('assert');
   (async () => {
@@ -61,7 +61,7 @@ Some plugins may alter its content:
   })()
   ```
 
-- `undefined` or `void`, it is interpreted as the [`status` property](/current/guide/status) of the output object.
+- `undefined` or `void`, it is interpreted as the [`status` property](/current/guide/status/) of the output object.
   ```js
   const assert = require('assert');
   (async () => {
@@ -103,7 +103,7 @@ Some plugins may alter its content:
 
 ## Preserving output
 
-You can use the [`raw_output` metadata](/current/api/metadata/raw_output) to disable modifications. In such a case, the output will be the same as the returned handler:
+You can use the [`raw_output` metadata](/current/api/metadata/raw_output/) to disable modifications. In such a case, the output will be the same as the returned handler:
 
 ```js
 const assert = require('assert');

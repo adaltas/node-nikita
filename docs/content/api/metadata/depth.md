@@ -1,8 +1,8 @@
 ---
 navtitle: depth
 related:
-- /api/metadata/position
-- /api/metadata/index
+- /api/metadata/position/
+- /api/metadata/index/
 ---
 
 # Metadata "depth"
@@ -14,7 +14,7 @@ The `depth` metadata indicates the level number of the action in the Nikita sess
 
 ## Usage
 
-The `depth` value is accessed inside the [action handler](/current/api/handler):
+The `depth` value is accessed inside the [action handler](/current/api/handler/):
 
 ```js
 // Root action, level 0

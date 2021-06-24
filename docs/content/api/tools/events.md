@@ -8,7 +8,7 @@ Nikita provides a facility to publish and listen to events. An instance of the [
 
 Events messages don't need to respect any particular structure unless you use an event name reserved internally by Nikita. No validation will occur.
 
-Refers to the [`tools.log`](/current/api/tools/log) function for a more sophisticated mechanism, it internally relies on `tools.events`. It provides context information to the event listener such as the module name where the event occurred, the logging level, etc.
+Refers to the [`tools.log`](/current/api/tools/log/) function for a more sophisticated mechanism, it internally relies on `tools.events`. It provides context information to the event listener such as the module name where the event occurred, the logging level, etc.
 
 ## Usage
 
@@ -39,7 +39,7 @@ Certain events are automatically emitted. They correspond to the action lifecycl
 - `nikita:rejected`   
   It is emitted once at a Nikita session when an action handler has failed.
 
-Some functionality like [logging and debugging](/current/guide/logging_debugging) introduces their own events:
+Some functionality like [logging and debugging](/current/guide/logging_debugging/) introduces their own events:
 
 - `diff`   
   Content modification. It is emitted by the `file` action.

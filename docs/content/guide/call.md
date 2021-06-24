@@ -5,7 +5,7 @@ sort: 2
 
 # Call and user-defined handlers
 
-Nikita gives you the choice between calling your own function, which we call handlers, or calling an [registered function](/current/guide/registry) by its name.
+Nikita gives you the choice between calling your own function, which we call handlers, or calling an [registered function](/current/guide/registry/) by its name.
 
 ## Calling a function
 
@@ -31,7 +31,7 @@ nikita
 })
 ```
 
-Use the expanded object syntax to pass additional information. For example, we could add the [`retry` metadata](/current/api/metadata/retry) or [configuration properties](/current/api/config):
+Use the expanded object syntax to pass additional information. For example, we could add the [`retry` metadata](/current/api/metadata/retry/) or [configuration properties](/current/api/config/):
 
 ```js
 nikita

@@ -10,13 +10,13 @@ Nikita is designed to help developers and operators to deploy infrastructures an
 
 You will find across this website resources to get familiar with Nikita's purposes, how to master Nikita and how to contribute to its success.
 
-* [Introduction](/current/project/introduction/)   
+* [Introduction](/project/introduction/)   
   Learn the motivations of software automation and its promises.
-* [Contribute](/current/project/contribute/)   
+* [Contribute](/project/contribute/)   
   Make this project become a success. Help us by providing feedback, reporting issues, improving the documentation, and submitting patches.
-* [Developer](/current/project/developers/)   
+* [Developer](/project/developers/)   
   The guide for developers who wants to contribute. Learn the project layout and test execution in different environments.
-* [Changelog](/current/project/changelog/)   
+* [Changelog](/project/changelog/)   
   Detailed log history of the current and previous releases.
-* [License (MIT)](/current/project/license/)   
+* [License (MIT)](/project/license/)   
 The open source and liberal MIT license.

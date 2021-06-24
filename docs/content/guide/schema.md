@@ -4,7 +4,7 @@ sort: 12
 
 # Schema definitions
 
-The configuration schema validates the [properties](/current/api/config) provided to and returned by an action. 
+The configuration schema validates the [properties](/current/api/config/) provided to and returned by an action. 
 
 Schema definition is optional but all the actions available in Nikita define a schema. It is used for validation but it also provides additional functionalities such as default values and coercion.
 

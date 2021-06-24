@@ -1,8 +1,8 @@
 ---
 navtitle: index
 related:
-- /api/metadata/position
-- /api/metadata/depth
+- /api/metadata/position/
+- /api/metadata/depth/
 ---
 
 # Metadata "index"
@@ -14,7 +14,7 @@ The `index` metadata indicates the index of an action relative to its sibling ac
 
 ## Usage
 
-Its value is accessed inside the [action handler](/current/api/handler) as the `metadata.index` property.
+Its value is accessed inside the [action handler](/current/api/handler/) as the `metadata.index` property.
 
 ```js
 nikita

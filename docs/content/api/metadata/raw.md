@@ -1,13 +1,13 @@
 ---
 navtitle: raw
 related:
-- /api/metadata/raw_input
-- /api/metadata/raw_output
+- /api/metadata/raw_input/
+- /api/metadata/raw_output/
 ---
 
 # Metadata "raw"
 
-The `raw` metadata property is an alias to define both the [`raw_input`](/current/api/metadata/raw_input) and the [`raw_output`](/current/api/metadata/raw_output) metadata properties.
+The `raw` metadata property is an alias to define both the [`raw_input`](/current/api/metadata/raw_input/) and the [`raw_output`](/current/api/metadata/raw_output/) metadata properties.
 
 * Type: `boolean`
 * Default: `false`

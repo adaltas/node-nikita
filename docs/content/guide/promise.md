@@ -8,9 +8,9 @@ Nikita's actions always return [JavaScript Promise](https://nodejs.dev/learn/und
 
 ## Accessing the action output
 
-The [action output](/current/api/output) is returned after its Promise is fulfilled.
+The [action output](/current/api/output/) is returned after its Promise is fulfilled.
 
-The most elegant and relevant approach to access the action output is using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await). It avoids a "callback hell" in case you need to pass a result of one action to a [configuration property](/current/api/config) of another action as in the following example:
+The most elegant and relevant approach to access the action output is using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await). It avoids a "callback hell" in case you need to pass a result of one action to a [configuration property](/current/api/config/) of another action as in the following example:
 
 ```js
 // Dependency
@@ -70,4 +70,4 @@ nikita
 })
 ```
 
-When an error occurs while executing actions, it can be caught. Read [the following documentation](/current/guide/error) about handling errors in Nikita.
+When an error occurs while executing actions, it can be caught. Read [the following documentation](/current/guide/error/) about handling errors in Nikita.

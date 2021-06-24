@@ -1,12 +1,12 @@
 ---
 navtitle: log
 related:
-- /api/tools/log
+- /api/tools/log/
 ---
 
 # Metadata "log"
 
-Dependending on its value, the `log` metadata disables [logging](/current/guide/logging_debugging) in an action or call a function every time the [`tools.log`](/current/api/tools/log) function is called.
+Dependending on its value, the `log` metadata disables [logging](/current/guide/logging_debugging/) in an action or call a function every time the [`tools.log`](/current/api/tools/log/) function is called.
 
 * Type: `boolean|function`
 * Default: `""`
@@ -15,7 +15,7 @@ Once defined, the `log` metadata of a parent action is propagated to all its chi
 
 When its value is `false`, logging is disabled in the action and all its children.
 
-When defined as a function, the function is called every time the `tools.log` function is called. The [`log`](/current/api/tools/log#log-object), [`config`](/current/api/config) and [`metadata`](/current/api/metadata) properties of the action are available in the first argument of the function.
+When defined as a function, the function is called every time the `tools.log` function is called. The [`log`](/current/api/tools/log/#log-object), [`config`](/current/api/config/) and [`metadata`](/current/api/metadata/) properties of the action are available in the first argument of the function.
 
 
 ## Usage

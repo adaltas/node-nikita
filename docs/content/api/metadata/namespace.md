@@ -1,12 +1,12 @@
 ---
 navtitle: namespace
 related:
-- /api/metadata/module
+- /api/metadata/module/
 ---
 
 # Metadata "namespace"
 
-The `namespace` metadata identifies the Nikita action by the name in the form of a list of addressable properties in the order it was [registered](/current/guide/registry).
+The `namespace` metadata identifies the Nikita action by the name in the form of a list of addressable properties in the order it was [registered](/current/guide/registry/).
 
 * Type: `array`
 * Read-only

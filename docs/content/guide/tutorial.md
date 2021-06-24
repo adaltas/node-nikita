@@ -18,7 +18,7 @@ For detailed information, navigate the documentation or submit an issue if you d
 
 ## What is Nikita?
 
-Nikita is a toolkit to automate the execution of deployment workflows. Use one of the [many available actions](/current/apis) or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
+Nikita is a toolkit to automate the execution of deployment workflows. Use one of the [many available actions](/current/actions/) or create your own functions to build simple to complex deployment pipelines and infrastructures. Actions are transparently executed locally or remotely over SSH from any host.
 
 ### Technologies
 
@@ -47,7 +47,7 @@ Nikita comes with a set of default functions. It is bundled with many handy func
 - package-management
 - run docker containers
 
-You are encouraged to extend Nikita with your own [actions](/current/api). In its simplest form, writing an action is just about writing a plain vanilla JavaScript function.
+You are encouraged to extend Nikita with your own [actions](/current/api/). In its simplest form, writing an action is just about writing a plain vanilla JavaScript function.
 
 ## Installation instructions
 
@@ -201,7 +201,7 @@ nikita(function() {
 })
 ```
 
-Alternatively, you can use [JavaScript arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) to reduce the syntax. In such a case, to call a child action you must use the [`context` property](/current/api/context), because arrow functions don't accept a custom `this` binding. `context` is available inside the handler as a property of the first argument:
+Alternatively, you can use [JavaScript arrow function expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) to reduce the syntax. In such a case, to call a child action you must use the [`context` property](/current/api/context/), because arrow functions don't accept a custom `this` binding. `context` is available inside the handler as a property of the first argument:
 
 ```js
 // Root action
@@ -220,7 +220,7 @@ nikita(() => {
 
 ### Action promise
 
-Nikita's actions always resolve [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises), they either fulfill with an action output or reject an error. To access the [action output](/current/api/output), you have to use the Promise API or simply use the [`async/await` construction](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await) to get the returned value.
+Nikita's actions always resolve [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises), they either fulfill with an action output or reject an error. To access the [action output](/current/api/output/), you have to use the Promise API or simply use the [`async/await` construction](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await) to get the returned value.
 
 ```js
 // Call asynchronous function
@@ -332,9 +332,9 @@ Instead of throw an error, it is also possible to return the promise of a child 
 
 ### Passing `metadata`
 
-Several properties are generic and globally available for every action. Examples include the `header`, `retry` and `relax` properties. Those are called [metadata properties](/current/api/metadata).
+Several properties are generic and globally available for every action. Examples include the `header`, `retry` and `relax` properties. Those are called [metadata properties](/current/api/metadata/).
 
-They are not to be confused with [configuration properties](/current/api/config). A configuration property is declared and used by a single action. A metadata property applies to multiple if not all actions and are usually declared inside a plugin.
+They are not to be confused with [configuration properties](/current/api/config/). A configuration property is declared and used by a single action. A metadata property applies to multiple if not all actions and are usually declared inside a plugin.
 
 To avoid naming collisions with configuration properties, metadata properties are prefixed with a dollar sign (`$`) and are available inside the action under the `metadata` property:
 
@@ -355,7 +355,7 @@ nikita({
 // Attempt 2 out of 3
 ```
 
-Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exceptions including `$handler`, `$plugins`, `$ssh` as well as all [condition](/current/guide/conditions) and [assertion](/current/guide/assertions) properties.
+Note, the majority of properties prefixed with `$` are metadata properties. There are however a few exceptions including `$handler`, `$plugins`, `$ssh` as well as all [condition](/current/guide/conditions/) and [assertion](/current/guide/assertions/) properties.
 
 ### Idempotence and status
 
@@ -733,7 +733,7 @@ localhost      ♥
 
 *Learn how easy and transparent it is to activate SSH.*
 
-Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [the majority of the tests](/current/project/developers/#tests-execution) are contextualized with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
+Nikita is written from the ground up to be transparent whether it is executed locally or over SSH. In fact, [the majority of the tests](/project/developers/#tests-execution) are contextualized with an ssh argument and are executed twice. The first time locally when the connection is set to null and the second time remotely with an SSH configuration object.
 
 Calling `nikita.ssh.open` and `nikita.ssh.close` will associate Nikita's current session with and without an SSH connection. The `nikita.ssh.open` action must be registered before scheduling any other actions and, inversely, the `nikita.ssh.close` action must be registered last. 
 

@@ -11,7 +11,7 @@ The `uuid` metadata property identifies a Nikita session. It is shared between a
 
 ## Usage
 
-The property is accessed inside the [action handler](/current/api/handler).
+The property is accessed inside the [action handler](/current/api/handler/).
 
 ```js
 nikita

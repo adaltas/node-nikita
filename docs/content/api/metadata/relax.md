@@ -9,7 +9,7 @@ The `relax` metadata makes an action tolerant to internal errors. It returns an 
 * Type: `boolean|string|array|regexp`
 * Default: `false`
 
-Sometimes, you wish to [handle errors](/current/guide/error) not in the action itself but after its execution or inside another sibling action executed after.
+Sometimes, you wish to [handle errors](/current/guide/error/) not in the action itself but after its execution or inside another sibling action executed after.
 
 ## Usage
 

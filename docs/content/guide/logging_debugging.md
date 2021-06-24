@@ -115,7 +115,7 @@ A serializer is an object which must be implemented by the user. Keys correspond
 
 ### Extending `nikita.log.fs`
 
-The `nikita.log.fs` action provides an easy and quick way to write your own logging actions. For example, both `nikita.log.csv` and `nikita.log.md` described below rely upon it. This way, you can leverage the [existing configuration properties](/current/api/log/fs/#schema).
+The `nikita.log.fs` action provides an easy and quick way to write your own logging actions. For example, both `nikita.log.csv` and `nikita.log.md` described below rely upon it. This way, you can leverage the [existing configuration properties](/current/actions/log/fs/#schema).
 
 For example, below is a lightly modify version of the `nikita.log.csv` action:
 
@@ -195,7 +195,7 @@ nikita
 })
 ```
 
-Output to CLI can be customized using [available configuration properties](/current/api/log/cli/#schema). For example, this configuration changes the spacing between host and header messages:
+Output to CLI can be customized using [available configuration properties](/current/actions/log/cli/#schema). For example, this configuration changes the spacing between host and header messages:
 
 ```js
 nikita
@@ -210,4 +210,4 @@ nikita
 
 ## CSV and Markdown logs
 
-Both `nikita.log.csv` and `nikita.log.md` actions use the `nikita.log.fs` with a custom serializer. Thus, they support all the [configuration properties](/current/api/log/fs/#schema) of the `nikita.log.fs` action.
+Both `nikita.log.csv` and `nikita.log.md` actions use the `nikita.log.fs` with a custom serializer. Thus, they support all the [configuration properties](/current/actions/log/fs/#schema) of the `nikita.log.fs` action.
