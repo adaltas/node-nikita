@@ -41,7 +41,3 @@ A constant objective has been to optimize and facilitate the classical developer
   Passing configuration properties, whether it comes from a flat file, process argument, or a database, is super easy, just pass a vanilla JavaScript object to your actions.
 * Deploy   
   Because it only relies on files, deploying Nikita projects is easy. The code can entirely be stored in a version control system like Git and is quickly integrated into a CI/CD workflow if requested. There is nothing to install on the target machine and Nikita itself will not install anything either for its purpose. On the host machine, only the Node.js engine to execute the code and NPM to deploy its dependency is expected.
-
-  
-
-  deploying Nikita projects is easy. The code can entirely be stored in a version control system like Git and

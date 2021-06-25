@@ -22,7 +22,7 @@ nikita
   })
   // Print the output
   console.info(who)
-  // Output the value "Nikita"
+  // Outputs the value "Nikita"
 })
 ```
 
@@ -30,7 +30,7 @@ nikita
 
 This returned value is eventually modified by plugins.
 
-The `@nikitajs/core/lib/plugins/status` plugin enriches the value with the `$status` property when an object literal is returned and converts the value `true` to `{ $status: true }` when a boolean value is returned. The `@nikitajs/core/lib/plugins/output_log` plugin returns the [logs emitted](/current/api/tools/log/) inside the action handler.
+The `@nikitajs/core/lib/plugins/output/status` plugin enriches the value with the `$status` property when an object literal is returned and converts the value `true` to `{ $status: true }` when a boolean value is returned. The `@nikitajs/core/lib/plugins/output/logs` plugin returns the [logs emitted](/current/api/tools/log/) inside the action handler.
 
 Below is the description of those properties when the returned value is an object literal:
 

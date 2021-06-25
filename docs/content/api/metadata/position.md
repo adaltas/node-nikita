@@ -23,7 +23,7 @@ Its value is accessed inside the [action handler](/current/api/handler/) as the 
 ```js
 nikita
 // Call an action
-.call(function({metadata: {depth, index, position}}) {
+.call(function({metadata: {position}}) {
   console.info(position)
   // Print the value `[ 0, 0 ]`
 })

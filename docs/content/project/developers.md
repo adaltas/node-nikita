@@ -23,7 +23,7 @@ Core engine modules are at the root of the "packages/core/src" directory. It con
   Register actions into the global namespace. All actions available by default are listed in this module.
 * "registry"   
   Management facility to register and unregister actions.
-* "session"   
+* "session/"   
   The Nikita session where most of the logic is wired.
 * "actions/"   
   Core Nikita actions.
