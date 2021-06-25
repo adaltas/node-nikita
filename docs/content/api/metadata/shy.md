@@ -20,18 +20,18 @@ The `shy` metadata is a boolean. The value is `false` by default. Set the value 
 ```js
 const assert = require('assert');
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   .call(async function() {
-    var {status} = await this.execute({
+    var {$status} = await this.execute({
       // highlight-next-line
       $shy: true,
       command: 'exit 0'
     })
     // Status of the child
-    assert.equal(status, true)
+    assert.equal($status, true)
   })
   // Status of the parent is not affected by the child
-  assert.equal(status, false)
+  assert.equal($status, false)
 })()
 ```
 
@@ -43,20 +43,20 @@ The action output contains the status of the execution no matter if the `shy` me
 const assert = require('assert');
 (async () => {
   // Status is set when shy is deactivated (default behavior)
-  var {status} = await nikita
+  var {$status} = await nikita
   .execute({
     // highlight-next-line
     $shy: false,
     command: 'exit 0'
   })
-  assert.equal(status, true)
+  assert.equal($status, true)
   // Status is set when shy is activated
-  var {status} = await nikita
+  var {$status} = await nikita
   .call({
     // highlight-next-line
     $shy: true,
     command: 'exit 0'
   })
-  assert.equal(status, true)
+  assert.equal($status, true)
 })()
 ```

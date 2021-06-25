@@ -58,7 +58,7 @@ When used with the [`relax` metadata](/current/api/metadata/relax/), every attem
 ```js
 const assert = require('assert');
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Call an action
   .call({
     // highlight-range{1-2}
@@ -69,6 +69,6 @@ const assert = require('assert');
     throw Error('Oups')
   })
   // Will be executed because the action was not fatal
-  assert.equal(status, false)
+  assert.equal($status, false)
 })()
 ```

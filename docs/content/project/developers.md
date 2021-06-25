@@ -97,7 +97,7 @@ const {config} = require './test'
 const they = require('mocha-they')(config);
 describe('Simple Test', function() {
   they('Check a file is touched', function(ssh) {
-    nikita({ssh: ssh})
+    nikita({$ssh: ssh})
     .file.touch('/tmp/a_file')
     .fs.assert('/tmp/a_file')
   })

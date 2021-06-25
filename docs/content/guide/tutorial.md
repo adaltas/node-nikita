@@ -472,13 +472,13 @@ Instead of using the `call` action, it might be more comfortable to call our `to
 const assert = require('assert');
 (async () => {
   // New Nikita session
-  var {status} = await nikita
+  var {$status} = await nikita
   // Register the touch action
   .registry.register({touch: './lib/touch'})
   // Calling the registered action
   .touch({target: '/tmp/a_file'})
   // Validation
-  assert.equal(status, true)
+  assert.equal($status, true)
 })()
 ```
 

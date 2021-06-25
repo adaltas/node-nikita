@@ -35,7 +35,7 @@ The `relax` metadata doesn't throw an error. Any error sent by the "handler" fun
   const {error} = await nikita
   .execute({
     // highlight-next-line
-    $relax: true
+    $relax: true,
     command: 'invalid command'
   })
   console.info(error)
@@ -46,13 +46,13 @@ The `error` is an extended `Error` object that provides a context of the action 
 
 ```
 NikitaError: NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered, command is "invalid command", got 127 instead of 0.
-    at Object.module.exports [as error] (/Users/sergeikudinov/dev/adaltas/prod/node-nikita/packages/core/lib/utils/error.js:36:10)
-    at Immediate.<anonymous> (/Users/sergeikudinov/dev/adaltas/prod/node-nikita/packages/core/lib/actions/execute/index.js:583:31)
-    at processImmediate (node:internal/timers:463:21) {
+    at Object.module.exports [as error] (/Users/serg/dev/adaltas/production/node-nikita/packages/core/lib/utils/error.js:36:10)
+    at Immediate.<anonymous> (/Users/serg/dev/adaltas/production/node-nikita/packages/core/lib/actions/execute/index.js:573:31)
+    at processImmediate (internal/timers.js:439:21) {
   code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID',
+  '$status': false,
   stdout: '',
   stderr: '/bin/sh: invalid: command not found\n',
-  status: false,
   command: 'invalid command',
   exit_code: 127
 }

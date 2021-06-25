@@ -104,11 +104,11 @@ connect({
 }, async function(err, ssh){
   if(err) return process.exit(1)
   // Pass the connection to the `file.touch` action
-  const {status} = await nikita.file.touch({
+  const {$status} = await nikita.file.touch({
     $ssh: ssh,
     target: '/tmp/nikita/a_file'
   })
-  console.info('File is written: ' + status)
+  console.info('File is written: ' + $status)
   ssh.end()
 })
 ```
@@ -117,7 +117,7 @@ connect({
 
 ```js
 (async () => {
-  const {status} = await nikita
+  const {$status} = await nikita
   .file.touch({
     $ssh: {
       host: 'localhost',
@@ -126,7 +126,7 @@ connect({
     },
     target: '/tmp/nikita/a_file'
   })
-  console.info('File is written: ' + status);
+  console.info('File is written: ' + $status);
 })()
 ```
 

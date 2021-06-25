@@ -12,7 +12,7 @@ The following example represents updating a file. It contains 2 conditions appli
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-range{1-11}
@@ -30,7 +30,7 @@ The following example represents updating a file. It contains 2 conditions appli
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
 
@@ -50,7 +50,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-range{1-6}
@@ -63,7 +63,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
 
@@ -83,7 +83,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-range{1-8}
@@ -98,7 +98,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated becaus
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
   
@@ -112,7 +112,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-next-line
@@ -120,7 +120,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
   
@@ -134,7 +134,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-next-line
@@ -142,7 +142,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if "/t
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
 
@@ -156,7 +156,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-range{1-4}
@@ -167,7 +167,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```
 
@@ -181,7 +181,7 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
 
 ```js
 (async () => {
-  var {status} = await nikita
+  var {$status} = await nikita
   // Update file content
   .file({
     // highlight-next-line
@@ -189,6 +189,6 @@ For example, the content of the file "/tmp/nikita/a_file" will be updated if the
     target: '/tmp/nikita/a_file',
     content: 'hello'
   })
-  console.info('File is updated:', status)
+  console.info('File is updated:', $status)
 })()
 ```

@@ -48,29 +48,29 @@ The value returned by the handler is a value set to the [action output](/current
 
 Some plugins may alter its content:
 
-- a **boolean**, it is interpreted as the [`status` property](/current/guide/status/) of the output object.
+- a **boolean**, it is interpreted as the [`$status` property](/current/api/output/status/) of the output object.
   ```js
   const assert = require('assert');
   (async () => {
-    const {status} = await nikita
+    const {$status} = await nikita
     .call(() => {
       // highlight-next-line
       return true
     })
-    assert.equal(status, true)
+    assert.equal($status, true)
   })()
   ```
 
-- `undefined` or `void`, it is interpreted as the [`status` property](/current/guide/status/) of the output object.
+- `undefined` or `void`, it is interpreted as the [`$status` property](/current/api/output/status/) of the output object.
   ```js
   const assert = require('assert');
   (async () => {
-    const {status} = await nikita
+    const {$status} = await nikita
     .call(() => {
       // highlight-next-line
       return undefined
     })
-    assert.equal(status, false)
+    assert.equal($status, false)
   })()
   ```
 
@@ -78,12 +78,12 @@ Some plugins may alter its content:
   ```js
   const assert = require('assert');
   (async () => {
-    const {status, key} = await nikita
+    const {$status, key} = await nikita
     .call(() => {
       // highlight-next-line
       return {key: 'value'}
     })
-    assert.equal(status, false)
+    assert.equal($status, false)
     assert.equal(key, 'value')
   })()
   ```
