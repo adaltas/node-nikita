@@ -5,6 +5,7 @@
 !.eslintrc
 !.travis.yml
 !.gitignore
+!.github
 !.gitattributes
 !.npmignore
 !.husky
