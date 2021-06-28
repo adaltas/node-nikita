@@ -5,7 +5,7 @@ authconfig provides a simple method of configuring /etc/sysconfig/network to han
 
 ## Example
 
-Example of a group object
+Example of a group object:
 
 ```js
 const {$status} = await nikita.system.authconfig({

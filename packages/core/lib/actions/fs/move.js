@@ -14,11 +14,11 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.fs.move({
+// const {$status} = await nikita.fs.move({
 //   source: __dirname,
 //   target: '/tmp/my_dir'
 // })
-// console.info(`Directory was moved: ${status}`)
+// console.info(`Directory was moved: ${$status}`)
 // ```
 
 // ## Schema definitions

@@ -11,7 +11,7 @@
 //   admin_password: 'test',
 //   database: 'my_db',
 // })
-// console.info(`Database created or modified: ${status}`)
+// console.info(`Database created or modified: ${$status}`)
 // ```
 
 // ## Schema definitions

@@ -18,28 +18,28 @@
 // ## Simple example
 
 // ```js
-// const {status} = await nikita.fs.remove('./some/dir')
-// console.info(`Directory was removed: ${status}`)
+// const {$status} = await nikita.fs.remove('./some/dir')
+// console.info(`Directory was removed: ${$status}`)
 // ```
 
 // ## Removing a directory unless a given file exists
 
 // ```js
-// const {status} = await nikita.fs.remove({
+// const {$status} = await nikita.fs.remove({
 //   $unless_exists: './some/file',
 //   target: './some/dir'
 // })
-// console.info(`Directory was removed: ${status}`)
+// console.info(`Directory was removed: ${$status}`)
 // ```
 
 // ## Removing multiple files and directories
 
 // ```js
-// const {status} = await nikita.fs.remove([
+// const {$status} = await nikita.fs.remove([
 //   { $unless_exists: './some/file', target: './some/dir' },
 //   './some/file'
 // ])
-// console.info(`Directories was removed: ${status}`)
+// console.info(`Directories was removed: ${$status}`)
 // ```
 
 // ## Schema definitions

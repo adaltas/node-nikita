@@ -26,22 +26,17 @@ Read and parse the group definition file located in "/etc/group".
 Retrieve all groups informations:
 
 ```js
-require('nikita')
-.system.group.read(function(err, {groups}){
-  assert(Array.isArray(groups), true)
-})
+const {groups} = await nikita.system.group.read()
+console.info("Available groups:", groups)
 ```
 
 Retrieve information of an individual group:
 
 ```js
-require('nikita')
-.system.group.read({
-  gid: 0
-}, function(err, {group}){
-  assert(group.gid, 0)
-  assert(group.group, 'root')
+const {group} = await nikita.system.group.read({
+  gid: 1
 })
+console.info("The group found:", group)
 ```
 
 ## Schema definitions

@@ -8,10 +8,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.fs.wait({
+// const {$status} = await nikita.fs.wait({
 //   target: '/path/to/file_or_directory'
 // })
-// console.info(`File was created: ${status}`)
+// console.info(`File was created: ${$status}`)
 // ```
 
 // ## Hooks

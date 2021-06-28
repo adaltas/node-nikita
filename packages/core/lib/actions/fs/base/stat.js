@@ -16,8 +16,8 @@
 // ```js
 // utils = require('@nikitajs/core/lib/utils')
 // const {stats} = await nikita
-// .file.touch("#{scratch}/a_file")
-// .fs.base.stat("#{scratch}/a_file")
+// .file.touch("/tmp/a_file")
+// .fs.base.stat("/tmp/a_file")
 // assert(utils.stats.isFile(stats.mode) === true)
 // ```
 
@@ -26,8 +26,8 @@
 // ```js
 // utils = require('@nikitajs/core/lib/utils')
 // const {stats} = await nikita
-// .fs.base.mkdir("#{scratch}/a_file")
-// .fs.base.stat("#{scratch}/a_file")
+// .fs.base.mkdir("/tmp/a_file")
+// .fs.base.stat("/tmp/a_file")
 // assert(utils.stats.isDirectory(stats.mode) === true)
 // ```
 

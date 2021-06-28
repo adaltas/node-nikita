@@ -13,12 +13,12 @@ Change the ownership of a file or a directory.
 ## Example
 
 ```js
-const {status} = await nikita.fs.chown({
+const {$status} = await nikita.fs.chown({
   target: '~/my/project',
   uid: 'my_user',
   gid: 'my_group'
 })
-console.info(`Ownership was modified: ${status}`)
+console.info(`Ownership was modified: ${$status}`)
 ```
 
 ## Note

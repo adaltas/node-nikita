@@ -15,13 +15,13 @@
 
 // ## Output
 
-// * `info.$status`   
-//   Value is "true" if command exit equals option "code", "0" by default, "false" if
-//   command exit equals option "code_skipped", none by default.
-// * `info.stdout`   
-//   Stdout value(s) unless `stdout` option is provided.
-// * `info.stderr`   
-//   Stderr value(s) unless `stderr` option is provided.
+// * `$status`   
+//   Value is `true` if command exit equals property `code`, `0` by default, `false` if
+//   command exit equals property `code_skipped`, `none` by default.
+// * `stdout`   
+//   Stdout value(s) unless `stdout` property is provided.
+// * `stderr`   
+//   Stderr value(s) unless `stderr` property is provided.
 
 // ## Temporary directory
 

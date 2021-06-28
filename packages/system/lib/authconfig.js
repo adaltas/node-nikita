@@ -5,7 +5,7 @@
 
 // ## Example
 
-// Example of a group object
+// Example of a group object:
 
 // ```js
 // const {$status} = await nikita.system.authconfig({

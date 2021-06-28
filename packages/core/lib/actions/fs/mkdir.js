@@ -15,21 +15,21 @@
 // ## Simple usage
 
 // ```js
-// const {status} = await nikita.fs.mkdir('./some/dir')
-// console.info(`Directory was created: ${status}`)
+// const {$status} = await nikita.fs.mkdir('./some/dir')
+// console.info(`Directory was created: ${$status}`)
 // ```
 
 // ## Advanced usage
 
 // ```js
-// const {status} = await nikita.fs.mkdir({
+// const {$status} = await nikita.fs.mkdir({
 //   $ssh: ssh,
 //   target: './some/dir',
 //   uid: 'a_user',
 //   gid: 'a_group'
 //   mode: 0o0777 // or '777'
 // })
-// console.info(`Directory was created: ${status}`)
+// console.info(`Directory was created: ${$status}`)
 // ```
 
 // ## Hooks

@@ -11,11 +11,10 @@
 // ## Example
 
 // ```js
-// const {status} = await nikita.fs.base.writeFile({
-//   target: "#{scratch}/a_file",
+// nikita.fs.base.writeFile({
+//   target: "/tmp/a_file",
 //   content: 'Some data, a string or a Buffer'
 // })
-// console.info(`File was written: ${status}`)
 // ```
 
 // ## Schema definitions

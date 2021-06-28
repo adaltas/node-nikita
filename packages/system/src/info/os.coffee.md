@@ -14,11 +14,11 @@ We shall explain what "non-portable" means.
 ## Example
 
 ```js
-{os} = nikita.system.info.os()
-console.info('Architecture:', info.arch)
-console.info('Distribution:', info.distribution)
-console.info('Version:', info.version)
-console.info('Linux version:', info.linux_version)
+const {os} = await nikita.system.info.os()
+console.info('Architecture:', os.arch)
+console.info('Distribution:', os.distribution)
+console.info('Version:', os.version)
+console.info('Linux version:', os.linux_version)
 ```
 
 ## Schema definitions

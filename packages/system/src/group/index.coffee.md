@@ -16,7 +16,7 @@ const {$status} = await nikita.system.group({
   system: true
   gid: 490
 });
-console.log(`Group was created/modified: ${status}`);
+console.log(`Group was created/modified: ${$status}`);
 ```
 
 The result of the above action can be viewed with the command

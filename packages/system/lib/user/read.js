@@ -25,23 +25,21 @@
 // ## Example
 
 // ```js
-// nikita
+// const {$status, users} = await nikita
 // .file({
 //   target: "/tmp/etc/passwd",
 //   content: "root:x:0:0:root:/root:/bin/bash"
 // })
 // .system.user.read({
 //   target: "/tmp/etc/passwd"
-// }, function (err, {status, users}){
-//   if(err) throw err;
-//   assert(status, false)
-//   assert(users, {
-//     "root": { user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash' }
-//   })
-// });
+// })
+// assert.equal($status, false)
+// assert.deepEqual(users, {
+//   "root": { user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash' }
+// })
 // ```
 
-// ## implementation
+// ## Implementation
 
 // The default implementation use the `getent passwd` command. It is possible to
 // read an alternative `/etc/passwd` file by setting the `target` option to the

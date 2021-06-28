@@ -77,17 +77,14 @@ stuff still works and root can fix the problem.
 ## Example
 
 ```js
-require('nikita')
-.system.info.disks(function(err, {disks}){
-  if(err) throw err;
-  disks.forEach(function(disk){
-    console.log('File system:', disk.filesystem)
-    console.log('Total space:', disk.total)
-    console.log('Used space:', disk.used)
-    console.log('Available space:', disk.available)
-    console.log('Available space (pourcent):', disk.available_pourcent)
-    console.log('Mountpoint:', disk.mountpoint)
-  })
+const {disks} = await nikita.system.info.disks()
+disks.forEach((disk) => {
+  console.info('File system:', disk.filesystem)
+  console.info('Total space:', disk.total)
+  console.info('Used space:', disk.used)
+  console.info('Available space:', disk.available)
+  console.info('Available space (pourcent):', disk.available_pourcent)
+  console.info('Mountpoint:', disk.mountpoint)
 })
 ```
 

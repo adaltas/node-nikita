@@ -13,21 +13,19 @@ Assert a file exists or a provided text match the content of a text file.
 Validate the content of a file:
 
 ```js
-const {status} = await nikita.fs.assert({
+nikita.fs.assert({
   target: '/tmp/a_file', 
   content: 'nikita is around'
 })
-console.info(`Content was validated: ${status}`)
 ```
 
 Ensure a file does not exists:
 
 ```js
-const {status} = await nikita.fs.assert({
+nikita.fs.assert({
   target: '/tmp/a_file',
   not: true
 })
-console.info(`File exists: ${status}`)
 ```
 
 ## Hooks

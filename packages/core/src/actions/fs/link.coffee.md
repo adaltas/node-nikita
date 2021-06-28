@@ -16,11 +16,11 @@ Note, it is valid for the "source" file to not exist.
 ## Example
 
 ```js
-const {status} = await nikita.fs.link({
+const {$status} = await nikita.fs.link({
   source: __dirname,
   target: '/tmp/a_link'
 })
-console.info(`Link was created: ${status}`)
+console.info(`Link was created: ${$status}`)
 ```
 
 ## Schema definitions

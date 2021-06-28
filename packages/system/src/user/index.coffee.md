@@ -13,17 +13,15 @@ ownerships and 0644 permissions unless it already exists.
 
 ## Example
 
-```coffee
-require('nikita')
-.system.user({
+```js
+const {$status} = await nikita.system.user({
   name: 'a_user',
   system: true,
   uid: 490,
   gid: 10,
   comment: 'A System User'
-}, function(err, {status}){
-  console.log(err ? err.message : 'User created: ' + status);
 })
+console.log(`User created: ${$status}`)
 ```
 
 The result of the above action can be viewed with the command

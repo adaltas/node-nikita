@@ -8,7 +8,7 @@ simple action that calls setTimeout. Thus, time is in millisecond.
 
 ```js
 before = Date.now()
-const {status} = await nikita.wait({
+const {$status} = await nikita.wait({
   time: 5000
 })
 throw Error 'TOO LATE!' if (Date.now() - before) > 5200

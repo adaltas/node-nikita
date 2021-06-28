@@ -9,7 +9,7 @@
 // ## Passing an action
 
 // ```js
-// {key} = await nikita.call({
+// const {key} = await nikita.call({
 //   config: {
 //     key: 'value'
 //   },

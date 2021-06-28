@@ -9,19 +9,17 @@
 // Activate the module "vboxpci" in the file "/etc/modules-load.d/vboxpci.conf":
 
 // ```
-// require('nikita')
-// .system.mod({
-//   name: 'vboxpci'
-// });
+// nikita.system.mod({
+//   modules: 'vboxpci'
+// })
 // ```
 
 // Activate the module "vboxpci" in the file "/etc/modules-load.d/my_modules.conf":
 
 // ```
-// require('nikita')
-// .system.mod({
+// nikita.system.mod({
 //   target: 'my_modules.conf',
-//   name: 'vboxpci'
+//   modules: 'vboxpci'
 // });
 // ```
 

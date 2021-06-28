@@ -10,13 +10,11 @@
 
 // ## Example
 
-// ```coffee
-// require('nikita')
-// .group.remove({
+// ```js
+// const {$status} = await nikita.group.remove({
 //   name: 'a_user'
-// }, function(err, {status}){
-//   console.log(err ? err.message : 'User removed: ' + status);
 // })
+// console.info(`User is removed: ${$status}`)
 // ```
 
 // The result of the above action can be viewed with the command

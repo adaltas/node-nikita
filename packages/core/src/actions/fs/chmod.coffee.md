@@ -13,11 +13,11 @@ Change the permissions of a file or directory.
 ## Example
 
 ```js
-const {status} = await nikita.fs.chmod({
+const {$status} = await nikita.fs.chmod({
   target: '~/my/project',
   mode: 0o755
 })
-console.info(`Permissions was modified: ${status}`)
+console.info(`Permissions were modified: ${$status}`)
 ```
 
 ## Schema definitions
