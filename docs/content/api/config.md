@@ -9,7 +9,7 @@ Configuration properties are used to contextualize the [action handler](/current
 
 ## Usage
 
-They are usually provided as an object when calling an action. For example, the `nikita.execute` action can receive an object with the `command` property:
+They are commonly provided as an object when calling an action. For example, the [`nikita.execute`](/current/actions/core/execute/) defines a `command` configuration property which is provided as:
 
 ```js
 nikita
