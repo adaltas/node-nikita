@@ -38,7 +38,7 @@ Throughout this tutorial, it is assumed you work on Linux or macOS. To be able t
 
 At the end of the tutorial, you will learn how to use Nikita over SSH. This way, your Windows host is used to create your workflow and you can target a remote host like a server, a virtual machine, or a container.
 
-### What is inside Nikita
+### What is inside Nikita?
 
 Nikita comes with a set of default functions. It is bundled with many handy functions covering a large range of usages:
 
@@ -304,7 +304,7 @@ const assert = require('assert');
 })()
 ```
 
-## Cascading outputs and errors
+### Cascading outputs and errors
 
 Instead of throw an error, it is also possible to return the promise of a child action. This way, both resolved output and errors are cascaded up to the parent actions:
 
