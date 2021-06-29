@@ -1,7 +1,7 @@
 ---
 navtitle: License (MIT)
 description: Content of the MIT license
-sort: 6
+sort: 7
 ---
 
 # Software License Agreement - MIT License

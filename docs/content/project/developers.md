@@ -1,42 +1,13 @@
 ---
 navtitle: Developer
-sort: 3
+sort: 4
 ---
 
 # Developer information
 
 You are encouraged to [contribute](/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
 
-## Project layout
-
-Nikita is organized as one monolithic [GIT](https://github.com/adaltas/node-nikita) repository, for the sake of clarity. It includes the core engine, user actions, and utils functions; all of them associated with their unit tests. 
-
-[Lerna](https://github.com/lerna/lerna) is used in independent mode. It optimizes the time and space requirements, allowing massive refactoring, updating, and feature enrichment without any concern. 
-
-### Core engine
-
-Core engine modules are at the root of the "packages/core/src" directory. It contains:
-
-* "index"   
-  The main Nikita entry point when issuing `require('nikita')`.
-* "register"   
-  Register actions into the global namespace. All actions available by default are listed in this module.
-* "registry"   
-  Management facility to register and unregister actions.
-* "session/"   
-  The Nikita session where most of the logic is wired.
-* "actions/"   
-  Core Nikita actions.
-* "metadata/" and "plugins/"   
-  Modules that extend functionality using hooks.
-* "scheduler/"   
-  Modules that schedule the sequence for executing Nikita's actions.
-* "utils/"   
-  Plain JavaScript functions are used across Nikita's actions. 
-
-### Actions
-
-The action modules are split across directories at the root of each "./src" package folder. The packages can also contain utils functions in the "./src/utils" folder used in this package. Each of those had been tested to be used in production, take a look at the below section. 
+Before starting with Nikita development, read the [project architecture](/project/architecture/), it presents how to project is organized in the Git repository.
 
 ## Tests execution
 

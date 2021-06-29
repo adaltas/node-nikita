@@ -12,6 +12,9 @@ You will find across this website resources to get familiar with Nikita's purpos
 
 * [Introduction](/project/introduction/)   
   Learn the motivations of software automation and its promises.
+* [Architecture](/project/architecture/)   
+  Understand how the project is organized, use it to understand
+  the source code and to start contributing.
 * [Contribute](/project/contribute/)   
   Make this project become a success. Help us by providing feedback, reporting issues, improving the documentation, and submitting patches.
 * [Developer](/project/developers/)   
