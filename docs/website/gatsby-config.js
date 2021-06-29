@@ -130,9 +130,11 @@ module.exports = {
           },
           {
             resolve: 'gatsby-remark-autolink-headers',
-            options: {
-              offsetY: '64', // <600: 48; >600:64
-            },
+            // Option `offsetY` doesn't work with gatsby-plugin-mdx,
+            // see https://github.com/gatsbyjs/gatsby/issues/19859#issuecomment-634061592
+            // options: {
+            //   offsetY: '64', // <600: 48; >600:64
+            // },
           },
           {
             resolve: `gatsby-remark-prismjs`,
