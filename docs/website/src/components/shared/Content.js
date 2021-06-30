@@ -109,6 +109,8 @@ const useStyles = theme => ({
       background: 'rgba(255,255,255,.7)',
       display: 'block',
     },
+  },
+  docsPage: {
     [theme.breakpoints.up('md')]: {
       display: 'inline-block',
       maxWidth: 'calc(100% - 200px)',
@@ -139,7 +141,7 @@ const Content = ({
             />
           </div>
         )}
-        <div css={styles.content}>
+        <div css={[styles.content, page.home ? null : styles.docsPage]}>
           {children}
         </div>
       </div>
