@@ -49,7 +49,7 @@ export const pageQuery = graphql`
       parent {
         ... on Mdx {
           body
-          tableOfContents(maxDepth: 2)
+          tableOfContents(maxDepth: 3)
         }
       }
     }

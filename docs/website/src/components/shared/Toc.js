@@ -9,17 +9,16 @@ const useStyles = theme => ({
     color: '#777777',
     fontSize: theme.typography.fontSize,
     fontWeight: 500,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    marginBottom: theme.spacing(3),
   },
   list: {
-    margin: theme.spacing(3, 0),
     paddingLeft: 0,
     '& li': {
       listStyle: 'none',
       marginBottom: theme.spacing(1),
     },
     '& a': {
-      fontSize: '.9rem',
       textDecoration: 'none',
       '&:link,&:visited': {
         color: '#777777',
@@ -28,32 +27,37 @@ const useStyles = theme => ({
         color: theme.link.light,
       },
     },
+  },
+  childList: {
+    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(1),
   }
 })
 
 const Toc = ({
-  startLevel,
+  maxLevel,
   items,
 }) => {
   const styles = useStyles(useTheme())
-  const renderToc = (level, startLevel, items) => (
-    items.map((item) => (
-      <Fragment key={item.url} >
-        {(level >= startLevel) && (
-          <li>
-            <Link to={item.url}>{item.title}</Link>
-          </li>
-        )}
-        {item.items && renderToc(++level, startLevel, item.items)}
-      </Fragment>
-    ))
-  )
+  const renderToc = (level, items) => {
+    level++
+    return maxLevel >= level && (
+      <ul css={[styles.list, level > 1 ? styles.childList : null ]}>
+        {items.map((item) => (
+          <Fragment key={item.url} >
+            <li>
+              <Link to={item.url}>{item.title}</Link>
+              {item.items && renderToc(level, item.items)}
+            </li>
+          </Fragment>
+        ))}
+      </ul>
+    )
+  }
   return (
     <nav>
-      <span css={styles.head}>Table of Contents</span>
-      <ul css={styles.list}>
-        {renderToc(0, startLevel, items)}
-      </ul>
+      <div css={styles.head}>Table of Contents</div>
+      {renderToc(0, items)}
     </nav>
   )
 }

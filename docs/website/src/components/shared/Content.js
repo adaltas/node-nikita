@@ -37,14 +37,15 @@ const useStyles = theme => ({
       lignItems: 'flex-start',
     },
   },
-  nav: {
+  toc: {
     paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
     [theme.breakpoints.up('md')]: {
       verticalAlign: 'top',
       display: 'inline-block',
       position: 'sticky',
-      top: '100px',
+      top: `calc(64px + ${theme.spacing(4)}px)`, // Compensate AppBar height + some marging
+      maxHeight: `calc(100vh - 64px - ${theme.spacing(4)}px)`,
       paddingLeft: theme.spacing(6),
       order: 2,
       height: '100%',
@@ -112,8 +113,7 @@ const useStyles = theme => ({
   },
   content_with_toc: {
     [theme.breakpoints.up('md')]: {
-      // display: 'inline-block',
-      maxWidth: 'calc(100% - 200px)',
+      maxWidth: 'calc(100% - 250px)',
     },
   }
 })
@@ -134,11 +134,8 @@ const Content = ({
           && page.tableOfContents.items[0]
           && page.tableOfContents.items[0].items 
           && (
-          <div css={styles.nav}>
-            <Toc
-              startLevel={1}
-              items={page.tableOfContents.items}
-            />
+          <div css={styles.toc}>
+            <Toc maxLevel={2} items={page.tableOfContents.items[0].items}/>
           </div>
         )}
         <div css={[styles.content, page.tableOfContents && styles.content_with_toc]}>
