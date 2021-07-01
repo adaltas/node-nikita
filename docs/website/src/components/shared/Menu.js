@@ -54,7 +54,7 @@ const getMenuData = (node) => {
   }
 }
 
-const createPageMenu = (menu, page, nodes, maxDepth = 3) => {
+const createPageMenu = (menu, nodes, maxDepth = 3) => {
   nodes.forEach( node => {
     const slugs = node.slug.split('/').filter(part => part)
     if(node.version.alias) slugs.shift() // Don't count root version pages (eg. "/current/")
@@ -73,36 +73,46 @@ const createPageMenu = (menu, page, nodes, maxDepth = 3) => {
   })
 }
 
-const createActionMenu = (menu, page, nodes) => {
-  menu.children.actions = {
-    children: {},
+const createActionMenu = (menu, page, packages) => {
+  return {
+    children: packages.map( pckg => ({
+      children: pckg.actions.map( action => ({
+        children: {},
+        data: getMenuData(action)
+      })),
+      data: {}
+    })),
     data: {
       title: 'Actions',
       slug: '/current/actions/',
       sort: 10,
     }
   }
-  let actionMenu = {}
-  nodes.forEach( (pckg, i) => {
-    actionMenu[i] = { children: {}, data: {} }
-    pckg.actions.forEach( (action, j) => {
-      actionMenu[i].children[j] = {
-        children: {},
-        data: getMenuData(action)
-      }
-    })
-    actionMenu[i].data = getMenuData(pckg)
-  })
-  menu.children.actions.children = actionMenu
 }
 
 const Menu = ({
   page,
   data
 }) => {
-  const menu = { children: {} }
-  createPageMenu(menu, page, data.pages.nodes) // Pages
-  createActionMenu(menu, page, data.packages.nodes) // Actions
+  const menu = {
+    children: {
+      actions: {
+        children: data.packages.nodes.map( (pckg) => ({
+          children: pckg.actions.map( (action) => ({
+            children: [],
+            data: getMenuData(action)
+          })),
+          data: getMenuData(pckg)
+        })),
+        data: {
+          title: 'Actions',
+          slug: '/current/actions/',
+          sort: 10,
+        }
+      }
+    }
+  }
+  createPageMenu(menu, data.pages.nodes)
   // Actions root page
   const styles = useStyles(useTheme())
   
