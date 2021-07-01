@@ -3,7 +3,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue';
 import {styles} from '@material-ui/core/Typography/Typography';
 
 // A custom theme for this app
-const scrollMarginTop = 'calc(74px + 1rem)' // Compensate AppBar height + some margin
+const scrollMarginTop = 'calc(64px + 1.5rem)' // Compensate AppBar height + some margin
 let theme = createMuiTheme({
   props: {
     MuiButtonBase: {
