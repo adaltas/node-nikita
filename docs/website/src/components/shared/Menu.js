@@ -45,14 +45,12 @@ const useStyles = theme => ({
   },
 })
 
-const getMenuData = (node) => {
-  return {
-    navtitle: node.navtitle || (node.frontmatter ? node.frontmatter.navtitle : ''),
-    title: node.title || (node.frontmatter ? node.frontmatter.title : ''),
-    slug: node.slug,
-    sort: (node.frontmatter ? node.frontmatter.sort || 99 : '') || 99,
-  }
-}
+const getMenuData = (node) => ({
+  navtitle: node.navtitle || (node.frontmatter ? node.frontmatter.navtitle : ''),
+  title: node.title || (node.frontmatter ? node.frontmatter.title : ''),
+  slug: node.slug,
+  sort: (node.frontmatter ? node.frontmatter.sort || 99 : '') || 99,
+})
 
 const createPageMenu = (menu, nodes, maxDepth = 3) => {
   nodes.forEach( node => {
@@ -73,33 +71,17 @@ const createPageMenu = (menu, nodes, maxDepth = 3) => {
   })
 }
 
-const createActionMenu = (menu, page, packages) => {
-  return {
-    children: packages.map( pckg => ({
-      children: pckg.actions.map( action => ({
-        children: {},
-        data: getMenuData(action)
-      })),
-      data: {}
-    })),
-    data: {
-      title: 'Actions',
-      slug: '/current/actions/',
-      sort: 10,
-    }
-  }
-}
-
 const Menu = ({
   page,
   data
 }) => {
+  const styles = useStyles(useTheme())
   const menu = {
     children: {
       actions: {
         children: data.packages.nodes.map( (pckg) => ({
           children: pckg.actions.map( (action) => ({
-            children: [],
+            children: {},
             data: getMenuData(action)
           })),
           data: getMenuData(pckg)
@@ -113,9 +95,6 @@ const Menu = ({
     }
   }
   createPageMenu(menu, data.pages.nodes)
-  // Actions root page
-  const styles = useStyles(useTheme())
-  
   return (
     <div css={styles.root}>
       <div css={styles.toolbar}>
