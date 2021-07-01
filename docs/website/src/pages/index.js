@@ -118,7 +118,7 @@ const Index = () => {
     >
       <div css={styles.root}>
         <h2>Main library features</h2>
-        <Grid container spacing={10}>
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={6} css={styles.feature}>
             <h3>
               <SvgIcon css={styles.icon}>

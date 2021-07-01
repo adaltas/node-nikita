@@ -53,7 +53,7 @@ const useStyles = theme => ({
   },
   content: {
     ...theme.typography.body1,
-    lineHeight: '1.6rem',
+    // lineHeight: '1.6rem',
     '& h2': {
       ...theme.typography.root,
       ...theme.typography.h2,
@@ -110,12 +110,12 @@ const useStyles = theme => ({
       display: 'block',
     },
   },
-  docsPage: {
+  content_with_toc: {
     [theme.breakpoints.up('md')]: {
-      display: 'inline-block',
+      // display: 'inline-block',
       maxWidth: 'calc(100% - 200px)',
     },
-  },
+  }
 })
 
 const Content = ({
@@ -141,7 +141,7 @@ const Content = ({
             />
           </div>
         )}
-        <div css={[styles.content, page.home ? null : styles.docsPage]}>
+        <div css={[styles.content, page.tableOfContents && styles.content_with_toc]}>
           {children}
         </div>
       </div>

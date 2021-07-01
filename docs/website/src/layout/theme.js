@@ -54,6 +54,9 @@ let theme = createMuiTheme({
       color: '#777777',
       scrollMarginTop: scrollMarginTop
     },
+    body1: {
+      lineHeight: '1.6rem',
+    }
   },
 });
 theme = responsiveFontSizes(theme);

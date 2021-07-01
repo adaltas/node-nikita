@@ -86,9 +86,6 @@ const useStyles = theme => ({
     [theme.breakpoints.up('md')]: {
       fontSize: '2rem',
     },
-    '> p:first-of-type': {
-      // paddingTop: '5rem',
-    },
     '> p': {
       margin: 0,
     },
