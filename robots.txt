@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://nikita.js.org/sitemap.xml
+Host: https://nikita.js.org
