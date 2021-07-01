@@ -33,6 +33,7 @@ const useStyles = theme => ({
   title: {
     color: 'rgba(255,255,255,1)',
     display: 'inline-block',
+    lineHeight: 'inherit',
     fontSize: '2rem',
     fontWeight: 'bold',
     letterSpacing: '.3rem',
