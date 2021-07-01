@@ -5,7 +5,7 @@ sort: 3
 
 # Project architecture
 
-Nikita is a Node.js based software use to automatice the execution of actions. Use an already defined action or write one in JavaScript. If you are interested to read the Nikita codebase, this page presents the high-level architecture of the project. Use it as a map to find what thing is doing what accross the code, where is it located.
+Nikita is a Node.js based software use to automate the execution of actions. Use an already defined action or write one in JavaScript. If you are interested to read the Nikita codebase, this page presents the high-level architecture of the project. Use it as a map to find what thing is doing what accross the code, where is it located.
 
 ## Project layout
 
