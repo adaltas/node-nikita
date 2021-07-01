@@ -23,9 +23,6 @@ const useClasses = makeStyles(() => ({
     '&:before': {
       display: 'none',
     },
-    '&$expanded': {
-      margin: 'auto',
-    },
   },
   accordionExpanded: {
     marginTop: '0 !important',
