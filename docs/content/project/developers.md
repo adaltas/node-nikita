@@ -43,7 +43,7 @@ To run all package tests from the project directory run:
 yarn workspace @nikitajs/core run test
 ```
 
-### SSH or locally
+## SSH or locally
 
 Why even choose? All tests when it makes sense are executed twice. Once without an SSH connection and once with an SSH connection pointing to `localhost`. To achieve this behavior, we extended [Mocha](https://mochajs.org/) by providing an alternative to the `it` function in the name of `they`. You can find it in the [mocha-they package](https://github.com/adaltas/node-ssh2-they).
 
@@ -75,19 +75,19 @@ describe('Simple Test', function() {
 })
 ```
 
-### Configuration customization
+## Configuration customization
 
 By default, tests will look for a configuration module located at the "./test.coffee" file. If they don't find it, they will copy the sample "./test.sample.coffee" file into "./test.coffee". Use the sample file as a starting point to configure your own environment.
 
 You can also customize the path to the configuration module by setting the environmental variable named `NIKITA_TEST_MODULE`.
 
-### Environments
+## Environments
 
 Some tests depend on particular settings to run successfully. Some actions are specific to a particular Linux distribution or issue internally alternatives commands which must be validated. Other actions depend on a service that is not always available on the host machine such as a database connection.
 
 Based on your environment support, targeted tests can be activated from the configuration. Tests are labeled with tags. The environment defines the test coverage by activating tags in their `test.coffee` configuration file. For example, to activate the MariaDB tests located in the ["db" package](https://github.com/adaltas/node-nikita/blob/master/packages/db/env/mariadb/test.coffee), set the `tags.db` property to `true` and configure the `db.mariadb` properties accordingly.
 
-### Docker
+## Docker
 
 To ensure tests are executed in a proper environment, we leverage [Docker](https://docs.docker.com/) and [Docker Compose](https://docs.docker.com/compose/). To each environment corresponds a directory inside the "./env" folder. Inside each folder, you will find the "docker-compose.yml" declaration file and its associated resources.
 
@@ -125,7 +125,7 @@ docker-compose run --rm nodejs test/actions/execute/*.coffee
 docker-compose run --rm nodejs
 ```
 
-### LXD
+## LXD
 
 Some tests are executed using [LXD](https://linuxcontainers.org/lxd/introduction/). The tests require a local LXD client. To install it on a Linux host, you can follow the [installation instructions](https://linuxcontainers.org/lxd/getting-started-cli/). On non-Linux hosts, you can set up the client to communicate with a remote LXD server hosted on a virtual machine. However, you will have to mount the project directory into the "/nikita" folder of the virtual machine. The provided [Vagrantfile](https://github.com/adaltas/node-nikita/blob/master/packages/lxd/assets/Vagrantfile) definition inside the "packages/lxd/assets" folder will set you up.
 
