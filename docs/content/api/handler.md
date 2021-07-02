@@ -3,13 +3,13 @@ navtitle: Handler
 sort: 2
 ---
 
-# Metadata "handler" (function, required)
+# Metadata "handler"
 
 The `handler` action property defines the function that an action implements to get things done. It is fundamental to each action.
 
 The property is required but most of the time, you don't have to write a handler function on your own. Instead, you can use an existing action which was previously [registered](/current/guide/registry/).
 
-However, you should not be afraid to write your own handler, it is as easy as writing a plain vanilla JavaScript function and using the Nikita `call` action to schedule its execution. 
+However, you should not be afraid to write your own handler, it is as easy as writing a plain vanilla JavaScript function and using the Nikita `call` action to schedule its execution.
 
 ## Usage
 
@@ -24,6 +24,19 @@ nikita
   $handler: ({config}) => {
     // Print the config value
     console.info(config.key)
+  }
+})
+```
+
+## Tip
+
+Call any registered action with `{ $handler: () => {} }` to disable its execution or, for example, test which arguments the `handler` receive. For example to know the configuration of the `execute` action:
+
+```js
+nikita
+.execute({
+  $handler: ({config}) => {
+    console.info(config)
   }
 })
 ```
