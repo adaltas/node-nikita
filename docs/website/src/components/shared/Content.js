@@ -126,16 +126,21 @@ const Content = ({
   return (
     <main css={styles.root}>
       {page && !page.home && (
-        <h1 css={styles.title}>{page.title}</h1>
+        <h1 id={page.tableOfContents
+          && page.tableOfContents.items
+          && page.tableOfContents.items[0]
+          && page.tableOfContents.items[0].url
+          && page.tableOfContents.items[0].url.replace('#', '')}
+          css={styles.title}>
+          {page.title}
+          </h1>
       )}
       <div css={styles.container}>
         {page.tableOfContents
           && page.tableOfContents.items
-          && page.tableOfContents.items[0]
-          && page.tableOfContents.items[0].items 
           && (
           <div css={styles.toc}>
-            <Toc maxLevel={2} items={page.tableOfContents.items[0].items}/>
+            <Toc isMobile={page.isMobile} items={page.tableOfContents.items}/>
           </div>
         )}
         <div css={[styles.content, page.tableOfContents && styles.content_with_toc]}>
