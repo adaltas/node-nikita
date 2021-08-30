@@ -16,7 +16,7 @@
     "limits",
     "mod"
   ],
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -41,7 +41,7 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.1",
+    "@nikitajs/file": "^1.0.0-alpha.2",
     "diff": "^5.0.0"
   },
   "devDependencies": {

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@1.0.0-alpha.1...@nikitajs/lxd@1.0.0-alpha.2) (2021-08-30)
+
+
+### Bug Fixes
+
+* log dependency declarations ([0469f05](https://github.com/adaltas/node-nikita/commit/0469f05d0ef5d3675f21bbd260b2dcfe94bfa3a7))
+
+
+### Features
+
+* **lxd:** add list actions for instances and networks ([97927bc](https://github.com/adaltas/node-nikita/commit/97927bcc0fb495098a26e8d36bc6cc66dda654e4))
+* **lxd:** add stop and delete actions to lxc.cluster ([0b94441](https://github.com/adaltas/node-nikita/commit/0b944419c6b8918e085a00ae02ee90e80b9a8c3e))
+* **lxd:** replace ip with native ipv4.address ([49137f8](https://github.com/adaltas/node-nikita/commit/49137f857d59e8acfdc22c2a53819ff7e30ea6cb))
+* **lxd:** schema migration ([058ec1e](https://github.com/adaltas/node-nikita/commit/058ec1ec3faefed3b75e29f98f4b689b2c5005aa))
+* **lxd:** support for apk and rc in cluster ([cb2da1c](https://github.com/adaltas/node-nikita/commit/cb2da1cf5c7c7f4f72e83bded982278192530ad1))
+
+
+
+
+
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@1.0.0-alpha.0...@nikitajs/lxd@1.0.0-alpha.1) (2021-03-10)
 
 

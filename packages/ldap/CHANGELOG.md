@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/ldap@1.0.0-alpha.1...@nikitajs/ldap@1.0.0-alpha.2) (2021-08-30)
+
+
+### Features
+
+* **ldap:** schema migration ([d265f2e](https://github.com/adaltas/node-nikita/commit/d265f2e4a27d5827478742cb92f53ce710adbaa0))
+
+
+
+
+
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/ldap@1.0.0-alpha.0...@nikitajs/ldap@1.0.0-alpha.1) (2021-03-10)
 
 

@@ -13,7 +13,7 @@
     "system",
     "task"
   ],
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -42,14 +42,14 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.1",
-    "@nikitajs/service": "^1.0.0-alpha.1",
+    "@nikitajs/file": "^1.0.0-alpha.2",
+    "@nikitajs/service": "^1.0.0-alpha.2",
     "dayjs": "^1.10.4",
     "jsesc": "^3.0.2",
     "mixme": "^0.5.1"
   },
   "devDependencies": {
-    "@nikitajs/log": "^1.0.0-alpha.1",
+    "@nikitajs/log": "^1.0.0-alpha.2",
     "coffeescript": "^2.5.1",
     "mocha": "^8.3.2",
     "mocha-they": "^0.1.2",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/db@1.0.0-alpha.1...@nikitajs/db@1.0.0-alpha.2) (2021-08-30)
+
+
+### Features
+
+* **db:** schema migration ([1961034](https://github.com/adaltas/node-nikita/commit/19610348d03a3843af68bae3c377a97f4ca5d4de))
+
+
+
+
+
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/db@1.0.0-alpha.0...@nikitajs/db@1.0.0-alpha.1) (2021-03-10)
 
 

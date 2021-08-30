@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/file",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Provides Nikita actions to work with files.",
   "keywords": [
     "nikita",
@@ -62,7 +62,7 @@
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
-    "@nikitajs/log": "^1.0.0-alpha.1",
+    "@nikitajs/log": "^1.0.0-alpha.2",
     "coffeescript": "^2.5.1",
     "eslint": "^7.25.0",
     "eslint-plugin-coffee": "^0.1.14",

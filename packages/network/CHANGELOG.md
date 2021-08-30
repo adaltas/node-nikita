@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/network@1.0.0-alpha.1...@nikitajs/network@1.0.0-alpha.2) (2021-08-30)
+
+
+### Features
+
+* **network:** schema migration ([e7b4bce](https://github.com/adaltas/node-nikita/commit/e7b4bce5a101d09b5498a0667d2fa0aec803e626))
+
+
+
+
+
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/network@1.0.0-alpha.0...@nikitajs/network@1.0.0-alpha.1) (2021-03-10)
 
 

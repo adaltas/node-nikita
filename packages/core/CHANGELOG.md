@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/core@1.0.0-alpha.1...@nikitajs/core@1.0.0-alpha.2) (2021-08-30)
+
+
+### Bug Fixes
+
+* **core:** catch errors in normalize events ([96d2690](https://github.com/adaltas/node-nikita/commit/96d26901083c684d21ff219f05307b0e6e506bf0))
+* **core:** correct the usage of arch_chroot ([f6925cc](https://github.com/adaltas/node-nikita/commit/f6925ccb0ecf8c073281d4fe4d48d6d12697e79c))
+* **core:** handle errors in normalize hook ([fc3895e](https://github.com/adaltas/node-nikita/commit/fc3895e03772f9a5272fd0780faf8475b9ecf369))
+* **core:** honors on_action when calling modules ([2f67c05](https://github.com/adaltas/node-nikita/commit/2f67c057eddd5df35b92a54caff58c02d40941aa))
+* **core:** link match full error code ([a5a5d4b](https://github.com/adaltas/node-nikita/commit/a5a5d4b998b13ae827d073a90239818aff2bc2bf))
+* **core:** match against module instead of namespaces ([554884c](https://github.com/adaltas/node-nikita/commit/554884cb806af0ce0d237ad5dd6d53928d44f702))
+* **core:** merge $ like magick properties ([03a3244](https://github.com/adaltas/node-nikita/commit/03a3244d924ee1f63a0e93153a1d96d107124671))
+* **core:** pass error and output in action argument ([68eec1b](https://github.com/adaltas/node-nikita/commit/68eec1b83720a865c5fd657bbf0d1ae8193035f7))
+* **core:** remove unused code ([b7f2df8](https://github.com/adaltas/node-nikita/commit/b7f2df8a943a95a1dbc894393fc5e8571163f113))
+* **core:** revert wrong usage of dollar sign ([a232efb](https://github.com/adaltas/node-nikita/commit/a232efb3907bf3cf381d5d72fda476c4bf1de1a3))
+* **core:** stop processing after normalize error ([0fe9177](https://github.com/adaltas/node-nikita/commit/0fe9177658100475fa376050f3a0923e7778da34))
+
+
+### Features
+
+* **core:** call load modules exporting object ([5bffd10](https://github.com/adaltas/node-nikita/commit/5bffd104c3177a362784c798f6b0f1f8f0796c4a))
+* **core:** custom keywords for stream and error ([f4a3941](https://github.com/adaltas/node-nikita/commit/f4a3941da18a16a0e91373992eab4489380611a7))
+* **core:** debug accept stderr string ([c281391](https://github.com/adaltas/node-nikita/commit/c2813912dad03650da959458c4ca0dd70be59817))
+* **core:** enforce schema in argument_to_config ([67a6a62](https://github.com/adaltas/node-nikita/commit/67a6a62ecd025cf005a1aae0615915bd57025fed))
+* **core:** expose serializer in log.md ([d578171](https://github.com/adaltas/node-nikita/commit/d57817106c435619e56f5b040448fde6d5f82844))
+* **core:** metadata header schema ([ae64293](https://github.com/adaltas/node-nikita/commit/ae642934bc1c82149d0d96b35a05babab31d6030))
+* **core:** new end option in scheduler ([8ae894c](https://github.com/adaltas/node-nikita/commit/8ae894ce532849e9dae98981abe198240c3e7fad))
+* **core:** new local object in tools.path ([61c8917](https://github.com/adaltas/node-nikita/commit/61c891772e37fcfdf101f5492118825a13acb6a7))
+* **core:** new scheduler strict option ([da0b027](https://github.com/adaltas/node-nikita/commit/da0b0271b4b1665ec8230281b05b98f94d491f18))
+* **core:** new schema event to modify action schema ([59aeda0](https://github.com/adaltas/node-nikita/commit/59aeda09eafbaf966430ad547382306e2fdb5871))
+* **core:** registry get return parent actions ([78a5f81](https://github.com/adaltas/node-nikita/commit/78a5f812138e6ed0d52690717b122caece1f9872))
+* **core:** scheduler parallel execution ([2d60f03](https://github.com/adaltas/node-nikita/commit/2d60f03763dccefa10cd0a78a7b9c4790d10a2c6))
+* **core:** schema validation for debug ([db60fb8](https://github.com/adaltas/node-nikita/commit/db60fb82f2eae98441a900fd683a15a640ce371d))
+* **core:** schema validation for depth, index and position ([4bfc2de](https://github.com/adaltas/node-nikita/commit/4bfc2de85ac0db630258530612f60f4fa182e8fa))
+* **core:** schema validation for disabled ([1f80590](https://github.com/adaltas/node-nikita/commit/1f8059002183c394231e5b956ac5f1729de07e33))
+* **core:** schemas stored in definitions ([d8fd7de](https://github.com/adaltas/node-nikita/commit/d8fd7de0851f223a917d5bf2daf0d1c9822a724c))
+* **core:** templating desactivated by default ([387c122](https://github.com/adaltas/node-nikita/commit/387c1221a7c42515794f9df3bb9c0a06ceea2fc6))
+* **core:** tmpdir metadata accept functions ([8a37452](https://github.com/adaltas/node-nikita/commit/8a37452700391b33a48186065650f70a5d2fb36c))
+* **core:** unmanaged handlers after resolve ([0f98f59](https://github.com/adaltas/node-nikita/commit/0f98f5904589c9288b00368feaea73693b132c52))
+* **core:** update module metadata in call ([0c7c793](https://github.com/adaltas/node-nikita/commit/0c7c7935ba2f1bee396a8f1d3b1e92b5f802d67b))
+* **core:** validate assertion function output ([8e62d3f](https://github.com/adaltas/node-nikita/commit/8e62d3f951d2c27a327a7d3c6a43047cdf8620f1))
+* **core:** validate raw properties ([a79f1b6](https://github.com/adaltas/node-nikita/commit/a79f1b670d602087a4401b123fefc2e391e063a4))
+
+
+
+
+
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/core@1.0.0-alpha.0...@nikitajs/core@1.0.0-alpha.1) (2021-03-10)
 
 

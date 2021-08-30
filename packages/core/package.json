@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/core",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Provides the Nikita engine and the core Nikita actions.",
   "keywords": [
     "nikita",
