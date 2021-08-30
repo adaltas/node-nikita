@@ -432,12 +432,12 @@ console.info(data)
           {stats} = await @fs.base.lstat target: config.target
           if utils.stats.isDirectory stats.mode
             throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
-            config.target = "#{config.target}/#{path.basename config.source}"
-            log message: "Destination is a directory and is now \"config.target\"", level: 'INFO'
-            # Destination is the parent directory, let's see if the file exist inside
-            {stats} = await @fs.base.stat target: config.target, $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-            throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
-            log message: "New target exists", level: 'INFO'
+            # config.target = "#{config.target}/#{path.basename config.source}"
+            # log message: "Destination is a directory and is now \"config.target\"", level: 'INFO'
+            # # Destination is the parent directory, let's see if the file exist inside
+            # {stats} = await @fs.base.stat target: config.target, $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+            # throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
+            # log message: "New target exists", level: 'INFO'
           else if utils.stats.isSymbolicLink stats.mode
             log message: "Destination is a symlink", level: 'INFO'
             if config.unlink
