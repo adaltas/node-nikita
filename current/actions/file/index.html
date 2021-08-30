@@ -409,12 +409,12 @@ console<span class="token punctuation">.</span><span class="token function">info
       {stats} = await @fs.base.lstat target: config.target
       if utils.stats.isDirectory stats.mode
         throw Error &#x27;Incoherent situation, target is a directory and there is no source to guess the filename&#x27;
-        config.target = &quot;#{config.target}/#{path.basename config.source}&quot;
-        log message: &quot;Destination is a directory and is now \&quot;config.target\&quot;&quot;, level: &#x27;INFO&#x27;
-        # Destination is the parent directory, let&#x27;s see if the file exist inside
-        {stats} = await @fs.base.stat target: config.target, $relax: &#x27;NIKITA_FS_STAT_TARGET_ENOENT&#x27;
-        throw Error &quot;Destination is not a file: #{config.target}&quot; unless utils.stats.isFile stats.mode
-        log message: &quot;New target exists&quot;, level: &#x27;INFO&#x27;
+        # config.target = &quot;#{config.target}/#{path.basename config.source}&quot;
+        # log message: &quot;Destination is a directory and is now \&quot;config.target\&quot;&quot;, level: &#x27;INFO&#x27;
+        # # Destination is the parent directory, let&#x27;s see if the file exist inside
+        # {stats} = await @fs.base.stat target: config.target, $relax: &#x27;NIKITA_FS_STAT_TARGET_ENOENT&#x27;
+        # throw Error &quot;Destination is not a file: #{config.target}&quot; unless utils.stats.isFile stats.mode
+        # log message: &quot;New target exists&quot;, level: &#x27;INFO&#x27;
       else if utils.stats.isSymbolicLink stats.mode
         log message: &quot;Destination is a symlink&quot;, level: &#x27;INFO&#x27;
         if config.unlink
