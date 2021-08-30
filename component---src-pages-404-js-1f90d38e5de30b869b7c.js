@@ -1,2 +1,0 @@
-(self.webpackChunknikita_docs=self.webpackChunknikita_docs||[]).push([[883],{9616:function(t,e,n){"use strict";n.r(e);n(7294);var s=n(835),o=n(5857);e.default=function(t){t.data;return(0,o.tZ)(s.Z,{page:{title:"Page not found",description:"The requested page does not exist",keywords:"nikita, node.js, 404, not found"}},(0,o.tZ)("p",null,"You just hit a route that doesn't exist... the sadness."))}}}]);
-//# sourceMappingURL=component---src-pages-404-js-1f90d38e5de30b869b7c.js.map
