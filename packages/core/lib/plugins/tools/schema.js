@@ -192,13 +192,15 @@ module.exports = {
               return;
             }
             return utils.error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
-              validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors were found in the configuration of',
-              action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "root action:",
+              validate.errors.length === 1 ? 'one error was found in the configuration of ' : 'multiple errors were found in the configuration of ',
+              action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`` : "root action",
+              action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call' ? ` in module ${action.metadata.module}` : void 0,
+              ':',
               validate.errors.map(function(err) {
                 var key,
               msg,
               value;
-                msg = err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data\//,
+                msg = ' ' + err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data\//,
               '');
                 if (err.params) {
                   msg += ((function() {
@@ -217,8 +219,8 @@ module.exports = {
                   })()).join('');
                 }
                 return msg;
-              }).sort().join('; ') + '.'
-            ]);
+              }).sort().join(';')
+            ].join('') + '.');
           }
         };
         await action.plugins.call({

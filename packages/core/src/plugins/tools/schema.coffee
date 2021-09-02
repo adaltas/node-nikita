@@ -128,14 +128,17 @@ module.exports =
             return if validate utils.object.filter action, ['error', 'output']
             utils.error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
               if validate.errors.length is 1
-              then 'one error was found in the configuration of'
-              else 'multiple errors were found in the configuration of'
+              then 'one error was found in the configuration of '
+              else 'multiple errors were found in the configuration of '
               if action.metadata.namespace.length
-              then "action `#{action.metadata.namespace.join('.')}`:"
-              else "root action:"
+              then "action `#{action.metadata.namespace.join('.')}`"
+              else "root action"
+              if action.metadata.namespace.join('.') is 'call' and action.metadata.module isnt '@nikitajs/core/src/actions/call'
+              then " in module #{action.metadata.module}"
+              ':'
               validate.errors
               .map (err) ->
-                msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data\//, ''
+                msg = ' '+err.schemaPath+' '+ajv.errorsText([err]).replace /^data\//, ''
                 msg += (
                   for key, value of err.params
                     continue if key is 'missingProperty'
@@ -143,8 +146,8 @@ module.exports =
                 ).join '' if err.params
                 msg
               .sort()
-              .join('; ')+'.'
-            ]
+              .join(';')
+            ].join('')+'.'
         await action.plugins.call
           name: 'nikita:schema'
           args: action: action, ajv: ajv, schema:
