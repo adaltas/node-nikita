@@ -57,3 +57,37 @@ describe 'actions.call', ->
       metadata.should.containEql
         header: 'hello'
         module: "#{tmpdir}/my_module.js"
+  
+  they 'call a module dont overwrite argument', ({ssh}) ->
+    nikita
+      ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @fs.base.writeFile
+        content: '''
+        module.exports = {
+          metadata: {
+            argument_to_config: 'a_boolean',
+            definitions: {
+              config: {
+                type: 'object',
+                properties: {
+                  a_boolean: {
+                    type: 'boolean',
+                    default: true
+                  }
+                }
+              }
+            }
+          },
+          handler: ({config, metadata}) => {
+            return {config, metadata}
+          }
+        }
+        '''
+        target: "#{tmpdir}/my_module.js"
+      {config, metadata} = await @call "#{tmpdir}/my_module.js"
+      config.should.eql
+        a_boolean: true
+      metadata.should.containEql
+        argument: undefined

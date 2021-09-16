@@ -28,7 +28,6 @@ module.exports = (args) ->
       if Array.isArray arg then throw utils.error 'NIKITA_SESSION_INVALID_ARGUMENTS', [
         "argument cannot be an array, got #{utils.error.got arg}"
       ]
-       
       if arg is null
         mutate new_action, metadata: argument: null
       else if is_object_literal arg

@@ -39,13 +39,14 @@
 // ## Using a module path
 
 // ```js
-// const key = await nikita
-// .fs.base.writeFile({
-//     content: 'module.exports = ({config}) => "value"',
+// const value = await nikita(function(){
+//   await this.fs.base.writeFile({
+//     content: 'module.exports = ({config}) => "my secret"',
 //     target: '/tmp/my_module'
+//   })
+//   return this.call( '/tmp/my_module' )
 // })
-// .call( '/tmp/my_module' )
-// assert(key === 'value')
+// assert(value === 'value')
 // ```
 
 // ## Exports
@@ -59,10 +60,19 @@ module.exports = {
         return;
       }
       mod = action.metadata.argument;
-      if (mod.substr(0, 1) === '.') {
-        mod = path.resolve(process.cwd(), mod);
+      if (typeof mod === 'string') {
+        if (mod.substr(0, 1) === '.') {
+          // When metadata.argument is a string,
+          // `call` consider it to be the module name to load.
+          mod = path.resolve(process.cwd(), mod);
+        }
+        mod = require.main.require(mod);
+        // The loaded action can have its own interpretation of an argument.
+        // In order to avoid any conflict, we simply remove the
+        // `action.metadata.argument` property.
+        // We shall probably also clean up the action.args array.
+        action.metadata.argument = void 0;
       }
-      mod = require.main.require(mod);
       on_action = (ref = mod.hooks) != null ? ref.on_action : void 0;
       if (typeof mod === 'function') {
         mod = {
