@@ -23,8 +23,13 @@ Write log to custom destinations in a user provided format.
             value is a function which must be implemented to serialize the
             information.
             '''
-            patternProperties:
-              '.*': typeof: 'function'
+            # patternProperties:
+            #   '.*': typeof: 'function'
+            properties:
+              'nikita:action:start': typeof: 'function'
+              'nikita:action:end': typeof: 'function'
+              'nikita:resolved': typeof: 'function'
+              'nikita:rejected': typeof: 'function'
             additionalProperties: false
           'stream':
             instanceof: 'Object' # WritableStream
