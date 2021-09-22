@@ -96,8 +96,8 @@ nikita(async function(){
           then out.push "\nRunning Command: `#{log.message}`\n"
           else out.push "\n```stdin\n#{log.message}\n```\n"
           out.join ''
-        'stderr': (log) ->
-          "\n```stderr\n#{log.message}```\n"
+        # 'stderr': (log) ->
+        #   "\n```stderr\n#{log.message}```\n"
         'stdout_stream': (log) ->
           if log.message is null
             state.stdout_count = 0

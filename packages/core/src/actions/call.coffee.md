@@ -65,6 +65,7 @@ assert(value === 'value')
             # In order to avoid any conflict, we simply remove the
             # `action.metadata.argument` property.
             # We shall probably also clean up the action.args array.
+            action.metadata.module = action.metadata.argument
             action.metadata.argument = undefined
           on_action = mod.hooks?.on_action
           mod = handler: mod if typeof mod is 'function'

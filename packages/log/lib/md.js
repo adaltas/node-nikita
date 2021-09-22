@@ -122,9 +122,8 @@ handler = async function({config}) {
       }
       return out.join('');
     },
-    'stderr': function(log) {
-      return `\n\`\`\`stderr\n${log.message}\`\`\`\n`;
-    },
+    // 'stderr': (log) ->
+    //   "\n```stderr\n#{log.message}```\n"
     'stdout_stream': function(log) {
       var out;
       if (log.message === null) {

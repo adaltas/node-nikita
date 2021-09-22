@@ -26,10 +26,14 @@ Write log to custom destinations in a user provided format.
             # patternProperties:
             #   '.*': typeof: 'function'
             properties:
+              'diff': typeof: 'function'
               'nikita:action:start': typeof: 'function'
               'nikita:action:end': typeof: 'function'
               'nikita:resolved': typeof: 'function'
               'nikita:rejected': typeof: 'function'
+              'stdin': typeof: 'function'
+              'stdout_stream': typeof: 'function'
+              'text': typeof: 'function'
             additionalProperties: false
           'stream':
             instanceof: 'Object' # WritableStream
@@ -52,21 +56,9 @@ Write log to custom destinations in a user provided format.
         return unless config.serializer['nikita:action:start']
         data = await config.serializer['nikita:action:start'].apply null, arguments
         config.stream.write data if data?
-      events.on 'text', (log) ->
-        return unless config.serializer.text
-        data = config.serializer.text log
-        config.stream.write data if data?
-      events.on 'stdin', (log) ->
-        return unless config.serializer.stdin
-        data = config.serializer.stdin log
-        config.stream.write data if data?
       events.on 'nikita:action:end', ->
         return unless config.serializer['nikita:action:end']
         data = config.serializer['nikita:action:end'].apply null, arguments
-        config.stream.write data if data?
-      events.on 'stdout_stream', (log) ->
-        return unless config.serializer.stdout_stream
-        data = config.serializer.stdout_stream log
         config.stream.write data if data?
       events.on 'nikita:resolved', ({action}) ->
         if config.serializer['nikita:resolved']
@@ -78,6 +70,18 @@ Write log to custom destinations in a user provided format.
           data = config.serializer['nikita:rejected'].apply null, arguments
           config.stream.write data if data?
         close()
+      events.on 'text', (log) ->
+        return unless config.serializer.text
+        data = config.serializer.text log
+        config.stream.write data if data?
+      events.on 'stdin', (log) ->
+        return unless config.serializer.stdin
+        data = config.serializer.stdin log
+        config.stream.write data if data?
+      events.on 'stdout_stream', (log) ->
+        return unless config.serializer.stdout_stream
+        data = config.serializer.stdout_stream log
+        config.stream.write data if data?
       null
 
 ## Exports

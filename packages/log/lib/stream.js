@@ -24,6 +24,9 @@ information.`,
         // patternProperties:
         //   '.*': typeof: 'function'
         properties: {
+          'diff': {
+            typeof: 'function'
+          },
           'nikita:action:start': {
             typeof: 'function'
           },
@@ -34,6 +37,15 @@ information.`,
             typeof: 'function'
           },
           'nikita:rejected': {
+            typeof: 'function'
+          },
+          'stdin': {
+            typeof: 'function'
+          },
+          'stdout_stream': {
+            typeof: 'function'
+          },
+          'text': {
             typeof: 'function'
           }
         },
@@ -81,42 +93,12 @@ handler = function({
       return config.stream.write(data);
     }
   });
-  events.on('text', function(log) {
-    var data;
-    if (!config.serializer.text) {
-      return;
-    }
-    data = config.serializer.text(log);
-    if (data != null) {
-      return config.stream.write(data);
-    }
-  });
-  events.on('stdin', function(log) {
-    var data;
-    if (!config.serializer.stdin) {
-      return;
-    }
-    data = config.serializer.stdin(log);
-    if (data != null) {
-      return config.stream.write(data);
-    }
-  });
   events.on('nikita:action:end', function() {
     var data;
     if (!config.serializer['nikita:action:end']) {
       return;
     }
     data = config.serializer['nikita:action:end'].apply(null, arguments);
-    if (data != null) {
-      return config.stream.write(data);
-    }
-  });
-  events.on('stdout_stream', function(log) {
-    var data;
-    if (!config.serializer.stdout_stream) {
-      return;
-    }
-    data = config.serializer.stdout_stream(log);
     if (data != null) {
       return config.stream.write(data);
     }
@@ -140,6 +122,36 @@ handler = function({
       }
     }
     return close();
+  });
+  events.on('text', function(log) {
+    var data;
+    if (!config.serializer.text) {
+      return;
+    }
+    data = config.serializer.text(log);
+    if (data != null) {
+      return config.stream.write(data);
+    }
+  });
+  events.on('stdin', function(log) {
+    var data;
+    if (!config.serializer.stdin) {
+      return;
+    }
+    data = config.serializer.stdin(log);
+    if (data != null) {
+      return config.stream.write(data);
+    }
+  });
+  events.on('stdout_stream', function(log) {
+    var data;
+    if (!config.serializer.stdout_stream) {
+      return;
+    }
+    data = config.serializer.stdout_stream(log);
+    if (data != null) {
+      return config.stream.write(data);
+    }
   });
   return null;
 };
