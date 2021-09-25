@@ -197,7 +197,7 @@ describe 'plugins.metadata.definitions', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `call`:'
-        '#/definitions/config/properties/a_regexp/instanceof config/a_regexp should pass "instanceof" keyword validation.'
+        '#/definitions/config/properties/a_regexp/instanceof config/a_regexp must pass "instanceof" keyword validation.'
       ].join ' '
 
   describe 'custom keywords', ->

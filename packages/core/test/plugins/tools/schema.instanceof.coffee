@@ -37,7 +37,7 @@ describe 'plugins.tools.schema.instanceof', ->
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `test`:'
           '#/definitions/config/properties/err/instanceof'
-          'config/err should pass "instanceof" keyword validation.'
+          'config/err must pass "instanceof" keyword validation.'
         ].join ' '
           
   it 'stream with valid property', ->
@@ -78,7 +78,7 @@ describe 'plugins.tools.schema.instanceof', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'multiple errors were found in the configuration of action `test`:'
-          '#/definitions/config/properties/readable/instanceof config/readable should pass "instanceof" keyword validation;'
+          '#/definitions/config/properties/readable/instanceof config/readable must pass "instanceof" keyword validation;'
           '#/definitions/config/properties/writable/instanceof'
-          'config/writable should pass "instanceof" keyword validation.'
+          'config/writable must pass "instanceof" keyword validation.'
         ].join ' '
