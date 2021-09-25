@@ -5,7 +5,6 @@ registry = require '@nikitajs/core/lib/registry'
 
 module.exports =
   log:
-    '': handler: (->)
     cli: '@nikitajs/log/src/cli'
     csv: '@nikitajs/log/src/csv'
     fs: '@nikitajs/log/src/fs'
