@@ -1,8 +1,8 @@
 
-{tags} = require '../test'
-nikita = require '../../src'
+{tags} = require '../../test'
+nikita = require '../../../src'
 
-describe 'plugins.$status', ->
+describe 'plugins.output.$status', ->
   return unless tags.api
   
   describe 'returned coercion', ->
@@ -48,21 +48,21 @@ describe 'plugins.$status', ->
   describe 'inherit', ->
 
     it '`true` when children are [`false`, `true`]', ->
-      {$status} = await nikita.call count: 0, ({context}) ->
+      {$status} = await nikita.call count: 0, ->
         @call -> false
         @call -> true
         {}
       $status.should.be.true()
 
     it '`true` when children are [`true`, `false`]', ->
-      {$status} = await nikita.call count: 0, ({context}) ->
+      {$status} = await nikita.call count: 0, ->
         @call -> false
         @call -> true
         {}
       $status.should.be.true()
 
     it '`false` when children are [`false`, `false`]', ->
-      {$status} = await nikita.call count: 0, ({context}) ->
+      {$status} = await nikita.call count: 0, ->
         @call -> false
         @call -> false
         {}
