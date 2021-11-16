@@ -2,7 +2,7 @@
 {tags} = require '../../test'
 nikita = require '../../../src'
 
-describe 'action.scheduler', ->
+describe 'session.scheduler', ->
   return unless tags.api
 
   describe 'arguments', ->

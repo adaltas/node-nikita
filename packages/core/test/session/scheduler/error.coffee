@@ -2,7 +2,7 @@
 {tags} = require '../../test'
 nikita = require '../../../src'
 
-describe 'action.scheduler.error', ->
+describe 'session.scheduler.error', ->
   return unless tags.api
 
   describe 'in last child', ->

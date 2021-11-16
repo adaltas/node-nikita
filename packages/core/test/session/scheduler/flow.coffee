@@ -2,7 +2,7 @@
 {tags} = require '../../test'
 nikita = require '../../../src'
 
-describe 'action.scheduler.flow', ->
+describe 'session.scheduler.flow', ->
   return unless tags.api
 
   it 'executed 1 args with 2 actions sequentially', ->
