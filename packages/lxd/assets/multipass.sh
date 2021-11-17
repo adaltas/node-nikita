@@ -12,12 +12,16 @@ set -e
 brew list | grep -x "bash-completion" || brew install bash-completion
 brew list | grep -x "multipass" || brew install --cask multipass
 
+if multipass info nikita ; then
+  multipass start nikita
+  exit 0
+fi
+
 multipass launch \
   --name nikita \
   --cpus 8 \
   --mem 30G \
   --disk 100G
-
 multipass exec nikita -- sudo apt-get update
 multipass exec nikita -- sudo snap install multipass-sshfs
 multipass mount $HOME nikita
