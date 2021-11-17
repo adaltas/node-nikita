@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.push', ->
   return unless tags.api
+  return
 
   describe 'returned value', ->
 

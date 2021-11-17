@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.pause', ->
   return unless tags.api
+  return
   
   it 'pause in options', ->
     stack = []

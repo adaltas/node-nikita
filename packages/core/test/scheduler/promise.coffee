@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.promise', ->
   return unless tags.api
+  return
   
   describe 'instantiate handlers with error', ->
 

@@ -10,6 +10,11 @@ module.exports = (handlers) ->
     running: false
   promise = new Promise (resolve, reject) ->
     scheduler =
+      error: (err) ->
+        state.resolved = true
+        while task = stack.shift()
+          task.reject err
+        return reject err
       pump: ->
         return if state.running
         unless state.resolved
@@ -30,7 +35,7 @@ module.exports = (handlers) ->
           catch error
             state.running = false
             item.reject.call null, error
-            setImmediate -> scheduler.pump()
+            scheduler.error error
       unshift: (handlers, options={}) ->
         options.pump ?= true
         isArray = Array.isArray handlers
@@ -42,7 +47,6 @@ module.exports = (handlers) ->
               resolve: resolve
               reject: reject
               options: options
-            scheduler.pump()
           else
             # Unshift from the last to the first element to preserve order
             Promise.all((
@@ -58,7 +62,6 @@ module.exports = (handlers) ->
               resolve: resolve
               reject: reject
               options: options
-            scheduler.pump()
           else
             Promise.all(
               scheduler.push handler, options for handler in handlers
@@ -68,6 +71,7 @@ module.exports = (handlers) ->
     if handlers
       if handlers.length
         scheduler.push handlers, output: true
+        scheduler.pump()
       else
         resolve []
   promise.catch (->) # Handle strict unhandled rejections

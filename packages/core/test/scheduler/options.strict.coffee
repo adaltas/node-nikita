@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.options.strict', ->
   return unless tags.api
+  return
   
   it 'when `false`', ->
     scheduler = schedule(null, strict: false)

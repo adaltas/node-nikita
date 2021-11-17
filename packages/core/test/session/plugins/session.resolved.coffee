@@ -16,9 +16,17 @@ describe 'session.plugins.session.resolved', ->
           'nikita:resolved': ({action, output}) ->
             stack.push 'end'
       @call ->
-        stack.push '1'
+        new Promise (resolve) ->
+          setTimeout ->
+            stack.push '1'
+            resolve()
+          , 50
       @call ->
-        stack.push '2'
+        new Promise (resolve) ->
+          setTimeout ->
+            stack.push '2'
+            resolve()
+          , 50
     n.call ->
       stack.push '3'
     await n

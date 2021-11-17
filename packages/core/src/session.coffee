@@ -1,7 +1,7 @@
 
 {merge} = require 'mixme'
 registry = require './registry'
-schedule = require './schedulers/native'
+schedule = require './schedulers'
 plugandplay = require 'plug-and-play'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'
@@ -28,7 +28,7 @@ session = (args, options={}) ->
         child: child
         parent: action
       # Multiply the arguments
-      schedule utils.array.multiply(...args).map (args) -> ->
+      schedule.fluent utils.array.multiply(...args).map (args) -> ->
         session args,
           namespace: nm
           child: child
@@ -73,10 +73,9 @@ session = (args, options={}) ->
         name: 'nikita:register'
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
-  schedulers = 
-    in: schedule null, {...action.scheduler, end: false}
-    out: schedule null, {...action.scheduler, pause: true}
-  # Start with a paused scheduler to register actions out of the handler
+  schedulers =
+    in: schedule.native()
+    out: schedule.fluent()
   action.scheduler = schedulers.out
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
@@ -90,7 +89,7 @@ session = (args, options={}) ->
         hooks: action.hooks?.on_normalize or action.on_normalize
         handler: normalize
     catch err
-      action.scheduler.broadcast(err)
+      schedulers.out.error err
       return reject err
     # Load action from registry
     if action.metadata.namespace
@@ -110,17 +109,19 @@ session = (args, options={}) ->
         action.handler.call action.context, action
     # Ensure child actions are executed
     pump = ->
-      # Now that the handler has been executed,
-      # import all the actions registered outside of it
-      while task = schedulers.out.state.stack.shift()
-        action.scheduler.state.stack.push task
-      action.scheduler.end(true)
+      action.scheduler.pump()
+      null
     output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
     Promise.all [output, action.scheduler]
-    .then (values) ->
-      on_result undefined, values.shift()
+    .then ([output]) ->
+      schedulers.out.pump()
+      await schedulers.out
+      output
+    .then (output) ->
+      on_result undefined, output
     , (err) ->
+      schedulers.out.error err
       on_result err
     # Hook to catch error and format output once all children are executed
     on_result = (error, output) ->

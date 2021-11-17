@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.creation', ->
   return unless tags.api
+  return
   
   describe 'usage', ->
   

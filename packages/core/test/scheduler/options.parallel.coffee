@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.options.parallel', ->
   return unless tags.api
+  return
   
   run = (parallel, expect) ->
     scheduler = schedule(null, parallel: parallel, managed: true)

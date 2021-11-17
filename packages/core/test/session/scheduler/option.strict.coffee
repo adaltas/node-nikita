@@ -6,7 +6,7 @@ describe 'session.scheduler.option.strict', ->
   return unless tags.api
 
   it 'function', ->
-    nikita $scheduler: strict: true
+    nikita
     .call -> true
     .call -> throw Error 'catchme'
     .call -> true

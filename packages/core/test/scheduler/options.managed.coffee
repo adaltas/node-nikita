@@ -4,6 +4,7 @@ schedule = require '../../src/schedulers/native'
 
 describe 'scheduler.options.managed', ->
   return unless tags.api
+  return
   
   describe '`false`, default', ->
   
