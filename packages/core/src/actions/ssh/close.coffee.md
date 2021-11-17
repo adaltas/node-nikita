@@ -47,3 +47,7 @@ Close the existing connection if any.
       handler: handler
       metadata:
         definitions: definitions
+        
+## Dependencies
+
+    utils = require '../../utils'

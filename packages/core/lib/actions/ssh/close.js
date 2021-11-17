@@ -9,7 +9,7 @@
 //   Return the SSH connection if any and if true, null if false.
 
 // ## Schema definitions
-var definitions, handler;
+var definitions, handler, utils;
 
 definitions = {
   config: {
@@ -58,3 +58,7 @@ module.exports = {
     definitions: definitions
   }
 };
+
+
+// ## Dependencies
+utils = require('../../utils');

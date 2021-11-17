@@ -244,7 +244,6 @@ module.exports = {
   }
 };
 
-
 // ## Dependencies
 connect = require('ssh2-connect');
 

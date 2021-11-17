@@ -21,18 +21,17 @@ describe 'actions.ssh.close', ->
         @ssh.close ssh: ssh
         @ssh.close ssh: ssh
         .should.be.finally.containEql $status: false
-        
+    
+    it 'error if no connection to close', ->
+      nikita.ssh.close
+        ssh: undefined
+      .should.be.rejectedWith
+        code: 'NIKITA_SSH_CLOSE_NO_CONN'
+
   describe 'sibling connection', ->
 
-    they 'search for sibling', ({ssh}) ->
+    they.only 'search for sibling', ({ssh}) ->
       nikita ->
         @ssh.open ssh
         @ssh.close()
         .should.be.finally.containEql $status: true
-
-      they 'error if no ssh to close', ({ssh}) ->
-        nikita ->
-          await @ssh.open ssh
-          @ssh.close()
-          .should.be.rejectedWith
-            code: 'NIKITA_SSH_CLOSE_NO_CONN'

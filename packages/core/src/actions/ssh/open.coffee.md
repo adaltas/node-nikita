@@ -191,7 +191,7 @@ pass all the properties through the `ssh` property.
         on_action: on_action
       metadata:
         definitions: definitions
-    
+
 ## Dependencies
 
     connect = require 'ssh2-connect'
