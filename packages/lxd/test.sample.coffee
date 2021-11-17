@@ -2,6 +2,7 @@
 module.exports =
   tags:
     lxd: true
+    lxd_vm: process.platform is 'linux'
     lxd_prlimit: true
   images:
     alpine: 'alpine/3.13'

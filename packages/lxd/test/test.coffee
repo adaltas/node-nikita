@@ -26,6 +26,7 @@ they 'cache container image to avoid timeout later', ({ssh}) ->
   .execute
     command: "lxc image copy images:#{config.images.alpine} `lxc remote get-default`:"
 
+return unless config.tags.lxd_vm
 they 'cache vm image to avoid timeout later', ({ssh}) ->
   @timeout 0
   nikita

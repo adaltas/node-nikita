@@ -82,7 +82,7 @@ describe 'lxc.init', ->
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
   
-  describe 'action', ->
+  describe 'container', ->
   
     they 'Init a new container', ({ssh}) ->
       nikita
@@ -125,7 +125,10 @@ describe 'lxc.init', ->
           container: 'nikita-init-3'
         $status.should.be.false()
         await @clean()
-  
+    
+  describe 'vm', ->
+    return unless tags.lxd_vm
+
     they 'Init new VM', ({ssh}) ->
       nikita
         $ssh: ssh

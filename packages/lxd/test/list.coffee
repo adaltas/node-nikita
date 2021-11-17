@@ -17,16 +17,17 @@ describe 'lxc.list', ->
       await @clean()
       await @lxc.init
         image: "images:#{images.alpine}"
+        container: 'nikita-list-c1'
+      await @lxc.init
+        $if: tags.lxd_vm
+        image: "images:#{images.alpine}"
         container: 'nikita-list-vm1'
         vm: true
-      await @lxc.init
-        image: "images:#{images.alpine}"
-        container: 'nikita-list-c1'
       await @wait time: 200
       {$status, list} = await @lxc.list()
       $status.should.be.true()
-      list.should.containEql 'nikita-list-vm1'
       list.should.containEql 'nikita-list-c1'
+      list.should.containEql 'nikita-list-vm1' if tags.lxd_vm
       await @clean()
 
   describe 'option `filter`', ->
@@ -41,16 +42,17 @@ describe 'lxc.list', ->
         await @clean()
         await @lxc.init
           image: "images:#{images.alpine}"
+          container: 'nikita-list-c1'
+        await @lxc.init
+          $if: tags.lxd_vm
+          image: "images:#{images.alpine}"
           container: 'nikita-list-vm1'
           vm: true
-        await @lxc.init
-          image: "images:#{images.alpine}"
-          container: 'nikita-list-c1'
         {$status, list} = await @lxc.list
           filter: 'containers'
         $status.should.be.true()
         list.should.containEql 'nikita-list-c1'
-        list.should.not.containEql 'nikita-list-vm1'
+        list.should.not.containEql 'nikita-list-vm1' if tags.lxd_vm
         await @clean()
 
     they 'when `virtual-machines`, only display VMs', ({ssh}) ->
@@ -63,14 +65,15 @@ describe 'lxc.list', ->
         await @clean()
         await @lxc.init
           image: "images:#{images.alpine}"
+          container: 'nikita-list-c1'
+        await @lxc.init
+          $if: tags.lxd_vm
+          image: "images:#{images.alpine}"
           container: 'nikita-list-vm1'
           vm: true
-        await @lxc.init
-          image: "images:#{images.alpine}"
-          container: 'nikita-list-c1'
         {$status, list} = await @lxc.list
           filter: 'virtual-machines'
         $status.should.be.true()
-        list.should.containEql 'nikita-list-vm1'
         list.should.not.containEql 'nikita-list-c1'
+        list.should.containEql 'nikita-list-vm1' if tags.lxd_vm
         await @clean()
