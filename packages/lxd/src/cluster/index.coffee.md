@@ -200,8 +200,9 @@ containers:
           $header: 'Start'
           container: containerName
         # Wait until container is running
+        # TODO: use the lxd API with @lxd.query
         await @execute.wait
-          command: "lxc info #{containerName} | grep 'Status: Running'"
+          command: "lxc info #{containerName} | grep 'Status: RUNNING'"
         await @network.tcp.wait
           host: 'linuxfoundation.org'
           port: 80

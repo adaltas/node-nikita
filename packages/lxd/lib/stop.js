@@ -54,7 +54,7 @@ lxc stop ${config.container}`,
   if (config.wait) {
     await this.execute.wait({
       $shy: true,
-      command: `lxc info ${config.container} | grep 'Status: Stopped'`,
+      command: `lxc info ${config.container} | grep 'Status: STOPPED'`,
       retry: config.wait_retry,
       interval: config.wait_interval
     });

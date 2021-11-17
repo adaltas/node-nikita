@@ -68,7 +68,6 @@ console.info(stdout)
         "--cwd #{utils.string.escapeshellarg config.cwd}" if config.cwd
         ...('--env ' + utils.string.escapeshellarg "#{k}=#{v}" for k, v of config.env)
       ].join ' '
-      # console.log config, opt
       await @execute config, trap: false,
         command: [
           "cat <<'NIKITALXDEXEC' | lxc exec #{opt} #{config.container} -- #{config.shell}"

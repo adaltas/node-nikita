@@ -80,7 +80,6 @@ handler = async function({config}) {
       return results;
     })())
   ].join(' ');
-  // console.log config, opt
   return (await this.execute(config, {
     trap: false
   }, {

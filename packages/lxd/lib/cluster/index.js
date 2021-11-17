@@ -263,8 +263,9 @@ handler = async function({config}) {
         container: containerName
       });
       // Wait until container is running
+      // TODO: use the lxd API with @lxd.query
       await this.execute.wait({
-        command: `lxc info ${containerName} | grep 'Status: Running'`
+        command: `lxc info ${containerName} | grep 'Status: RUNNING'`
       });
       await this.network.tcp.wait({
         host: 'linuxfoundation.org',

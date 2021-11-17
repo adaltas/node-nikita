@@ -54,7 +54,7 @@ console.info(`The container was stopped: ${$status}`);
       if config.wait
         await @execute.wait
           $shy: true
-          command: "lxc info #{config.container} | grep 'Status: Stopped'"
+          command: "lxc info #{config.container} | grep 'Status: STOPPED'"
           retry: config.wait_retry
           interval: config.wait_interval
       {}
