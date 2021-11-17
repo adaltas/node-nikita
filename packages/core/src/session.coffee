@@ -28,7 +28,7 @@ session = (args, options={}) ->
         child: child
         parent: action
       # Multiply the arguments
-      schedule.fluent utils.array.multiply(...args).map (args) -> ->
+      schedule strict: true, paused: true, utils.array.multiply(...args).map (args) -> ->
         session args,
           namespace: nm
           child: child
@@ -74,8 +74,8 @@ session = (args, options={}) ->
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
   schedulers =
-    in: schedule.native()
-    out: schedule.fluent()
+    in: schedule()
+    out: schedule null, strict: true, paused: true
   action.scheduler = schedulers.out
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
@@ -89,7 +89,7 @@ session = (args, options={}) ->
         hooks: action.hooks?.on_normalize or action.on_normalize
         handler: normalize
     catch err
-      schedulers.out.error err
+      schedulers.out.end err
       return reject err
     # Load action from registry
     if action.metadata.namespace
@@ -109,19 +109,19 @@ session = (args, options={}) ->
         action.handler.call action.context, action
     # Ensure child actions are executed
     pump = ->
-      action.scheduler.pump()
+      action.scheduler.resume()
       null
     output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
     Promise.all [output, action.scheduler]
     .then ([output]) ->
-      schedulers.out.pump()
+      schedulers.out.resume()
       await schedulers.out
       output
     .then (output) ->
       on_result undefined, output
     , (err) ->
-      schedulers.out.error err
+      schedulers.out.end err
       on_result err
     # Hook to catch error and format output once all children are executed
     on_result = (error, output) ->

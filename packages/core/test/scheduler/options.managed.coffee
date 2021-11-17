@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-schedule = require '../../src/schedulers/native'
+schedule = require '../../src/schedulers'
 
 describe 'scheduler.options.managed', ->
   return unless tags.api
