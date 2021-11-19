@@ -9,7 +9,8 @@ module.exports = {
     "scope-enum": async ctx => 
       [2, "always", [...(await getPackages(ctx)), 
         // Insert custom scopes below:
-        "release"
+        "release",
+        "website"
       ]]
   }
 };
