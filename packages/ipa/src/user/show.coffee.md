@@ -40,9 +40,9 @@ console.info(`User is ${result.uid[0]}`)
       config.uid ?= config.username
       delete config.username
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -87,4 +87,4 @@ console.info(`User is ${result.uid[0]}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions

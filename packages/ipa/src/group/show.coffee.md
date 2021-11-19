@@ -17,9 +17,9 @@ const {result} = await nikita.ipa.group.show({
 console.info(`Group is ${result.cn[0]}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -57,4 +57,4 @@ console.info(`Group is ${result.cn[0]}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

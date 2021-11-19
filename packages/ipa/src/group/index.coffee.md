@@ -17,9 +17,9 @@ const {$status} = await nikita.ipa.group({
 console.info(`Group was updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -77,4 +77,4 @@ console.info(`Group was updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

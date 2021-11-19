@@ -18,9 +18,9 @@ const {$status} = await nikita.ipa.service({
 console.info(`Service was updated: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -63,4 +63,4 @@ console.info(`Service was updated: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

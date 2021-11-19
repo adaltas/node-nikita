@@ -23,9 +23,9 @@ console.info(`User was deleted: ${$status}`)
       config.uid ?= config.username
       delete config.username
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -69,4 +69,4 @@ console.info(`User was deleted: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions

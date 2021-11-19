@@ -23,9 +23,9 @@ console.info(`User exists: ${$status}`)
       config.uid ?= config.username
       delete config.username
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -65,5 +65,5 @@ console.info(`User exists: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
+        definitions: definitions
         shy: true
-        schema: schema

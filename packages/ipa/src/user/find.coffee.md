@@ -19,9 +19,9 @@ const {$status} = await nikita.ipa.user.find({
 console.info(`User was found: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -107,4 +107,4 @@ console.info(`User was found: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

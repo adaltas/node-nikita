@@ -20,9 +20,9 @@ const {$status} = await nikita.ipa.group.add_member({
 console.info(`Member was added to the group: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -68,4 +68,4 @@ console.info(`Member was added to the group: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

@@ -26,9 +26,9 @@ catch (err){
 }  
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -66,4 +66,4 @@ catch (err){
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

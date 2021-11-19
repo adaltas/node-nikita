@@ -17,9 +17,9 @@ const {$status} = await nikita.ipa.service.del({
 console.info(`Service was deleted: ${$status}`)
 ```
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -56,4 +56,4 @@ console.info(`Service was deleted: ${$status}`)
     module.exports =
       handler: handler
       metadata:
-        schema: schema
+        definitions: definitions

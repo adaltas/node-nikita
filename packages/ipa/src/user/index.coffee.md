@@ -36,9 +36,9 @@ console.info(`User was updated: ${$status}`)
       if config.attributes
         config.attributes.mail = [config.attributes.mail] if typeof config.attributes.mail is 'string'
 
-## Schema
+## Schema definitions
 
-    schema =
+    definitions =
       config:
         type: 'object'
         properties:
@@ -105,4 +105,4 @@ console.info(`User was updated: ${$status}`)
       hooks:
         on_action: on_action
       metadata:
-        schema: schema
+        definitions: definitions
