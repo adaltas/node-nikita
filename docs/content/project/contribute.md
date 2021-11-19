@@ -1,7 +1,7 @@
 ---
 navtitle: Contribute
 description: How to contribute to the project
-sort: 5
+sort: 4
 ---
 
 # Contributing
