@@ -5,7 +5,7 @@ sort: 5
 
 # Developer information
 
-You are encouraged to [contribute](/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes the project layout and how to run the tests.
+You are encouraged to [contribute](/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes how to setup your developer and testing environment and how tests are organized and executed.
 
 Before starting with Nikita development, read the [project architecture](/project/architecture/), it presents how to project is organized in the Git repository.
 
@@ -13,46 +13,70 @@ Before starting with Nikita development, read the [project architecture](/projec
 
 Nikita targets Unix-like systems including Linux and macOS. Windows is not supported as a targeting node where actions are executed. It is however known to work as a Nikita host. This means you can run Nikita from a Windows host and target Linux nodes over SSH.
 
-Tests are executed with [Mocha](https://mochajs.org/) and [Should.js](https://shouldjs.github.io/). They are all located inside the "./test" folder.
+Nikita use [Mocha](https://mochajs.org/) and [Should.js](https://shouldjs.github.io/). All tests are all located inside the `test` folders.
 
-For the tests to execute successfully, you must:
+### Running all tests
 
-* be online (attempt to fetch an FTP file)
-* be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password
+The command `yarn test` run both on the local machine as well as on containerized and virtualized environments to simulate various operating systems and execution contexts. Lerna can run multiple commands in parallel with the `--concurrency` option:
 
-Install Nikita with Yarn:
-
-```bash
-# Clone the repository
-git clone https://github.com/adaltas/node-nikita.git nikita
-# Go to your nikita folder
-cd ~/nikita
-# Install the package dependencies and bootstrap Lerna
-yarn install
+```
+npx lerna run test --stream --concurrency 8
 ```
 
-`yarn test` executes the full test suite while `npx mocha test/your_choice/*.coffee` executes a subset of the test suite. For example, to only test the `nikita.file.ini` actions, run the following:
+### Running local tests
+
+For the local tests to execute successfully, you must:
+
+* be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password
+* be online (attempt to fetch an FTP file)
+
+Local tests are executed with the command `yarn test:local`. It can be executed globally from the project root directoy or selectively inside each package. Inside a package, to speed test execution, you can pass the `--parallel` Mocha argument, for example:
+
+```bash
+cd packages/core
+yarn run test:local --parallel
+```
+
+To execute a subset of the tests, go to the package folder and pass a globing expression to Mocha such as `cd ./packages/{package} && npx mocha 'test/**/*.coffee'`.
+
+For example, to only test the `nikita.file.ini` actions, run the following:
 
 ```bash
 cd packages/file && npx mocha test/ini.coffee
+# Or
+yarn workspace @nikitajs/file exec mocha test/ini.coffee 
+# Or
+npx lerna --scope @nikitajs/file exec mocha test/ini.coffee
 ```
 
-To run all package tests from the project directory run: 
+### Running environment tests
 
-```bash
-yarn workspace @nikitajs/core run test
-```
+For the environment tests to execute successfully, you must:
+
+* Install and configure a [Docker client](https://www.docker.com/).
+* Install and configure an [LXD client](https://linuxcontainers.org/lxd/introduction/).
+
+Environment tests are executed with the command `yarn test:env`. To execute a single environment, go to the targeted `env` folder such as `./packages/{package}/env/{env}` and execute its `run.sh` script.
+
+## Configuration customization
+
+Tests load a configuration file. Its purpose is to parameterize the Nikita sessions and to filter the execution of tests with a tagging system.
+
+By default, the configuration files are located in each package folder. They are named `test.coffee`. A sample file is provided as well named `test.coffee.sample`. If a configuration file does not exists, the sample file is copied.
+
+You can also customize the path to the configuration module by setting the `NIKITA_TEST_MODULE` environmental variable.
 
 ## SSH or locally
 
-Why even choose? All tests when it makes sense are executed twice. Once without an SSH connection and once with an SSH connection pointing to `localhost`. To achieve this behavior, we extended [Mocha](https://mochajs.org/) by providing an alternative to the `it` function in the name of `they`. You can find it in the [mocha-they package](https://github.com/adaltas/node-ssh2-they).
+Why even choose? When it makes sense, the majority of tests run twice. Once without an SSH connection and once with an SSH connection pointing to `localhost` by default. To achieve this behavior, we extended [Mocha](https://mochajs.org/) by providing an alternative to the `it` function in the name of `they`. You can find it in the [mocha-they package](https://github.com/adaltas/node-ssh2-they).
 
 For example, this test will only be executed locally:
 
 ```js
 const nikita = require('nikita');
-describe('Simple Test', function() {
-  it('Check a file is touched', function() {
+
+describe('Simple Test', () => {
+  it('Check a file is touched', () => {
     nikita
     .file.touch('/tmp/a_file')
     .fs.assert('/tmp/a_file')
@@ -64,26 +88,23 @@ While the same test using `they` will be executed locally and remotely using pro
 
 ```js
 const nikita = require('nikita');
-const {config} = require './test'
+const {config} = require('./test');
 const they = require('mocha-they')(config);
-describe('Simple Test', function() {
-  they('Check a file is touched', function(ssh) {
+
+describe('Simple Test', () => {
+  they('Check a file is touched', (ssh) => {
     nikita({$ssh: ssh})
     .file.touch('/tmp/a_file')
-    .fs.assert('/tmp/a_file')
+    .fs.assert('/tmp/a_file');
   })
 })
 ```
 
-## Configuration customization
-
-By default, tests will look for a configuration module located at the "./test.coffee" file. If they don't find it, they will copy the sample "./test.sample.coffee" file into "./test.coffee". Use the sample file as a starting point to configure your own environment.
-
-You can also customize the path to the configuration module by setting the environmental variable named `NIKITA_TEST_MODULE`.
-
 ## Environments
 
 Some tests depend on particular settings to run successfully. Some actions are specific to a particular Linux distribution or issue internally alternatives commands which must be validated. Other actions depend on a service that is not always available on the host machine such as a database connection.
+
+The environment tests require the presence of [Docker](https://www.docker.com/) and [LXD](https://linuxcontainers.org/lxd/introduction/) clients.
 
 Based on your environment support, targeted tests can be activated from the configuration. Tests are labeled with tags. The environment defines the test coverage by activating tags in their `test.coffee` configuration file. For example, to activate the MariaDB tests located in the ["db" package](https://github.com/adaltas/node-nikita/blob/master/packages/db/env/mariadb/test.coffee), set the `tags.db` property to `true` and configure the `db.mariadb` properties accordingly.
 
