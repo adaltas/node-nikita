@@ -26,10 +26,10 @@ nikita
 
 The actions will be executed in this sequence:
 
-* `call`
-* `service` for `my_pkg_1`
-* `service` for `my_pkg_2`
-* `file.yaml`
+* (1) `call`
+  * (2) `service` for `my_pkg_1`
+  * (3) `service` for `my_pkg_2`
+* (4) `file.yaml`
 
 This tree-like traversal is leverage by the [`header` metadata](/current/api/metadata/header/) and the `log.cli` action to display a report to the terminal.
 
