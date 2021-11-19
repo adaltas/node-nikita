@@ -34,39 +34,10 @@ Documentation is available on the [project website](https://nikita.js.org).
 npm install nikita
 ```
 
-## Test
+## Developer information
 
-For the tests to execute successfully, you must:   
+Refer to the documentation to learn more and get involved:
 
-*   be online (attempt to fetch an ftp file)   
-*   be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password   
-
-```bash
-# run all package tests from the package directory
-cd packages/core && npm test
-# run all package tests from the project directory
-yarn workspace @nikita/core run test
-# or a subset of the tests
-npm run build && npx mocha test/api/**.coffee
-```
-
-Some of the tests require a specific environment. You are encouraged to 
-customize which tests you wish to run and to use docker container.
-
-To filter and configure your tests, you can either create a "test.coffee" at the
-root of this project or point the "MECANO_TEST" environment variable to such a
-file. You can use the file "test.coffee.sample" as a starting point.
-
-There are tests prepared to run on CentOS and Ubuntu using docker. Goto to one
-of the docker directory and run docker-compose, here's an example to run tests
-on CentOS:
-
-```
-cd env/centos7 # or any other directory
-# Run all tests
-docker-compose up --abort-on-container-exit
-# Enter bash console
-docker-compose run --rm nodejs
-# Run a subset of the tests
-docker-compose run --rm nodejs 'test/core/*'
-```
+* The [general project architecture](https://nikita.js.org/project/architecture/).
+* Become a [contributor](https://nikita.js.org/project/contribute/).
+* How to setup a [developer and testing environment](https://nikita.js.org/project/developers/).
