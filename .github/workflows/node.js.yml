@@ -23,7 +23,7 @@ jobs:
     - run: cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
     - run: echo whoami && ssh `whoami`@localhost hostname
     - run: yarn --frozen-lockfile
-    - run: yarn run test
+    - run: yarn run test:local
   # deploy:
   #   needs: test
   #   runs-on: ubuntu-latest
