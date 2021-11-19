@@ -181,6 +181,26 @@ console.info(stdout)
             description: '''
             Unix group id.
             '''
+          'stdio':
+            # Schema coercion from string, without is
+            # oneOf: [
+            #   $ref: '#/definitions/stdio'
+            # ,
+            #   type: 'array'
+            #   items: $ref: '#/definitions/stdio'
+            # ]
+            type: 'array'
+            items:
+              $ref: '#/definitions/stdio'
+            description: '''
+            Configure the pipes that are established between the parent and
+            child process.
+            '''
+          'stdin':
+            instanceof: 'Object' # must be `stream.Writable`
+            description: '''
+            Readable EventEmitter in which the standard input is piped from.
+            '''
           'stdin_log':
             type: 'boolean'
             default: true
@@ -283,6 +303,19 @@ console.info(stdout)
                 '''
             required: ['arch_chroot_rootdir']
         required: ['command']
+      # see https://nodejs.org/api/child_process.html#optionsstdio
+      stdio:
+        oneOf: [
+          enum: [
+            'pipe', 'overlapped', 'ignore', 'inherit'
+          ]
+          type: 'string'
+        ,
+          enum: [
+            0, 1, 2
+          ]
+          type: 'integer'
+        ]
           
 ## Handler
 
@@ -387,11 +420,13 @@ console.info(stdout)
         child = exec config,
           ssh: ssh
           env: config.env
-        config.stdin.pipe child.stdin if config.stdin
-        child.stdout.pipe config.stdout, end: false if config.stdout
-        child.stderr.pipe config.stderr, end: false if config.stderr
+        # Note, child[stdin|stdout|stderr] are undefined
+        # when option stdio is set to 'inherit'
+        config.stdin.pipe child.stdin if config.stdin and child.stdin
+        child.stdout.pipe config.stdout, end: false if config.stdout and child.stdout
+        child.stderr.pipe config.stderr, end: false if config.stderr and child.stderr
         stdout_stream_open = stderr_stream_open = false
-        if config.stdout_return or config.stdout_log
+        if child.stdout and (config.stdout_return or config.stdout_log)
           child.stdout.on 'data', (data) ->
             stdout_stream_open = true if config.stdout_log
             log message: data, type: 'stdout_stream' if config.stdout_log
@@ -405,7 +440,7 @@ console.info(stdout)
                 'this is embarassing and we never found how to catch this bug,'
                 'we would really enjoy some help to replicate or fix this one.'
               ].join ' '
-        if config.stderr_return or config.stderr_log
+        if child.stderr and (config.stderr_return or config.stderr_log)
           child.stderr.on 'data', (data) ->
             stderr_stream_open = true if config.stderr_log
             log message: data, type: 'stderr_stream' if config.stderr_log
@@ -436,9 +471,9 @@ console.info(stdout)
                 when 'yaml' then yaml.load result.stdout
             log message: result.stdout, type: 'stdout' if result.stdout and result.stdout isnt '' and config.stdout_log
             log message: result.stderr, type: 'stderr' if result.stderr and result.stderr isnt '' and config.stderr_log
-            if config.stdout
+            if child.stdout and config.stdout
               child.stdout.unpipe config.stdout
-            if config.stderr
+            if child.stderr and config.stderr
               child.stderr.unpipe config.stderr
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
               return reject utils.error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [

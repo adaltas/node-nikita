@@ -185,6 +185,25 @@ environment variables must be used with SSH.`
         type: 'integer',
         description: `Unix group id.`
       },
+      'stdio': {
+        // Schema coercion from string, without is
+        // oneOf: [
+        //   $ref: '#/definitions/stdio'
+        // ,
+        //   type: 'array'
+        //   items: $ref: '#/definitions/stdio'
+        // ]
+        type: 'array',
+        items: {
+          $ref: '#/definitions/stdio'
+        },
+        description: `Configure the pipes that are established between the parent and
+child process.`
+      },
+      'stdin': {
+        instanceof: 'Object', // must be `stream.Writable`
+        description: `Readable EventEmitter in which the standard input is piped from.`
+      },
       'stdin_log': {
         type: 'boolean',
         default: true,
@@ -276,6 +295,24 @@ if the "arch_chroot" option is activated.`
       }
     },
     required: ['command']
+  },
+  // see https://nodejs.org/api/child_process.html#optionsstdio
+  stdio: {
+    oneOf: [
+      {
+        enum: ['pipe',
+      'overlapped',
+      'ignore',
+      'inherit'],
+        type: 'string'
+      },
+      {
+        enum: [0,
+      1,
+      2],
+        type: 'integer'
+      }
+    ]
   }
 };
 
@@ -458,21 +495,23 @@ handler = async function({
       ssh: ssh,
       env: config.env
     });
-    if (config.stdin) {
+    if (config.stdin && child.stdin) {
+      // Note, child[stdin|stdout|stderr] are undefined
+      // when option stdio is set to 'inherit'
       config.stdin.pipe(child.stdin);
     }
-    if (config.stdout) {
+    if (config.stdout && child.stdout) {
       child.stdout.pipe(config.stdout, {
         end: false
       });
     }
-    if (config.stderr) {
+    if (config.stderr && child.stderr) {
       child.stderr.pipe(config.stderr, {
         end: false
       });
     }
     stdout_stream_open = stderr_stream_open = false;
-    if (config.stdout_return || config.stdout_log) {
+    if (child.stdout && (config.stdout_return || config.stdout_log)) {
       child.stdout.on('data', function(data) {
         if (config.stdout_log) {
           stdout_stream_open = true;
@@ -492,7 +531,7 @@ handler = async function({
         }
       });
     }
-    if (config.stderr_return || config.stderr_log) {
+    if (child.stderr && (config.stderr_return || config.stderr_log)) {
       child.stderr.on('data', function(data) {
         if (config.stderr_log) {
           stderr_stream_open = true;
@@ -563,10 +602,10 @@ handler = async function({
             type: 'stderr'
           });
         }
-        if (config.stdout) {
+        if (child.stdout && config.stdout) {
           child.stdout.unpipe(config.stdout);
         }
-        if (config.stderr) {
+        if (child.stderr && config.stderr) {
           child.stderr.unpipe(config.stderr);
         }
         if (config.code.indexOf(code) === -1 && config.code_skipped.indexOf(code) === -1) {
