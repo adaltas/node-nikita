@@ -18,7 +18,7 @@
 // ```
 
 // ## Hooks
-var handler, on_action, schema;
+var definitions, handler, on_action;
 
 on_action = function({config}) {
   if (config.uid == null) {
@@ -27,8 +27,8 @@ on_action = function({config}) {
   return delete config.username;
 };
 
-// ## Schema
-schema = {
+// ## Schema definitions
+definitions = {
   config: {
     type: 'object',
     properties: {
@@ -82,6 +82,6 @@ module.exports = {
     on_action: on_action
   },
   metadata: {
-    schema: schema
+    definitions: definitions
   }
 };
