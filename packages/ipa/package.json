@@ -47,6 +47,7 @@
   "devDependencies": {
     "@nikitajs/log": "^1.0.0-alpha.2",
     "@nikitajs/lxd": "^1.0.0-alpha.2",
+    "@nikitajs/lxd-runner": "^1.0.0-alpha.2",
     "@nikitajs/tools": "^1.0.0-alpha.2",
     "coffeescript": "^2.5.1",
     "mixme": "^0.5.1",
