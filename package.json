@@ -23,6 +23,7 @@
     "postinstall": "husky install"
   },
   "workspaces": [
+    "extra/*",
     "packages/*"
   ],
   "config": {
