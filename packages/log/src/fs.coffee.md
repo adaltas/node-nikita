@@ -43,7 +43,7 @@ this is direction. The paths look like
             '''
           'basedir':
             type: 'string'
-            default: './log'
+            # default: './log'
             description: '''
             Directory where to store logs relative to the process working
             directory. Default to the "log" directory. Note, when the `archive`
@@ -52,10 +52,10 @@ this is direction. The paths look like
             '''
           'filename':
             type: 'string'
-            # default: 'local.log'
             description: '''
-            Name of the log file. The default behavior rely on the templated
-            plugin to contextually render the filename.
+            Name of the log file. It could contain the directory path as well.
+            It defaults to `local.log` locally or `{hostname}.log` on a remote
+            connection.
             '''
           'serializer':
             type: 'object'
@@ -70,12 +70,11 @@ this is direction. The paths look like
 
     handler = ({config}) ->
       # Normalization
-      config.basedir = path.resolve config.basedir
+      logdir = path.dirname config.filename
+      logdir = path.resolve config.basedir, logdir if config.basedir
       # Archive config
-      unless config.archive
-        logdir = path.resolve config.basedir
-      else
-        latestdir = path.resolve config.basedir, 'latest'
+      if config.archive
+        latestdir = path.resolve logdir, 'latest'
         now = new Date()
         config.archive = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2) if config.archive is true
         logdir = path.resolve config.basedir, config.archive
@@ -84,7 +83,7 @@ this is direction. The paths look like
       catch err
         throw err unless err.code is 'NIKITA_FS_MKDIR_TARGET_EEXIST'
       # Events
-      config.stream ?= fs.createWriteStream path.resolve logdir, config.filename
+      config.stream ?= fs.createWriteStream path.resolve logdir, path.basename config.filename
       await @log.stream config
       # Handle link to latest directory
       await @fs.base.symlink

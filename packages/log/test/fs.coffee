@@ -51,6 +51,22 @@ describe 'log.fs', ->
         target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: 'ok\n'
 
+  they 'filename relative with parent dir', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $tmpdir: true
+      $dirty: true
+    , ({metadata: {tmpdir}}) ->
+      await @log.fs
+        basedir: tmpdir
+        filename: './log/test.log'
+        serializer: text: (log) -> "#{log.message}\n"
+      await @call ({tools: {log}}) ->
+        log message: 'ok'
+      await @fs.assert
+        target: "#{tmpdir}/log/test.log"
+        content: 'ok\n'
+
   describe 'archive', ->
 
     they 'archive default directory name', ({ssh}) ->

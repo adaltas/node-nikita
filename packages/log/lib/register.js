@@ -6,9 +6,6 @@ registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
   log: {
-    '': {
-      handler: (function() {})
-    },
     cli: '@nikitajs/log/lib/cli',
     csv: '@nikitajs/log/lib/csv',
     fs: '@nikitajs/log/lib/fs',

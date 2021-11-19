@@ -43,7 +43,7 @@ definitions = {
       },
       'basedir': {
         type: 'string',
-        default: './log',
+        // default: './log'
         description: `Directory where to store logs relative to the process working
 directory. Default to the "log" directory. Note, when the \`archive\`
 option is activated, the log files will be stored accessible from
@@ -51,9 +51,9 @@ option is activated, the log files will be stored accessible from
       },
       'filename': {
         type: 'string',
-        // default: 'local.log'
-        description: `Name of the log file. The default behavior rely on the templated
-plugin to contextually render the filename.`
+        description: `Name of the log file. It could contain the directory path as well.
+It defaults to \`local.log\` locally or \`{hostname}.log\` on a remote
+connection.`
       },
       'serializer': {
         type: 'object',
@@ -70,12 +70,13 @@ information.`
 handler = async function({config}) {
   var err, latestdir, logdir, now;
   // Normalization
-  config.basedir = path.resolve(config.basedir);
+  logdir = path.dirname(config.filename);
+  if (config.basedir) {
+    logdir = path.resolve(config.basedir, logdir);
+  }
   // Archive config
-  if (!config.archive) {
-    logdir = path.resolve(config.basedir);
-  } else {
-    latestdir = path.resolve(config.basedir, 'latest');
+  if (config.archive) {
+    latestdir = path.resolve(logdir, 'latest');
     now = new Date();
     if (config.archive === true) {
       config.archive = `${now.getFullYear()}`.slice(-2) + `0${now.getFullYear()}`.slice(-2) + `0${now.getDate()}`.slice(-2);
@@ -94,7 +95,7 @@ handler = async function({config}) {
   }
   // Events
   if (config.stream == null) {
-    config.stream = fs.createWriteStream(path.resolve(logdir, config.filename));
+    config.stream = fs.createWriteStream(path.resolve(logdir, path.basename(config.filename)));
   }
   await this.log.stream(config);
   // Handle link to latest directory
