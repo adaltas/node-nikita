@@ -19,9 +19,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - run: sudo apt install -y openssh-server && sudo systemctl start sshd
     - run: ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
+    - run: pwd && whoami && ls -l ~ && ls -l ~/.ssh && sudo systemctl status sshd
     - run: cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-    - run: echo whoami && ssh `whoami`@localhost hostname
+    - run: ls -l ~/.ssh/authorized_keys
+    - run: chmod 644 ~/.ssh/authorized_keys
+    - run: ls -l ~/.ssh/authorized_keys
+    - run: echo $(whoami) && ssh `whoami`@localhost hostname
     - run: yarn --frozen-lockfile
     - run: yarn run test:local
   # deploy:
@@ -42,15 +47,12 @@ jobs:
   #       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   www:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 14.x
     - run: yarn --frozen-lockfile
     - run: cd docs/website && yarn install && yarn build
     - run: echo 'nikita.js.org' > docs/website/public/CNAME
