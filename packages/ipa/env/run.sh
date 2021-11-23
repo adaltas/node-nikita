@@ -3,4 +3,4 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-./ipa/run.sh
+npx coffee ./ipa/index.coffee run

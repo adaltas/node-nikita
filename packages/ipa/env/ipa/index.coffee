@@ -33,6 +33,7 @@ runner = require '@nikitajs/lxd-runner'
 runner
   cwd: '/nikita/packages/ipa'
   container: 'nikita-ipa'
+  logdir: path.resolve __dirname, './logs'
   cluster: 
     # FreeIPA do a reverse lookup on initialisation
     # Using the default bridge yields to the error
