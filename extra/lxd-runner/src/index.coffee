@@ -24,6 +24,11 @@ module.exports = (config) ->
         Absolute path inside the container to use as the working directory.
         '''
         required: !config.cwd
+      logdir:
+        default: './logs'
+        description: '''
+        Directory were to store the logs.
+        '''
     commands:
       'enter':
         description: '''
@@ -32,7 +37,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/enter.md'
+          .log.md filename: path.join logdir, 'enter.md'
           .execute
             $header: 'Container enter'
             command: """
@@ -52,7 +57,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/exec.md'
+          .log.md filename: path.join logdir, 'exec.md'
           .execute
             $header: 'Container exec'
             command: """
@@ -71,7 +76,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/start.md'
+          .log.md filename: path.join logdir, 'run.md'
           .call '@nikitajs/lxd-runner/lib/actions/run', {...config, ...params}
       'start':
         description: '''
@@ -80,7 +85,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/start.md'
+          .log.md filename: path.join logdir, 'start.md'
           .call '@nikitajs/lxd-runner/lib/actions/start', {...config, ...params}
       'stop':
         description: '''
@@ -89,15 +94,15 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/stop.md'
+          .log.md filename: path.join logdir, 'stop.md'
           .call '@nikitajs/lxd-runner/lib/actions/stop', {...config, ...params}
       'test':
         description: '''
-        Execute all the tests.
+        Execute all the tests, does not start and stop the containers, see `run`.
         '''
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: './logs/test.md'
+          .log.md filename: path.join logdir, 'test.md'
           .call '@nikitajs/lxd-runner/lib/actions/test', {...config, ...params}
   .route()
