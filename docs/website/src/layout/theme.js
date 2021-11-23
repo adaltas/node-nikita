@@ -1,10 +1,10 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import {styles} from '@material-ui/core/Typography/Typography';
 
 // A custom theme for this app
 const scrollMarginTop = 'calc(64px + 1.5rem)' // Compensate AppBar height + some margin
-let theme = createMuiTheme({
+let theme = createTheme({
   props: {
     MuiButtonBase: {
       disableRipple: true, // No ripple on the whole application
