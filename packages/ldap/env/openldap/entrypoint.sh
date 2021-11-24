@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Run supervisord detached...
+# Run supervisord detached
 supervisord -c /etc/supervisord.conf
 # We have TTY, so probably an interactive container...
 if test -t 0; then

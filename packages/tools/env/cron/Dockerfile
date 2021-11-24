@@ -11,8 +11,8 @@ RUN yum install -y xz \
 
 # Install supervisor
 RUN \
-  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which && \
-  easy_install supervisor
+  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which python3-pip && \
+  pip3 install supervisor
 ADD ./supervisord.conf /etc/supervisord.conf
 
 # Install SSH

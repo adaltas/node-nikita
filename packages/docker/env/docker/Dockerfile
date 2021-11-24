@@ -13,8 +13,8 @@ RUN \
   # Install epel (requirement for service nginx)
   yum install -y epel-release \
   # Install supervisor \
-  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which && \
-  easy_install supervisor
+  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which python3-pip && \
+  pip3 install supervisor
 
 # Install SSH
 RUN yum install -y openssh-server openssh-clients \

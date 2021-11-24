@@ -9,12 +9,13 @@ RUN yum install -y xz \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
+# RUN \
+# yum install -y iproute python-setuptools hostname inotify-tools yum-utils which && \
+# easy_install supervisor
+# ADD ./supervisord.conf /etc/supervisord.conf
 RUN \
-  # Install epel (requirement for service nginx)
-  yum install -y epel-release \
-  # Install supervisor
-  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which && \
-  easy_install supervisor
+  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which python3-pip && \
+  pip3 install supervisor
 ADD ./supervisord.conf /etc/supervisord.conf
 
 # Install SSH
