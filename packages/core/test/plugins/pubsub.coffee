@@ -11,7 +11,7 @@ describe 'plugins.pubsub', ->
   they 'set then get', ({ssh}) ->
     engine = memory()
     await nikita
-      ssh: ssh
+      $ssh: ssh
       $pubsub: engine
     , ({tools: {pubsub}}) ->
       await pubsub.set 'a_key', 'a value'
@@ -25,7 +25,7 @@ describe 'plugins.pubsub', ->
     engine = memory()
     new Promise (resolve, reject) ->
       nikita
-        ssh: ssh
+        $ssh: ssh
         $pubsub: engine
       , ({tools: {pubsub}}) ->
         try

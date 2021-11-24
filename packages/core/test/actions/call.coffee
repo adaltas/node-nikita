@@ -21,7 +21,7 @@ describe 'actions.call', ->
   
   they 'call a module exporting a function', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile
@@ -36,7 +36,7 @@ describe 'actions.call', ->
   
   they 'call a module exporting an object', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile
@@ -60,7 +60,7 @@ describe 'actions.call', ->
   
   they 'call a module dont overwrite argument', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile

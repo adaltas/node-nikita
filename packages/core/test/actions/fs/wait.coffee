@@ -30,7 +30,7 @@ describe 'actions.fs.wait', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         setTimeout ->
-          nikita(ssh: ssh).fs.mkdir "#{tmpdir}/a_dir"
+          nikita($ssh: ssh).fs.mkdir "#{tmpdir}/a_dir"
         , 200
         {$status} = await @fs.wait
           target: "#{tmpdir}/a_dir"

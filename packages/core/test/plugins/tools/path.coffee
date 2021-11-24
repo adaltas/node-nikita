@@ -9,7 +9,7 @@ describe 'plugins.tools.path', ->
 
   they 'ssh defined in current action', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({tools: {path}, ssh}) ->
       path.join('this','is','a','dir').should.eql unless ssh
       then p.join 'this','is','a','dir'
@@ -17,7 +17,7 @@ describe 'plugins.tools.path', ->
 
   they 'defined in parent action', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       @call -> @call ({tools: {path}, ssh}) ->
         path.join('this','is','a','dir').should.eql unless ssh
@@ -26,14 +26,14 @@ describe 'plugins.tools.path', ->
 
   they 'reinject posix and win32', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({tools: {path}}) ->
       path.win32.should.eql p.win32
       path.posix.should.eql p.posix
 
   they 'inject local', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ({tools: {path}}) ->
       path.local.should.eql p
 

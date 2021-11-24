@@ -8,7 +8,7 @@ return unless tags.system_info_os
 describe 'system.info.os', ->
 
   they 'default options', ({ssh}) ->
-    {os} = await nikita(ssh: ssh).system.info.os()
+    {os} = await nikita($ssh: ssh).system.info.os()
     Object.keys(os).sort().should.eql [
       'arch', 'distribution', 'linux_version', 'version'
     ]
