@@ -18,7 +18,7 @@ they = require('mocha-they')(config.ssh)
 
 they 'cache to avoid timeout later', ({ssh}) ->
   @timeout 0
-  nikita(ssh: ssh).execute '''
+  nikita($ssh: ssh).execute '''
   if command -v yum; then
     yum update -y
     yum check-update -q

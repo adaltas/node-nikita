@@ -1,6 +1,8 @@
 FROM archlinux:latest
 MAINTAINER David Worms
 
+# See https://github.com/mscdex/ssh2/issues/989
+RUN echo 'Server=https://archive.archlinux.org/repos/2021/05/01/$repo/os/$arch' > /etc/pacman.d/mirrorlist
 RUN pacman --noconfirm -Syu && pacman --noconfirm -S procps grep which sed
 
 # Install Node.js
