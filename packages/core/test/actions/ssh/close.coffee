@@ -30,7 +30,7 @@ describe 'actions.ssh.close', ->
 
   describe 'sibling connection', ->
 
-    they.only 'search for sibling', ({ssh}) ->
+    they 'search for sibling', ({ssh}) ->
       nikita ->
         @ssh.open ssh
         @ssh.close()
