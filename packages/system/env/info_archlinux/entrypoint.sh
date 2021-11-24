@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # mount --bind /var/tmp/root.x86_64 /mnt
 

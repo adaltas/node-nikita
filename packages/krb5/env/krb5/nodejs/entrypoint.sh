@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # kadmin NODE.DC1.CONSUL -p admin/admin -s krb5 -w admin -q 'listprincs'
 until echo admin | kinit admin/admin

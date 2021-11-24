@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # We have TTY, so probably an interactive container...
 if test -t 0; then

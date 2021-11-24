@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Run supervisord detached...
 supervisord -c /etc/supervisord.conf
