@@ -25,6 +25,10 @@ module.exports = function(config) {
         default: `${config.cwd}`,
         description: `Absolute path inside the container to use as the working directory.`,
         required: !config.cwd
+      },
+      logdir: {
+        default: './logs',
+        description: `Directory were to store the logs.`
       }
     },
     commands: {
@@ -37,7 +41,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/enter.md'
+            filename: path.join(params.logdir, 'enter.md')
           }).execute({
             $header: 'Container enter',
             command: `lxc exec --cwd ${params.cwd} ${params.container} -- bash`,
@@ -58,7 +62,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/exec.md'
+            filename: path.join(params.logdir, 'exec.md')
           }).execute({
             $header: 'Container exec',
             command: `lxc exec --cwd ${params.cwd} ${params.container} -- ${params.command}`,
@@ -78,7 +82,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/start.md'
+            filename: path.join(params.logdir, 'run.md')
           }).call('@nikitajs/lxd-runner/lib/actions/run', {...config, ...params});
         }
       },
@@ -91,7 +95,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/start.md'
+            filename: path.join(params.logdir, 'start.md')
           }).call('@nikitajs/lxd-runner/lib/actions/start', {...config, ...params});
         }
       },
@@ -104,12 +108,12 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/stop.md'
+            filename: path.join(params.logdir, 'stop.md')
           }).call('@nikitajs/lxd-runner/lib/actions/stop', {...config, ...params});
         }
       },
       'test': {
-        description: `Execute all the tests.`,
+        description: `Execute all the tests, does not start and stop the containers, see \`run\`.`,
         handler: function({params}) {
           return nikita.log.cli({
             pad: {
@@ -117,7 +121,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: './logs/test.md'
+            filename: path.join(params.logdir, 'test.md')
           }).call('@nikitajs/lxd-runner/lib/actions/test', {...config, ...params});
         }
       }

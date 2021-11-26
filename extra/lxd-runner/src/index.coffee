@@ -37,7 +37,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'enter.md'
+          .log.md filename: path.join params.logdir, 'enter.md'
           .execute
             $header: 'Container enter'
             command: """
@@ -57,7 +57,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'exec.md'
+          .log.md filename: path.join params.logdir, 'exec.md'
           .execute
             $header: 'Container exec'
             command: """
@@ -76,7 +76,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'run.md'
+          .log.md filename: path.join params.logdir, 'run.md'
           .call '@nikitajs/lxd-runner/lib/actions/run', {...config, ...params}
       'start':
         description: '''
@@ -85,7 +85,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'start.md'
+          .log.md filename: path.join params.logdir, 'start.md'
           .call '@nikitajs/lxd-runner/lib/actions/start', {...config, ...params}
       'stop':
         description: '''
@@ -94,7 +94,7 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'stop.md'
+          .log.md filename: path.join params.logdir, 'stop.md'
           .call '@nikitajs/lxd-runner/lib/actions/stop', {...config, ...params}
       'test':
         description: '''
@@ -103,6 +103,6 @@ module.exports = (config) ->
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
-          .log.md filename: path.join logdir, 'test.md'
+          .log.md filename: path.join params.logdir, 'test.md'
           .call '@nikitajs/lxd-runner/lib/actions/test', {...config, ...params}
   .route()
