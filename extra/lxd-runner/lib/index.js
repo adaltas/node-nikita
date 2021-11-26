@@ -27,7 +27,7 @@ module.exports = function(config) {
         required: !config.cwd
       },
       logdir: {
-        default: './logs',
+        default: `${config.logdir}`,
         description: `Directory were to store the logs.`
       }
     },
@@ -41,7 +41,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'enter.md')
+            filename: path.resolve(params.logdir, 'enter.md')
           }).execute({
             $header: 'Container enter',
             command: `lxc exec --cwd ${params.cwd} ${params.container} -- bash`,
@@ -62,7 +62,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'exec.md')
+            filename: path.resolve(params.logdir, 'exec.md')
           }).execute({
             $header: 'Container exec',
             command: `lxc exec --cwd ${params.cwd} ${params.container} -- ${params.command}`,
@@ -82,7 +82,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'run.md')
+            filename: path.resolve(params.logdir, 'run.md')
           }).call('@nikitajs/lxd-runner/lib/actions/run', {...config, ...params});
         }
       },
@@ -95,7 +95,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'start.md')
+            filename: path.resolve(params.logdir, 'start.md')
           }).call('@nikitajs/lxd-runner/lib/actions/start', {...config, ...params});
         }
       },
@@ -108,7 +108,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'stop.md')
+            filename: path.resolve(params.logdir, 'stop.md')
           }).call('@nikitajs/lxd-runner/lib/actions/stop', {...config, ...params});
         }
       },
@@ -121,7 +121,7 @@ module.exports = function(config) {
               header: 60
             }
           }).log.md({
-            filename: path.join(params.logdir, 'test.md')
+            filename: path.resolve(params.logdir, 'test.md')
           }).call('@nikitajs/lxd-runner/lib/actions/test', {...config, ...params});
         }
       }
