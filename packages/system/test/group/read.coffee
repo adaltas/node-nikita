@@ -73,12 +73,12 @@ describe 'system.group.read', ->
           content: """
           root:x:0:root
           bin:x:1:root,bin,daemon
-          docker:x:994:wdavidw
+          docker:x:994:monsieur
           """
         {group} = await @system.group.read
           target: "#{tmpdir}/etc/group"
           gid: 'docker'
-        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'wdavidw' ]
+        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'monsieur' ]
     
     they 'map a gid to group record', ({ssh}) ->
       nikita
@@ -90,10 +90,10 @@ describe 'system.group.read', ->
           content: """
           root:x:0:root
           bin:x:1:root,bin,daemon
-          docker:x:994:wdavidw
+          docker:x:994:monsieur
           """
         {group} = await @system.group.read
           target: "#{tmpdir}/etc/group"
           gid: '994'
-        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'wdavidw' ]
+        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'monsieur' ]
   

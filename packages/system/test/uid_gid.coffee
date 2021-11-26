@@ -34,14 +34,14 @@ describe 'system.uid_gid', ->
         content: """
         root:x:0:root
         bin:x:1:root,bin,daemon
-        users:x:994:wdavidw
+        users:x:994:monsieur
         """
       @file
         target: "#{tmpdir}/etc/passwd"
         content: """
         root:x:0:0:root:/root:/bin/bash
         bin:x:1:1:bin:/bin:/usr/bin/nologin
-        wdavidw:x:99:99:wdavidw:/:/home/wdavidw
+        monsieur:x:99:99:monsieur:/:/home/monsieur
         """
       {$status, uid, gid} = await @system.uid_gid
         group_target: "#{tmpdir}/etc/group"

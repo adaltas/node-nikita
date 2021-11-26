@@ -15,7 +15,7 @@
 
 // ```js
 // const {$status} = await nikita.tools.git({
-//   source: 'https://github.com/wdavidw/node-nikita.git'
+//   source: 'https://github.com/adaltas/node-nikita.git'
 //   target: '/tmp/nikita'
 // })
 // console.info(`Repo was synchronized: ${$status}`)

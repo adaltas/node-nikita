@@ -17,7 +17,7 @@ SSH connection is again available.
 ```js
 const {$status} = await nikita.ssh.root({
   "username": "vagrant",
-  "private_key_path": "/Users/wdavidw/.vagrant.d/insecure_private_key"
+  "private_key_path": "/home/monsieur/.vagrant.d/insecure_private_key"
   "public_key_path": "~/.ssh/id_rsa.pub"
 })
 console.info(`Public key was updoaded for root user: ${$status}`)
