@@ -3,11 +3,11 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-./apm/run.sh
+npx coffee ./apm/index.coffee run
 ./centos6/run.sh
 ./centos7/run.sh
 ./cron/run.sh
-# ./dconf/run.sh
-./iptables/run.sh
-./npm/run.sh
-./rubygems/run.sh
+./dconf/run.sh
+npx coffee ./iptables/index.coffee run
+npx coffee ./npm/index.coffee run
+npx coffee ./rubygems/index.coffee run

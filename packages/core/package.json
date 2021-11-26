@@ -82,6 +82,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@nikitajs/lxd-runner": "^1.0.0-alpha.2",
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "coffeescript": "^2.6.1",

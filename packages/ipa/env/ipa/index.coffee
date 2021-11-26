@@ -34,7 +34,7 @@ runner
   cwd: '/nikita/packages/ipa'
   container: 'nikita-ipa'
   logdir: path.resolve __dirname, './logs'
-  cluster: 
+  cluster:
     # FreeIPA do a reverse lookup on initialisation
     # Using the default bridge yields to the error
     # `The host name freeipa.nikita does not match the value freeipa.lxd obtained by reverse lookup on IP address fd42:f662:97ea:ba7f:216:3eff:fe1d:96f2%215`

@@ -11,5 +11,5 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 # ./archlinux/run.sh
 ./centos6/run.sh
 ./centos7/run.sh
-./systemctl/run.sh
+npx coffee ./systemctl/index.coffee run
 ./ubuntu/run.sh

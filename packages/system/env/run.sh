@@ -3,7 +3,7 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-./authconfig/run.sh
+npx coffee ./authconfig/index.coffee run
 ./cgroups/run.sh
 ./info_archlinux/run.sh
 ./info_centos6/run.sh

@@ -45,6 +45,7 @@
     "diff": "^5.0.0"
   },
   "devDependencies": {
+    "@nikitajs/lxd-runner": "^1.0.0-alpha.2",
     "coffeescript": "^2.5.1",
     "mocha": "^8.3.2",
     "mocha-they": "^0.1.2",
