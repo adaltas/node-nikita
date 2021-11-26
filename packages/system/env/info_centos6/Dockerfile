@@ -13,7 +13,6 @@ RUN sed -i -e 's/mirrorlist/#mirrorlist/g' \
 # Install Node.js
 # Note: The latest working NodeJS version on CentOS 6.10 (Final) is 11.15.0,
 # related error - https://github.com/nodejs/build/issues/1995
-ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 11.15.0
 RUN yum install -y xz \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \

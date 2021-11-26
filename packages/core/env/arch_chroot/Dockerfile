@@ -6,7 +6,6 @@ RUN echo 'Server=https://archive.archlinux.org/repos/2021/05/01/$repo/os/$arch' 
 RUN pacman --noconfirm -Syu && pacman --noconfirm -S procps grep which sed
 
 # Install Node.js
-ENV NPM_CONFIG_LOGLEVEL info
 RUN pacman --noconfirm -S nodejs npm
 
 # Install supervisor

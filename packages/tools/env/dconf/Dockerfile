@@ -5,7 +5,6 @@ LABEL project=nikita \
       project.tests="tools.dconf"
 
 # Install Node.js
-ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 12.13.1
 RUN apt-get update -y \
  && apt-get install -y curl xz-utils \
