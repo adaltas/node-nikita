@@ -4,7 +4,7 @@
 // Delete a name and possibly the file it refers to.
 
 // ## Schema definitions
-var definitions, handler;
+var definitions, escapeshellarg, handler, utils;
 
 definitions = {
   config: {
@@ -40,7 +40,7 @@ definitions = {
 // ## Handler
 handler = async function({config}) {
   return (await this.execute({
-    command: `ln -sf ${config.source} ${config.target}`
+    command: `ln -sf ${escapeshellarg(config.source)} ${escapeshellarg(config.target)}`
   }));
 };
 
@@ -54,3 +54,8 @@ module.exports = {
     definitions: definitions
   }
 };
+
+// ## Dependencies
+utils = require('../../../utils');
+
+({escapeshellarg} = utils.string);

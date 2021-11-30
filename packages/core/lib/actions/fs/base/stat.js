@@ -44,7 +44,7 @@
 
 // TODO: we shall be able to reference this as a `$ref` once schema does apply to
 // returned values.
-var definitions, definitions_output, errors, handler, utils;
+var definitions, definitions_output, errors, escapeshellarg, handler, utils;
 
 definitions_output = {
   type: 'object',
@@ -122,9 +122,9 @@ handler = async function({config}) {
     ({stdout} = (await this.execute({
       command: `[ ! -e ${config.target} ] && exit 3
 if [ -d /private ]; then
-  stat ${dereference} -f '%Xp|%u|%g|%z|%a|%m' ${config.target} # MacOS
+  stat ${dereference} -f '%Xp|%u|%g|%z|%a|%m' ${escapeshellarg(config.target)} # MacOS
 else
-  stat ${dereference} -c '%f|%u|%g|%s|%X|%Y' ${config.target} # Linux
+  stat ${dereference} -c '%f|%u|%g|%s|%X|%Y' ${escapeshellarg(config.target)} # Linux
 fi`,
       trim: true
     })));
@@ -177,6 +177,8 @@ errors = {
 
 // ## Dependencies
 utils = require('../../../utils');
+
+({escapeshellarg} = utils.string);
 
 // ## Stat implementation
 

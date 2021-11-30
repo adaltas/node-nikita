@@ -99,3 +99,8 @@ console.info(`Link was created: ${$status}`)
       handler: handler
       metadata:
         definitions: definitions
+
+## Dependencies
+
+    utils = require '../../utils'
+    {escapeshellarg} = utils.string

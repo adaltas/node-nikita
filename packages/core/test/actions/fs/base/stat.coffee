@@ -38,6 +38,25 @@ describe 'actions.fs.base.stat', ->
       stats.size.should.be.a.Number()
       stats.atime.should.be.a.Number()
       stats.mtime.should.be.a.Number()
+  
+  they 'with a file containing a space', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $templated: true
+      $tmpdir: true
+    , ->
+      await @fs.base.writeFile
+        target: "{{parent.metadata.tmpdir}}/a file"
+        content: 'hello'
+      {stats} = await @fs.base.stat
+        target: "{{parent.metadata.tmpdir}}/a file"
+      utils.stats.isFile(stats.mode).should.be.true()
+      stats.mode.should.be.a.Number()
+      stats.uid.should.be.a.Number()
+      stats.gid.should.be.a.Number()
+      stats.size.should.be.a.Number()
+      stats.atime.should.be.a.Number()
+      stats.mtime.should.be.a.Number()
 
   they 'with a directory', ({ssh}) ->
     nikita

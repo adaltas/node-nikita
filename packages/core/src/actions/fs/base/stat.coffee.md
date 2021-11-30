@@ -112,9 +112,9 @@ returned values.
           command: """
           [ ! -e #{config.target} ] && exit 3
           if [ -d /private ]; then
-            stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{config.target} # MacOS
+            stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{escapeshellarg config.target} # MacOS
           else
-            stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{config.target} # Linux
+            stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{escapeshellarg config.target} # Linux
           fi
           """
           trim: true
@@ -157,6 +157,7 @@ returned values.
 ## Dependencies
 
     utils = require '../../../utils'
+    {escapeshellarg} = utils.string
 
 ## Stat implementation
 

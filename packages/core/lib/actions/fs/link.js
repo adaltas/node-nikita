@@ -24,7 +24,7 @@
 // ```
 
 // ## Schema definitions
-var definitions, handler;
+var definitions, escapeshellarg, handler, utils;
 
 definitions = {
   config: {
@@ -136,3 +136,8 @@ module.exports = {
     definitions: definitions
   }
 };
+
+// ## Dependencies
+utils = require('../../utils');
+
+({escapeshellarg} = utils.string);

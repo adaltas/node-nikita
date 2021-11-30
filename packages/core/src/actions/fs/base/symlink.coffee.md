@@ -26,7 +26,7 @@ Delete a name and possibly the file it refers to.
     handler = ({config}) ->
       await @execute
         command: """
-        ln -sf #{config.source} #{config.target}
+        ln -sf #{escapeshellarg config.source} #{escapeshellarg config.target}
         """
 
 ## Exports
@@ -38,3 +38,8 @@ Delete a name and possibly the file it refers to.
         log: false
         raw_output: true
         definitions: definitions
+
+## Dependencies
+
+    utils = require '../../../utils'
+    {escapeshellarg} = utils.string

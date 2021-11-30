@@ -52,6 +52,8 @@ console.info(`Directories was removed: ${$status}`)
             type: 'boolean'
             description: '''
             Attempt to remove the file hierarchy rooted in the directory.
+            Attempting to remove a non-empty directory without the `recursive`
+            config will throw an Error.
             '''
           'target':
             type: 'string'

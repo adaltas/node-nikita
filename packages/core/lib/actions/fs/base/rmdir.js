@@ -4,12 +4,18 @@
 // Delete a directory.
 
 // ## Schema definitions
-var definitions, errors, handler, utils;
+var definitions, errors, escapeshellarg, handler, utils;
 
 definitions = {
   config: {
     type: 'object',
     properties: {
+      'recursive': {
+        type: 'boolean',
+        description: `Attempt to remove the file hierarchy rooted in the directory.
+Attempting to remove a non-empty directory without the \`recursive\`
+config will throw an Error.`
+      },
       'target': {
         oneOf: [
           {
@@ -34,7 +40,7 @@ handler = async function({
   var err;
   try {
     await this.execute({
-      command: [`[ ! -d '${config.target}' ] && exit 2`, !config.recursive ? `rmdir '${config.target}'` : `rm -R '${config.target}'`].join('\n')
+      command: [`[ ! -d ${escapeshellarg(config.target)} ] && exit 2`, !config.recursive ? `rmdir ${escapeshellarg(config.target)}` : `rm -R ${escapeshellarg(config.target)}`].join('\n')
     });
     return log({
       message: "Directory successfully removed",
@@ -77,3 +83,5 @@ errors = {
 
 // ## Dependencies
 utils = require('../../../utils');
+
+({escapeshellarg} = utils.string);

@@ -9,6 +9,13 @@ Delete a directory.
       config:
         type: 'object'
         properties:
+          'recursive':
+            type: 'boolean'
+            description: '''
+            Attempt to remove the file hierarchy rooted in the directory.
+            Attempting to remove a non-empty directory without the `recursive`
+            config will throw an Error.
+            '''
           'target':
             oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
             description: '''
@@ -22,11 +29,11 @@ Delete a directory.
       try
         await @execute
           command: [
-            "[ ! -d '#{config.target}' ] && exit 2"
+            "[ ! -d #{escapeshellarg config.target} ] && exit 2"
             unless config.recursive
-              "rmdir '#{config.target}'"
+              "rmdir #{escapeshellarg config.target}"
             else
-              "rm -R '#{config.target}'"
+              "rm -R #{escapeshellarg config.target}"
           ].join '\n'
         log message: "Directory successfully removed", level: 'INFO'
       catch err
@@ -60,3 +67,4 @@ Delete a directory.
 ## Dependencies
 
     utils = require '../../../utils'
+    {escapeshellarg} = utils.string

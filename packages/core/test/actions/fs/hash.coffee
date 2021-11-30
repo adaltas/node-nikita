@@ -28,16 +28,24 @@ describe 'actions.fs.hash', ->
       $status.should.be.true()
 
   they 'a file with a globing pattern', ({ssh}) ->
+    # Note, this used to be supported and the following test was
+    # passing until we started to escaped shell arguments.
+    # nikita
+    #   $ssh: ssh
+    #   $tmpdir: true
+    # , ({metadata: {tmpdir}}) ->
+    #   await @fs.base.mkdir "#{tmpdir}/test"
+    #   await @fs.base.writeFile
+    #     target: "#{tmpdir}/test/a_file"
+    #     content: 'some content'
+    #   {hash} = await @fs.hash "#{tmpdir}/test/a*file"
+    #   hash.should.eql '9893532233caff98cd083a116b013c0b'
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile
-        target: "#{tmpdir}/test/a_file"
-        content: 'some content'
-      {hash} = await @fs.hash "#{tmpdir}/test/a*file"
-      hash.should.eql '9893532233caff98cd083a116b013c0b'
+      @fs.hash "#{tmpdir}/test/a*file"
+      .should.be.rejected()
 
   they 'a link', ({ssh}) ->
     nikita
