@@ -59,6 +59,10 @@ handlers =
       linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
       match = action.conditions.if_os.some (condition) ->
         a = !condition.arch.length || condition.arch.some (value) ->
+          # Uses `uname -m` internally.
+          # Node.js values: 'arm', 'arm64', 'ia32', 'mips', 'mipsel', 'ppc', 'ppc64', 's390', 's390x', 'x32', and 'x64'
+          # `uname` values: see https://en.wikipedia.org/wiki/Uname#Examples
+          #
           return true if typeof value is 'string' and value is arch
           return true if value instanceof RegExp and value.test arch
         n = !condition.distribution.length || condition.distribution.some (value) ->

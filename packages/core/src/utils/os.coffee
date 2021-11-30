@@ -5,22 +5,26 @@ module.exports =
   ###
   Shell command to print archictecture, OS name, version release and linux
   version release to stdout.
-  
+
+  The `arch` property is obtained from `uname -m`. Note, on Apple M1, `uname -p`
+  return `arm` when `uname -m` return `arm64`. See the [`uname` possible
+  values](https://en.wikipedia.org/wiki/Uname#Examples).
+
   The `name` property return one of 'rhel', 'centos', 'ubuntu', 'debian' or
   'arch'. Other distributions are not yet implemented.
-  
+
   TODO:
   - we shall implement a property `distrib` to distinguish `rhel` from `centos`
   - name shall return an array of possible match, eg CentOS 6 matching
     `centos6`, `centos`, `rhel`, `linux`. This way, the `if_os` condition will
     match against multiple keywords.
-  
+
   The following distributions are supported and tested:
   * RHEL 6, CentOS 6
   * RHEL 7, CentOS 7
   * Ubuntu/Debian
   * Arch Linux
-  * TODO: support RHEL 8, CentOS 8, Oracle
+  * TODO: support RHEL 8, CentOS 8
   ###
   command: """
     #ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')

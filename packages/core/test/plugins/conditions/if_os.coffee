@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 describe 'plugin.conditions if_os', ->
   return unless tags.conditions_if_os
-  
+
   they 'match distribution string', ({ssh}) ->
     nikita
       $ssh: ssh
@@ -55,7 +55,7 @@ describe 'plugin.conditions if_os', ->
       $handler: -> true
       $ssh: ssh
     $status.should.be.true()
-  
+
   they 'match major Linux version', ({ssh}) ->
     {$status} = await nikita
       $if_os:

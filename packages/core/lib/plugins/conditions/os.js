@@ -114,6 +114,10 @@ handlers = {
         var a, lv, n, v;
         a = !condition.arch.length || condition.arch.some(function(value) {
           if (typeof value === 'string' && value === arch) {
+            // Uses `uname -m` internally.
+            // Node.js values: 'arm', 'arm64', 'ia32', 'mips', 'mipsel', 'ppc', 'ppc64', 's390', 's390x', 'x32', and 'x64'
+            // `uname` values: see https://en.wikipedia.org/wiki/Uname#Examples
+
             return true;
           }
           if (value instanceof RegExp && value.test(arch)) {
