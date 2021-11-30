@@ -75,7 +75,7 @@ a global scale.`,
       },
       'compose': {
         type: 'boolean',
-        description: `Use the \`docker-compose\` command instead of \`docker\`.`
+        description: `Use the \`docker compose\` command instead of \`docker\`.`
       },
       'machine': {
         type: 'string',

@@ -70,7 +70,7 @@ Execute a docker command.
           'compose':
             type: 'boolean'
             description: '''
-            Use the `docker-compose` command instead of `docker`.
+            Use the `docker compose` command instead of `docker`.
             '''
           'machine':
             type: 'string'

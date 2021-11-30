@@ -1,7 +1,7 @@
 
 # `nikita.docker.compose`
 
-Create and start containers according to a docker-compose file
+Create and start containers according to a docker-compose.yml file
 `nikita.docker.compose` is an alias to `nikita.docker.compose.up`
 
 ## Output

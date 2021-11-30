@@ -18,7 +18,7 @@ return unless config.tags.docker
 nikita = require '@nikitajs/core/lib'
 they = require('mocha-they')(config.config)
 they 'wait for docker daemon to listen', ({ssh}) ->
-  # Note, this particularly apply to docker-compose environnements
+  # Note, this particularly apply to docker compose environnements
   # where the daemon take some time to be up and running
   # Wait 10s before timeout
   # It takes some time under heavy load like testing in parallel

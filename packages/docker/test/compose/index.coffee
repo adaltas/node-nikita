@@ -28,7 +28,7 @@ describe 'docker.compose', ->
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        $if: $status # Inside docker-compose
+        $if: $status # Inside docker compose
         host: 'dind'
         port: 499
       @network.tcp.wait
@@ -60,7 +60,7 @@ describe 'docker.compose', ->
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        $if: $status # Inside docker-compose
+        $if: $status # Inside docker compose
         host: 'dind'
         port: 499
       @network.tcp.wait
@@ -93,7 +93,7 @@ describe 'docker.compose', ->
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        $if: $status # Inside docker-compose
+        $if: $status # Inside docker compose
         host: 'dind'
         port: 499
       @network.tcp.wait
@@ -127,7 +127,7 @@ describe 'docker.compose', ->
         command: 'ping dind -c 1'
         code_skipped: [2,68]
       @network.tcp.wait
-        $if: $status # Inside docker-compose
+        $if: $status # Inside docker compose
         host: 'dind'
         port: 499
       @network.tcp.wait

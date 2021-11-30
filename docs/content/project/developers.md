@@ -121,11 +121,11 @@ To ensure tests are executed in a proper environment, we leverage [Docker](https
 
 The commands to execute the tests are common to every Docker environment and provide a lot of flexibility. From any environment directory, you can run:
 
-* `docker-compose up --abort-on-container-exit`   
+* `docker compose up --abort-on-container-exit`   
   Run the all test suite from the host shell.
-* `docker-compose run --rm nodejs`   
+* `docker compose run --rm nodejs`   
   Enter inside the Nikita container and execute your commands.
-* `docker-compose run --rm nodejs 'test/**/*.coffee'`   
+* `docker compose run --rm nodejs 'test/**/*.coffee'`   
   Run a subset of the tests from the host shell.
 
 Here's an example to run tests on CentOS 7:
@@ -139,11 +139,11 @@ yarn install
 # Navigate to the target environment
 cd packages/core/env/centos7
 # Run all tests
-docker-compose up --abort-on-container-exit
+docker compose up --abort-on-container-exit
 # Run a subset of the tests
-docker-compose run --rm nodejs test/actions/execute/*.coffee
+docker compose run --rm nodejs test/actions/execute/*.coffee
 # Enter bash console
-docker-compose run --rm nodejs
+docker compose run --rm nodejs
 ```
 
 ## LXD

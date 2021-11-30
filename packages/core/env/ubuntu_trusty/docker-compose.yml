@@ -1,6 +1,8 @@
 
-# docker-compose up --abort-on-container-exit
-# worth investigating for service: https://github.com/phusion/baseimage-docker#readme
+# worth investigating
+# [Baseimage-docker](https://github.com/phusion/baseimage-docker#readme):
+# Baseimage-docker only consumes 8.3 MB RAM and is much more powerful than
+# Busybox or Alpine. See why below.
 
 version: '2'
 services:
