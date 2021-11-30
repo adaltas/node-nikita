@@ -58,7 +58,7 @@
       "@nikitajs/ldap/src/register"
     ],
     "inline-diffs": true,
-    "timeout": 40000,
+    "timeout": 10000,
     "reporter": "spec",
     "recursive": true
   },

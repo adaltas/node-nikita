@@ -71,7 +71,7 @@
       "@nikitajs/lxd/src/register"
     ],
     "inline-diffs": true,
-    "timeout": 80000,
+    "timeout": 20000,
     "reporter": "spec",
     "recursive": true
   },
