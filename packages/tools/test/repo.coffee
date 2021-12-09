@@ -131,7 +131,7 @@ describe 'tools.repo', ->
       $status.should.be.false()
       await @fs.assert '/etc/yum.repos.d/linuxtech.repo'
 
-  they 'Do Not update Package', ({ssh}) ->
+  they 'config `update` is `false` (default)', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
@@ -173,7 +173,7 @@ describe 'tools.repo', ->
       await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
 
-  they 'Update Package', ({ssh}) ->
+  they 'config `update` is `true`', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->

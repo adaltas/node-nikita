@@ -31,6 +31,7 @@ Install Atom packages with APM.
       {stdout} = await @execute
         $shy: true
         command: "apm outdated --json"
+        # TODO: use the nikita.execute.json config
       pkgs = JSON.parse stdout
       outdated = pkgs.map (pkg) -> pkg.name.toLowerCase()
       if config.upgrade and outdated.length
@@ -40,6 +41,7 @@ Install Atom packages with APM.
       {stdout} = await @execute
         $shy: true
         command: "apm list --installed --json"
+        # TODO: use the nikita.execute.json config
       pkgs = JSON.parse stdout
       installed = pkgs.user.map (pkg) -> pkg.name.toLowerCase()
       # Upgrade

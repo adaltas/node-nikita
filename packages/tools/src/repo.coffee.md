@@ -63,12 +63,9 @@ console.info(`Repo was updated: ${$status}`)
             and the filename is derivated from the url.
             '''
         oneOf: [
-          {
-            required: ['content']
-          },
-          {
-            required: ['source']
-          }
+          required: ['content']
+        ,
+          required: ['source']
         ]
 
 ## Handler
