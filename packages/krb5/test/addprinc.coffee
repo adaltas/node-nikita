@@ -105,8 +105,8 @@ describe 'krb5.addprinc', ->
         $ssh: ssh
         krb5: admin: krb5
       , ->
-        await @execute
-          command: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
+        await @fs.remove
+          target: '/etc/security/keytabs/user1.service.keytab'
         await @krb5.delprinc
           principal: user.principal
         await @krb5.delprinc
