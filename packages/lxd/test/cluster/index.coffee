@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
+{config, images, tags} = require '../test'
 they = require('mocha-they')(config)
 path = require('path')
 
@@ -59,7 +59,7 @@ describe 'lxc.cluster', ->
           network: 'nktlxdpub'
         await @lxc.network.delete
           network: 'nktlxdprv'
-      @clean()
+      await @clean()
       await @lxc.cluster
         networks:
           nktlxdpub:
@@ -74,7 +74,7 @@ describe 'lxc.cluster', ->
             'dns.domain': 'nikita.local'
         containers:
           'nikita-cluster-1':
-            image: 'images:alpine/3.11'
+            image: "images:#{images.alpine}"
             disk:
               nikitadir:
                 source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
@@ -121,7 +121,7 @@ describe 'lxc.cluster', ->
               'dns.domain': 'nikita.local'
           containers:
             'nikita-cluster-2':
-              image: 'images:alpine/3.11'
+              image: "images:#{images.alpine}"
               nic:
                 eth0: # Overwrite the default DHCP Nat enabled interface
                   name: 'eth0', nictype: 'bridged', parent: 'nktlxdprv'
