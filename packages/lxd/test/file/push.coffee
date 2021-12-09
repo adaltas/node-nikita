@@ -40,8 +40,7 @@ describe 'lxc.file.push', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-1'
-        await @lxc.start
-          container: 'nikita-file-push-1'
+          start: true
         await @file.touch
           target: "#{tmpdir}/a_file"
         @lxc.file.push
@@ -63,8 +62,7 @@ describe 'lxc.file.push', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-2'
-        await @lxc.start
-          container: 'nikita-file-push-2'
+          start: true
         await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-2'
@@ -94,8 +92,7 @@ describe 'lxc.file.push', ->
         @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-3'
-        @lxc.start
-          container: 'nikita-file-push-3'
+          start: true
         await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-3'
@@ -127,8 +124,7 @@ describe 'lxc.file.push', ->
         @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-4'
-        @lxc.start
-          container: 'nikita-file-push-4'
+          start: true
         await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-4'
@@ -154,8 +150,7 @@ describe 'lxc.file.push', ->
         @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-5'
-        @lxc.start
-          container: 'nikita-file-push-5'
+          start: true
         await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-5'
@@ -184,8 +179,7 @@ describe 'lxc.file.push', ->
         @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-6'
-        @lxc.start
-          container: 'nikita-file-push-6'
+          start: true
         @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-6'

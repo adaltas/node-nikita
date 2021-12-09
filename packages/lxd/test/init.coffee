@@ -96,17 +96,33 @@ describe 'lxc.init', ->
           container: 'nikita-init-1'
         $status.should.be.true()
         await @clean()
-  
-    they 'Validate name', ({ssh}) ->
+        
+    they 'Config `start`', ({ssh}) ->
       nikita
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
           @lxc.delete 'nikita-init-2', force: true
         await @clean()
-        {$status} = await @lxc.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-init-2'
+          start: true
+        {$status} = await @lxc.running
+          container: 'nikita-init-2'
+        $status.should.be.true()
+        await @clean()
+  
+    they 'Validate name', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @lxc.delete 'nikita-init-3', force: true
+        await @clean()
+        {$status} = await @lxc.init
+          image: "images:#{images.alpine}"
+          container: 'nikita-init-3'
         $status.should.be.true()
         await @clean()
   
@@ -115,14 +131,14 @@ describe 'lxc.init', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-init-3', force: true
+          @lxc.delete 'nikita-init-4', force: true
         await @clean()
         await @lxc.init
           image: "images:#{images.alpine}"
-          container: 'nikita-init-3'
+          container: 'nikita-init-4'
         {$status} = await @lxc.init
           image: "images:#{images.alpine}"
-          container: 'nikita-init-3'
+          container: 'nikita-init-4'
         $status.should.be.false()
         await @clean()
     

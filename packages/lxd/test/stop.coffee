@@ -32,8 +32,7 @@ describe 'lxc.stop', ->
       await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-stop-2'
-      await @lxc.start
-        container: 'nikita-stop-2'
+        start: true
       {$status} = await @lxc.stop
         container: 'nikita-stop-2'
       $status.should.be.true()

@@ -17,8 +17,7 @@ describe 'lxc.exec', ->
       await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-exec-1'
-      await @lxc.start
-        container: 'nikita-exec-1'
+        start: true
       {$status, stdout} = await @lxc.exec
         container: 'nikita-exec-1'
         command: """
@@ -40,8 +39,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-2'
-        await @lxc.start
-          container: 'nikita-exec-2'
+          start: true
         {stdout} = await @lxc.exec
           container: 'nikita-exec-2'
           command: 'echo $0'
@@ -59,8 +57,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-3'
-        await @lxc.start
-          container: 'nikita-exec-3'
+          start: true
         await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-exec-3'
@@ -85,8 +82,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-4'
-        await @lxc.start
-          container: 'nikita-exec-4'
+          start: true
         @lxc.exec
           container: 'nikita-exec-4'
           trap: true
@@ -108,8 +104,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-5'
-        await @lxc.start
-          container: 'nikita-exec-5'
+          start: true
         {$status, code} = await @lxc.exec
           container: 'nikita-exec-5'
           trap: false
@@ -133,8 +128,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-6'
-        await @lxc.start
-          container: 'nikita-exec-6'
+          start: true
         {stdout} = await @lxc.exec
           container: 'nikita-exec-6'
           env:
@@ -159,8 +153,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-7'
-        await @lxc.start
-          container: 'nikita-exec-7'
+          start: true
         @lxc.exec
           container: 'nikita-exec-7'
           command: 'adduser --uid 1234 --disabled-password nikita'
@@ -184,8 +177,7 @@ describe 'lxc.exec', ->
         await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-exec-8'
-        await @lxc.start
-          container: 'nikita-exec-8'
+          start: true
         {stdout} = await @lxc.exec
           container: 'nikita-exec-8'
           cwd: '/bin'

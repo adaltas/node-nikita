@@ -17,8 +17,7 @@ describe 'lxc.file.exists', ->
       @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-file-exists-1'
-      @lxc.start
-        container: 'nikita-file-exists-1'
+        start: true
       @execute
         command: "lxc exec nikita-file-exists-1 -- touch /root/a_file"
       {exists} = await @lxc.file.exists
@@ -37,8 +36,7 @@ describe 'lxc.file.exists', ->
       @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-file-exists-2'
-      @lxc.start
-        container: 'nikita-file-exists-2'
+        start: true
       {exists} = await @lxc.file.exists
         container: 'nikita-file-exists-2'
         target: '/root/a_file'

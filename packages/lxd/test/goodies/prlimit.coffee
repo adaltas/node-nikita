@@ -17,8 +17,7 @@ describe 'lxc.goodie.prlimit', ->
       @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-goodies-prlimit-1'
-      @lxc.start
-        container: 'nikita-goodies-prlimit-1'
+        start: true
       try
         await @lxc.goodies.prlimit
           container: 'nikita-goodies-prlimit-1'

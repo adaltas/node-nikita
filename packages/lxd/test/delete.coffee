@@ -30,8 +30,7 @@ describe 'lxc.delete', ->
       await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-delete-2'
-      await @lxc.start
-        container: 'nikita-delete-2'
+        start: true
       {$status} = await @lxc.delete
         container: 'nikita-delete-2'
         force: true

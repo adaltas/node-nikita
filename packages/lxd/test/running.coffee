@@ -17,8 +17,7 @@ describe 'lxc.running', ->
       await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-running-1'
-      await @lxc.start
-        container: 'nikita-running-1'
+        start: true
       {$status} = await @lxc.running
         container: 'nikita-running-1'
       $status.should.be.true()

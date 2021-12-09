@@ -79,6 +79,12 @@ now.
             description: '''
             If true, instantiate a VM instead of a container.
             '''
+          'start':
+            type: 'boolean'
+            default: false
+            description: '''
+            Start the container once initialized.
+            '''
           'target':
             type: 'string'
             description: '''
@@ -99,13 +105,16 @@ now.
         "--target #{config.target}" if config.target
       ].join ' '
       # Execution
-      await @execute
+      {$status} = await @execute
         command: """
-        lxc remote get-default
         lxc info #{config.container} >/dev/null && exit 42
         echo '' | #{command_init}
         """
         code_skipped: 42
+      await @lxc.start
+        $if: config.start
+        container: config.container
+      $status
 
 ## Exports
 
