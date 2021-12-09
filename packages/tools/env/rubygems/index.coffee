@@ -51,3 +51,5 @@ runner
         """
         trap: true
         code_skipped: 42
+.catch (err) ->
+  console.error err

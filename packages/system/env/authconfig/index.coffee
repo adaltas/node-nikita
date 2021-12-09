@@ -47,3 +47,5 @@ runner
         $header: 'Package'
         container: config.container
         command: 'yum install -y authconfig'
+.catch (err) ->
+  console.error err

@@ -65,3 +65,5 @@ runner
         chown -R target /home/target/
         '''
         trap: true
+.catch (err) ->
+  console.error err

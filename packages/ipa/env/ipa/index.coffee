@@ -133,3 +133,5 @@ runner
         '''
         container: config.container
         trap: true
+.catch (err) ->
+  console.error err

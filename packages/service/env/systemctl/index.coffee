@@ -43,3 +43,5 @@ runner
         fi
         """
         trap: true
+.catch (err) ->
+  console.error err
