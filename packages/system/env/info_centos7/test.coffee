@@ -5,7 +5,7 @@ module.exports =
     system_info_os: true
   expect:
     os:
-      arch: 'x86_64'
+      arch: /x86_64|aarch64/
       distribution: 'centos'
       linux_version: /5\.10\.\d+/
       version: /7\.9\.\d+/

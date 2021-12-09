@@ -8,6 +8,7 @@ services:
     build: .
     image: nikita_service_centos6
     container_name: nikita_service_centos6
+    platform: linux/amd64 # Required on Apple M1
     volumes:
       - ../../../../:/nikita
     environment:
