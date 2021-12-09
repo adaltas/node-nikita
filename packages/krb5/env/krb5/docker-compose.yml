@@ -7,6 +7,7 @@ services:
   nodejs:
     build: ./nodejs
     image: nikita_krb5_nodejs
+    container_name: nikita_krb5_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:

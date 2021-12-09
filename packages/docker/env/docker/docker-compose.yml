@@ -7,6 +7,7 @@ services:
   nodejs:
     build: .
     image: nikita_docker_nodejs
+    container_name: nikita_docker_nodejs
     volumes:
       - ../../../../:/nikita
     depends_on:

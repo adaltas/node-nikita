@@ -7,6 +7,7 @@ services:
   nodejs:
     build: .
     image: nikita_tools_dconf
+    container_name: nikita_tools_dconf
     volumes:
       - ../../../../:/nikita
     environment:
