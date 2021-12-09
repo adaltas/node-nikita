@@ -609,6 +609,13 @@ handler = async function({
           child.stderr.unpipe(config.stderr);
         }
         if (config.code.indexOf(code) === -1 && config.code_skipped.indexOf(code) === -1) {
+          log(metadata.relax ? {
+            message: `An unexpected exit code was encountered in relax mode, got \`${code}\``,
+            level: 'INFO'
+          } : {
+            message: `An unexpected exit code was encountered, got \`${code}\``,
+            level: 'ERROR'
+          });
           return reject(utils.error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, config.code.length === 1 ? `instead of ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`], {
             ...result,
             exit_code: code
@@ -618,7 +625,7 @@ handler = async function({
           result.$status = true;
         } else {
           log({
-            message: `Skip exit code \"${code}\"`,
+            message: `Skip exit code \`${code}\``,
             level: 'INFO'
           });
         }

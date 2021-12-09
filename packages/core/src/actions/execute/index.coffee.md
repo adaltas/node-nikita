@@ -476,6 +476,9 @@ console.info(stdout)
             if child.stderr and config.stderr
               child.stderr.unpipe config.stderr
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
+              log if metadata.relax
+              then message: "An unexpected exit code was encountered in relax mode, got `#{code}`", level: 'INFO'
+              else message: "An unexpected exit code was encountered, got `#{code}`", level: 'ERROR'
               return reject utils.error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
                 "command is #{JSON.stringify utils.string.max config.command_original, 50},"
@@ -487,7 +490,7 @@ console.info(stdout)
             if config.code_skipped.indexOf(code) is -1
               result.$status = true
             else
-              log message: "Skip exit code \"#{code}\"", level: 'INFO'
+              log message: "Skip exit code `#{code}`", level: 'INFO'
             resolve result
 
 ## Exports

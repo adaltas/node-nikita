@@ -126,6 +126,37 @@ describe 'actions.execute', ->
           command: "exit 42"
           code_skipped: [42,43]
         .should.be.finally.containEql $status: false
+    
+    they 'log error', ({ssh}) ->
+      logs = []
+      nikita $ssh: ssh, ->
+        @execute
+          $log: ({log}) ->
+            return unless log.type is 'text'
+            logs.push log
+          command: "exit 1"
+        .then -> throw Error 'Oh no'
+        .catch ->
+          logs.should.match [
+            level: 'ERROR'
+            message: 'An unexpected exit code was encountered, got `1`'
+          ]
+      
+    they 'log error with metadata.relax', ({ssh}) ->
+      logs = []
+      nikita $ssh: ssh, ->
+        @execute
+          $log: ({log}) ->
+            return unless log.type is 'text'
+            logs.push log
+          $relax: true
+          command: "exit 1"
+        .then -> throw Error 'Oh no'
+        .catch ->
+          logs.should.match [
+            level: 'INFO'
+            message: 'An unexpected exit code was encountered in relax mode, got `1`'
+          ]
 
   describe 'trim', ->
 
