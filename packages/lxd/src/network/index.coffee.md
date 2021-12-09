@@ -62,7 +62,7 @@ console.info(`Network was created: ${$status}`)
       {stdout, code, $status} = await @execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented
         command: """
-        lxc network > /dev/null || exit 5
+        lxc network 2>/dev/null || exit 5
         lxc network show #{config.network} && exit 42
         #{[
           'lxc',

@@ -68,7 +68,10 @@ console.info(stdout)
         "--cwd #{utils.string.escapeshellarg config.cwd}" if config.cwd
         ...('--env ' + utils.string.escapeshellarg "#{k}=#{v}" for k, v of config.env)
       ].join ' '
-      await @execute config, trap: false,
+      # Note, `trap` and `env` apply to `lxc exec` and not to `execute`
+      config.trap = undefined
+      config.env = undefined
+      await @execute config,
         command: [
           "cat <<'NIKITALXDEXEC' | lxc exec #{opt} #{config.container} -- #{config.shell}"
           'set -e' if config.trap

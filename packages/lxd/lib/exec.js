@@ -80,9 +80,10 @@ handler = async function({config}) {
       return results;
     })())
   ].join(' ');
+  // Note, `trap` and `env` apply to `lxc exec` and not to `execute`
+  config.trap = void 0;
+  config.env = void 0;
   return (await this.execute(config, {
-    trap: false
-  }, {
     command: [`cat <<'NIKITALXDEXEC' | lxc exec ${opt} ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
   }));
 };

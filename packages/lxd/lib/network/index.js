@@ -70,7 +70,7 @@ handler = async function({config}) {
   // Command if the network does not yet exist
   ({stdout, code, $status} = (await this.execute({
     // return code 5 indicates a version of lxc where 'network' command is not implemented
-    command: `lxc network > /dev/null || exit 5
+    command: `lxc network 2>/dev/null || exit 5
 lxc network show ${config.network} && exit 42
 ${[
       'lxc',
