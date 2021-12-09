@@ -1,5 +1,5 @@
 
 module.exports = ({config}) ->
-  @call '@nikitajs/lxd-runner/lib/actions/start', config
-  @call '@nikitajs/lxd-runner/lib/actions/test', config
-  @call '@nikitajs/lxd-runner/lib/actions/stop', config
+  await @call '@nikitajs/lxd-runner/lib/actions/start', config
+  await @call '@nikitajs/lxd-runner/lib/actions/test', config
+  await @call '@nikitajs/lxd-runner/lib/actions/stop', config
