@@ -1,19 +1,22 @@
 #!/bin/bash
 set -e
 
-service ssh start
 dbus-launch
-
-# We have TTY, so probably an interactive container...
+# Start ssh daemon
+/usr/sbin/sshd
 if test -t 0; then
-  # Some command(s) has been passed to container? Execute them and exit.
-  # No commands provided? Run bash.
-  if [[ $@ ]]; then 
-    node_modules/.bin/mocha $@
-  else 
+  # We have TTY, so probably an interactive container...
+  if [[ $@ ]]; then
+    # Transfer arguments to mocha
+    . ~/.bashrc
+    npx mocha $@
+  else
+    # Run bash when no argument
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi
 else
+  # Detached mode
+  . ~/.bashrc
   npm run test:local
 fi

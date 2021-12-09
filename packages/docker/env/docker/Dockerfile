@@ -8,13 +8,6 @@ RUN yum install -y xz \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
-RUN \
-  # Install epel (requirement for service nginx)
-  yum install -y epel-release \
-  # Install supervisor \
-  yum install -y iproute python-setuptools hostname inotify-tools yum-utils which python3-pip && \
-  pip3 install supervisor
-
 # Install SSH
 RUN yum install -y openssh-server openssh-clients \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
@@ -28,9 +21,10 @@ RUN curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-co
 RUN chmod +x /usr/local/bin/docker-compose
 
 RUN yum clean all
-ADD ./supervisord.conf /etc/supervisord.conf
 
 ADD ./entrypoint.sh /entrypoint.sh
+RUN mkdir -p /nikita
 WORKDIR /nikita/packages/docker
+ENV TERM xterm # Color output in TTY
 
 ENTRYPOINT ["/entrypoint.sh"]

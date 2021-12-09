@@ -1,20 +1,21 @@
 #!/bin/bash
+set -e
 
-# We have TTY, so probably an interactive container...
+# Start ssh daemon
+/usr/sbin/sshd
 if test -t 0; then
-  # Run supervisord detached...
-  supervisord -c /etc/supervisord.conf
-  # Some command(s) has been passed to container? Execute them and exit.
-  # No commands provided? Run bash.
-  if [[ $@ ]]; then 
-    node_modules/.bin/mocha $@
-  else 
+  # We have TTY, so probably an interactive container...
+  if [[ $@ ]]; then
+    # Transfer arguments to mocha
+    . ~/.bashrc
+    npx mocha $@
+  else
+    # Run bash when no argument
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi
-# Detached mode
 else
-  # Run supervisord in foreground, which will stay until container is stopped.
-  supervisord -c /etc/supervisord.conf
+  # Detached mode
+  . ~/.bashrc
   npm run test:local
 fi

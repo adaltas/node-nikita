@@ -5,6 +5,7 @@ services:
     build: .
     image: nikita_service_archlinux
     container_name: nikita_service_archlinux
+    platform: linux/amd64 # Required on Apple M1
     volumes:
       - ../../../../:/nikita
     environment:

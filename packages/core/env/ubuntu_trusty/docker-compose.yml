@@ -9,6 +9,7 @@ services:
   nodejs:
     build: .
     image: nikita_core_ubuntu_trusty
+    container_name: nikita_core_ubuntu_trusty_nodejs
     volumes:
       - ../../../../:/nikita
     environment:

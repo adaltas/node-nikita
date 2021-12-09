@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-service ssh start
-
+# Source Node.js
+. ~/.bashrc
+# Start ssh daemon
+/usr/sbin/sshd
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Some command(s) has been passed to container? Execute them and exit.
