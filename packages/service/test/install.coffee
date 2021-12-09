@@ -55,7 +55,19 @@ describe 'service.install', ->
       @call ({parent: {state}}) ->
         state['nikita:execute:installed'].should.containEql service.name
 
-  they 'skip code when error', ({ssh}) ->
+  they 'throw error if not exists', ({ssh}) ->
+    nikita.service.install
+      $ssh: ssh
+      name: 'thisservicedoesnotexist'
+    .should.be.rejectedWith
+      code: 'NIKITA_SERVICE_INSTALL'
+      message: [
+        'NIKITA_SERVICE_INSTALL:'
+        'failed to install package,'
+        'name is `thisservicedoesnotexist`'
+      ].join ' '
+
+  they 'option `code_skipped`', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->

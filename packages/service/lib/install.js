@@ -275,6 +275,9 @@ fi`,
       if (err.exit_code === 2) {
         throw Error("Unsupported Package Manager: yum, yaourt, pacman, apt-get supported");
       }
+      throw utils.error('NIKITA_SERVICE_INSTALL', ['failed to install package,', `name is \`${config.name}\``], {
+        target: config.target
+      });
     }
   }
   if (config.cache) {

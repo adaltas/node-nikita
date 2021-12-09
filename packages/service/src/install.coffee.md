@@ -194,6 +194,10 @@ console.info(`Package installed: ${$status}`)
             config.outdated.splice outdatedIndex, 1 unless outdatedIndex is -1
         catch err
           throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err.exit_code is 2
+          throw utils.error 'NIKITA_SERVICE_INSTALL', [
+              'failed to install package,'
+              "name is `#{config.name}`"
+            ], target: config.target
       if config.cache
         log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO'
         state['nikita:execute:installed'] = config.installed
