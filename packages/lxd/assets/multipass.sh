@@ -38,7 +38,9 @@ multipass exec nikita -- lxc config set images.auto_update_cached false
 multipass exec nikita -- sudo sh -c "echo 'fs.protected_regular = 0' >> /etc/sysctl.conf && sysctl -p"
 
 IP=`multipass info nikita --format json | jq -r '.info.nikita.ipv4[0]'`
-lxc remote switch local
-lxc remote remove nikita
+if lxc remote list --format json | jq -re .nikita; then
+  lxc remote switch local
+  lxc remote remove nikita
+fi
 lxc remote add nikita --accept-certificate --password secret $IP:8443
 lxc remote switch nikita
