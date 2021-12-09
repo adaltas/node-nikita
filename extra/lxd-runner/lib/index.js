@@ -33,7 +33,7 @@ module.exports = function(config) {
     },
     commands: {
       'enter': {
-        description: `Enter inside the container console.`,
+        description: `Open a prompt running inside the container.`,
         handler: function({params}) {
           return nikita.log.cli({
             pad: {
@@ -54,7 +54,7 @@ module.exports = function(config) {
       },
       'exec': {
         description: `Execute a command inside the container console.`,
-        main: 'command',
+        main: 'cmd',
         handler: function({params}) {
           return nikita.log.cli({
             pad: {
@@ -65,7 +65,7 @@ module.exports = function(config) {
             filename: path.resolve(params.logdir, 'exec.md')
           }).execute({
             $header: 'Container exec',
-            command: `lxc exec --cwd ${params.cwd} ${params.container} -- ${params.command}`,
+            command: `lxc exec --cwd ${params.cwd} ${params.container} -- ${params.cmd}`,
             stdio: ['inherit', 'inherit', 'inherit'],
             stdin: process.stdin,
             stdout: process.stdout,

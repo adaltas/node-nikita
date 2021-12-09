@@ -32,7 +32,7 @@ module.exports = (config) ->
     commands:
       'enter':
         description: '''
-        Enter inside the container console.
+        Open a prompt running inside the container.
         '''
         handler: ({params}) ->
           nikita
@@ -53,7 +53,7 @@ module.exports = (config) ->
         description: '''
         Execute a command inside the container console.
         '''
-        main: 'command'
+        main: 'cmd'
         handler: ({params}) ->
           nikita
           .log.cli pad: host: 20, header: 60
@@ -63,7 +63,7 @@ module.exports = (config) ->
             command: """
             lxc exec \
               --cwd #{params.cwd} \
-              #{params.container} -- #{params.command}
+              #{params.container} -- #{params.cmd}
             """
             stdio: ['inherit', 'inherit', 'inherit']
             stdin: process.stdin
