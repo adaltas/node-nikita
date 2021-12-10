@@ -46,9 +46,9 @@
   },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.2",
-    "coffeescript": "^2.5.1",
-    "mixme": "^0.5.1",
-    "mocha": "^8.3.2",
+    "coffeescript": "^2.6.1",
+    "mixme": "^0.5.4",
+    "mocha": "^9.1.3",
     "mocha-they": "^0.1.2",
     "should": "^13.2.3"
   },

@@ -62,9 +62,9 @@
     }
   ],
   "dependencies": {
-    "ajv": "^8.8.1",
+    "ajv": "^8.8.2",
     "ajv-formats": "^2.1.1",
-    "ajv-keywords": "^5.0.0",
+    "ajv-keywords": "^5.1.0",
     "js-yaml": "^4.1.0",
     "minimatch": "^3.0.4",
     "mixme": "^0.5.4",
@@ -86,7 +86,7 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "coffeescript": "^2.6.1",
-    "eslint": "^8.2.0",
+    "eslint": "^8.4.1",
     "eslint-plugin-coffee": "^0.1.15",
     "mocha": "^9.1.3",
     "mocha-they": "^0.1.2",
