@@ -12,10 +12,10 @@ describe 'docker.exec', ->
       $ssh: ssh
       docker: docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_exec'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_exec'
       {$status, stdout} = await @docker.exec
@@ -23,7 +23,7 @@ describe 'docker.exec', ->
         command: 'echo toto'
       $status.should.be.true()
       stdout.trim().should.eql 'toto'
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_exec'
         force: true
 

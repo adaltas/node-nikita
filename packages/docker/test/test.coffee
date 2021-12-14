@@ -23,15 +23,19 @@ they 'wait for docker daemon to listen', ({ssh}) ->
   # Wait 10s before timeout
   # It takes some time under heavy load like testing in parallel
   nikita
-    ssh: ssh
+    $ssh: ssh
     docker: config.docker
-  .execute.wait
-    command: 'docker ps'
-    retry: 40
-    interval: 250
+  # .execute.wait
+  #   command: 'docker ps'
+  #   retry: 40
+  #   interval: 250
+  .docker.tools.execute
+    $interval: 1000 # nor interval nor sleep seems implemented
+    $retry: 40
+    command: 'ps'
 they 'cache image to avoid timeout later', ({ssh}) ->
   @timeout 0
   nikita
-    ssh: ssh
+    $ssh: ssh
     docker: config.docker
   .docker.pull image: 'httpd'

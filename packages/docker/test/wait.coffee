@@ -22,6 +22,9 @@ describe 'docker.wait', ->
         @docker.stop
           container: 'nikita_test_wait'
       , 50
-      {$status} = await nikita.docker.wait
+      {$status} = await nikita
+        $ssh: ssh
+        docker: docker
+      .docker.wait
         container: 'nikita_test_wait'
       $status.should.be.true()
