@@ -35,18 +35,12 @@ Execute a docker command.
               Current working directory from where to execute the command.
               '''
             'code':
-              type: 'array'
-              default: [0]
-              items:
-                type: 'integer'
-              description: '''
-              Expected code(s) returned by the command, int or array of int, default
-              to 0.
-              '''
+              $ref: 'module://@nikitajs/core/src/actions/execute#/definitions/config/properties/code'
+              default: {}
             'docker':
               $ref: '#/definitions/docker'
-          ,
-            $ref: 'module://@nikitajs/core/lib/actions/execute'
+            'format':
+              $ref: 'module://@nikitajs/core/src/actions/execute#/definitions/config/properties/format'
         ]
         required: ['command']
       # Note, we can't use additionalProperties properties with anyOf for now,
@@ -61,16 +55,17 @@ Execute a docker command.
         a global scale.
         '''
         properties:
-          'boot2docker':
-            type: 'boolean'
-            default: false
-            description: '''
-            Whether to use boot2docker or not.
-            '''
           'compose':
             type: 'boolean'
             description: '''
-            Use the `docker compose` command instead of `docker`.
+            Use the `docker compose` (or `docker-compose`) command instead of
+            `docker`.
+            '''
+          'docker_host':
+            type: 'string'
+            description: '''
+            The value associated with the `DOCKER_HOST` environment variable,
+            for example `tcp://dind:2375`.
             '''
           'machine':
             type: 'string'
@@ -78,53 +73,55 @@ Execute a docker command.
             description: '''
             Name of the docker-machine, required if using docker-machine.
             '''
-    # (
-    #   schema.properties["#{property}"] =
-    #     $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
-    # ) for property in [
-    #   'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
-    #   'stdout', 'stdout_return', 'stdout_log',
-    #   'stderr', 'stderr_return', 'stderr_log',
-    #   'sudo', 'target', 'trap', 'uid'
-    # ]
+          'opts':
+            type: 'object'
+            default: {}
+            description: '''
+            Options passed to the `docker` or `docker compose` command.
+            '''
 
 ## Handler
 
     handler = ({config, tools: {find}}) ->
-      # Global config
+      # Merge global config
       config.docker = await find ({config: {docker}}) -> docker
-      config[k] ?= v for k, v of config.docker
-      opts = for option in utils[ unless config.compose then 'options' else 'compose_options' ]
-        value = config[option]
-        continue unless value?
+      config = merge config, config.docker
+      # Build Docker 
+      config.opts = for option, value of config.opts
+        continue if value is null
         value = 'true' if value is true
         value = 'false' if value is false
         if option in ['tlsverify'] then  "--#{option}" else "--#{option}=#{value}"
-      opts = opts.join ' '
-      bin = if config.compose then 'bin_compose' else 'bin_docker'
+      config.opts = config.opts.join ' '
       try
-        await @execute config,
-          command: """
-          export SHELL=/bin/bash
-          export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-          bin_boot2docker=$(command -v boot2docker)
-          bin_docker=$(command -v docker)
-          bin_machine=$(command -v docker-machine)
-          bin_compose=$(command -v docker-compose)
-          machine='#{config.machine or ''}'
-          boot2docker='#{if config.boot2docker then '1' else ''}'
-          docker=''
-          if [[ $machine != '' ]] && [ $bin_machine ]; then
-            if [ -z "#{config.machine or ''}" ]; then exit 5; fi
-            if docker-machine status "${machine}" | egrep 'Stopped|Saved'; then
-              docker-machine start "${machine}";
-            fi
-            eval "$(${bin_machine} env ${machine})"
-          elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
-            eval "$(${bin_boot2docker} shellinit)"
-          fi
-          $#{bin} #{opts} #{config.command}
-          """
+        await @execute
+          code: config.code
+          format: config.format
+          trap: true
+          command: [
+            if config.docker_host
+              """
+              export DOCKER_HOST=#{config.docker_host}
+              """
+            if config.machine
+              """
+              if command -v docker-machine ; then echo 1; fi
+              machine='#{config.machine or ''}'
+              if [ -z "#{config.machine or ''}" ]; then exit 5; fi
+              if docker-machine status "${machine}" | egrep 'Stopped|Saved'; then
+                docker-machine start "${machine}";
+              fi
+              eval "$(docker-machine env ${machine})"
+              """
+            if config.compose
+              """
+              opts='#{config.opts}'
+              bin=`command -v docker-compose >/dev/null 2>&1  && echo "docker-compose $opts" || echo "docker $opts compose"` 
+              $bin #{config.command}
+              """
+            else
+              "docker #{config.opts} #{config.command}"
+          ].join '\n'
       catch err
         throw Error err.stderr.trim() if utils.string.lines(err.stderr.trim()).length is 1
         throw Error err.stderr.trim().replace 'Error response from daemon: ', '' if /^Error response from daemon/.test err.stderr
@@ -133,8 +130,6 @@ Execute a docker command.
 
     module.exports =
       handler: handler
-      # hooks:
-      #   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
       metadata:
         argument_to_config: 'command'
         definitions: definitions
@@ -142,3 +137,4 @@ Execute a docker command.
 ## Dependencies
 
     utils = require '../utils'
+    {merge} = require 'mixme'

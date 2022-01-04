@@ -81,7 +81,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
                 fi
                 """
               trap: true
-              code_skipped: 3
+              code: [0, 3]
               # arch_chroot: config.arch_chroot
               # arch_chroot_rootdir: config.arch_chroot_rootdir
             message = if config.startup then 'activated' else 'disabled'
@@ -95,7 +95,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
           {$status, stdout, stderr} = await @execute
             $shy: true
             command: "chkconfig --list #{config.name}"
-            code_skipped: 1
+            code: [0, 1]
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
             log message: "Invalid chkconfig name for \"#{config.name}\"", level: 'ERROR'
@@ -145,7 +145,7 @@ console.info(`Service was desactivated on startup: ${$status}`)
                 update-rc.d -f #{config.name} enable
               fi
               """
-            code_skipped: 3
+            code: [0, 3]
             # arch_chroot: config.arch_chroot
             # arch_chroot_rootdir: config.arch_chroot_rootdir
           message = if config.startup then 'activated' else 'disabled'

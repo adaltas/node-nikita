@@ -70,7 +70,7 @@ else
   echo "Unsupported Package Manager" >&2
   exit 2
 fi`,
-        code_skipped: 1,
+        code: [0, 1],
         stdout_log: false
       })));
       log({
@@ -108,7 +108,7 @@ else
   echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
   exit 2
 fi`,
-        code_skipped: 3
+        code: [0, 3]
       })));
       // Update list of installed packages
       installed.splice(installed.indexOf(config.name), 1);

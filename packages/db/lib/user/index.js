@@ -91,7 +91,7 @@ if [ $signal -eq 3 ]; then
   fi
 fi
 exit $signal`,
-    code_skipped: 3,
+    code: [, 3],
     trap: true
   }));
 };

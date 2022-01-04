@@ -67,13 +67,13 @@ describe 'service.install', ->
         'name is `thisservicedoesnotexist`'
       ].join ' '
 
-  they 'option `code_skipped`', ({ssh}) ->
+  they 'option `code`', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
       {$status} = await @service.install
         name: 'thisservicedoesnotexist'
-        code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
+        code: [0, [1, 100]] # 1 for RHEL, 100 for Ubuntu
       $status.should.be.false()
   
   describe 'specific', ->

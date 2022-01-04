@@ -83,7 +83,7 @@ handler = async function({
   if (!info) { // Create group
     ({$status} = (await this.execute({
       command: ['groupadd', config.system ? '-r' : void 0, config.gid != null ? `-g ${config.gid}` : void 0, config.name].join(' '),
-      code_skipped: 9
+      code: [0, 9]
     })));
     if (!$status) { // Modify group
       return log({

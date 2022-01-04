@@ -190,7 +190,8 @@ handler = async function({
   if (!user_info) {
     await this.execute([
       {
-        code_skipped: 9,
+        code: [0,
+      9],
         command: ['useradd',
       config.system ? '-r' : void 0,
       !config.home ? '-M' : void 0,

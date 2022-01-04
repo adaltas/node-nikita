@@ -262,7 +262,7 @@ console.info(`Container was run: ${$status}`)
         $if: config.name?
         $shy: true
         command: "ps -a | egrep ' #{config.name}$'"
-        code_skipped: 1
+        code: [0, 1]
       log message: "Container already running. Skipping", level: 'INFO' if $status
       result = await @docker.tools.execute
         $if: -> not config.name? or $status is false

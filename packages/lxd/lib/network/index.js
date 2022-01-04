@@ -90,7 +90,7 @@ ${[
         return results;
       })())
     ].join(' ')}`,
-    code_skipped: [5, 42]
+    code: [0, [5, 42]]
   })));
   if (code === 5) {
     throw Error("This version of lxc does not support the network command.");

@@ -13,17 +13,17 @@ describe 'plugin.conditions if_execute', ->
       $ssh: ssh
     $status.should.be.true()
 
-  they 'skip if string command exit with code_skipped', ({ssh}) ->
+  they 'skip if string command exit error exit code`', ({ssh}) ->
     {$status} = await nikita
       $if_execute: 'exit 42'
       $handler: -> true
       $ssh: ssh
     $status.should.be.false()
 
-  they 'error if code_skipped not match', ({ssh}) ->
+  they 'error if `code.false` not match', ({ssh}) ->
     nikita
       $if_execute:
-        code_skipped: 1
+        code: [, 1]
         command: 'exit 42'
       $handler: -> true
       $ssh: ssh
@@ -31,13 +31,13 @@ describe 'plugin.conditions if_execute', ->
       message: [
         'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
         'an unexpected exit code was encountered,'
-        'command is "exit 42", got 42 instead of 0.'
+        'command is "exit 42", got 42 instead of {"true":[],"false":[1]}.'
       ].join ' '
   
-  they 'skip if skip_code match', ({ssh}) ->
+  they 'skip if `code.false` match', ({ssh}) ->
     {$status} = await nikita
       $if_execute:
-        code_skipped: 42
+        code: [, 42]
         command: 'exit 42'
       $handler: -> true
       $ssh: ssh

@@ -69,8 +69,7 @@ handler = async function({config}) {
     $if: config.name,
     $shy: true,
     command: `volume inspect ${config.name}`,
-    code: 1,
-    code_skipped: 0
+    code: [1, 0]
   })));
   return (await this.docker.tools.execute({
     $if: !config.name || $status,

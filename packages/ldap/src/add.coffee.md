@@ -90,7 +90,7 @@ console.info(`Entry modified: ${$status}`)
         # Check if record already exists
         {$status, stdout} = await @ldap.search config,
           base: entry.dn
-          code_skipped: 32 # No such object
+          code: [0, 32] # No such object
           scope: 'base'
         original = {}
         continue if $status

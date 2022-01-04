@@ -36,7 +36,7 @@ definitions = {
 handler = async function({config}) {
   return (await this.execute({
     command: `lxc list -c ns --format csv | grep '${config.container},RUNNING' || exit 42`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

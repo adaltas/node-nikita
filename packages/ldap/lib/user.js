@@ -129,7 +129,7 @@ handler = async function({
         base: '',
         scope: 'base',
         filter: 'objectclass=*',
-        code_skipped: 49
+        code: [0, 49]
       })));
       if (!loggedin) {
         new_password = true;

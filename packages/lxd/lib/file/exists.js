@@ -44,7 +44,7 @@ handler = async function({config}) {
   var $status;
   ({$status} = (await this.execute({
     command: `lxc exec ${config.container} -- stat ${config.target}`,
-    code_skipped: 1
+    code: [0, 42]
   })));
   return {
     exists: $status

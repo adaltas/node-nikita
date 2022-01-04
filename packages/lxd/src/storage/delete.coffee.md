@@ -45,7 +45,7 @@ console.info(`Storage was deleted: ${$status}`)
         lxc storage list | grep #{config.name} || exit 42
         #{command_delete}
         """
-        code_skipped: 42
+        code: [0, 42]
 
 ## Exports
 

@@ -59,7 +59,7 @@ console.info(`Package or service was removed: ${$status}`)
               exit 2
             fi
             """
-            code_skipped: 1
+            code: [0, 1]
             stdout_log: false
           log message: "Installed packages retrieved", level: 'INFO'
           installed = for pkg in utils.string.lines(stdout) then pkg
@@ -81,7 +81,7 @@ console.info(`Package or service was removed: ${$status}`)
               exit 2
             fi
             """
-            code_skipped: 3
+            code: [0, 3]
           # Update list of installed packages
           installed.splice installed.indexOf(config.name), 1
           # Log information

@@ -5,19 +5,69 @@
 
 // ## Exit codes
 
-// The properties "code" and "code_skipped" are important to determine whether an
+// The "code" property is important to determine whether an
 // action failed or succeed with or without modifications. An action is expected to
-// execute successfully with modifications if the exit code match one of the value
+// execute successfully if the exit code match one of the value
 // in "code", by default "0". Otherwise, it is considered to have failed and an
-// error is passed to the user callback. The "code_skipped" option is used to
-// define one or more exit codes that are considered successfull but without
-// creating any modifications.
+// error is passed to the user callback. Sucessfull codes may or may not impact the
+// status, indicating or not a change of state.
+
+// The normalized form of code is an object with 2 properties:
+
+// - `true`: indicating a change of state, returned `$status` is `true`.
+// - `false`: indicating no change of state, returned `$status` is `false`.
+
+// The default value is: `{ true: [0], false: [] }`.
+
+// When code is an integer, it overwrite the `true` property, for example:
+
+// ```js
+// nikita.execute({
+//   code: 1,
+//   command: 'exit 1'
+// }, ({config}) => {
+//   assert.deepEqual(
+//     config.code,
+//     { true: [1], false: [] }
+//   );
+// });
+// ```
+
+// When code is an array, the first element overwrite the `true` property while
+// additionnal elements overwrite the `false` property:
+
+// ```js
+// nikita.execute({
+//   code: [1, 2, [3, 4]],
+//   command: 'exit 1'
+// }, ({config}) => {
+//   assert.deepEqual(
+//     config.code,
+//     { true: [1], false: [2, 3, 4] }
+//   );
+// });
+// ```
+
+// When code is a string, it is splitted by spaces and then interpreted as an
+// array:
+
+// ```js
+// nikita.execute({
+//   code: '1 2 3',
+//   command: 'exit 1'
+// }, ({config}) => {
+//   assert.deepEqual(
+//     config.code,
+//     { true: [1], false: [2, 3] }
+//   );
+// });
+// ```
 
 // ## Output
 
 // * `$status`   
-//   Value is `true` if command exit equals property `code`, `0` by default, `false` if
-//   command exit equals property `code_skipped`, `none` by default.
+//   Value is `true` if exit code equals on of the values of `code.true`, `[0]` by default, `false` if
+//   exit code equals on of the values of `code.false`, `[]` by default.
 // * `stdout`   
 //   Stdout value(s) unless `stdout` property is provided.
 // * `stderr`   
@@ -46,14 +96,14 @@
 // print the error message if the command failed or an information message if it
 // succeed.
 
-// An exit code equal to "9" defined by the "code_skipped" option indicates that
+// An exit code equal to "9" defined by the "code.false" property indicates that
 // the command is considered successfull but without any impact.
 
 // ```js
 // const {$status} = await nikita.execute({
 //   ssh: ssh,
 //   command: 'useradd myfriend',
-//   code_skipped: 9
+//   code: [0, 9]
 // })
 // console.info(`User was created: ${$status}`)
 // ```
@@ -112,6 +162,28 @@ or any provided string, require the "arch_chroot_rootdir" option if activated.`
         type: ['boolean', 'string'],
         description: `Serialize the command into a file and execute it with bash.`
       },
+      'code': {
+        cast_code: true,
+        type: ['integer', 'string', 'array', 'object'],
+        properties: {
+          'true': {
+            type: 'array',
+            items: {
+              type: 'integer'
+            },
+            default: [0]
+          },
+          'false': {
+            type: 'array',
+            items: {
+              type: 'integer'
+            },
+            default: []
+          }
+        },
+        default: {},
+        description: `Valid exit code(s) returned by the command.`
+      },
       'command': {
         oneOf: [
           {
@@ -129,24 +201,6 @@ to execute.`
       'cwd': {
         type: 'string',
         description: `Current working directory from where to execute the command.`
-      },
-      'code': {
-        type: 'array',
-        items: {
-          type: 'integer'
-        },
-        default: [0],
-        description: `Expected code(s) returned by the command, int or array of int, default
-to 0.`
-      },
-      'code_skipped': {
-        type: 'array',
-        items: {
-          type: 'integer'
-        },
-        default: [],
-        description: `Expected code(s) returned by the command if it has no effect, executed
-will not be incremented, int or array of int.`
       },
       'dirty': {
         type: 'boolean',
@@ -458,7 +512,6 @@ handler = async function({
       level: 'INFO'
     });
     config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${target_in}`;
-    // config.command += ";code=`echo $?`; exit $code" unless config.dirty
     await this.fs.base.writeFile({
       $sudo: false,
       $arch_chroot: false,
@@ -580,7 +633,7 @@ handler = async function({
         if (config.trim || config.stderr_trim) {
           result.stderr = result.stderr.trim();
         }
-        if (config.format && config.code.indexOf(code) !== -1) {
+        if (config.format && config.code.true.indexOf(code) !== -1) {
           result.data = (function() {
             switch (config.format) {
               case 'json':
@@ -608,20 +661,17 @@ handler = async function({
         if (child.stderr && config.stderr) {
           child.stderr.unpipe(config.stderr);
         }
-        if (config.code.indexOf(code) === -1 && config.code_skipped.indexOf(code) === -1) {
-          log(metadata.relax ? {
-            message: `An unexpected exit code was encountered in relax mode, got \`${code}\``,
-            level: 'INFO'
-          } : {
-            message: `An unexpected exit code was encountered, got \`${code}\``,
-            level: 'ERROR'
+        if (config.code.true.indexOf(code) === -1 && config.code.false.indexOf(code) === -1) {
+          log({
+            message: ['An unexpected exit code was encountered,', metadata.relax ? 'using relax mode,' : void 0, `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, `instead of ${JSON.stringify(config.code)}.`].join(' '),
+            level: metadata.relax ? 'INFO' : 'ERROR'
           });
-          return reject(utils.error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, config.code.length === 1 ? `instead of ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`], {
+          return reject(utils.error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', metadata.relax ? 'using relax mode,' : void 0, `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, `instead of ${JSON.stringify(config.code)}.`], {
             ...result,
             exit_code: code
           }));
         }
-        if (config.code_skipped.indexOf(code) === -1) {
+        if (config.code.false.indexOf(code) === -1) {
           result.$status = true;
         } else {
           log({

@@ -293,7 +293,7 @@ else
 fi
 command -v openssl`,
         trap: true,
-        code_skipped: 42
+        code: [0, 42]
       });
       // Enable SSH
       if ((ref5 = containerConfig.ssh) != null ? ref5.enabled : void 0) {
@@ -326,7 +326,7 @@ else
   echo "Unsupported init system" >&2 && exit 3
 fi`,
           trap: true,
-          code_skipped: 42
+          code: [0, 42]
         });
       }
       ref6 = containerConfig.user;
@@ -346,7 +346,7 @@ mkdir -p /home/${userName}/.ssh
 chown ${userName}.${userName} /home/${userName}/.ssh
 chmod 700 /home/${userName}/.ssh`,
             trap: true,
-            code_skipped: 42
+            code: [0, 42]
           });
           // Enable sudo access
           await this.lxc.exec({
@@ -358,7 +358,7 @@ command -v sudo
 cat /etc/sudoers | grep "${userName}" && exit 42
 echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
             trap: true,
-            code_skipped: 42
+            code: [0, 42]
           });
           // Add SSH public key to authorized_keys file
           return (await this.lxc.file.push({

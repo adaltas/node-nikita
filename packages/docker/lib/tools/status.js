@@ -67,7 +67,7 @@ handler = async function({
   // Construct exec command
   return (await this.docker.tools.execute({
     command: `ps | egrep ' ${config.container}$'`,
-    code_skipped: 1
+    code: [0, 1]
   }));
 };
 

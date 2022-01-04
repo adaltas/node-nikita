@@ -60,7 +60,7 @@ handler = async function({config}) {
   } = (await this.docker.tools.execute({
     $templated: false,
     command: `inspect ${config.container} --format '{{ json .State.Running }}'`,
-    code_skipped: 1,
+    code: [0, 1],
     format: 'json'
   })));
   if (!exists) {

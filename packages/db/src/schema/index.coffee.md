@@ -59,7 +59,7 @@ console.info(`Schema created or modified: ${$status}`)
     handler = ({config}) ->
       {$status} = await @execute
         $shy: true
-        code_skipped: 2
+        code: [, 2]
         command: command config, '\\dt'
       throw Error "Database does not exist #{config.database}" if !$status
       await @db.query config,
@@ -70,7 +70,7 @@ console.info(`Schema created or modified: ${$status}`)
         $if: config.owner?
         $unless_execute: command(config, '\\dn') + " | grep '#{config.schema}|#{config.owner}'"
         command: command config, "ALTER SCHEMA #{config.schema} OWNER TO #{config.owner};"
-        code_skipped: 1
+        code: [, 1]
       throw Error "Owner #{config.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
 
 ## Exports

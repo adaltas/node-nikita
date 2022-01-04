@@ -91,7 +91,7 @@ else
   systemctl enable ${config.name}
 fi`,
           trap: true,
-          code_skipped: 3
+          code: [0, 3]
         })));
         // arch_chroot: config.arch_chroot
         // arch_chroot_rootdir: config.arch_chroot_rootdir
@@ -119,7 +119,7 @@ fi`,
       ({$status, stdout, stderr} = (await this.execute({
         $shy: true,
         command: `chkconfig --list ${config.name}`,
-        code_skipped: 1
+        code: [0, 1]
       })));
       // Invalid service name return code is 0 and message in stderr start by error
       if (/^error/.test(stderr)) {
@@ -205,7 +205,7 @@ else
   echo 'Enable ${config.name}'
   update-rc.d -f ${config.name} enable
 fi`,
-        code_skipped: 3
+        code: [0, 3]
       })));
       // arch_chroot: config.arch_chroot
       // arch_chroot_rootdir: config.arch_chroot_rootdir

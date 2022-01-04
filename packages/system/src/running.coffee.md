@@ -65,7 +65,7 @@ console.info(`Is PID running: ${$status}`)
           command: """
           kill -s 0 '#{config.pid}' >/dev/null 2>&1 || exit 42
           """
-          code_skipped: 42
+          code: [0, 42]
         log switch code
           when 0 then message: "PID #{config.pid} is running", level: 'INFO', module: 'nikita/lib/system/running'
           when 42 then message: "PID #{config.pid} is not running", level: 'INFO', module: 'nikita/lib/system/running'
@@ -81,7 +81,7 @@ console.info(`Is PID running: ${$status}`)
             exit 42;
           fi
           """
-          code_skipped: [42, 43]
+          code: [0, [42, 43]]
           stdout_trim: true
         log switch code
           when 0 then message: "PID #{stdout} is running", level: 'INFO', module: 'nikita/lib/system/running'

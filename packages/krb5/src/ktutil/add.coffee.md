@@ -74,7 +74,7 @@ console.info(`Keytab was created or modified: ${$status}`)
       {$status, stdout, code} = await @execute
         $shy: true
         command: "echo -e 'rkt #{config.keytab}\nlist -e -t \n' | ktutil"
-        code_skipped: 1
+        code: [0, 1]
       if $status
         log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout

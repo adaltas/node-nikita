@@ -37,6 +37,6 @@ describe 'actions.execute.config.format', ->
       {stdout, data} = await @execute
         command: 'exit 1'
         format: 'json'
-        code_skipped: 1
+        code: [, 1]
       stdout.should.eql ''
       should.not.exist(data)

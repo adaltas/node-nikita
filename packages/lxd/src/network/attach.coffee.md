@@ -50,7 +50,7 @@ console.info(`Network was attached: ${$status}`)
         lxc config device list #{config.container} | grep #{config.network} && exit 42
         #{command_attach}
         """
-        code_skipped: 42
+        code: [0, 42]
 
 ## Exports
 

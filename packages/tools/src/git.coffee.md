@@ -73,7 +73,7 @@ console.info(`Repo was synchronized: ${$status}`)
           # stdout: process.stdout
           cwd: config.target
           trap: true
-          code_skipped: 3
+          code: [0, 3]
       unless repo_uptodate
         await @execute
           command: "git checkout #{config.revision}"

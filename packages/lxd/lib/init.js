@@ -95,7 +95,7 @@ handler = async function({config}) {
   ({$status} = (await this.execute({
     command: `lxc info ${config.container} >/dev/null && exit 42
 echo '' | ${command_init}`,
-    code_skipped: 42
+    code: [0, 42]
   })));
   await this.lxc.start({
     $if: config.start,

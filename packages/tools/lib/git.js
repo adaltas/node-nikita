@@ -90,7 +90,7 @@ if [ $current != $target ]; then exit 3; fi`,
       // stdout: process.stdout
       cwd: config.target,
       trap: true,
-      code_skipped: 3
+      code: [0, 3]
     })));
   }
   if (!repo_uptodate) {

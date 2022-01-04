@@ -56,12 +56,12 @@ describe 'actions.execute.config.bash', ->
       {files} = await @fs.glob "#{tmpdir}/*"
       files.length.should.eql 0
 
-  they 'option `code_skipped`', ({ssh}) ->
+  they 'option `code.false`', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
       {$status} = await @execute
         command: "exit 2"
         bash: true
-        code_skipped: 2
+        code: [, 2]
       $status.should.be.false()

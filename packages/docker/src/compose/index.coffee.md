@@ -77,22 +77,37 @@ Create and start containers according to a docker-compose.yml file
       if config.content and not config.target?
         config.target ?= "/tmp/nikita_docker_compose_#{Date.now()}/docker-compose.yml"
         clean_target = true
+      config.compose_env ?= []
+      if config.compose_env.length and not config.target_env?
+        config.target_env ?= "/tmp/nikita_docker_compose_#{Date.now()}/.env"
+        clean_target = true
       config.recreate ?= false # TODO: move to schema
       config.services ?= []
       config.services = [config.services] if not Array.isArray config.services
       await @file.yaml
         $if: config.content?
-        eof: config.eof
         backup: config.backup
-        target: config.target
         content: config.content
+        eof: config.eof
+        target: config.target
+      await @file
+        $if: config.compose_env.length
+        backup: config.backup
+        # If compose_env is an object
+        # content: Object.keys(config.compose_env)
+        #   .map( (key) => "#{key}=#{config.compose_env[key]}")
+        #   .join('\n')
+        # If compose_env is an array
+        content: config.compose_env.join('\n')
+        eof: config.eof
+        target: config.target_env
       {$status, stdout} = await @docker.tools.execute
         $shy: true
         command: "--file #{config.target} ps -q | xargs docker #{utils.opts config} inspect"
         compose: true
         cwd: config.cwd
         uid: config.uid
-        code_skipped: 123
+        code: [0, 123]
         stdout_log: false
       unless $status
         $status = true
@@ -112,10 +127,15 @@ Create and start containers according to a docker-compose.yml file
           compose: true
           cwd: path.dirname config.target
           uid: config.uid
+      catch err
+        throw err
       finally
         await @fs.remove
           $if: clean_target
           target: config.target
+        await @fs.remove
+          $if: clean_target and config.target_env
+          target: config.target_env
 
 ## Exports
 

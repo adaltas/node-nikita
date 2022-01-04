@@ -59,7 +59,7 @@ console.info(`keytab was created or updated: ${$status}`)
       {$status, stdout} = await @execute
         $shy: true
         command: "export TZ=GMT; klist -kt #{config.keytab}"
-        code_skipped: 1
+        code: [0, 1]
       if $status
         log message: "Keytab exists, check kvno validity", level: 'DEBUG'
         for line in utils.string.lines stdout

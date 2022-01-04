@@ -333,7 +333,7 @@ handler = async function({
     $if: config.name != null,
     $shy: true,
     command: `ps -a | egrep ' ${config.name}$'`,
-    code_skipped: 1
+    code: [0, 1]
   })));
   if ($status) {
     log({

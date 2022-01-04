@@ -214,7 +214,7 @@ default location of the Oracle JDK installation.
             -alias #{config.name}
           """
           trap: true
-          code_skipped: 5 # OpenSSL exit 3 if file does not exists
+          code: [0, 5] # OpenSSL exit 3 if file does not exists
       catch err
         throw Error "OpenSSL command line tool not detected" if err.exit_code is 4
         throw Error "Keystore file does not exists" if err.exit_code is 6
@@ -271,7 +271,7 @@ default location of the Oracle JDK installation.
           exit $code
           """
           trap: true
-          code_skipped: 5
+          code: [0, 5]
       catch err
         throw Error "CA file does not exist: #{files.cacert}" if err.exit_code is 3
         throw err

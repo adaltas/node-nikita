@@ -118,7 +118,7 @@ console.info(`File was pushed: ${$status}`)
             EOF`
             [ "$sourceDgst" != "$targetDgst" ] || exit 42
             """
-            code_skipped: 42
+            code: [0, 42]
             trap: true
         catch err
           throw Error "Invalid Option: source is not a file, got #{JSON.stringify config.source}" if err.exit_code is 2

@@ -71,8 +71,7 @@ console.info(`Schema created or modified: ${$status}`)
         ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" \
         | grep -E cn=\\{[0-9]+\\}#{config.name},cn=schema,cn=config
         """
-        code: 1
-        code_skipped: 0
+        code: [1, 0]
       return false unless $status
       await @system.mkdir
         target: ldif

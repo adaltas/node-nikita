@@ -126,7 +126,7 @@ command -v openssl >/dev/null || exit 4
 openssl dgst -${config.algo} ${config.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
 EOF\`
 [ "$sourceDgst" != "$targetDgst" ] || exit 42`,
-        code_skipped: 42,
+        code: [0, 42],
         trap: true
       })));
     } catch (error) {

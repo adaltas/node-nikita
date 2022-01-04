@@ -90,6 +90,36 @@ module.exports =
           metaSchema:
             type: 'boolean'
             enum: [true]
+        # Note, this is currently tested in action.execute.config_code
+        ajv.addKeyword
+          keyword: "cast_code"
+          type: ['integer', 'string', 'array', 'object']
+          compile: (value) ->
+            return (data, schema, parentData) ->
+              code = data
+              if typeof code is 'undefined'
+                code = 0
+              if typeof code is 'number'
+                code = [code]
+              else if typeof code is 'string'
+                code = code.split /[ ,]/
+              if Array.isArray code
+                [t, f...] = code
+                code = true: t, false: f
+              if code isnt null
+                code.true ?= []
+                code.true = [code.true] unless Array.isArray code.true
+                code.false ?= []
+                code.false = [code.false] unless Array.isArray code.false
+              code.true = utils.array.flatten code.true
+              code.true = code.true.map (c) -> parseInt c, 10
+              code.false = utils.array.flatten code.false
+              code.false = code.false.map (c) -> parseInt c, 10
+              schema.parentData[schema.parentDataProperty] = code
+              true
+          metaSchema:
+            type: 'boolean'
+            enum: [true]
         action.tools.schema =
           ajv: ajv
           add: (schema, name) ->

@@ -4,7 +4,7 @@
 // Execute a docker command.
 
 // ## Schema definitions
-var definitions, handler, utils;
+var definitions, handler, merge, utils;
 
 definitions = {
   config: {
@@ -39,21 +39,16 @@ to execute.`
             description: `Current working directory from where to execute the command.`
           },
           'code': {
-            type: 'array',
-            default: [0],
-            items: {
-              type: 'integer'
-            },
-            description: `Expected code(s) returned by the command, int or array of int, default
-to 0.`
+            $ref: 'module://@nikitajs/core/src/actions/execute#/definitions/config/properties/code',
+            default: {}
           },
           'docker': {
             $ref: '#/definitions/docker'
+          },
+          'format': {
+            $ref: 'module://@nikitajs/core/src/actions/execute#/definitions/config/properties/format'
           }
         }
-      },
-      {
-        $ref: 'module://@nikitajs/core/lib/actions/execute'
       }
     ],
     required: ['command']
@@ -68,61 +63,51 @@ to 0.`
 property, used when providing and cascading a docker configuration at
 a global scale.`,
     properties: {
-      'boot2docker': {
-        type: 'boolean',
-        default: false,
-        description: `Whether to use boot2docker or not.`
-      },
       'compose': {
         type: 'boolean',
-        description: `Use the \`docker compose\` command instead of \`docker\`.`
+        description: `Use the \`docker compose\` (or \`docker-compose\`) command instead of
+\`docker\`.`
+      },
+      'docker_host': {
+        type: 'string',
+        description: `The value associated with the \`DOCKER_HOST\` environment variable,
+for example \`tcp://dind:2375\`.`
       },
       'machine': {
         type: 'string',
         format: 'hostname',
         description: `Name of the docker-machine, required if using docker-machine.`
+      },
+      'opts': {
+        type: 'object',
+        default: {},
+        description: `Options passed to the \`docker\` or \`docker compose\` command.`
       }
     }
   }
 };
-
-// (
-//   schema.properties["#{property}"] =
-//     $ref: "module://@nikitajs/core/lib/actions/execute#/properties/#{property}"
-// ) for property in [
-//   'code_skipped', 'dry', 'env', 'format', 'gid', 'stdin_log',
-//   'stdout', 'stdout_return', 'stdout_log',
-//   'stderr', 'stderr_return', 'stderr_log',
-//   'sudo', 'target', 'trap', 'uid'
-// ]
 
 // ## Handler
 handler = async function({
     config,
     tools: {find}
   }) {
-  var bin, err, k, option, opts, ref, v, value;
-  // Global config
+  var err, option, value;
+  // Merge global config
   config.docker = (await find(function({
       config: {docker}
     }) {
     return docker;
   }));
-  ref = config.docker;
-  for (k in ref) {
-    v = ref[k];
-    if (config[k] == null) {
-      config[k] = v;
-    }
-  }
-  opts = (function() {
-    var i, len, ref1, results;
-    ref1 = utils[!config.compose ? 'options' : 'compose_options'];
+  config = merge(config, config.docker);
+  // Build Docker 
+  config.opts = (function() {
+    var ref, results;
+    ref = config.opts;
     results = [];
-    for (i = 0, len = ref1.length; i < len; i++) {
-      option = ref1[i];
-      value = config[option];
-      if (value == null) {
+    for (option in ref) {
+      value = ref[option];
+      if (value === null) {
         continue;
       }
       if (value === true) {
@@ -139,29 +124,25 @@ handler = async function({
     }
     return results;
   })();
-  opts = opts.join(' ');
-  bin = config.compose ? 'bin_compose' : 'bin_docker';
+  config.opts = config.opts.join(' ');
   try {
-    return (await this.execute(config, {
-      command: `export SHELL=/bin/bash
-export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-bin_boot2docker=$(command -v boot2docker)
-bin_docker=$(command -v docker)
-bin_machine=$(command -v docker-machine)
-bin_compose=$(command -v docker-compose)
+    return (await this.execute({
+      code: config.code,
+      format: config.format,
+      trap: true,
+      command: [
+        config.docker_host ? `export DOCKER_HOST=${config.docker_host}` : void 0,
+        config.machine ? `if command -v docker-machine ; then echo 1; fi
 machine='${config.machine || ''}'
-boot2docker='${config.boot2docker ? '1' : ''}'
-docker=''
-if [[ $machine != '' ]] && [ $bin_machine ]; then
-  if [ -z "${config.machine || ''}" ]; then exit 5; fi
-  if docker-machine status "\${machine}" | egrep 'Stopped|Saved'; then
-    docker-machine start "\${machine}";
-  fi
-  eval "$(\${bin_machine} env \${machine})"
-elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
-  eval "$(\${bin_boot2docker} shellinit)"
+if [ -z "${config.machine || ''}" ]; then exit 5; fi
+if docker-machine status "\${machine}" | egrep 'Stopped|Saved'; then
+  docker-machine start "\${machine}";
 fi
-$${bin} ${opts} ${config.command}`
+eval "$(docker-machine env \${machine})"` : void 0,
+        config.compose ? `opts='${config.opts}'
+bin=\`command -v docker-compose >/dev/null 2>&1  && echo "docker-compose $opts" || echo "docker $opts compose"\` 
+$bin ${config.command}` : `docker ${config.opts} ${config.command}`
+      ].join('\n')
     }));
   } catch (error) {
     err = error;
@@ -177,8 +158,6 @@ $${bin} ${opts} ${config.command}`
 // ## Exports
 module.exports = {
   handler: handler,
-  // hooks:
-  //   on_action: require('@nikitajs/core/lib/actions/execute').hooks.on_action
   metadata: {
     argument_to_config: 'command',
     definitions: definitions
@@ -187,3 +166,5 @@ module.exports = {
 
 // ## Dependencies
 utils = require('../utils');
+
+({merge} = require('mixme'));

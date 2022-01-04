@@ -51,7 +51,7 @@ console.info(`ticket was renewed: ${$status}`)
         if #{utils.krb5.su config, 'klist -s'}; then exit 3; fi
         #{utils.krb5.kinit config}
         """
-        code_skipped: 3
+        code: [0, 3]
       return unless (config.uid? or config.gid?) and config.keytab?
       await @fs.chown
         uid: config.uid

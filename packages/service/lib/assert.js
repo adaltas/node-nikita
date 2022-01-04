@@ -89,8 +89,7 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-      code: 0,
-      code_skipped: 3
+      code: [0, 3]
     })));
   } catch (error) {
     // arch_chroot: config.arch_chroot

@@ -95,7 +95,7 @@ console.info(`User created or modified: ${$status}`)
             base: ''
             scope: 'base'
             filter: 'objectclass=*'
-            code_skipped: 49
+            code: [0, 49]
           new_password = true unless loggedin
         if added or new_password and not /^\{SASL\}/.test user.userPassword
           await @execute

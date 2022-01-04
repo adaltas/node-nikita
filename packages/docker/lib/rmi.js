@@ -46,7 +46,7 @@ definitions = {
 handler = async function({config}) {
   await this.docker.tools.execute({
     command: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
-    code_skipped: [1]
+    code: [0, 1]
   });
   return (await this.docker.tools.execute({
     $if: function({parent}) {

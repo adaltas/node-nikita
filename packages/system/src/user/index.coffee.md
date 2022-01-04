@@ -164,7 +164,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           mode: 0o0644 # Same as '/home'
       unless user_info
         await @execute [
-          code_skipped: 9
+          code: [0, 9]
           command: [
             'useradd'
             '-r' if config.system

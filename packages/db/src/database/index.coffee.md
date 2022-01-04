@@ -96,7 +96,7 @@ console.info(`Database created or modified: ${$status}`)
           echo '[WARN] User privileges granted'
           #{command_grant_privileges}
           """
-          code_skipped: 3
+          code: [, 3]
         log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify config.database}", level: 'WARN' if $status
       undefined
 

@@ -79,7 +79,7 @@ handler = async function({config}) {
   }));
 };
 
-// code_skipped: 68
+// code: [0, 68]
 // modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
 // added = modified # For now, we dont modify
 // callback err, modified, added
