@@ -41,7 +41,7 @@ handler = async function({config}) {
   return (await this.execute({
     command: `lxc storage list | grep ${config.name} || exit 42
 ${command_delete}`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

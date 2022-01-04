@@ -4,8 +4,14 @@ module.exports =
     docker: true
     docker_volume: true
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
-    host: 'dind:2375'
-    # machine: 'nikita'
+    # host: 'dind:2375'
+  #   # machine: 'nikita'
+    docker_host: 'tcp://dind:2375'
+    # opts:
+    #   host: 'dind:2375'
+    # # env:
+    # #   DOCKER_HOST:'tcp://dind:2375'
+    # compose_env: ['DOCKER_HOST=tcp://dind:2375']
   config: [
     label: 'local'
   ,

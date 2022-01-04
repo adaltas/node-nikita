@@ -306,7 +306,7 @@ signal=\`cat $randdir/signal\`
 remove_randdir
 echo "[INFO] Exit code is $signal"
 exit $signal`,
-    code_skipped: 3,
+    code: [0, 3],
     stdin_log: false
   }));
 };

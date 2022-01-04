@@ -34,7 +34,7 @@ module.exports = {
 
 handlers = {
   if_execute: async function(action, value) {
-    var $status, code_skipped, condition, err, final_run, i, len, ref, ref1;
+    var $status, code, condition, err, final_run, i, len, ref;
     final_run = true;
     ref = action.conditions.if_execute;
     for (i = 0, len = ref.length; i < len; i++) {
@@ -50,8 +50,18 @@ handlers = {
         }
       } catch (error) {
         err = error;
-        code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);
-        if (code_skipped && parseInt(code_skipped, 10) !== err.exit_code) {
+        ({code} = (await session({
+          $bastard: true,
+          $namespace: ['execute'],
+          $parent: action
+        }, condition, function({config}) {
+          return {
+            code: config.code
+          };
+        })));
+        if (code.false.length && !code.false.includes(err.exit_code)) {
+          // If `code.false` is present,
+          // use it instead of error to to disabled the action
           throw err;
         }
         final_run = false;
@@ -60,7 +70,7 @@ handlers = {
     return final_run;
   },
   unless_execute: async function(action) {
-    var $status, code_skipped, condition, err, final_run, i, len, ref, ref1;
+    var $status, code, condition, err, final_run, i, len, ref;
     final_run = true;
     ref = action.conditions.unless_execute;
     for (i = 0, len = ref.length; i < len; i++) {
@@ -76,8 +86,18 @@ handlers = {
         }
       } catch (error) {
         err = error;
-        code_skipped = condition.code_skipped || ((ref1 = condition.config) != null ? ref1.code_skipped : void 0);
-        if (code_skipped && parseInt(code_skipped, 10) !== err.exit_code) {
+        ({code} = (await session({
+          $bastard: true,
+          $namespace: ['execute'],
+          $parent: action
+        }, condition, function({config}) {
+          return {
+            code: config.code
+          };
+        })));
+        if (code.false.length && !code.false.includes(err.exit_code)) {
+          // If `code.false` is present,
+          // use it instead of error to to disabled the action
           throw err;
         }
       }

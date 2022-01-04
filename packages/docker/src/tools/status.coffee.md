@@ -48,7 +48,7 @@ console.info(`Container is running: ${$status}`)
       # Construct exec command
       await @docker.tools.execute
         command: "ps | egrep ' #{config.container}$'"
-        code_skipped: 1
+        code: [0, 1]
 
 ## Exports
 

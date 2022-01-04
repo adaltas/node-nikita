@@ -230,7 +230,7 @@ containers:
           command -v openssl
           """
           trap: true
-          code_skipped: 42
+          code: [0, 42]
         # Enable SSH
         if containerConfig.ssh?.enabled
           await @lxc.exec
@@ -264,7 +264,7 @@ containers:
             fi
             """
             trap: true
-            code_skipped: 42
+            code: [0, 42]
         # Create users
         for userName, configUser of containerConfig.user then await @call
           $header: "User #{userName}"
@@ -280,7 +280,7 @@ containers:
             chmod 700 /home/#{userName}/.ssh
             """
             trap: true
-            code_skipped: 42
+            code: [0, 42]
           # Enable sudo access
           await @lxc.exec
             $if: configUser.sudo
@@ -293,7 +293,7 @@ containers:
             echo "#{userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             """
             trap: true
-            code_skipped: 42
+            code: [0, 42]
           # Add SSH public key to authorized_keys file
           await @lxc.file.push
             $if: configUser.authorized_keys

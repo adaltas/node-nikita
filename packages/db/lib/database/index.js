@@ -152,7 +152,7 @@ handler = async function({
 fi
 echo '[WARN] User privileges granted'
 ${command_grant_privileges}`,
-      code_skipped: 3
+      code: [, 3]
     })));
     if ($status) {
       log({

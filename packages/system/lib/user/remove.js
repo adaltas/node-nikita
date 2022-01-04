@@ -37,7 +37,7 @@ definitions = {
 handler = function({config}) {
   return this.execute({
     command: `userdel ${config.name}`,
-    code_skipped: 6
+    code: [0, 6]
   });
 };
 

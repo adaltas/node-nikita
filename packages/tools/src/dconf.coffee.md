@@ -50,7 +50,7 @@ Run the command "dconf-editor" to navigate the database with a UI.
         dconf read #{key} | grep -x "#{value}" && exit 3
         dconf write #{key} "#{value}"
         """
-        code_skipped: 3
+        code: [0, 3]
       ) for key, value of config.properties
       undefined
 

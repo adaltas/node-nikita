@@ -72,7 +72,7 @@ The result of the above action can be viewed with the command
             "-g #{config.gid}" if config.gid?
             config.name
           ].join ' '
-          code_skipped: 9
+          code: [0, 9]
         log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN' unless $status
       else # Modify group
         changes = ['gid'].filter (k) -> config[k]? and "#{info[k]}" isnt "#{config[k]}"

@@ -53,7 +53,7 @@ else
   echo "Unsupported Loader" >&2
   exit 2
 fi`,
-      code_skipped: 3
+      code: [0, 3]
     })));
     if ($status) {
       // arch_chroot: config.arch_chroot

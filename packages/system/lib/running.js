@@ -77,7 +77,7 @@ handler = async function({
   if (config.pid) {
     ({code} = (await this.execute({
       command: `kill -s 0 '${config.pid}' >/dev/null 2>&1 || exit 42`,
-      code_skipped: 42
+      code: [0, 42]
     })));
     log((function() {
       switch (code) {
@@ -110,7 +110,7 @@ if ! kill -s 0 "$pid" >/dev/null 2>&1; then
   rm '${config.target}';
   exit 42;
 fi`,
-      code_skipped: [42, 43],
+      code: [0, [42, 43]],
       stdout_trim: true
     })));
     log((function() {

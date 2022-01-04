@@ -86,7 +86,7 @@ Reload the service daemon provider depending on the os.
           systemctl status #{config.name} 2>\&1 | egrep \
           '(Reason: No such file or directory)|(Unit #{config.name}.service could not be found)|(#{config.name}.service changed on disk)'
           """
-        code_skipped: 1
+        code: [0, 1]
       return unless $status
       await @execute
         command: 'systemctl daemon-reload;systemctl reset-failed'

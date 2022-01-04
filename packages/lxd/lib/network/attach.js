@@ -46,7 +46,7 @@ handler = async function({config}) {
   return (await this.execute({
     command: `lxc config device list ${config.container} | grep ${config.network} && exit 42
 ${command_attach}`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

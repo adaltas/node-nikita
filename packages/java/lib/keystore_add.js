@@ -218,7 +218,10 @@ ${config.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out 
 # Import PKCS12 into keystore
 \${keytoolbin} -noprompt -importkeystore -destkeystore ${config.keystore} -deststorepass ${config.storepass} -destkeypass ${config.keypass} -srckeystore "${tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass ${config.keypass} -alias ${config.name}`,
         trap: true,
-        code_skipped: 5 // OpenSSL exit 3 if file does not exists
+        code: [
+          0,
+          5 // OpenSSL exit 3 if file does not exists
+        ]
       });
     }
   } catch (error) {
@@ -281,7 +284,7 @@ for N in $(seq 0 $(($CERTS - 1))); do
 done
 exit $code`,
         trap: true,
-        code_skipped: 5
+        code: [0, 5]
       });
     }
   } catch (error) {

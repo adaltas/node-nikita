@@ -14,28 +14,29 @@ describe 'docker.compose', ->
       $ssh: ssh
       docker: docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_compose_up_content'
         force: true
       {$status} = await @docker.compose.up
         content:
-          compose:
-            image: 'httpd'
-            container_name: 'nikita_docker_compose_up_content'
-            ports: ['499:80']
+          services:
+            content:
+              image: 'httpd'
+              container_name: 'nikita_docker_compose_up_content'
+              ports: ['12300:80']
       $status.should.be.true()
       {$status} = await @execute
         command: 'ping dind -c 1'
-        code_skipped: [2,68]
-      @network.tcp.wait
+        code: [0, [2,68]]
+      await @network.tcp.wait
         $if: $status # Inside docker compose
         host: 'dind'
-        port: 499
-      @network.tcp.wait
+        port: 12300
+      await @network.tcp.wait
         $unless: $status # Inside host node
         host: '127.0.0.1'
-        port: 499
-      @docker.rm
+        port: 12300
+      await @docker.rm
         container: 'nikita_docker_compose_up_content'
         force: true
   
@@ -45,29 +46,30 @@ describe 'docker.compose', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_docker_compose_up_content_to_file'
         force: true
       {$status} = await @docker.compose
         content:
-          compose:
-            image: 'httpd'
-            container_name: 'nikita_docker_docker_compose_up_content_to_file'
-            ports: ['499:80']
+          services:
+            content_to_file:
+              image: 'httpd'
+              container_name: 'nikita_docker_docker_compose_up_content_to_file'
+              ports: ['12301:80']
         target: "#{tmpdir}/docker_compose_up_content_to_file/docker-compose.yml"
       $status.should.be.true()
       {$status} = await @execute
         command: 'ping dind -c 1'
-        code_skipped: [2,68]
-      @network.tcp.wait
+        code: [0, [2,68]]
+      await @network.tcp.wait
         $if: $status # Inside docker compose
         host: 'dind'
-        port: 499
-      @network.tcp.wait
+        port: 12301
+      await @network.tcp.wait
         $unless: $status # Inside host node
         host: '127.0.0.1'
-        port: 499
-      @docker.rm
+        port: 12301
+      await @docker.rm
         container: 'nikita_docker_docker_compose_up_content_to_file'
         force: true
 
@@ -77,30 +79,31 @@ describe 'docker.compose', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_compose_up_file'
         force: true
-      @file.yaml
+      await @file.yaml
         content:
-          compose:
-            image: 'httpd'
-            container_name: 'nikita_docker_compose_up_file'
-            ports: ['499:80']
+          services:
+            up_from_file:
+              image: 'httpd'
+              container_name: 'nikita_docker_compose_up_file'
+              ports: ['12302:80']
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
-      @docker.compose
+      await @docker.compose
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       {$status} = await @execute
         command: 'ping dind -c 1'
-        code_skipped: [2,68]
-      @network.tcp.wait
+        code: [0, [2,68]]
+      await @network.tcp.wait
         $if: $status # Inside docker compose
         host: 'dind'
-        port: 499
-      @network.tcp.wait
+        port: 12302
+      await @network.tcp.wait
         $unless: $status # Inside host node
         host: '127.0.0.1'
-        port: 499
-      @docker.rm
+        port: 12302
+      await @docker.rm
         container: 'nikita_docker_compose_up_file'
         force: true
   
@@ -110,31 +113,32 @@ describe 'docker.compose', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_compose_up_service'
         force: true
-      @file.yaml
+      await @file.yaml
         content:
-          compose:
-            image: 'httpd'
-            container_name: 'nikita_docker_compose_up_service'
-            ports: ['499:80']
+          services:
+            up_with_service_name:
+              image: 'httpd'
+              container_name: 'nikita_docker_compose_up_service'
+              ports: ['12303:80']
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
-      @docker.compose
+      await @docker.compose
         service: 'compose'
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       {$status} = await @execute
         command: 'ping dind -c 1'
-        code_skipped: [2,68]
-      @network.tcp.wait
+        code: [0, [2,68]]
+      await @network.tcp.wait
         $if: $status # Inside docker compose
         host: 'dind'
-        port: 499
-      @network.tcp.wait
+        port: 12303
+      await @network.tcp.wait
         $unless: $status # Inside host node
         host: '127.0.0.1'
-        port: 499
-      @docker.rm
+        port: 12303
+      await @docker.rm
         container: 'nikita_docker_compose_up_service'
         force: true
   
@@ -144,24 +148,25 @@ describe 'docker.compose', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_compose_idem'
         force: true
-      @file.yaml
+      await @file.yaml
         content:
-          compose:
-            image: 'httpd'
-            container_name: 'nikita_docker_compose_idem'
-            ports: ['499:80']
+          services:
+            status_not_modified:
+              image: 'httpd'
+              container_name: 'nikita_docker_compose_idem'
+              ports: ['12304:80']
         target: "#{tmpdir}/nikita_docker_compose_idem/docker-compose.yml"
-      @docker.compose
+      await @docker.compose
         target: "#{tmpdir}/nikita_docker_compose_idem/docker-compose.yml"
-      @network.tcp.wait
+      await @network.tcp.wait
         host: 'dind'
-        port: 499
+        port: 12304
       {$status} = await @docker.compose
         target: "#{tmpdir}/nikita_docker_compose_idem/docker-compose.yml"
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         container: 'nikita_docker_compose_idem'
         force: true

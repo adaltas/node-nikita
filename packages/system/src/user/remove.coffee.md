@@ -35,7 +35,7 @@ console.log(`User removed: ${$status}`)
     handler = ({config}) ->
       @execute
         command: "userdel #{config.name}"
-        code_skipped: 6
+        code: [0, 6]
 
 ## Exports
 

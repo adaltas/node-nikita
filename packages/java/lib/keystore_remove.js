@@ -105,7 +105,7 @@ for alias in ${aliases}; do
 done
 [ $count -eq 0 ] && exit 3
 exit 0`,
-    code_skipped: 3
+    code: [0, 3]
   }));
 };
 

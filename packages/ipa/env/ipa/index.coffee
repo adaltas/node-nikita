@@ -68,7 +68,7 @@ runner
     provision_container: ({config}) ->
       await @lxc.exec
         $header: 'Node.js'
-        code_skipped: 42
+        code: [0, 42]
         command: '''
         bash -l -c "command -v node" && exit 42
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
@@ -79,7 +79,7 @@ runner
         trap: true
       await @lxc.exec
         $header: 'SSH keys'
-        code_skipped: 42
+        code: [0, 42]
         command: """
         grep "`cat /root/.ssh/id_rsa.pub`" /root/.ssh/authorized_keys && exit 42
         mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -92,7 +92,7 @@ runner
         trap: true
       await @lxc.exec
         $header: 'Install FreeIPA'
-        code_skipped: 42
+        code: [0, 42]
         # Other possibilities to check ipa status:
         # echo > /dev/tcp/localhost/443
         # echo admin_pw | kinit admin
@@ -126,7 +126,7 @@ runner
         # ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
       await @lxc.exec
         $header: 'Immutable DNS'
-        code_skipped: 42
+        code: [0, 42]
         command: '''
         cat /etc/sysconfig/network-scripts/ifcfg-eth0 | egrep '^PEERDNS=no' && exit 42
         echo 'PEERDNS=no' >> /etc/sysconfig/network-scripts/ifcfg-eth0

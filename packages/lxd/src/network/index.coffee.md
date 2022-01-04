@@ -74,7 +74,7 @@ console.info(`Network was created: ${$status}`)
           )
         ].join ' '}
         """
-        code_skipped: [5, 42]
+        code: [0, [5, 42]]
       throw Error "This version of lxc does not support the network command." if code is 5
       return $status: $status unless code is 42 # was created
       # Network already exists, find the changes

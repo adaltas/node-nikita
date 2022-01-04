@@ -76,7 +76,7 @@ describe 'docker.exec', ->
       {$status} = await @docker.exec
         container: 'nikita_test_exec'
         command: 'toto'
-        code_skipped: 126
+        code: [0, 126]
       $status.should.be.false()
       @docker.rm
         container: 'nikita_test_exec'

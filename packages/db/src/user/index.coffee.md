@@ -77,7 +77,7 @@ Create a user for the destination database.
         fi
         exit $signal
         """
-        code_skipped: 3
+        code: [, 3]
         trap: true
 
 ## Exports

@@ -87,7 +87,7 @@ ${[
         return results;
       })())
     ].join(' ')}`,
-    code_skipped: 42
+    code: [0, 42]
   })));
   if (code !== 42) {
     return;

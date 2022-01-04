@@ -67,7 +67,7 @@ console.info(`Storage was created or config updated: ${$status}`)
           )
         ].join ' '}
         """
-        code_skipped: 42
+        code: [0, 42]
       return unless code is 42
       # Storage already exists, find the changes
       return unless config?.properties

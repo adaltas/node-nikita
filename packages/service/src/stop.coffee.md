@@ -54,7 +54,7 @@ console.info(`Service was stopped: ${$status}`)
             exit 2
           fi
           """
-          code_skipped: 3
+          code: [0, 3]
           # arch_chroot: config.arch_chroot
           # arch_chroot_rootdir: config.arch_chroot_rootdir
         log message: "Service is stopped", level: 'INFO' if $status

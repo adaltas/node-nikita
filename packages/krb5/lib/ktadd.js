@@ -72,7 +72,7 @@ handler = async function({
   ({$status, stdout} = (await this.execute({
     $shy: true,
     command: `export TZ=GMT; klist -kt ${config.keytab}`,
-    code_skipped: 1
+    code: [0, 1]
   })));
   if ($status) {
     log({

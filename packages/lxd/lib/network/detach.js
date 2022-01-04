@@ -43,7 +43,7 @@ handler = async function({config}) {
   return (await this.execute({
     command: `lxc config device list ${config.container} | grep ${config.network} || exit 42
 ${['lxc', 'network', 'detach', config.network, config.container].join(' ')}`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

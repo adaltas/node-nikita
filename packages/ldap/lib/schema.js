@@ -77,8 +77,7 @@ handler = async function({
   ldif = `${tmpdir}/ldif`;
   ({$status} = (await this.execute({
     command: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
-    code: 1,
-    code_skipped: 0
+    code: [1, 0]
   })));
   if (!$status) {
     return false;

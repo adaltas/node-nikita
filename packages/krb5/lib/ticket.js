@@ -55,7 +55,7 @@ handler = async function({config}) {
   await this.execute({
     command: `if ${utils.krb5.su(config, 'klist -s')}; then exit 3; fi
 ${utils.krb5.kinit(config)}`,
-    code_skipped: 3
+    code: [0, 3]
   });
   if (!(((config.uid != null) || (config.gid != null)) && (config.keytab != null))) {
     return;

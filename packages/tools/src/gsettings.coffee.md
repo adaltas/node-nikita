@@ -36,7 +36,7 @@ console.log(`Property was modified: ${$status}`)
           await @execute """
           gsettings get #{path} #{key} | grep -x "#{value}" && exit 3
           gsettings set #{path} #{key} "#{value}"
-          """, code_skipped: 3
+          """, code: [0, 3]
 
 ## Exports
 

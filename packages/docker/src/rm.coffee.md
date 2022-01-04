@@ -58,7 +58,7 @@ console.info(`Container was removed: ${$status}`)
         command: """
         inspect #{config.container} --format '{{ json .State.Running }}'
         """
-        code_skipped: 1
+        code: [0, 1]
         format: 'json'
       return false unless exists
       throw Error 'Container must be stopped to be removed without force' if running and not config.force

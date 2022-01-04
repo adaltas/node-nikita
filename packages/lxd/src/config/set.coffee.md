@@ -48,7 +48,7 @@ console.info(`Property was set: ${$status}`)
           config.container
         ].join ' '}
         """
-        code_skipped: 42
+        code: [0, 42]
       {config: properties} = yaml.load stdout
       changes = diff properties, merge properties, config.properties
       # if changes is empty status is false because no command were executed

@@ -46,7 +46,9 @@ describe 'docker.rm', ->
           container: 'nikita_rm'
         throw Error 'Oh no'
       catch err
-        err.message.should.eql 'Container must be stopped to be removed without force'
+        # Error response from daemon: You cannot remove a running container XXXXX. Stop the container before attempting removal or force remove
+        # Container must be stopped to be removed without force
+        err.message.should.match /(You cannot remove a running container)|(Container must be stopped)/
       finally
         @docker.stop
           container: 'nikita_rm'

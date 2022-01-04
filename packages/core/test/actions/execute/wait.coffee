@@ -100,22 +100,22 @@ describe 'actions.execute.wait', ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         logs.should.eql 0
   
-  describe 'config `code_skipped`', ->
+  describe 'config `code`', ->
   
-    they 'error if error code not skipped, first attempt', ({ssh}) ->
+    they 'error with code.false, first attempt', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @execute.wait
           command: "exit 99"
-          code_skipped: 1
+          code: [, 1]
           interval: 40
         .should.be.rejectedWith
           code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
           exit_code: 99
     
-    they 'error if error code not skipped, retried attempt', ({ssh}) ->
+    they 'error with code.false, retried attempt', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -124,13 +124,17 @@ describe 'actions.execute.wait', ->
           setTimeout ->
             nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
           , 200
-        @execute.wait
+        attempts = 0
+        await @execute.wait
+          $log: ({log}) ->
+            attempts++ if /^Start attempt/.test log.message
           command: "test -d #{tmpdir}/file && exit 99"
-          code_skipped: 1
+          code: [, 1]
           interval: 40
         .should.be.rejectedWith
           code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
           exit_code: 99
+        attempts.should.be.above 1
 
   describe 'config `quorum`', ->
     

@@ -44,7 +44,7 @@ definitions = {
 handler = function({metadata, config}) {
   return this.execute({
     command: `groupdel ${config.name}`,
-    code_skipped: 6
+    code: [0, 6]
   });
 };
 

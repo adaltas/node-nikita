@@ -61,7 +61,7 @@ handler = async function({config}) {
     await this.execute({
       command: `dconf read ${key} | grep -x "${value}" && exit 3
 dconf write ${key} "${value}"`,
-      code_skipped: 3
+      code: [0, 3]
     });
   }
   return void 0;

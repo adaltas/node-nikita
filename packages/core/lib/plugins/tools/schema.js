@@ -119,6 +119,60 @@ module.exports = {
             enum: [true]
           }
         });
+        // Note, this is currently tested in action.execute.config_code
+        ajv.addKeyword({
+          keyword: "cast_code",
+          type: ['integer', 'string', 'array', 'object'],
+          compile: function(value) {
+            return function(data, schema, parentData) {
+              var code, f, t;
+              code = data;
+              if (typeof code === 'undefined') {
+                code = 0;
+              }
+              if (typeof code === 'number') {
+                code = [code];
+              } else if (typeof code === 'string') {
+                code = code.split(/[ ,]/);
+              }
+              if (Array.isArray(code)) {
+                [t, ...f] = code;
+                code = {
+                  true: t,
+                  false: f
+                };
+              }
+              if (code !== null) {
+                if (code.true == null) {
+                  code.true = [];
+                }
+                if (!Array.isArray(code.true)) {
+                  code.true = [code.true];
+                }
+                if (code.false == null) {
+                  code.false = [];
+                }
+                if (!Array.isArray(code.false)) {
+                  code.false = [code.false];
+                }
+              }
+              code.true = utils.array.flatten(code.true);
+              code.true = code.true.map(function(c) {
+                return parseInt(c, 10);
+              });
+              code.false = utils.array.flatten(code.false);
+              code.false = code.false.map(function(c) {
+                return parseInt(c, 10);
+              });
+              schema.parentData[schema.parentDataProperty] = code;
+              return true;
+            };
+          },
+          metaSchema: {
+            type: 'boolean',
+            enum: [true]
+          }
+        });
         action.tools.schema = {
           ajv: ajv,
           add: function(schema, name) {

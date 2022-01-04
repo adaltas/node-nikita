@@ -64,8 +64,7 @@ We might think about re-integrating them.
               exit 2
             fi
             """
-          code: 0
-          code_skipped: 3
+          code: [0, 3]
           # arch_chroot: config.arch_chroot
           # arch_chroot_rootdir: config.arch_chroot_rootdir
         log message: "Status for #{config.name} is #{if $status then 'started' else 'stoped'}", level: 'INFO'

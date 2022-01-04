@@ -31,7 +31,7 @@ runner
         nvm install node
         '''
         trap: true
-        code_skipped: 42
+        code: [0, 42]
       await @lxc.exec
         $header: 'SSH keys'
         container: config.container

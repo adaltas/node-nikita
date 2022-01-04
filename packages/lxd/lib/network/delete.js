@@ -39,7 +39,7 @@ handler = async function({config}) {
   return (await this.execute({
     command: `lxc network list --format csv | grep ${config.network} || exit 42
 ${['lxc', 'network', 'delete', config.network].join(' ')}`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

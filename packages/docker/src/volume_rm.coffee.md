@@ -40,8 +40,7 @@ console.info(`Volume was removed: ${$status}`)
       throw Error "Missing required option name" unless config.name
       await @docker.tools.execute
         command: "volume rm #{config.name}"
-        code: 0
-        code_skipped: 1
+        code: [0, 1]
 
 ## Exports
 

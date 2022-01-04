@@ -18,19 +18,39 @@
 var definitions, handler, on_action, utils;
 
 on_action = function({config}) {
+  // Command is required but let the schema throw an error
   if (!config.command) {
     return;
+  }
+  if (typeof config.command === 'string') {
+    config.command = [config.command];
   }
   // Always normalise quorum as an integer
   if (config.quorum && config.quorum === true) {
     return config.quorum = Math.ceil((config.command.length + 1) / 2);
   } else if (config.quorum == null) {
-    if (typeof config.command === 'string') {
-      config.command = [config.command];
-    }
     return config.quorum = config.command.length;
   }
 };
+
+// # Code normalization
+// # Note, code imported from execute
+// if typeof config.code is 'undefined'
+//   config.code = 0
+// if typeof config.code is 'number'
+//   config.code = [config.code]
+// else if typeof config.code is 'string'
+//   config.code = config.code.split ' '
+// if Array.isArray config.code
+//   [t, f...] = config.code
+//   config.code = true: t, false: f
+// if config.code isnt null
+//   config.code.true ?= []
+//   config.code.true = [config.code.true] unless Array.isArray config.code.true
+//   config.code.false ?= []
+//   config.code.false = [config.code.false] unless Array.isArray config.code.false
+// config.code.true = utils.array.flatten config.code.true
+// config.code.false = utils.array.flatten config.code.false
 
 // ## Schema definitions
 definitions = {
@@ -51,25 +71,12 @@ definitions = {
       'interval': {
         type: 'integer',
         default: 2000,
-        description: `Time interval between which we should wait before re-executing the
-command, default to 2s.`
+        description: `Time interval in milliseconds between which we should wait before
+re-executing the command, default to 2s.`
       },
       'code': {
-        type: 'array',
-        items: {
-          type: 'integer'
-        },
-        description: `Expected exit code to recieve to exit and call the user callback,
-default to "0".`
-      },
-      'code_skipped': {
-        type: 'array',
-        items: {
-          type: 'integer'
-        },
-        // default: [1]
-        description: `Expected code to be returned when the command failed and should be
-scheduled for later execution, default to "1".`
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code',
+        default: {}
       },
       'retry': {
         type: 'integer',
@@ -119,17 +126,16 @@ handler = async function({
         $status: success
       } = (await this.execute({
         command: command,
-        code: config.code || 0,
-        code_skipped: config.code_skipped,
+        code: config.code,
         stdin_log: config.stdin_log,
         stdout_log: config.stdout_log,
         stderr_log: config.stderr_log,
-        $relax: config.code_skipped === void 0
+        $relax: config.code.false.length === 0
       })));
       return !success;
     }));
     log({
-      message: `Attempt #${attempts} expect ${config.quorum} success, got ${config.command.length - commands.length}`,
+      message: `Attempt #${attempts}, expect ${config.quorum} success to reach the quorum, got ${config.command.length - commands.length}`,
       level: 'INFO'
     });
     if (commands.length <= config.command.length - config.quorum) {

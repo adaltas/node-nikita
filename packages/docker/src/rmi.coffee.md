@@ -50,7 +50,7 @@ force options is set.
           "| grep '#{config.image} '"
           "| grep ' #{config.tag} '" if config.tag?
         ].join ' '
-        code_skipped: [1]
+        code: [0, 1]
       await @docker.tools.execute
         $if: ({parent}) ->
           parent.parent.tools.status -1

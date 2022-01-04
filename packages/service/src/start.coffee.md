@@ -53,7 +53,7 @@ console.info(`Service was started: ${$status}`)
             exit 2
           fi
           """
-          code_skipped: 3
+          code: [0, 3]
           # arch_chroot: config.arch_chroot
           # rootdir: config.rootdir
         log message: "Service is started", level: 'INFO' if $status

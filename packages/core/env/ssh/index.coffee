@@ -49,7 +49,7 @@ runner
         user: '1234'
         shell: 'bash'
         trap: true
-        code_skipped: 42
+        code: [0, 42]
       await @lxc.exec
         $header: 'User `target`'
         container: config.container

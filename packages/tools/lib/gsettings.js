@@ -49,7 +49,7 @@ handler = async function({config}) {
         value = properties[key];
         results1.push((await this.execute(`gsettings get ${path} ${key} | grep -x "${value}" && exit 3
 gsettings set ${path} ${key} "${value}"`, {
-          code_skipped: 3
+          code: [0, 3]
         })));
       }
       return results1;

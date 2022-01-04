@@ -51,7 +51,7 @@ handler = async function({config}) {
   var $status;
   ({$status} = (await this.docker.tools.execute({
     command: `ps | egrep ' ${config.container}$' | grep 'Up'`,
-    code_skipped: 1
+    code: [0, 1]
   })));
   return (await this.docker.tools.execute({
     $if: $status,

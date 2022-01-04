@@ -69,7 +69,7 @@ handler = async function({config}) {
     // because there is no native way to list all existing tags on the registry
     $unless: config.all,
     command: ['images', `| grep '${config.image}'`, `| grep '${config.tag}'`].join(' '),
-    code_skipped: 1
+    code: [0, 1]
   })));
   // Pull image
   return (await this.docker.tools.execute({

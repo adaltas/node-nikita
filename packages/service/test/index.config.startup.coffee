@@ -67,7 +67,7 @@ describe 'service#config.startup', ->
         $ssh: ssh
       , ->
         # Note, `-v` flag differ between bash (exit code 1) and sh (exit code 127)
-        {$status} = await @execute 'command -v chkconfig', code_skipped: 127, $relax: true
+        {$status} = await @execute 'command -v chkconfig', code: [0, 127], $relax: true
         return unless $status
         @service.remove
           name: service.name

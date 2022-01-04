@@ -67,7 +67,7 @@ console.info(`Image was pulled: ${$status}`)
           "| grep '#{config.image}'"
           "| grep '#{config.tag}'"
         ].join ' '
-        code_skipped: 1
+        code: [0, 1]
       # Pull image
       await @docker.tools.execute
         $unless: $status

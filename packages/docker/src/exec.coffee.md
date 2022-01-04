@@ -30,11 +30,9 @@ console.info(`Command was executed: ${$status}`)
       config:
         type: 'object'
         properties:
-          'code_skipped':
-            type: 'array', items: type: 'integer'
-            description: '''
-            The exit code(s) to skip.
-            '''
+          'code':
+            $ref: 'module://@nikitajs/core/src/actions/execute#/definitions/config/properties/code'
+            default: {}
           'container':
             type: 'string'
             description: '''
@@ -70,7 +68,7 @@ console.info(`Command was executed: ${$status}`)
       # delete config.command
       await @docker.tools.execute
         command: command
-        code_skipped: config.code_skipped
+        code: config.code
 
 ## Exports
 

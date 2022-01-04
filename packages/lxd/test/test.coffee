@@ -42,4 +42,4 @@ they 'cache vm image to avoid timeout later', ({ssh}) ->
     echo "" | lxc init images:#{config.images.alpine} vm1 --vm
     lxc rm -f vm1
     """
-    code_skipped: 42
+    code: [0, 42]

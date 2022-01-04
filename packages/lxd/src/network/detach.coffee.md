@@ -48,7 +48,7 @@ console.info(`Network was detached: ${$status}`)
            config.container
         ].join ' '}
         """
-        code_skipped: 42
+        code: [0, 42]
 
 ## Exports
 

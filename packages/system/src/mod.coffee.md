@@ -81,14 +81,14 @@ nikita.system.mod({
           lsmod | grep #{module} && exit 3
           modprobe #{module}
           """
-          code_skipped: 3
+          code: [0, 3]
         await @execute
           $if: config.load and not active
           command: """
           lsmod | grep #{module} || exit 3
           modprobe -r #{module}
           """
-          code_skipped: 3
+          code: [0, 3]
         await @file
           $if: config.persist
           target: target

@@ -42,7 +42,7 @@ you are a member of the "wheel" group (gid of "10") with the command
     handler = ({metadata, config}) ->
       @execute
         command: "groupdel #{config.name}"
-        code_skipped: 6
+        code: [0, 6]
 
 ## Exports
 

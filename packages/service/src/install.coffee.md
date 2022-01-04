@@ -33,10 +33,10 @@ console.info(`Package installed: ${$status}`)
             description: '''
             Run the yum command entirely from system cache, don't update cache.
             '''
-          'code_skipped':
-            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code_skipped'
+          'code':
+            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code'
             description: '''
-            Error code to skip when using nikita.service.
+            Error code applied when using nikita.service.
             '''
           'installed':
             type: 'array', items: type: 'string'
@@ -120,7 +120,7 @@ console.info(`Package installed: ${$status}`)
               exit 2
             fi
             """
-            code_skipped: 1
+            code: [0, 1]
             # arch_chroot: config.arch_chroot
             # arch_chroot_rootdir: config.arch_chroot_rootdir
             stdin_log: false
@@ -147,7 +147,7 @@ console.info(`Package installed: ${$status}`)
               exit 2
             fi
             """
-            code_skipped: 1
+            code: [0, 1]
             # arch_chroot: config.arch_chroot
             # arch_chroot_rootdir: config.arch_chroot_rootdir
             stdin_log: false
@@ -179,7 +179,7 @@ console.info(`Package installed: ${$status}`)
               exit 2
             fi
             """
-            code_skipped: config.code_skipped
+            code: config.code
             # arch_chroot: config.arch_chroot
             # arch_chroot_rootdir: config.arch_chroot_rootdir
           log if $status

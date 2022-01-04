@@ -70,7 +70,7 @@ handler = async function({
     config,
     tools: {find, log}
   }) {
-  var $status, clean_target, containers, k, ref, stdout, v;
+  var $status, clean_target, containers, err, k, ref, stdout, v;
   // Global config
   config.docker = (await find(function({
       config: {docker}
@@ -94,6 +94,15 @@ handler = async function({
     }
     clean_target = true;
   }
+  if (config.compose_env == null) {
+    config.compose_env = [];
+  }
+  if (config.compose_env.length && (config.target_env == null)) {
+    if (config.target_env == null) {
+      config.target_env = `/tmp/nikita_docker_compose_${Date.now()}/.env`;
+    }
+    clean_target = true;
+  }
   if (config.recreate == null) {
     config.recreate = false; // TODO: move to schema
   }
@@ -105,10 +114,22 @@ handler = async function({
   }
   await this.file.yaml({
     $if: config.content != null,
-    eof: config.eof,
     backup: config.backup,
-    target: config.target,
-    content: config.content
+    content: config.content,
+    eof: config.eof,
+    target: config.target
+  });
+  await this.file({
+    $if: config.compose_env.length,
+    backup: config.backup,
+    // If compose_env is an object
+    // content: Object.keys(config.compose_env)
+    //   .map( (key) => "#{key}=#{config.compose_env[key]}")
+    //   .join('\n')
+    // If compose_env is an array
+    content: config.compose_env.join('\n'),
+    eof: config.eof,
+    target: config.target_env
   });
   ({$status, stdout} = (await this.docker.tools.execute({
     $shy: true,
@@ -116,7 +137,7 @@ handler = async function({
     compose: true,
     cwd: config.cwd,
     uid: config.uid,
-    code_skipped: 123,
+    code: [0, 123],
     stdout_log: false
   })));
   if (!$status) {
@@ -138,10 +159,17 @@ handler = async function({
       cwd: path.dirname(config.target),
       uid: config.uid
     }));
+  } catch (error) {
+    err = error;
+    throw err;
   } finally {
     await this.fs.remove({
       $if: clean_target,
       target: config.target
+    });
+    await this.fs.remove({
+      $if: clean_target && config.target_env,
+      target: config.target_env
     });
   }
 };

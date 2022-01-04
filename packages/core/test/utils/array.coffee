@@ -17,6 +17,7 @@ describe 'utils.array', ->
     flatten([['a',['b']], [['c', ['d']]], ['e']], -1).should.eql ['a', 'b', 'c', 'd', 'e']
     flatten([['a',['b']], [['c', ['d']]], ['e']], 0).should.eql ['a', ['b'], ['c', ['d']], 'e']
     flatten([['a',['b']], [['c', ['d']]], ['e']], 1).should.eql ['a', 'b', 'c', ['d'], 'e']
+    flatten([[0]]).should.eql([0])
 
   it 'intersect', ->
     intersect(['a', 'c', 'd'], ['e', 'd', 'c']).should.eql ['c', 'd']

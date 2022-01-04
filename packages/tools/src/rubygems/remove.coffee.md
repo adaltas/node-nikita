@@ -62,7 +62,7 @@ uninstall -i /usr/share/gems json"
         #{config.gem_bin} list -i #{config.name} || exit 3
         #{config.gem_bin} uninstall #{config.name} #{version}
         """
-        code_skipped: 3
+        code: [0, 3]
         bash: config.bash
 
 ## Exports

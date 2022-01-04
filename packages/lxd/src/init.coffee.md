@@ -110,7 +110,7 @@ now.
         lxc info #{config.container} >/dev/null && exit 42
         echo '' | #{command_init}
         """
-        code_skipped: 42
+        code: [0, 42]
       await @lxc.start
         $if: config.start
         container: config.container

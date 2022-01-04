@@ -37,7 +37,7 @@ handler = async function({config}) {
   return (await this.execute({
     command: `lxc info ${config.container} > /dev/null || exit 42
 ${['lxc', 'delete', config.container, config.force ? "--force" : void 0].join(' ')}`,
-    code_skipped: 42
+    code: [0, 42]
   }));
 };
 

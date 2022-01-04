@@ -92,13 +92,13 @@ handler = async function({metadata, config}) {
       $if: config.load && active,
       command: `lsmod | grep ${module} && exit 3
 modprobe ${module}`,
-      code_skipped: 3
+      code: [0, 3]
     });
     await this.execute({
       $if: config.load && !active,
       command: `lsmod | grep ${module} || exit 3
 modprobe -r ${module}`,
-      code_skipped: 3
+      code: [0, 3]
     });
     await this.file({
       $if: config.persist,

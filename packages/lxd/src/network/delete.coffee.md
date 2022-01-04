@@ -44,7 +44,7 @@ console.info(`Network was deleted: ${$status}`)
            config.network
         ].join ' '}
         """
-        code_skipped: 42
+        code: [0, 42]
 
 ## Exports
 

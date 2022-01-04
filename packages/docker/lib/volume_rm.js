@@ -45,8 +45,7 @@ handler = async function({config}) {
   }
   return (await this.docker.tools.execute({
     command: `volume rm ${config.name}`,
-    code: 0,
-    code_skipped: 1
+    code: [0, 1]
   }));
 };
 

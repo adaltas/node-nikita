@@ -49,7 +49,7 @@ handler = async function({config}) {
   await this.execute({
     command: `lxc list -c ns --format csv | grep '${config.container},STOPPED' && exit 42
 lxc stop ${config.container}`,
-    code_skipped: 42
+    code: [0, 42]
   });
   if (config.wait) {
     await this.execute.wait({

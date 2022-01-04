@@ -48,7 +48,7 @@ handler = async function({config}) {
   // - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
   return (await this.db.query(config, {
     command: `DROP DATABASE IF EXISTS ${config.database};`,
-    code_skipped: 2,
+    code: [, 2],
     database: null
   }));
 };

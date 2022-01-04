@@ -74,7 +74,7 @@ describe 'actions.execute', ->
       data.should.containEql search1
       data.should.containEql search2
 
-    they 'stdout and stderr return empty on command error', ({ssh}) -> #.skip 'remote',
+    they 'stdout and stderr return empty on command error', ({ssh}) ->
       nikita
         $ssh: ssh
       .execute
@@ -83,80 +83,6 @@ describe 'actions.execute', ->
       .should.be.finally.containEql
         stdout: ''
         stderr: ''
-
-  describe 'code', ->
-
-    they 'valid exit code', ({ssh}) ->
-      nikita $ssh: ssh, ->
-        @execute
-          command: "exit 42"
-          code: [42, 43]
-        .should.be.resolved()
-
-    they 'invalid exit code with default', ({ssh}) ->
-      nikita.execute
-        command: "exit 42"
-        $ssh: ssh
-      .should.be.rejectedWith [
-        'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
-        'an unexpected exit code was encountered,'
-        'command is "exit 42",'
-        'got 42 instead of 0.'
-      ].join ' '
-
-    they 'invalid exit code unmatching provided codes', ({ssh}) ->
-      nikita.execute
-        command: "exit 42"
-        code: [1,2,3]
-        $ssh: ssh
-      .should.be.rejectedWith [
-        'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
-        'an unexpected exit code was encountered,'
-        'command is "exit 42",'
-        'got 42 while expecting one of [1,2,3].'
-      ].join ' '
-
-    they 'should honor code skipped', ({ssh}) ->
-      nikita $ssh: ssh, ->
-        @execute
-          command: "exit 42"
-          code_skipped: 42
-        .should.be.finally.containEql $status: false
-        @execute
-          command: "exit 42"
-          code_skipped: [42,43]
-        .should.be.finally.containEql $status: false
-    
-    they 'log error', ({ssh}) ->
-      logs = []
-      nikita $ssh: ssh, ->
-        @execute
-          $log: ({log}) ->
-            return unless log.type is 'text'
-            logs.push log
-          command: "exit 1"
-        .then -> throw Error 'Oh no'
-        .catch ->
-          logs.should.match [
-            level: 'ERROR'
-            message: 'An unexpected exit code was encountered, got `1`'
-          ]
-      
-    they 'log error with metadata.relax', ({ssh}) ->
-      logs = []
-      nikita $ssh: ssh, ->
-        @execute
-          $log: ({log}) ->
-            return unless log.type is 'text'
-            logs.push log
-          $relax: true
-          command: "exit 1"
-        .then -> throw Error 'Oh no'
-        .catch ->
-          logs.should.match [
-            level: 'INFO'
-            message: 'An unexpected exit code was encountered in relax mode, got `1`'
-          ]
 
   describe 'trim', ->
 
@@ -252,7 +178,7 @@ describe 'actions.execute', ->
           message: [
             'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered,'
             'command is "sh -c \'>&2 echo \\"Some Error\\"; exit 2\'",'
-            'got 2 instead of 0.'
+            'got 2 instead of {"true":[0],"false":[]}.'
           ].join ' '
           command: 'sh -c \'>&2 echo "Some Error"; exit 2\''
           exit_code: 2

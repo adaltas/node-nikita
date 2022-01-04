@@ -39,7 +39,7 @@ console.info(`Container was started: ${$status}`)
         lxc list -c ns --format csv | grep '#{config.container},RUNNING' && exit 42
         #{command_init}
         """
-        code_skipped: 42
+        code: [0, 42]
 
 ## Exports
 
