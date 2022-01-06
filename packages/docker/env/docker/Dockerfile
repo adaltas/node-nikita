@@ -1,30 +1,34 @@
-FROM centos:7
+FROM ubuntu:focal
 MAINTAINER David Worms
 
 # Install Node.js
-ENV NODE_VERSION 14.15.2
-RUN yum install -y xz \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
-  && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
+# ping used in compose test
+ENV NODE_VERSION stable
+RUN \
+     apt update -y \
+  && apt install -y build-essential curl git iputils-ping \
+  && curl -L https://git.io/n-install | bash -s -- -y \
+  && /root/n/bin/n $NODE_VERSION
 
 # Install SSH
-RUN yum install -y openssh-server openssh-clients \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y openssh-server \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
-  && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
+  && ssh-keygen -A \
+  && mkdir -p /run/sshd
 
-# Install docker
-RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-RUN yum install -y docker-ce
-RUN curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-RUN chmod +x /usr/local/bin/docker-compose
-
-RUN yum clean all
+# Install Docker
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+  && apt-get update \
+  && apt-get install docker-ce-cli \
+  && mkdir -p ~/.docker/cli-plugins/ \
+  && curl -SL https://github.com/docker/compose/releases/download/v2.0.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose \
+  && chmod +x ~/.docker/cli-plugins/docker-compose
 
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/docker
-ENV TERM xterm # Color output in TTY
+# ENV TERM xterm # Break the shell
 
 ENTRYPOINT ["/entrypoint.sh"]
