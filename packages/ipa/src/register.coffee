@@ -18,6 +18,7 @@ module.exports =
       del: '@nikitajs/ipa/src/user/del'
       exists: '@nikitajs/ipa/src/user/exists'
       show: '@nikitajs/ipa/src/user/show'
+      status: '@nikitajs/ipa/src/user/status'
     service:
       '': '@nikitajs/ipa/src/service'
       del: '@nikitajs/ipa/src/service/del'

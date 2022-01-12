@@ -35,6 +35,7 @@ multipass exec nikita -- lxc config set core.trust_password "secret"
 multipass exec nikita -- lxc config set images.remote_cache_expiry 30
 multipass exec nikita -- lxc config set images.auto_update_interval 24
 multipass exec nikita -- lxc config set images.auto_update_cached false
+# Fix "ipa ERROR [Errno 13] Permission denied" 
 multipass exec nikita -- sudo sh -c "echo 'fs.protected_regular = 0' >> /etc/sysctl.conf && sysctl -p"
 
 IP=`multipass info nikita --format json | jq -r '.info.nikita.ipv4[0]'`
