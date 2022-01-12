@@ -14,9 +14,10 @@ module.exports =
       show: '@nikitajs/ipa/src/group/show'
     user:
       '': '@nikitajs/ipa/src/user'
-      find: '@nikitajs/ipa/src/user/find'
+      disable: '@nikitajs/ipa/src/user/disable'
       del: '@nikitajs/ipa/src/user/del'
       exists: '@nikitajs/ipa/src/user/exists'
+      find: '@nikitajs/ipa/src/user/find'
       show: '@nikitajs/ipa/src/user/show'
       status: '@nikitajs/ipa/src/user/status'
     service:
