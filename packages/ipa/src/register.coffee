@@ -16,6 +16,7 @@ module.exports =
       '': '@nikitajs/ipa/src/user'
       disable: '@nikitajs/ipa/src/user/disable'
       del: '@nikitajs/ipa/src/user/del'
+      enable: '@nikitajs/ipa/src/user/enable'
       exists: '@nikitajs/ipa/src/user/exists'
       find: '@nikitajs/ipa/src/user/find'
       show: '@nikitajs/ipa/src/user/show'
