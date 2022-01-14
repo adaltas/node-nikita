@@ -46,7 +46,7 @@
     "@nikitajs/log": "^1.0.0-alpha.2",
     "js-yaml": "^4.1.0",
     "object-diff": "^0.0.4",
-    "shell": "^0.8.5"
+    "shell": "^0.8.6"
   },
   "peerDependencies": {
     "@nikitajs/core": "^1.0.0-alpha.1"
