@@ -117,7 +117,7 @@ nikita.fs.assert({
 
 ## Handler
 
-    handler = ({config}) ->
+    handler = ({config, metadata}) ->
       config.filetype = for filetype in config.filetype or []
         continue unless filetype
         if typeof filetype is 'string'
