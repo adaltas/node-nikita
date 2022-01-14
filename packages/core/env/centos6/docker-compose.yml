@@ -1,8 +1,4 @@
 
-# TODO: implement variable substitution once default value is implemented
-# see https://github.com/docker/compose/issues/2441
-
-version: '3'
 services:
   nodejs:
     build: .
