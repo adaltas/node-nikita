@@ -5,7 +5,7 @@ they = require('mocha-they')(config)
 
 describe 'plugins.execute', ->
   return unless tags.api
-  
+
   describe 'usage', ->
 
     it 'supported properties', ->
@@ -26,9 +26,9 @@ describe 'plugins.execute', ->
       config.env.should.containEql key: 'value'
       config.env_export.should.eql true
       config.sudo.should.eql true
-  
+
   describe 'env', ->
-    
+
     they 'merge parent metadata with config', ({ssh}) ->
       nikita
         ssh: ssh
@@ -41,11 +41,14 @@ describe 'plugins.execute', ->
         env.should.eql
           NIKITA_PROCESS_ENV_1: '1'
           NIKITA_PROCESS_ENV_2: '2'
-    
+
     they 'process.env disabled if some env are provided', ({ssh}) ->
       nikita
         ssh: ssh
-        $env: 'NIKITA_PROCESS_ENV': '1'
+        $env:
+          # PATH required on NixOS, or env won't be avaiable
+          'PATH': process.env['PATH']
+          'NIKITA_PROCESS_ENV': '1'
       , ->
         process.env['NIKITA_PROCESS_ENV'] = '1'
         {stdout} = await @execute
@@ -54,7 +57,3 @@ describe 'plugins.execute', ->
           stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
         else # But not in remote mode
           stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
-            
-      
-
-        
