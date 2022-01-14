@@ -39,7 +39,7 @@ module.exports =
           when 'boolean'
             tools.path.resolve os_tmpdir, 'nikita-'+metadata.uuid
           when 'function'
-            metadata.tmpdir = await metadata.tmpdir.call null,
+            await metadata.tmpdir.call null,
               action: action
               os_tmpdir: os_tmpdir
               tmpdir: 'nikita-'+metadata.uuid

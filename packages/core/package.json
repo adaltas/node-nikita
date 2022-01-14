@@ -74,7 +74,7 @@
     "self-templated": "^0.2.2",
     "semver": "^7.3.5",
     "ssh2-connect": "^3.1.0",
-    "ssh2-exec": "^0.7.0",
+    "ssh2-exec": "^0.7.2",
     "ssh2-fs": "^1.0.6",
     "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",

@@ -22,11 +22,12 @@ describe 'actions.execute.config.arch_linux', ->
           '#/dependencies/arch_chroot/required config must have required property \'arch_chroot_rootdir\'.'
         ].join ' '
   
-  describe 'usage', ->
+  describe 'usage with sudo', ->
 
     they 'target as string', ({ssh}) ->
       nikita
         $ssh: ssh
+        $sudo: true
       , ->
         await @execute
           command: "mount --bind /var/tmp/root.x86_64 /mnt"
@@ -42,6 +43,11 @@ describe 'actions.execute.config.arch_linux', ->
             target: '/root/my_script'
             command: "cat /root/hello"
           stdout.should.eql 'you'
+          # Make sure tmpdir is disposed
+          await @fs.assert
+            $templated: true
+            target: "{{sibling.metadata.tmpdir}}"
+            not: true
         catch err
           throw err
         finally

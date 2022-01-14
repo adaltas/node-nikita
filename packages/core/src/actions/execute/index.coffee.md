@@ -118,14 +118,47 @@ console.info(stdout)
       handler: ({config, metadata, ssh, tools: {find, path, walk}}) ->
         config.env ?= if not ssh and not config.env then process.env else {}
         env_export = if config.env_export? then config.env_export else !!ssh
-        if config.sudo or config.bash or (env_export and Object.keys(config.env).length)
-          metadata.tmpdir ?= true
-        else if config.arch_chroot_rootdir
+        if config.arch_chroot_rootdir
+          # # Disable tmpdir, it is specifically managed in the handler
+          # metadata.tmpdir = true
           metadata.tmpdir ?= ({os_tmpdir, tmpdir}) ->
+            current_username =
+              if ssh then ssh.config.username
+              else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
+              else process.env['USER']
             # Note, Arch mount `/tmp` with tmpfs in memory
             # placing a file in the host fs will not expose it inside of chroot
             config.arch_chroot_tmpdir = path.join '/opt', tmpdir
-            path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
+            tmpdir = path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
+            command = [
+              "mkdir #{tmpdir}"
+              "chmod 777 #{tmpdir}"
+            ].map (command) ->
+              if current_username is 'root'
+              then command
+              else "sudo #{command}" 
+            .join ' && '
+            await execProm ssh, command
+            tmpdir
+        else if config.sudo or config.bash or (env_export and Object.keys(config.env).length)
+          metadata.tmpdir ?= true
+      
+    on_result =
+      before: '@nikitajs/core/src/plugins/ssh'
+      handler: ({action: {config, metadata, ssh}}) ->
+        return unless config.arch_chroot_rootdir
+        current_username =
+          if ssh then ssh.config.username
+          else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
+          else process.env['USER']
+        command = [
+          "rm -rf #{metadata.tmpdir}"
+        ].map (command) ->
+          if current_username is 'root'
+          then command
+          else "sudo #{command}" 
+        .join ' && '
+        await execProm ssh, command
 
 ## Schema definitions
 
@@ -405,22 +438,6 @@ console.info(stdout)
           mode: 0o500
           target: env_export_target
           uid: config.uid
-      # Write script
-      if config.bash
-        command = config.command
-        target = path.join metadata.tmpdir, utils.string.hash config.command if typeof target isnt 'string'
-        log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
-        config.command = "#{config.bash} #{target}"
-        config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
-        config.command += ";code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
-        await @fs.base.writeFile
-          $sudo: false
-          $arch_chroot: false
-          $arch_chroot_rootdir: false
-          content: command
-          mode: config.mode
-          target: target
-          uid: config.uid
       if config.arch_chroot
         # Note, with arch_chroot enabled, 
         # arch_chroot_rootdir `/mnt` gave birth to
@@ -439,6 +456,22 @@ console.info(stdout)
           target: "#{target}"
           content: "#{command}"
           mode: config.mode
+      # Write script
+      else if config.bash
+        command = config.command
+        target = path.join metadata.tmpdir, utils.string.hash config.command if typeof target isnt 'string'
+        log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
+        config.command = "#{config.bash} #{target}"
+        config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
+        config.command += ";code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
+        await @fs.base.writeFile
+          $sudo: false
+          $arch_chroot: false
+          $arch_chroot_rootdir: false
+          content: command
+          mode: config.mode
+          target: target
+          uid: config.uid
       if config.sudo
         config.command = "sudo #{config.command}"
       # Execute
@@ -538,6 +571,7 @@ console.info(stdout)
       handler: handler
       hooks:
         on_action: on_action
+        on_result: on_result
       metadata:
         argument_to_config: 'command'
         definitions: definitions
@@ -545,5 +579,7 @@ console.info(stdout)
 ## Dependencies
 
     exec = require 'ssh2-exec'
+    execProm = require('ssh2-exec/promise')
+    fs = require 'ssh2-fs'
     yaml = require 'js-yaml'
     utils = require '../../utils'
