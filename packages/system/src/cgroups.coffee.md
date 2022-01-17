@@ -100,7 +100,7 @@ group bibi {
             type: 'string'
             description: '''
             The cgconfig configuration file. By default nikita detects provider
-            based on  os.
+            based on os.
             '''
         anyOf: [
           required: ['groups']
