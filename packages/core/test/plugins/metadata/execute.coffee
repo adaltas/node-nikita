@@ -10,7 +10,7 @@ describe 'plugins.execute', ->
 
     it 'supported properties', ->
       config = await nikita
-        $arch_chroot: true
+        $arch_chroot: false
         $arch_chroot_rootdir: '/tmp'
         $bash: true
         $dry: true
@@ -19,7 +19,7 @@ describe 'plugins.execute', ->
         $sudo: true
       , ->
         @execute 'fake cmd', ({config}) -> config
-      config.arch_chroot.should.eql true
+      config.arch_chroot.should.eql false
       config.arch_chroot_rootdir.should.eql '/tmp'
       config.bash.should.eql true
       config.dry.should.eql true
