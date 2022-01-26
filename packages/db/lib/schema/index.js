@@ -65,7 +65,7 @@ handler = async function({config}) {
   var $status, stderr;
   ({$status} = (await this.execute({
     $shy: true,
-    code: [, 2],
+    code: [0, 2],
     command: command(config, '\\dt')
   })));
   if (!$status) {
@@ -80,7 +80,7 @@ handler = async function({config}) {
     $if: config.owner != null,
     $unless_execute: command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
     command: command(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
-    code: [, 1]
+    code: [0, 1]
   })));
   if (/^ERROR:\s\srole.*does\snot\sexist/.test(stderr)) {
     throw Error(`Owner ${config.owner} does not exists`);
@@ -96,6 +96,5 @@ module.exports = {
   }
 };
 
-
-  // ## Dependencies
+// ## Dependencies
 ({command} = require('../query'));

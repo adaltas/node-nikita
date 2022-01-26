@@ -51,7 +51,7 @@ Create a user for the destination database.
       # - MariaDB: "ERROR 1049 (42000): Unknown database 'my_db'"
       await @db.query config,
         command: "DROP DATABASE IF EXISTS #{config.database};"
-        code: [, 2]
+        code: [0, 2]
         database: null
 
 ## Exports
