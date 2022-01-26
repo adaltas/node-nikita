@@ -8,8 +8,8 @@ RUN \
 # Install Node.js
 RUN pacman --noconfirm -S nodejs npm
 
-# Install SSH
-RUN pacman --noconfirm -S openssh \
+# Install SSH and sudo
+RUN pacman --noconfirm -S openssh sudo \
  && /usr/bin/ssh-keygen -A
 
 # Install arch-chroot
@@ -30,7 +30,6 @@ RUN useradd nikita -d /home/nikita \
  && mkdir -p /home/nikita \
  && chown nikita /home/nikita \
  && chmod 700 /home/nikita \
- && pacman --noconfirm -S sudo \
  && echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
 USER nikita
 
