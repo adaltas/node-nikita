@@ -14,6 +14,6 @@ services:
     image: mariadb:latest
     container_name: nikita_db_mariadb_db
     environment:
-      MYSQL_ROOT_PASSWORD: rootme
+      MARIADB_ROOT_PASSWORD: rootme
     expose:
       - "3306"
