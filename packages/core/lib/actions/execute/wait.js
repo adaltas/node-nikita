@@ -33,25 +33,6 @@ on_action = function({config}) {
   }
 };
 
-// # Code normalization
-// # Note, code imported from execute
-// if typeof config.code is 'undefined'
-//   config.code = 0
-// if typeof config.code is 'number'
-//   config.code = [config.code]
-// else if typeof config.code is 'string'
-//   config.code = config.code.split ' '
-// if Array.isArray config.code
-//   [t, f...] = config.code
-//   config.code = true: t, false: f
-// if config.code isnt null
-//   config.code.true ?= []
-//   config.code.true = [config.code.true] unless Array.isArray config.code.true
-//   config.code.false ?= []
-//   config.code.false = [config.code.false] unless Array.isArray config.code.false
-// config.code.true = utils.array.flatten config.code.true
-// config.code.false = utils.array.flatten config.code.false
-
 // ## Schema definitions
 definitions = {
   config: {

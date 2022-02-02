@@ -125,7 +125,7 @@ one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice',
 };
 
 // ## Handler
-handler = async function({config}) {
+handler = async function({config, metadata}) {
   var _hash, algo, data, err, exists, filetype, filter, hash, i, j, len, len1, ref, ref1, ref10, ref11, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, stats;
   config.filetype = (function() {
     var i, len, ref, results;

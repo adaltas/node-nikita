@@ -12,7 +12,10 @@ describe 'actions.execute.config.env_export', ->
       logs = []
       {stdout} = await @execute
         command: 'env'
-        env: 'MY_KEY': 'MY VALUE'
+        env:
+          # Required By NixOS to locate the `env` command
+          'PATH': process.env['PATH']
+          'MY_KEY': 'MY VALUE'
         env_export: true
         $log: ({log}) ->
           return unless log.type is 'text'
@@ -23,7 +26,10 @@ describe 'actions.execute.config.env_export', ->
   they 'env in parent action', ({ssh}) ->
     nikita
       $ssh: ssh
-      $env: 'MY_KEY': 'MY VALUE'
+      $env:
+        # Required By NixOS to locate the `env` command
+        'PATH': process.env['PATH']
+        'MY_KEY': 'MY VALUE'
     ,->
       @call ->
         logs = []
@@ -39,7 +45,10 @@ describe 'actions.execute.config.env_export', ->
   they 'env merged with parent action', ({ssh}) ->
     nikita
       $ssh: ssh
-      $env: 'MY_KEY_1': 'MY VALUE 1'
+      $env:
+        # Required By NixOS to locate the `env` command
+        'PATH': process.env['PATH']
+        'MY_KEY_1': 'MY VALUE 1'
     ,->
       @call
         $env: 'MY_KEY_2': 'MY VALUE 2'

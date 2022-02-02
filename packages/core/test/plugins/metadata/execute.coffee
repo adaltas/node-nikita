@@ -42,18 +42,16 @@ describe 'plugins.execute', ->
           NIKITA_PROCESS_ENV_1: '1'
           NIKITA_PROCESS_ENV_2: '2'
 
-    they 'process.env disabled if some env are provided', ({ssh}) ->
+    they 'process.env disabled if env is provided in parent', ({ssh}) ->
       nikita
         ssh: ssh
         $env:
-          # PATH required on NixOS, or env won't be avaiable
+          # Required By NixOS to locate the `env` command
           'PATH': process.env['PATH']
           'NIKITA_PROCESS_ENV': '1'
       , ->
-        process.env['NIKITA_PROCESS_ENV'] = '1'
+        process.env['NIKITA_INVALID_ENV'] = '1'
         {stdout} = await @execute
           command: 'env'
-        unless ssh # In local mode, default to process.env
-          stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
-        else # But not in remote mode
-          stdout.split('\n').includes('NIKITA_EXECUTE_ENV=1').should.be.false()
+        stdout.split('\n').includes('NIKITA_PROCESS_ENV=1').should.be.true()
+        stdout.split('\n').includes('NIKITA_INVALID_ENV=1').should.be.false()
