@@ -1,7 +1,6 @@
 FROM centos:7
 MAINTAINER David Worms
 
-
 RUN \
   # Install Node dependencies
   yum install -y git make && \

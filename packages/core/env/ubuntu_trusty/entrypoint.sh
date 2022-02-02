@@ -2,7 +2,7 @@
 set -e
 
 # Start ssh daemon
-/usr/sbin/sshd
+sudo /usr/sbin/sshd
 if test -t 0; then
   # We have TTY, so probably an interactive container...
   if [[ $@ ]]; then
@@ -15,7 +15,5 @@ if test -t 0; then
     /bin/bash
   fi
 else
-  # Detached mode
-  . ~/.bashrc
   npm run test:local
 fi
