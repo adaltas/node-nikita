@@ -6,9 +6,9 @@ they = require('mocha-they')(config)
 return unless tags.posix
 
 describe 'actions.fs.copy', ->
-  
+
   describe 'api', ->
-    
+
     it 'parent `true` leads to `{}`', ->
       nikita.fs.copy
         source: "a_source"
@@ -16,9 +16,9 @@ describe 'actions.fs.copy', ->
         parent: true
       , ({config}) ->
         config.parent.should.eql {}
-  
+
   describe 'options parent', ->
-    
+
     they 'create parent directory', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -31,7 +31,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/a_dir/a_file"
           content: 'hello'
-  
+
     they 'throw error if false', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -45,7 +45,7 @@ describe 'actions.fs.copy', ->
         # Error is thrown by fs.base.copy, no need to check on the message here
         .should.be.rejectedWith
           code: 'NIKITA_FS_COPY_TARGET_ENOENT'
-        
+
     they 'pass mode attribute', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -83,7 +83,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
         $status.should.be.false()
-  
+
     they 'into a directory', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -98,7 +98,7 @@ describe 'actions.fs.copy', ->
         $status.should.be.true()
         @fs.assert
           target: "#{tmpdir}/existing_dir/a_file"
-  
+
     they 'over an existing file', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -117,7 +117,7 @@ describe 'actions.fs.copy', ->
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
         $status.should.be.false()
-  
+
     they 'change permissions', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -146,7 +146,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/target_file"
           mode: 0o0755
-  
+
     they 'handle hidden files', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -161,7 +161,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/.a_copy"
           content: 'hello'
-  
+
     they 'set permissions', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -178,7 +178,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/a_target_file"
           mode: 0o0644
-  
+
     they 'preserve permissions', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -195,9 +195,9 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/a_target_file"
           mode: 0o0640
-  
+
   describe 'link', ->
-  
+
     they 'file into file', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -215,7 +215,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/dst_file"
           content: 'hello'
-  
+
     they 'file parent dir', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -234,10 +234,12 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/ln_file"
           content: 'hello'
-  
+
   describe 'directory', ->
-  
-    they 'should copy without slash at the end', ({ssh}) ->
+
+    they.only 'should copy without slash at the end', ({ssh}) ->
+      return if ssh
+      console.log ':;;;;;', 1
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -261,7 +263,7 @@ describe 'actions.fs.copy', ->
         $status.should.be.true()
         await @fs.assert "#{tmpdir}/target_2/source/a_dir/a_file"
         await @fs.assert "#{tmpdir}/target_2/source/a_file"
-  
+
     they 'should copy the files when dir end with slash', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -286,7 +288,7 @@ describe 'actions.fs.copy', ->
         $status.should.be.true()
         await @fs.assert "#{tmpdir}/target_2/a_dir/a_file"
         await @fs.assert "#{tmpdir}/target_2/a_file"
-  
+
     they 'should copy hidden files', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -309,7 +311,7 @@ describe 'actions.fs.copy', ->
           "#{tmpdir}/a_copy/.a_hidden_file"
           "#{tmpdir}/a_copy/a_file"
         ]
-  
+
     they 'set permissions', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -342,7 +344,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert
           target: "#{tmpdir}/a_target/a_dir/a_file"
           mode: 0o0700
-  
+
     they 'preserve permissions', ({ssh}) ->
       nikita
         $ssh: ssh

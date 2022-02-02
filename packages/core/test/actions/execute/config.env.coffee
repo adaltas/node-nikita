@@ -30,7 +30,7 @@ describe 'actions.execute.config.env', ->
       {stdout} = await @execute
         command: 'env'
         env:
-          # PATH required on NixOS, or env won't be avaiable
+          # Required By NixOS to locate the `env` command
           'PATH': process.env['PATH']
           'LANG': 'tv'
       stdout.split('\n').includes('LANG=tv').should.be.true()
@@ -39,7 +39,7 @@ describe 'actions.execute.config.env', ->
     nikita
       $ssh: ssh
       $env:
-        # PATH required on NixOS, or env won't be avaiable
+        # Required By NixOS to locate the `env` command
         'PATH': process.env['PATH']
         'LANG': 'tv'
     , ->

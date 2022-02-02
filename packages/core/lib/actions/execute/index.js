@@ -48,21 +48,6 @@
 // });
 // ```
 
-// When code is a string, it is splitted by spaces and then interpreted as an
-// array:
-
-// ```js
-// nikita.execute({
-//   code: '1 2 3',
-//   command: 'exit 1'
-// }, ({config}) => {
-//   assert.deepEqual(
-//     config.code,
-//     { true: [1], false: [2, 3] }
-//   );
-// });
-// ```
-
 // ## Output
 
 // * `$status`   
@@ -119,7 +104,7 @@
 // ```
 
 // ## Hooks
-var definitions, exec, handler, on_action, utils, yaml;
+var definitions, exec, execProm, fs, handler, on_action, on_result, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path'],
@@ -135,16 +120,50 @@ on_action = {
       config.env = !ssh && !config.env ? process.env : {};
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
-    if (config.sudo || config.bash || (env_export && Object.keys(config.env).length)) {
-      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
-    } else if (config.arch_chroot_rootdir) {
-      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = function({os_tmpdir, tmpdir}) {
+    if (config.arch_chroot_rootdir) {
+      // # Disable tmpdir, it is specifically managed in the handler
+      // metadata.tmpdir = true
+      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = async function({os_tmpdir, tmpdir}) {
+        var command, current_username;
+        current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
         // Note, Arch mount `/tmp` with tmpfs in memory
         // placing a file in the host fs will not expose it inside of chroot
         config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
-        return path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
+        tmpdir = path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
+        command = [`mkdir ${tmpdir}`, `chmod 777 ${tmpdir}`].map(function(command) {
+          if (current_username === 'root') {
+            return command;
+          } else {
+            return `sudo ${command}`;
+          }
+        }).join(' && ');
+        await execProm(ssh, command);
+        return tmpdir;
       };
+    } else if (config.sudo || config.bash || (env_export && Object.keys(config.env).length)) {
+      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
     }
+  }
+};
+
+on_result = {
+  before: '@nikitajs/core/lib/plugins/ssh',
+  handler: async function({
+      action: {config, metadata, ssh}
+    }) {
+    var command, current_username;
+    if (!config.arch_chroot_rootdir) {
+      return;
+    }
+    current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
+    command = [`rm -rf ${metadata.tmpdir}`].map(function(command) {
+      if (current_username === 'root') {
+        return command;
+      } else {
+        return `sudo ${command}`;
+      }
+    }).join(' && ');
+    return (await execProm(ssh, command));
   }
 };
 
@@ -469,33 +488,6 @@ handler = async function({
       uid: config.uid
     });
   }
-  // Write script
-  if (config.bash) {
-    command = config.command;
-    if (typeof target !== 'string') {
-      target = path.join(metadata.tmpdir, utils.string.hash(config.command));
-    }
-    log({
-      message: `Writing bash script to ${JSON.stringify(target)}`,
-      level: 'INFO'
-    });
-    config.command = `${config.bash} ${target}`;
-    if (config.uid) {
-      config.command = `su - ${config.uid} -c '${config.command}'`;
-    }
-    if (!config.dirty) {
-      config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
-    }
-    await this.fs.base.writeFile({
-      $sudo: false,
-      $arch_chroot: false,
-      $arch_chroot_rootdir: false,
-      content: command,
-      mode: config.mode,
-      target: target,
-      uid: config.uid
-    });
-  }
   if (config.arch_chroot) {
     // Note, with arch_chroot enabled, 
     // arch_chroot_rootdir `/mnt` gave birth to
@@ -519,6 +511,32 @@ handler = async function({
       target: `${target}`,
       content: `${command}`,
       mode: config.mode
+    });
+  // Write script
+  } else if (config.bash) {
+    command = config.command;
+    if (typeof target !== 'string') {
+      target = path.join(metadata.tmpdir, utils.string.hash(config.command));
+    }
+    log({
+      message: `Writing bash script to ${JSON.stringify(target)}`,
+      level: 'INFO'
+    });
+    config.command = `${config.bash} ${target}`;
+    if (config.uid) {
+      config.command = `su - ${config.uid} -c '${config.command}'`;
+    }
+    if (!config.dirty) {
+      config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
+    }
+    await this.fs.base.writeFile({
+      $sudo: false,
+      $arch_chroot: false,
+      $arch_chroot_rootdir: false,
+      content: command,
+      mode: config.mode,
+      target: target,
+      uid: config.uid
     });
   }
   if (config.sudo) {
@@ -689,7 +707,8 @@ handler = async function({
 module.exports = {
   handler: handler,
   hooks: {
-    on_action: on_action
+    on_action: on_action,
+    on_result: on_result
   },
   metadata: {
     argument_to_config: 'command',
@@ -699,6 +718,10 @@ module.exports = {
 
 // ## Dependencies
 exec = require('ssh2-exec');
+
+execProm = require('ssh2-exec/promise');
+
+fs = require('ssh2-fs');
 
 yaml = require('js-yaml');
 

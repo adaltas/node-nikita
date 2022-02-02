@@ -41,7 +41,7 @@ module.exports = {
             case 'boolean':
               return tools.path.resolve(os_tmpdir, 'nikita-' + metadata.uuid);
             case 'function':
-              return metadata.tmpdir = (await metadata.tmpdir.call(null, {
+              return (await metadata.tmpdir.call(null, {
                 action: action,
                 os_tmpdir: os_tmpdir,
                 tmpdir: 'nikita-' + metadata.uuid

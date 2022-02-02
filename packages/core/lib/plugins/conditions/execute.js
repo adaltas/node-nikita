@@ -61,7 +61,7 @@ handlers = {
         })));
         if (code.false.length && !code.false.includes(err.exit_code)) {
           // If `code.false` is present,
-          // use it instead of error to to disabled the action
+          // use it instead of error to disabled the action
           throw err;
         }
         final_run = false;
