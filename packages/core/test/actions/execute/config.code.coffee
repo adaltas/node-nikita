@@ -4,6 +4,7 @@ nikita = require '../../../src'
 they = require('mocha-they')(config)
 
 describe 'actions.execute.config.code', ->
+  return unless tags.posix
   
   describe 'normalization', ->
   
