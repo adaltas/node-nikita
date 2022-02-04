@@ -1,10 +1,21 @@
 
 services:
+  target:
+    build:
+      context: .
+      dockerfile: ./target/Dockerfile
+    image: nikita_core_centos6_target
+    container_name: nikita_core_centos6_target
+    platform: linux/amd64 # Required on Apple M1
   nodejs:
-    build: .
-    image: nikita_core_centos6
+    build:
+      context: .
+      dockerfile: ./nodejs/Dockerfile
+    image: nikita_core_centos6_nodejs
     container_name: nikita_core_centos6_nodejs
     platform: linux/amd64 # Required on Apple M1
+    depends_on:
+      - target
     volumes:
       - ../../../../:/nikita
     environment:
