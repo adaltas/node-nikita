@@ -237,9 +237,7 @@ describe 'actions.fs.copy', ->
 
   describe 'directory', ->
 
-    they.only 'should copy without slash at the end', ({ssh}) ->
-      return if ssh
-      console.log ':;;;;;', 1
+    they 'should copy without slash at the end', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true

@@ -35,6 +35,6 @@ describe 'session.plugins.on_normalize', ->
             handler.apply null, arguments
             throw Error 'catchme'
     # But we want it to be returned by level 1
-    .call (-> console.log 'oh no')
+    .call (-> throw Error 'oh no')
     .should.be.rejectedWith 'catchme'
         
