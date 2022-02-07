@@ -1,6 +1,5 @@
 
 {merge} = require 'mixme'
-session = require '../session'
 
 module.exports =
   name: '@nikitajs/core/src/plugins/execute'
