@@ -11,9 +11,10 @@ describe 'service.startup', ->
   
   describe 'startup', ->
 
-    they 'from service', ({ssh}) ->
+    they 'from service', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -38,9 +39,10 @@ describe 'service.startup', ->
           startup: false
         $status.should.be.false()
 
-    they 'string argument', ({ssh}) ->
+    they 'string argument', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
