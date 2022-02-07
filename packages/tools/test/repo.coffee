@@ -232,3 +232,27 @@ describe 'tools.repo', ->
       $status.should.be.false()
       await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
+  they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh}) ->
+    nikita
+      $ssh: ssh,
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @tools.repo
+        target: "/etc/yum.repos.d/jenkins.repo"
+        source: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+        gpg_dir: tmpdir
+        verify: true
+      .should.be.rejectedWith 'Missing gpgkey'
+  they 'Download config `gpg_key`', ({ssh}) ->
+    nikita
+      $ssh: ssh,
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      {$status} = await @tools.repo
+        target: "/etc/yum.repos.d/jenkins.repo"
+        source: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+        gpg_key: "https://pkg.jenkins.io/redhat/jenkins.io.key"
+        gpg_dir: tmpdir
+        verify: true
+      $status.should.be.true()
+      await @fs.assert "#{tmpdir}/jenkins.io.key"

@@ -37,6 +37,12 @@ console.info(`Repo was updated: ${$status}`)
             description: '''
             Directory storing GPG keys.
             '''
+          'gpg_key':
+            type: 'string'
+            description: '''
+            Import specified key into the gpg_dir specified, downloads
+            the file if it's an url.
+            '''
           'local':
             $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local'
             default: false
@@ -127,9 +133,10 @@ console.info(`Repo was updated: ${$status}`)
       keys = for name, section of data
         repoids.push name
         continue unless section.gpgcheck is '1'
-        throw Error 'Missing gpgkey' unless section.gpgkey?
+        throw Error 'Missing gpgkey' unless config.gpg_key or section.gpgkey?
         continue unless /^http(s)??:\/\//.test section.gpgkey
         section.gpgkey
+      keys.push config.gpg_key if config.gpg_key
       # Download GPG Keys
       if config.verify
         for key in keys
