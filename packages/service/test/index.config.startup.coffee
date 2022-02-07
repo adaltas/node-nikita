@@ -28,9 +28,10 @@ describe 'service#config.startup', ->
 
     @timeout 30000
 
-    they 'activate startup with boolean true', ({ssh}) ->
+    they 'activate startup with boolean true', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -45,9 +46,10 @@ describe 'service#config.startup', ->
           startup: true
         $status.should.be.false()
     
-    they 'activate startup with boolean false', ({ssh}) ->
+    they 'activate startup with boolean false', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -62,11 +64,16 @@ describe 'service#config.startup', ->
           startup: false
         $status.should.be.false()
 
-    they 'activate startup with string', ({ssh}) ->
+    they 'activate startup with string', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
-      , ->
+        $sudo: sudo
+        # Startup levels only apply to chkconfig
+        # Note, on CentOS 7, chkconfig is installed but Nikita wont use it
+        # if it detect systemctl
         # Note, `-v` flag differ between bash (exit code 1) and sh (exit code 127)
+        $if_exec: 'command -v chkconfig && ! command -v systemctl'
+      , ->
         {$status} = await @execute 'command -v chkconfig', code: [0, 127], $relax: true
         return unless $status
         @service.remove
@@ -81,25 +88,23 @@ describe 'service#config.startup', ->
           startup: '235'
         $status.should.be.false()
 
-    they 'detect change in startup', ({ssh}) ->
+    they 'detect change in startup level', ({ssh, sudo}) ->
       # Startup levels only apply to chkconfig
       # Note, on CentOS 7, chkconfig is installed but Nikita wont use it
       # if it detect systemctl
       nikita
         $ssh: ssh
+        $sudo: sudo
+        $if_exec: 'command -v chkconfig && ! command -v systemctl'
       , ->
-        try
-          await @execute '! command -v systemctl && command -v chkconfig'
-          @service.remove
-            name: service.name
-          {$status} = await @service
-            name: service.name
-            chk_name: service.chk_name
-            startup: '2345'
-          $status.should.be.true()
-          {$status} = await @service
-            chk_name: service.chk_name
-            startup: '2345'
-          $status.should.be.false()
-        catch err
-          return
+        @service.remove
+          name: service.name
+        {$status} = await @service
+          name: service.name
+          chk_name: service.chk_name
+          startup: '2345'
+        $status.should.be.true()
+        {$status} = await @service
+          chk_name: service.chk_name
+          startup: '2345'
+        $status.should.be.false()

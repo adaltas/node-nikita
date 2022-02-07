@@ -85,7 +85,7 @@ describe 'service.install arch', ->
   
   return unless tags.service_install_arch
   
-  they 'add pacman options', ({ssh}) ->
+  they 'add pacman options', ({ssh, sudo}) ->
     message = null
     nikita
       $ssh: ssh
@@ -100,7 +100,7 @@ describe 'service.install arch', ->
       @call ->
         message.should.containEql "pacman --noconfirm -S #{service.name} -u -y"
       
-  they 'add yaourt options', ({ssh}) ->
+  they 'add yaourt options', ({ssh, sudo}) ->
     message = null
     nikita
       $ssh: ssh
@@ -115,7 +115,7 @@ describe 'service.install arch', ->
       @call ->
         message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
       
-  they 'add yay options', ({ssh}) ->
+  they 'add yay options', ({ssh, sudo}) ->
     message = null
     nikita
       $ssh: ssh

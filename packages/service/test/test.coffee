@@ -14,11 +14,14 @@ config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
 module.exports = config
 
 nikita = require '@nikitajs/core/lib'
-they = require('mocha-they')(config.ssh)
+they = require('mocha-they')(config.config)
 
-they 'cache to avoid timeout later', ({ssh}) ->
-  @timeout 0
-  nikita($ssh: ssh).execute '''
+they 'cache to avoid timeout later', ({ssh, sudo}) ->
+  @timeout 50000
+  nikita(
+    $ssh: ssh
+    $sudo: sudo
+  ).execute '''
   if command -v yum; then
     yum update -y
     yum check-update -q
