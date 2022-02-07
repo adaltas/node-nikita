@@ -67,21 +67,34 @@ describe 'actions.execute.config.env_export', ->
         logs.length.should.eql 1
 
   they.skip 'dont write if someone did it', ({ssh}) ->
+    # Note, caching of generated env file would hard to implement
+    # It can't be inside execute with tempdir, the file is automatically
+    # disposed when the execute action is done
+    # It must be implemented as a plugin, written before first execute action
+    # and, in case execute doesn't defined any env properties,
+    # disposed by the parent action
+    # Note, env_export_hash is not yet returned by execute.
     nikita
       $ssh: ssh
-      $env: 'MY_KEY_1': 'MY VALUE 1'
+      $env:
+        # Required By NixOS to locate the `env` command
+        'PATH': process.env['PATH']
+        'MY_KEY_1': 'MY VALUE 1'
     , ({metadata: {tmpdir}}) ->
       @call
+        # Required By NixOS to locate the `env` command
+        'PATH': process.env['PATH']
         $env: 'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute
           command: 'env'
-          # env: 'MY_KEY_3': 'MY VALUE 3'
           env_export: true
-        console.log '111111env_export_hash', env_export_hash
+        # Check the env_export_hash value
       @call
-        $env: 'MY_KEY_2': 'MY VALUE 2'
+        $env:
+          'PATH': process.env['PATH']
+          'MY_KEY_2': 'MY VALUE 2'
       , ->
         logs = []
         {stdout, env_export_hash} = await @execute
@@ -90,6 +103,7 @@ describe 'actions.execute.config.env_export', ->
           $log: ({log}) ->
             return unless log.type is 'text'
             logs.push log.message if /^Writing env export/.test log.message
+        # Check the env_export_hash value shall be the same
         # stdout.split('\n').includes('MY_KEY_1=MY VALUE 1').should.be.true()
         # stdout.split('\n').includes('MY_KEY_2=MY VALUE 2').should.be.true()
         # stdout.split('\n').includes('MY_KEY_3=MY VALUE 3').should.be.true()

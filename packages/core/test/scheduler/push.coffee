@@ -34,10 +34,10 @@ describe 'scheduler.push', ->
     it.skip 'function', ->
       scheduler = schedule()
       # scheduler.push ->
-      #   console.log '1 called'
+      #   console.info '1 called'
       #   new Promise (resolve, reject) -> reject Error 1
       # scheduler.push ->
-      #   console.log '2 not called'
+      #   console.info '2 not called'
       #   new Promise (resolve, reject) -> reject Error 2
       # null
       (await Promise.allSettled [
