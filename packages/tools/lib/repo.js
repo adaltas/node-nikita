@@ -14,7 +14,7 @@
 // ```
 
 // ## Schema definitions
-var definitions, handler, utils;
+var definitions, handler, url, utils;
 
 definitions = {
   config: {
@@ -22,7 +22,7 @@ definitions = {
     properties: {
       'content': {
         type: ['string', 'object'],
-        description: `Content to write inside the file.`
+        description: `Content to write inside the repository definition file.`
       },
       'clean': {
         type: 'string',
@@ -35,9 +35,18 @@ path is resolved to the parent target directory which is
         default: '/etc/pki/rpm-gpg',
         description: `Directory storing GPG keys.`
       },
+      'gpg_key': {
+        type: 'string',
+        description: `Import specified key into the gpg_dir specified, downloads
+the file if it's an url.`
+      },
+      'local': {
+        $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local',
+        default: false
+      },
       'source': {
         type: 'string',
-        description: `The source file containing the repository`
+        description: `The source file containing the repository definition file.`
       },
       'target': {
         type: 'string',
@@ -71,9 +80,10 @@ and the filename is derivated from the url.`
 // ## Handler
 handler = async function({
     config,
+    ssh,
     tools: {log, path}
   }) {
-  var $status, data, file, files, i, key, keys, len, name, remote_files, repoids, section;
+  var $status, data, file, files, i, isFile, key, keys, len, name, remote_files, repoids, section;
   if (config.source != null) {
     // TODO wdavidw 180115, target should be mandatory and not default to the source filename
     if (config.target == null) {
@@ -108,26 +118,39 @@ handler = async function({
     })();
   }
   await this.fs.remove(remote_files);
-  // Download source
-  await this.file.download({
-    $if: config.source != null,
-    source: config.source,
-    target: config.target,
-    headers: config.headers,
-    md5: config.md5,
-    proxy: config.proxy,
-    location: config.location,
-    cache: false
-  });
-  // Write
-  await this.file.types.yum_repo({
-    $if: config.content != null,
-    content: config.content,
-    mode: config.mode,
-    uid: config.uid,
-    gid: config.gid,
-    target: config.target
-  });
+  // Use download unless we are over ssh, in such case,
+  // the source default to target host unless local is provided
+  isFile = config.source && url.parse(config.source).protocol === null;
+  if ((config.source != null) && (!isFile || (ssh != null) && (config.local != null))) {
+    await this.file.download({
+      cache: false,
+      gid: config.gid,
+      headers: config.headers,
+      location: config.location,
+      md5: config.md5,
+      mode: config.mode,
+      proxy: config.proxy,
+      source: config.source,
+      target: config.target,
+      uid: config.uid
+    });
+  } else if (config.source != null) {
+    await this.fs.copy({
+      gid: config.gid,
+      mode: config.mode,
+      source: config.source,
+      target: config.target,
+      uid: config.uid
+    });
+  } else if (config.content != null) {
+    await this.file.types.yum_repo({
+      content: config.content,
+      gid: config.gid,
+      mode: config.mode,
+      target: config.target,
+      uid: config.uid
+    });
+  }
   // Parse the definition file
   keys = [];
   log(`Read GPG keys from ${config.target}`, {
@@ -148,7 +171,7 @@ handler = async function({
       if (section.gpgcheck !== '1') {
         continue;
       }
-      if (section.gpgkey == null) {
+      if (!(config.gpg_key || (section.gpgkey != null))) {
         throw Error('Missing gpgkey');
       }
       if (!/^http(s)??:\/\//.test(section.gpgkey)) {
@@ -158,6 +181,9 @@ handler = async function({
     }
     return results;
   })();
+  if (config.gpg_key) {
+    keys.push(config.gpg_key);
+  }
   // Download GPG Keys
   if (config.verify) {
     for (i = 0, len = keys.length; i < len; i++) {
@@ -204,3 +230,5 @@ module.exports = {
 
 // ## Dependencies
 utils = require('@nikitajs/file/lib/utils');
+
+url = require('url');
