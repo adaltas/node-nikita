@@ -10,9 +10,10 @@ describe 'service.assert', ->
     @timeout 50000
     return unless tags.service_install
 
-    they 'succeed if package is installed', ({ssh}) ->
+    they 'succeed if package is installed', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -22,9 +23,10 @@ describe 'service.assert', ->
           name: service.name
           installed: true
 
-    they 'fail if package isnt installed', ({ssh}) ->
+    they 'fail if package isnt installed', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -39,9 +41,10 @@ describe 'service.assert', ->
     @timeout 50000
     return unless tags.service_systemctl
 
-    they 'succeed if service is started', ({ssh}) ->
+    they 'succeed if service is started', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -58,9 +61,10 @@ describe 'service.assert', ->
         .should.be.rejectedWith
           message: "Service Started: #{service.srv_name}"
 
-    they 'fail if service isnt started', ({ssh}) ->
+    they 'fail if service isnt started', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -82,9 +86,10 @@ describe 'service.assert', ->
     @timeout 50000
     return unless tags.service_systemctl
 
-    they 'succeed if service is started', ({ssh}) ->
+    they 'succeed if service is started', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name
@@ -101,9 +106,10 @@ describe 'service.assert', ->
         .should.be.rejectedWith
           message: "Service Stopped: #{service.srv_name}"
 
-    they 'fail if service isnt started', ({ssh}) ->
+    they 'fail if service isnt started', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @service.remove
           name: service.name

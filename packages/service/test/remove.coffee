@@ -9,9 +9,10 @@ describe 'service.remove', ->
   
   @timeout 20000
 
-  they 'new package', ({ssh}) ->
+  they 'new package', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       @service.install
         name: service.name

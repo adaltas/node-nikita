@@ -10,5 +10,3 @@ services:
       - ../../../../:/nikita
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/service/env/archlinux/test.coffee
-    cap_add:
-      - SYS_ADMIN # Required to use `mount`
