@@ -2,7 +2,7 @@
 set -e
 
 # Start ssh daemon
-/usr/sbin/sshd
+sudo /usr/sbin/sshd
 if test -t 0; then
   # We have TTY, so probably an interactive container...
   if [[ $@ ]]; then
