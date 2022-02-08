@@ -43,10 +43,10 @@ nikita
           name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
           'ipv4.address': '10.10.10.11'
       proxy:
-        ssh: listen: 'tcp:0.0.0.0:2201', connect: 'tcp:127.0.0.1:22'
+        ssh: listen: 'tcp:0.0.0.0:2201', connect: 'tcp:0.0.0.0:22'
       ssh: enabled: true
       user:
-        nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
+        nikita: sudo: true, authorized_keys: './assets/id_ed25519.pub'
     n2:
       image: 'images:centos/7'
       disk:
@@ -63,7 +63,7 @@ nikita
         ssh: listen: 'tcp:0.0.0.0:2202', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
       user:
-        nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
+        nikita: sudo: true, authorized_keys: './assets/id_ed25519.pub'
     n3:
       image: 'images:centos/7'
       disk:
@@ -80,11 +80,11 @@ nikita
         ssh: listen: 'tcp:0.0.0.0:2203', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
       user:
-        nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
+        nikita: sudo: true, authorized_keys: './assets/id_ed25519.pub'
   prevision: ({config}) ->
     await @tools.ssh.keygen
       $header: 'SSH key'
-      target: './assets/id_rsa'
+      target: './assets/id_ed25519'
       bits: 2048
       key_format: 'PEM'
       comment: 'nikita'
