@@ -5,6 +5,8 @@ path = require('path');
 
 nikita = require('@nikitajs/core/lib');
 
+require('@nikitajs/log/lib/register');
+
 require('@nikitajs/lxd/lib/register');
 
 require('@nikitajs/tools/lib/register');
@@ -168,11 +170,9 @@ nikita.log.cli({
 curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts`,
       trap: true,
-      code_skipped: 42
+      code: [0, 42]
     }));
   }
-});
-
 // @lxc.file.push
 //   debug: true
 //   header: 'Test configuration'
@@ -181,3 +181,8 @@ bash n lts`,
 //   uid: 'nikita'
 //   source: './test.coffee'
 //   target: '/nikita/packages/core/test.coffee'
+}).then(function() {
+  return console.log('ok');
+}, function(err) {
+  return console.log('err', err);
+});

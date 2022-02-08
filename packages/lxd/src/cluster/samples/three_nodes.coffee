@@ -1,6 +1,7 @@
 
 path = require 'path'
 nikita = require '@nikitajs/core/lib'
+require '@nikitajs/log/lib/register'
 require '@nikitajs/lxd/src/register'
 require '@nikitajs/tools/lib/register'
 
@@ -97,7 +98,7 @@ nikita
       bash n lts
       """
       trap: true
-      code_skipped: 42
+      code: [0, 42]
     # @lxc.file.push
     #   debug: true
     #   header: 'Test configuration'
@@ -106,3 +107,7 @@ nikita
     #   uid: 'nikita'
     #   source: './test.coffee'
     #   target: '/nikita/packages/core/test.coffee'
+.then ->
+  console.log 'ok'
+, (err) ->
+  console.log 'err', err
