@@ -284,7 +284,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             $shy: true
             target: stageDestination
       else if source_url.protocol not in protocols_http and not ssh
-        log message: "File Download without ssh (with or without cache)", level: 'DEBUG'
+        log message: "File Download without ssh (#{if config.cache then 'with' else 'no'} cache)", level: 'DEBUG'
         hash_source = hash_target = null
         {hash} = await @fs.hash target: config.source, algo: algo
         hash_source = hash
@@ -304,7 +304,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             source: config.source
             target: stageDestination
       else if source_url.protocol not in protocols_http and ssh
-        log message: "File Download with ssh (with or without cache)", level: 'DEBUG'
+        log message: "File Download with ssh (#{if config.cache then 'with' else 'no'} cache)", level: 'DEBUG'
         hash_source = hash_target = null
         {hash} = await @fs.hash
           $ssh: false
@@ -333,6 +333,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
             log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination}", level: 'INFO'
           catch err
             log message: "Downloaded local source #{JSON.stringify config.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR'
+            throw err
       log message: "Unstage downloaded file", level: 'DEBUG'
       unless match
         await @fs.move
