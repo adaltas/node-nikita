@@ -22,7 +22,7 @@ console.info(`Repo was updated: ${$status}`)
           'content':
             type: ['string', 'object']
             description: '''
-            Content to write inside the file.
+            Content to write inside the repository definition file.
             '''
           'clean':
             type: 'string'
@@ -37,10 +37,13 @@ console.info(`Repo was updated: ${$status}`)
             description: '''
             Directory storing GPG keys.
             '''
+          'local':
+            $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/local'
+            default: false
           'source':
             type: 'string'
             description: '''
-            The source file containing the repository
+            The source file containing the repository definition file.
             '''
           'target':
             type: 'string'
@@ -70,7 +73,7 @@ console.info(`Repo was updated: ${$status}`)
 
 ## Handler
 
-    handler = ({config, tools: {log, path}}) ->
+    handler = ({config, ssh, tools: {log, path}}) ->
       # TODO wdavidw 180115, target should be mandatory and not default to the source filename
       config.target ?= path.resolve "/etc/yum.repos.d", path.basename config.source if config.source?
       config.target = path.resolve '/etc/yum.repos.d', config.target
@@ -85,24 +88,39 @@ console.info(`Repo was updated: ${$status}`)
           continue if file is config.target
           file
       await @fs.remove remote_files
-      # Download source
-      await @file.download
-        $if: config.source?
-        source: config.source
-        target: config.target
-        headers: config.headers
-        md5: config.md5
-        proxy: config.proxy
-        location: config.location
-        cache: false
-      # Write
-      await @file.types.yum_repo
-        $if: config.content?
-        content: config.content
-        mode: config.mode
-        uid: config.uid
-        gid: config.gid
-        target: config.target
+      # # Note, nikita.file.download doesnt honors config.local like
+      # # nikita.file does, it could be interesting to implement it such as:
+      # # if ssh and config.source is a file and config.local then copy
+      # if ssh? and config.source? and config.local?
+      # Use download unless we are over ssh, in such case,
+      # the source default to target host unless local is provided
+      isFile = config.source and url.parse(config.source).protocol is null
+      if config.source? and (not isFile or ssh? and config.local?)
+        await @file.download
+          cache: false
+          gid: config.gid
+          headers: config.headers
+          location: config.location
+          md5: config.md5
+          mode: config.mode
+          proxy: config.proxy
+          source: config.source
+          target: config.target
+          uid: config.uid
+      else if config.source?
+        await @fs.copy
+          gid: config.gid
+          mode: config.mode
+          source: config.source
+          target: config.target
+          uid: config.uid
+      else if config.content?
+        await @file.types.yum_repo
+          content: config.content
+          gid: config.gid
+          mode: config.mode
+          target: config.target
+          uid: config.uid
       # Parse the definition file
       keys = []
       log "Read GPG keys from #{config.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
@@ -152,3 +170,4 @@ console.info(`Repo was updated: ${$status}`)
 ## Dependencies
 
     utils = require '@nikitajs/file/lib/utils'
+    url = require 'url'

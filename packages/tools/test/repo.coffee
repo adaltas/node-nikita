@@ -14,8 +14,9 @@ describe 'tools.repo', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/repo"
+      # Write a local file, tools.repo will download to the remote destination
       @file
+        $ssh: false
         target: "#{tmpdir}/CentOS.repo"
         content: """
         [base]
@@ -25,6 +26,7 @@ describe 'tools.repo', ->
         gpgcheck=1
         gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
         """
+      @fs.mkdir "#{tmpdir}/repo"
       {$status} = await @tools.repo
         source: "#{tmpdir}/CentOS.repo"
         target: "#{tmpdir}/repo/centos.repo"
@@ -67,6 +69,7 @@ describe 'tools.repo', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @file
+        $ssh: false
         target: "#{tmpdir}/source/CentOS.repo"
         content: """
           [base]
@@ -95,32 +98,41 @@ describe 'tools.repo', ->
         target: "#{tmpdir}/target/test.repo"
         not: true
   
-  they 'Download GPG Keys option', ({ssh}) ->
+  they 'Download GPG Keys option', ({ssh, sudo}) ->
+    source = await nikita
+    .file
+      $dirty: true
+      $tmpdir: true
+      $templated: true
+      target: "{{metadata.tmpdir}}/linuxtech.repo"
+      content: """
+      [linuxtech-release]
+      name=LinuxTECH.NET el6 main repo
+      baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
+      mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
+      mirrorlist_expire=7d
+      enabled=1
+      gpgcheck=1
+      gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
+      """
+    .call ({sibling}) -> sibling.config.target
     nikita
       $ssh: ssh
       $tmpdir: true
+      $sudo: sudo
     , ({metadata: {tmpdir}}) ->
-      await @file
-        target: "#{tmpdir}/linuxtech.repo"
-        content: """
-        [linuxtech-release]
-        name=LinuxTECH.NET el6 main repo
-        baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
-        mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
-        mirrorlist_expire=7d
-        enabled=1
-        gpgcheck=1
-        gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
-        """
       await @tools.repo
-        source: "#{tmpdir}/linuxtech.repo"
+        local: true
+        source: "#{source}"
         gpg_dir: "#{tmpdir}"
         update: false
       await @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
+    await nikita.fs.base.unlink source
   
-  they 'Download repo from remote location', ({ssh}) ->
+  they 'Download repo from remote location', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       await @fs.remove '/etc/yum.repos.d/linuxtech.repo'
       {$status} = await @tools.repo
@@ -131,9 +143,10 @@ describe 'tools.repo', ->
       $status.should.be.false()
       await @fs.assert '/etc/yum.repos.d/linuxtech.repo'
 
-  they 'config `update` is `false` (default)', ({ssh}) ->
+  they 'config `update` is `false` (default)', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       await @fs.remove '/etc/yum.repos.d/mongodb.repo'
       await @service.remove 'mongodb-org-shell'
@@ -173,9 +186,10 @@ describe 'tools.repo', ->
       await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
 
-  they 'config `update` is `true`', ({ssh}) ->
+  they 'config `update` is `true`', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       await @fs.remove '/etc/yum.repos.d/mongodb.repo'
       await @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'

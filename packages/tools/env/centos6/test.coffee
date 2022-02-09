@@ -3,10 +3,9 @@ module.exports =
   tags:
     tools_repo: true
   config: [
-    label: 'local'
-  ,
     label: 'remote'
     ssh:
-      host: '127.0.0.1', username: process.env.USER,
-      private_key_path: '~/.ssh/id_rsa'
+      host: 'target', username: 'nikita',
+      sudo: true
+      password: 'secret' # private_key_path: '~/.ssh/id_rsa'
   ]

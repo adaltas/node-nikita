@@ -10,17 +10,13 @@ RUN sed -i -e 's/mirrorlist/#mirrorlist/g' \
   && yum clean all \
   && yum -y update
 
-# Install Node.js
-# Node.js will fail to install on greeter versions
-ENV NODE_VERSION 11.15.0
-RUN \
-     yum install -y git make \
-  && curl -L https://git.io/n-install | bash -s -- -y \
-  && . ~/.bashrc && n $NODE_VERSION
-  
 # Install SSH
+#RUN \
+#  # Install SSH and sudo
+#  yum install -y openssh-server openssh-clients sudo && \
+#  ssh-keygen -A
 RUN \
-     yum install -y openssh-server openssh-clients \
+     yum install -y openssh-server openssh-clients sudo \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   # Avoid `Could not load host key: /etc/ssh/ssh_host_rsa_key`
@@ -28,17 +24,26 @@ RUN \
   # Avoid `Could not load host key: /etc/ssh/ssh_host_dsa_key`
   && cp -rp /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key
 
-# Install Java, OpenSSL, GIT and compression dependencies
-RUN yum install -y \
-  java \
-  openssl \
-  git \
-  zip unzip bzip2
-
 RUN yum clean all
 
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/tools
+ENV TERM xterm # Color output in TTY
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Sudo User
+RUN useradd nikita -d /home/nikita && \
+  hash=$(echo "secret" | openssl passwd -1 -stdin) && \
+  usermod --pass="$hash" nikita && \
+  mkdir -p /home/nikita && \
+  mkdir -p /home/nikita/.ssh && \
+  chown nikita /home/nikita && \
+  chmod 700 /home/nikita && \
+  echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
+
+RUN chown -R nikita /home/nikita/.ssh
+USER nikita
+
+#ENTRYPOINT ["bash"]
+ENTRYPOINT ["sudo", "/usr/sbin/sshd", "-D"]
+# ENTRYPOINT ["/entrypoint.sh"]
