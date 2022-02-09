@@ -44,8 +44,8 @@ module.exports =
         # Register function
         action.tools ?= {}
         action.tools.find = ->
-          [action, finder] = validate action, arguments
-          await find action, finder
+          [act, finder] = validate action, arguments
+          await find act, finder
         # Register action
         action.registry.register ['tools', 'find'],
           metadata: raw: true
