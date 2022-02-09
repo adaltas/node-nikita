@@ -417,7 +417,7 @@ handler = async function({
     }
   } else if ((ref4 = source_url.protocol, indexOf.call(protocols_http, ref4) < 0) && !ssh) {
     log({
-      message: "File Download without ssh (with or without cache)",
+      message: `File Download without ssh (${config.cache ? 'with' : 'no'} cache)`,
       level: 'DEBUG'
     });
     hash_source = hash_target = null;
@@ -458,7 +458,7 @@ handler = async function({
     }
   } else if ((ref5 = source_url.protocol, indexOf.call(protocols_http, ref5) < 0) && ssh) {
     log({
-      message: "File Download with ssh (with or without cache)",
+      message: `File Download with ssh (${config.cache ? 'with' : 'no'} cache)`,
       level: 'DEBUG'
     });
     hash_source = hash_target = null;
@@ -513,6 +513,7 @@ handler = async function({
           message: `Downloaded local source ${JSON.stringify(config.source)} to remote target ${JSON.stringify(stageDestination)} failed`,
           level: 'ERROR'
         });
+        throw err;
       }
     }
   }
