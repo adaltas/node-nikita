@@ -17,6 +17,7 @@ module.exports = {
   require: ['@nikitajs/core/lib/plugins/tools/find', '@nikitajs/core/lib/plugins/tools/path'],
   hooks: {
     'nikita:action': {
+      before: ['@nikitajs/core/lib/plugins/templated'],
       after: ['@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path', '@nikitajs/core/lib/plugins/metadata/uuid'],
       handler: async function(action) {
         var config, err, metadata, os_tmpdir, ref, ssh, tmpDirInParent, tools;

@@ -14,6 +14,9 @@ module.exports =
   ]
   hooks:
     'nikita:action':
+      before: [
+        '@nikitajs/core/src/plugins/templated'
+      ]
       after: [
         '@nikitajs/core/src/plugins/ssh'
         '@nikitajs/core/src/plugins/tools/path'
