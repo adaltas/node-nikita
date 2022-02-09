@@ -343,7 +343,8 @@ config.command}\`. See the \`tmpdir\` plugin for additionnal information.`
       'trap': {
         type: 'boolean',
         default: false,
-        description: `Exit immediately if a commands exits with a non-zero status.`
+        description: `Exit immediately if a commands inside a script exits with a non-zero
+exit status, add the \`set -e\` option to your script.`
       },
       'trim': {
         type: 'boolean',

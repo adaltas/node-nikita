@@ -92,6 +92,14 @@ describe 'plugins.metadata.tmpdir', ->
       nikita.call $ssh: ssh, $tmpdir: true, (->)
       .should.be.resolved()
 
+    it 'honors templated', () ->
+      nikita.call
+        $tmpdir: '/tmp/nikita'
+        $templated: true
+        target: 'a value with {{metadata.tmpdir}}'
+      , ({config}) ->
+        config.target.should.eql 'a value with /tmp/nikita'
+  
   describe 'option dirty', ->
 
     they 'is true', ({ssh}) ->

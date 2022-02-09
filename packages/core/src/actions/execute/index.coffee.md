@@ -347,7 +347,8 @@ console.info(stdout)
             type: 'boolean'
             default: false
             description: '''
-            Exit immediately if a commands exits with a non-zero status.
+            Exit immediately if a commands inside a script exits with a non-zero
+            exit status, add the `set -e` option to your script.
             '''
           'trim':
             type: 'boolean'
