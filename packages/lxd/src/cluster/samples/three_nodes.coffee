@@ -19,16 +19,15 @@ nikita
 .lxc.cluster
   $header: 'Container'
   networks:
-    lxdbr0public:
-      'ipv4.address': '172.16.0.1/24'
+    lxdbr3pub:
+      'ipv4.address': '10.10.40.1/24'
       'ipv4.nat': true
       'ipv6.address': 'none'
-      'dns.domain': 'nikita'
-    lxdbr1private:
-      'ipv4.address': '10.10.10.1/24'
+      'dns.domain': 'nikita.local'
+    lxdbr3priv:
+      'ipv4.address': '10.10.50.1/24'
       'ipv4.nat': false
       'ipv6.address': 'none'
-      'dns.domain': 'nikita'
   containers:
     n1:
       image: 'images:centos/7'
@@ -38,10 +37,10 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+          name: 'eth0', nictype: 'bridged', parent: 'lxdbr3pub'
         eth1:
-          name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          'ipv4.address': '10.10.10.11'
+          name: 'eth1', nictype: 'bridged', parent: 'lxdbr3priv'
+          'ipv4.address': '10.10.50.11'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2201', connect: 'tcp:0.0.0.0:22'
       ssh: enabled: true
@@ -55,10 +54,10 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+          name: 'eth0', nictype: 'bridged', parent: 'lxdbr3pub'
         eth1:
-          name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          'ipv4.address': '10.10.10.12'
+          name: 'eth1', nictype: 'bridged', parent: 'lxdbr3priv'
+          'ipv4.address': '10.10.50.12'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2202', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
@@ -72,10 +71,10 @@ nikita
           source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
-          name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
+          name: 'eth0', nictype: 'bridged', parent: 'lxdbr3pub'
         eth1:
-          name: 'eth1', nictype: 'bridged', parent: 'lxdbr1private'
-          'ipv4.address': '10.10.10.13'
+          name: 'eth1', nictype: 'bridged', parent: 'lxdbr3priv'
+          'ipv4.address': '10.10.50.13'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2203', connect: 'tcp:127.0.0.1:22'
       ssh: enabled: true
@@ -99,6 +98,14 @@ nikita
       """
       trap: true
       code: [0, 42]
+    # await @lxd.exec
+    #   $header: 'FQND'
+    #   container: config.container
+    #   command: """
+    #   fqdn=`hostnamectl status | grep 'Static hostname' | sed 's/^.* \\(.*\\)$/\\1/'`
+    #   [[ $fqdn == "#{config.fqdn}" ]] && exit 3
+    #   hostnamectl set-hostname #{config.fqdn} --static
+    #   """
     # @lxc.file.push
     #   debug: true
     #   header: 'Test configuration'

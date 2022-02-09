@@ -53,7 +53,6 @@ lxc remote add nikita --accept-certificate --password secret 127.0.0.1:8443
 lxc remote switch nikita
 ```
 
-
 ### Permission denied on tmp
 
 [FreeIPA install issue](https://bugzilla.redhat.com/show_bug.cgi?id=1678793)
