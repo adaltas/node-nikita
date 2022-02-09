@@ -55,9 +55,9 @@ module.exports = {
           action.tools = {};
         }
         action.tools.find = async function() {
-          var finder;
-          [action, finder] = validate(action, arguments);
-          return (await find(action, finder));
+          var act, finder;
+          [act, finder] = validate(action, arguments);
+          return (await find(act, finder));
         };
         // Register action
         action.registry.register(['tools', 'find'], {

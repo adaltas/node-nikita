@@ -62,6 +62,15 @@ describe 'plugins.tools.find', ->
             find ({config}) ->
               config.key if config.stop
             .should.be.resolvedWith null
+    
+    it 'fix bug where internal action variable was mutated', ->
+      nikita.call key: 'depth 0', ->
+        @call key: 'depth 1', ->
+          @call key: 'depth 2', ({parent, tools: {find}}) ->
+            await find parent, ({config}) -> true
+            {key} = await find ({config}) -> config
+            key.should.eql 'depth 2'
+        
       
     
     
