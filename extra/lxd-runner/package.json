@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@nikitajs/core": "^1.0.0-alpha.2",
-    "shell": "^0.8.6"
+    "shell": "^0.9.1"
   },
   "scripts": {
     "build": "coffee -b -o lib src"

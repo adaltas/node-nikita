@@ -88,10 +88,6 @@ console.info(`Repo was updated: ${$status}`)
           continue if file is config.target
           file
       await @fs.remove remote_files
-      # # Note, nikita.file.download doesnt honors config.local like
-      # # nikita.file does, it could be interesting to implement it such as:
-      # # if ssh and config.source is a file and config.local then copy
-      # if ssh? and config.source? and config.local?
       # Use download unless we are over ssh, in such case,
       # the source default to target host unless local is provided
       isFile = config.source and url.parse(config.source).protocol is null

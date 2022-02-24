@@ -2,7 +2,7 @@
 {merge} = require 'mixme'
 registry = require './registry'
 schedule = require './schedulers'
-plugandplay = require 'plug-and-play'
+{plugandplay} = require 'plug-and-play'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'
 utils = require './utils'
@@ -56,7 +56,7 @@ session = (args, options={}) ->
   # Normalize arguments
   action = plugins.call_sync
     name: 'nikita:arguments'
-    plugins: options.plugins
+    plugins: options.plugins # Hum, not sure this property exists in plugandplay
     args: {args: args, ...options}
     handler: ({args, namespace}) ->
       contextualize [...args, $namespace: namespace]
