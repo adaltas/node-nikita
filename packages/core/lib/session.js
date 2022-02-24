@@ -7,7 +7,7 @@ registry = require('./registry');
 
 schedule = require('./schedulers');
 
-plugandplay = require('plug-and-play');
+({plugandplay} = require('plug-and-play'));
 
 contextualize = require('./session/contextualize');
 

@@ -3,7 +3,7 @@ var nikita, path, shell;
 
 path = require('path');
 
-shell = require('shell');
+({shell} = require('shell'));
 
 nikita = require('@nikitajs/core');
 
