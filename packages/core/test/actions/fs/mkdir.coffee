@@ -37,39 +37,7 @@ describe 'actions.fs.mkdir', ->
       {stats} = await @fs.base.stat "#{tmpdir}/a_parent_dir/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
-  describe 'parent', ->
-
-    they 'true set default system permissions', ({ssh}) ->
-      nikita
-        $ssh: ssh
-        $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        await @fs.mkdir
-          target: "#{tmpdir}/a_parent_dir/a_dir_2"
-          parent: true
-          mode: 0o717
-        await @fs.assert
-          target: "#{tmpdir}/a_parent_dir"
-          mode: 0o0717
-          not: true
-
-    they 'object set custom permissions', ({ssh}) ->
-      nikita
-        $ssh: ssh
-        $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        await @fs.mkdir
-          target: "#{tmpdir}/a_parent_dir/a_dir_1"
-          parent: mode: 0o0741
-          mode: 0o0715
-        await @fs.assert
-          target: "#{tmpdir}/a_parent_dir"
-          mode: 0o0741
-        await @fs.assert
-          target: "#{tmpdir}/a_parent_dir/a_dir_1"
-          mode: 0o0715
-
-  describe 'exclude', ->
+  describe 'config.exclude', ->
 
     they 'should stop when `exclude` match', ({ssh}) ->
       nikita
@@ -87,7 +55,7 @@ describe 'actions.fs.mkdir', ->
         await @fs.assert
           target: path.dirname source
 
-  describe 'cwd', ->
+  describe 'config.cwd', ->
 
     they 'should honore `cwd` for relative paths', ({ssh}) ->
       nikita
@@ -101,7 +69,50 @@ describe 'actions.fs.mkdir', ->
         await @fs.assert
           target: "#{tmpdir}/a_dir"
 
-  describe 'mode', ->
+  describe 'config.force', ->
+    
+    they.only 'false dont overwrite permission dir', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          parent: mode: 0o0777
+          mode: 0o0777
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          parent: mode: 0o0715
+          mode: 0o0715
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir"
+          mode: 0o0777
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          mode: 0o0777
+            
+    they.only 'true overwrite permissions on target but not parent', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          parent: mode: 0o0777
+          mode: 0o0777
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          force: true
+          parent: mode: 0o0715
+          mode: 0o0715
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir"
+          mode: 0o0777
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir/a_child_dir"
+          mode: 0o0715
+
+  describe 'config.mode', ->
 
     they 'change mode as string', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
@@ -161,6 +172,38 @@ describe 'actions.fs.mkdir', ->
         await @fs.assert
           target: "#{tmpdir}/a_dir"
           mode: 0o0744
+
+  describe 'config.parent', ->
+
+    they 'true set default system permissions', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_dir_2"
+          parent: true
+          mode: 0o717
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir"
+          mode: 0o0717
+          not: true
+
+    they 'object set custom permissions', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir
+          target: "#{tmpdir}/a_parent_dir/a_dir_1"
+          parent: mode: 0o0741
+          mode: 0o0715
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir"
+          mode: 0o0741
+        await @fs.assert
+          target: "#{tmpdir}/a_parent_dir/a_dir_1"
+          mode: 0o0715
 
   describe 'error', ->
 
