@@ -9,13 +9,12 @@ describe 'system.tmpfs', ->
   
   describe 'generate without merge', ->
     
-    they 'simple mount group configuration with target', ({ssh}) ->
+    they 'simple mount group configuration with target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
         $tmpdir: true
-      , ({metadata: {tmpdir}})->
-        @fs.remove
-          target: "#{tmpdir}/file_1.conf"
+      , ({metadata: {tmpdir}}) ->
         {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_1.conf"
           mount: '/var/run/file_1'
@@ -26,17 +25,18 @@ describe 'system.tmpfs', ->
           perm: '0644'
           merge: false
         $status.should.be.true()
-        @execute
+        await @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/file_1.conf"
           content: """
             d /var/run/file_1 0644 root root 10s -
           """
 
-    they 'status not modified', ({ssh}) ->
+    they 'status not modified', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
         $tmpdir: true
       , ({metadata: {tmpdir}})->
         {$status} = await @system.tmpfs
@@ -67,9 +67,10 @@ describe 'system.tmpfs', ->
             d /var/run/file_1 0644 root root 10s -
           """
   
-    they 'Override existing configuration file with target', ({ssh}) ->
+    they 'Override existing configuration file with target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
         $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
@@ -104,9 +105,10 @@ describe 'system.tmpfs', ->
   
   describe 'generate with merge', ->
     
-    they 'multiple file with target', ({ssh}) ->
+    they 'multiple file with target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
         $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
@@ -142,9 +144,10 @@ describe 'system.tmpfs', ->
             d /var/run/file_1 0644 root root 10s -
           """
 
-    they 'multiple file merge status not modifed with target', ({ssh}) ->
+    they 'multiple file merge status not modifed with target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
         $tmpdir: true
       , ({metadata: {tmpdir}})->
         @fs.remove
@@ -192,9 +195,10 @@ describe 'system.tmpfs', ->
 
   describe 'default target Centos/Redhat 7', ->
     
-    they 'simple mount group configuration', ({ssh}) ->
+    they 'simple mount group configuration', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @fs.remove
           target: "/etc/tmpfiles.d/root.conf"
@@ -213,9 +217,10 @@ describe 'system.tmpfs', ->
           target: '/etc/tmpfiles.d/root.conf'
           content: "d /var/run/file_1 0644 root root 10s -"
 
-    they 'simple mount group no uid', ({ssh}) ->
+    they 'simple mount group no uid', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @fs.remove '/etc/tmpfiles.d/root.conf'
         {$status} = await @system.tmpfs
