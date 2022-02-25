@@ -5,6 +5,11 @@ Recursively create a directory. The behavior is similar to the Unix command
 `mkdir -p`. It supports an alternative syntax where config is simply the path
 of the directory to create.
 
+Permissions defined in the `mode` configuration are set on directory
+creation. Use `force` to update the target directory if it exists and if its
+value is different than expected. Parent directories are not impacted by
+`force`. 
+
 ## Output
 
 * `err`   
@@ -56,6 +61,13 @@ console.info(`Directory was created: ${$status}`)
             Exclude directories matching a regular expression. For example, the
             expression `/\${/` on './var/cache/${user}' exclude the directories
             containing a variables and only apply to `./var/cache/`.
+            '''
+          'force':
+            type: ['boolean']
+            description: '''
+            Overwrite permissions on the target directory. By default,
+            permissions on only set on directory creation. It does not impact
+            the parent directory permissions.
             '''
           'gid':
             $ref: 'module://@nikitajs/core/src/actions/fs/chown#/definitions/config/properties/gid'
@@ -125,7 +137,8 @@ console.info(`Directory was created: ${$status}`)
         await @fs.base.mkdir target, opts
         log message: "Directory \"#{target}\" created ", level: 'INFO'
       # Target directory update
-      if creates.length is 0
+      # Do not create directory unless `force` is set
+      if config.force and creates.length is 0
         log message: "Directory already exists", level: 'DEBUG'
         await @fs.chown
           $if: config.uid? or config.gid?
