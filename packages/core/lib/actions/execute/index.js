@@ -399,7 +399,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, err, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -496,9 +496,9 @@ handler = async function({
     // and target is inside it
     command = config.command;
     if (typeof target !== 'string') {
-      target_in = path.join(config.arch_chroot_tmpdir, utils.string.hash(config.command));
+      target_in = path.join(config.arch_chroot_tmpdir, `execute-arch_chroot-${utils.string.hash(config.command)}`);
+      target = path.join(config.arch_chroot_rootdir, target_in);
     }
-    target = path.join(config.arch_chroot_rootdir, target_in);
     // target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
     log({
       message: `Writing arch-chroot script to ${JSON.stringify(target)}`,
@@ -517,7 +517,7 @@ handler = async function({
   } else if (config.bash) {
     command = config.command;
     if (typeof target !== 'string') {
-      target = path.join(metadata.tmpdir, utils.string.hash(config.command));
+      target = path.join(metadata.tmpdir, `execute-bash-${utils.string.hash(config.command)}`);
     }
     log({
       message: `Writing bash script to ${JSON.stringify(target)}`,
@@ -530,15 +530,29 @@ handler = async function({
     if (!config.dirty) {
       config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
     }
-    await this.fs.base.writeFile({
-      $sudo: false,
-      $arch_chroot: false,
-      $arch_chroot_rootdir: false,
-      content: command,
-      mode: config.mode,
-      target: target,
-      uid: config.uid
-    });
+    try {
+      await this.fs.base.writeFile({
+        $sudo: false,
+        $arch_chroot: false,
+        $arch_chroot_rootdir: false,
+        content: command,
+        mode: config.mode,
+        target: target,
+        uid: config.uid
+      });
+    } catch (error) {
+      err = error;
+      console.log(err, {
+        $sudo: false,
+        $arch_chroot: false,
+        $arch_chroot_rootdir: false,
+        content: command,
+        mode: config.mode,
+        target: target,
+        uid: config.uid
+      });
+      throw err;
+    }
   }
   if (config.sudo) {
     config.command = `sudo ${config.command}`;
