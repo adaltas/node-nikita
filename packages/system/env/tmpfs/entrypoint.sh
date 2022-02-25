@@ -2,13 +2,13 @@
 set -e
 
 # Start ssh daemon
-/usr/sbin/sshd
+sudo /usr/sbin/sshd
+# We have TTY, so probably an interactive container...
 if test -t 0; then
-  # We have TTY, so probably an interactive container...
+  # Some command(s) has been passed to container? Execute them and exit.
   if [[ $@ ]]; then
-    # Transfer arguments to mocha
-    . ~/.bashrc
     npx mocha $@
+  # No commands provided? Run bash.
   else
     # Run bash when no argument
     export PS1='[\u@\h : \w]\$ '
@@ -16,6 +16,5 @@ if test -t 0; then
   fi
 else
   # Detached mode
-  . ~/.bashrc
   npm run test:local
 fi
