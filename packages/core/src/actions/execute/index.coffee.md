@@ -445,8 +445,9 @@ console.info(stdout)
         # tmpdir `/mnt/tmpdir/nikita-random-path`
         # and target is inside it
         command = config.command
-        target_in = path.join config.arch_chroot_tmpdir, utils.string.hash config.command if typeof target isnt 'string'
-        target = path.join config.arch_chroot_rootdir, target_in
+        if typeof target isnt 'string'
+          target_in = path.join config.arch_chroot_tmpdir, "execute-arch_chroot-#{utils.string.hash config.command}"
+          target = path.join config.arch_chroot_rootdir, target_in
         # target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
         log message: "Writing arch-chroot script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{target_in}"
@@ -460,7 +461,8 @@ console.info(stdout)
       # Write script
       else if config.bash
         command = config.command
-        target = path.join metadata.tmpdir, utils.string.hash config.command if typeof target isnt 'string'
+        if typeof target isnt 'string'
+          target = path.join metadata.tmpdir, "execute-bash-#{utils.string.hash config.command}"
         log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.bash} #{target}"
         config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
