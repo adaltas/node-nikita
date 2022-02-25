@@ -101,9 +101,10 @@ console.info(`Stream was created: ${$status}`)
       # Replace the target file in append or sudo mode
       if config.target_tmp
         await @execute
-          command: """
-          mv '#{config.target_tmp}' '#{config.target}'
-          """
+          command: [
+            "mv '#{config.target_tmp}' '#{config.target}'"
+            "chown root:root '#{config.target}'" if config.sudo
+          ].join '\n'
 
 ## Exports
 
