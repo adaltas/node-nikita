@@ -148,7 +148,7 @@ cp '${config.target}' '${config.target_tmp}'`);
   // Replace the target file in append or sudo mode
   if (config.target_tmp) {
     return (await this.execute({
-      command: `mv '${config.target_tmp}' '${config.target}'`
+      command: [`mv '${config.target_tmp}' '${config.target}'`, config.sudo ? `chown root:root '${config.target}'` : void 0].join('\n')
     }));
   }
 };
