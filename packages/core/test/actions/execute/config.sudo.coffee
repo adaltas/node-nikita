@@ -15,3 +15,14 @@ describe 'actions.execute.config.sudo', ->
         content: 'root'
         $sudo: true
         trim: true
+
+  they 'execute with bash', ({ssh}) ->
+    nikita
+      $ssh: ssh
+    , ->
+      @execute.assert
+        bash: true
+        command: 'whoami'
+        content: 'root'
+        $sudo: true
+        trim: true
