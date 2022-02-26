@@ -1,9 +1,9 @@
+
 FROM archlinux:latest
 MAINTAINER David Worms
 
-RUN \
-     pacman --noconfirm -Syu \
-  && pacman --noconfirm -S procps grep which sed
+RUN pacman --noconfirm -Syu \
+ && pacman --noconfirm -S procps grep which sed
 
 # Install Node.js
 RUN pacman --noconfirm -S nodejs npm

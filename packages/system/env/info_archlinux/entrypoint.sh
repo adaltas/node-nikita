@@ -8,7 +8,7 @@ if test -t 0; then
   # Some command(s) has been passed to container? Execute them and exit.
   # No commands provided? Run bash.
   if [[ $@ ]]; then
-    node_modules/.bin/mocha $@
+    npx mocha $@
   else
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
