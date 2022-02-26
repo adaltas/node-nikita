@@ -64,7 +64,7 @@
       "@nikitajs/krb5/src/register"
     ],
     "inline-diffs": true,
-    "timeout": 100000,
+    "timeout": 20000,
     "reporter": "spec",
     "recursive": true
   },
