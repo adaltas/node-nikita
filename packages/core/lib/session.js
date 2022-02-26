@@ -92,7 +92,7 @@ session = function(args, options = {}) {
   // Normalize arguments
   action = plugins.call_sync({
     name: 'nikita:arguments',
-    plugins: options.plugins,
+    plugins: options.plugins, // Hum, not sure this property exists in plugandplay
     args: {
       args: args,
       ...options
