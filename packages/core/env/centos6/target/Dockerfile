@@ -17,8 +17,6 @@ RUN sed -i -e 's/mirrorlist/#mirrorlist/g' \
 #  ssh-keygen -A
 RUN \
      yum install -y openssh-server openssh-clients sudo \
-  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   # Avoid `Could not load host key: /etc/ssh/ssh_host_rsa_key`
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key \
   # Avoid `Could not load host key: /etc/ssh/ssh_host_dsa_key`
