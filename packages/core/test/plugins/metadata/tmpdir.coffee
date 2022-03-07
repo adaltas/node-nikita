@@ -21,37 +21,7 @@ describe 'plugins.metadata.tmpdir', ->
           "got {}"
         ].join ' '
   
-  describe 'cascade', ->
-
-    they 'not available in children', ({ssh}) ->
-      nikita.call $ssh: ssh, $tmpdir: true, ->
-        @call -> @call ({metadata: {tmpdir}}) ->
-          should(tmpdir).be.undefined()
-
-    they 'current action', ({ssh}) ->
-      nikita
-        $ssh: ssh
-      , ({ssh}) ->
-        tmpdir = await @call
-          $tmpdir: true
-        , ({metadata: {tmpdir}}) ->
-          await fs.exists(ssh, tmpdir).should.be.resolvedWith true
-          tmpdir
-        fs.exists(ssh, tmpdir).should.be.resolvedWith false
-
-    they 'remove directory with files and foders inside', ({ssh}) ->
-      nikita
-        $ssh: ssh
-      , ({ssh}) ->
-        tmpdir = await @call
-          $tmpdir: true
-        , ({metadata: {tmpdir}}) ->
-          await fs.mkdir ssh, "#{tmpdir}/a_dir"
-          await fs.writeFile ssh, "#{tmpdir}/a_dir/a_file", ''
-          tmpdir
-        fs.exists(ssh, tmpdir).should.be.resolvedWith false
-  
-  describe 'option tmpdir', ->
+  describe 'accepted values', ->
 
     they 'is a boolean', ({ssh}) ->
       nikita
@@ -85,14 +55,53 @@ describe 'plugins.metadata.tmpdir', ->
       , ({metadata}) -> metadata.tmpdir
       .then (tmpdir) ->
         tmpdir.should.match /ok$/
+    
+  describe 'disposal', ->
+
+    they 'remove left directory', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({ssh}) ->
+        tmpdir = await @call
+          $tmpdir: true
+        , ({metadata: {tmpdir}}) ->
+          await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+          tmpdir
+        fs.exists(ssh, tmpdir).should.be.resolvedWith false
+
+    they 'remove directory with files and foders inside', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({ssh}) ->
+        tmpdir = await @call
+          $tmpdir: true
+        , ({metadata: {tmpdir}}) ->
+          await fs.mkdir ssh, "#{tmpdir}/a_dir"
+          await fs.writeFile ssh, "#{tmpdir}/a_dir/a_file", ''
+          tmpdir
+        fs.exists(ssh, tmpdir).should.be.resolvedWith false
+  
+  describe 'cascade', ->
+
+    they 'not available in children', ({ssh}) ->
+      nikita.call $ssh: ssh, $tmpdir: true, ->
+        @call -> @call ({metadata: {tmpdir}}) ->
+          should(tmpdir).be.undefined()
+
+    they 'several true dont change value', ({ssh}) ->
+      nikita.call $ssh: ssh, $tmpdir: true, ->
+        @call -> @call ({metadata: {tmpdir}}) ->
+          should(tmpdir).be.undefined()
+  
+  describe 'metadata', ->
           
-    they 'ssh and tmpdir in same child', -> ({ssh}) ->
+    they 'with ssh in same child action', -> ({ssh}) ->
       # Fix bug where the ssh connection was not discoved when
       # ssh was created in the same child and tmpdir
       nikita.call $ssh: ssh, $tmpdir: true, (->)
       .should.be.resolved()
 
-    it 'honors templated', () ->
+    it 'with templated', () ->
       nikita.call
         $tmpdir: '/tmp/nikita'
         $templated: true
@@ -100,7 +109,7 @@ describe 'plugins.metadata.tmpdir', ->
       , ({config}) ->
         config.target.should.eql 'a value with /tmp/nikita'
   
-  describe 'option dirty', ->
+  describe 'config.dirty', ->
 
     they 'is true', ({ssh}) ->
       nikita
