@@ -11,17 +11,18 @@ The `ssh` configuration property must be provided for the action to run remotely
 
 ## Implementation
 
-Behind the scene, the [ssh2] package written by [Brian White](https://github.com/mscdex) is used to assure SSH transport. This is a pure JavaScript package written for Node.js.
+Behind the scene, the [ssh2](https://github.com/mscdex/ssh2) package written by [Brian White](https://github.com/mscdex) is used to assure SSH transport. This is a pure JavaScript package written for Node.js.
 
-To create a connection, we use [ssh2-connect]. The package simplifies the creation of a connection and also provides a few additional configurations.
+To create a connection, we use [ssh2-connect](https://github.com/adaltas/node-ssh2-connect). The package simplifies the creation of a connection and also provides a few additional configurations.
+
 
 ## Configurations
 
-If the `ssh` property is a configuration object, the configuration used to initialize the SSH connection is the one of the [ssh2] package as well as the one of the [ssh2-connect] package.
+If the `ssh` property is a configuration object, the configuration used to initialize the SSH connection is the one of the [ssh2](https://github.com/mscdex/ssh2) package as well as the one of the [ssh2-connect](https://github.com/adaltas/node-ssh2-connect) package.
 
 > Note, the [ssh2-connect] package will automatically convert the properties from snake case to camel case.
 
-The [ssh2] configuration properties:
+The [ssh2](https://github.com/mscdex/ssh2) configuration properties:
   
 * `host` (string)   
   Hostname or IP address of the remote server. Default is `127.0.0.1`.
@@ -65,7 +66,7 @@ The [ssh2] configuration properties:
 * `agentForward` (boolean)   
   Set to true to use OpenSSH agent forwarding ('auth-agent@openssh.com'). Default: `false`
 
-The [ssh2-connect] configuration properties:
+The [ssh2-connect](https://github.com/adaltas/node-ssh2-connect) configuration properties:
 
 - `username` (string)   
   Username of the user used to authenticate and create the SSH connection. Default is `root`.
@@ -90,30 +91,29 @@ Additional configuration properties:
 - `ssh` (object)   
   Associate an existing SSH connection to the current action and its siblings.
 
-## Examples
-
-### Passing an existing SSH connection
+## Passing an existing SSH connection
 
 ```js
 const connect = require('ssh2-connect');
-// Create an SSH connection
-connect({
-  host: 'localhost',
-  username: 'root',
-  privateKeyPath: '~/.ssh/id_rsa'
-}, async function(err, ssh){
-  if(err) return process.exit(1)
+(async () => {
+  // Initiaze the SSH connection
+  const ssh = await connect({
+    host: 'localhost',
+    username: 'root',
+    privateKeyPath: '~/.ssh/id_rsa'
+  });
   // Pass the connection to the `file.touch` action
   const {$status} = await nikita.file.touch({
     $ssh: ssh,
     target: '/tmp/nikita/a_file'
-  })
+  });
   console.info('File is written: ' + $status)
+  // Close the connection
   ssh.end()
-})
+})();
 ```
 
-### Passing an SSH configuration
+## Passing an SSH configuration
 
 ```js
 (async () => {
@@ -186,6 +186,3 @@ nikita({
 // Close SSH
 .ssh.close()
 ```
-
-[ssh2-connect]: https://github.com/wdavidw/ssh2-connect
-[ssh2]: https://github.com/mscdex/ssh2
