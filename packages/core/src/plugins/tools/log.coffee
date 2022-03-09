@@ -21,9 +21,12 @@ module.exports =
       if not action.metadata.log? and action.parent?.metadata?.log?
         action.metadata.log = action.parent.metadata.log
     'nikita:action':
-      after: '@nikitajs/core/src/plugins/tools/events'
+      after: [
+        '@nikitajs/core/src/plugins/tools/events'
+        '@nikitajs/core/src/plugins/metadata/debug'
+      ]
       handler: (action) ->
-        action.tools ?= {}
+        debug = await action.tools.find (action) -> action.metadata.debug
         action.tools.log = (log) ->
           log = merge log
           log = message: log if typeof log is 'string'
@@ -46,6 +49,6 @@ module.exports =
               config: action.config
               metadata: action.metadata
           else
-            return if action.metadata?.log is false
+            return if not debug and action.metadata?.log is false
           action.tools.events.emit log.type, log, action
           log

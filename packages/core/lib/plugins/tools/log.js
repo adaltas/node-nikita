@@ -28,11 +28,12 @@ module.exports = {
       }
     },
     'nikita:action': {
-      after: '@nikitajs/core/lib/plugins/tools/events',
-      handler: function(action) {
-        if (action.tools == null) {
-          action.tools = {};
-        }
+      after: ['@nikitajs/core/lib/plugins/tools/events', '@nikitajs/core/lib/plugins/metadata/debug'],
+      handler: async function(action) {
+        var debug;
+        debug = (await action.tools.find(function(action) {
+          return action.metadata.debug;
+        }));
         return action.tools.log = function(log) {
           var frame, ref, ref1;
           log = merge(log);
@@ -75,7 +76,7 @@ module.exports = {
               });
             }
           } else {
-            if (((ref1 = action.metadata) != null ? ref1.log : void 0) === false) {
+            if (!debug && ((ref1 = action.metadata) != null ? ref1.log : void 0) === false) {
               return;
             }
           }
