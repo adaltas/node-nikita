@@ -54,8 +54,20 @@ describe 'plugins.tools.log', ->
       .call $log: false, ({tools: {log}}) ->
         log message: 'disabled'
         @call ({tools: {log}}) ->
-          log message: 'enabled child'
+          log message: 'disabled child'
       data.should.eql []
+    
+    it 'equals `false` disabled with `metadata.debug`', ->
+      data = []
+      await nikita
+        $debug: new stream.Writable write: (->)
+      .call ({tools: {events}}) ->
+        events.on 'text', (log) -> data.push log.message
+      .call $log: false, ({tools: {log}}) ->
+        log message: 'enabled parent'
+        @call ({tools: {log}}) ->
+          log message: 'enabled child'
+      data.should.eql ['enabled parent', 'enabled child']
   
   describe 'is a `function`', ->
   
