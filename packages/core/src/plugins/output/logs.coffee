@@ -12,13 +12,13 @@ path = require 'path'
 module.exports =
   name: '@nikitajs/core/src/plugins/output/logs'
   require: [
-    '@nikitajs/core/src/plugins/tools_log'
+    '@nikitajs/core/src/plugins/tools/log'
     '@nikitajs/core/src/plugins/output/status'
     '@nikitajs/core/src/plugins/metadata/raw'
   ]
   hooks:
     'nikita:action':
-      after: '@nikitajs/core/src/plugins/tools_log'
+      after: '@nikitajs/core/src/plugins/tools/log'
       handler: (action) ->
         action.state.logs = []
         action.tools.log = ( (fn) ->

@@ -18,7 +18,7 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 
 */
 module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools_log',
+  name: '@nikitajs/core/lib/plugins/tools/log',
   require: '@nikitajs/core/lib/plugins/tools/events',
   hooks: {
     'nikita:normalize': function(action) {

@@ -16,7 +16,7 @@ TODO: detect/force isTTY
 */
 module.exports = {
   name: '@nikitajs/core/lib/plugins/metadata/debug',
-  require: '@nikitajs/core/lib/plugins/tools_log',
+  require: '@nikitajs/core/lib/plugins/tools/log',
   hooks: {
     'nikita:schema': function({schema}) {
       return mutate(schema.definitions.metadata.properties, {

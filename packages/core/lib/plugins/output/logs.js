@@ -13,10 +13,10 @@ path = require('path');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/output/logs',
-  require: ['@nikitajs/core/lib/plugins/tools_log', '@nikitajs/core/lib/plugins/output/status', '@nikitajs/core/lib/plugins/metadata/raw'],
+  require: ['@nikitajs/core/lib/plugins/tools/log', '@nikitajs/core/lib/plugins/output/status', '@nikitajs/core/lib/plugins/metadata/raw'],
   hooks: {
     'nikita:action': {
-      after: '@nikitajs/core/lib/plugins/tools_log',
+      after: '@nikitajs/core/lib/plugins/tools/log',
       handler: function(action) {
         action.state.logs = [];
         return action.tools.log = (function(fn) {
