@@ -1,6 +1,7 @@
 
 {merge} = require 'mixme'
 {whoami} = require './os'
+connect = require 'ssh2-connect'
 
 module.exports = ssh =
   compare: (ssh1, ssh2) ->
@@ -17,5 +18,4 @@ module.exports = ssh =
     config2.username ?= whoami()
     compare_config config1, config2
   is: (ssh) ->
-    return false unless ssh?._sshstream?.config?.ident?
-    /SSH-\d+.\d+-ssh2js\d+.\d+.\d+/.test ssh._sshstream.config.ident
+    connect.is ssh

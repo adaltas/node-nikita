@@ -15,7 +15,10 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 
 module.exports =
   name: '@nikitajs/core/src/plugins/tools/log'
-  require: '@nikitajs/core/src/plugins/tools/events'
+  require: [
+    '@nikitajs/core/src/plugins/tools/events'
+    '@nikitajs/core/src/plugins/tools/find'
+  ]
   hooks:
     'nikita:normalize': (action) ->
       if not action.metadata.log? and action.parent?.metadata?.log?

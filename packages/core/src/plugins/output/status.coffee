@@ -6,11 +6,12 @@ module.exports =
   name: '@nikitajs/core/src/plugins/output/status'
   require: [
     '@nikitajs/core/src/plugins/history'
-    '@nikitajs/core/src/plugins/metadata/raw'
   ]
   recommand: [
-    # status is set to `false` when action is disabled
+    # Status is set to `false` when action is disabled
     '@nikitajs/core/src/plugins/metadata/disabled'
+    # Honors raw_output if present
+    '@nikitajs/core/src/plugins/metadata/raw'
   ]
   hooks:
     # 'nikita:registry:normalize': (action) ->

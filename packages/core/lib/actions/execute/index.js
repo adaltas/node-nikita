@@ -399,7 +399,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, err, k, stdout, target, target_in, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -530,29 +530,15 @@ handler = async function({
     if (!config.dirty) {
       config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
     }
-    try {
-      await this.fs.base.writeFile({
-        $sudo: false,
-        $arch_chroot: false,
-        $arch_chroot_rootdir: false,
-        content: command,
-        mode: config.mode,
-        target: target,
-        uid: config.uid
-      });
-    } catch (error) {
-      err = error;
-      console.log(err, {
-        $sudo: false,
-        $arch_chroot: false,
-        $arch_chroot_rootdir: false,
-        content: command,
-        mode: config.mode,
-        target: target,
-        uid: config.uid
-      });
-      throw err;
-    }
+    await this.fs.base.writeFile({
+      $sudo: false,
+      $arch_chroot: false,
+      $arch_chroot_rootdir: false,
+      content: command,
+      mode: config.mode,
+      target: target,
+      uid: config.uid
+    });
   }
   if (config.sudo) {
     config.command = `sudo ${config.command}`;

@@ -30,8 +30,10 @@ module.exports =
         {ssh} = await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
             require './tools/events'
+            require './tools/find'
             require './tools/log'
             require './output/status'
+            require './metadata/raw'
             require './history'
           ]
         .ssh.open action.ssh
@@ -71,8 +73,10 @@ module.exports =
         await session.with_options [{}],
           plugins: [ # Need to inject `tools.log`
             require './tools/events'
+            require './tools/find'
             require './tools/log'
             require './output/status'
+            require './metadata/raw'
             require './history'
           ]
         .ssh.close ssh: action.ssh

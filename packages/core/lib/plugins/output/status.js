@@ -7,9 +7,13 @@ utils = require('../../utils');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/output/status',
-  require: ['@nikitajs/core/lib/plugins/history', '@nikitajs/core/lib/plugins/metadata/raw'],
-  // status is set to `false` when action is disabled
-  recommand: ['@nikitajs/core/lib/plugins/metadata/disabled'],
+  require: ['@nikitajs/core/lib/plugins/history'],
+  recommand: [
+    // Status is set to `false` when action is disabled
+    '@nikitajs/core/lib/plugins/metadata/disabled',
+    // Honors raw_output if present
+    '@nikitajs/core/lib/plugins/metadata/raw'
+  ],
   hooks: {
     // 'nikita:registry:normalize': (action) ->
     //   action.metadata ?= {}
