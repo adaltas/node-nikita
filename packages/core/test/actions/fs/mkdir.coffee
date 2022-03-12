@@ -71,7 +71,7 @@ describe 'actions.fs.mkdir', ->
 
   describe 'config.force', ->
     
-    they.only 'false dont overwrite permission dir', ({ssh}) ->
+    they 'false dont overwrite permission dir', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -91,7 +91,7 @@ describe 'actions.fs.mkdir', ->
           target: "#{tmpdir}/a_parent_dir/a_child_dir"
           mode: 0o0777
             
-    they.only 'true overwrite permissions on target but not parent', ({ssh}) ->
+    they 'true overwrite permissions on target but not parent', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -140,38 +140,36 @@ describe 'actions.fs.mkdir', ->
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o0744
 
-    they 'detect a permission change', ({ssh}) ->
-      # 40744: 4 for directory, 744 for permissions
-      nikita
-        $ssh: ssh
-        $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        await @fs.mkdir
-          target: "#{tmpdir}/ssh_dir_string"
-          mode: 0o744
-        {$status} = await @fs.mkdir
-          target: "#{tmpdir}/ssh_dir_string"
-          mode: 0o755
-        $status.should.be.true()
-        {$status} = await @fs.mkdir
-          target: "#{tmpdir}/ssh_dir_string"
-          mode: 0o755
-        $status.should.be.false()
-
-    they 'dont ovewrite permission', ({ssh}) ->
+    they 'dont modify permission if dir exist and mode not defined', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir
           target: "#{tmpdir}/a_dir"
-          mode: 0o744
+          mode: 0o700
         {$status} = await @fs.mkdir
           target: "#{tmpdir}/a_dir"
         $status.should.be.false()
         await @fs.assert
           target: "#{tmpdir}/a_dir"
-          mode: 0o0744
+          mode: 0o0700
+
+    they 'dont modify permission if dir exist and mode defined', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir
+          target: "#{tmpdir}/a_dir"
+          mode: 0o700
+        {$status} = await @fs.mkdir
+          target: "#{tmpdir}/a_dir"
+          mode: 0o744
+        $status.should.be.false()
+        await @fs.assert
+          target: "#{tmpdir}/a_dir"
+          mode: 0o0700
 
   describe 'config.parent', ->
 
