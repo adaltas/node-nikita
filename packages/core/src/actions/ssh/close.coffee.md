@@ -33,7 +33,7 @@ Close the existing connection if any.
         'or ensure a connection was open in a sibling action'
       ] unless config.ssh
       # Exit if the connection is already close
-      return false unless config.ssh._sshstream?.writable and config.ssh._sock?.writable
+      return false if connect.closed config.ssh
       # Terminate the connection
       new Promise (resolve, reject) ->
         config.ssh.end()
@@ -50,4 +50,5 @@ Close the existing connection if any.
         
 ## Dependencies
 
+    connect = require 'ssh2-connect'
     utils = require '../../utils'
