@@ -4,14 +4,27 @@ nikita = require '../../../src'
 they = require('mocha-they')(config)
 
 describe 'plugins.execute', ->
-  return unless tags.api
 
-  describe 'usage', ->
+  describe 'usage for arch_chroot', ->
+    return unless tags.system_execute_arc_chroot
 
     it 'supported properties', ->
+      # Note, chroot create a tmpdir which require sudo permissions
+      # It is currently managed inside the `nikita:action` hook, thus
+      # disconnected the handler still attempt to create the folder.
       config = await nikita
         $arch_chroot: false
         $arch_chroot_rootdir: '/tmp'
+      , ->
+        @execute 'fake cmd', ({config}) -> config
+      config.arch_chroot.should.eql false
+      config.arch_chroot_rootdir.should.eql '/tmp'
+
+  describe 'usage', ->
+    return unless tags.api
+
+    it 'supported properties', ->
+      config = await nikita
         $bash: true
         $dry: true
         $env: key: 'value'
@@ -19,8 +32,6 @@ describe 'plugins.execute', ->
         $sudo: true
       , ->
         @execute 'fake cmd', ({config}) -> config
-      config.arch_chroot.should.eql false
-      config.arch_chroot_rootdir.should.eql '/tmp'
       config.bash.should.eql true
       config.dry.should.eql true
       config.env.should.containEql key: 'value'
@@ -28,6 +39,7 @@ describe 'plugins.execute', ->
       config.sudo.should.eql true
 
   describe 'env', ->
+    return unless tags.api
 
     they 'merge parent metadata with config', ({ssh}) ->
       nikita
