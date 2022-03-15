@@ -50,13 +50,12 @@ session = (args, options={}) ->
   options.parent = options.parent or args[0]?.$parent or undefined
   options.namespace = options.namespace or args[0]?.$namespace or undefined
   plugins = plugandplay
-    plugins: options.plugins or args[0]?.$plugins or args[0]?.plugins
+    plugins: options.plugins or args[0]?.$plugins
     chain: new Proxy on_call, get: on_get
     parent: if options.parent then options.parent.plugins else undefined
   # Normalize arguments
   action = plugins.call_sync
     name: 'nikita:arguments'
-    plugins: options.plugins # Hum, not sure this property exists in plugandplay
     args: {args: args, ...options}
     handler: ({args, namespace}) ->
       contextualize [...args, $namespace: namespace]

@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
 registry = require '../../src/registry'
-plugandplay = require 'plug-and-play'
+{plugandplay} = require 'plug-and-play'
 
 describe 'registry.get', ->
   return unless tags.api

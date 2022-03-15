@@ -16,7 +16,7 @@ normalize = require('./session/normalize');
 utils = require('./utils');
 
 session = function(args, options = {}) {
-  var action, base, namespace, on_call, on_get, plugins, ref, ref1, ref2, ref3, result, schedulers;
+  var action, base, namespace, on_call, on_get, plugins, ref, ref1, ref2, result, schedulers;
   // Catch calls to new actions
   namespace = [];
   on_call = function(...args) {
@@ -83,7 +83,7 @@ session = function(args, options = {}) {
   options.parent = options.parent || ((ref = args[0]) != null ? ref.$parent : void 0) || void 0;
   options.namespace = options.namespace || ((ref1 = args[0]) != null ? ref1.$namespace : void 0) || void 0;
   plugins = plugandplay({
-    plugins: options.plugins || ((ref2 = args[0]) != null ? ref2.$plugins : void 0) || ((ref3 = args[0]) != null ? ref3.plugins : void 0),
+    plugins: options.plugins || ((ref2 = args[0]) != null ? ref2.$plugins : void 0),
     chain: new Proxy(on_call, {
       get: on_get
     }),
@@ -92,7 +92,6 @@ session = function(args, options = {}) {
   // Normalize arguments
   action = plugins.call_sync({
     name: 'nikita:arguments',
-    plugins: options.plugins, // Hum, not sure this property exists in plugandplay
     args: {
       args: args,
       ...options
@@ -143,13 +142,13 @@ session = function(args, options = {}) {
   });
   // Execute the action
   result = new Promise(async function(resolve, reject) {
-    var action_from_registry, err, k, on_result, output, pump, ref4, v;
+    var action_from_registry, err, k, on_result, output, pump, ref3, v;
     try {
       // Hook intented to modify the current action being created
       action = (await action.plugins.call({
         name: 'nikita:normalize',
         args: action,
-        hooks: ((ref4 = action.hooks) != null ? ref4.on_normalize : void 0) || action.on_normalize,
+        hooks: ((ref3 = action.hooks) != null ? ref3.on_normalize : void 0) || action.on_normalize,
         handler: normalize
       }));
     } catch (error1) {
