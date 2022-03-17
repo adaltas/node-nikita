@@ -118,27 +118,30 @@ console.info(stdout)
       handler: ({config, metadata, ssh, tools: {find, path, walk}}) ->
         config.env ?= if not ssh and not config.env then process.env else {}
         env_export = if config.env_export? then config.env_export else !!ssh
-        if config.arch_chroot_rootdir
+        # Create the tmpdir if arch_chroot is activated
+        if config.arch_chroot and config.arch_chroot_rootdir
           # # Disable tmpdir, it is specifically managed in the handler
           # metadata.tmpdir = true
           metadata.tmpdir ?= ({os_tmpdir, tmpdir}) ->
-            current_username =
-              if ssh then ssh.config.username
-              else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
-              else process.env['USER']
             # Note, Arch mount `/tmp` with tmpfs in memory
             # placing a file in the host fs will not expose it inside of chroot
             config.arch_chroot_tmpdir = path.join '/opt', tmpdir
             tmpdir = path.join config.arch_chroot_rootdir, config.arch_chroot_tmpdir
-            command = [
-              "mkdir #{tmpdir}"
-              "chmod 777 #{tmpdir}"
-            ].map (command) ->
-              if current_username is 'root'
+            sudo = (command) ->
+              if utils.os.whoami(ssh) is 'root'
               then command
-              else "sudo #{command}" 
-            .join ' && '
-            await execProm ssh, command
+              else "sudo #{command}"
+            command = [
+              'set -e'
+              sudo "[ -w #{config.arch_chroot_rootdir} ] || exit 2;"
+              sudo "mkdir -p #{tmpdir};"
+              sudo "chmod 700 #{tmpdir};"
+            ].join '\n'
+            try
+              await execProm ssh, command
+            catch err
+              throw errors.NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST err: err, config: config if err.code is 2
+              throw err
             tmpdir
         else if config.sudo or config.bash or (env_export and Object.keys(config.env).length)
           metadata.tmpdir ?= true
@@ -146,18 +149,18 @@ console.info(stdout)
     on_result =
       before: '@nikitajs/core/src/plugins/ssh'
       handler: ({action: {config, metadata, ssh}}) ->
-        return unless config.arch_chroot_rootdir
-        current_username =
-          if ssh then ssh.config.username
-          else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
-          else process.env['USER']
-        command = [
-          "rm -rf #{metadata.tmpdir}"
-        ].map (command) ->
-          if current_username is 'root'
+        # Only arch chroot manage tmpdir, otherwise it is handled by the plugin
+        return unless config.arch_chroot and config.arch_chroot_rootdir
+        # Disregard cleaning if tmpdir is a user defined function and if
+        # the function failed to execute, see the on_action hook above.
+        return if typeof metadata.tmpdir is 'function'
+        sudo = (command) ->
+          if utils.os.whoami(ssh) is 'root'
           then command
-          else "sudo #{command}" 
-        .join ' && '
+          else "sudo #{command}"
+        command = [
+          sudo "rm -rf #{metadata.tmpdir}"
+        ].join '\n'
         await execProm ssh, command
 
 ## Schema definitions
@@ -410,10 +413,7 @@ console.info(stdout)
         ).join '\n'
         env_export_hash = utils.string.hash env_export_content
       # Guess current username
-      current_username =
-        if ssh then ssh.config.username
-        else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
-        else process.env['USER']
+      current_username = utils.os.whoami(ssh)
       # Sudo
       if config.sudo
         if current_username is 'root'
@@ -452,7 +452,7 @@ console.info(stdout)
         log message: "Writing arch-chroot script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{target_in}"
         await @fs.base.writeFile
-          $sudo: false
+          # $sudo: false
           $arch_chroot: false
           $arch_chroot_rootdir: false
           target: "#{target}"
@@ -578,6 +578,18 @@ console.info(stdout)
       metadata:
         argument_to_config: 'command'
         definitions: definitions
+
+## Errors
+
+    errors =
+      NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST: ({err, config}) ->
+        utils.error 'NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST', [
+          'directory defined by `config.arch_chroot_rootdir` must exist,'
+          "location is #{JSON.stringify config.arch_chroot_rootdir}."
+        ],
+          exit_code: err.code
+          stdout: err.stdout
+          stderr: err.stderr
 
 ## Dependencies
 
