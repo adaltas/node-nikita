@@ -21,6 +21,25 @@ describe 'actions.execute.config.arch_linux', ->
           'one error was found in the configuration of action `execute`:'
           '#/dependencies/arch_chroot/required config must have required property \'arch_chroot_rootdir\'.'
         ].join ' '
+          
+    it 'arch_chroot_rootdir must exist', ->
+      # Note, chroot create a tmpdir which require sudo permissions
+      # It is currently managed inside the `nikita:action` hook.
+      nikita
+        $sudo: true
+      , ->
+        @execute
+          arch_chroot: true
+          arch_chroot_rootdir: '/doesnotexist'
+          command: 'whoami'
+        .should.be.rejectedWith
+          code: 'NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST'
+          exit_code: 2
+          message: [
+            'NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST:'
+            'directory defined by `config.arch_chroot_rootdir` must exist,'
+            'location is "/doesnotexist".'
+          ].join ' '
   
   describe 'usage with sudo', ->
 
