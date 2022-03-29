@@ -43,20 +43,21 @@ describe 'system.group.read', ->
   describe 'without option `target`', ->
     return unless tags.system_user
 
-    they 'use `getent` without target', ({ssh}) ->
+    they 'use `getent` without target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.group.remove 'toto'
         @system.group
           name: 'toto'
-          gid: 1000
+          gid: 1010
         {group} = await @system.group.read
           gid: 'toto'
         group.should.match
           group: 'toto'
           password: 'x'
-          gid: 1000
+          gid: 1010
           users: []
         @system.group.remove 'toto'
   

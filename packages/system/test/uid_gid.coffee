@@ -7,9 +7,10 @@ return unless tags.system_user
 
 describe 'system.uid_gid', ->
 
-  they 'convert names to id', ({ssh}) ->
+  they 'convert names to id', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       @system.user.remove 'toto'
       @system.group.remove ['toto', 'lulu']

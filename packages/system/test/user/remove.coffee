@@ -18,9 +18,10 @@ describe 'system.user.remove', ->
     
     return unless tags.system_user
   
-    they 'handle status', ({ssh}) ->
+    they 'handle status', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'

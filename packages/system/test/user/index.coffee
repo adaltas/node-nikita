@@ -8,7 +8,7 @@ describe 'system.user', ->
   describe 'schema', ->
     return unless tags.api
   
-    it 'shell', ->
+    it 'config.shell', ->
       {shell} = await nikita.system.user
         shell: true
         name: 'gollum'
@@ -27,9 +27,10 @@ describe 'system.user', ->
   describe 'usage', ->
     return unless tags.system_user
     
-    they 'accept only user name', ({ssh}) ->
+    they 'accept only user name', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
@@ -38,9 +39,10 @@ describe 'system.user', ->
         {$status} = await @system.user 'toto'
         $status.should.be.false()
 
-    they 'created with a uid', ({ssh}) ->
+    they 'created with a uid', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
@@ -53,9 +55,10 @@ describe 'system.user', ->
         {$status} = await @system.user 'toto'
         $status.should.be.false()
 
-    they 'created without a uid', ({ssh}) ->
+    they 'created without a uid', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
@@ -66,15 +69,17 @@ describe 'system.user', ->
         {$status} = await @system.user 'toto'
         $status.should.be.false()
 
-    they 'parent home does not exist', ({ssh}) ->
+    they 'parent home does not exist', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
+        $sudo: sudo
       , ({metadata: {tmpdir}})->
         await @system.user.remove 'toto'
         await @system.group.remove 'toto'
         await @fs.remove "#{tmpdir}/toto/subdir"
-        {$status} = await @system.user 'toto', home: "#{tmpdir}/toto/subdir"
+        {$status} = await @system.user 'toto',
+          home: "#{tmpdir}/toto/subdir"
         $status.should.be.true()
         @fs.assert "#{tmpdir}/toto",
           mode: [0o0644, 0o0755]
