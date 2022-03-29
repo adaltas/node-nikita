@@ -1,4 +1,5 @@
 
+path = require 'path'
 nikita = require '@nikitajs/core/lib'
 {tags, config} = require './test'
 they = require('mocha-they')(config)
@@ -99,35 +100,34 @@ describe 'tools.repo', ->
         not: true
   
   they 'Download GPG Keys option', ({ssh, sudo}) ->
-    source = await nikita
-    .file
-      $dirty: true
-      $tmpdir: true
-      $templated: true
-      target: "{{metadata.tmpdir}}/linuxtech.repo"
-      content: """
-      [linuxtech-release]
-      name=LinuxTECH.NET el6 main repo
-      baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
-      mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
-      mirrorlist_expire=7d
-      enabled=1
-      gpgcheck=1
-      gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
-      """
-    .call ({sibling}) -> sibling.config.target
     nikita
-      $ssh: ssh
       $tmpdir: true
-      $sudo: sudo
     , ({metadata: {tmpdir}}) ->
-      await @tools.repo
-        local: true
-        source: "#{source}"
-        gpg_dir: "#{tmpdir}"
-        update: false
-      await @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
-    await nikita.fs.base.unlink source
+      source = "#{tmpdir}/linuxtech.repo"
+      await @file
+        $templated: true
+        target: source
+        content: """
+        [linuxtech-release]
+        name=LinuxTECH.NET el6 main repo
+        baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
+        mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
+        mirrorlist_expire=7d
+        enabled=1
+        gpgcheck=1
+        gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
+        """
+      await nikita
+        $ssh: ssh
+        $tmpdir: true
+        $sudo: sudo
+      , ({metadata: {tmpdir}}) ->
+        await @tools.repo
+          local: true
+          source: "#{source}"
+          gpg_dir: "#{tmpdir}"
+          update: false
+        await @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
   
   they 'Download repo from remote location', ({ssh, sudo}) ->
     nikita
