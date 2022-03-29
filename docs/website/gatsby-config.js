@@ -82,8 +82,8 @@ module.exports = {
     {
       resolve: 'nikita-packages',
       options: {
-        include: packagesPath,
-        ignore: [`./nikita`],
+        include: ['./packages/*/README.md'],
+        ignore: [`./packages/nikita`],
       },
     },
     {

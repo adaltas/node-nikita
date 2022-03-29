@@ -3,6 +3,7 @@ const crypto = require("crypto")
 const path = require("path")
 const fs = require('fs').promises
 const constants = require('fs').constants
+const minimatch = require('minimatch')
 
 exports.createSchemaCustomization = ({ actions }) => {
   const { createTypes } = actions
@@ -31,15 +32,21 @@ exports.onCreateNode = async (
   { actions: {createNode}, createNodeId, node },
   { include, ignore }
 ) => {
-  if (!include) return
+  if (!include) return;
   if (node.internal.type !== `Mdx`) return
   // Filter non-readme files
-  const regexp = new RegExp(`${path.resolve(include)}/.*/README.md$`)
-  if (!regexp.test(node.fileAbsolutePath)) return 
+  if( !Array.isArray(include) ){ include = [include] };
+  const isIncluded = include.some( (location) =>
+    minimatch(node.fileAbsolutePath, path.resolve('../..', location))
+  );
+  if (!isIncluded) return;
   // Filter ignored packages
   if (ignore && ignore.length > 0) {
-    const regexpIgnore = new RegExp(ignore.map(item => path.resolve(include, item)).join('|'))
-    if (regexpIgnore.test(node.fileAbsolutePath)) return
+    if( !Array.isArray(ignore) ){ ignore = [ignore] };
+    const isIgnored = ignore.some( (location) =>
+      minimatch(node.fileAbsolutePath, path.resolve('../..', location))
+    );
+    if (isIgnored) return;
   }
   // Get package.json
   const packageJsonPath = path.join(node.fileAbsolutePath, '../package.json')
@@ -49,8 +56,9 @@ exports.onCreateNode = async (
   const name = packageJson.name.replace('@nikitajs/', '')
   const currentVersion = '1', version = '1' // Currently only 1 version
   var versionAlias = currentVersion == version ? 'current' : `v${version}`
-  const slug = `/${versionAlias}/packages/${name}/`
-  const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${path.relative(path.join(include, '../'), node.fileAbsolutePath)}`
+  const slug = `/${versionAlias}/packages/${name}/`;
+  const ghSlug = path.dirname(path.relative('../..', node.fileAbsolutePath));
+  const edit_url = `https://github.com/adaltas/node-nikita/edit/master/${ghSlug}`
   // Inherit fields
   createNode({
     // Custom fields
