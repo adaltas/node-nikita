@@ -470,13 +470,6 @@ console.info(stdout)
           uid: config.uid
       if config.sudo
         config.command = "sudo #{config.command}"
-      # Debug message
-      flags = [
-        'debug' if config.debug
-        'bash' if config.bash
-        'arch_chroot' if config.arch_chroot
-      ].filter (flag) -> !!flag
-      log message: "Main execute flags: #{flags.join(', ')}", level: 'DEBUG' #if flags.length
       # Execute
       new Promise (resolve, reject) ->
         log message: config.command_original, type: 'stdin', level: 'INFO' if config.stdin_log
@@ -525,7 +518,7 @@ console.info(stdout)
                 'we would really enjoy some help to replicate or fix this one.'
               ].join ' '
         child.on "exit", (code) ->
-          log message: "Command exist with status: #{code}", level: 'DEBUG'
+          log message: "Command exit with status: #{code}", level: 'DEBUG'
           result.code = code
           # Give it some time because the "exit" event is sometimes called
           # before the "stdout" "data" event when running `npm test`
@@ -554,7 +547,7 @@ console.info(stdout)
                   "command is #{JSON.stringify utils.string.max config.command_original, 50},"
                   "got #{JSON.stringify result.code}"
                   "instead of #{JSON.stringify config.code}."
-                ].join ' '
+                ].filter( (line) -> !!line).join ' '
                 level: if metadata.relax then 'INFO' else 'ERROR'
               return reject utils.error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'

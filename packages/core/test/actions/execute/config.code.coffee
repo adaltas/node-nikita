@@ -104,8 +104,11 @@ describe 'actions.execute.config.code', ->
         .then -> throw Error 'Oh no'
         .catch ->
           logs.should.match [
+            level: 'DEBUG'
+            message: 'Command exit with status: 1'
+          ,
             level: 'ERROR'
-            message: 'An unexpected exit code was encountered,  command is "exit 1", got 1 instead of {"true":[0],"false":[]}.'
+            message: 'An unexpected exit code was encountered, command is "exit 1", got 1 instead of {"true":[0],"false":[]}.'
           ]
     
     they 'log error with metadata.relax', ({ssh}) ->
@@ -113,7 +116,7 @@ describe 'actions.execute.config.code', ->
       nikita $ssh: ssh, ->
         @execute
           $log: ({log}) ->
-            return unless log.type is 'text'
+            return unless log.type is 'text' and log.level isnt 'DEBUG'
             logs.push log
           $relax: true
           command: "exit 1"
