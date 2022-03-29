@@ -417,7 +417,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, flags, k, stdout, target, target_in, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -556,14 +556,6 @@ handler = async function({
   if (config.sudo) {
     config.command = `sudo ${config.command}`;
   }
-  // Debug message
-  flags = [config.debug ? 'debug' : void 0, config.bash ? 'bash' : void 0, config.arch_chroot ? 'arch_chroot' : void 0].filter(function(flag) {
-    return !!flag;
-  });
-  log({
-    message: `Main execute flags: ${flags.join(', ')}`,
-    level: 'DEBUG' //if flags.length
-  });
   // Execute
   return new Promise(function(resolve, reject) {
     var child, result, stderr_stream_open, stdout_stream_open;
@@ -646,7 +638,7 @@ handler = async function({
     }
     return child.on("exit", function(code) {
       log({
-        message: `Command exist with status: ${code}`,
+        message: `Command exit with status: ${code}`,
         level: 'DEBUG'
       });
       result.code = code;
@@ -707,7 +699,9 @@ handler = async function({
         }
         if (config.code.true.indexOf(code) === -1 && config.code.false.indexOf(code) === -1) {
           log({
-            message: ['An unexpected exit code was encountered,', metadata.relax ? 'using relax mode,' : void 0, `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, `instead of ${JSON.stringify(config.code)}.`].join(' '),
+            message: ['An unexpected exit code was encountered,', metadata.relax ? 'using relax mode,' : void 0, `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, `instead of ${JSON.stringify(config.code)}.`].filter(function(line) {
+              return !!line;
+            }).join(' '),
             level: metadata.relax ? 'INFO' : 'ERROR'
           });
           return reject(utils.error('NIKITA_EXECUTE_EXIT_CODE_INVALID', ['an unexpected exit code was encountered,', metadata.relax ? 'using relax mode,' : void 0, `command is ${JSON.stringify(utils.string.max(config.command_original, 50))},`, `got ${JSON.stringify(result.code)}`, `instead of ${JSON.stringify(config.code)}.`], {

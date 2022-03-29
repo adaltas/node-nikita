@@ -55,6 +55,7 @@ describe 'metadata "debug"', ->
         '\u001b[33m[1.1.INFO execute] echo to_stdout; echo to_stderr 1>&2\u001b[39m\n'
         '\u001b[36m[1.1.INFO execute] to_stdout\u001b[39m\n'
         '\u001b[35m[1.1.INFO execute] to_stderr\u001b[39m\n'
+        '\u001b[32m[1.1.DEBUG execute] Command exit with status: 0\u001b[39m\n'
       ].join()
     
   describe 'print', ->
