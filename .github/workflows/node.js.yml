@@ -20,13 +20,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: sudo apt install -y openssh-server && sudo systemctl start sshd
-    - run: ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
-    - run: pwd && whoami && ls -l ~ && ls -l ~/.ssh && sudo systemctl status sshd
-    - run: cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-    - run: ls -l ~/.ssh/authorized_keys
-    - run: chmod 644 ~/.ssh/authorized_keys
-    - run: ls -l ~/.ssh/authorized_keys
-    - run: echo $(whoami) && ssh `whoami`@localhost hostname
+    - run: ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
+    - run: cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
     - run: yarn --frozen-lockfile
     - run: yarn run test:local
   # deploy:
