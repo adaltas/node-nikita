@@ -4,8 +4,8 @@ utils = require '../utils'
 session = require '../session'
 
 ###
-Pass an SSH connection or SSH information to an action. Disable SSH if the value
-is `null` or `false`.
+Pass an SSH connection to an action. The connection is accessible with the
+`action.ssh` property.
 ###
 
 module.exports =

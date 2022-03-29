@@ -12,7 +12,7 @@ The `tmpdir` metadata creates a temporary directory for the duration of the acti
 
 ## Usage
 
-To create a temporary directory pass `true` to the metadata. The pathname of the created directory is available inside the [action handler](/current/api/handler/):
+To create a temporary directory set the value `true` to the metadata `tmpdir` property. The pathname of the created directory is available inside the [action handler](/current/api/handler/):
 
 ```js
 nikita
@@ -28,11 +28,11 @@ nikita
 
 When actions are [running over SSH](/current/guide/local_remote/), the temporary directory is always created inside the `/tmp` folder. Otherwise, it is inside the default OS temporary directory returned by the Node.js native function [`os.tmpdir()`](https://nodejs.org/api/os.html#os_os_tmpdir).
 
-The directory name is generated basing on the [`uuid` metadata](/current/api/metadata/uuid/). When it is created with boolean `true`, the directory is unique for the entire Nikita's session and shared between all child actions. Thus, enabling the metadata in children doesn't make sense when it is already enabled in the parent action. The following example asserts this behavior:
+The directory name is generated based on the [`uuid` metadata](/current/api/metadata/uuid/). When it is created with boolean `true`, the directory is unique for the entire Nikita's session and shared with all the child actions. Thus, enabling the property with `true` in children doesn't create a new directory when it is already enabled in the parent action. The following example validate this behavior:
 
 ```js
 const assert = require('assert');
-(async ()=>{
+(async () => {
   await nikita
   // Call parent action with tmpdir enabled
   .call({

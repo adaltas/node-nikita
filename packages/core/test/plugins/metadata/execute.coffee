@@ -23,14 +23,23 @@ describe 'plugins.execute', ->
         $dry: true
         $env: key: 'value'
         $env_export: true
-        $sudo: true
       , ->
         @execute 'fake cmd', ({config}) -> config
       config.bash.should.eql true
       config.dry.should.eql true
       config.env.should.containEql key: 'value'
       config.env_export.should.eql true
-      config.sudo.should.eql true
+      should(config.sudo).be.undefined()
+    
+    it 'schema validation', ->
+      nikita
+        $sudo: 'Oh no'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of root action:'
+        'nikita#/definitions/metadata/properties/sudo/type metadata/sudo must be boolean,'
+        'type is "boolean".'
+      ].join ' '
 
   describe 'env', ->
 

@@ -13,11 +13,11 @@ describe 'plugins.execute.sudo', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile
+        $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
-        $sudo: true
       await @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
@@ -45,25 +45,25 @@ describe 'plugins.execute.sudo', ->
       $sudo: false
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
+        $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
+      await @fs.base.chown
         $sudo: true
-      @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
+      await @fs.base.chmod
         $sudo: true
-      @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
+      await @fs.base.readFile
         $sudo: true
-      @fs.base.readFile
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
-        $sudo: true
       .should.be.finally.containEql data: 'hello'
 
   they 'writeFile', ({ssh}) ->

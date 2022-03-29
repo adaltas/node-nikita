@@ -15,6 +15,19 @@ Behind the scene, the [ssh2](https://github.com/mscdex/ssh2) package written by 
 
 To create a connection, we use [ssh2-connect](https://github.com/adaltas/node-ssh2-connect). The package simplifies the creation of a connection and also provides a few additional configurations.
 
+## Usage
+
+Set the `$ssh` property to define the connection. Either provide an existing SSH connection or a SSH configuration.
+
+With the former, the connection won't be closed by Nikita. It is your responsibility.
+
+With the later the connection is managed by Nikita. It is created before the execution of the action handler. It is then closed once the action and its children finish their execution.
+
+The `action.ssh` property is always available inside an action. It takes two forms, either null or a open connection.
+
+Unless defined otherwise, the value is cascaded from a parent to its child actions.
+
+SSH is disabled with the values `null` or `false`.
 
 ## Configurations
 

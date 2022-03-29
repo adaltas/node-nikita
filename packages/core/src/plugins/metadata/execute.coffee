@@ -1,5 +1,5 @@
 
-{merge} = require 'mixme'
+{merge, mutate} = require 'mixme'
 
 module.exports =
   name: '@nikitajs/core/src/plugins/execute'
@@ -8,6 +8,14 @@ module.exports =
     '@nikitajs/core/src/plugins/tools/walk'
   ]
   hooks:
+    'nikita:schema': ({schema}) ->
+      mutate schema.definitions.metadata.properties,
+        sudo:
+          type: 'boolean'
+          description: '''
+          Run the action with as the superuser.
+          '''
+          # default: false
     'nikita:action':
       handler: ({config, metadata, tools: {find, walk}}) ->
         return unless metadata.module is '@nikitajs/core/src/actions/execute'
