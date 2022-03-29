@@ -44,21 +44,22 @@ describe 'system.user.read', ->
   describe 'without option `target`', ->
     return unless tags.system_user
 
-    they 'use `getent` without target', ({ssh}) ->
+    they 'use `getent` without target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
+        $sudo: sudo
       , ->
         @system.user.remove 'toto'
         @system.group.remove 'toto'
         @system.user
           name: 'toto'
           system: true
-          uid: 1000
+          uid: 1010
         {user} = await @system.user.read
           uid: 'toto'
         user.should.match
           user: 'toto'
-          uid: 1000
+          uid: 1010
           comment: ''
           home: '/home/toto'
           shell: '/bin/sh'

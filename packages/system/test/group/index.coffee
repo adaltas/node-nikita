@@ -7,9 +7,10 @@ return unless tags.system_group
 
 describe 'system.group', ->
   
-  they 'accept only user name', ({ssh}) ->
+  they 'accept only user name', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       @system.user.remove 'toto'
       @system.group.remove 'toto'
@@ -18,9 +19,10 @@ describe 'system.group', ->
       {$status} = await @system.group 'toto'
       $status.should.be.false()
 
-  they 'accept gid as int or string', ({ssh}) ->
+  they 'accept gid as int or string', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
     , ->
       @system.user.remove 'toto'
       @system.group.remove 'toto'

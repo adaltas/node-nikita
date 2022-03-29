@@ -100,7 +100,7 @@ mounts part of the cgroups.`
       'target': {
         type: 'string',
         description: `The cgconfig configuration file. By default nikita detects provider
-based on  os.`
+based on os.`
       }
     },
     anyOf: [
