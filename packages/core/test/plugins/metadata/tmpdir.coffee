@@ -11,14 +11,27 @@ describe 'plugins.metadata.tmpdir', ->
   
   describe 'validation', ->
 
-    they 'invalid value', ({ssh}) ->
-      nikita.call $ssh: ssh, $tmpdir: {}, (->)
+    # Schema validation doesn't seem to works, leave it here for later
+    they.skip 'invalid value (schema)', ({ssh}) ->
+      await nikita
+        $ssh: ssh
+        $tmpdir: {'oh': 'no'}
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of root action:'
+        'nikita#/definitions/metadata/properties/tmpdir/oneOf'
+        'metadata/tmpdir must match exactly one schema in oneOf,'
+        'passingSchemas is [0,1].'
+      ].join ' '
+
+    they 'invalid value (hardcoded, to be replaced by schema)', ({ssh}) ->
+      nikita.call $ssh: ssh, $tmpdir: null, (->)
       .should.be.rejectedWith
         code: 'METADATA_TMPDIR_INVALID'
         message: [
           'METADATA_TMPDIR_INVALID:'
-          'the "tmpdir" metadata value must be a boolean, a function or a string,'
-          "got {}"
+          'the "tmpdir" metadata value must be a boolean, a function, an object or a string,'
+          "got null"
         ].join ' '
   
   describe 'accepted values', ->
@@ -26,21 +39,37 @@ describe 'plugins.metadata.tmpdir', ->
     they 'is a boolean', ({ssh}) ->
       nikita
         $ssh: ssh
-      .call $tmpdir: true, ({metadata}) ->
-        metadata.tmpdir
+      .call $tmpdir: true, ({metadata: {tmpdir}, ssh}) ->
+        await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+        tmpdir
       .then (tmpdir) ->
-        path.parse(tmpdir).name.should.match /^nikita-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/
+        path.parse(tmpdir).name.should.match /^nikita-\w{32}$/
 
-    they 'is a string', ({ssh}) ->
+    they 'is a relative path', ({ssh}) ->
+      target = "./nikita-#{Math.random().toString(36).replace(/[^a-z]+/g, '')}"
       nikita
         $ssh: ssh
-      .call $tmpdir: './a_dir', ({metadata}) ->
-        metadata.tmpdir
+      .call $tmpdir: target, ({metadata: {tmpdir}, ssh}) ->
+        await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+        tmpdir
       .then (tmpdir) ->
         tmpdir.should.eql unless ssh
-        then path.resolve os.tmpdir(), './a_dir'
-        else path.posix.resolve '/tmp', './a_dir'
-
+        then path.resolve os.tmpdir(), target
+        else path.posix.resolve '/tmp', target
+          
+    they 'is an absolute path', ({ssh}) ->
+      target = "./nikita-#{Math.random().toString(36).replace(/[^a-z]+/g, '')}"
+      target = unless ssh
+      then path.resolve os.tmpdir(), target
+      else path.posix.resolve '/tmp', target
+      nikita
+        $ssh: ssh
+      .call $tmpdir: target, ({metadata: {tmpdir}, ssh}) ->
+        await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+        tmpdir
+      .then (tmpdir) ->
+        tmpdir.should.eql target
+    
     they 'is a function', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -51,25 +80,26 @@ describe 'plugins.metadata.tmpdir', ->
           else '/tmp'
           tmpdir.should.match /^nikita-.*/
           # Test action arg and return
-          action.tools.path.join os_tmpdir, "#{tmpdir}-ok"
-      , ({metadata}) -> metadata.tmpdir
+          target: action.tools.path.join os_tmpdir, "#{tmpdir}-ok"
+      , ({metadata: {tmpdir}, ssh}) ->
+        await fs.exists(ssh, tmpdir).should.be.resolvedWith true
+        tmpdir
       .then (tmpdir) ->
         tmpdir.should.match /ok$/
     
   describe 'disposal', ->
 
-    they 'remove left directory', ({ssh}) ->
+    they 'remove directory', ({ssh}) ->
       nikita
         $ssh: ssh
       , ({ssh}) ->
         tmpdir = await @call
           $tmpdir: true
         , ({metadata: {tmpdir}}) ->
-          await fs.exists(ssh, tmpdir).should.be.resolvedWith true
           tmpdir
         fs.exists(ssh, tmpdir).should.be.resolvedWith false
 
-    they 'remove directory with files and foders inside', ({ssh}) ->
+    they 'remove directory with files and folders inside', ({ssh}) ->
       nikita
         $ssh: ssh
       , ({ssh}) ->
@@ -89,9 +119,51 @@ describe 'plugins.metadata.tmpdir', ->
           should(tmpdir).be.undefined()
 
     they 'several true dont change value', ({ssh}) ->
-      nikita.call $ssh: ssh, $tmpdir: true, ->
-        @call -> @call ({metadata: {tmpdir}}) ->
-          should(tmpdir).be.undefined()
+      nikita.call
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir: tmpdir1}}) ->
+        @call
+          $tmpdir: true
+        , ({metadata: {tmpdir: tmpdir2}}) ->
+          @call
+            $tmpdir: true
+          , ({metadata: {tmpdir: tmpdir3}}) ->
+            tmpdir1.should.eql tmpdir2
+            tmpdir1.should.eql tmpdir3
+
+    they 'recreated with new ssh connection', ({ssh}) ->
+      return unless ssh
+      {ssh} = await nikita.ssh.open ssh
+      # console.log '>>> 1 start'
+      tmpdir3 = await nikita.call
+        $tmpdir: true
+      , ({metadata: {tmpdir: tmpdir1}}) ->
+        # console.log '>>> 2 start'
+        tmpdir3 = await @call
+          $ssh: ssh
+          $tmpdir: true
+        , ({metadata: {tmpdir: tmpdir2}}) ->
+          # console.log '>>> 3 start'
+          tmpdir3 = await @call
+            $ssh: false
+            $tmpdir: true
+          , ({metadata: {tmpdir: tmpdir3}}) ->
+            # console.log 'tmpdir1', tmpdir1
+            # console.log 'tmpdir2', tmpdir2
+            # console.log 'tmpdir3', tmpdir3
+            tmpdir1.should.not.eql tmpdir2
+            tmpdir1.should.eql tmpdir3
+            tmpdir3
+          # console.log '<<< 3 end'
+          await @fs.assert tmpdir3
+          tmpdir3
+        # console.log '<<< 2 end'
+        await @fs.assert tmpdir3
+        tmpdir3
+      # console.log '<<< 1 end'
+      await nikita.fs.assert target: tmpdir3, not: true
+      await nikita.ssh.close ssh: ssh
   
   describe 'metadata', ->
           
@@ -101,13 +173,19 @@ describe 'plugins.metadata.tmpdir', ->
       nikita.call $ssh: ssh, $tmpdir: true, (->)
       .should.be.resolved()
 
-    it 'with templated', () ->
-      nikita.call
-        $tmpdir: '/tmp/nikita'
+    they 'with templated', ({ssh}) ->
+      target = "./nikita-#{Math.random().toString(36).replace(/[^a-z]+/g, '')}"
+      target = unless ssh
+      then path.resolve os.tmpdir(), target
+      else path.posix.resolve '/tmp', target
+      nikita
+        $ssh: ssh
+      .call
+        $tmpdir: target
         $templated: true
-        target: 'a value with {{metadata.tmpdir}}'
+        target: "a value with {{metadata.tmpdir}}"
       , ({config}) ->
-        config.target.should.eql 'a value with /tmp/nikita'
+        config.target.should.eql "a value with #{target}"
   
   describe 'config.dirty', ->
 

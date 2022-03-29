@@ -90,11 +90,11 @@ describe 'actions.fs.base.createWriteStream', ->
         {stats} = await @fs.base.stat "#{tmpdir}/a_file"
         utils.mode.compare(stats.mode, 0o0611).should.be.true()
     
-    they.skip 'config `flags` equal "a"', ({ssh}) ->
+    they 'config `flags` equal "a"', ({ssh}) ->
       nikita
         $ssh: ssh
         $templated: true
-        tmpdir: true
+        $tmpdir: true
       , ->
         await @fs.base.createWriteStream
           target: "{{parent.metadata.tmpdir}}/a_file"
@@ -105,9 +105,9 @@ describe 'actions.fs.base.createWriteStream', ->
           target: "{{parent.metadata.tmpdir}}/a_file"
           flags: 'a'
           stream: (ws) ->
-            ws.write ' nikita'
+            ws.write '...nikita'
             ws.end()
         @fs.base.readFile
+          encoding: 'utf8'
           target: "{{parent.metadata.tmpdir}}/a_file"
-        .should.be.finally.containEql data: "hello nikita"
-    
+        .should.be.finally.containEql data: "hello...nikita"

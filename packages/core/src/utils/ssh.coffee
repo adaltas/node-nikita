@@ -2,6 +2,7 @@
 {merge} = require 'mixme'
 {whoami} = require './os'
 connect = require 'ssh2-connect'
+{hash} = require './string'
 
 module.exports = ssh =
   compare: (ssh1, ssh2) ->
@@ -19,3 +20,5 @@ module.exports = ssh =
     compare_config config1, config2
   is: (ssh) ->
     connect.is ssh
+  hash: (ssh) ->
+    hash JSON.stringify ssh.config

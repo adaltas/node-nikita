@@ -48,7 +48,7 @@ console.info(Buffer.concat(buffers).toString())
       ]
       handler: ({config, metadata, tools: {find, walk}}) ->
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
-        metadata.tmpdir ?= true if config.sudo
+        metadata.tmpdir = sudo: false if config.sudo
 
 ## Schema definitions
 
@@ -88,20 +88,24 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Handler
 
-    handler = ({config, metadata, ssh, tools: {path, log, find}}) ->
+    handler = ({config, metadata, ssh, tools: {path, log}}) ->
+      sudo = (cmd) -> if config.sudo then "sudo #{cmd}" else "#{cmd}"
       # Normalization
       config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
       throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
-      config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}" if config.sudo
       throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless config.on_readable or config.stream
+      # In sudo mode, we can't be sure the user has the permission to open a
+      # readable stream on the target file
+      if config.sudo
+        config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}"
       # Guess current username
-      current_username = utils.os.whoami ssh: ssh
+      whoami = utils.os.whoami ssh: ssh
       try if config.target_tmp
-        await @execute """
-          [ ! -f '#{config.target}' ] && exit
-          cp '#{config.target}' '#{config.target_tmp}'
-          chown '#{current_username}' '#{config.target_tmp}'
-          """
+        await exec ssh, [
+          sudo "[ ! -f '#{config.target}' ] && exit 1"
+          sudo "cp '#{config.target}' '#{config.target_tmp}'"
+          sudo "chown '#{whoami}' '#{config.target_tmp}'"
+        ].join '\n'
         log message: "Placing original file in temporary path before reading", level: 'INFO'
       catch err
         log message: "Failed to place original file in temporary path", level: 'ERROR'
@@ -134,7 +138,6 @@ console.info(Buffer.concat(buffers).toString())
         argument_to_config: 'target'
         log: false
         raw_output: true
-        tmpdir: true
         definitions: definitions
 
 ## Errors
@@ -180,4 +183,5 @@ console.info(Buffer.concat(buffers).toString())
 ## Dependencies
 
     fs = require 'ssh2-fs'
+    exec = require 'ssh2-exec/promise'
     utils = require '../../../utils'

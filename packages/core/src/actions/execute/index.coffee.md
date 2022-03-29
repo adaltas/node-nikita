@@ -120,8 +120,6 @@ console.info(stdout)
         env_export = if config.env_export? then config.env_export else !!ssh
         # Create the tmpdir if arch_chroot is activated
         if config.arch_chroot and config.arch_chroot_rootdir
-          # # Disable tmpdir, it is specifically managed in the handler
-          # metadata.tmpdir = true
           metadata.tmpdir ?= ({os_tmpdir, tmpdir}) ->
             # Note, Arch mount `/tmp` with tmpfs in memory
             # placing a file in the host fs will not expose it inside of chroot
@@ -142,7 +140,7 @@ console.info(stdout)
             catch err
               throw errors.NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST err: err, config: config if err.code is 2
               throw err
-            tmpdir
+            target: tmpdir
         else if config.sudo or config.bash or (env_export and Object.keys(config.env).length)
           metadata.tmpdir ?= true
       
@@ -432,9 +430,7 @@ console.info(stdout)
         config.command = "source #{env_export_target}\n#{config.command}"
         log message: "Writing env export to #{JSON.stringify env_export_target}", level: 'INFO'
         await @fs.base.writeFile
-          $sudo: false
-          $arch_chroot: false
-          $arch_chroot_rootdir: false
+          $sudo: config.sudo
           content: env_export_content
           mode: 0o500
           target: env_export_target
@@ -452,9 +448,7 @@ console.info(stdout)
         log message: "Writing arch-chroot script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{target_in}"
         await @fs.base.writeFile
-          # $sudo: false
-          $arch_chroot: false
-          $arch_chroot_rootdir: false
+          $sudo: config.sudo
           target: "#{target}"
           content: "#{command}"
           mode: config.mode
@@ -466,17 +460,23 @@ console.info(stdout)
         log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.bash} #{target}"
         config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
+        # Note, rm cannot be remove with arch_chroot enabled
         config.command += ";code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
-          $sudo: false
-          $arch_chroot: false
-          $arch_chroot_rootdir: false
+          $sudo: config.sudo
           content: command
           mode: config.mode
           target: target
           uid: config.uid
       if config.sudo
         config.command = "sudo #{config.command}"
+      # Debug message
+      flags = [
+        'debug' if config.debug
+        'bash' if config.bash
+        'arch_chroot' if config.arch_chroot
+      ].filter (flag) -> !!flag
+      log message: "Main execute flags: #{flags.join(', ')}", level: 'DEBUG' #if flags.length
       # Execute
       new Promise (resolve, reject) ->
         log message: config.command_original, type: 'stdin', level: 'INFO' if config.stdin_log
@@ -525,6 +525,7 @@ console.info(stdout)
                 'we would really enjoy some help to replicate or fix this one.'
               ].join ' '
         child.on "exit", (code) ->
+          log message: "Command exist with status: #{code}", level: 'DEBUG'
           result.code = code
           # Give it some time because the "exit" event is sometimes called
           # before the "stdout" "data" event when running `npm test`
@@ -594,7 +595,7 @@ console.info(stdout)
 ## Dependencies
 
     exec = require 'ssh2-exec'
-    execProm = require('ssh2-exec/promise')
+    execProm = require 'ssh2-exec/promise'
     fs = require 'ssh2-fs'
     yaml = require 'js-yaml'
     utils = require '../../utils'

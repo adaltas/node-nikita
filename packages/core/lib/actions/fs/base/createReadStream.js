@@ -37,7 +37,7 @@
 // ```
 
 // ## Hooks
-var definitions, errors, fs, handler, on_action, utils;
+var definitions, errors, exec, fs, handler, on_action, utils;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute'],
@@ -55,7 +55,9 @@ on_action = {
       }));
     }
     if (config.sudo) {
-      return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
+      return metadata.tmpdir = {
+        sudo: false
+      };
     }
   }
 };
@@ -106,31 +108,38 @@ handler = async function({
     config,
     metadata,
     ssh,
-    tools: {path, log, find}
+    tools: {path, log}
   }) {
-  var current_username, err;
+  var err, sudo, whoami;
+  sudo = function(cmd) {
+    if (config.sudo) {
+      return `sudo ${cmd}`;
+    } else {
+      return `${cmd}`;
+    }
+  };
   // Normalization
   config.target = config.cwd ? path.resolve(config.cwd, config.target) : path.normalize(config.target);
   if (ssh && !path.isAbsolute(config.target)) {
     throw Error(`Non Absolute Path: target is ${JSON.stringify(config.target)}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option`);
   }
+  if (!(config.on_readable || config.stream)) {
+    throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER();
+  }
+  // In sudo mode, we can't be sure the user has the permission to open a
+  // readable stream on the target file
   if (config.sudo) {
     if (config.target_tmp == null) {
       config.target_tmp = `${metadata.tmpdir}/${utils.string.hash(config.target)}`;
     }
   }
-  if (!(config.on_readable || config.stream)) {
-    throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER();
-  }
   // Guess current username
-  current_username = utils.os.whoami({
+  whoami = utils.os.whoami({
     ssh: ssh
   });
   try {
     if (config.target_tmp) {
-      await this.execute(`[ ! -f '${config.target}' ] && exit
-cp '${config.target}' '${config.target_tmp}'
-chown '${current_username}' '${config.target_tmp}'`);
+      await exec(ssh, [sudo(`[ ! -f '${config.target}' ] && exit 1`), sudo(`cp '${config.target}' '${config.target_tmp}'`), sudo(`chown '${whoami}' '${config.target_tmp}'`)].join('\n'));
       log({
         message: "Placing original file in temporary path before reading",
         level: 'INFO'
@@ -193,7 +202,6 @@ module.exports = {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    tmpdir: true,
     definitions: definitions
   }
 };
@@ -229,5 +237,7 @@ errors = {
 
 // ## Dependencies
 fs = require('ssh2-fs');
+
+exec = require('ssh2-exec/promise');
 
 utils = require('../../../utils');

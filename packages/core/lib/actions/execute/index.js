@@ -104,7 +104,7 @@
 // ```
 
 // ## Hooks
-var definitions, exec, execProm, fs, handler, on_action, on_result, utils, yaml;
+var definitions, errors, exec, execProm, fs, handler, on_action, on_result, utils, yaml;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path'],
@@ -120,25 +120,37 @@ on_action = {
       config.env = !ssh && !config.env ? process.env : {};
     }
     env_export = config.env_export != null ? config.env_export : !!ssh;
-    if (config.arch_chroot_rootdir) {
-      // # Disable tmpdir, it is specifically managed in the handler
-      // metadata.tmpdir = true
+    // Create the tmpdir if arch_chroot is activated
+    if (config.arch_chroot && config.arch_chroot_rootdir) {
       return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = async function({os_tmpdir, tmpdir}) {
-        var command, current_username;
-        current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
+        var command, err, sudo;
         // Note, Arch mount `/tmp` with tmpfs in memory
         // placing a file in the host fs will not expose it inside of chroot
         config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
         tmpdir = path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
-        command = [`mkdir ${tmpdir}`, `chmod 777 ${tmpdir}`].map(function(command) {
-          if (current_username === 'root') {
+        sudo = function(command) {
+          if (utils.os.whoami(ssh) === 'root') {
             return command;
           } else {
             return `sudo ${command}`;
           }
-        }).join(' && ');
-        await execProm(ssh, command);
-        return tmpdir;
+        };
+        command = ['set -e', sudo(`[ -w ${config.arch_chroot_rootdir} ] || exit 2;`), sudo(`mkdir -p ${tmpdir};`), sudo(`chmod 700 ${tmpdir};`)].join('\n');
+        try {
+          await execProm(ssh, command);
+        } catch (error) {
+          err = error;
+          if (err.code === 2) {
+            throw errors.NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST({
+              err: err,
+              config: config
+            });
+          }
+          throw err;
+        }
+        return {
+          target: tmpdir
+        };
       };
     } else if (config.sudo || config.bash || (env_export && Object.keys(config.env).length)) {
       return metadata.tmpdir != null ? metadata.tmpdir : metadata.tmpdir = true;
@@ -151,18 +163,24 @@ on_result = {
   handler: async function({
       action: {config, metadata, ssh}
     }) {
-    var command, current_username;
-    if (!config.arch_chroot_rootdir) {
+    var command, sudo;
+    // Only arch chroot manage tmpdir, otherwise it is handled by the plugin
+    if (!(config.arch_chroot && config.arch_chroot_rootdir)) {
       return;
     }
-    current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
-    command = [`rm -rf ${metadata.tmpdir}`].map(function(command) {
-      if (current_username === 'root') {
+    // Disregard cleaning if tmpdir is a user defined function and if
+    // the function failed to execute, see the on_action hook above.
+    if (typeof metadata.tmpdir === 'function') {
+      return;
+    }
+    sudo = function(command) {
+      if (utils.os.whoami(ssh) === 'root') {
         return command;
       } else {
         return `sudo ${command}`;
       }
-    }).join(' && ');
+    };
+    command = [sudo(`rm -rf ${metadata.tmpdir}`)].join('\n');
     return (await execProm(ssh, command));
   }
 };
@@ -399,7 +417,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
+  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, flags, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -447,7 +465,7 @@ handler = async function({
     env_export_hash = utils.string.hash(env_export_content);
   }
   // Guess current username
-  current_username = ssh ? ssh.config.username : /^win/.test(process.platform) ? process.env['USERPROFILE'].split(path.win32.sep)[2] : process.env['USER'];
+  current_username = utils.os.whoami(ssh);
   // Sudo
   if (config.sudo) {
     if (current_username === 'root') {
@@ -480,9 +498,7 @@ handler = async function({
       level: 'INFO'
     });
     await this.fs.base.writeFile({
-      $sudo: false,
-      $arch_chroot: false,
-      $arch_chroot_rootdir: false,
+      $sudo: config.sudo,
       content: env_export_content,
       mode: 0o500,
       target: env_export_target,
@@ -506,9 +522,7 @@ handler = async function({
     });
     config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${target_in}`;
     await this.fs.base.writeFile({
-      $sudo: false,
-      $arch_chroot: false,
-      $arch_chroot_rootdir: false,
+      $sudo: config.sudo,
       target: `${target}`,
       content: `${command}`,
       mode: config.mode
@@ -528,12 +542,11 @@ handler = async function({
       config.command = `su - ${config.uid} -c '${config.command}'`;
     }
     if (!config.dirty) {
+      // Note, rm cannot be remove with arch_chroot enabled
       config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
     }
     await this.fs.base.writeFile({
-      $sudo: false,
-      $arch_chroot: false,
-      $arch_chroot_rootdir: false,
+      $sudo: config.sudo,
       content: command,
       mode: config.mode,
       target: target,
@@ -543,6 +556,14 @@ handler = async function({
   if (config.sudo) {
     config.command = `sudo ${config.command}`;
   }
+  // Debug message
+  flags = [config.debug ? 'debug' : void 0, config.bash ? 'bash' : void 0, config.arch_chroot ? 'arch_chroot' : void 0].filter(function(flag) {
+    return !!flag;
+  });
+  log({
+    message: `Main execute flags: ${flags.join(', ')}`,
+    level: 'DEBUG' //if flags.length
+  });
   // Execute
   return new Promise(function(resolve, reject) {
     var child, result, stderr_stream_open, stdout_stream_open;
@@ -624,6 +645,10 @@ handler = async function({
       });
     }
     return child.on("exit", function(code) {
+      log({
+        message: `Command exist with status: ${code}`,
+        level: 'DEBUG'
+      });
       result.code = code;
       // Give it some time because the "exit" event is sometimes called
       // before the "stdout" "data" event when running `npm test`
@@ -714,6 +739,17 @@ module.exports = {
   metadata: {
     argument_to_config: 'command',
     definitions: definitions
+  }
+};
+
+// ## Errors
+errors = {
+  NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST: function({err, config}) {
+    return utils.error('NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST', ['directory defined by `config.arch_chroot_rootdir` must exist,', `location is ${JSON.stringify(config.arch_chroot_rootdir)}.`], {
+      exit_code: err.code,
+      stdout: err.stdout,
+      stderr: err.stderr
+    });
   }
 };
 

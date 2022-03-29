@@ -26,7 +26,7 @@ console.info(`Stream was created: ${$status}`)
       ]
       handler: ({config, metadata, tools: {find}}) ->
         config.sudo ?= await find ({metadata: {sudo}}) -> sudo
-        metadata.tmpdir = true if config.sudo or config.flags?[0] is 'a'
+        metadata.tmpdir = sudo: false if config.sudo or config.flags?[0] is 'a'
 
 ## Schema definitions
 
@@ -67,23 +67,26 @@ console.info(`Stream was created: ${$status}`)
 
 ## Handler
 
-    handler = ({config, metadata, ssh, tools: {find, log}}) ->
+    handler = ({config, metadata, ssh, tools: {log}}) ->
+      sudo = (cmd) -> if config.sudo then "sudo #{cmd}" else "#{cmd}"
       # Normalize config
       if config.sudo or config.flags[0] is 'a'
         config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}"
       # config.mode ?= 0o644 # Node.js default to 0o666
       # In append mode, we write to a copy of the target file located in a temporary location
       try if config.flags[0] is 'a'
-        await @execute """
-        [ ! -f '#{config.target}' ] && exit
-        cp '#{config.target}' '#{config.target_tmp}'
-        """
+        whoami = utils.os.whoami ssh
+        await exec ssh, [
+          sudo "[ ! -f '#{config.target}' ] && exit"
+          sudo "cp '#{config.target}' '#{config.target_tmp}'"
+          sudo "chown #{whoami} '#{config.target_tmp}'"
+        ].join '\n'
         log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO'
       catch err
         log message: "Failed to place original file in temporary path", level: 'ERROR'
         throw err
       # Start writing the content
-      log message: 'Writting file', level: 'DEBUG'
+      log message: 'Start writing bytes', level: 'DEBUG'
       await new Promise (resolve, reject) ->
         ws = await fs.createWriteStream ssh, config.target_tmp or config.target,
           flags: config.flags,
@@ -100,10 +103,10 @@ console.info(`Stream was created: ${$status}`)
           resolve() unless err
       # Replace the target file in append or sudo mode
       if config.target_tmp
-        await @execute
+        await exec ssh,
           command: [
-            "mv '#{config.target_tmp}' '#{config.target}'"
-            "chown root:root '#{config.target}'" if config.sudo
+            sudo "mv '#{config.target_tmp}' '#{config.target}'"
+            sudo "chown root '#{config.target}'" if config.sudo
           ].join '\n'
 
 ## Exports
@@ -135,4 +138,5 @@ console.info(`Stream was created: ${$status}`)
 ## Dependencies
 
     fs = require 'ssh2-fs'
+    exec = require 'ssh2-exec/promise'
     utils = require '../../../utils'

@@ -15,7 +15,7 @@
 // ```
 
 // ## Hooks
-var definitions, errors, fs, handler, on_action, utils;
+var definitions, errors, exec, fs, handler, on_action, utils;
 
 on_action = {
   after: ['@nikitajs/core/lib/plugins/execute'],
@@ -34,7 +34,9 @@ on_action = {
       }));
     }
     if (config.sudo || ((ref = config.flags) != null ? ref[0] : void 0) === 'a') {
-      return metadata.tmpdir = true;
+      return metadata.tmpdir = {
+        sudo: false
+      };
     }
   }
 };
@@ -87,9 +89,16 @@ handler = async function({
     config,
     metadata,
     ssh,
-    tools: {find, log}
+    tools: {log}
   }) {
-  var err;
+  var err, sudo, whoami;
+  sudo = function(cmd) {
+    if (config.sudo) {
+      return `sudo ${cmd}`;
+    } else {
+      return `${cmd}`;
+    }
+  };
   // Normalize config
   if (config.sudo || config.flags[0] === 'a') {
     if (config.target_tmp == null) {
@@ -100,8 +109,8 @@ handler = async function({
     // config.mode ?= 0o644 # Node.js default to 0o666
     // In append mode, we write to a copy of the target file located in a temporary location
     if (config.flags[0] === 'a') {
-      await this.execute(`[ ! -f '${config.target}' ] && exit
-cp '${config.target}' '${config.target_tmp}'`);
+      whoami = utils.os.whoami(ssh);
+      await exec(ssh, [sudo(`[ ! -f '${config.target}' ] && exit`), sudo(`cp '${config.target}' '${config.target_tmp}'`), sudo(`chown ${whoami} '${config.target_tmp}'`)].join('\n'));
       log({
         message: "Append prepared by placing a copy of the original file in a temporary path",
         level: 'INFO'
@@ -117,7 +126,7 @@ cp '${config.target}' '${config.target_tmp}'`);
   }
   // Start writing the content
   log({
-    message: 'Writting file',
+    message: 'Start writing bytes',
     level: 'DEBUG'
   });
   await new Promise(async function(resolve, reject) {
@@ -147,8 +156,8 @@ cp '${config.target}' '${config.target_tmp}'`);
   });
   // Replace the target file in append or sudo mode
   if (config.target_tmp) {
-    return (await this.execute({
-      command: [`mv '${config.target_tmp}' '${config.target}'`, config.sudo ? `chown root:root '${config.target}'` : void 0].join('\n')
+    return (await exec(ssh, {
+      command: [sudo(`mv '${config.target_tmp}' '${config.target}'`), config.sudo ? sudo(`chown root '${config.target}'`) : void 0].join('\n')
     }));
   }
 };
@@ -180,5 +189,7 @@ errors = {
 
 // ## Dependencies
 fs = require('ssh2-fs');
+
+exec = require('ssh2-exec/promise');
 
 utils = require('../../../utils');
