@@ -10,13 +10,19 @@ import Toc from "./Toc"
 require('prismjs/themes/prism.css')
 
 const useStyles = theme => ({
-  root: theme.mixins.gutters({
+  root: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
     paddingTop: theme.spacing(5),
     margin: theme.spacing(0, 'auto', 5),
     [theme.breakpoints.up(900 + theme.spacing(6))]: {
       maxWidth: 1000,
     },
-  }),
+  },
   title: {
     ...theme.typography.root,
     ...theme.typography.h1,
@@ -122,7 +128,7 @@ const Content = ({
   children,
   page
 }) => {
-  const styles = useStyles(useTheme())
+  const styles = useStyles(useTheme());
   return (
     <main css={styles.root}>
       {page && !page.home && (

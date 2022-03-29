@@ -12,15 +12,21 @@ const useStyles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.primary.main,
   },
-  rootInner: theme.mixins.gutters({
+  rootInner: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
+    },
     // ...theme.typography,
     flex: '1 1 100%',
     maxWidth: '100%',
     margin: '0 auto',
     [theme.breakpoints.up(900 + theme.spacing(6))]: {
-      maxWidth: 900,
+      maxWidth: 900, // Voluntarily 100px smaller than main content
     },
-  }),
+  },
   subheading: {
     color: '#CCC8C7',
   },
