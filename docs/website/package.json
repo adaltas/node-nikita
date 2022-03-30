@@ -1,7 +1,8 @@
 {
-  "name": "nikita-docs",
+  "private": true,
+  "name": "@nikitajs/website",
   "description": "Nikita Official Documentation",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "author": "David Worms <david@adaltas.com>",
   "contributors": [
     {
