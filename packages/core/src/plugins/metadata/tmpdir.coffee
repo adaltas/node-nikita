@@ -90,15 +90,11 @@ module.exports =
         tmpdir_info.target = tools.path.resolve os_tmpdir, tmpdir_info.target
         
         metadata.tmpdir = tmpdir_info.target
-        
         exists = action.parent and await tools.find action.parent, ({metadata}) ->
           return unless metadata.tmpdir
           if tmpdir_info.hash is metadata.tmpdir_info?.hash
             true
         return if exists
-        dirty = await tools.find ({metadata}) -> metadata.dirty
-        # return if dirty and await fs.exists ssh, metadata.tmpdir
-        # try
         try
           await fs.mkdir ssh, metadata.tmpdir, tmpdir_info.mode
           await exec ssh, "sudo chown root:root '#{metadata.tmpdir}'" if tmpdir_info.sudo

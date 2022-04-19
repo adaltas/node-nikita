@@ -417,7 +417,7 @@ handler = async function({
     tools: {dig, find, log, path, walk},
     ssh
   }) {
-  var command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
+  var cmd, command, current_username, dry, env_export, env_export_content, env_export_hash, env_export_target, k, stdout, target, target_in, v;
   // Validate parameters
   if (config.mode == null) {
     config.mode = 0o500;
@@ -521,6 +521,9 @@ handler = async function({
       level: 'INFO'
     });
     config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${target_in}`;
+    if (config.sudo) {
+      config.command = `sudo ${config.command}`;
+    }
     await this.fs.base.writeFile({
       $sudo: config.sudo,
       target: `${target}`,
@@ -537,14 +540,27 @@ handler = async function({
       message: `Writing bash script to ${JSON.stringify(target)}`,
       level: 'INFO'
     });
-    config.command = `${config.bash} ${target}`;
+    cmd = `${config.bash} ${target}`;
     if (config.uid) {
-      config.command = `su - ${config.uid} -c '${config.command}'`;
+      cmd = `su - ${config.uid} -c '${cmd}'`;
+    }
+    if (config.sudo) {
+      cmd = `sudo ${cmd}`;
     }
     if (!config.dirty) {
-      // Note, rm cannot be remove with arch_chroot enabled
-      config.command += `;code=\`echo $?\`; rm '${target}'; exit $code`;
+      cmd += "; code=`echo $?` ";
+      if (!config.sudo) {
+        cmd += `&& rm '${target}'`;
+      } else {
+        cmd += `&& sudo rm '${target}'`;
+      }
+      cmd += "&& exit $code";
     }
+    config.command = cmd;
+    // config.command = "#{config.bash} #{target}"
+    // config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
+    // # Note, rm cannot be remove with arch_chroot enabled
+    // config.command += " && code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
     await this.fs.base.writeFile({
       $sudo: config.sudo,
       content: command,
@@ -552,8 +568,7 @@ handler = async function({
       target: target,
       uid: config.uid
     });
-  }
-  if (config.sudo) {
+  } else if (config.sudo) {
     config.command = `sudo ${config.command}`;
   }
   // Execute

@@ -37,7 +37,7 @@ module.exports = {
       // Probably related to pb above
       // '@nikitajs/core/lib/plugins/metadata/schema'
       handler: async function(action) {
-        var config, dirty, err, exists, metadata, os_tmpdir, ref, ssh, ssh_hash, sudo, tmp_hash, tmpdir_info, tools;
+        var config, err, exists, metadata, os_tmpdir, ref, ssh, ssh_hash, sudo, tmp_hash, tmpdir_info, tools;
         ({config, metadata, tools} = action);
         if (!(((ref = typeof metadata.tmpdir) === 'boolean' || ref === 'function' || ref === 'string' || ref === 'undefined') || (is_object_literal(metadata.tmpdir)))) {
           throw utils.error('METADATA_TMPDIR_INVALID', ['the "tmpdir" metadata value must be a boolean, a function, an object or a string,', `got ${JSON.stringify(metadata.tmpdir)}`]);
@@ -120,12 +120,7 @@ module.exports = {
         if (exists) {
           return;
         }
-        dirty = (await tools.find(function({metadata}) {
-          return metadata.dirty;
-        }));
         try {
-          // return if dirty and await fs.exists ssh, metadata.tmpdir
-          // try
           await fs.mkdir(ssh, metadata.tmpdir, tmpdir_info.mode);
           if (tmpdir_info.sudo) {
             await exec(ssh, `sudo chown root:root '${metadata.tmpdir}'`);

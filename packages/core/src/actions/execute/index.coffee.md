@@ -447,6 +447,7 @@ console.info(stdout)
         # target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
         log message: "Writing arch-chroot script to #{JSON.stringify target}", level: 'INFO'
         config.command = "#{config.arch_chroot} #{config.arch_chroot_rootdir} bash #{target_in}"
+        config.command = "sudo #{config.command}" if config.sudo
         await @fs.base.writeFile
           $sudo: config.sudo
           target: "#{target}"
@@ -458,17 +459,30 @@ console.info(stdout)
         if typeof target isnt 'string'
           target = path.join metadata.tmpdir, "execute-bash-#{utils.string.hash config.command}"
         log message: "Writing bash script to #{JSON.stringify target}", level: 'INFO'
-        config.command = "#{config.bash} #{target}"
-        config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
-        # Note, rm cannot be remove with arch_chroot enabled
-        config.command += ";code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
+        cmd = "#{config.bash} #{target}"
+        if config.uid
+          cmd = "su - #{config.uid} -c '#{cmd}'"
+        if config.sudo
+          cmd = "sudo #{cmd}"
+        unless config.dirty
+          cmd += "; code=`echo $?` "
+          unless config.sudo
+            cmd += "&& rm '#{target}'"
+          else
+            cmd += "&& sudo rm '#{target}'"
+          cmd += "&& exit $code"
+        config.command = cmd
+        # config.command = "#{config.bash} #{target}"
+        # config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
+        # # Note, rm cannot be remove with arch_chroot enabled
+        # config.command += " && code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
         await @fs.base.writeFile
           $sudo: config.sudo
           content: command
           mode: config.mode
           target: target
           uid: config.uid
-      if config.sudo
+      else if config.sudo
         config.command = "sudo #{config.command}"
       # Execute
       new Promise (resolve, reject) ->
