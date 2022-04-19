@@ -16,25 +16,22 @@ RUN \
   && su - nikita -c 'curl -L https://git.io/n-install | bash -s -- -y' \
   && su - nikita -c '. ~/.bashrc && n $NODE_VERSION'
 
-# Install SSH
-RUN yum install -y openssh-server openssh-clients \
-  && mkdir -p /home/nikita/.ssh \
-  && chmod 700 /home/nikita/.ssh \
-  && ssh-keygen -t rsa -f /home/nikita/.ssh/id_rsa -N '' \
-  && cat /home/nikita/.ssh/id_rsa.pub > /home/nikita/.ssh/authorized_keys \
-  && ssh-keygen -f /etc/ssh/ssh_host_rsa_key \
-  && chown -R nikita /home/nikita/.ssh \
-  && ssh-keygen -A
 
-# Install openssl
-RUN yum install -y openssl
-
-# Finalize
-RUN yum clean all
+RUN \
+     # Install SSH
+     yum install -y openssh-server openssh-clients \
+  && ssh-keygen -A \
+     # Install openssl
+  && yum install -y openssl
+     # Finalize
+  && yum clean all
 
 ADD ./entrypoint.sh /entrypoint.sh
 WORKDIR /home/nikita/work/packages/core
 ENV TERM xterm
 USER nikita
+
+RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''\
+ && cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
 
 ENTRYPOINT ["/entrypoint.sh"]
