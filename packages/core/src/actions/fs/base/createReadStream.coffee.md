@@ -95,14 +95,15 @@ console.info(Buffer.concat(buffers).toString())
       throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
       throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless config.on_readable or config.stream
       # In sudo mode, we can't be sure the user has the permission to open a
-      # readable stream on the target file
+      # readable stream on the target file, so we create a copy with the correct
+      # permission
       if config.sudo
         config.target_tmp ?= "#{metadata.tmpdir}/#{utils.string.hash config.target}"
       # Guess current username
       whoami = utils.os.whoami ssh: ssh
       try if config.target_tmp
         await exec ssh, [
-          sudo "[ ! -f '#{config.target}' ] && exit 1"
+          sudo "[ ! -f '#{config.target}' ] && exit 0" # don't do anything, fallback to ENOENT later
           sudo "cp '#{config.target}' '#{config.target_tmp}'"
           sudo "chown '#{whoami}' '#{config.target_tmp}'"
         ].join '\n'

@@ -158,7 +158,7 @@ describe 'tools.repo', ->
             'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-3.2.asc'
       await @service.install
         name: 'mongodb-org-shell'
       await @execute
@@ -171,7 +171,7 @@ describe 'tools.repo', ->
             'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-3.4.asc'
       $status.should.be.true()
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
@@ -181,7 +181,7 @@ describe 'tools.repo', ->
             'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-3.4.asc'
       $status.should.be.false()
       await @execute
         command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
@@ -203,7 +203,7 @@ describe 'tools.repo', ->
             'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-3.2.asc'
       await @service.install
         name: 'mongodb-org-shell'
       await @execute

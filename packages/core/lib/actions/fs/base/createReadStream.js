@@ -127,7 +127,8 @@ handler = async function({
     throw errors.NIKITA_FS_CRS_NO_EVENT_HANDLER();
   }
   // In sudo mode, we can't be sure the user has the permission to open a
-  // readable stream on the target file
+  // readable stream on the target file, so we create a copy with the correct
+  // permission
   if (config.sudo) {
     if (config.target_tmp == null) {
       config.target_tmp = `${metadata.tmpdir}/${utils.string.hash(config.target)}`;
@@ -139,7 +140,7 @@ handler = async function({
   });
   try {
     if (config.target_tmp) {
-      await exec(ssh, [sudo(`[ ! -f '${config.target}' ] && exit 1`), sudo(`cp '${config.target}' '${config.target_tmp}'`), sudo(`chown '${whoami}' '${config.target_tmp}'`)].join('\n'));
+      await exec(ssh, [sudo(`[ ! -f '${config.target}' ] && exit 0`), sudo(`cp '${config.target}' '${config.target_tmp}'`), sudo(`chown '${whoami}' '${config.target_tmp}'`)].join('\n'));
       log({
         message: "Placing original file in temporary path before reading",
         level: 'INFO'
