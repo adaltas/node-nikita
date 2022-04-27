@@ -27,17 +27,16 @@ nikita.log.cli({
 }).lxc.cluster({
   $header: 'Container',
   networks: {
-    lxdbr0public: {
-      'ipv4.address': '172.16.0.1/24',
+    lxdbr3pub: {
+      'ipv4.address': '10.10.40.1/24',
       'ipv4.nat': true,
       'ipv6.address': 'none',
-      'dns.domain': 'nikita'
+      'dns.domain': 'nikita.local'
     },
-    lxdbr1private: {
-      'ipv4.address': '10.10.10.1/24',
+    lxdbr3priv: {
+      'ipv4.address': '10.10.50.1/24',
       'ipv4.nat': false,
-      'ipv6.address': 'none',
-      'dns.domain': 'nikita'
+      'ipv6.address': 'none'
     }
   },
   containers: {
@@ -53,19 +52,19 @@ nikita.log.cli({
         eth0: {
           name: 'eth0',
           nictype: 'bridged',
-          parent: 'lxdbr0public'
+          parent: 'lxdbr3pub'
         },
         eth1: {
           name: 'eth1',
           nictype: 'bridged',
-          parent: 'lxdbr1private',
-          'ipv4.address': '10.10.10.11'
+          parent: 'lxdbr3priv',
+          'ipv4.address': '10.10.50.11'
         }
       },
       proxy: {
         ssh: {
           listen: 'tcp:0.0.0.0:2201',
-          connect: 'tcp:127.0.0.1:22'
+          connect: 'tcp:0.0.0.0:22'
         }
       },
       ssh: {
@@ -74,7 +73,7 @@ nikita.log.cli({
       user: {
         nikita: {
           sudo: true,
-          authorized_keys: './assets/id_rsa.pub'
+          authorized_keys: './assets/id_ed25519.pub'
         }
       }
     },
@@ -90,13 +89,13 @@ nikita.log.cli({
         eth0: {
           name: 'eth0',
           nictype: 'bridged',
-          parent: 'lxdbr0public'
+          parent: 'lxdbr3pub'
         },
         eth1: {
           name: 'eth1',
           nictype: 'bridged',
-          parent: 'lxdbr1private',
-          'ipv4.address': '10.10.10.12'
+          parent: 'lxdbr3priv',
+          'ipv4.address': '10.10.50.12'
         }
       },
       proxy: {
@@ -111,7 +110,7 @@ nikita.log.cli({
       user: {
         nikita: {
           sudo: true,
-          authorized_keys: './assets/id_rsa.pub'
+          authorized_keys: './assets/id_ed25519.pub'
         }
       }
     },
@@ -127,13 +126,13 @@ nikita.log.cli({
         eth0: {
           name: 'eth0',
           nictype: 'bridged',
-          parent: 'lxdbr0public'
+          parent: 'lxdbr3pub'
         },
         eth1: {
           name: 'eth1',
           nictype: 'bridged',
-          parent: 'lxdbr1private',
-          'ipv4.address': '10.10.10.13'
+          parent: 'lxdbr3priv',
+          'ipv4.address': '10.10.50.13'
         }
       },
       proxy: {
@@ -148,7 +147,7 @@ nikita.log.cli({
       user: {
         nikita: {
           sudo: true,
-          authorized_keys: './assets/id_rsa.pub'
+          authorized_keys: './assets/id_ed25519.pub'
         }
       }
     }
@@ -156,7 +155,7 @@ nikita.log.cli({
   prevision: async function({config}) {
     return (await this.tools.ssh.keygen({
       $header: 'SSH key',
-      target: './assets/id_rsa',
+      target: './assets/id_ed25519',
       bits: 2048,
       key_format: 'PEM',
       comment: 'nikita'
@@ -173,6 +172,14 @@ bash n lts`,
       code: [0, 42]
     }));
   }
+// await @lxd.exec
+//   $header: 'FQND'
+//   container: config.container
+//   command: """
+//   fqdn=`hostnamectl status | grep 'Static hostname' | sed 's/^.* \\(.*\\)$/\\1/'`
+//   [[ $fqdn == "#{config.fqdn}" ]] && exit 3
+//   hostnamectl set-hostname #{config.fqdn} --static
+//   """
 // @lxc.file.push
 //   debug: true
 //   header: 'Test configuration'

@@ -134,10 +134,24 @@ containers:
               $ref: 'module://@nikitajs/lxd/src/network#/definitions/config/properties/properties'
           'prevision':
             typeof: 'function'
+            description: '''
+            A nikita action called before the container's creation.
+            '''
+          'prevision_container':
+            typeof: 'function'
+            description: '''
+            A nikita action called for every container before it is created.
+            '''
           'provision':
             typeof: 'function'
+            description: '''
+            A nikita action called after the container's creation.
+            '''
           'provision_container':
             typeof: 'function'
+            description: '''
+            A nikita action called for every container after it is created.
+            '''
         # required: ['containers']
 
 ## Handler
@@ -152,6 +166,13 @@ containers:
           $header: "Network #{networkName}"
           network: networkName
           properties: networkProperties
+      # Prevision containers
+      if !!config.prevision_container
+        for containerName, containerConfig of config.containers
+          await @call
+            container: containerName
+          , containerConfig
+          , config.prevision_container
       # Init containers
       for containerName, containerConfig of config.containers then await @call
         $header: "Container #{containerName}"
@@ -304,9 +325,6 @@ containers:
             mode: 600
             source: "#{configUser.authorized_keys}"
             target: "/home/#{userName}/.ssh/authorized_keys"
-      # Provision
-      if !!config.provision
-        await @call config, config.provision
       # Provision containers
       if !!config.provision_container
         for containerName, containerConfig of config.containers
@@ -314,6 +332,9 @@ containers:
             container: containerName
           , containerConfig
           , config.provision_container
+      # Provision
+      if !!config.provision
+        await @call config, config.provision
 
 ## Exports
 

@@ -165,13 +165,20 @@ authorized_keys file.`
         }
       },
       'prevision': {
-        typeof: 'function'
+        typeof: 'function',
+        description: `A nikita action called before the container's creation.`
+      },
+      'prevision_container': {
+        typeof: 'function',
+        description: `A nikita action called for every container before it is created.`
       },
       'provision': {
-        typeof: 'function'
+        typeof: 'function',
+        description: `A nikita action called after the container's creation.`
       },
       'provision_container': {
-        typeof: 'function'
+        typeof: 'function',
+        description: `A nikita action called for every container after it is created.`
       }
     }
   }
@@ -181,7 +188,7 @@ authorized_keys file.`
 
 // ## Handler
 handler = async function({config}) {
-  var containerConfig, containerName, networkName, networkProperties, ref, ref1, ref2, results;
+  var containerConfig, containerName, networkName, networkProperties, ref, ref1, ref2, ref3;
   if (!!config.prevision) {
     await this.call(config, config.prevision);
   }
@@ -195,14 +202,23 @@ handler = async function({config}) {
       properties: networkProperties
     });
   }
-  ref1 = config.containers;
+  if (!!config.prevision_container) {
+    ref1 = config.containers;
+    for (containerName in ref1) {
+      containerConfig = ref1[containerName];
+      await this.call({
+        container: containerName
+      }, containerConfig, config.prevision_container);
+    }
+  }
+  ref2 = config.containers;
   // Init containers
-  for (containerName in ref1) {
-    containerConfig = ref1[containerName];
+  for (containerName in ref2) {
+    containerConfig = ref2[containerName];
     await this.call({
       $header: `Container ${containerName}`
     }, async function() {
-      var configDisk, configNic, configProxy, configUser, deviceName, ref2, ref3, ref4, ref5, ref6, results, userName;
+      var configDisk, configNic, configProxy, configUser, deviceName, ref3, ref4, ref5, ref6, ref7, results, userName;
       // Set configuration
       await this.lxc.init({
         $header: 'Init',
@@ -217,10 +233,10 @@ handler = async function({config}) {
           properties: containerConfig.properties
         });
       }
-      ref2 = containerConfig.disk;
+      ref3 = containerConfig.disk;
       // Create disk device
-      for (deviceName in ref2) {
-        configDisk = ref2[deviceName];
+      for (deviceName in ref3) {
+        configDisk = ref3[deviceName];
         await this.lxc.config.device({
           $header: `Device ${deviceName} disk`,
           container: containerName,
@@ -229,10 +245,10 @@ handler = async function({config}) {
           properties: configDisk
         });
       }
-      ref3 = containerConfig.nic;
+      ref4 = containerConfig.nic;
       // Create nic device
-      for (deviceName in ref3) {
-        configNic = ref3[deviceName];
+      for (deviceName in ref4) {
+        configNic = ref4[deviceName];
         // note: `confignic.config.parent` is not required for each type
         // throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
         await this.lxc.config.device({
@@ -243,10 +259,10 @@ handler = async function({config}) {
           properties: utils.object.filter(configNic, ['ip', 'netmask'])
         });
       }
-      ref4 = containerConfig.proxy;
+      ref5 = containerConfig.proxy;
       // Create proxy device
-      for (deviceName in ref4) {
-        configProxy = ref4[deviceName];
+      for (deviceName in ref5) {
+        configProxy = ref5[deviceName];
         // todo: add host detection and port forwarding to VirtualBox
         // VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
         await this.lxc.config.device({
@@ -296,7 +312,7 @@ command -v openssl`,
         code: [0, 42]
       });
       // Enable SSH
-      if ((ref5 = containerConfig.ssh) != null ? ref5.enabled : void 0) {
+      if ((ref6 = containerConfig.ssh) != null ? ref6.enabled : void 0) {
         await this.lxc.exec({
           $header: 'SSH',
           container: containerName,
@@ -329,11 +345,11 @@ fi`,
           code: [0, 42]
         });
       }
-      ref6 = containerConfig.user;
+      ref7 = containerConfig.user;
       // Create users
       results = [];
-      for (userName in ref6) {
-        configUser = ref6[userName];
+      for (userName in ref7) {
+        configUser = ref7[userName];
         results.push((await this.call({
           $header: `User ${userName}`
         }, async function() {
@@ -376,19 +392,17 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
       return results;
     });
   }
-  if (!!config.provision) {
-    await this.call(config, config.provision);
-  }
   if (!!config.provision_container) {
-    ref2 = config.containers;
-    results = [];
-    for (containerName in ref2) {
-      containerConfig = ref2[containerName];
-      results.push((await this.call({
+    ref3 = config.containers;
+    for (containerName in ref3) {
+      containerConfig = ref3[containerName];
+      await this.call({
         container: containerName
-      }, containerConfig, config.provision_container)));
+      }, containerConfig, config.provision_container);
     }
-    return results;
+  }
+  if (!!config.provision) {
+    return (await this.call(config, config.provision));
   }
 };
 
