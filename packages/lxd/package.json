@@ -11,7 +11,7 @@
     "lxd",
     "container"
   ],
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -43,7 +43,7 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/log": "^1.0.0-alpha.2",
+    "@nikitajs/log": "^2.0.0-alpha.0",
     "js-yaml": "^4.1.0",
     "object-diff": "^0.0.4",
     "shell": "^0.9.2"

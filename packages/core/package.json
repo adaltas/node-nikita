@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/core",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "Provides the Nikita engine and the core Nikita actions and plugins.",
   "keywords": [
     "nikita",
@@ -82,9 +82,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@nikitajs/lxd-runner": "^1.0.0-alpha.2",
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
+    "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
     "coffeescript": "^2.6.1",
     "eslint": "^8.11.0",
     "eslint-plugin-coffee": "^0.1.15",
