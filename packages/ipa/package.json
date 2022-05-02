@@ -10,7 +10,7 @@
     "tls",
     "ssl"
   ],
-  "version": "1.0.0-r.0",
+  "version": "1.0.0-alpha.2",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
