@@ -42,6 +42,12 @@ module.exports =
     storage:
       '': '@nikitajs/lxd/src/storage'
       delete: '@nikitajs/lxd/src/storage/delete'
+      volume:
+        '': '@nikitajs/lxd/src/storage/volume'
+        delete: '@nikitajs/lxd/src/storage/volume/delete' 
+        list: '@nikitajs/lxd/src/storage/volume/list' 
+        get: '@nikitajs/lxd/src/storage/volume/get'
+        attach: '@nikitajs/lxd/src/storage/volume/attach'
 (->
   try
     await registry.register module.exports
