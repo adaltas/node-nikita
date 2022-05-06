@@ -74,6 +74,12 @@ console<span class="token punctuation">.</span><span class="token function">info
         description: &#x27;&#x27;&#x27;
         Directory storing GPG keys.
         &#x27;&#x27;&#x27;
+      &#x27;gpg_key&#x27;:
+        type: &#x27;string&#x27;
+        description: &#x27;&#x27;&#x27;
+        Import specified key into the gpg_dir specified, downloads
+        the file if it&#x27;s an url.
+        &#x27;&#x27;&#x27;
       &#x27;local&#x27;:
         $ref: &#x27;module://@nikitajs/file/lib/index#/definitions/config/properties/local&#x27;
         default: false
@@ -160,9 +166,10 @@ console<span class="token punctuation">.</span><span class="token function">info
   keys = for name, section of data
     repoids.push name
     continue unless section.gpgcheck is &#x27;1&#x27;
-    throw Error &#x27;Missing gpgkey&#x27; unless section.gpgkey?
+    throw Error &#x27;Missing gpgkey&#x27; unless config.gpg_key or section.gpgkey?
     continue unless /^http(s)??:\/\//.test section.gpgkey
     section.gpgkey
+  keys.push config.gpg_key if config.gpg_key
   # Download GPG Keys
   if config.verify
     for key in keys
