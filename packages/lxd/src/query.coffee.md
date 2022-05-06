@@ -18,10 +18,7 @@ The `lxc query` command comes with a few flag which we shall support:
 
 ```
 Flags:
-  -d, --data      Input data
       --raw       Print the raw response
-  -X, --request   Action (defaults to GET) (default "GET")
-      --wait      Wait for the operation to complete
 ```
 
 ## Schema definitions
@@ -36,16 +33,52 @@ Flags:
             The API path in the form of `[<remote>:]<API path>`, for example
             `/1.0/instances/c1`
             '''
+          'wait':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, activates the wait flag that waits for the operation to complete.
+            '''
+          'request':
+            enum: ['GET', 'PUT', 'DELETE', 'POST', 'PATCH']
+            default: 'GET'
+            description: '''
+            Action to use for the API call.
+            '''
+          'data':
+            type: 'string'
+            description: '''
+            Data to send to the action in the form of application/json stringified object.
+            '''
+          'format':
+            type: 'string'
+            enum: ['json', 'string']
+            default: 'json'
+            description: '''
+            Format to use for the output data, either `json` or `string`.
+            '''
+        required: ['path']
 
 ## Handler
 
     handler = ({config}) ->
-      {stdout} = await @execute
+      {$status, stdout} = await @execute
         command: [
-          'lxc', 'query', config.path
+          'lxc', 'query', 
+          "--wait" if config.wait, 
+          "--request", config.request, 
+          "--data '#{config.data}'" if config.data?, 
+          config.path,
+          "|| exit 42"
         ].join ' '
-      $status: true
-      data: JSON.parse stdout
+        code: [0, 42]
+      $status: $status
+      switch config.format
+        when 'json' 
+         if $status then data: JSON.parse stdout else data: {}
+        when 'string' 
+         if $status then data: stdout else data: ""
+      
 
 ## Exports
 
