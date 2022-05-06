@@ -80,7 +80,7 @@ console.info(`Disk was created: ${$status}`)
                 Path on the host, either to a file/directory or to a block
                 device.
                 '''
-            required: ['path', 'source']
+            required: ['path']
           'type':
             const: 'disk'
       'infiniband':
