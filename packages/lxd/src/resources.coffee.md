@@ -6,46 +6,23 @@ Show full information about the resources available to the LXD server.
 ## Output parameters
 
 * `$status` (boolean)
-* `config` (object)   
+* `config` (object) 
   Information about the resources available to the LXD server.
 
 ## Example
 
 ```js
-const {config} = await nikita.lxc.resources({
-  container: 'container1',
-  device: 'disk'
-})
+const {config} = await nikita.lxc.resources()
 console.info(config)
 ```
-
-## Schema definitions
-
-    definitions =
-      config:
-        type: 'object'
-        properties:
-          'container':
-            $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
-          'device':
-            enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy']
-            description: '''
-            Name of the device in LXD configuration, for example "eth0".
-            '''
-        required: ['container', 'device']
 
 ## Handler
 
     handler = ({config}) ->
-      {stdout} = await @execute
-        command: [
-          'lxc', 'query',
-          '/' + [
-            '1.0', 'resources'
-          ].join '/'
-        ].join ' '
-      config: JSON.parse stdout
-
+      {data, $status} = await @lxc.query
+        path: "/1.0/resources"
+      $status: $status
+      config: data
 ## Exports
 
     module.exports =
