@@ -38,17 +38,7 @@ module.exports = (config) ->
           nikita
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'enter.md'
-          .execute
-            $header: 'Container enter'
-            command: """
-            lxc exec \
-              --cwd #{params.cwd} \
-              #{params.container} -- bash
-            """
-            stdio: ['inherit', 'inherit', 'inherit']
-            stdin: process.stdin
-            stdout: process.stdout
-            stderr: process.stderr
+          .call '@nikitajs/lxd-runner/lib/actions/enter', {...config, ...params}
       'exec':
         description: '''
         Execute a command inside the container console.
@@ -58,17 +48,7 @@ module.exports = (config) ->
           nikita
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'exec.md'
-          .execute
-            $header: 'Container exec'
-            command: """
-            lxc exec \
-              --cwd #{params.cwd} \
-              #{params.container} -- #{params.cmd}
-            """
-            stdio: ['inherit', 'inherit', 'inherit']
-            stdin: process.stdin
-            stdout: process.stdout
-            stderr: process.stderr
+          .call '@nikitajs/lxd-runner/lib/actions/exec', {...config, ...params}
       'run':
         description: '''
         Start and stop the container and execute all the tests.
