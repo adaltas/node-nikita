@@ -32,6 +32,26 @@ module.exports = function(config) {
       }
     },
     commands: {
+      'delete': {
+        description: `Delete a container container.`,
+        options: {
+          force: {
+            type: 'boolean',
+            shortcut: 'f',
+            description: `Force the container removal even if it is started.`
+          }
+        },
+        handler: function({params}) {
+          return nikita.log.cli({
+            pad: {
+              host: 20,
+              header: 60
+            }
+          }).log.md({
+            filename: path.resolve(params.logdir, 'delete.md')
+          }).call('@nikitajs/lxd-runner/lib/actions/delete', {...config, ...params});
+        }
+      },
       'enter': {
         description: `Open a prompt running inside the container.`,
         handler: function({params}) {

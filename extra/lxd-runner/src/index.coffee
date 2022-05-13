@@ -30,6 +30,22 @@ module.exports = (config) ->
         Directory were to store the logs.
         '''
     commands:
+      'delete':
+        description: '''
+        Delete a container container.
+        '''
+        options:
+          force:
+            type: 'boolean'
+            shortcut: 'f'
+            description: '''
+            Force the container removal even if it is started.
+            '''
+        handler: ({params}) ->
+          nikita
+          .log.cli pad: host: 20, header: 60
+          .log.md filename: path.resolve params.logdir, 'delete.md'
+          .call '@nikitajs/lxd-runner/lib/actions/delete', {...config, ...params}
       'enter':
         description: '''
         Open a prompt running inside the container.
