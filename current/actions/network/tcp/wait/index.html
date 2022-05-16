@@ -168,7 +168,7 @@ console<span class="token punctuation">.</span><span class="token function">info
     quorum_target = config.server.length
   # Note, the option is not tested and doesnt seem to work from a manual test
   config.timeout = 0 unless config.timeout &gt; 0
-  config.timeout = Math.round config.timeout / 1000
+  # config.timeout = Math.round config.timeout / 1000
   await @execute
     bash: true
     command: &quot;&quot;&quot;
@@ -191,6 +191,12 @@ console<span class="token punctuation">.</span><span class="token function">info
     mkdir -p $randdir
     echo 3 &gt; $randdir/signal
     echo &#x27;&#x27; &gt; $randdir/quorum
+    function get_time {
+      # Return the time since epoch in millisecond
+      # Note, date +%N doesn&#x27;t work on MacOS, using Python instead
+      # `date +%s%N | cut -b1-13` prints `1652694375N`
+      python -c &#x27;import time; print(int(time.time() * 1000))&#x27;
+    }
     function remove_randdir {
       for address in &quot;${addresses[@]}&quot; ; do
         host=&quot;${address%%:*}&quot;
@@ -206,13 +212,6 @@ console<span class="token punctuation">.</span><span class="token function">info
         remove_randdir
       fi
     }
-    function check_timeout {
-      local timeout=$1
-      local randfile4conn=$2
-      sleep $timeout
-      echo &quot;[WARN] Reach timeout&quot;
-      rm -f $randfile4conn
-    }
     function wait_connection {
       local host=$1
       local port=$2
@@ -224,6 +223,10 @@ console<span class="token punctuation">.</span><span class="token function">info
       while [[ -f &quot;$randfile4conn&quot; ]] &amp;&amp; ! `bash -c &quot;$isopen&quot; 2&gt;/dev/null`; do
         ((count++))
         echo &quot;[DEBUG] Connection failed to $host:$port on attempt $count&quot; &gt;&amp;2
+        if [ ! -z &quot;$timeout&quot; ]; then
+          current_time=`get_time`
+          (( $start_time+$timeout &lt; $current_time )) &amp;&amp; exit 2
+        fi
         sleep #{config.interval}
       done
       if [[ -f &quot;$randfile4conn&quot; ]]; then
@@ -236,11 +239,7 @@ console<span class="token punctuation">.</span><span class="token function">info
         echo 0 &gt; $randdir/signal
       fi
     }
-    if [ ! -z &quot;$timeout&quot; ]; then
-      host=&quot;${address%%:*}&quot;
-      port=&quot;${address##*:}&quot;
-      check_timeout $timeout `compute_md5 $host:$port` &amp;
-    fi
+    start_time=`get_time`
     for address in &quot;${addresses[@]}&quot; ; do
       host=&quot;${address%%:*}&quot;
       port=&quot;${address##*:}&quot;
