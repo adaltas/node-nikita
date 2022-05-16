@@ -220,7 +220,7 @@ handler = async function({
     // Note, the option is not tested and doesnt seem to work from a manual test
     config.timeout = 0;
   }
-  config.timeout = Math.round(config.timeout / 1000);
+  // config.timeout = Math.round config.timeout / 1000
   return (await this.execute({
     bash: true,
     command: `function compute_md5 {
@@ -244,6 +244,12 @@ echo "[INFO] randdir is: $randdir"
 mkdir -p $randdir
 echo 3 > $randdir/signal
 echo '' > $randdir/quorum
+function get_time {
+  # Return the time since epoch in millisecond
+  # Note, date +%N doesn't work on MacOS, using Python instead
+  # \`date +%s%N | cut -b1-13\` prints \`1652694375N\`
+  python -c 'import time; print(int(time.time() * 1000))'
+}
 function remove_randdir {
   for address in "\${addresses[@]}" ; do
     host="\${address%%:*}"
@@ -259,13 +265,6 @@ function check_quorum {
     remove_randdir
   fi
 }
-function check_timeout {
-  local timeout=$1
-  local randfile4conn=$2
-  sleep $timeout
-  echo "[WARN] Reach timeout"
-  rm -f $randfile4conn
-}
 function wait_connection {
   local host=$1
   local port=$2
@@ -277,6 +276,10 @@ function wait_connection {
   while [[ -f "$randfile4conn" ]] && ! \`bash -c "$isopen" 2>/dev/null\`; do
     ((count++))
     echo "[DEBUG] Connection failed to $host:$port on attempt $count" >&2
+    if [ ! -z "$timeout" ]; then
+      current_time=\`get_time\`
+      (( $start_time+$timeout < $current_time )) && exit 2
+    fi
     sleep ${config.interval}
   done
   if [[ -f "$randfile4conn" ]]; then
@@ -289,11 +292,7 @@ function wait_connection {
     echo 0 > $randdir/signal
   fi
 }
-if [ ! -z "$timeout" ]; then
-  host="\${address%%:*}"
-  port="\${address##*:}"
-  check_timeout $timeout \`compute_md5 $host:$port\` &
-fi
+start_time=\`get_time\`
 for address in "\${addresses[@]}" ; do
   host="\${address%%:*}"
   port="\${address##*:}"
