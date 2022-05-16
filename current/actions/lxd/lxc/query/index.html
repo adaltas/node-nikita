@@ -52,10 +52,7 @@
   <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">&quot;/1.0/instances/c1&quot;</span><span class="token punctuation">,</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 console<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Container c1 info: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>data<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div><h2 id="todo" style="position:relative"><a href="#todo" aria-label="todo permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TODO</h2><p>The <code class="language-text">lxc query</code> command comes with a few flag which we shall support:</p><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">Flags:
-  -d, --data      Input data
-      --raw       Print the raw response
-  -X, --request   Action (defaults to GET) (default &quot;GET&quot;)
-      --wait      Wait for the operation to complete</code></pre></div><h2 id="schema-definitions" style="position:relative"><a href="#schema-definitions" aria-label="schema definitions permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema definitions</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">definitions =
+      --raw       Print the raw response</code></pre></div><h2 id="schema-definitions" style="position:relative"><a href="#schema-definitions" aria-label="schema definitions permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema definitions</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">definitions =
   config:
     type: &#x27;object&#x27;
     properties:
@@ -64,13 +61,49 @@ console<span class="token punctuation">.</span><span class="token function">info
         description: &#x27;&#x27;&#x27;
         The API path in the form of `[&lt;remote&gt;:]&lt;API path&gt;`, for example
         `/1.0/instances/c1`
-        &#x27;&#x27;&#x27;</code></pre></div><h2 id="handler" style="position:relative"><a href="#handler" aria-label="handler permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handler</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">handler = ({config}) -&gt;
-  {stdout} = await @execute
+        &#x27;&#x27;&#x27;
+      &#x27;wait&#x27;:
+        type: &#x27;boolean&#x27;
+        default: false
+        description: &#x27;&#x27;&#x27;
+        If true, activates the wait flag that waits for the operation to complete.
+        &#x27;&#x27;&#x27;
+      &#x27;request&#x27;:
+        enum: [&#x27;GET&#x27;, &#x27;PUT&#x27;, &#x27;DELETE&#x27;, &#x27;POST&#x27;, &#x27;PATCH&#x27;]
+        default: &#x27;GET&#x27;
+        description: &#x27;&#x27;&#x27;
+        Action to use for the API call.
+        &#x27;&#x27;&#x27;
+      &#x27;data&#x27;:
+        type: &#x27;string&#x27;
+        description: &#x27;&#x27;&#x27;
+        Data to send to the action in the form of application/json stringified object.
+        &#x27;&#x27;&#x27;
+      &#x27;format&#x27;:
+        type: &#x27;string&#x27;
+        enum: [&#x27;json&#x27;, &#x27;string&#x27;]
+        default: &#x27;json&#x27;
+        description: &#x27;&#x27;&#x27;
+        Format to use for the output data, either `json` or `string`.
+        &#x27;&#x27;&#x27;
+    required: [&#x27;path&#x27;]</code></pre></div><h2 id="handler" style="position:relative"><a href="#handler" aria-label="handler permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handler</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">handler = ({config}) -&gt;
+  {$status, stdout} = await @execute
     command: [
-      &#x27;lxc&#x27;, &#x27;query&#x27;, config.path
+      &#x27;lxc&#x27;, &#x27;query&#x27;, 
+      &quot;--wait&quot; if config.wait, 
+      &quot;--request&quot;, config.request, 
+      &quot;--data &#x27;#{config.data}&#x27;&quot; if config.data?, 
+      config.path,
+      &quot;|| exit 42&quot;
     ].join &#x27; &#x27;
-  $status: true
-  data: JSON.parse stdout</code></pre></div><h2 id="exports" style="position:relative"><a href="#exports" aria-label="exports permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Exports</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">module.exports =
+    code: [0, 42]
+  $status: $status
+  switch config.format
+    when &#x27;json&#x27; 
+     if $status then data: JSON.parse stdout else data: {}
+    when &#x27;string&#x27; 
+     if $status then data: stdout else data: &quot;&quot;
+  </code></pre></div><h2 id="exports" style="position:relative"><a href="#exports" aria-label="exports permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Exports</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">module.exports =
   handler: handler
   metadata:
     definitions: definitions
