@@ -56,17 +56,17 @@
     "cson": "^7.20.0",
     "diff": "^5.0.0",
     "handlebars": "^4.7.7",
-    "ini": "^2.0.0",
+    "ini": "^3.0.0",
     "mixme": "^0.5.4",
     "xmlbuilder": "^15.1.1",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
     "@nikitajs/log": "^2.0.0-alpha.0",
-    "coffeescript": "^2.6.1",
-    "eslint": "^8.11.0",
+    "coffeescript": "^2.7.0",
+    "eslint": "^8.15.0",
     "eslint-plugin-coffee": "^0.1.15",
-    "mocha": "^9.2.2",
+    "mocha": "^10.0.0",
     "mocha-they": "^0.1.3",
     "should": "^13.2.3"
   },
