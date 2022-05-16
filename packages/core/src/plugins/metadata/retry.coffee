@@ -28,6 +28,9 @@ module.exports =
         # Handle error
         failure = (err) ->
           throw err if retry isnt true and action.metadata.attempt >= retry - 1
+          # Sleep
+          if action.metadata.sleep
+            await new Promise (resolve) -> setTimeout resolve, action.metadata.sleep
           # Increment the attempt metadata
           action.metadata.attempt++
           action.config = merge {}, config

@@ -36,9 +36,15 @@ module.exports = {
         ({retry} = action.metadata);
         config = merge({}, action.config);
         // Handle error
-        failure = function(err) {
+        failure = async function(err) {
           if (retry !== true && action.metadata.attempt >= retry - 1) {
             throw err;
+          }
+          // Sleep
+          if (action.metadata.sleep) {
+            await new Promise(function(resolve) {
+              return setTimeout(resolve, action.metadata.sleep);
+            });
           }
           // Increment the attempt metadata
           action.metadata.attempt++;
