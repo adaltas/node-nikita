@@ -16,6 +16,8 @@ describe 'lxc.network.delete', ->
       {$status} = await @lxc.network.delete
         network: "nkt-delete-1"
       $status.should.be.true()
+      {list} = await @lxc.network.list()
+      list.should.not.containEql 'nkt-delete-1'
           
   they 'Network already deleted', ({ssh}) ->
     nikita

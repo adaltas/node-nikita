@@ -26,26 +26,17 @@ console.info(`Network was deleted: ${$status}`)
           'network':
             type: 'string'
             description: '''
-            The network name to delete.
+            Name of the network to delete.
             '''
         required: ['network']
 
 ## Handler
 
     handler = ({config}) ->
-      #Execute
-      await @execute
-        command: """
-        lxc network list --format csv | grep #{config.network} || exit 42
-        #{[
-          'lxc'
-          'network'
-          'delete'
-           config.network
-        ].join ' '}
-        """
-        code: [0, 42]
-
+      await @lxc.query
+        path: "/1.0/networks/#{config.network}"
+        request: 'DELETE'
+        format: 'string'
 ## Exports
 
     module.exports =
