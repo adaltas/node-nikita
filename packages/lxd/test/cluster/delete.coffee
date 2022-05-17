@@ -12,14 +12,13 @@ describe 'lxc.cluster.delete', ->
     @timeout -1 # yum install take a lot of time
     nikita
       $ssh: ssh
-    , ->
+    , ({registry}) ->
       cluster =
         networks:
           nktlxdpub:
-            'ipv4.address': '192.0.2.1/28'
+            'ipv4.address': '10.10.40.1/24'
             'ipv4.nat': true
             'ipv6.address': 'none'
-            'dns.domain': 'nikita.local'
         containers:
           'nikita-cluster-del-1':
             image: "images:#{images.alpine}"
@@ -27,20 +26,26 @@ describe 'lxc.cluster.delete', ->
           'nikita-cluster-del-2':
             image: "images:#{images.alpine}"
             nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
-      # Create a 2 nodes cluster and stop it
-      await @lxc.cluster cluster
-      await @wait time: 200
-      await @lxc.cluster.stop {...cluster, wait: true}
-      # Status modified if cluster deleted
-      {$status} = await @lxc.cluster.delete cluster
-      $status.should.be.true()
-      {list} = await @lxc.list
-        filter: 'containers'
-      # Containers and network shall no longer exist
-      list.should.not.containEql 'nikita-cluster-del-1'
-      list.should.not.containEql 'nikita-cluster-del-2'
-      {list} = await @lxc.network.list()
-      list.should.not.containEql 'nktlxdpub'
+      await registry.register 'clean', ->
+        # Status modified if cluster deleted
+        await @lxc.cluster.delete {...cluster, force: true}
+      await registry.register 'test', ->
+        await @lxc.cluster cluster
+        {list} = await @lxc.list
+          filter: 'containers'
+        {$status} = await @lxc.cluster.delete {...cluster, force: true}
+        $status.should.be.true()
+        # Containers and network shall no longer exist
+        list.should.not.containEql 'nikita-cluster-del-1'
+        list.should.not.containEql 'nikita-cluster-del-2'
+        {list} = await @lxc.network.list()
+        list.should.not.containEql 'nktlxdpub'
+      try 
+        await @test()
+      catch err 
+        await @clean()
+      finally
+        await @clean()
   
   describe 'option `force`', ->
 
@@ -52,10 +57,9 @@ describe 'lxc.cluster.delete', ->
         cluster =
           networks:
             nktlxdpub:
-              'ipv4.address': '192.0.2.1/28'
+              'ipv4.address': '10.10.40.1/24'
               'ipv4.nat': true
               'ipv6.address': 'none'
-              'dns.domain': 'nikita.local'
           containers:
             'nikita-cluster-del-1':
               image: "images:#{images.alpine}"
@@ -73,14 +77,13 @@ describe 'lxc.cluster.delete', ->
       @timeout -1 # yum install take a lot of time
       nikita
         $ssh: ssh
-      , ->
+      , ({registry}) ->
         cluster =
           networks:
             nktlxdpub:
-              'ipv4.address': '192.0.2.1/28'
+              'ipv4.address': '10.10.40.1/24'
               'ipv4.nat': true
               'ipv6.address': 'none'
-              'dns.domain': 'nikita.local'
           containers:
             'nikita-cluster-del-1':
               image: "images:#{images.alpine}"
@@ -88,13 +91,25 @@ describe 'lxc.cluster.delete', ->
             'nikita-cluster-del-2':
               image: "images:#{images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
-        await @lxc.cluster cluster
-        await @wait time: 200
-        {$status} = await @lxc.cluster.delete {...cluster, force: true}
-        $status.should.be.true()
-        {list} = await @lxc.list
-          filter: 'containers'
-        list.should.not.containEql 'nikita-cluster-del-1'
-        list.should.not.containEql 'nikita-cluster-del-2'
-        {list} = await @lxc.network.list()
-        list.should.not.containEql 'nktlxdpub'
+        await registry.register 'clean', ->
+          await @lxc.cluster.delete
+            containers: cluster.containers
+            networks: cluster.networks
+            force: true
+        await registry.register 'test', ->
+          await @lxc.cluster cluster
+          {$status} = await @lxc.cluster.delete {...cluster, force: true}
+          $status.should.be.true()
+          {list} = await @lxc.list
+            filter: 'containers'
+          list.should.not.containEql 'nikita-cluster-del-1'
+          list.should.not.containEql 'nikita-cluster-del-2'
+          {list} = await @lxc.network.list()
+          list.should.not.containEql 'nktlxdpub'
+        try 
+          await @clean()
+          await @test()
+        catch err 
+          await @clean()
+        finally
+          await @clean()

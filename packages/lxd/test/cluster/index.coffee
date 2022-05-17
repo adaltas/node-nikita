@@ -51,24 +51,14 @@ describe 'lxc.cluster', ->
     nikita
       $ssh: ssh
     , ({registry}) ->
-      await registry.register ['clean'], ->
-        await @lxc.delete
-          container: 'nikita-cluster-1'
-          force: true
-        await @lxc.network.delete
-          network: 'nktlxdpub'
-        await @lxc.network.delete
-          network: 'nktlxdprv'
-      await @clean()
-      await @lxc.cluster
+      cluster =
         networks:
           nktlxdpub:
-            'ipv4.address': '192.0.2.1/30'
+            'ipv4.address': '10.10.40.1/24'
             'ipv4.nat': true
             'ipv6.address': 'none'
-            'dns.domain': 'nikita.local'
           nktlxdprv:
-            'ipv4.address': '192.0.2.5/30'
+            'ipv4.address': '10.10.50.1/24'
             'ipv4.nat': false
             'ipv6.address': 'none'
             'dns.domain': 'nikita.local'
@@ -84,21 +74,36 @@ describe 'lxc.cluster', ->
                 name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
               eth1:
                 name: 'eth1', nictype: 'bridged', parent: 'nktlxdprv'
-                'ipv4.address': '192.0.2.6'
-      await @wait time: 200
-      {exists} = await @lxc.config.device.exists
-        container: 'nikita-cluster-1'
-        device: 'nikitadir'
-      exists.should.be.true()
-      {exists} = await @lxc.config.device.exists
-        container: 'nikita-cluster-1'
-        device: 'eth0'
-      exists.should.be.true()
-      {exists} = await @lxc.config.device.exists
-        container: 'nikita-cluster-1'
-        device: 'eth1'
-      exists.should.be.true()
-      @clean()
+                'ipv4.address': '10.10.50.11'
+      await registry.register ['clean'], ->
+        await @lxc.delete
+          container: 'nikita-cluster-1'
+          force: true
+        await @lxc.network.delete
+          network: 'nktlxdpub'
+        await @lxc.network.delete
+          network: 'nktlxdprv'
+      await registry.register ['test'], ->
+        await @lxc.cluster cluster
+        {exists} = await @lxc.config.device.exists
+          container: 'nikita-cluster-1'
+          device: 'nikitadir'
+        exists.should.be.true()
+        {exists} = await @lxc.config.device.exists
+          container: 'nikita-cluster-1'
+          device: 'eth0'
+        exists.should.be.true()
+        {exists} = await @lxc.config.device.exists
+          container: 'nikita-cluster-1'
+          device: 'eth1'
+        exists.should.be.true()
+      try
+        await @clean()
+        await @test()
+      catch err
+        await @clean()
+      finally 
+        await @clean()
 
   they 'ip and ssh', ({ssh}) ->
     @timeout -1
@@ -139,5 +144,38 @@ describe 'lxc.cluster', ->
         await @test enabled: true
         await @clean()
         await @test enabled: false
+      catch err
+        await @clean()
+      finally
+        await @clean()
+
+  return unless tags.lxd_vm
+
+  they 'init properties with vm', ({ssh}) ->
+    @timeout -1
+    nikita
+      $ssh: ssh
+    , ({registry}) ->
+      await registry.register 'clean', ->
+        await @lxc.delete
+          container: 'nikita-cluster-3'
+          force: true
+      await registry.register 'test', ->
+        await @lxc.cluster
+          containers:
+            'nikita-cluster-3':
+              image: "images:centos/7"
+              vm: true
+              properties: 
+                'security.secureboot': false
+              ssh: enabled: true
+        {$status} = await @lxc.running
+          container: 'nikita-cluster-3'
+        $status.should.be.eql true
+      try
+        await @clean()
+        await @test()
+      catch err
+        await @clean()
       finally
         await @clean()

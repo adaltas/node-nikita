@@ -48,6 +48,8 @@ module.exports =
         list: '@nikitajs/lxd/src/storage/volume/list' 
         get: '@nikitajs/lxd/src/storage/volume/get'
         attach: '@nikitajs/lxd/src/storage/volume/attach'
+    wait:
+      ready: '@nikitajs/lxd/src/wait/ready'
 (->
   try
     await registry.register module.exports
