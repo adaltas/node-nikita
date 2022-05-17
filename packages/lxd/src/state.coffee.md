@@ -30,14 +30,10 @@ console.info(config)
 ## Handler
 
     handler = ({config}) ->
-      {stdout} = await @execute
-        command: [
-          'lxc', 'query',
-          '/' + [
-            '1.0', 'instances', config.container, 'state'
-          ].join '/'
-        ].join ' '
-      config: JSON.parse stdout
+      {data, $status} = await @lxc.query
+        path: "/1.0/instances/#{config.container}/state"
+      $status: $status
+      config: data
 
 ## Exports
 
