@@ -40,6 +40,10 @@
     {
       "name": "Sergei Kudinov",
       "email": "sergei@adaltas.com"
+    },
+    {
+      "name": "Kellian Cottart",
+      "email": "kellian@adaltas.com"
     }
   ],
   "dependencies": {
