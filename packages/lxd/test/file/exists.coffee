@@ -61,7 +61,7 @@ describe 'lxc.file.exists', ->
         {exists} = await @lxc.file.exists
           container: 'nikita-file-exists-3'
           target: '/root/a_file'
-        exists.should.be.true()$
+        exists.should.be.true()
         # check is exists is false
         await @lxc.exec
           container: 'nikita-file-exists-3'
