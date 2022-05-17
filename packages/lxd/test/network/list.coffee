@@ -12,15 +12,21 @@ describe 'lxc.network.list', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: 'nkttestnetlist'
-      await @clean()
-      await @lxc.network
-        network: 'nkttestnetlist'
-        properties:
-          'ipv4.address': '192.0.2.1/30'
-          'dns.domain': 'nikita.net.test'
-      {$status, list} = await @lxc.network.list()
-      $status.should.be.true()
-      list.should.containEql 'nkttestnetlist'
-      await @clean()
+      registry.register 'test', ->
+        await @lxc.network
+          network: 'nkttestnetlist'
+          properties:
+            'ipv4.address': '192.0.2.1/30'
+            'dns.domain': 'nikita.net.test'
+        {$status, list} = await @lxc.network.list()
+        $status.should.be.true()
+        list.should.containEql 'nkttestnetlist'
+      try 
+        await @clean()
+        await @test()
+      catch err
+        await @clean()
+      finally 
+        await @clean()
