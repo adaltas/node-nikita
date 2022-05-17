@@ -38,11 +38,10 @@ console.info(`File exists: ${$status}`)
 ## Handler
 
     handler = ({config}) ->
-      {$status} = await @execute
-        command: """
-        lxc exec #{config.container} -- stat #{config.target}
-        """
-        code: [0, 42]
+      {$status} = await @lxc.query
+        $header: "Check if file exists in container #{config.container}"
+        path: "/1.0/instances/#{config.container}/files?path=#{config.target}"
+        format: 'string'
       exists: $status
 
 ## Exports
