@@ -33,7 +33,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-2"
       try
         await @clean()
@@ -48,7 +48,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-3"
       try
         {$status} = await @lxc.network
@@ -66,7 +66,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-4"
       try
         await @lxc.network
@@ -82,7 +82,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-5"
       try
         await @lxc.network
@@ -101,7 +101,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-6"
       try
         {$status} = await @lxc.network
@@ -130,7 +130,7 @@ describe 'lxc.network.create', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-network-7"
       try
         await @lxc.network
