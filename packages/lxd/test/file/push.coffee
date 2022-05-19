@@ -35,7 +35,7 @@ describe 'lxc.file.push', ->
         $tmpdir: true
       , ({metadata: {tmpdir}, registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-1', force: true
+          await @lxc.delete 'nikita-file-push-1', force: true
         await @clean()
         await @lxc.init
           image: "images:#{images.alpine}"
@@ -43,7 +43,7 @@ describe 'lxc.file.push', ->
           start: true
         await @file.touch
           target: "#{tmpdir}/a_file"
-        @lxc.file.push
+        await @lxc.file.push
           container: 'nikita-file-push-1'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
@@ -56,30 +56,58 @@ describe 'lxc.file.push', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}, registry}) ->
-        registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-2', force: true
-        await @clean()
-        await @lxc.init
-          image: "images:#{images.alpine}"
-          container: 'nikita-file-push-2'
-          start: true
-        await @lxc.exec
-          $$: retry: 3, sleep: 200 # Wait for network to be ready
-          container: 'nikita-file-push-2'
-          command: 'apk add openssl'
-        await @file
-          target: "#{tmpdir}/a_file"
-          content: 'something'
-        {$status} = await @lxc.file.push
-          container: 'nikita-file-push-2'
-          source: "#{tmpdir}/a_file"
-          target: '/root/a_file'
-        $status.should.be.true()
-        {$status} = await @lxc.file.exists
-          container: 'nikita-file-push-2'
-          target: '/root/a_file'
-        $status.should.be.true()
-        await @clean()
+        await registry.register 'clean', ->
+          await @lxc.delete 
+            container: 'nikita-file-push-2'
+            force: true
+          await @lxc.network.delete
+            network: 'nktlxdpub'
+        await registry.register 'test', ->
+          # creating network
+          await @lxc.network
+            network: 'nktlxdpub'
+            properties:
+              'ipv4.address': '10.10.40.1/24'
+              'ipv4.nat': true
+              'ipv6.address': 'none'
+          # creating a container
+          await @lxc.init
+            image: "images:#{images.alpine}"
+            container: 'nikita-file-push-2'
+            nic:
+              eth0:
+                name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
+            ssh: enabled: true
+            start: true
+          # attaching network
+          await @lxc.network.attach
+            container: 'nikita-file-push-2'
+            network: 'nktlxdpub'
+          # adding openssl for file push
+          await @lxc.exec
+            $retry: 100
+            $wait: 200 # Wait for network to be ready
+            container: 'nikita-file-push-2'
+            command: 'apk add openssl'
+          await @file
+            target: "#{tmpdir}/a_file"
+            content: 'something'
+          {$status} = await @lxc.file.push
+            container: 'nikita-file-push-2'
+            source: "#{tmpdir}/a_file"
+            target: '/root/a_file'
+          $status.should.be.true()
+          {$status} = await @lxc.file.exists
+            container: 'nikita-file-push-2'
+            target: '/root/a_file'
+          $status.should.be.true()
+        try 
+          await @clean()
+          await @test()
+        catch err
+          await @clean()
+        finally 
+          await @clean()
 
     they 'the same file', ({ssh}) ->
       nikita
@@ -87,9 +115,9 @@ describe 'lxc.file.push', ->
         $tmpdir: true
       , ({metadata: {tmpdir}, registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-3', force: true
+          await @lxc.delete 'nikita-file-push-3', force: true
         await @clean()
-        @lxc.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-3'
           start: true
@@ -97,10 +125,10 @@ describe 'lxc.file.push', ->
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-3'
           command: 'apk add openssl'
-        @file
+        await @file
           target: "#{tmpdir}/a_file"
           content: 'something'
-        @lxc.file.push
+        await @lxc.file.push
           container: 'nikita-file-push-3'
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
@@ -119,9 +147,9 @@ describe 'lxc.file.push', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-4', force: true
+          await @lxc.delete 'nikita-file-push-4', force: true
         await @clean()
-        @lxc.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-4'
           start: true
@@ -145,9 +173,9 @@ describe 'lxc.file.push', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-5', force: true
+          await @lxc.delete 'nikita-file-push-5', force: true
         await @clean()
-        @lxc.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-5'
           start: true
@@ -155,7 +183,7 @@ describe 'lxc.file.push', ->
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-5'
           command: 'apk add openssl'
-        @lxc.file.push
+        await @lxc.file.push
           container: 'nikita-file-push-5'
           target: '/root/a_file'
           content: 'something'
@@ -174,17 +202,17 @@ describe 'lxc.file.push', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-file-push-6', force: true
+          await @lxc.delete 'nikita-file-push-6', force: true
         await @clean()
-        @lxc.init
+        await @lxc.init
           image: "images:#{images.alpine}"
           container: 'nikita-file-push-6'
           start: true
-        @lxc.exec
+        await @lxc.exec
           $$: retry: 3, sleep: 200 # Wait for network to be ready
           container: 'nikita-file-push-6'
           command: 'apk add openssl'
-        @lxc.file.push
+        await @lxc.file.push
           container: 'nikita-file-push-6'
           target: '/root/a_file'
           content: 'something'
