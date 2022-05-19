@@ -48,25 +48,39 @@ describe 'lxc.file.pull', ->
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir}, registry}) ->
-          cluster =
-            networks:
-              nktlxdpub:
+          await registry.register 'clean', ->
+            await @lxc.delete 
+              container: 'nikita-file-pull-2'
+              force: true
+            await @lxc.network.delete
+              network: 'nktlxdpub'
+          await registry.register 'test', ->
+            # creating network
+            await @lxc.network
+              network: 'nktlxdpub'
+              properties:
                 'ipv4.address': '10.10.40.1/24'
                 'ipv4.nat': true
                 'ipv6.address': 'none'
-            containers:
-              'nikita-file-pull-2':
-                image: 'images:centos/7'
-                nic:
-                  eth0:
-                    name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
-                ssh: enabled: true
-          await registry.register 'clean', ->
-            await @lxc.cluster.delete {...cluster, force: true}
-          await registry.register 'test', ->
-            # creating a cluster of a singular container
-            await @lxc.cluster cluster
-            # creating a file
+            # creating a container
+            await @lxc.init
+              image: "images:#{images.alpine}"
+              container: 'nikita-file-pull-2'
+              nic:
+                eth0:
+                  name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
+              ssh: enabled: true
+              start: true
+            # attaching network
+            await @lxc.network.attach
+              container: 'nikita-file-pull-2'
+              network: 'nktlxdpub'
+            # adding openssl for file pull
+            await @lxc.exec
+              $retry: 100
+              $wait: 200 # Wait for network to be ready
+              container: 'nikita-file-pull-2'
+              command: 'apk add openssl'
             await @lxc.exec
               container: 'nikita-file-pull-2'
               command: "touch file.sh && echo 'hello' > file.sh"
