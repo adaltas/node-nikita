@@ -80,7 +80,6 @@ const useStyles = theme => ({
       marginTop: 0,
       marginBottom: 0,
     },
-    
   },
   icon: {
     verticalAlign: 'middle',
@@ -141,7 +140,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'No agent to install, no database to depends on. Your project is just another Node.js package easily versioned in Git and any SCM, easily integrated with your CI and CD DevOps tools.'
+                'No agent to install, no database to depend on. Your project is just another Node.js package easily versionned in Git and any SCM, easily integrated with your CI and CD DevOps tools.'
               }
             </p>
           </Grid>
@@ -154,7 +153,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Call a function multiple times and expect the same result. You’ll be informed of any modifications and can retrieve detailed information.'
+                'Call a function multiple times and expect the same result. You’ll be informed of any modification and can retrieve detailed information.'
               }
             </p>
           </Grid>
@@ -167,7 +166,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Learn fast. Source code is self-documented with the most common usages enriched by many examples. Don’t forget to look at the tests as well.'
+                'Learn fast. Source code is self-documented with the most common uses enriched by many examples. Don’t forget to look at the tests as well.'
               }
             </p>
           </Grid>
@@ -180,7 +179,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Deliberately sacrificing speed for a maximum of strength, ease of use, and flexibility. The simple API built on a plugin architecture allows us to constantly add new functionality without affecting the API.'
+                'Deliberately sacrificing speed for a maximum of strength, ease of use, and flexibility. The simple API built on a plugin architecture allows us to constantly add new functionalities without affecting the API.'
               }
             </p>
           </Grid>
@@ -208,7 +207,7 @@ const Index = () => {
               All the functions run transparently over SSH with a possibility to
               execute as the root user via sudo. Look at the <a
               href="https://github.com/adaltas/node-nikita/tree/master/packages/core/test"
-              alt="Nikita unit tests">tests</a>, they are all executed both
+              alt="Nikita unit tests">tests</a>, they are all executed both 
               locally and remotely.
             </p>
           </Grid>
@@ -234,7 +233,7 @@ const Index = () => {
             </h3>
             <p>
               {
-                'Feel confident. The modules are used in production for years and the code is enforced by an extensive test coverage.'
+                'Feel confident. Modules are used in production for years and the code is enforced by an extensive test coverage.'
               }
             </p>
           </Grid>
@@ -243,12 +242,12 @@ const Index = () => {
               <SvgIcon css={styles.icon}>
                 <path d=" M 6 10.8 L 6 13.2 L 18 13.2 L 18 10.8 C 18 9.476 19.076 8.4 20.4 8.4 L 21.6 8.4 C 21.6 6.412 19.988 4.8 18 4.8 L 6 4.8 C 4.013 4.8 2.4 6.412 2.4 8.4 L 3.6 8.4 C 4.924 8.4 6 9.476 6 10.8 Z  M 21.6 9.6 L 20.4 9.6 C 19.736 9.6 19.2 10.136 19.2 10.8 L 19.2 14.4 L 4.8 14.4 L 4.8 10.8 C 4.8 10.136 4.264 9.6 3.6 9.6 L 2.4 9.6 C 1.076 9.6 0 10.676 0 12 C 0 12.885 0.488 13.65 1.2 14.066 L 1.2 18.6 C 1.2 18.93 1.47 19.2 1.8 19.2 L 4.2 19.2 C 4.53 19.2 4.8 18.93 4.8 18.6 L 4.8 18 L 19.2 18 L 19.2 18.6 C 19.2 18.93 19.47 19.2 19.8 19.2 L 22.2 19.2 C 22.53 19.2 22.8 18.93 22.8 18.6 L 22.8 14.066 C 23.513 13.65 24 12.885 24 12 C 24 10.676 22.924 9.6 21.6 9.6 Z " />
               </SvgIcon>
-              {'Suppport'}
+              {'Support'}
             </h3>
             <p>
-              The package is open-sourced with one of the least restrictive
+              The package is open sourced with one of the least restrictive
               licenses. Get involved and contribute to open source
-              development by sending pull requests and requesting commercial
+              development by sending pull requests and requesting commercial 
               support from <a href="http://www.adaltas.com">Adaltas</a>.
             </p>
           </Grid>
