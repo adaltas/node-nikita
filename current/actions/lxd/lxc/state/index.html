@@ -58,14 +58,10 @@ console<span class="token punctuation">.</span><span class="token function">info
       &#x27;container&#x27;:
         $ref: &#x27;module://@nikitajs/lxd/src/init#/definitions/config/properties/container&#x27;
     required: [&#x27;container&#x27;]</code></pre></div><h2 id="handler" style="position:relative"><a href="#handler" aria-label="handler permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Handler</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">handler = ({config}) -&gt;
-  {stdout} = await @execute
-    command: [
-      &#x27;lxc&#x27;, &#x27;query&#x27;,
-      &#x27;/&#x27; + [
-        &#x27;1.0&#x27;, &#x27;instances&#x27;, config.container, &#x27;state&#x27;
-      ].join &#x27;/&#x27;
-    ].join &#x27; &#x27;
-  config: JSON.parse stdout</code></pre></div><h2 id="exports" style="position:relative"><a href="#exports" aria-label="exports permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Exports</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">module.exports =
+  {data, $status} = await @lxc.query
+    path: &quot;/1.0/instances/#{config.container}/state&quot;
+  $status: $status
+  config: data</code></pre></div><h2 id="exports" style="position:relative"><a href="#exports" aria-label="exports permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Exports</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">module.exports =
   handler: handler
   metadata:
     definitions: definitions</code></pre></div><h2 id="output-example" style="position:relative"><a href="#output-example" aria-label="output example permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Output example</h2><div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">lxc query /1.0/instances/c1/state
