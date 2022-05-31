@@ -32,6 +32,9 @@ console.info(`File was pushed: ${$status}`)
             $ref: 'module://@nikitajs/core/lib/actions/fs/hash#/definitions/config/properties/algo'
           'container':
             $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
+            description: '''
+            Name of the container in lxd.
+            '''
           'content':
             type: 'string'
             description: '''
@@ -41,7 +44,7 @@ console.info(`File was pushed: ${$status}`)
             type: 'boolean'
             default: false
             description: '''
-            Create any directories necessary.
+            Create any directories necessary in the container.
             '''
           'gid':
             type: ['integer', 'string']
@@ -51,8 +54,7 @@ console.info(`File was pushed: ${$status}`)
           'lxd_target':
             type: 'string'
             description: '''
-            File destination in the form of "[<remote>:]<container>/<path>",
-            overwrite the `target` option.
+            Path to the destination of the file inside the container as "<container>/<path>". Concatenation of the `container` property with the `target` property. 
             '''
           'mode':
             type: ['integer', 'string']
@@ -66,12 +68,12 @@ console.info(`File was pushed: ${$status}`)
           'source':
             type: 'string'
             description: '''
-            File to push in the form of "<path>".
+            Path to the file to push to the container on your local machine.
             '''
           'target':
             type: 'string'
             description: '''
-            File destination in the form of "<path>".
+            Path to the destination of the file once it has been pushed to the container.
             '''
           'uid':
             type: ['integer', 'string']
