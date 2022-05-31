@@ -10,5 +10,7 @@ module.exports =
     label: 'local'
   ,
     label: 'remote'
-    { ssh: host: 'localhost', username: 'root' }
+    ssh:
+      host: '127.0.0.1', username: process.env.USER,
+      private_key_path: '~/.ssh/id_ed25519'
   ]
