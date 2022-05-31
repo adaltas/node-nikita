@@ -62,6 +62,9 @@ console<span class="token punctuation">.</span><span class="token function">info
         $ref: &#x27;module://@nikitajs/core/lib/actions/fs/hash#/definitions/config/properties/algo&#x27;
       &#x27;container&#x27;:
         $ref: &#x27;module://@nikitajs/lxd/src/init#/definitions/config/properties/container&#x27;
+        description: &#x27;&#x27;&#x27;
+        Name of the container in lxd.
+        &#x27;&#x27;&#x27;
       &#x27;content&#x27;:
         type: &#x27;string&#x27;
         description: &#x27;&#x27;&#x27;
@@ -71,7 +74,7 @@ console<span class="token punctuation">.</span><span class="token function">info
         type: &#x27;boolean&#x27;
         default: false
         description: &#x27;&#x27;&#x27;
-        Create any directories necessary.
+        Create any directories necessary in the container.
         &#x27;&#x27;&#x27;
       &#x27;gid&#x27;:
         type: [&#x27;integer&#x27;, &#x27;string&#x27;]
@@ -81,8 +84,7 @@ console<span class="token punctuation">.</span><span class="token function">info
       &#x27;lxd_target&#x27;:
         type: &#x27;string&#x27;
         description: &#x27;&#x27;&#x27;
-        File destination in the form of &quot;[&lt;remote&gt;:]&lt;container&gt;/&lt;path&gt;&quot;,
-        overwrite the `target` option.
+        Path to the destination of the file inside the container as &quot;&lt;container&gt;/&lt;path&gt;&quot;. Concatenation of the `container` property with the `target` property. 
         &#x27;&#x27;&#x27;
       &#x27;mode&#x27;:
         type: [&#x27;integer&#x27;, &#x27;string&#x27;]
@@ -96,12 +98,12 @@ console<span class="token punctuation">.</span><span class="token function">info
       &#x27;source&#x27;:
         type: &#x27;string&#x27;
         description: &#x27;&#x27;&#x27;
-        File to push in the form of &quot;&lt;path&gt;&quot;.
+        Path to the file to push to the container on your local machine.
         &#x27;&#x27;&#x27;
       &#x27;target&#x27;:
         type: &#x27;string&#x27;
         description: &#x27;&#x27;&#x27;
-        File destination in the form of &quot;&lt;path&gt;&quot;.
+        Path to the destination of the file once it has been pushed to the container.
         &#x27;&#x27;&#x27;
       &#x27;uid&#x27;:
         type: [&#x27;integer&#x27;, &#x27;string&#x27;]
