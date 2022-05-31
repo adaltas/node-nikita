@@ -19,10 +19,10 @@ module.exports =
       mutate schema.definitions.metadata.properties,
         debug:
           oneOf: [
-            type: 'boolean'
-          ,
             type: 'string'
             enum: ['stdout', 'stderr']
+          ,
+            type: 'boolean'
           ,
             instanceof: 'stream.Writable'
           ]

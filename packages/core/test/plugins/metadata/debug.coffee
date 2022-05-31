@@ -31,6 +31,13 @@ describe 'metadata "debug"', ->
         $debug: new stream.Writable()
         $handler: -> 'ok'
       .should.be.fulfilledWith 'ok'
+  
+    it 'cast to `false`', ->
+      # Note, activating schema coercion converted boolean false to a string
+      {debug} = await nikita
+        $debug: false
+        $handler: ({metadata}) -> debug: metadata.debug
+      debug.should.be.false()
 
   describe 'type', ->
   

@@ -23,12 +23,12 @@ module.exports = {
         debug: {
           oneOf: [
             {
-              type: 'boolean'
-            },
-            {
               type: 'string',
               enum: ['stdout',
             'stderr']
+            },
+            {
+              type: 'boolean'
             },
             {
               instanceof: 'stream.Writable'
