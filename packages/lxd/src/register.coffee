@@ -25,8 +25,9 @@ module.exports =
     stop: '@nikitajs/lxd/src/stop'
     exec: '@nikitajs/lxd/src/exec'
     file:
-      push: '@nikitajs/lxd/src/file/push'
       exists: '@nikitajs/lxd/src/file/exists'
+      pull: '@nikitajs/lxd/src/file/pull'
+      push: '@nikitajs/lxd/src/file/push'
     goodies:
       prlimit: '@nikitajs/lxd/src/goodies/prlimit'
     network:
@@ -50,6 +51,7 @@ module.exports =
         attach: '@nikitajs/lxd/src/storage/volume/attach'
     wait:
       ready: '@nikitajs/lxd/src/wait/ready'
+    resources: '@nikitajs/lxd/src/resources'
 (->
   try
     await registry.register module.exports

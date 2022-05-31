@@ -258,7 +258,8 @@ containers:
             container: containerName
             command: """
             if command -v systemctl >/dev/null 2>&1; then
-              systemctl status sshd && exit 42 || echo '' > /dev/null
+              srv=`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'`
+              systemctl status $srv && exit 42 || echo '' > /dev/null
             elif command -v rc-service >/dev/null 2>&1; then
               # Exit code 3 if stopped
               rc-service sshd status && exit 42 || echo '' > /dev/null
@@ -273,9 +274,10 @@ containers:
               echo "Unsupported package manager" >&2 && exit 2
             fi
             if command -v systemctl >/dev/null 2>&1; then
-              # systemctl status sshd && exit 42
-              systemctl start sshd
-              systemctl enable sshd
+              # Support `ssh` and `sshd`: changed between 16.04 and 22.04
+              srv=`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'`
+              systemctl start $srv
+              systemctl enable $srv
             elif command -v rc-update >/dev/null 2>&1; then
               rc-service sshd start
               rc-update add sshd

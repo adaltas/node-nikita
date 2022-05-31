@@ -255,3 +255,16 @@ describe 'network.tcp.wait', ->
         finally
           srv1.close()
           srv2.close()
+  
+  describe 'timeout', ->
+    
+    it 'stop when timeout is reached', ->
+      start = Date.now()
+      {$status} = await nikita.network.tcp.wait
+        interval: 1000
+        timeout: 2000
+        server: { host: 'localhost', port: 999999 }
+      end = Date.now()
+      (end - start).should.be.above 2000
+      (end - start).should.be.below 2800
+      
