@@ -15,6 +15,16 @@ containers:
 predelete: path/to/action
 ```
 
+## Hooks
+
+    on_action =
+      before: [
+        '@nikitajs/core/src/plugins/metadata/schema'
+      ]
+      handler: ({config}) ->
+        for name, container of config.containers
+          container.container = name
+
 ## Schema definitions
 
     definitions =
@@ -60,5 +70,7 @@ predelete: path/to/action
 
     module.exports =
       handler: handler
+      hooks:
+        on_action: on_action
       metadata:
         definitions: definitions

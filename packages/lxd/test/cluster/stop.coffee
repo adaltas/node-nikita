@@ -13,10 +13,9 @@ describe 'lxc.cluster.stop', ->
     cluster =
       networks:
         nktlxdpub:
-          'ipv4.address': '192.0.2.1/28'
+          'ipv4.address': '10.10.40.1/24'
           'ipv4.nat': true
           'ipv6.address': 'none'
-          'dns.domain': 'nikita.local'
       containers:
         'nikita-cluster-stop-1':
           image: "images:#{images.alpine}"
