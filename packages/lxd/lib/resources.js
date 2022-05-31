@@ -6,16 +6,13 @@
 // ## Output parameters
 
 // * `$status` (boolean)
-// * `config` (object)   
+// * `config` (object)
 //   Information about the resources available to the LXD server.
 
 // ## Example
 
 // ```js
-// const {config} = await nikita.lxc.resources({
-//   container: 'container1',
-//   device: 'disk'
-// })
+// const {config} = await nikita.lxc.resources()
 // console.info(config)
 // ```
 
@@ -24,30 +21,22 @@ var definitions, handler;
 
 definitions = {
   config: {
-    type: 'object',
-    properties: {
-      'container': {
-        $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
-      },
-      'device': {
-        enum: ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy'],
-        description: `Name of the device in LXD configuration, for example "eth0".`
-      }
-    },
-    required: ['container', 'device']
+    type: 'object'
   }
 };
 
 // ## Handler
 handler = async function({config}) {
-  var stdout;
-  ({stdout} = (await this.execute({
-    command: ['lxc', 'query', '/' + ['1.0', 'resources'].join('/')].join(' ')
+  var $status, data;
+  ({data, $status} = (await this.lxc.query({
+    path: "/1.0/resources"
   })));
   return {
-    config: JSON.parse(stdout)
+    $status: $status,
+    config: data
   };
 };
+
 
 // ## Exports
 module.exports = {
@@ -59,8 +48,7 @@ module.exports = {
 
 // ## Output example
 
-// ```
-// lxc query /1.0/containers/c1/state
+// ```json
 // {
 //  "cpu": {
 //    "usage": 800378470122

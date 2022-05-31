@@ -34,12 +34,13 @@ definitions = {
 
 // ## Handler
 handler = async function({config}) {
-  var stdout;
-  ({stdout} = (await this.execute({
-    command: ['lxc', 'query', '/' + ['1.0', 'instances', config.container, 'state'].join('/')].join(' ')
+  var $status, data;
+  ({data, $status} = (await this.lxc.query({
+    path: `/1.0/instances/${config.container}/state`
   })));
   return {
-    config: JSON.parse(stdout)
+    $status: $status,
+    config: data
   };
 };
 

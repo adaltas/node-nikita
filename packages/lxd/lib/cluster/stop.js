@@ -13,9 +13,24 @@
 // prestop: path/to/action
 // ```
 
-// ## Schema definitions
-var definitions, handler;
+// ## Hooks
+var definitions, handler, on_action;
 
+on_action = {
+  before: ['@nikitajs/core/src/plugins/metadata/schema'],
+  handler: function({config}) {
+    var container, name, ref, results;
+    ref = config.containers;
+    results = [];
+    for (name in ref) {
+      container = ref[name];
+      results.push(container.container = name);
+    }
+    return results;
+  }
+};
+
+// ## Schema definitions
 definitions = {
   config: {
     type: 'object',
@@ -58,6 +73,9 @@ handler = async function({config}) {
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     definitions: definitions
   }

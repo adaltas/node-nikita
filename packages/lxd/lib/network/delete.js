@@ -26,7 +26,7 @@ definitions = {
     properties: {
       'network': {
         type: 'string',
-        description: `The network name to delete.`
+        description: `Name of the network to delete.`
       }
     },
     required: ['network']
@@ -35,11 +35,10 @@ definitions = {
 
 // ## Handler
 handler = async function({config}) {
-  //Execute
-  return (await this.execute({
-    command: `lxc network list --format csv | grep ${config.network} || exit 42
-${['lxc', 'network', 'delete', config.network].join(' ')}`,
-    code: [0, 42]
+  return (await this.lxc.query({
+    path: `/1.0/networks/${config.network}`,
+    request: 'DELETE',
+    format: 'string'
   }));
 };
 

@@ -31,8 +31,9 @@ module.exports = {
     stop: '@nikitajs/lxd/lib/stop',
     exec: '@nikitajs/lxd/lib/exec',
     file: {
-      push: '@nikitajs/lxd/lib/file/push',
-      exists: '@nikitajs/lxd/lib/file/exists'
+      exists: '@nikitajs/lxd/lib/file/exists',
+      pull: '@nikitajs/lxd/lib/file/pull',
+      push: '@nikitajs/lxd/lib/file/push'
     },
     goodies: {
       prlimit: '@nikitajs/lxd/lib/goodies/prlimit'
@@ -50,8 +51,19 @@ module.exports = {
     running: '@nikitajs/lxd/lib/running',
     storage: {
       '': '@nikitajs/lxd/lib/storage',
-      delete: '@nikitajs/lxd/lib/storage/delete'
-    }
+      delete: '@nikitajs/lxd/lib/storage/delete',
+      volume: {
+        '': '@nikitajs/lxd/lib/storage/volume',
+        delete: '@nikitajs/lxd/lib/storage/volume/delete',
+        list: '@nikitajs/lxd/lib/storage/volume/list',
+        get: '@nikitajs/lxd/lib/storage/volume/get',
+        attach: '@nikitajs/lxd/lib/storage/volume/attach'
+      }
+    },
+    wait: {
+      ready: '@nikitajs/lxd/lib/wait/ready'
+    },
+    resources: '@nikitajs/lxd/lib/resources'
   }
 };
 

@@ -42,9 +42,10 @@ definitions = {
 // ## Handler
 handler = async function({config}) {
   var $status;
-  ({$status} = (await this.execute({
-    command: `lxc exec ${config.container} -- stat ${config.target}`,
-    code: [0, 42]
+  ({$status} = (await this.lxc.query({
+    $header: `Check if file exists in container ${config.container}`,
+    path: `/1.0/instances/${config.container}/files?path=${config.target}`,
+    format: 'string'
   })));
   return {
     exists: $status

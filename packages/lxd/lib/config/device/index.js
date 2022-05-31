@@ -106,7 +106,7 @@ for containers).`
 device.`
           }
         },
-        required: ['path', 'source']
+        required: ['path']
       },
       'type': {
         const: 'disk'

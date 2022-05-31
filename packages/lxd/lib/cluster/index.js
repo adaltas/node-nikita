@@ -52,9 +52,24 @@
 //     provision_container: path/to/action
 // ```
 
-// ## Schema definitions
-var definitions, handler, utils;
+// ## Hooks
+var definitions, handler, on_action, utils;
 
+on_action = {
+  before: ['@nikitajs/core/src/plugins/metadata/schema'],
+  handler: function({config}) {
+    var container, name, ref, results;
+    ref = config.containers;
+    results = [];
+    for (name in ref) {
+      container = ref[name];
+      results.push(container.container = name);
+    }
+    return results;
+  }
+};
+
+// ## Schema definitions
 definitions = {
   config: {
     type: 'object',
@@ -65,6 +80,7 @@ definitions = {
 config.`,
         patternProperties: {
           '(^[a-zA-Z][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9](?!\-)$)|(^[a-zA-Z]$)': {
+            $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config',
             type: 'object',
             properties: {
               'properties': {
@@ -78,9 +94,6 @@ config.`,
                     $ref: 'module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties'
                   }
                 }
-              },
-              'image': {
-                $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/image'
               },
               'nic': {
                 type: 'object',
@@ -150,8 +163,7 @@ authorized_keys file.`
                   }
                 }
               }
-            },
-            required: ['image']
+            }
           }
         }
       },
@@ -221,10 +233,8 @@ handler = async function({config}) {
       var configDisk, configNic, configProxy, configUser, deviceName, ref3, ref4, ref5, ref6, ref7, results, userName;
       // Set configuration
       await this.lxc.init({
-        $header: 'Init',
-        container: containerName,
-        image: containerConfig.image
-      });
+        $header: 'Init'
+      }, containerConfig);
       // Set config
       if (containerConfig != null ? containerConfig.properties : void 0) {
         await this.lxc.config.set({
@@ -278,24 +288,17 @@ handler = async function({config}) {
         $header: 'Start',
         container: containerName
       });
-      // Wait until container is running
-      // TODO: use the lxd API with @lxd.query
-      await this.execute.wait({
-        $header: 'Wait container',
-        command: `lxc info ${containerName} | grep 'Status: RUNNING'`
+      
+      // Wait until container is ready
+      await this.lxc.wait.ready({
+        $header: 'Wait for container to be ready to use',
+        container: containerName,
+        nat: true
       });
-      await this.network.tcp.wait({
-        $header: 'Wait networking',
-        host: 'linuxfoundation.org',
-        port: 80,
-        interval: 2000,
-        timeout: 10000
-      });
+      
       // Openssl is required by the `lxc.file.push` action
       await this.lxc.exec({
         $header: 'OpenSSL',
-        // $retry: 10
-        // $sleep: 5000
         container: containerName,
         command: `command -v openssl && exit 42
 if command -v yum >/dev/null 2>&1; then
@@ -317,7 +320,8 @@ command -v openssl`,
           $header: 'SSH',
           container: containerName,
           command: `if command -v systemctl >/dev/null 2>&1; then
-  systemctl status sshd && exit 42 || echo '' > /dev/null
+  srv=\`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'\`
+  systemctl status $srv && exit 42 || echo '' > /dev/null
 elif command -v rc-service >/dev/null 2>&1; then
   # Exit code 3 if stopped
   rc-service sshd status && exit 42 || echo '' > /dev/null
@@ -332,9 +336,10 @@ else
   echo "Unsupported package manager" >&2 && exit 2
 fi
 if command -v systemctl >/dev/null 2>&1; then
-  # systemctl status sshd && exit 42
-  systemctl start sshd
-  systemctl enable sshd
+  # Support \`ssh\` and \`sshd\`: changed between 16.04 and 22.04
+  srv=\`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'\`
+  systemctl start $srv
+  systemctl enable $srv
 elif command -v rc-update >/dev/null 2>&1; then
   rc-service sshd start
   rc-update add sshd
@@ -409,6 +414,9 @@ echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
 // ## Exports
 module.exports = {
   handler: handler,
+  hooks: {
+    on_action: on_action
+  },
   metadata: {
     definitions: definitions
   }
