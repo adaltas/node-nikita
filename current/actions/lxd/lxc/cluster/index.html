@@ -287,8 +287,8 @@
         container: containerName
         command: &quot;&quot;&quot;
         if command -v systemctl &gt;/dev/null 2&gt;&amp;1; then
-          srv=`systemctl list-units | grep ssh | sed &#x27;s/ *\(ssh.*\)\.service.*/\\1/&#x27;`
-          systemctl status $srv &amp;&amp; exit 42 || echo &#x27;&#x27; &gt; /dev/null
+          srv=`systemctl list-units --all --type=service | grep ssh | sed &#x27;s/ *\\(ssh.*\\)\.service.*/\\1/&#x27;`
+          [ ! -z $srv ] &amp;&amp; systemctl status $srv &amp;&amp; exit 42 || echo &#x27;&#x27; &gt; /dev/null
         elif command -v rc-service &gt;/dev/null 2&gt;&amp;1; then
           # Exit code 3 if stopped
           rc-service sshd status &amp;&amp; exit 42 || echo &#x27;&#x27; &gt; /dev/null
@@ -304,7 +304,8 @@
         fi
         if command -v systemctl &gt;/dev/null 2&gt;&amp;1; then
           # Support `ssh` and `sshd`: changed between 16.04 and 22.04
-          srv=`systemctl list-units | grep ssh | sed &#x27;s/ *\(ssh.*\)\.service.*/\\1/&#x27;`
+          # systemctl list-units not showing sshd on centos 7 if module not started, fixing with --all
+          srv=`systemctl list-units --all --type=service | grep ssh | sed &#x27;s/ *\\(ssh.*\\)\.service.*/\\1/&#x27;`
           systemctl start $srv
           systemctl enable $srv
         elif command -v rc-update &gt;/dev/null 2&gt;&amp;1; then
