@@ -24,6 +24,12 @@ module.exports = (config) ->
         Absolute path inside the container to use as the working directory.
         '''
         required: !config.cwd
+      debug:
+        default: false
+        type: 'boolean'
+        description: '''
+        Instantiate the Nikita session in debug mode.
+        '''
       logdir:
         default: "#{config.logdir}"
         description: '''
@@ -43,6 +49,7 @@ module.exports = (config) ->
             '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'delete.md'
           .call '@nikitajs/lxd-runner/lib/actions/delete', {...config, ...params}
@@ -52,6 +59,7 @@ module.exports = (config) ->
         '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'enter.md'
           .call '@nikitajs/lxd-runner/lib/actions/enter', {...config, ...params}
@@ -62,6 +70,7 @@ module.exports = (config) ->
         main: 'cmd'
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'exec.md'
           .call '@nikitajs/lxd-runner/lib/actions/exec', {...config, ...params}
@@ -71,6 +80,7 @@ module.exports = (config) ->
         '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'run.md'
           .call '@nikitajs/lxd-runner/lib/actions/run', {...config, ...params}
@@ -80,6 +90,7 @@ module.exports = (config) ->
         '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'start.md'
           .call '@nikitajs/lxd-runner/lib/actions/start', {...config, ...params}
@@ -89,6 +100,7 @@ module.exports = (config) ->
         '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'stop.md'
           .call '@nikitajs/lxd-runner/lib/actions/stop', {...config, ...params}
@@ -98,6 +110,7 @@ module.exports = (config) ->
         '''
         handler: ({params}) ->
           nikita
+            $debug: params.debug
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'test.md'
           .call '@nikitajs/lxd-runner/lib/actions/test', {...config, ...params}

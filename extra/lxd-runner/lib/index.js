@@ -26,6 +26,11 @@ module.exports = function(config) {
         description: `Absolute path inside the container to use as the working directory.`,
         required: !config.cwd
       },
+      debug: {
+        default: false,
+        type: 'boolean',
+        description: `Instantiate the Nikita session in debug mode.`
+      },
       logdir: {
         default: `${config.logdir}`,
         description: `Directory were to store the logs.`
@@ -42,7 +47,9 @@ module.exports = function(config) {
           }
         },
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -55,7 +62,9 @@ module.exports = function(config) {
       'enter': {
         description: `Open a prompt running inside the container.`,
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -69,7 +78,9 @@ module.exports = function(config) {
         description: `Execute a command inside the container console.`,
         main: 'cmd',
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -82,7 +93,9 @@ module.exports = function(config) {
       'run': {
         description: `Start and stop the container and execute all the tests.`,
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -95,7 +108,9 @@ module.exports = function(config) {
       'start': {
         description: `Start the container.`,
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -108,7 +123,9 @@ module.exports = function(config) {
       'stop': {
         description: `Stop the container.`,
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
@@ -121,7 +138,9 @@ module.exports = function(config) {
       'test': {
         description: `Execute all the tests, does not start and stop the containers, see \`run\`.`,
         handler: function({params}) {
-          return nikita.log.cli({
+          return nikita({
+            $debug: params.debug
+          }).log.cli({
             pad: {
               host: 20,
               header: 60
