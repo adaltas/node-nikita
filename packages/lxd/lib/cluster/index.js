@@ -320,8 +320,8 @@ command -v openssl`,
           $header: 'SSH',
           container: containerName,
           command: `if command -v systemctl >/dev/null 2>&1; then
-  srv=\`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'\`
-  systemctl status $srv && exit 42 || echo '' > /dev/null
+  srv=\`systemctl list-units --all --type=service | grep ssh | sed 's/ *\\(ssh.*\\)\.service.*/\\1/'\`
+  [ ! -z $srv ] && systemctl status $srv && exit 42 || echo '' > /dev/null
 elif command -v rc-service >/dev/null 2>&1; then
   # Exit code 3 if stopped
   rc-service sshd status && exit 42 || echo '' > /dev/null
@@ -337,7 +337,8 @@ else
 fi
 if command -v systemctl >/dev/null 2>&1; then
   # Support \`ssh\` and \`sshd\`: changed between 16.04 and 22.04
-  srv=\`systemctl list-units | grep ssh | sed 's/ *\(ssh.*\)\.service.*/\\1/'\`
+  # systemctl list-units not showing sshd on centos 7 if module not started, fixing with --all
+  srv=\`systemctl list-units --all --type=service | grep ssh | sed 's/ *\\(ssh.*\\)\.service.*/\\1/'\`
   systemctl start $srv
   systemctl enable $srv
 elif command -v rc-update >/dev/null 2>&1; then
