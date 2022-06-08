@@ -8,7 +8,7 @@ return unless tags.tools_iptables
 
 describe 'tools.iptables', ->
 
-  they 'insert a rull after existing', ({ssh}) ->
+  they 'insert a rule after existing', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
