@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core/lib'
-utils = require '../src/utils'
-{tags, config} = require './test'
+utils = require '../../src/utils'
+{tags, config} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.posix

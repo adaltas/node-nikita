@@ -79,11 +79,8 @@ console.info(`Content was updated: ${$status}`)
             windows",  "\n" otherwise). The name stands for End Of Line.
             '''
           'encoding':
-            type: 'string'
+            $ref: 'module://@nikitajs/file/src/ini/read#/definitions/config/properties/encoding'
             default: 'utf8'
-            description: '''
-            File encoding.
-            '''
           'escape':
             type: 'boolean'
             default: true
@@ -93,6 +90,11 @@ console.info(`Content was updated: ${$status}`)
             '''
           'gid':
             $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/gid'
+          'local':
+            type: 'boolean'
+            description: '''
+            Read the source file locally if it exists.
+            '''
           'merge':
             type: 'boolean'
             description: '''
@@ -101,11 +103,7 @@ console.info(`Content was updated: ${$status}`)
           'mode':
             $ref: 'module://@nikitajs/file/src/index#/definitions/config/properties/mode'
           'parse':
-            typeof: 'function'
-            description: '''
-            User-defined function to parse the content from ini format, default to
-            `require('ini').parse`, see
-            'nikita.file.utils.ini.parse\_multi\_brackets'. '''
+            $ref: 'module://@nikitajs/file/src/ini/read#/definitions/config/properties/parse'
           'stringify':
             typeof: 'function'
             description: '''
@@ -115,7 +113,7 @@ console.info(`Content was updated: ${$status}`)
             example.
             '''
           'source':
-            type: 'string'
+            $ref: 'module://@nikitajs/file/src/ini/read#/definitions/config/properties/target'
             description: '''
             Path to a ini file providing default options; lower precedence than
             the content object; may be used conjointly with the local option;
@@ -184,5 +182,5 @@ console.info(`Content was updated: ${$status}`)
 
 ## Dependencies
 
-    utils = require './utils'
+    utils = require '../utils'
     {merge} = require 'mixme'

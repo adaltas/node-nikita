@@ -9,7 +9,9 @@ module.exports =
     cache: '@nikitajs/file/src/cache'
     cson: '@nikitajs/file/src/cson'
     download: '@nikitajs/file/src/download'
-    ini: '@nikitajs/file/src/ini'
+    ini:
+      '': '@nikitajs/file/src/ini'
+      'read': '@nikitajs/file/src/ini/read'
     json: '@nikitajs/file/src/json'
     properties:
       '': '@nikitajs/file/src/properties'

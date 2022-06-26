@@ -79,9 +79,8 @@ remotely  (SSH) or to the platform if executed locally ("\r\n for
 windows",  "\n" otherwise). The name stands for End Of Line.`
       },
       'encoding': {
-        type: 'string',
-        default: 'utf8',
-        description: `File encoding.`
+        $ref: 'module://@nikitajs/file/lib/ini/read#/definitions/config/properties/encoding',
+        default: 'utf8'
       },
       'escape': {
         type: 'boolean',
@@ -92,6 +91,10 @@ default.`
       'gid': {
         $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/gid'
       },
+      'local': {
+        type: 'boolean',
+        description: `Read the source file locally if it exists.`
+      },
       'merge': {
         type: 'boolean',
         description: `Read the target if it exists and merge its content.`
@@ -100,10 +103,7 @@ default.`
         $ref: 'module://@nikitajs/file/lib/index#/definitions/config/properties/mode'
       },
       'parse': {
-        typeof: 'function',
-        description: `User-defined function to parse the content from ini format, default to
-\`require('ini').parse\`, see
-'nikita.file.utils.ini.parse\_multi\_brackets'. `
+        $ref: 'module://@nikitajs/file/lib/ini/read#/definitions/config/properties/parse'
       },
       'stringify': {
         typeof: 'function',
@@ -113,7 +113,7 @@ to \`require('ini').stringify\`, see
 example.`
       },
       'source': {
-        type: 'string',
+        $ref: 'module://@nikitajs/file/lib/ini/read#/definitions/config/properties/target',
         description: `Path to a ini file providing default options; lower precedence than
 the content object; may be used conjointly with the local option;
 optional, use should_exists to enforce its presence.`
@@ -212,6 +212,6 @@ module.exports = {
 };
 
 // ## Dependencies
-utils = require('./utils');
+utils = require('../utils');
 
 ({merge} = require('mixme'));
