@@ -54,7 +54,7 @@
   ],
   "dependencies": {
     "cson": "^7.20.0",
-    "diff": "^5.0.0",
+    "diff": "^5.1.0",
     "handlebars": "^4.7.7",
     "ini": "^3.0.0",
     "mixme": "^0.5.4",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "@nikitajs/log": "^2.0.0-alpha.0",
     "coffeescript": "^2.7.0",
-    "eslint": "^8.15.0",
+    "eslint": "^8.18.0",
     "eslint-plugin-coffee": "^0.1.15",
     "mocha": "^10.0.0",
     "mocha-they": "^0.1.3",

@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@nikitajs/file": "^1.0.0-alpha.3",
-    "diff": "^5.0.0"
+    "diff": "^5.1.0"
   },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
