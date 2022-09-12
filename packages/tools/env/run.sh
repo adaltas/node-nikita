@@ -4,7 +4,6 @@ set -e
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
 npx coffee ./apm/index.coffee run
-./centos6/run.sh
 ./centos7/run.sh
 ./cron/run.sh
 ./dconf/run.sh
