@@ -9,7 +9,6 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 # which happens in the Dockerfile as well as in the tests
 # "install # specific # add pacman options"
 ./archlinux/run.sh
-#./centos6/run.sh
 ./centos7/run.sh
 npx coffee ./systemctl/index.coffee run
 ./ubuntu/run.sh
