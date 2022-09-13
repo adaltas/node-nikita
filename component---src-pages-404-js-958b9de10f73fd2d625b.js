@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunk_nikitajs_website=self.webpackChunk_nikitajs_website||[]).push([[883],{8360:function(t,e,s){s.r(e);s(2784);var n=s(6169),i=s(6927);e.default=function(t){t.data;return(0,i.tZ)(n.Z,{page:{title:"Page not found",description:"The requested page does not exist",keywords:"nikita, node.js, 404, not found"}},(0,i.tZ)("p",null,"You just hit a route that doesn't exist... the sadness."))}}}]);
+//# sourceMappingURL=component---src-pages-404-js-958b9de10f73fd2d625b.js.map
