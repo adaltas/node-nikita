@@ -7,7 +7,8 @@ registry = require('@nikitajs/core/lib/registry');
 module.exports = {
   network: {
     http: {
-      '': '@nikitajs/network/lib/http'
+      '': '@nikitajs/network/lib/http',
+      'wait': '@nikitajs/network/lib/http/wait'
     },
     tcp: {
       'assert': '@nikitajs/network/lib/tcp/assert',

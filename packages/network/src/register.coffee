@@ -7,6 +7,7 @@ module.exports =
   network:
     http:
       '': '@nikitajs/network/src/http'
+      'wait': '@nikitajs/network/src/http/wait'
     tcp:
       'assert': '@nikitajs/network/src/tcp/assert'
       'wait': '@nikitajs/network/src/tcp/wait'
