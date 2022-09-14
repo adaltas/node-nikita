@@ -257,13 +257,15 @@ describe 'network.tcp.wait', ->
   
   describe 'timeout', ->
     
-    it 'stop when timeout is reached', ->
-      start = Date.now()
-      {$status} = await nikita.network.tcp.wait
-        interval: 1000
-        timeout: 2000
-        server: { host: 'localhost', port: 999999 }
-      end = Date.now()
-      (end - start).should.be.above 2000
-      (end - start).should.be.below 2800
+    they 'stop when timeout is reached', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({tools: {events}}) ->
+        @network.tcp.wait
+          interval: 1000
+          timeout: 2000
+          server: { host: 'localhost', port: 999999 }
+        .should.be.rejectedWith
+          code: 'NIKITA_TCP_WAIT_TIMEOUT'
+          message: 'NIKITA_TCP_WAIT_TIMEOUT: timeout reached after 2000ms.'
       

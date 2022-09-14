@@ -50,7 +50,7 @@
 // ```
 
 // ## Hooks
-var definitions, handler, on_action, utils;
+var definitions, errors, handler, on_action, utils;
 
 on_action = function({config}) {
   var extract_servers, i, len, ref, srv, srvs;
@@ -123,6 +123,7 @@ definitions = {
         description: `One or multiple hosts, used to build or enrich the 'server' option.`
       },
       'interval': {
+        default: 2000,
         type: 'number',
         description: `Time in millisecond between each connection attempt.`
       },
@@ -197,7 +198,7 @@ handler = async function({
     config,
     tools: {log}
   }) {
-  var quorum_target, ref;
+  var err, quorum_target, ref;
   if (!((ref = config.server) != null ? ref.length : void 0)) {
     log({
       message: "No connection to wait for",
@@ -206,9 +207,6 @@ handler = async function({
     return;
   }
   // Validate servers
-  if (config.interval == null) {
-    config.interval = 2000; // 2s
-  }
   config.interval = Math.round(config.interval / 1000);
   quorum_target = config.quorum;
   if (quorum_target && quorum_target === true) {
@@ -220,15 +218,16 @@ handler = async function({
     // Note, the option is not tested and doesnt seem to work from a manual test
     config.timeout = 0;
   }
-  // config.timeout = Math.round config.timeout / 1000
-  return (await this.execute({
-    bash: true,
-    command: `function compute_md5 {
+  try {
+    // config.timeout = Math.round config.timeout / 1000
+    return (await this.execute({
+      bash: true,
+      command: `function compute_md5 {
   echo $1 | openssl md5 | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
 }
 addresses=( ${config.server.map(function(server) {
-      return "'" + server.host + "':'" + server.port + "'";
-    }).join(' ')} )
+        return "'" + server.host + "':'" + server.port + "'";
+      }).join(' ')} )
 timeout=${config.timeout || ''}
 md5=\`compute_md5 \${addresses[@]}\`
 randdir="${config.randdir || ''}"
@@ -274,11 +273,14 @@ function wait_connection {
   isopen="echo > '/dev/tcp/$host/$port'"
   touch "$randfile4conn"
   while [[ -f "$randfile4conn" ]] && ! \`bash -c "$isopen" 2>/dev/null\`; do
+    # Exit if timeout signal is broadcasted by any child 
+    if [[ $(< $randdir/signal) == '2' ]]; then exit; fi
     ((count++))
     echo "[DEBUG] Connection failed to $host:$port on attempt $count" >&2
+    echo "[INFO] timeout is $timeout" >&2
     if [ ! -z "$timeout" ]; then
       current_time=\`get_time\`
-      (( $start_time+$timeout < $current_time )) && exit 2
+      (( $start_time+$timeout > $current_time )) && echo 2 > $randdir/signal
     fi
     sleep ${config.interval}
   done
@@ -305,9 +307,23 @@ signal=\`cat $randdir/signal\`
 remove_randdir
 echo "[INFO] Exit code is $signal"
 exit $signal`,
-    code: [0, 3],
-    stdin_log: false
-  }));
+      code: [0, 3],
+      stdin_log: false
+    }));
+  } catch (error) {
+    err = error;
+    if (err.exit_code === 2) {
+      throw errors.NIKITA_TCP_WAIT_TIMEOUT({config});
+    }
+    throw err;
+  }
+};
+
+// ## Errors
+errors = {
+  NIKITA_TCP_WAIT_TIMEOUT: function({config}) {
+    return utils.error('NIKITA_TCP_WAIT_TIMEOUT', [`timeout reached after ${config.timeout}ms.`]);
+  }
 };
 
 // ## Exports
