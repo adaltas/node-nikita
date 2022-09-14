@@ -64,7 +64,6 @@ describe 'network.tcp.wait', ->
   describe 'run', ->
 
     they 'a single host and a single port', ({ssh}) ->
-      return if ssh
       srv = server()
       await nikita
         $ssh: ssh
