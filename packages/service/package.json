@@ -13,7 +13,7 @@
     "yum",
     "pacman"
   ],
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -42,7 +42,7 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.3"
+    "@nikitajs/file": "^1.0.0-alpha.4"
   },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
