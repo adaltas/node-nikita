@@ -43,7 +43,7 @@
   ],
   "dependencies": {
     "@nikitajs/file": "^1.0.0-alpha.4",
-    "@nikitajs/service": "^1.0.0-alpha.3",
+    "@nikitajs/service": "^1.0.0-alpha.4",
     "dayjs": "^1.11.2",
     "jsesc": "^3.0.2",
     "mixme": "^0.5.4"
