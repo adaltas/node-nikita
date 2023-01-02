@@ -74,6 +74,16 @@ module.exports = (config) ->
           .log.cli pad: host: 20, header: 60
           .log.md filename: path.resolve params.logdir, 'exec.md'
           .call '@nikitajs/lxd-runner/lib/actions/exec', {...config, ...params}
+      'state':
+        description: '''
+        Print machine state and information.
+        '''
+        handler: ({params}) ->
+          nikita
+            $debug: params.debug
+          .log.cli pad: host: 20, header: 60
+          .log.md filename: path.resolve params.logdir, 'exec.md'
+          .call '@nikitajs/lxd-runner/lib/actions/state', {...config, ...params}
       'run':
         description: '''
         Start and stop the container and execute all the tests.

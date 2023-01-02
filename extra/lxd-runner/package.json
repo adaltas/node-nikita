@@ -12,5 +12,8 @@
   "dependencies": {
     "@nikitajs/core": "^1.0.0-alpha.3",
     "shell": "^0.9.4"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.7.0"
   }
 }
