@@ -9,8 +9,7 @@ runner
   cluster:
     containers:
       'nikita-core-chown':
-        image: 'images:centos/7'
-        # image: 'ubuntu'
+        image: 'images:almalinux/8'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/chown/test.coffee'
           'raw.idmap': if parseInt(process.env['NIKITA_LXD_IN_VAGRANT'])
@@ -27,6 +26,7 @@ runner
         container: config.container
         command: '''
         if command -v node ; then exit 42; fi
+        yum install -y tar
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
         nvm install 16

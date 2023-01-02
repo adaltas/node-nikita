@@ -16,7 +16,6 @@ RUN \
   && su - nikita -c 'curl -L https://git.io/n-install | bash -s -- -y' \
   && su - nikita -c '. ~/.bashrc && n $NODE_VERSION'
 
-
 RUN \
      # Install SSH
      yum install -y openssh-server openssh-clients \

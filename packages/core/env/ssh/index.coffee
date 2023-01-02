@@ -6,13 +6,15 @@ runner
   cwd: '/nikita/packages/core'
   container: 'nikita-core-ssh'
   logdir: path.resolve __dirname, './logs'
+  test_user: 1234
   cluster:
     containers:
       'nikita-core-ssh':
-        image: 'images:centos/7'
+        image: 'images:almalinux/8'
         # image: 'ubuntu'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/ssh/test.coffee'
+          'environment.HOME': '/home/source' # Fix, npm not available because HOME not defined
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
           then 'both 1000 1234'
           else "both #{process.getuid()} 1234"
@@ -22,6 +24,13 @@ runner
             source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
         ssh: enabled: true
     provision_container: ({config}) ->
+      await @lxc.exec
+        $header: 'Dependencies'
+        container: config.container
+        command: '''
+        # nvm require the tar commands
+        yum install -y tar
+        '''
       await @lxc.exec
         $header: 'User `source`'
         container: config.container

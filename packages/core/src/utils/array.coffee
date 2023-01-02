@@ -27,6 +27,8 @@ module.exports =
         break if argument.indexOf(item) is -1
       result.push item if j is arguments.length
     result
+  # flatten: (arr, depth=Infinity) ->
+  #   arr.flat(depth)
   flatten: (arr, depth=-1) ->
     ret = []
     for i in [0 ... arr.length]
@@ -52,7 +54,7 @@ module.exports =
         else
           for action, i in results
             [action..., arg_element]
-      results = module.exports.flatten newresults, 0
+      results = newresults.flat(1)
     results
   merge: (arrays...) ->
     r = []

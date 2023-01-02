@@ -50,13 +50,19 @@ handlers =
       $bastard: true
       $parent: action
     , ->
-      {$status, stdout} = await @execute
-        command: utils.os.command
+      {$status, stdout} = await @execute utils.os.command
       return final_run = false unless $status
       [arch, distribution, version, linux_version] = stdout.split '|'
+      # Note, CentOS 7 version currently return version "7.9.2009", transforming it to "5.19"
+      # means that the check runs agains "5.19.0" later on and may fail
       # Remove patch version (eg. 7.8.12 -> 7.8)
-      version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
-      linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      # Instead, remove any information after the patch value
+      version = "#{match[0]}" if match = /^(\d+)\.(\d+)\.(\d+)/.exec version
+      # Note, arch linux currently return the linux version "5.15.49", transforming it to "5.19"
+      # means that the check runs agains "5.19.0" later on and may fail
+      # linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      # Instead, remove any information after the patch value
+      linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)\.(\d+)/.exec linux_version
       match = action.conditions.if_os.some (condition) ->
         a = !condition.arch.length || condition.arch.some (value) ->
           # Uses `uname -m` internally.
@@ -90,9 +96,15 @@ handlers =
         command: utils.os.command
       return final_run = false unless $status
       [arch, distribution, version, linux_version] = stdout.split '|'
+      # Note, CentOS 7 version currently return version "7.9.2009", transforming it to "5.19"
+      # means that the check runs agains "5.19.0" later on and may fail
       # Remove patch version (eg. 7.8.12 -> 7.8)
-      version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
-      linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      # Instead, remove any information after the patch value
+      version = "#{match[0]}" if match = /^(\d+)\.(\d+)\.(\d+)/.exec version
+      # Note, arch linux currently return the linux version "5.15.49", transforming it to "5.19"
+      # means that the check runs agains "5.19.0" later on and may fail
+      # linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      # Instead, remove any information after the patch value
       match = action.conditions.unless_os.some (condition) ->
         a = !condition.arch.length || condition.arch.some (value) ->
           return true if typeof value is 'string' and value is arch

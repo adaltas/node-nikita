@@ -96,9 +96,7 @@ handlers = {
       $parent: action
     }, async function() {
       var $status, arch, distribution, linux_version, match, stdout, version;
-      ({$status, stdout} = (await this.execute({
-        command: utils.os.command
-      })));
+      ({$status, stdout} = (await this.execute(utils.os.command)));
       if (!$status) {
         return final_run = false;
       }
@@ -107,7 +105,11 @@ handlers = {
         // Remove patch version (eg. 7.8.12 -> 7.8)
         version = `${match[0]}`;
       }
-      if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
+      if (match = /^(\d+)\.(\d+)\.(\d+)/.exec(linux_version)) {
+        // Note, arch linux currently return the linux version "5.15.49", transforming it to "5.19"
+        // means that the check runs agains "5.19.0" later on and may fail
+        // linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+        // Instead, remove any information after the patch value
         linux_version = `${match[0]}`;
       }
       match = action.conditions.if_os.some(function(condition) {

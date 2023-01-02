@@ -46,6 +46,8 @@ module.exports = {
     }
     return result;
   },
+  // flatten: (arr, depth=Infinity) ->
+  //   arr.flat(depth)
   flatten: function(arr, depth = -1) {
     var i, k, ref, ret;
     ret = [];
@@ -97,7 +99,7 @@ module.exports = {
         }
         return results1;
       })();
-      results = module.exports.flatten(newresults, 0);
+      results = newresults.flat(1);
     }
     return results;
   },

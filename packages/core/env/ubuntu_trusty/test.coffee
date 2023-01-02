@@ -13,7 +13,7 @@ module.exports =
     # change the minor version according to the latest used in the Dockerfile,
     # run `cat /etc/lsb-release` to check the Ubuntu version
     version: '14.04'
-    linux_version: '5.10'
+    linux_version: '5.15.49'
   config: [
     label: 'local'
   ,
