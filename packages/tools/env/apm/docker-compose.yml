@@ -1,0 +1,13 @@
+
+services:
+  nodejs:
+    build: .
+    image: nikita_tools_apm
+    container_name: nikita_tools_apm_nodejs
+    platform: linux/amd64 # Required on Apple M1
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/tools/env/apm/test.coffee
+      DEBUG: 1
+      # DEBUG: 0
