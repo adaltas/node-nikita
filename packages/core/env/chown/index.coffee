@@ -27,7 +27,7 @@ runner
         command: '''
         if command -v node ; then exit 42; fi
         yum install -y tar
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+        curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
         nvm install 16
         '''

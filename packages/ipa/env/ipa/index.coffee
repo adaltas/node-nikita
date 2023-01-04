@@ -71,7 +71,7 @@ runner
         code: [0, 42]
         command: '''
         bash -l -c "command -v node" && exit 42
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+        curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
         nvm install 16
         '''
