@@ -8,4 +8,5 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 npx coffee env/chown/index.coffee run
 npx coffee env/ssh/index.coffee run
 ./sudo/run.sh
-./ubuntu_trusty/run.sh
+./ubuntu-14.04/run.sh
+./ubuntu-22.04/run.sh

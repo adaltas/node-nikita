@@ -14,7 +14,7 @@ runner
         # image: 'ubuntu'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/ssh/test.coffee'
-          'environment.HOME': '/home/source' # Fix, npm not available because HOME not defined
+          'environment.HOME': '/home/source' # Fix, LXD doesnt set HOME with --user
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
           then 'both 1000 1234'
           else "both #{process.getuid()} 1234"
@@ -49,7 +49,6 @@ runner
         $header: 'Node.js'
         container: config.container
         command: """
-        export HOME=/home/source
         if command -v node ; then exit 42; fi
         curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc

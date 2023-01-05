@@ -13,7 +13,6 @@ RUN \
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/core
-ENV TERM xterm # Color output in TTY
 
 # Sudo User
 RUN useradd nikita -d /home/nikita -m -s /bin/bash && \
@@ -26,7 +25,11 @@ USER nikita
 # Install Node.js
 ENV NODE_VERSION stable
 RUN \
-  curl -L https://git.io/n-install | bash -s -- -y
+  curl -L https://git.io/n-install | bash -s -- -y 16.19
+# Note, Node.js >18 throw error
+# node: /lib/aarch64-linux-gnu/libm.so.6: version `GLIBC_2.27' not found (required by node)
+# node: /usr/lib/aarch64-linux-gnu/libstdc++.so.6: version `CXXABI_1.3.9' not found (required by node)
+# ...
 # Note, bashrc not sourced unless running interactively
 # RUN . ~/.bashrc && n $NODE_VERSION
 ENV PATH /home/nikita/n/bin:$PATH
