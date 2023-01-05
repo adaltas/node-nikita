@@ -15,7 +15,6 @@ RUN \
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/system
-ENV TERM xterm
 
 # Sudo User
 RUN useradd nikita -d /home/nikita -m -s /bin/bash && \

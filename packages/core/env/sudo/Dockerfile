@@ -27,7 +27,6 @@ RUN \
 
 ADD ./entrypoint.sh /entrypoint.sh
 WORKDIR /home/nikita/work/packages/core
-ENV TERM xterm
 USER nikita
 
 RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''\

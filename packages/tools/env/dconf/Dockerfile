@@ -26,6 +26,5 @@ COPY dbus.conf /etc/dbus-1/session.d/dbus.conf
 COPY ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/tools
-ENV TERM xterm
 
 ENTRYPOINT ["/entrypoint.sh"]

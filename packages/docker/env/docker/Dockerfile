@@ -29,6 +29,5 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/docker
-# ENV TERM xterm # Break the shell
 
 ENTRYPOINT ["/entrypoint.sh"]

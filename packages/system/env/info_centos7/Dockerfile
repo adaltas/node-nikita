@@ -14,7 +14,6 @@ RUN yum clean all
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/system
-ENV TERM xterm # Color output in TTY
 
 # Sudo User
 RUN useradd nikita -d /home/nikita \

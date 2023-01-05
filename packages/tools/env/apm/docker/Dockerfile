@@ -20,7 +20,6 @@ RUN \
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/tools
-ENV TERM xterm # Color output in TTY
 
 # Sudo User
 RUN useradd nikita -d /home/nikita -m -s /bin/bash && \

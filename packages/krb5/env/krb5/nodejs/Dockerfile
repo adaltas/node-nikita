@@ -51,6 +51,5 @@ RUN yum clean all
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/krb5
-ENV TERM xterm # Color output in TTY
 
 ENTRYPOINT ["/entrypoint.sh"]
