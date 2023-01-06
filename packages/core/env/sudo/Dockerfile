@@ -22,6 +22,7 @@ RUN \
   && ssh-keygen -A \
      # Install openssl
   && yum install -y openssl
+  && yum install -y openssl \
      # Finalize
   && yum clean all
 
