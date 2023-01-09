@@ -2,11 +2,11 @@ FROM centos:7
 MAINTAINER David Worms
 
 RUN \
-    # Install Node dependencies
- && yum install -y git make && \
-    # Install SSH and sudo
- && yum install -y openssh-server openssh-clients sudo && \
- && ssh-keygen -A
+     # Install Node dependencies
+     yum install -y git make \
+     # Install SSH and sudo
+  && yum install -y openssh-server openssh-clients sudo \
+  && ssh-keygen -A
 
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
