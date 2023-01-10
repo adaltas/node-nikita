@@ -24,9 +24,9 @@ RUN useradd nikita -d /home/nikita \
 USER nikita
 
 # Install Node.js
-ENV NODE_VERSION stable
-RUN curl -L https://git.io/n-install | bash -s -- -y
-# Note, bashrc not sourced unless running interactively
+# Note, CentOS 7.9.2009 incompatible with Node.js >= 18
+RUN \
+  curl -L https://git.io/n-install | bash -s -- -y 16.19
 ENV PATH /home/nikita/n/bin:$PATH
 
 RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' \

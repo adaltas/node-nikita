@@ -22,7 +22,9 @@ USER nikita
 
 # Install Node.js
 ENV NODE_VERSION stable
-RUN curl -L https://git.io/n-install | bash -s -- -y
+# Note, CentOS 7.9.2009 incompatible with Node.js >= 18
+RUN \
+  curl -L https://git.io/n-install | bash -s -- -y 16.19
 # Note, bashrc not sourced unless running interactively
 # RUN . ~/.bashrc && n $NODE_VERSION
 ENV PATH /home/nikita/n/bin:$PATH

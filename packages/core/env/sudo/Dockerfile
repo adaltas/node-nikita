@@ -1,6 +1,10 @@
 FROM centos:7.9.2009
 MAINTAINER David Worms
 
+RUN \
+     # Install Node dependencies
+     yum install -y git make
+
 # Sudo User
 RUN useradd nikita -d /home/nikita \
 && mkdir -p /home/nikita \
@@ -10,18 +14,16 @@ RUN useradd nikita -d /home/nikita \
 && echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
 
 # Install Node.js
-ENV NODE_VERSION stable
+# Note, CentOS 7.9.2009 incompatible with Node.js >= 18
 RUN \
-     yum install -y git make \
-  && su - nikita -c 'curl -L https://git.io/n-install | bash -s -- -y' \
-  && su - nikita -c '. ~/.bashrc && n $NODE_VERSION'
+     su - nikita -c 'curl -L https://git.io/n-install | bash -s -- -y 16.19'
+ENV PATH /home/nikita/n/bin:$PATH
 
 RUN \
      # Install SSH
      yum install -y openssh-server openssh-clients \
   && ssh-keygen -A \
      # Install openssl
-  && yum install -y openssl
   && yum install -y openssl \
      # Finalize
   && yum clean all
