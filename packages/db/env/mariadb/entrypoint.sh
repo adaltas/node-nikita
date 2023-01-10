@@ -5,12 +5,12 @@ set -e
 . ~/.bashrc
 # Start ssh daemon
 sudo /usr/sbin/sshd
-# We have TTY, so probably an interactive container...
 if test -t 0; then
-  # Some command(s) has been passed to container? Execute them and exit.
-  # No commands provided? Run bash.
+  # We have TTY, so probably an interactive container...
   if [[ $@ ]]; then
-    node_modules/.bin/mocha $@
+    # Transfer arguments to mocha
+    . ~/.bashrc
+    npx mocha $@
   else
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
