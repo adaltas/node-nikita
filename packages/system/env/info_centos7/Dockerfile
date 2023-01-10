@@ -1,5 +1,5 @@
 
-FROM centos:7
+FROM centos:7.9.2009
 MAINTAINER David Worms
 
 RUN \
