@@ -659,14 +659,14 @@ nikita({
 
 *Learn how to leverage exit code to alter the action status.*
 
-The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value `0` will indicate that the server was started, the value `42` will indicate that it was already running and any other exit code will be treated as an error.
+The Redis server is now configured and ready to be started. The status reflects whether the server was already started or not based on the [shell exit code](https://tldp.org/LDP/abs/html/exitcodes.html). The value `0` will indicate that the server was started, the value `3` will indicate that it was already running and any other exit code will be treated as an error.
 
 ```js
 nikita(async function() {
   await this.log.cli()
   await this.execute({
     $header: 'Startup',
-    code_skipped: 42,
+    code: 3,
     command: `
     # Exit code 3 if ping is successful
     redis-stable/src/redis-cli ping && exit 3
@@ -924,7 +924,7 @@ module.exports = async function({config}) {
   await this.execute({
     $header: 'Startup',
     cwd: config.cwd,
-    code_skipped: 3,
+    code: 3,
     command: `
     redis-stable/src/redis-cli ping && exit 3
     nohup redis-stable/src/redis-server conf/redis.conf &
