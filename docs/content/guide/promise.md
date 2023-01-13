@@ -4,13 +4,13 @@ sort: 2
 
 # Action Promise
 
-Nikita's actions always return [JavaScript Promise](https://nodejs.dev/learn/understanding-javascript-promises) and provide the guarantee that all actions are executed sequentially according to their declaration.
+Nikita's actions always return [JavaScript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and provide the guarantee that all actions are executed sequentially according to their declaration.
 
 ## Accessing the action output
 
 The [action output](/current/api/output/) is returned after its Promise is fulfilled.
 
-The most elegant and relevant approach to access the action output is using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await). It avoids a "callback hell" in case you need to pass a result of one action to a [configuration property](/current/api/config/) of another action as in the following example:
+The most elegant and relevant approach to access the action output is using the [`async`/`await` operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). It avoids a "callback hell" in case you need to pass a result of one action to a [configuration property](/current/api/config/) of another action as in the following example:
 
 ```js
 // Dependency

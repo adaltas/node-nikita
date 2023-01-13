@@ -220,7 +220,7 @@ nikita(() => {
 
 ### Action promise
 
-Nikita's actions always resolve [Javascript Promises](https://nodejs.dev/learn/understanding-javascript-promises), they either fulfill with an action output or reject an error. To access the [action output](/current/api/output/), you have to use the Promise API or simply use the [`async/await` construction](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await) to get the returned value.
+Nikita's actions always resolve [Javascript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), they either fulfill with an action output or reject an error. To access the [action output](/current/api/output/), you have to use the Promise API or simply use the [`async/await` construction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) to get the returned value.
 
 ```js
 // Call asynchronous function

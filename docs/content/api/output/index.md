@@ -9,7 +9,7 @@ The action output is the value returned by the [action handler](/current/api/han
 
 ## Usage
 
-The action output is returned when its [promise](/current/guide/promise/) is fulfilled, thus, it is accessed using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await).
+The action output is returned when its [promise](/current/guide/promise/) is fulfilled, thus, it is accessed using the [`async`/`await` operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function).
 
 ```js
 nikita

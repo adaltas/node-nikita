@@ -19,7 +19,7 @@ The topics of this section are organized by relevance, the first ones being cons
 * [Call and user-defined handlers](/current/guide/call/)   
   Nikita gives you the choice between calling your own function, which we call handlers, or calling a registered function by its name.
 * [Action promise](/current/guide/promise/)   
-  Nikita's actions always return [JavaScript Promise](https://nodejs.dev/learn/understanding-javascript-promises) and provide the guarantee that all actions are executed sequentially according to their declaration.
+  Nikita's actions always return [JavaScript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and provide the guarantee that all actions are executed sequentially according to their declaration.
 * [Status](/current/guide/status/)   
   The status is information indicating whether an action had any impact or not. Its meaning may differ from one action to another, for example: touching a file, modification of a configuration file, checking if a port is open, ...
 * [Local and remote (SSH) execution](/current/guide/local_remote/)   

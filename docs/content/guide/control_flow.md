@@ -84,7 +84,7 @@ nikita
 })
 ```
 
-However, the session can be preserved by catching the exception thrown by action [Promise](https://nodejs.dev/learn/understanding-javascript-promises). The example below uses the `try...catch` statement to handle the exception:
+However, the session can be preserved by catching the exception thrown by action [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The example below uses the `try...catch` statement to handle the exception:
 
 ```js
 nikita
@@ -109,7 +109,7 @@ nikita
 
 The execution flow can be controlled by mixing [conditions](/current/guide/conditions/) and [output](/current/api/output/) such as [`status`](/current/api/output/status/) and [`error`](/current/guide/error/) returned with Promise.
 
-> Note, Nikita's actions always return [Javascript Promise](https://nodejs.dev/learn/understanding-javascript-promises). To access the action output, you have to call an asynchronous function and "await" for the result of Promise.
+> Note, Nikita's actions always return [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). To access the action output, you have to call an asynchronous function and "await" for the result of Promise.
 
 The example below demonstrates the combination of the `status` output variable and the [`if` condition](/current/guide/conditions/). The second action is executed if the status is `true`:
 

@@ -29,7 +29,7 @@ The child action objects contain the following properties:
 
 ## Usage
 
-The `children` property of the parent action is enriched once a child action complete its execution, wether it is fulfilled or rejected. Thus, it is accessed using the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await):
+The `children` property of the parent action is enriched once a child action complete its execution, wether it is fulfilled or rejected. Thus, it is accessed using the [`async`/`await` operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function):
 
 ```js
 nikita

@@ -10,7 +10,7 @@ By default, errors are not managed by Nikita. It is your responsibility to handl
 
 ## Using `try/catch` blocks with `async/await`
 
-The most common method to catch errors is using the [`try/catch` statement](https://nodejs.org/en/knowledge/errors/what-is-try-catch/) in a combination with the [`async`/`await` operators](https://nodejs.dev/learn/modern-asynchronous-javascript-with-async-and-await). It is a question of tastes but some consider it to be the most elegant:
+The most common method to catch errors is using the [`try/catch` statement](https://nodejs.org/en/knowledge/errors/what-is-try-catch/) in a combination with the [`async`/`await` operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). It is a question of tastes but some consider it to be the most elegant:
 
 ```js
 // Global Nikita session
