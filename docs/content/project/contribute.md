@@ -36,7 +36,7 @@ Every significant change is documented in the [Changelog](/project/changelog/) f
 
 ## Documentation
 
-Managing an open source project a huge time sink and most of us are non-native English speakers. We greatly appreciate any time spent fixing typos or clarifying sections in the documentation.
+Managing an open-source project is a huge time sink and most of us are non-native English speakers. We greatly appreciate any time spent fixing typos or clarifying sections in the documentation.
 
 ## Discussions
 
@@ -76,4 +76,4 @@ We are using GitHub Issues for our public bugs. We keep a close eye on this and 
 
 ### Reporting New Issues
 
-The best way to get your bug fixed is to provide a reduced test case. You can get inspiration from our current [tests' suite](https://github.com/adaltas/node-nikita/tree/master/packages/core/test). Note, tests are filtered by tags and some tests require a specific environment which is provided through [Docker or LXD environments](https://github.com/adaltas/node-nikita/tree/master/packages/tools/env).
+The best way to get your bug fixed is to provide a reduced test case. You can get inspiration from our current [tests suite](https://github.com/adaltas/node-nikita/tree/master/packages/core/test). Note, tests are filtered by tags and some tests require a specific environment which is provided through [Docker or LXD environments](https://github.com/adaltas/node-nikita/tree/master/packages/tools/env).

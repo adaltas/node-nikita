@@ -7,7 +7,7 @@ sort: 5
 
 You are encouraged to [contribute](/project/contribute/) to Nikita. There are multiple ways to offer assistance to the project. To fix and write actions, you will have to get your hands dirty and dive into the source code. This page describes how to setup your developer and testing environment and how tests are organized and executed.
 
-Before starting with Nikita development, read the [project architecture](/project/architecture/), it presents how to project is organized in the Git repository.
+Before starting with Nikita's development, read the [project architecture](/project/architecture/), which presents how to project is organized in the Git repository.
 
 ## Tests execution
 
@@ -37,7 +37,7 @@ cd packages/core
 yarn run test:local --parallel
 ```
 
-To execute a subset of the tests, go to the package folder and pass a globing expression to Mocha such as `cd ./packages/{package} && npx mocha 'test/**/*.coffee'`.
+To execute a subset of the tests, go to the package folder and pass a globbing expression to Mocha such as `cd ./packages/{package} && npx mocha 'test/**/*.coffee'`.
 
 For example, to only test the `nikita.file.ini` actions, run the following:
 

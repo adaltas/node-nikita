@@ -26,7 +26,7 @@ Nikita is written in JavaScript and executed with Node.js. It is available on [N
 
 ### Use cases
 
-It serves multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate components' deployments (installations, functional tests, lifecycle management...).
+It serves multiple purposes. For example, it can be used in a website with a Node.js backend, where you want to execute actions (writing files, copy, move, executing custom scripts...) or you can use it to automate and orchestrate component deployments (installations, functional tests, lifecycle management, ...).
 
 Take a view at [Ryba](https://github.com/ryba-io/ryba) which contains playbooks to set up and manage Big Data systems.
 
@@ -580,7 +580,7 @@ Before starting the server, we create a configuration file. The Redis format is 
 
 *Learn how to activate pretty reporting and detailed logs written in Markdown.*
 
-So far, we retrieved the action output to manually print a message for the user with the `console.info` function completed by character depending the the execution status. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
+So far, we retrieved the action output to manually print a message for the user with the `console.info` function completed by character depending on the execution status. This process is automatically managed by the `nikita.log.cli` action. A message is printed to the user terminal whenever the `header` metadata property is present:
 
 ```js
 nikita(async function() {

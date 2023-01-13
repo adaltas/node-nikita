@@ -26,7 +26,7 @@ nikita.call('my value', ({metadata}) => {
 })
 ```
 
-## Recommandation
+## Recommendation
 
 When [writing and registering](/current/guide/register/) Nikita actions, the behavior is similar. When an action make use of `argument`, it is usually a good practice to handle its associated value before the handler is executed, commonly inside the `on_action` hook. This way, other plugins can honors it.
 
