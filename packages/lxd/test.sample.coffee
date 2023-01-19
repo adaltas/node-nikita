@@ -5,7 +5,7 @@ module.exports =
     lxd_vm: process.platform is 'linux'
     lxd_prlimit: true
   images:
-    alpine: 'alpine/3.13'
+    alpine: 'alpine/3.17'
   config: [
     label: 'local'
     # label: 'remote'
