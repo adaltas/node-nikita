@@ -166,7 +166,6 @@ describe 'log.md', ->
           ```stdout
           this is a one line output
           
-          ```
           """
           
     they 'stdin one line', ({ssh}) ->
