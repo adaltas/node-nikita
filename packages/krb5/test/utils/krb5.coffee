@@ -1,6 +1,6 @@
 
 krb5 = require '../../src/utils/krb5'
-tags = require '../test'
+{tags, config, krb5} = require '../test'
 
 return unless tags.krb5
 
