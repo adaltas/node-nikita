@@ -14,9 +14,6 @@ describe 'lxc.start', ->
       registry.register 'clean', ->
         @lxc.delete 'nikita-start-1', force: true
       await @clean()
-      await @lxc.delete
-        container: 'nikita-start-1'
-        force: true
       await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-start-1'
