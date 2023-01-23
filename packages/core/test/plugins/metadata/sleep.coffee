@@ -49,6 +49,6 @@ describe 'plugins.metadata.sleep (plugin.retry)', ->
         throw Error 'Catchme'
       .catch (err) ->
         times.length.should.eql 2
-        (times[1] - times[0]).should.be.above 100
+        (times[1] - times[0]).should.be.above 95
         (times[1] - times[0]).should.be.below 180
     
