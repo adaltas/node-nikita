@@ -18,8 +18,5 @@ describe 'lxc.goodie.prlimit', ->
         image: "images:#{images.alpine}"
         container: 'nikita-goodies-prlimit-1'
         start: true
-      try
-        await @lxc.goodies.prlimit
-          container: 'nikita-goodies-prlimit-1'
-      catch err
-        throw err unless err.code is 'NIKITA_LXC_PRLIMIT_MISSING'
+      await @lxc.goodies.prlimit
+        container: 'nikita-goodies-prlimit-1'

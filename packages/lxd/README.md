@@ -35,8 +35,11 @@ The procedure is abstracted inside the `./bin/cluster start` command. Below are 
 Install:
 
 ```bash
-# Initialize the VM
-cd assets && vagrant up && cd..
+# Initialize the VM with multipass
+# (compatible with macos silicon)
+cd assets && ./multipass.sh && cd ..
+# Initialize the VM with Vagrant
+# cd assets && vagrant up && cd ..
 # Set up LXD client
 lxc remote add nikita 127.0.0.1:8443
 lxc remote switch nikita
@@ -52,6 +55,10 @@ lxc remote remove nikita
 lxc remote add nikita --accept-certificate --password secret 127.0.0.1:8443
 lxc remote switch nikita
 ```
+
+When using a host VM, the test `test/goodies/prlimit.coffee` will fail because
+it is expected to run on the LXC host machine and the not machine where Nikita
+is executed. The property `tags.lxd_prlimit` must be `false` in `test.coffee`.
 
 ### Permission denied on tmp
 

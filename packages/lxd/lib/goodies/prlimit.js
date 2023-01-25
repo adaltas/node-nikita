@@ -3,7 +3,10 @@
 
 // Print the process limit associated with a running container.
 
-// Note, the command must be executed on the host container of the machine. When
+// The action require the `prlimit` command to be available. On Ubuntu, use `apt
+// install util-linux`.
+
+// Note, the action must be executed on the host container of the machine. When
 // using a remote LXD server or cluster, you must know on which node the machine is running
 // and run the action in this node.
 
