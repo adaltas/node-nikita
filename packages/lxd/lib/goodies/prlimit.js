@@ -49,8 +49,8 @@ handler = async function({config}) {
   var description, err, hard, i, limits, line, resource, soft, stdout, units;
   try {
     ({stdout} = (await this.execute({
-      command: `command -p prlimit || exit 3
-sudo prlimit -p $(lxc info ${config.container} | awk '$1==\"Pid:\"{print $2}')`
+      command: `command -v prlimit || exit 3
+sudo prlimit -p $(lxc info ${config.container} | awk '$1==\"PID:\"{print $2}')`
     })));
     limits = (function() {
       var j, len, ref, results;

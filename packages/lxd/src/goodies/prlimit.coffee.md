@@ -45,8 +45,8 @@ console.info( `${stdout} ${JSON.decode(limits)}`)
       try
         {stdout} = await @execute
           command: """
-          command -p prlimit || exit 3
-          sudo prlimit -p $(lxc info #{config.container} | awk '$1==\"Pid:\"{print $2}')
+          command -v prlimit || exit 3
+          sudo prlimit -p $(lxc info #{config.container} | awk '$1==\"PID:\"{print $2}')
           """
         limits = for line, i in utils.string.lines stdout
           continue if i is 0
