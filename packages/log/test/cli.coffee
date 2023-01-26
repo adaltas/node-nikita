@@ -230,6 +230,7 @@ describe 'log.cli', ->
         ]
 
     they 'option colors', ({ssh}) ->
+      return this.skip() unless process.stdout.isTTY
       data = []
       host = ssh?.host or 'local'
       nikita
