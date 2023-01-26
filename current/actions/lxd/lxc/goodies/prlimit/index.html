@@ -69,8 +69,8 @@ console<span class="token punctuation">.</span><span class="token function">info
   try
     {stdout} = await @execute
       command: &quot;&quot;&quot;
-      command -p prlimit || exit 3
-      sudo prlimit -p $(lxc info #{config.container} | awk &#x27;$1==\&quot;Pid:\&quot;{print $2}&#x27;)
+      command -v prlimit || exit 3
+      sudo prlimit -p $(lxc info #{config.container} | awk &#x27;$1==\&quot;PID:\&quot;{print $2}&#x27;)
       &quot;&quot;&quot;
     limits = for line, i in utils.string.lines stdout
       continue if i is 0
