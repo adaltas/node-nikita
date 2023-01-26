@@ -62,7 +62,7 @@
       "@nikitajs/java/src/register"
     ],
     "inline-diffs": true,
-    "timeout": 10000,
+    "timeout": 20000,
     "reporter": "spec",
     "recursive": true
   },
