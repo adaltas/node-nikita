@@ -293,9 +293,9 @@ handler = async function({config}) {
       await this.lxc.wait.ready({
         $header: 'Wait for container to be ready to use',
         container: containerName,
-        nat: true
+        nat: true,
+        nat_check: !!process.env.CI ? 'wget -q google.com' : void 0
       });
-      
       // Openssl is required by the `lxc.file.push` action
       await this.lxc.exec({
         $header: 'OpenSSL',
