@@ -26,6 +26,13 @@ console.info(`Container is ready: ${$status}`)
             description: """
             If true, will wait for internet to be connected
             """
+          'nat_check':
+            type: 'string'
+            default: 'ping -c 3 8.8.8.8 || exit 42'
+            description: '''
+            Command use to check network activation. Expect exit code `0` when
+            ready, exit code `42` if not yet ready and any other code on error.
+            '''
         required: ['container']
 
 ## Handler
@@ -60,9 +67,7 @@ console.info(`Container is ready: ${$status}`)
             {$status} = await @lxc.exec
               $header: "Trying to connect to internet"
               container: config.container
-              command:"""
-              ping -c 2 8.8.8.8 || exit 42
-              """
+              command: config.nat_check
               code: [0, 42]
             if $status is false
               throw Error "Reschedule: Internet not ready"
