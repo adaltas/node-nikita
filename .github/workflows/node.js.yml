@@ -7,62 +7,50 @@ on:
     branches: [ fix/ci-test-job ]
   pull_request:
     branches: [ master ]
+  
 jobs:
+  list-packages:
+    name: List Packages
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.get-folders.outputs.packages }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: get-folders
+      working-directory: packages
+      shell: bash
+      run: |
+        packages=$(tree -J -d -L 1 | jq -c '.[0].contents | map(.name)')
+        echo "packages=$packages" >> $GITHUB_OUTPUT
   test:
+    name: Package Test
+    needs: [list-packages]
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false # avoid cancel all in-progress jobs if any fails
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x] 
+        package: ${{ fromJson(needs.list-packages.outputs.packages)}}
+        exclude: 
+          - package: nikita # scope lerna flag not working with: @nikitajs/nikita
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: sudo apt install -y openssh-server openssl && sudo systemctl start sshd
-    - run: sudo apt install -y openjdk-8-jre-headless
-    - run: ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
-    - run: cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
-    - run: yarn --frozen-lockfile
-    - run: npx lerna run test:local --ignore=@nikitajs/lxd
-    
-  test_lxd:
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install LXD
-      if: "${{ github.event.inputs.channel == '' }}"
-      shell: bash
+    - name: Setup SSH
+      run: | 
+        ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
+        cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
+    - name: Install external dependencies
       run: |
-        if ! snap info lxd | grep "installed"; then
-          sudo snap install lxd --channel=5.0/stable
-        fi
-    - name: Initialise LXD
-      shell: bash
-      run: |
-        sudo lxd waitready
-        sudo lxd init --auto
-    - name: Set up permissions for socket
-      shell: bash
-      run: |
-        sudo snap set lxd daemon.group=adm
-        sudo snap restart lxd
-    - name: Configure firewall
-      shell: bash
-      run: |
-        set -x
-        sudo iptables -I DOCKER-USER -j ACCEPT
-    - run: ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ''
-    - run: cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
-    - run: yarn --frozen-lockfile
-    - run: npx lerna run test:local --scope=@nikitajs/lxd
+        script=.github/CI_DEPENDENCIES/${{ matrix.package }}.sh
+        test -f $script && bash $script || echo "No external dependencies script available"
+    - name: Install package dependencies
+      run: yarn --frozen-lockfile
+    - name: Test
+      run: npx lerna run test:local --scope=@nikitajs/${{ matrix.package }}
     
   # deploy:
   #   needs: test
