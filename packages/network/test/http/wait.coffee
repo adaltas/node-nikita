@@ -9,6 +9,7 @@ they = require('mocha-they')(config)
 return unless tags.posix
 
 portincr = 22345
+hangTimeout = null
 server = ->
   _ = null
   port = portincr++
@@ -19,6 +20,8 @@ server = ->
       new Promise (resolve, reject) ->
         _ = http.createServer (req, res) ->
           switch req.url
+            when '/hang'
+              hangTimeout = setTimeout((->), 100000)
             when '/200'
               res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
               res.end '{"key": "value"}'
@@ -31,6 +34,7 @@ server = ->
         .on 'error', (err) -> reject err
     close: ->
       new Promise (resolve) ->
+        clearTimeout hangTimeout if hangTimeout
         _.close resolve
 
 
@@ -63,7 +67,6 @@ describe 'run', ->
   they 'code 200 with invalid previous status', ({ssh}) ->
     srv = server()
     await srv.listen()
-    count = 0
     await nikita
       $ssh: ssh
     , ({tools: {events}}) ->
@@ -73,15 +76,18 @@ describe 'run', ->
       $status.should.be.true()
     await srv.close()
 
-  they 'code 200 with invalid previous status', ({ssh}) ->
+  they 'invalid status reach timeout', ({ssh}) ->
+    srv = server()
+    await srv.listen()
     await nikita
       $ssh: ssh
     , ({tools: {events}}) ->
       {$status} = await @network.http.wait
-        url: "http://localhost:999999"
+        url: "http://localhost:#{srv.port}/hang"
         interval: 50
-        timeout: 200
+        timeout: 1000
       .should.be.rejectedWith
         code: 'NIKITA_HTTP_WAIT_TIMEOUT'
-        message: 'NIKITA_HTTP_WAIT_TIMEOUT: timeout reached after 200ms.'
+        message: 'NIKITA_HTTP_WAIT_TIMEOUT: timeout reached after 1000ms.'
+    await srv.close()
       

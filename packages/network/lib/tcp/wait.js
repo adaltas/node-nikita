@@ -186,7 +186,7 @@ information. It default to a temporary location.`
       },
       'timeout': {
         type: 'integer',
-        description: `Maximum time in millisecond to wait until this function is considered
+        description: `Maximum time in millisecond to wait until this action is considered
 to have failed.`
       }
     }

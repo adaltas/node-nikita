@@ -12,7 +12,7 @@
 // connection finaly succeeded.
 
 // ## Schema definitions
-var definitions, handler;
+var definitions, errors, handler, utils;
 
 definitions = {
   config: {
@@ -21,15 +21,10 @@ definitions = {
     properties: {
       'interval': {
         default: 2000, // see https://github.com/ajv-validator/ajv/issues/337
-        // type: 'number'
-        // description: '''
-        // Time in millisecond between each connection attempt.
-        // '''
         $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/interval'
       },
-      status_code: {
+      'status_code': {
         type: 'array',
-        // default: [/^[1|2|3]\d{2}$/]
         default: ['1xx', '2xx', '3xx'],
         items: {
           oneOf: [
@@ -40,23 +35,29 @@ definitions = {
               instanceof: 'RegExp'
             }
           ]
-        }
+        },
+        description: `Accepted status codes. Accepted values are strings and regular
+expressions. String patterns are defined using the \`x\` character.
+For example the value \`5xx\` accept all HTTP status code from the 5
+class.`
       },
-      // default: /^[1|2|3]\d{2}$/
       'timeout': {
-        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout'
+        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout',
+        description: `Maximum time in millisecond to wait until this action is considered
+to have failed. When defined, the timeout is applied set to http
+request to avoid request hanging.`
       }
     }
   }
 };
-
 
 // ## Handler
 handler = async function({
     config,
     tools: {log}
   }) {
-  var count, error, status_code;
+  var count, error, start, status_code;
+  start = Date.now();
   config.status_code = config.status_code.map(function(item) {
     if (typeof item === 'string') {
       item = new RegExp('^' + item.replaceAll('x', '\\d') + '$');
@@ -68,11 +69,11 @@ handler = async function({
     ({error, status_code} = (await this.network.http({
       $relax: true,
       method: config.method,
-      url: config.url
+      url: config.url,
+      timeout: config.timeout
     })));
-    console.log('status_code', config.url, status_code);
     log({
-      message: error ? `Attemp ${count} faild with error` : `Attemp ${count} return status ${status_code}`,
+      message: error ? `Attemp ${count} failed with error` : `Attemp ${count} return status ${status_code}`,
       attempt: count,
       status_code: status_code
     });
@@ -81,8 +82,23 @@ handler = async function({
     })) {
       return count > 0;
     }
+    if (config.timeout && error.code === 'CURLE_OPERATION_TIMEDOUT') {
+      // HTTP request timeout
+      throw errors.NIKITA_HTTP_WAIT_TIMEOUT({config});
+    }
     await this.wait(config.interval);
+    // Action timeout
+    if (config.timeout && start + config.timeout < Date.now()) {
+      throw errors.NIKITA_HTTP_WAIT_TIMEOUT({config});
+    }
     count++;
+  }
+};
+
+// ## Errors
+errors = {
+  NIKITA_HTTP_WAIT_TIMEOUT: function({config}) {
+    return utils.error('NIKITA_HTTP_WAIT_TIMEOUT', [`timeout reached after ${config.timeout}ms.`]);
   }
 };
 
@@ -95,6 +111,4 @@ module.exports = {
 };
 
 // ## Dependencies
-
-// url = require 'url'
-// utils = require '../utils'
+utils = require('../utils');

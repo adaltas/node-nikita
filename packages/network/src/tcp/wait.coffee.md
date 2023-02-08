@@ -140,7 +140,7 @@ console.info(`Servers listening: ${$status}`)
           'timeout':
             type: 'integer'
             description: '''
-            Maximum time in millisecond to wait until this function is considered
+            Maximum time in millisecond to wait until this action is considered
             to have failed.
             '''
 

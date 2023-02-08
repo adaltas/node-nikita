@@ -120,6 +120,11 @@ is assumed at port 1080. See curl(1) man page.`
         type: 'string',
         description: `Write to file instead of stdout; mapped to the curl \`output\` argument.`
       },
+      'timeout': {
+        $ref: 'module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout',
+        description: `Maximum time in millisecond for the HTTP request. Prevent the
+request from hanging.`
+      },
       'uid': {
         $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid',
         description: `User name or id who owns the target file; only apply if \`target\` is
@@ -175,6 +180,7 @@ handler = async function({config}) {
 command -v curl >/dev/null || exit 90
 ${[
         'curl',
+        config.timeout ? `--max-time '${Math.max(config.timeout / 1000)}'` : void 0,
         '--include', // Include protocol headers in the output (H/F)
         '--silent', // Dont print progression to stderr
         config.fail ? '--fail' : void 0,

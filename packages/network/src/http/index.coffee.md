@@ -133,6 +133,12 @@ try {
             description: '''
             Write to file instead of stdout; mapped to the curl `output` argument.
             '''
+          'timeout':
+            $ref: 'module://@nikitajs/network/src/tcp/wait#/definitions/config/properties/timeout'
+            description: '''
+            Maximum time in millisecond for the HTTP request. Prevent the
+            request from hanging.
+            '''
           'uid':
             $ref: 'module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid'
             description: '''
@@ -176,6 +182,7 @@ try {
           command -v curl >/dev/null || exit 90
           #{[
             'curl'
+            "--max-time '#{Math.max(config.timeout/1000)}'" if config.timeout
             '--include' # Include protocol headers in the output (H/F)
             '--silent' # Dont print progression to stderr
             '--fail' if config.fail

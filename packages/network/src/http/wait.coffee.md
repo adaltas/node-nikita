@@ -22,7 +22,7 @@ connection finaly succeeded.
           'interval':
             default: 2000 # see https://github.com/ajv-validator/ajv/issues/337
             $ref: 'module://@nikitajs/network/src/tcp/wait#/definitions/config/properties/interval'
-          status_code:
+          'status_code':
             type: 'array'
             default: ['1xx', '2xx', '3xx']
             items:
@@ -39,7 +39,11 @@ connection finaly succeeded.
             '''
           'timeout':
             $ref: 'module://@nikitajs/network/src/tcp/wait#/definitions/config/properties/timeout'
-          
+            description: '''
+            Maximum time in millisecond to wait until this action is considered
+            to have failed. When defined, the timeout is applied set to http
+            request to avoid request hanging.
+            '''
 
 ## Handler
 
@@ -54,15 +58,19 @@ connection finaly succeeded.
           $relax: true
           method: config.method
           url: config.url
+          timeout: config.timeout
         log
           message: if error
-          then "Attemp #{count} faild with error"
+          then "Attemp #{count} failed with error"
           else "Attemp #{count} return status #{status_code}"
           attempt: count
           status_code: status_code
         return count > 0 if not error and config.status_code.some (code) -> code.test status_code
+        # HTTP request timeout
+        throw errors.NIKITA_HTTP_WAIT_TIMEOUT({config}) if config.timeout and error.code is 'CURLE_OPERATION_TIMEDOUT'
         await @wait config.interval
-        if config.timeout and start + config.timeout > Date.now()
+        # Action timeout
+        if config.timeout and start + config.timeout < Date.now()
           throw errors.NIKITA_HTTP_WAIT_TIMEOUT({config})
         count++
 
