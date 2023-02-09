@@ -1,11 +1,23 @@
 
 nikita = require '@nikitajs/core/lib'
+utils = require '@nikitajs/core/lib/utils'
 {config, images, tags} = require './test'
 they = require('mocha-they')(config)
 
 return unless tags.lxd
 
 describe 'lxc.exec', ->
+  
+  describe 'schema', ->
+    
+    it 'extends nikita.execute using `code`', () ->
+      nikita.lxc.exec
+        container: 'fake'
+        command: 'whoami'
+        code: (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: new RegExp utils.regexp.escape 'action `lxc.exec`: #/properties/code/type config/code must be'
 
   they 'a command with pipe inside', ({ssh}) ->
     nikita

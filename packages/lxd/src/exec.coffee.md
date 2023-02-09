@@ -23,6 +23,7 @@ console.info(stdout)
     definitions =
       config:
         type: 'object'
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config'
         properties:
           'container':
             $ref: 'module://@nikitajs/lxd/src/init#/definitions/config/properties/container'
