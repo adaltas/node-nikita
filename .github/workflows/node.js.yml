@@ -31,8 +31,6 @@ jobs:
       matrix:
         node-version: [18.x] 
         package: ${{ fromJson(needs.list-packages.outputs.packages)}}
-        exclude: 
-          - package: nikita # scope lerna flag not working with: @nikitajs/nikita
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -50,8 +48,14 @@ jobs:
     - name: Install package dependencies
       run: yarn --frozen-lockfile
     - name: Test
-      run: npx lerna run test:local --scope=@nikitajs/${{ matrix.package }}
-    
+      shell: bash
+      run: |
+        if [ ${{ matrix.package }} != nikita ]; then
+          npx lerna run test:local --scope=@nikitajs/${{ matrix.package }}
+        else
+          npx lerna run test:local --scope=${{ matrix.package }}
+        fi
+  
   # deploy:
   #   needs: test
   #   runs-on: ubuntu-latest
