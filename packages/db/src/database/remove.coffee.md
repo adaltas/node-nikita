@@ -65,4 +65,4 @@ Create a user for the destination database.
 
 ## Dependencies
 
-    {command, connection_config} = require '../query'
+    {command} = require '../query'
