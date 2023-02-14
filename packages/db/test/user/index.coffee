@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core/lib'
-{command} = require '../src/query'
-{tags, config, db} = require './test'
+{command} = require '../../src/query'
+{tags, config, db} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.db

@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core/lib'
-{tags, config, db} = require './test'
+{tags, config, db} = require '../test'
 they = require('mocha-they')(config)
 
 return unless tags.db
