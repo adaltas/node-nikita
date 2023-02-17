@@ -90,4 +90,4 @@ Create a user for the destination database.
 
 ## Dependencies
 
-    {command} = require '../query'
+    {command} = require '../utils'

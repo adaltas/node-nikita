@@ -83,4 +83,4 @@ console.info(`Schema created or modified: ${$status}`)
 
 ## Dependencies
 
-    {command} = require '../query'
+    {command} = require '../utils'

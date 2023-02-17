@@ -111,4 +111,4 @@ console.info(`Database created or modified: ${$status}`)
 
 ## Dependencies
 
-    {command} = require '../query'
+    {command} = require '../utils'

@@ -62,7 +62,3 @@ console.info(`Schema exists: ${exists}`)
       metadata:
         global: 'db'
         definitions: definitions
-      
-## Dependencies
-
-    {command} = require '../query'

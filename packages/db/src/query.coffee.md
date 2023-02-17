@@ -73,7 +73,7 @@ Make requests to a database.
 
     handler = ({config}) ->
       {$status, stdout} = await @execute
-        command: command config
+        command: utils.command config
         trim: config.trim
       if config.grep and typeof config.grep is 'string'
         return stdout: stdout, $status: stdout.split('\n').some (line) -> line is config.grep
@@ -93,4 +93,4 @@ Make requests to a database.
 
 ## Dependencies
 
-    utils = require '@nikitajs/core/lib/utils'
+    utils = require './utils'

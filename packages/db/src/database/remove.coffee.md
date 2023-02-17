@@ -62,7 +62,3 @@ Create a user for the destination database.
         argument_to_config: 'database'
         global: 'db'
         definitions: definitions
-
-## Dependencies
-
-    {command} = require '../query'

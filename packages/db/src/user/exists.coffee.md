@@ -63,4 +63,4 @@ Check if a user exists in the database.
 
 ## Dependencies
 
-    {connection_config} = require '../query'
+    {connection_config} = require '../utils'

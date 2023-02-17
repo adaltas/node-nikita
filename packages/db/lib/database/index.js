@@ -175,4 +175,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command} = require('../query'));
+({command} = require('../utils'));

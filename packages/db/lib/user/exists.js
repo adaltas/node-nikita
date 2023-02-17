@@ -71,4 +71,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({connection_config} = require('../query'));
+({connection_config} = require('../utils'));

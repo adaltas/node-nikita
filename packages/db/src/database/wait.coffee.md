@@ -59,4 +59,4 @@ console.info(`Did database existed initially: ${!$status}`)
 
 ## Dependencies
 
-    {command} = require '../query'
+    {command} = require '../utils'

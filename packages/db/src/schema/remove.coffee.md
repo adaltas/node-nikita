@@ -47,7 +47,3 @@ Remove a schema from a database.
         argument_to_config: 'schema'
         global: 'db'
         definitions: definitions
-
-## Dependencies
-
-    {command} = require '../query'
