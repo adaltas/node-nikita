@@ -49,7 +49,3 @@ Check if a database exists.
         global: 'db'
         shy: true
         definitions: definitions
-
-## Dependencies
-
-    {command} = require '../query'

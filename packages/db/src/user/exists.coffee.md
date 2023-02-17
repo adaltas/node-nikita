@@ -41,7 +41,7 @@ Check if a user exists in the database.
 ## Handler
 
     handler = ({config}) ->
-      {stdout} = await @db.query connection_config(config),
+      {stdout} = await @db.query db.connection_config(config),
         database: undefined
         command: switch config.engine
           when 'mariadb', 'mysql'
@@ -63,4 +63,4 @@ Check if a user exists in the database.
 
 ## Dependencies
 
-    {connection_config} = require '../query'
+    {db} = require '../utils'

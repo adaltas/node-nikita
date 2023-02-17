@@ -22,7 +22,7 @@
 // ```
 
 // ## Schema definitions
-var command, definitions, handler;
+var db, definitions, handler;
 
 definitions = {
   config: {
@@ -66,20 +66,20 @@ handler = async function({config}) {
   ({$status} = (await this.execute({
     $shy: true,
     code: [0, 2],
-    command: command(config, '\\dt')
+    command: db.command(config, '\\dt')
   })));
   if (!$status) {
     throw Error(`Database does not exist ${config.database}`);
   }
   await this.db.query(config, {
     command: `CREATE SCHEMA ${config.schema};`,
-    $unless_execute: command(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
+    $unless_execute: db.command(config, `SELECT 1 FROM pg_namespace WHERE nspname = '${config.schema}';`) + " | grep 1"
   });
   // Check if owner is the good one
   ({stderr} = (await this.execute({
     $if: config.owner != null,
-    $unless_execute: command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
-    command: command(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
+    $unless_execute: db.command(config, '\\dn') + ` | grep '${config.schema}|${config.owner}'`,
+    command: db.command(config, `ALTER SCHEMA ${config.schema} OWNER TO ${config.owner};`),
     code: [0, 1]
   })));
   if (/^ERROR:\s\srole.*does\snot\sexist/.test(stderr)) {
@@ -97,4 +97,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command} = require('../query'));
+({db} = require('../utils'));

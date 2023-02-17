@@ -15,7 +15,7 @@
 // ```
 
 // ## Schema definitions
-var command, definitions, handler;
+var db, definitions, handler;
 
 definitions = {
   config: {
@@ -92,12 +92,12 @@ handler = async function({
             config.collation = 'utf8_general_ci';
           }
       }
-      command_database_create = command(config, {
+      command_database_create = db.command(config, {
         database: null
       }, [`CREATE DATABASE ${config.database}`, `DEFAULT CHARACTER SET ${config.character_set}`, config.collation ? `DEFAULT COLLATE ${config.collation}` : void 0, ';'].join(' '));
       break;
     case 'postgresql':
-      command_database_create = command(config, {
+      command_database_create = db.command(config, {
         database: null
       }, `CREATE DATABASE ${config.database};`);
   }
@@ -129,19 +129,19 @@ handler = async function({
     switch (config.engine) {
       case 'mariadb':
       case 'mysql':
-        // command_has_privileges = command config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
-        command_has_privileges = command(config, {
+        // command_has_privileges = db.command config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
+        command_has_privileges = db.command(config, {
           database: 'mysql'
         }, `SELECT user FROM db WHERE db='${config.database}';`) + ` | grep '${user}'`;
-        command_grant_privileges = command(config, {
+        command_grant_privileges = db.command(config, {
           database: null
         }, `GRANT ALL PRIVILEGES ON ${config.database}.* TO '${user}' WITH GRANT OPTION;`);
         break;
       case 'postgresql':
-        command_has_privileges = command(config, {
+        command_has_privileges = db.command(config, {
           database: config.database
         }, "\\l") + ` | egrep '^${user}='`;
-        command_grant_privileges = command(config, {
+        command_grant_privileges = db.command(config, {
           database: null
         }, `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`);
     }
@@ -175,4 +175,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command} = require('../query'));
+({db} = require('../utils'));

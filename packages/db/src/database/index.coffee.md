@@ -59,14 +59,14 @@ console.info(`Database created or modified: ${$status}`)
           switch config.character_set
             when 'latin1' then config.collation ?= 'latin1_swedish_ci' # MySQL default
             when 'utf8' then config.collation ?= 'utf8_general_ci'
-          command_database_create = command config, database: null, [
+          command_database_create = db.command config, database: null, [
             "CREATE DATABASE #{config.database}"
             "DEFAULT CHARACTER SET #{config.character_set}"
             "DEFAULT COLLATE #{config.collation}" if config.collation
             ';'
           ].join ' '
         when 'postgresql'
-          command_database_create = command config, database: null, "CREATE DATABASE #{config.database};"
+          command_database_create = db.command config, database: null, "CREATE DATABASE #{config.database};"
       # Create the database if it does not exists
       {exists} = await @db.database.exists config
       unless exists
@@ -81,12 +81,12 @@ console.info(`Database created or modified: ${$status}`)
         throw Error "DB user does not exists: #{user}" unless exists
         switch config.engine
           when 'mariadb', 'mysql'
-            # command_has_privileges = command config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
-            command_has_privileges = command(config, database: 'mysql', "SELECT user FROM db WHERE db='#{config.database}';") + " | grep '#{user}'"
-            command_grant_privileges = command config, database: null, "GRANT ALL PRIVILEGES ON #{config.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
+            # command_has_privileges = db.command config, admin_username: null, username: user.username, password: user.password, database: config.database, "SHOW TABLES FROM pg_database"
+            command_has_privileges = db.command(config, database: 'mysql', "SELECT user FROM db WHERE db='#{config.database}';") + " | grep '#{user}'"
+            command_grant_privileges = db.command config, database: null, "GRANT ALL PRIVILEGES ON #{config.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
           when 'postgresql'
-            command_has_privileges = command(config, database: config.database, "\\l") + " | egrep '^#{user}='"
-            command_grant_privileges = command config, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{config.database} TO #{user}"
+            command_has_privileges = db.command(config, database: config.database, "\\l") + " | egrep '^#{user}='"
+            command_grant_privileges = db.command config, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{config.database} TO #{user}"
         {$status} = await @execute
           command: """
           if #{command_has_privileges}; then
@@ -111,4 +111,4 @@ console.info(`Database created or modified: ${$status}`)
 
 ## Dependencies
 
-    {command} = require '../query'
+    {db} = require '../utils'

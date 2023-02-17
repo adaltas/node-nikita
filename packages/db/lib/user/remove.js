@@ -4,7 +4,7 @@
 // Remove a user for the destination database.
 
 // ## Schema definitions
-var command, definitions, handler;
+var definitions, handler;
 
 definitions = {
   config: {
@@ -35,6 +35,3 @@ module.exports = {
     definitions: definitions
   }
 };
-
-// ## Dependencies
-({command} = require('../query'));

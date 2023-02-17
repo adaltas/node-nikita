@@ -33,7 +33,3 @@ Remove a user for the destination database.
         argument_to_config: 'username'
         global: 'db'
         definitions: definitions
-
-## Dependencies
-
-    {command} = require '../query'
