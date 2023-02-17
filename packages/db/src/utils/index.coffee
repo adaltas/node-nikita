@@ -30,7 +30,8 @@ module.exports = {
             # -r, --raw                 Write fields without conversion. Used with --batch.
             "-N -s -r" if config.silent
             "-e \"#{module.exports.db.escape config.command}\"" if config.command
-          ].join ' '
+          ].filter Boolean
+          .join ' '
         when 'postgresql'
           config.path ?= 'psql'
           config.port ?= '5432'
@@ -47,7 +48,8 @@ module.exports = {
             # -q, --quiet              Run quietly (no messages, only query output)
             "-tAq"
             "-c \"#{config.command}\"" if config.command
-          ].join ' '
+          ].filter Boolean
+          .join ' '
         else
           throw Error "Unsupported engine: #{JSON.stringify config.engine}"
     ###

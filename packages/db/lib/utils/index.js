@@ -49,7 +49,7 @@ module.exports = {
             // -r, --raw                 Write fields without conversion. Used with --batch.
             config.silent ? "-N -s -r" : void 0,
             config.command ? `-e \"${module.exports.db.escape(config.command)}\"` : void 0
-          ].join(' ');
+          ].filter(Boolean).join(' ');
         case 'postgresql':
           if (config.path == null) {
             config.path = 'psql';
@@ -70,7 +70,7 @@ module.exports = {
             // -q, --quiet              Run quietly (no messages, only query output)
             "-tAq",
             config.command ? `-c \"${config.command}\"` : void 0
-          ].join(' ');
+          ].filter(Boolean).join(' ');
         default:
           throw Error(`Unsupported engine: ${JSON.stringify(config.engine)}`);
       }
