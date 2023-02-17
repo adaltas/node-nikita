@@ -15,7 +15,7 @@
 // ```
 
 // ## Schema definitions
-var command, definitions, handler;
+var db, definitions, handler;
 
 definitions = {
   config: {
@@ -53,11 +53,11 @@ handler = async function({config}) {
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':
-          return command(config, {
+          return db.command(config, {
             database: null
           }, "show databases") + ` | grep '${config.database}'`;
         case 'postgresql':
-          return command(config, {
+          return db.command(config, {
             database: null
           }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${config.database}'`;
       }
@@ -76,4 +76,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command} = require('../utils'));
+({db} = require('../utils'));

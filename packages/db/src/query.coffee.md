@@ -73,7 +73,7 @@ Make requests to a database.
 
     handler = ({config}) ->
       {$status, stdout} = await @execute
-        command: utils.command config
+        command: utils.db.command config
         trim: config.trim
       if config.grep and typeof config.grep is 'string'
         return stdout: stdout, $status: stdout.split('\n').some (line) -> line is config.grep

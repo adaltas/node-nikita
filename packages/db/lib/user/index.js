@@ -4,7 +4,7 @@
 // Create a user for the destination database.
 
 // ## Schema definitions
-var command, definitions, handler;
+var db, definitions, handler;
 
 definitions = {
   config: {
@@ -46,31 +46,31 @@ handler = async function({config}) {
   // Commands
   switch (config.engine) {
     case 'mariadb':
-      command_user_exists = command(config, `SELECT User FROM mysql.user WHERE User='${config.username}'`) + ` | grep ${config.username}`;
-      command_user_create = command(config, `CREATE USER ${config.username} IDENTIFIED BY '${config.password}';`);
-      command_password_is_invalid = command(config, {
+      command_user_exists = db.command(config, `SELECT User FROM mysql.user WHERE User='${config.username}'`) + ` | grep ${config.username}`;
+      command_user_create = db.command(config, `CREATE USER ${config.username} IDENTIFIED BY '${config.password}';`);
+      command_password_is_invalid = db.command(config, {
         admin_username: config.username,
         admin_password: config.password
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'";
-      command_password_change = command(config, `SET PASSWORD FOR ${config.username} = PASSWORD ('${config.password}');`);
+      command_password_change = db.command(config, `SET PASSWORD FOR ${config.username} = PASSWORD ('${config.password}');`);
       break;
     case 'mysql':
-      command_user_exists = command(config, `SELECT User FROM mysql.user WHERE User='${config.username}'`) + ` | grep ${config.username}`;
-      command_user_create = command(config, `CREATE USER ${config.username} IDENTIFIED BY '${config.password}';`);
-      command_password_is_invalid = command(config, {
+      command_user_exists = db.command(config, `SELECT User FROM mysql.user WHERE User='${config.username}'`) + ` | grep ${config.username}`;
+      command_user_create = db.command(config, `CREATE USER ${config.username} IDENTIFIED BY '${config.password}';`);
+      command_password_is_invalid = db.command(config, {
         admin_username: config.username,
         admin_password: config.password
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'";
-      command_password_change = command(config, `ALTER USER ${config.username} IDENTIFIED BY '${config.password}';`);
+      command_password_change = db.command(config, `ALTER USER ${config.username} IDENTIFIED BY '${config.password}';`);
       break;
     case 'postgresql':
-      command_user_exists = command(config, `SELECT 1 FROM pg_roles WHERE rolname='${config.username}'`) + " | grep 1";
-      command_user_create = command(config, `CREATE USER ${config.username} WITH PASSWORD '${config.password}';`);
-      command_password_is_invalid = command(config, {
+      command_user_exists = db.command(config, `SELECT 1 FROM pg_roles WHERE rolname='${config.username}'`) + " | grep 1";
+      command_user_create = db.command(config, `CREATE USER ${config.username} WITH PASSWORD '${config.password}';`);
+      command_password_is_invalid = db.command(config, {
         admin_username: config.username,
         admin_password: config.password
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
-      command_password_change = command(config, `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`);
+      command_password_change = db.command(config, `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`);
   }
   return (await this.execute({
     command: `signal=3
@@ -106,4 +106,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({command} = require('../utils'));
+({db} = require('../utils'));

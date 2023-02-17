@@ -2,7 +2,7 @@
 nikita = require '@nikitajs/core/lib'
 {tags, config, db} = require '../test'
 they = require('mocha-they')(config)
-{command} = require '../../src/utils'
+utils = require '../../src/utils'
 
 return unless tags.db
 
@@ -49,8 +49,8 @@ for engine, _ of db then do (engine) ->
           # Todo: why not using nikita.user.exists ?
           {$status: user_exists} = await @execute
             command: switch engine
-              when 'mariadb', 'mysql' then command(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
-              when 'postgresql' then command(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
+              when 'mariadb', 'mysql' then utils.db.command(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='db_create_3';") + " | grep 'db_create_user_3'"
+              when 'postgresql' then utils.db.command(db[engine], database: 'db_create_3', '\\l') + " | egrep '^db_create_user_3='"
           user_exists.should.be.true()
           @db.database.remove 'db_create_3'
           @db.user.remove 'db_create_user_3'

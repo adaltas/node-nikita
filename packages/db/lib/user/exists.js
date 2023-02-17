@@ -22,7 +22,7 @@
 //   Port to the associated database.   
 
 // ## Schema definitions
-var connection_config, definitions, handler;
+var db, definitions, handler;
 
 definitions = {
   config: {
@@ -41,7 +41,7 @@ definitions = {
 // ## Handler
 handler = async function({config}) {
   var stdout;
-  ({stdout} = (await this.db.query(connection_config(config), {
+  ({stdout} = (await this.db.query(db.connection_config(config), {
     database: void 0,
     command: (function() {
       switch (config.engine) {
@@ -71,4 +71,4 @@ module.exports = {
 };
 
 // ## Dependencies
-({connection_config} = require('../utils'));
+({db} = require('../utils'));

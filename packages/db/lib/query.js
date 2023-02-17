@@ -73,7 +73,7 @@ are converted to lower cases.`
 handler = async function({config}) {
   var $status, stdout;
   ({$status, stdout} = (await this.execute({
-    command: utils.command(config),
+    command: utils.db.command(config),
     trim: config.trim
   })));
   if (config.grep && typeof config.grep === 'string') {
