@@ -18,7 +18,7 @@ module.exports = {
           config.path ?= 'mysql'
           config.port ?= '3306'
           [
-            "mysql"
+            "#{config.path}"
             "-h#{config.host}"
             "-P#{config.port}"
             "-u#{config.admin_username}"
@@ -36,7 +36,7 @@ module.exports = {
           config.port ?= '5432'
           [
             "PGPASSWORD=#{config.admin_password}"
-            "psql"
+            "#{config.path}"
             "-h #{config.host}"
             "-p #{config.port}"
             "-U #{config.admin_username}"

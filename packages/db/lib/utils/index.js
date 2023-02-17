@@ -37,7 +37,7 @@ module.exports = {
             config.port = '3306';
           }
           return [
-            "mysql",
+            `${config.path}`,
             `-h${config.host}`,
             `-P${config.port}`,
             `-u${config.admin_username}`,
@@ -59,7 +59,7 @@ module.exports = {
           }
           return [
             `PGPASSWORD=${config.admin_password}`,
-            "psql",
+            `${config.path}`,
             `-h ${config.host}`,
             `-p ${config.port}`,
             `-U ${config.admin_username}`,
