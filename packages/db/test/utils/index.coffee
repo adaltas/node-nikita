@@ -1,4 +1,3 @@
-{db} = require '../test'
 utils = require '../../src/utils'
 {command, escape, jdbc} = utils.db
 
@@ -50,28 +49,27 @@ describe "db.utils", ->
         .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
     
       it "default arguments", ->
-        command(db['mariadb']).should.equal expected = [
-          "mysql"
-          "-h#{db['mariadb'].host}"
-          "-P#{db['mariadb'].port}"
-          "-u#{db['mariadb'].admin_username}"
-          "-p'#{db['mariadb'].admin_password}'"
-        ].join ' '
+        command
+          admin_db: 'root'
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'mariadb'
+          host: 'localhost'
+          port: 3306
+        .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
     
       it 'command option', ->
           command
+            admin_db: 'root'
+            admin_password: 'rootme'
+            admin_username: 'root'
+            engine: 'mariadb'
+            host: 'localhost'
+            port: 3306
             command: '''
             show databases;
             '''
-            db['mariadb']
-          .should.equal [
-            "mysql"
-            "-h#{db['mariadb'].host}"
-            "-P#{db['mariadb'].port}"
-            "-u#{db['mariadb'].admin_username}"
-            "-p'#{db['mariadb'].admin_password}'"
-            "-e \"#{escape 'show databases;'}\""
-          ].join ' '
+          .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\' -e "show databases;"'
         
     describe "using engine: postgresql", ->
       
@@ -84,27 +82,24 @@ describe "db.utils", ->
         .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
 
       it "default arguments", ->
-        command(db['postgresql']).should.equal [
-          "PGPASSWORD=#{db['postgresql'].admin_password}"
-          "psql"
-          "-h #{db['postgresql'].host}"
-          "-p #{db['postgresql'].port}"
-          "-U #{db['postgresql'].admin_username}"
-          "-tAq"
-          ].join ' '      
+        command
+          admin_db: 'root'
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'postgresql'
+          host: 'localhost'
+          port: 5432
+        .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
       
       it 'command option', ->
         command
+          admin_db: 'root'
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'postgresql'
+          host: 'localhost'
+          port: 5432
           command: '''
           show databases;
           '''
-          db['postgresql']
-        .should.equal [
-          "PGPASSWORD=#{db['postgresql'].admin_password}"
-          "psql"
-          "-h #{db['postgresql'].host}"
-          "-p #{db['postgresql'].port}"
-          "-U #{db['postgresql'].admin_username}"
-          "-tAq"
-          "-c \"#{'show databases;'}\""
-          ].join ' '
+        .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq -c "show databases;"'
