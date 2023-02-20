@@ -40,50 +40,39 @@ describe "db.utils", ->
       
     describe "using engine: mariadb", ->
       
-      it 'set default port engine', ->
-        command
-          admin_password: 'rootme'
-          admin_username: 'root'
-          engine: 'mariadb'
-          host: 'localhost'
-        .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
-    
       it "default arguments", ->
         command
-          admin_db: 'root'
           admin_password: 'rootme'
           admin_username: 'root'
           engine: 'mariadb'
           host: 'localhost'
           port: 3306
         .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
-    
-      it 'command option', ->
-          command
-            admin_db: 'root'
-            admin_password: 'rootme'
-            admin_username: 'root'
-            engine: 'mariadb'
-            host: 'localhost'
-            port: 3306
-            command: '''
-            show databases;
-            '''
-          .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\' -e "show databases;"'
-        
-    describe "using engine: postgresql", ->
       
       it 'set default port engine', ->
         command
           admin_password: 'rootme'
           admin_username: 'root'
-          engine: 'postgresql'
+          engine: 'mariadb'
           host: 'localhost'
-        .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
-
+        .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
+    
+      it 'command option', ->
+        command
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'mariadb'
+          host: 'localhost'
+          port: 3306
+          command: '''
+          show databases;
+          '''
+        .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\' -e "show databases;"'
+        
+    describe "using engine: postgresql", ->
+      
       it "default arguments", ->
         command
-          admin_db: 'root'
           admin_password: 'rootme'
           admin_username: 'root'
           engine: 'postgresql'
@@ -91,9 +80,16 @@ describe "db.utils", ->
           port: 5432
         .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
       
+      it 'set default port engine', ->
+        command
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'postgresql'
+          host: 'localhost'
+        .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
+      
       it 'command option', ->
         command
-          admin_db: 'root'
           admin_password: 'rootme'
           admin_username: 'root'
           engine: 'postgresql'
