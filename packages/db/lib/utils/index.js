@@ -37,7 +37,7 @@ module.exports = {
             config.port = '3306';
           }
           return [
-            "mysql",
+            `${config.path}`,
             `-h${config.host}`,
             `-P${config.port}`,
             `-u${config.admin_username}`,
@@ -49,7 +49,7 @@ module.exports = {
             // -r, --raw                 Write fields without conversion. Used with --batch.
             config.silent ? "-N -s -r" : void 0,
             config.command ? `-e \"${module.exports.db.escape(config.command)}\"` : void 0
-          ].join(' ');
+          ].filter(Boolean).join(' ');
         case 'postgresql':
           if (config.path == null) {
             config.path = 'psql';
@@ -59,7 +59,7 @@ module.exports = {
           }
           return [
             `PGPASSWORD=${config.admin_password}`,
-            "psql",
+            `${config.path}`,
             `-h ${config.host}`,
             `-p ${config.port}`,
             `-U ${config.admin_username}`,
@@ -70,7 +70,7 @@ module.exports = {
             // -q, --quiet              Run quietly (no messages, only query output)
             "-tAq",
             config.command ? `-c \"${config.command}\"` : void 0
-          ].join(' ');
+          ].filter(Boolean).join(' ');
         default:
           throw Error(`Unsupported engine: ${JSON.stringify(config.engine)}`);
       }
