@@ -40,8 +40,7 @@ describe "db.utils", ->
       .should.throw 'Unsupported engine: "invalid_engine"'
       
     describe "using engine: mariadb", ->
-      return unless db.mariadb?
-    
+      
       it 'set default port engine', ->
         command
           admin_password: 'rootme'
@@ -75,7 +74,6 @@ describe "db.utils", ->
           ].join ' '
         
     describe "using engine: postgresql", ->
-      return unless db.postgresql?
       
       it 'set default port engine', ->
         command
@@ -83,8 +81,7 @@ describe "db.utils", ->
           admin_username: 'root'
           engine: 'postgresql'
           host: 'localhost'
-        .should.equal 'PGPASSWORD=rootme psql -h localhost 
-        -p 5432 -U root -tAq'
+        .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
 
       it "default arguments", ->
         command(db.postgresql).should.equal [
