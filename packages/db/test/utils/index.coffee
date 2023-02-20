@@ -50,12 +50,12 @@ describe "db.utils", ->
         .should.equal 'mysql -hlocalhost -P3306 -uroot -p\'rootme\''
     
       it "default arguments", ->
-        command(db.mariadb).should.equal expected = [
+        command(db['mariadb']).should.equal expected = [
           "mysql"
-          "-h#{db.mariadb.host}"
-          "-P#{db.mariadb.port}"
-          "-u#{db.mariadb.admin_username}"
-          "-p'#{db.mariadb.admin_password}'"
+          "-h#{db['mariadb'].host}"
+          "-P#{db['mariadb'].port}"
+          "-u#{db['mariadb'].admin_username}"
+          "-p'#{db['mariadb'].admin_password}'"
         ].join ' '
     
       it 'command option', ->
@@ -63,13 +63,13 @@ describe "db.utils", ->
             command: '''
             show databases;
             '''
-            db.mariadb
+            db['mariadb']
           .should.equal [
             "mysql"
-            "-h#{db.mariadb.host}"
-            "-P#{db.mariadb.port}"
-            "-u#{db.mariadb.admin_username}"
-            "-p'#{db.mariadb.admin_password}'"
+            "-h#{db['mariadb'].host}"
+            "-P#{db['mariadb'].port}"
+            "-u#{db['mariadb'].admin_username}"
+            "-p'#{db['mariadb'].admin_password}'"
             "-e \"#{escape 'show databases;'}\""
           ].join ' '
         
@@ -84,12 +84,12 @@ describe "db.utils", ->
         .should.equal 'PGPASSWORD=rootme psql -h localhost -p 5432 -U root -tAq'
 
       it "default arguments", ->
-        command(db.postgresql).should.equal [
-          "PGPASSWORD=#{db.postgresql.admin_password}"
+        command(db['postgresql']).should.equal [
+          "PGPASSWORD=#{db['postgresql'].admin_password}"
           "psql"
-          "-h #{db.postgresql.host}"
-          "-p #{db.postgresql.port}"
-          "-U #{db.postgresql.admin_username}"
+          "-h #{db['postgresql'].host}"
+          "-p #{db['postgresql'].port}"
+          "-U #{db['postgresql'].admin_username}"
           "-tAq"
           ].join ' '      
       
@@ -98,13 +98,13 @@ describe "db.utils", ->
           command: '''
           show databases;
           '''
-          db.postgresql
+          db['postgresql']
         .should.equal [
-          "PGPASSWORD=#{db.postgresql.admin_password}"
+          "PGPASSWORD=#{db['postgresql'].admin_password}"
           "psql"
-          "-h #{db.postgresql.host}"
-          "-p #{db.postgresql.port}"
-          "-U #{db.postgresql.admin_username}"
+          "-h #{db['postgresql'].host}"
+          "-p #{db['postgresql'].port}"
+          "-U #{db['postgresql'].admin_username}"
           "-tAq"
           "-c \"#{'show databases;'}\""
           ].join ' '
