@@ -20,7 +20,7 @@ fi
 multipass launch \
   --name nikita \
   --cpus 8 \
-  --mem 30G \
+  --memory 30G \
   --disk 100G
 multipass exec nikita -- sudo apt-get update
 multipass exec nikita -- sudo snap install multipass-sshfs
