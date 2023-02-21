@@ -45,7 +45,7 @@ console.info(`The volume informations are: ${data}`)
     handler = ({config}) ->
       {$status, data} = await @lxc.query
         path: "/1.0/storage-pools/#{config.pool}/volumes/#{config.type}/#{config.name}"
-        code: [0, 42]
+        code: [0, 1]
       $status: $status
       data: data
       

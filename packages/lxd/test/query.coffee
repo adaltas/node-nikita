@@ -94,6 +94,7 @@ describe 'lxc.query', ->
       , ->
         {$status, data} = await @lxc.query
           path: '/1.0/unknown'
+          code: [0, 1]
         $status.should.eql false
         data.should.eql {}
     
@@ -104,6 +105,7 @@ describe 'lxc.query', ->
         {$status, data} = await @lxc.query
           path: '/1.0/unknown'
           format: 'string'
+          code: [0, 1]
         $status.should.eql false
         data.should.eql ""
     

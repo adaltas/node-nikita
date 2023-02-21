@@ -18,8 +18,8 @@ console.info(`LXD networks: ${list}`);
 
     handler = ({config}) ->
       {data} = await @lxc.query
-        $shy: false
         path: "/1.0/networks"
+      $status: true
       list: (i.split('/').pop() for i in data)
 
 ## Exports

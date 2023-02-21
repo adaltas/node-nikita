@@ -50,7 +50,7 @@ handler = async function({config}) {
     path: `/1.0/storage-pools/${config.pool}/volumes/${config.type}/${config.name}`,
     request: "DELETE",
     format: 'string',
-    code: [0, 42]
+    code: [0, 1]
   })));
   return {
     $status: $status

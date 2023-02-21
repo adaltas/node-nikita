@@ -28,20 +28,8 @@ definitions = {
   config: {
     type: 'object',
     properties: {
-      'path': {
-        type: 'string',
-        description: `The API path in the form of \`[<remote>:]<API path>\`, for example
-\`/1.0/instances/c1\``
-      },
-      'wait': {
-        type: 'boolean',
-        default: false,
-        description: `If true, activates the wait flag that waits for the operation to complete.`
-      },
-      'request': {
-        enum: ['GET', 'PUT', 'DELETE', 'POST', 'PATCH'],
-        default: 'GET',
-        description: `Action to use for the API call.`
+      'code': {
+        $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code'
       },
       'data': {
         type: 'string',
@@ -52,6 +40,21 @@ definitions = {
         enum: ['json', 'string'],
         default: 'json',
         description: `Format to use for the output data, either \`json\` or \`string\`.`
+      },
+      'path': {
+        type: 'string',
+        description: `The API path in the form of \`[<remote>:]<API path>\`, for example
+\`/1.0/instances/c1\``
+      },
+      'request': {
+        enum: ['GET', 'PUT', 'DELETE', 'POST', 'PATCH'],
+        default: 'GET',
+        description: `Action to use for the API call.`
+      },
+      'wait': {
+        type: 'boolean',
+        default: false,
+        description: `If true, activates the wait flag that waits for the operation to complete.`
       }
     },
     required: ['path']
@@ -62,8 +65,9 @@ definitions = {
 handler = async function({config}) {
   var $status, stdout;
   ({$status, stdout} = (await this.execute({
-    command: ['lxc', 'query', config.wait ? "--wait" : void 0, "--request", config.request, config.data != null ? `--data '${config.data}'` : void 0, config.path, "|| exit 42"].join(' '),
-    code: [0, 42]
+    command: ['lxc', 'query', config.wait ? "--wait" : void 0, "--request", config.request, config.data != null ? `--data '${    // "|| exit 42"
+config.data}'` : void 0, config.path].join(' '),
+    code: config.code
   })));
   ({
     $status: $status

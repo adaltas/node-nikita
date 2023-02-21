@@ -37,6 +37,8 @@ console.info(`Network was deleted: ${$status}`)
         path: "/1.0/networks/#{config.network}"
         request: 'DELETE'
         format: 'string'
+        code: [0, 1]
+
 ## Exports
 
     module.exports =

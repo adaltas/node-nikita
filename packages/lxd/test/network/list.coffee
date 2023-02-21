@@ -26,7 +26,5 @@ describe 'lxc.network.list', ->
       try 
         await @clean()
         await @test()
-      catch err
-        await @clean()
       finally 
         await @clean()

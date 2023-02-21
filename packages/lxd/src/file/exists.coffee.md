@@ -42,6 +42,7 @@ console.info(`File exists: ${$status}`)
         $header: "Check if file exists in container #{config.container}"
         path: "/1.0/instances/#{config.container}/files?path=#{config.target}"
         format: 'string'
+        code: [0, 1]
       exists: $status
 
 ## Exports

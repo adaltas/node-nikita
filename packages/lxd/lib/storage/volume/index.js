@@ -76,7 +76,7 @@ handler = async function({config}) {
     request: "POST",
     data: parameters,
     format: 'string',
-    code: [0, 42]
+    code: [0, 1]
   })));
   return {
     $status: $status

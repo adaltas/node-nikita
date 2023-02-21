@@ -45,7 +45,7 @@ handler = async function({config}) {
   var $status, data, i;
   ({$status, data} = (await this.lxc.query({
     path: `/1.0/storage-pools/${config.pool}/volumes/${config.type}`,
-    code: [0, 42]
+    code: [0, 1]
   })));
   return {
     $status: $status,

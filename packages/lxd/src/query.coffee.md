@@ -27,24 +27,8 @@ Flags:
       config:
         type: 'object'
         properties:
-          'path':
-            type: 'string'
-            description: '''
-            The API path in the form of `[<remote>:]<API path>`, for example
-            `/1.0/instances/c1`
-            '''
-          'wait':
-            type: 'boolean'
-            default: false
-            description: '''
-            If true, activates the wait flag that waits for the operation to complete.
-            '''
-          'request':
-            enum: ['GET', 'PUT', 'DELETE', 'POST', 'PATCH']
-            default: 'GET'
-            description: '''
-            Action to use for the API call.
-            '''
+          'code':
+            $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code'
           'data':
             type: 'string'
             description: '''
@@ -56,6 +40,24 @@ Flags:
             default: 'json'
             description: '''
             Format to use for the output data, either `json` or `string`.
+            '''
+          'path':
+            type: 'string'
+            description: '''
+            The API path in the form of `[<remote>:]<API path>`, for example
+            `/1.0/instances/c1`
+            '''
+          'request':
+            enum: ['GET', 'PUT', 'DELETE', 'POST', 'PATCH']
+            default: 'GET'
+            description: '''
+            Action to use for the API call.
+            '''
+          'wait':
+            type: 'boolean'
+            default: false
+            description: '''
+            If true, activates the wait flag that waits for the operation to complete.
             '''
         required: ['path']
 
@@ -69,9 +71,9 @@ Flags:
           "--request", config.request, 
           "--data '#{config.data}'" if config.data?, 
           config.path,
-          "|| exit 42"
+          # "|| exit 42"
         ].join ' '
-        code: [0, 42]
+        code: config.code
       $status: $status
       switch config.format
         when 'json' 

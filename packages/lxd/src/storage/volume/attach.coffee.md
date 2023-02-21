@@ -94,7 +94,7 @@ console.info(`The volume was deleted: ${$status}`)
         data: parameters
         wait: true
         format: "string"
-        code: [0, 42]
+        code: [0, 1]
       $status: $status
       
 ## Exports

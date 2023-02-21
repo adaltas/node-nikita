@@ -19,10 +19,10 @@ definitions = {};
 handler = async function({config}) {
   var data, i;
   ({data} = (await this.lxc.query({
-    $shy: false,
     path: "/1.0/networks"
   })));
   return {
+    $status: true,
     list: (function() {
       var j, len, results;
       results = [];

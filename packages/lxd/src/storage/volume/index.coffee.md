@@ -74,7 +74,7 @@ console.info(`The pool creation was correctly made: ${$status}`)
         request: "POST"
         data: parameters
         format: 'string'
-        code: [0, 42]
+        code: [0, 1]
       $status: $status
       
 

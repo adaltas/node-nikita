@@ -38,7 +38,8 @@ handler = async function({config}) {
   return (await this.lxc.query({
     path: `/1.0/networks/${config.network}`,
     request: 'DELETE',
-    format: 'string'
+    format: 'string',
+    code: [0, 1]
   }));
 };
 
