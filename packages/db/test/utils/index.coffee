@@ -35,8 +35,40 @@ describe 'db.utils', ->
     
     it 'invalid engine', ->
       () -> command
+        admin_password: 'rootme'
+        admin_username: 'root'
+        host: 'localhost'
         engine: 'invalid_engine'
       .should.throw 'Unsupported engine: "invalid_engine"'
+    
+    describe 'required properties', ->
+      
+      it 'admin_username', ->
+        () -> command
+          admin_password: 'rootme'
+          host: 'local'
+          engine: 'mariadb'
+        .should.throw 'Missing required property: admin_username'
+        
+      it 'admin_password', ->
+        () -> command
+          admin_username: 'root'
+          host: 'local'
+          engine: 'mariadb'
+        .should.throw 'Missing required property: admin_password'
+        
+      it 'host', ->
+        () -> command
+          admin_password: 'rootme'
+          admin_username: 'root'
+          engine: 'mariadb'
+        .should.throw 'Missing required property: host'
+      
+      it 'multiples', ->
+        () -> command
+          admin_password: 'rootme'
+          engine: 'mariadb'
+        .should.throw new RegExp 'Missing required property:'
       
     describe 'using engine: mariadb', ->
       

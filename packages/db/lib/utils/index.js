@@ -13,8 +13,9 @@ module.exports = {
     },
     // Build the CLI query command.
     command: function(...opts) {
-      var config, i, k, len, opt, v;
+      var config, i, k, len, opt, required_properties, v;
       config = {};
+      required_properties = ['host', 'admin_username', 'admin_password'];
       for (i = 0, len = opts.length; i < len; i++) {
         opt = opts[i];
         if (typeof opt === 'string') {
@@ -27,6 +28,11 @@ module.exports = {
           config[k] = v;
         }
       }
+      required_properties.forEach(function(property) {
+        if (!config[property]) {
+          throw Error(`Missing required property: ${property}`);
+        }
+      });
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':

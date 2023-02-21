@@ -9,10 +9,12 @@ module.exports = {
     # Build the CLI query command.
     command : (...opts) ->
       config = {}
+      required_properties = ['host', 'admin_username', 'admin_password']
       for opt in opts
         opt = command: opt if typeof opt is 'string'
         for k, v of opt
           config[k] = v
+      required_properties.forEach (property) -> throw Error "Missing required property: #{property}" if !config[property]
       switch config.engine
         when 'mariadb', 'mysql'
           config.path ?= 'mysql'
