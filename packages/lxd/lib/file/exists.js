@@ -20,6 +20,28 @@
 // * Handle unmatched target ownerships
 // * Detect name from lxd_target
 
+// ## Implementation change
+
+// Previous implementation used `lxc.query` action to retrieve the content of the 
+// file and then determine if it exists or not:
+
+// ```bash
+// lxc query --request GET /1.0/instances/container_name/files?path=file_path
+// ```
+
+// It presents two problems:
+
+// 1. The file is fetch which introduce delay and be unacceptable for large file.
+// 2. The current LXD version throw an error when the file is empty, see 
+// [LXD issue #11388](https://github.com/lxc/lxd/issues/11388).
+
+// The [LXD API](https://linuxcontainers.org/lxd/docs/latest/api/#/) exposes a
+// REST endpoint to obtain file metadata. However, lxc query don't support the 
+// HEAD HTTP method, see [LXD issue #11383](https://github.com/lxc/lxd/issues/11383).
+
+// This implementation uses the `lxc.exec` action to run the existence file test directly 
+// inside the container.
+
 // ## Schema definitions
 var definitions, handler;
 
@@ -32,7 +54,7 @@ definitions = {
       },
       'target': {
         type: 'string',
-        description: `File destination in the form of "<path>".`
+        description: `File location in the form of "<path>".`
       }
     },
     required: ['container']
@@ -42,10 +64,10 @@ definitions = {
 // ## Handler
 handler = async function({config}) {
   var $status;
-  ({$status} = (await this.lxc.query({
+  ({$status} = (await this.lxc.exec({
     $header: `Check if file exists in container ${config.container}`,
-    path: `/1.0/instances/${config.container}/files?path=${config.target}`,
-    format: 'string',
+    container: config.container,
+    command: `test -f ${config.target}`,
     code: [0, 1]
   })));
   return {
