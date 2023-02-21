@@ -33,7 +33,8 @@ module.exports = {
     file: {
       exists: '@nikitajs/lxd/lib/file/exists',
       pull: '@nikitajs/lxd/lib/file/pull',
-      push: '@nikitajs/lxd/lib/file/push'
+      push: '@nikitajs/lxd/lib/file/push',
+      read: '@nikitajs/lxd/lib/file/read'
     },
     goodies: {
       prlimit: '@nikitajs/lxd/lib/goodies/prlimit'

@@ -28,6 +28,7 @@ module.exports =
       exists: '@nikitajs/lxd/src/file/exists'
       pull: '@nikitajs/lxd/src/file/pull'
       push: '@nikitajs/lxd/src/file/push'
+      read: '@nikitajs/lxd/src/file/read'
     goodies:
       prlimit: '@nikitajs/lxd/src/goodies/prlimit'
     network:

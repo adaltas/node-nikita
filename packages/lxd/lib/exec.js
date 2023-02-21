@@ -24,6 +24,7 @@ var definitions, handler, utils;
 definitions = {
   config: {
     type: 'object',
+    $ref: 'module://@nikitajs/core/lib/actions/execute#/definitions/config',
     properties: {
       'container': {
         $ref: 'module://@nikitajs/lxd/lib/init#/definitions/config/properties/container'
