@@ -27,6 +27,15 @@ module.exports = {
           config[k] = v;
         }
       }
+      if (!config.admin_username) {
+        throw utils.error('NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', ['Missing required argument: "admin_username"']);
+      }
+      if (!config.admin_password) {
+        throw utils.error('NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', ['Missing required argument: "admin_password"']);
+      }
+      if (!config.host) {
+        throw utils.error('NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', ['Missing required argument: "host"']);
+      }
       switch (config.engine) {
         case 'mariadb':
         case 'mysql':

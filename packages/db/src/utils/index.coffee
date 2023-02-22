@@ -13,6 +13,15 @@ module.exports = {
         opt = command: opt if typeof opt is 'string'
         for k, v of opt
           config[k] = v
+      if !config.admin_username then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "admin_username"'
+      ]
+      if !config.admin_password then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "admin_password"'
+      ]
+      if !config.host then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "host"'
+      ]
       switch config.engine
         when 'mariadb', 'mysql'
           config.path ?= 'mysql'
