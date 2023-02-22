@@ -9,12 +9,19 @@ module.exports = {
     # Build the CLI query command.
     command : (...opts) ->
       config = {}
-      required_properties = ['host', 'admin_username', 'admin_password']
       for opt in opts
         opt = command: opt if typeof opt is 'string'
         for k, v of opt
           config[k] = v
-      required_properties.forEach (property) -> throw Error "Missing required property: #{property}" if !config[property]
+      if !config.admin_username then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "admin_username"'
+      ]
+      if !config.admin_password then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "admin_password"'
+      ]
+      if !config.host then throw utils.error 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS', [
+        'Missing required argument: "host"'
+      ]
       switch config.engine
         when 'mariadb', 'mysql'
           config.path ?= 'mysql'

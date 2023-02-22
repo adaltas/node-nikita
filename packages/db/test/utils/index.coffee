@@ -41,34 +41,47 @@ describe 'db.utils', ->
         engine: 'invalid_engine'
       .should.throw 'Unsupported engine: "invalid_engine"'
     
-    describe 'required properties', ->
+    it 'required arguments', ->
       
-      it 'admin_username', ->
         () -> command
           admin_password: 'rootme'
           host: 'local'
           engine: 'mariadb'
-        .should.throw 'Missing required property: admin_username'
+        .should.throw
+          code: 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS'
+          message: [
+            'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
+            'Missing required argument: "admin_username"'
+          ].join ' '
         
-      it 'admin_password', ->
         () -> command
           admin_username: 'root'
           host: 'local'
           engine: 'mariadb'
-        .should.throw 'Missing required property: admin_password'
+        .should.throw
+          code: 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS'
+          message: [
+            'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
+            'Missing required argument: "admin_password"'
+          ].join ' '
         
-      it 'host', ->
         () -> command
           admin_password: 'rootme'
           admin_username: 'root'
           engine: 'mariadb'
-        .should.throw 'Missing required property: host'
+        .should.throw
+          code: 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS'
+          message: [
+            'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
+            'Missing required argument: "host"'
+          ].join ' '
       
-      it 'multiples', ->
         () -> command
           admin_password: 'rootme'
           engine: 'mariadb'
-        .should.throw new RegExp 'Missing required property:'
+        .should.throw
+          code: 'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS'
+          message: new RegExp 'Missing required argument:'
       
     describe 'using engine: mariadb', ->
       
