@@ -42,7 +42,6 @@ describe 'db.utils', ->
       .should.throw 'Unsupported engine: "invalid_engine"'
     
     it 'required arguments', ->
-      
         () -> command
           admin_password: 'rootme'
           host: 'local'
@@ -53,7 +52,6 @@ describe 'db.utils', ->
             'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
             'Missing required argument: "admin_username"'
           ].join ' '
-        
         () -> command
           admin_username: 'root'
           host: 'local'
@@ -64,7 +62,6 @@ describe 'db.utils', ->
             'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
             'Missing required argument: "admin_password"'
           ].join ' '
-        
         () -> command
           admin_password: 'rootme'
           admin_username: 'root'
@@ -75,7 +72,6 @@ describe 'db.utils', ->
             'NIKITA_DB_UTILS_REQUIRED_ARGUMENTS:'
             'Missing required argument: "host"'
           ].join ' '
-      
         () -> command
           admin_password: 'rootme'
           engine: 'mariadb'
