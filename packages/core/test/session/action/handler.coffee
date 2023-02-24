@@ -7,7 +7,7 @@ describe 'session.action.handler', ->
   
   describe 'root action', ->
     
-    it 'return an object', ->
+    it 'return an promise', ->
       {key} = await nikita ->
         new Promise (resolve, reject) ->
           resolve key: 'value'
