@@ -26,21 +26,49 @@ describe 'session.scheduler.flow', ->
     .should.be.resolvedWith [1, 2]
     .then -> stack.should.eql [1, 2, 3, 4]
 
-  it 'executed 2 actions sequentially', ->
+  it 'with in action and 2 out child actions sequentially', ->
     stack = []
-    await nikita ({metadata}) ->
+    await nikita () ->
       stack.push 1
-    .call ({metadata}) ->
+    .call () ->
       new Promise (resolve, reject) ->
         setTimeout ->
           stack.push 2
           resolve()
         , 100
-    .call ({metadata}) ->
+    .call () ->
       new Promise (resolve, reject) ->
         stack.push 3
         resolve()
     stack.should.eql [1,2,3]
+
+  it 'with in action containing children and 2 out child actions sequentially', ->
+    stack = []
+    n = nikita () ->
+      @call () ->
+        new Promise (resolve, reject) ->
+          setTimeout ->
+            stack.push 1
+            resolve()
+          , 100
+      @call () ->
+        new Promise (resolve, reject) ->
+          setTimeout ->
+            stack.push 2
+            resolve()
+          , 100
+    n.call () ->
+      new Promise (resolve, reject) ->
+        setTimeout ->
+          stack.push 3
+          resolve()
+        , 100
+    n.call () ->
+      new Promise (resolve, reject) ->
+        stack.push 4
+        resolve()
+    await n
+    stack.should.eql [1,2,3,4]
 
   it 'await root return value once children are processed', ->
     app = nikita ({metadata}) ->

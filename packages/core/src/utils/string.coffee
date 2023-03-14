@@ -5,7 +5,7 @@ module.exports =
       "'#{result}'"
     ###
     `string.hash(file, [algorithm], callback)`
-    ------------------------------------------
+    
     Output the hash of a supplied string in hexadecimal
     form. The default algorithm to compute the hash is md5.
     ###
@@ -17,7 +17,7 @@ module.exports =
       Array(l+1).join str
     ###
     `string.endsWith(search, [position])`
-    -------------------------------------
+    
     Determines whether a string ends with the characters of another string,
     returning true or false as appropriate.
     This method has been added to the ECMAScript 6 specification and its code

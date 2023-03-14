@@ -50,7 +50,10 @@ check, default to 2s.`
 };
 
 // ## Handler
-handler = async function({config}, callback) {
+handler = async function({
+    config,
+    tools: {log}
+  }) {
   var exists, i, len, ref, status, target;
   status = false;
   ref = config.target;
@@ -68,7 +71,7 @@ handler = async function({config}, callback) {
         break;
       }
       status = true;
-      this.log({
+      log({
         message: "Wait for file to be created",
         level: 'INFO'
       });

@@ -183,8 +183,8 @@ describe 'plugins.metadata.definitions', ->
           properties:
             'a_regexp': instanceof: 'RegExp'
         a_regexp: /.*/
-      -> ({config}) ->
-          'ok'.should.match config.a_regexp
+      , ({config}) ->
+        'ok'.should.match config.a_regexp
 
     it 'instanceof invalid', ->
       nikita.call

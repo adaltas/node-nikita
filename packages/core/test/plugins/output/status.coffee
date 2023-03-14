@@ -2,7 +2,7 @@
 {tags} = require '../../test'
 nikita = require '../../../src'
 
-describe 'plugins.output.$status', ->
+describe 'plugins.output.status', ->
   return unless tags.api
   
   describe 'returned coercion', ->

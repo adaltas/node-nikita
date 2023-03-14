@@ -44,7 +44,7 @@ console.info(`File was created: ${$status}`)
 
 ## Handler
 
-    handler = ({config}, callback) ->
+    handler = ({config, tools: {log}}) ->
       status = false
       # Validate parameters
       for target in config.target
@@ -55,7 +55,7 @@ console.info(`File was created: ${$status}`)
           {exists} = await @fs.base.exists target
           break if exists
           status = true
-          @log message: "Wait for file to be created", level: 'INFO'
+          log message: "Wait for file to be created", level: 'INFO'
           await @wait config.interval
       status
 

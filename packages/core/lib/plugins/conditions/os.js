@@ -101,8 +101,11 @@ handlers = {
         return final_run = false;
       }
       [arch, distribution, version, linux_version] = stdout.split('|');
-      if (match = /^(\d+)\.(\d+)/.exec(version)) {
+      if (match = /^(\d+)\.(\d+)\.(\d+)/.exec(version)) {
+        // Note, CentOS 7 version currently return version "7.9.2009", transforming it to "5.19"
+        // means that the check runs agains "5.19.0" later on and may fail
         // Remove patch version (eg. 7.8.12 -> 7.8)
+        // Instead, remove any information after the patch value
         version = `${match[0]}`;
       }
       if (match = /^(\d+)\.(\d+)\.(\d+)/.exec(linux_version)) {
@@ -176,13 +179,17 @@ handlers = {
         return final_run = false;
       }
       [arch, distribution, version, linux_version] = stdout.split('|');
-      if (match = /^(\d+)\.(\d+)/.exec(version)) {
+      if (match = /^(\d+)\.(\d+)\.(\d+)/.exec(version)) {
+        // Note, CentOS 7 version currently return version "7.9.2009", transforming it to "5.19"
+        // means that the check runs agains "5.19.0" later on and may fail
         // Remove patch version (eg. 7.8.12 -> 7.8)
+        // Instead, remove any information after the patch value
         version = `${match[0]}`;
       }
-      if (match = /^(\d+)\.(\d+)/.exec(linux_version)) {
-        linux_version = `${match[0]}`;
-      }
+      // Note, arch linux currently return the linux version "5.15.49", transforming it to "5.19"
+      // means that the check runs agains "5.19.0" later on and may fail
+      // linux_version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec linux_version
+      // Instead, remove any information after the patch value
       match = action.conditions.unless_os.some(function(condition) {
         var a, lv, n, v;
         a = !condition.arch.length || condition.arch.some(function(value) {
