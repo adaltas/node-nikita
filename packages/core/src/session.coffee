@@ -1,7 +1,7 @@
 
 {merge} = require 'mixme'
+each = require 'each'
 registry = require './registry'
-schedule = require './schedulers'
 {plugandplay} = require 'plug-and-play'
 contextualize = require './session/contextualize'
 normalize = require './session/normalize'
@@ -14,7 +14,7 @@ session = (args, options={}) ->
     # Extract action namespace and reset the state
     [namespace, nm] = [[], namespace]
     # Schedule the action and get the result as a promise
-    prom = action.scheduler.push ->
+    prom = action.scheduler.call ->
       # Validate the namespace
       child = await action.registry.get nm
       unless child
@@ -28,7 +28,7 @@ session = (args, options={}) ->
         child: child
         parent: action
       # Multiply the arguments
-      schedule strict: true, paused: true, utils.array.multiply(...args).map (args) -> ->
+      each flatten: true, utils.array.multiply(...args).map (args) -> ->
         session args,
           namespace: nm
           child: child
@@ -61,7 +61,7 @@ session = (args, options={}) ->
       contextualize [...args, $namespace: namespace]
   action.parent = options.parent
   action.plugins = plugins
-  action.scheduler ?= {}
+  action.scheduler ?= undefined
   action.metadata.namespace ?= []
   # Initialize the registry to manage action registration
   action.registry = registry.create
@@ -73,8 +73,8 @@ session = (args, options={}) ->
         args: name: name, action: act
   # Local scheduler to execute children and be notified on finish
   schedulers =
-    in: schedule()
-    out: schedule null, strict: true, paused: true
+    in: each relax: true
+    out: each pause: true
   action.scheduler = schedulers.out
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
@@ -106,18 +106,19 @@ session = (args, options={}) ->
       handler: (action) ->
         # Execution of an action handler
         action.handler.call action.context, action
-    # Ensure child actions are executed
-    pump = ->
-      action.scheduler.resume()
-      null
-    output.then pump, pump
+    # Ensure child actions are executed even after parent execution
+    pump = output
+    .catch (err) ->
+      schedulers.in.error(err)
+    .then ->
+      schedulers.in.end()
     # Make sure the promise is resolved after the scheduler and its children
-    Promise.all [output, action.scheduler]
+    Promise.all [output, pump]
     .then ([output]) ->
-      schedulers.out.resume()
-      await schedulers.out
+      await schedulers.out.resume()
       output
     .then (output) ->
+      schedulers.out.end()
       on_result undefined, output
     , (err) ->
       schedulers.out.end err

@@ -67,5 +67,3 @@ module.exports =
                 'unless the `raw_output` configuration is activated,'
                 "got #{JSON.stringify output}"
               ]
-      
-            

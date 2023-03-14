@@ -180,6 +180,9 @@ module.exports = function(handlers, options) {
         });
         prom.catch((function() {})); // Handle strict unhandled rejections
         return prom;
+      },
+      call: function(handlers, options = {}) {
+        return this.push(handlers, options);
       }
     };
     if (handlers) {

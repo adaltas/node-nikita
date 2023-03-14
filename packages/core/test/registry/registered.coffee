@@ -43,16 +43,16 @@ describe 'registry.registered', ->
       .should.be.finally.false()
 
     it 'return true with 1 level', ->
+      # With the current fluent API, no action can be called asynchronously.
       n = nikita.registry.register ['my_action'], handler: (->)
       result = await n.registry.registered('my_action')
       result.should.be.true()
-      result = await n.registry.registered(['my_action'])
-      result.should.be.true()
+      (->
+        n.registry.registered(['my_action'])
+      ).should.throw 'EACH_CLOSED: cannot schedule new items when closed.'
 
     it 'return true with multi level', ->
       n = nikita.registry.register ['my', 'module'], handler: (->)
-      result = await n.registry.registered(['my', 'module'])
-      result.should.be.true()
       result = await n.registry.registered(['my'])
       result.should.be.false()
 
