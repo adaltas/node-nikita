@@ -118,7 +118,6 @@ describe 'log.cli', ->
         catch err
         # @call header: 'b', relax: true, -> throw Error 'ok'
         @call ->
-          console.log 'ok2', data
           data.should.eql [
             "#{host}   c   ✘\n"
             "#{host}   d   ✘\n"
@@ -164,7 +163,9 @@ describe 'log.cli', ->
           "#{host}   d   ✔\n"
         ]
 
-    they 'option depth', ({ssh}) ->
+  describe 'config', ->
+
+    they 'config.depth', ({ssh}) ->
       data = []
       host = ssh?.host or 'local'
       nikita
@@ -185,7 +186,7 @@ describe 'log.cli', ->
           "#{host}   h1   -\n"
         ]
 
-    they 'option divider', ({ssh}) ->
+    they 'config.divider', ({ssh}) ->
       data = []
       host = ssh?.host or 'local'
       nikita
@@ -207,7 +208,46 @@ describe 'log.cli', ->
           "#{host}   h1   -\n"
         ]
 
-    they 'option pad', ({ssh}) ->
+    they 'config.colors', ({ssh}) ->
+      return this.skip() unless process.stdout.isTTY
+      data = []
+      host = ssh?.host or 'local'
+      nikita
+        $ssh: ssh
+      .log.cli
+        colors: true
+        stream: new MyWritable data
+        time: false
+      .call $header: 'a', -> false
+      .call $header: 'b', -> true
+      .call $header: 'c', $relax: true, -> throw Error 'ok'
+      .call ->
+        data.should.eql [
+          "\u001b[36m\u001b[2m#{host}   a   -\u001b[22m\u001b[39m\n"
+          "\u001b[32m#{host}   b   ✔\u001b[39m\n"
+          "\u001b[31m#{host}   c   ✘\u001b[39m\n"
+        ]
+
+    it 'config.host', ->
+      data = []
+      nikita
+      .log.cli
+        colors: false
+        host: 'domain.com'
+        pad: host: 10, header: 1
+        stream: new MyWritable data
+        time: false
+      .call $header: 'a', -> false
+      .call $header: 'b', -> true
+      .call $header: 'c', $relax: true, -> throw Error 'ok'
+      .call ->
+        data.should.eql [
+          'domain.com a -\n'
+          'domain.com b ✔\n'
+          'domain.com c ✘\n'
+        ]
+
+    they 'config.pad', ({ssh}) ->
       data = []
       host = ssh?.host or 'local'
       nikita
@@ -228,28 +268,8 @@ describe 'log.cli', ->
           "#{host}#{' '.repeat(14 - host.length)} h1 : h2b           -\n"
           "#{host}#{' '.repeat(14 - host.length)} h1                 -\n"
         ]
-
-    they 'option colors', ({ssh}) ->
-      return this.skip() unless process.stdout.isTTY
-      data = []
-      host = ssh?.host or 'local'
-      nikita
-        $ssh: ssh
-      .log.cli
-        colors: true
-        stream: new MyWritable data
-        time: false
-      .call $header: 'a', -> false
-      .call $header: 'b', -> true
-      .call $header: 'c', $relax: true, -> throw Error 'ok'
-      .call ->
-        data.should.eql [
-          "\u001b[36m\u001b[2m#{host}   a   -\u001b[22m\u001b[39m\n"
-          "\u001b[32m#{host}   b   ✔\u001b[39m\n"
-          "\u001b[31m#{host}   c   ✘\u001b[39m\n"
-        ]
     
-    they 'option time', ({ssh}) ->
+    they 'config.time default behavior', ({ssh}) ->
       data = []
       nikita
         $ssh: ssh
