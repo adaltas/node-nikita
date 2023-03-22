@@ -74,7 +74,7 @@ session = (args, options={}) ->
   # Local scheduler to execute children and be notified on finish
   schedulers =
     in: each relax: true
-    out: each pause: true
+    out: each pause: true, fluent: false
   action.scheduler = schedulers.out
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
