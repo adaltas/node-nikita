@@ -132,7 +132,8 @@ session = function(args, options = {}) {
       relax: true
     }),
     out: each({
-      pause: true
+      pause: true,
+      fluent: false
     })
   };
   action.scheduler = schedulers.out;
