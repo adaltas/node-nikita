@@ -40,7 +40,7 @@
     "@nikitajs/db": "^1.0.0-alpha.3",
     "@nikitajs/docker": "^1.0.0-alpha.3",
     "@nikitajs/file": "^1.0.0-alpha.3",
-    "@nikitajs/ipa": "^1.0.0-r.0",
+    "@nikitajs/ipa": "^1.0.0-alpha.3",
     "@nikitajs/java": "^1.0.0-alpha.3",
     "@nikitajs/krb5": "^1.0.0-alpha.3",
     "@nikitajs/ldap": "^1.0.0-alpha.3",
