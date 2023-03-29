@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-{intersect, flatten, merge, multiply, shuffle, unique} = require '../../src/utils/array'
+{intersect, flatten, merge, multiply, shuffle, unique} = require '../../lib/utils/array'
 
 describe 'utils.array', ->
   return unless tags.api
@@ -13,10 +13,11 @@ describe 'utils.array', ->
 
   it 'flatten', ->
     flatten([['a'], ['b']]).should.eql ['a', 'b']
-    flatten([['a',['b']], [['c', ['d']]]]).should.eql ['a', 'b', 'c', 'd']
+    flatten([['a',['b']], [['c', ['d']]], ['e']]).should.eql ['a', 'b', 'c', 'd', 'e']
     flatten([['a',['b']], [['c', ['d']]], ['e']], -1).should.eql ['a', 'b', 'c', 'd', 'e']
-    flatten([['a',['b']], [['c', ['d']]], ['e']], 0).should.eql ['a', ['b'], ['c', ['d']], 'e']
-    flatten([['a',['b']], [['c', ['d']]], ['e']], 1).should.eql ['a', 'b', 'c', ['d'], 'e']
+    flatten([['a',['b']], [['c', ['d']]], ['e']], 0).should.eql [['a',['b']], [['c', ['d']]], ['e']]
+    flatten([['a',['b']], [['c', ['d']]], ['e']], 1).should.eql ['a', ['b'], ['c', ['d']], 'e']
+    flatten([['a',['b']], [['c', ['d']]], ['e']], 2).should.eql ['a', 'b', 'c', ['d'], 'e']
     flatten([[0]]).should.eql([0])
 
   it 'intersect', ->

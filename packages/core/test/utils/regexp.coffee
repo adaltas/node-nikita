@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-regexp = require '../../src/utils/regexp'
+regexp = require '../../lib/utils/regexp'
 
 describe 'utils.regexp', ->
   return unless tags.api

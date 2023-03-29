@@ -1,0 +1,18 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "recursive": {
+        "type": "boolean",
+        "description": "Attempt to remove the file hierarchy rooted in the directory.\\nAttempting to remove a non-empty directory without the `recursive`\\nconfig will throw an Error."
+      },
+      "target": {
+        "type": "string",
+        "description": "File, directory or glob (pattern matching based on wildcard\\ncharacters)."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

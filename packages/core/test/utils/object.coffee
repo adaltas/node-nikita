@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-{copy, diff, equals, filter, match} = require '../../src/utils/object'
+{copy, diff, equals, filter, match} = require '../../lib/utils/object'
 
 describe 'utils.object', ->
   return unless tags.api

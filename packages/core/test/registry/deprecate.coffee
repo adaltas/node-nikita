@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
+nikita = require '../../lib'
 
 describe 'registry.deprecate', ->
   return unless tags.api

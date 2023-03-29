@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-registry = require '../../src/registry'
+registry = require '../../lib/registry'
 {plugandplay} = require 'plug-and-play'
 
 describe 'registry.get', ->

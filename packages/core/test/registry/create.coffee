@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-registry = require '../../src/registry'
+registry = require '../../lib/registry'
 
 describe 'registry.create', ->
   return unless tags.api

@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
+nikita = require '../../lib'
 
 describe 'plugins.global', ->
   return unless tags.api

@@ -1,7 +1,7 @@
 
 {merge} = require 'mixme'
-nikita = require '../../src'
-utils = require '../../src/utils'
+nikita = require '../../lib'
+utils = require '../../lib/utils'
 {tags, config} = require '../test'
 # All test are executed with an ssh connection passed as an argument
 they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)

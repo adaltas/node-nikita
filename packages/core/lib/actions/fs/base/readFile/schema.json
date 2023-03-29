@@ -1,0 +1,24 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "encoding": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/base/createReadStream#/definitions/config/properties/encoding"
+      },
+      "target": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "instanceof": "Buffer"
+          }
+        ],
+        "description": "Source location of the file to read."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

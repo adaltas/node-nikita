@@ -65,6 +65,7 @@
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
     "ajv-keywords": "^5.1.0",
+    "dedent": "^0.7.0",
     "each": "^2.4.0",
     "js-yaml": "^4.1.0",
     "minimatch": "^5.1.0",
@@ -88,7 +89,6 @@
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
     "coffeescript": "^2.7.0",
     "eslint": "^8.18.0",
-    "eslint-plugin-coffee": "^0.1.15",
     "mocha": "^10.0.0",
     "mocha-they": "^0.1.3",
     "should": "^13.2.3"
@@ -122,9 +122,8 @@
     "directory": "packages/core"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/core\\/src/@nikitajs\\/core\\/lib/g'",
-    "lint": "eslint 'src/**/*.coffee'",
-    "lint-fix": "eslint --fix 'src/**/*.coffee'",
+    "lint": "eslint 'lib/**/*.coffee'",
+    "lint-fix": "eslint --fix 'lib/**/*.coffee'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'"

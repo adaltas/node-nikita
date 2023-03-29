@@ -1,5 +1,5 @@
 
-mode = require '../../src/utils/mode'
+mode = require '../../lib/utils/mode'
 {tags} = require '../test'
 
 describe 'utils.mode', ->

@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'plugins.metadata.definitions', ->
   return unless tags.api
@@ -96,8 +96,9 @@ describe 'plugins.metadata.definitions', ->
         $handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_INVALID_DEFINITION:'
+        'schema failed to compile in root action,'
         'schema is invalid:'
-        'data/definitions must be object'
+        'data/definitions must be object.'
       ].join ' '
 
     it 'ensure schema is an object in child action', ->
@@ -106,8 +107,9 @@ describe 'plugins.metadata.definitions', ->
         $handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_INVALID_DEFINITION:'
+        'schema failed to compile in action `call`,'
         'schema is invalid:'
-        'data/definitions must be object'
+        'data/definitions must be object.'
       ].join ' '
 
     it 'invalid with one error', ->

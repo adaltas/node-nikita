@@ -1,7 +1,7 @@
 
 stream = require 'stream'
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'plugins.tools.schema.instanceof', ->
   return unless tags.api

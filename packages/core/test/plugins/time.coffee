@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
+nikita = require '../../lib'
 
 describe 'plugins.time', ->
   return unless tags.api

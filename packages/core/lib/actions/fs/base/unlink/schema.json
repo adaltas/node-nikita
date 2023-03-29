@@ -1,0 +1,14 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "description": "Location of the file to remove."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

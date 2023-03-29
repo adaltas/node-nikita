@@ -12,22 +12,18 @@ module.exports = {
   other arguments mode must much at least one element of the array.
   */
   compare: function(...modes) {
-    var i, j, mode, ref, ref1;
-    ref = modes[0];
+    let ref = modes[0];
     if (ref == null) {
       throw Error(`Invalid mode: ${ref}`);
     }
     if (!Array.isArray(ref)) {
       ref = [ref];
     }
-    ref = ref.map((mode) => {
-      return this.stringify(mode);
-    });
-    for (i = j = 1, ref1 = modes.length; (1 <= ref1 ? j < ref1 : j > ref1); i = 1 <= ref1 ? ++j : --j) {
-      mode = this.stringify(modes[i]);
+    ref = ref.map((mode) => this.stringify(mode) );
+    for (let i = 1; i < modes.length; i++) {
+      const mode = this.stringify(modes[i]);
       if (!ref.some(function(m) {
-        var l;
-        l = Math.min(m.length, mode.length);
+        const l = Math.min(m.length, mode.length);
         return m.substr(-l) === mode.substr(-l);
       })) {
         return false;

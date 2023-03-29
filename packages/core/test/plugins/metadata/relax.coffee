@@ -1,7 +1,7 @@
 
-nikita = require '../../../src'
+nikita = require '../../../lib'
 {tags} = require '../../test'
-err = require '../../../src/utils/error'
+err = require '../../../lib/utils/error'
 
 describe 'plugins.metadata.relax', ->
   return unless tags.api

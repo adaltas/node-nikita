@@ -1,6 +1,6 @@
 
-memory = require '../../src/plugins/pubsub/engines/memory'
-nikita = require '../../src'
+memory = require '../../lib/plugins/pubsub/engines/memory'
+nikita = require '../../lib'
 {tags, config} = require '../test'
 they = require('mocha-they')(config)
 

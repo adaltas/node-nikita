@@ -1,0 +1,65 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "gid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+      },
+      "mode": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+      },
+      "parent": {
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "gid": {
+                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/gid"
+              },
+              "mode": {
+                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/mode"
+              },
+              "uid": {
+                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/uid"
+              }
+            }
+          }
+        ],
+        "description": "Create parent directory with provided attributes if an object or\ndefault system config if \"true\", supported attributes include 'mode',\n'uid', 'gid', 'size', 'atime', and 'mtime'."
+      },
+      "preserve": {
+        "type": "boolean",
+        "default": false,
+        "description": "Preserve file ownerships and permissions."
+      },
+      "source": {
+        "type": "string",
+        "description": "The file or directory to copy."
+      },
+      "source_stats": {
+        "type": "object",
+        "description": "Short-circuit to prevent source stat retrieval if already at our\ndisposal.",
+        "$ref": "module://@nikitajs/core/lib/actions/fs/base/stat#/definitions/output/properties/stats"
+      },
+      "target": {
+        "type": "string",
+        "description": "Where the file or directory is copied."
+      },
+      "target_stats": {
+        "type": "object",
+        "description": "Short-circuit to prevent target stat retrieval if already at our\ndisposal.",
+        "$ref": "module://@nikitajs/core/lib/actions/fs/base/stat#/definitions/output/properties/stats"
+      },
+      "uid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+      }
+    },
+    "required": [
+      "source",
+      "target"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 stream = require 'stream'
 
 describe 'plugins.tools.log', ->
