@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'plugin.assertions assert', ->
   return unless tags.api

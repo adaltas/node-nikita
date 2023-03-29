@@ -1,5 +1,5 @@
 
-string = require '../../src/utils/string'
+string = require '../../lib/utils/string'
 {tags} = require '../test'
 
 describe 'utils.string', ->

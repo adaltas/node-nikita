@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'session.plugins.on_action', ->
   return unless tags.api

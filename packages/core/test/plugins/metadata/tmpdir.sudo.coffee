@@ -3,7 +3,7 @@ path = require 'path'
 os = require 'os'
 fs = require 'ssh2-fs'
 {tags, config} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 they = require('mocha-they')(config)
 
 describe 'plugins.metadata.tmpdir', ->

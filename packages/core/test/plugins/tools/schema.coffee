@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'plugins.tools.schema', ->
   return unless tags.api
@@ -52,19 +52,66 @@ describe 'plugins.tools.schema', ->
         error = await action.tools.schema.validate action
         should(error).be.undefined()
         action.metadata.meta.should.be.true()
-    
-  describe '`validate` errors', ->
+  
+  describe '`validate` error with INVALID_DEFINITION', ->
 
     it 'root action', ->
-      nikita key: 'value', (action) ->
-        # key is a string, let's define it as an integer
+      nikita (action) ->
+        # Defining $ref in properties is invalid
         action.metadata.definitions =
           config:
             type: 'object'
             properties:
-              key: type: 'integer'
+              $ref: 'module://@nikitajs/some/module'
         error = await action.tools.schema.validate action
-        error.code.should.eql 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
+        error.message.should.eql [
+          'NIKITA_SCHEMA_INVALID_DEFINITION:'
+          'schema failed to compile in root action, schema is invalid:'
+          'data/definitions/config/properties/$ref must be object,boolean.'
+        ].join ' '
+
+    it 'call action', ->
+      nikita.call (action) ->
+        # Defining $ref in properties is invalid
+        action.metadata.definitions =
+          config:
+            type: 'object'
+            properties:
+              $ref: 'module://@nikitajs/some/module'
+        error = await action.tools.schema.validate action
+        error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
+        error.message.should.eql [
+          'NIKITA_SCHEMA_INVALID_DEFINITION:'
+          'schema failed to compile in action `call`, schema is invalid:'
+          'data/definitions/config/properties/$ref must be object,boolean.'
+        ].join ' '
+
+    it 'call with action module', ->
+      nikita
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          content: 'module.exports = {}'
+          target: "#{tmpdir}/my_module.js"
+        @call "#{tmpdir}/my_module.js", (action) ->
+          # Defining $ref in properties is invalid
+          action.metadata.definitions =
+            config:
+              type: 'object'
+              properties:
+                $ref: 'module://@nikitajs/some/module'
+          error = await action.tools.schema.validate action
+          error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
+          error.message = error.message.replace "#{tmpdir}/my_module.js", 'package/module'
+          error.message.should.eql [
+            'NIKITA_SCHEMA_INVALID_DEFINITION:'
+            'schema failed to compile in action `call` in module package/module, schema is invalid:'
+            'data/definitions/config/properties/$ref must be object,boolean.'
+          ].join ' '
+
+    
+  describe '`validate` error with VALIDATION_CONFIG', ->
 
     it 'root action', ->
       nikita key: 'value', (action) ->
@@ -79,8 +126,7 @@ describe 'plugins.tools.schema', ->
         error.message.should.eql [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of root action:'
-          '#/definitions/config/properties/key/type config/key must be integer,'
-          'type is "integer".'
+          '#/definitions/config/properties/key/type config/key must be integer, type is "integer".'
         ].join ' '
 
     it 'call action', ->

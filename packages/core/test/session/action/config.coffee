@@ -1,6 +1,6 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 
 describe 'session.handler.config', ->
   return unless tags.api

@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
-registry = require '../../src/registry'
+nikita = require '../../lib'
+registry = require '../../lib/registry'
 
 # Test the construction of the session namespace stored in state
 

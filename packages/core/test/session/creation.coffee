@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
-session = require '../../src/session'
+nikita = require '../../lib'
+session = require '../../lib/session'
 
 describe 'session.creation', ->
   return unless tags.api

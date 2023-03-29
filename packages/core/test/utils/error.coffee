@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-error = require '../../src/utils/error'
+error = require '../../lib/utils/error'
 
 describe 'utils.error', ->
   return unless tags.api

@@ -1,9 +1,9 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
-session = require '../../../src/session'
-history = require '../../../src/plugins/history'
-position = require '../../../src/plugins/metadata/position'
+nikita = require '../../../lib'
+session = require '../../../lib/session'
+history = require '../../../lib/plugins/history'
+position = require '../../../lib/plugins/metadata/position'
 
 # Test the construction of the session namespace stored in state
 

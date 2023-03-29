@@ -1,8 +1,8 @@
 
 {tags} = require '../../test'
-nikita = require '../../../src'
-registry = require '../../../src/registry'
-register = require '../../../src/register'
+nikita = require '../../../lib'
+registry = require '../../../lib/registry'
+register = require '../../../lib/register'
 
 describe 'plugins.metadata.index', ->
   return unless tags.api

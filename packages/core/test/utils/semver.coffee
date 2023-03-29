@@ -1,5 +1,5 @@
 
-semver = require '../../src/utils/semver'
+semver = require '../../lib/utils/semver'
 {tags} = require '../test'
 
 describe 'utils.semver', ->

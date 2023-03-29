@@ -1,0 +1,27 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "algo": {
+        "type": "string",
+        "default": "md5",
+        "description": "Any algorythm supported by `openssl` such as \"md5\", \"sha1\" and\n\"sha256\"."
+      },
+      "hash": {
+        "type": "string",
+        "description": "Assert that the targeted content match a provided hash."
+      },
+      "stats": {
+        "typeof": "object",
+        "description": "Stat object of the target file. Short-circuit to avoid fetching the\nstat object associated with the target if one is already available."
+      },
+      "target": {
+        "type": "string",
+        "description": "The file or directory to compute the hash from."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

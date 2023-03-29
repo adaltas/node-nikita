@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
 {merge} = require 'mixme'
-{whoami} = require '../../src/utils/os'
+{whoami} = require '../../lib/utils/os'
 cleanup = (property, value) ->
   if value?
     process.env[property] = value

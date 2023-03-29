@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-promise = require '../../src/utils/promise'
+promise = require '../../lib/utils/promise'
 
 describe 'utils.promise', ->
   return unless tags.api

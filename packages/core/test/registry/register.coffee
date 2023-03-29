@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
-registry = require '../../src/registry'
+nikita = require '../../lib'
+registry = require '../../lib/registry'
 
 describe 'registry.register', ->
   return unless tags.api
@@ -98,11 +98,11 @@ describe 'registry.register', ->
     it 'is a string, function style', ->
       # Room for improvement in the future
       nikita ({registry}) ->
-        await registry.register 'an_action', '@nikitajs/core/src/actions/execute'
+        await registry.register 'an_action', '@nikitajs/core/lib/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
         should(config).be.undefined()
 
     it 'is a string, object style', ->
@@ -110,17 +110,17 @@ describe 'registry.register', ->
       nikita ({registry}) ->
         await registry.register
           'an_action':
-            '': '@nikitajs/core/src/actions/execute'
-            'child': '@nikitajs/core/src/actions/execute'
+            '': '@nikitajs/core/lib/actions/execute'
+            'child': '@nikitajs/core/lib/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         result = await @registry.registered ['an_action', 'child']
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
         should(config).be.undefined()
         {metadata, config} = await @registry.get ['an_action', 'child']
-        metadata.module.should.eql '@nikitajs/core/src/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
         should(config).be.undefined()
 
     it.skip 'receive config', ->

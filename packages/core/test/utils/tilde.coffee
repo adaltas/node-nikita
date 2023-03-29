@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-tilde = require '../../src/utils/tilde'
+tilde = require '../../lib/utils/tilde'
 
 describe 'utils.tilde', ->
   return unless tags.api

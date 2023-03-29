@@ -2,7 +2,6 @@
 module.exports = {
   array: require('./array'),
   buffer: require('./buffer'),
-  diff: require('./diff'),
   error: require('./error'),
   mode: require('./mode'),
   object: require('./object'),

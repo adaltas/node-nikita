@@ -1,5 +1,5 @@
 
-nikita = require '../../../src'
+nikita = require '../../../lib'
 {tags, config, conditions_if_os} = require '../../test'
 they = require('mocha-they')(config)
 

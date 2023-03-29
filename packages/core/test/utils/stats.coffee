@@ -1,5 +1,5 @@
 
-utils = require '../../src/utils'
+utils = require '../../lib/utils'
 {tags} = require '../test'
 
 describe 'utils.stats', ->

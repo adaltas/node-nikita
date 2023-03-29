@@ -2,30 +2,6 @@
 var constants;
 
 module.exports = {
-  // new: (stat)
-  //   Stats = (stat) ->
-  //     @mode = stat && stat.mode
-  //     @uid = stat && stat.uid
-  //     @gid = stat && stat.gid
-  //     @size = stat && stat.size
-  //     @atime = stat && stat.atime
-  //     @mtime = stat && stat.mtime
-  //   Stats.prototype._checkModeProperty = (property) ->
-  //     (this.mode & constants.S_IFMT) is property
-  //   Stats.prototype.isDirectory = ->
-  //     @_checkModeProperty constants.S_IFDIR
-  //   Stats.prototype.isFile = ->
-  //     @_checkModeProperty constants.S_IFREG
-  //   Stats.prototype.isBlockDevice = ->
-  //     @_checkModeProperty constants.S_IFBLK
-  //   Stats.prototype.isCharacterDevice = ->
-  //     @_checkModeProperty constants.S_IFCHR
-  //   Stats.prototype.isSymbolicLink = ->
-  //     @_checkModeProperty constants.S_IFLNK
-  //   Stats.prototype.isFIFO = ->
-  //     @_checkModeProperty constants.S_IFIFO
-  //   Stats.prototype.isSocket = ->
-  //     @_checkModeProperty constants.S_IFSOCK
   isDirectory: function(mode) {
     return (mode & constants.S_IFMT) === constants.S_IFDIR;
   },

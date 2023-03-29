@@ -1,6 +1,6 @@
 
 fs = require 'fs'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 

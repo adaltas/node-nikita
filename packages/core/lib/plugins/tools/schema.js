@@ -4,31 +4,23 @@ The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
 object.
 */
-var Ajv, ajv_formats, ajv_keywords, instanceofDef, merge, mutate, parse, stream, utils;
 
-stream = require('stream');
-
-({merge, mutate} = require('mixme'));
-
-Ajv = require('ajv').default;
-
-ajv_keywords = require('ajv-keywords');
-
-ajv_formats = require("ajv-formats");
-
-utils = require('../../utils');
-
-instanceofDef = require('ajv-keywords/dist/definitions/instanceof');
+const stream = require('stream');
+const util = require('util');
+const dedent = require('dedent');
+const {merge, mutate} = require('mixme');
+const Ajv = require('ajv').default;
+const ajv_keywords = require('ajv-keywords');
+const ajv_formats = require("ajv-formats");
+const utils = require('../../utils');
+const instanceofDef = require('ajv-keywords/dist/definitions/instanceof');
 
 instanceofDef.CONSTRUCTORS['Error'] = Error;
-
 instanceofDef.CONSTRUCTORS['stream.Writable'] = stream.Writable;
-
 instanceofDef.CONSTRUCTORS['stream.Readable'] = stream.Readable;
 
-parse = function(uri) {
-  var matches;
-  matches = /^(\w+:)\/\/(.*)/.exec(uri);
+const parse = function(uri) {
+  const matches = /^(\w+:)\/\/(.*)/.exec(uri);
   if (!matches) {
     throw utils.error('NIKITA_SCHEMA_MALFORMED_URI', ['uri must start with a valid protocol', 'such as "module://" or "registry://",', `got ${JSON.stringify(uri)}.`]);
   }
@@ -43,19 +35,18 @@ module.exports = {
   hooks: {
     'nikita:normalize': {
       handler: async function(action) {
-        var ajv, ref;
         // Handler execution
         // action = await handler.apply null, arguments
         if (action.tools == null) {
           action.tools = {};
         }
         // Get schema from parent action
-        if ((ref = action.parent) != null ? ref.tools.schema : void 0) {
+        if (action.parent?.tools.schema != null) {
           action.tools.schema = action.parent.tools.schema;
           return action;
         }
         // Instantiate a new schema
-        ajv = new Ajv({
+        const ajv = new Ajv({
           $data: true,
           allErrors: true,
           useDefaults: true,
@@ -65,31 +56,32 @@ module.exports = {
           coerceTypes: 'array',
           loadSchema: function(uri) {
             return new Promise(async function(accept, reject) {
-              var err, module, pathname, protocol;
+              let pathname, protocol;
               try {
                 ({protocol, pathname} = parse(uri));
               } catch (error) {
-                err = error;
-                return reject(err);
+                return reject(error);
               }
               switch (protocol) {
                 case 'module:':
                   try {
-                    action = require.main.require(pathname);
+                    const act = require.main.require(pathname);
                     return accept({
-                      definitions: action.metadata.definitions
+                      definitions: act.metadata.definitions
                     });
                   } catch (error) {
-                    err = error;
-                    return reject(utils.error('NIKITA_SCHEMA_INVALID_MODULE', ['the module location is not resolvable,', `module name is ${JSON.stringify(pathname)}.`]));
+                    return reject(utils.error('NIKITA_SCHEMA_INVALID_MODULE', [
+                      'the module location is not resolvable,',
+                      `module name is ${JSON.stringify(pathname)}.`
+                    ]));
                   }
                   break;
                 case 'registry:':
-                  module = pathname.split('/');
-                  action = (await action.registry.get(module));
-                  if (action) {
+                  const module = pathname.split('/');
+                  const act = await action.registry.get(module);
+                  if (act) {
                     return accept({
-                      definitions: action.metadata.definitions
+                      definitions: act.metadata.definitions
                     });
                   } else {
                     return reject(utils.error('NIKITA_SCHEMA_UNREGISTERED_ACTION', ['the action is not registered inside the Nikita registry,', `action namespace is ${JSON.stringify(module.join('.'))}.`]));
@@ -125,8 +117,7 @@ module.exports = {
           type: ['integer', 'string', 'array', 'object'],
           compile: function(value) {
             return function(data, schema, parentData) {
-              var code, f, t;
-              code = data;
+              let code = data;
               if (typeof code === 'undefined') {
                 code = 0;
               }
@@ -136,7 +127,7 @@ module.exports = {
                 code = code.split(/[ ,]/);
               }
               if (Array.isArray(code)) {
-                [t, ...f] = code;
+                const [t, ...f] = code;
                 code = {
                   true: t,
                   false: f
@@ -182,9 +173,8 @@ module.exports = {
             return ajv.addSchema(schema, name);
           },
           addMetadata: function(name, future) {
-            var current, schema;
-            schema = ajv.getSchema('nikita').schema;
-            current = schema.definitions.metadata.properties[name];
+            let schema = ajv.getSchema('nikita').schema;
+            const current = schema.definitions.metadata.properties[name];
             if (utils.object.match(current, future)) {
               return false;
             }
@@ -202,7 +192,7 @@ module.exports = {
             return true;
           },
           validate: async function(action, schema) {
-            var err, validate;
+            let validate;
             try {
               if (schema == null) {
                 schema = action.metadata.definitions;
@@ -212,11 +202,9 @@ module.exports = {
                 type: 'object',
                 allOf: [
                   {
-                    properties: (function(obj = {}) {
-                      var k,
-                  v;
-                      for (k in schema) {
-                        v = schema[k];
+                    properties: (() => {
+                      const obj = {};
+                      for (const k in schema) {
                         obj[k] = {
                           $ref: `#/definitions/${k}`
                         };
@@ -233,44 +221,51 @@ module.exports = {
                   }
                 ]
               };
-              validate = (await ajv.compileAsync(schema));
+              validate = await ajv.compileAsync(schema);
             } catch (error) {
-              err = error;
-              if (!err.code) {
-                err.code = 'NIKITA_SCHEMA_INVALID_DEFINITION';
-                err.message = `${err.code}: ${err.message}`;
+              // if (!error.code) {
+              //   console.log('>', action.metadata.namespace, action.metadata.module)
+              //   error.code = 'NIKITA_SCHEMA_INVALID_DEFINITION';
+              //   error.message = `${error.code}: ${error.message}`;
+              // }
+              // throw error;
+              if (!error.code) {
+                return utils.error('NIKITA_SCHEMA_INVALID_DEFINITION', [
+                  'schema failed to compile in ',
+                  action.metadata.namespace.length
+                  ? `action \`${action.metadata.namespace.join('.')}\``
+                  : "root action",
+                  action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call'
+                  ? ` in module ${action.metadata.module}`
+                  : undefined,
+                  ', ',
+                  error.message
+                ].join('') + '.');
+              } else {
+                return error;
               }
-              throw err;
             }
             if (validate(utils.object.filter(action, ['error', 'output']))) {
               return;
             }
             return utils.error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
-              validate.errors.length === 1 ? 'one error was found in the configuration of ' : 'multiple errors were found in the configuration of ',
-              action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`` : "root action",
-              action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call' ? ` in module ${action.metadata.module}` : void 0,
+              validate.errors.length === 1
+              ? 'one error was found in the configuration of '
+              : 'multiple errors were found in the configuration of ',
+              action.metadata.namespace.length
+              ? `action \`${action.metadata.namespace.join('.')}\``
+              : "root action",
+              action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call'
+              ? ` in module ${action.metadata.module}`
+              : undefined,
               ':',
-              validate.errors.map(function(err) {
-                var key,
-              msg,
-              value;
-                msg = ' ' + err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data\//,
-              '');
-                if (err.params) {
-                  msg += ((function() {
-                    var ref1,
-              results;
-                    ref1 = err.params;
-                    results = [];
-                    for (key in ref1) {
-                      value = ref1[key];
-                      if (key === 'missingProperty') {
-                        continue;
-                      }
-                      results.push(`, ${key} is ${JSON.stringify(value)}`);
-                    }
-                    return results;
-                  })()).join('');
+              validate.errors.map( (err) => {
+                let msg =
+                  ' ' + err.schemaPath + ' ' +
+                  ajv.errorsText([err]).replace(/^data\//, '');
+                for(const key in err.params){
+                  if(key === 'missingProperty') continue;
+                  msg += `, ${key} is ${JSON.stringify(err.params[key])}`
                 }
                 return msg;
               }).sort().join(';')
@@ -297,11 +292,8 @@ module.exports = {
           },
           // TODO: write a test and document before activation
           // hooks: action.hooks['nikita:schema']
-          handler: function({action, ajv, schema}) {
-            return ajv.addSchema(schema, 'nikita');
-          }
+          handler: ({ajv, schema}) => ajv.addSchema(schema, 'nikita')
         });
-        return action;
       }
     },
     'nikita:schema': function({schema}) {
@@ -309,8 +301,10 @@ module.exports = {
         schema: {
           type: 'boolean',
           default: true,
-          description: `Set to \`false\` to disable schema validation in the
-current action.`
+          description: dedent`
+            Set to \`false\` to disable schema validation in the current
+            action.
+          `
         }
       });
     }

@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-{trim} = require '../../src/utils/buffer'
+{trim} = require '../../lib/utils/buffer'
 
 describe 'utils.buffer', ->
   return unless tags.api

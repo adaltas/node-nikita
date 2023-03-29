@@ -48,6 +48,7 @@
   ],
   "dependencies": {
     "@nikitajs/log": "^2.0.0-alpha.0",
+    "dedent": "^0.7.0",
     "js-yaml": "^4.1.0",
     "object-diff": "^0.0.4",
     "shell": "^0.9.4"
@@ -72,7 +73,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/lxd/src/register"
+      "@nikitajs/lxd/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 20000,

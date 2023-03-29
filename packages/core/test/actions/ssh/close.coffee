@@ -1,6 +1,6 @@
 
 connect = require 'ssh2-connect'
-nikita = require '../../../src'
+nikita = require '../../../lib'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 

@@ -1,7 +1,7 @@
 
 path = require 'path'
-nikita = require '../../../src'
-utils = require '../../../src/utils'
+nikita = require '../../../lib'
+utils = require '../../../lib/utils'
 {tags, config} = require '../../test'
 they = require('mocha-they')(config)
 

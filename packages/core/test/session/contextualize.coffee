@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
-contextualize = require '../../src/session/contextualize'
-normalize = require '../../src/session/normalize'
+contextualize = require '../../lib/session/contextualize'
+normalize = require '../../lib/session/normalize'
 
 describe 'session.contextualize', ->
   return unless tags.api

@@ -1,6 +1,6 @@
 
-nikita = require '../../src'
-registry = require '../../src/registry'
+nikita = require '../../lib'
+registry = require '../../lib/registry'
 {tags, config} = require '../test'
 they = require('mocha-they')(config)
 

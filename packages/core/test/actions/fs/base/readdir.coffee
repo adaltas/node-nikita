@@ -1,5 +1,5 @@
 
-nikita = require '../../../../src'
+nikita = require '../../../../lib'
 fs = require('fs').promises
 {Dirent} = require 'fs'
 {tags, config} = require '../../../test'
@@ -25,11 +25,13 @@ describe 'actions.fs.base.readdir', ->
       files
       .sort()
       .map (file) -> JSON.parse JSON.stringify file # Convert Dirent to object literal
-      .should.eql [
+      .should.match [
         { name: 'a_dir' }
-        { name: 'file_1' }
-        { name: 'file_2' }
-      ]
+        { name: 'file_1', path: "#{tmpdir}/parent" }
+        { name: 'file_2', path: "#{tmpdir}/parent" }
+      ].map (match) =>
+        # Node.js 20 introduce a `path` property with the parent dir
+        if parseInt(process.versions.node.split('.')[0], 10) < 20 then name: match.name else match
       files[0].isDirectory().should.be.true()
       files[1].isFile().should.be.true()
 

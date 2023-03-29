@@ -1,7 +1,7 @@
 
 {tags} = require '../test'
-nikita = require '../../src'
-registry = require '../../src/registry'
+nikita = require '../../lib'
+registry = require '../../lib/registry'
 
 describe 'registry', ->
   return unless tags.api
