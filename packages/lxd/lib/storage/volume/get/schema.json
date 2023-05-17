@@ -1,0 +1,27 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "pool": {
+        "type": "string",
+        "description": "Name of the storage pool containing the volume to get."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of the storage volume to get."
+      },
+      "type": {
+        "enum": [
+          "custom"
+        ],
+        "default": "custom",
+        "description": "Type of storage volume to get."
+      }
+    },
+    "required": [
+      "pool",
+      "name",
+      "type"
+    ]
+  }
+}

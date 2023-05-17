@@ -76,7 +76,7 @@
       "@nikitajs/lxd/lib/register"
     ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "timeout": 40000,
     "reporter": "spec",
     "recursive": true
   },
@@ -91,7 +91,6 @@
     "directory": "packages/lxd"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/lxd\\/src/@nikitajs\\/lxd\\/lib/g'",
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
   }

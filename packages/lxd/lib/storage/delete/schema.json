@@ -1,0 +1,14 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the storage to delete."
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+}

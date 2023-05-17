@@ -1,0 +1,46 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "code": {
+        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code"
+      },
+      "data": {
+        "type": "string",
+        "description": "Data to send to the action in the form of application/json stringified object."
+      },
+      "format": {
+        "type": "string",
+        "enum": [
+          "json",
+          "string"
+        ],
+        "default": "json",
+        "description": "Format to use for the output data, either `json` or `string`."
+      },
+      "path": {
+        "type": "string",
+        "description": "The API path in the form of `[<remote>:]<API path>`, for example\n`/1.0/instances/c1`"
+      },
+      "request": {
+        "enum": [
+          "GET",
+          "PUT",
+          "DELETE",
+          "POST",
+          "PATCH"
+        ],
+        "default": "GET",
+        "description": "Action to use for the API call."
+      },
+      "wait": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, activates the wait flag that waits for the operation to complete."
+      }
+    },
+    "required": [
+      "path"
+    ]
+  }
+}

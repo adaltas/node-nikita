@@ -1,0 +1,40 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the storage to create or update."
+      },
+      "driver": {
+        "type": "string",
+        "enum": [
+          "btrfs",
+          "ceph",
+          "cephfs",
+          "dir",
+          "lvm",
+          "zfs"
+        ],
+        "description": "The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs."
+      },
+      "properties": {
+        "type": "object",
+        "patternProperties": {
+          "": {
+            "type": [
+              "string",
+              "boolean",
+              "number"
+            ]
+          }
+        },
+        "description": "The configuration to use to configure this storage, depends on the\ndriver. See [available\nfields](https://lxc.readthedocs.io/en/latest/storage/)."
+      }
+    },
+    "required": [
+      "name",
+      "driver"
+    ]
+  }
+}

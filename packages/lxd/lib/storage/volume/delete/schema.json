@@ -1,0 +1,27 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "pool": {
+        "type": "string",
+        "description": "Name of the storage pool containing the volume to delete."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of the storage volume to delete."
+      },
+      "type": {
+        "enum": [
+          "custom"
+        ],
+        "default": "custom",
+        "description": "Type of the storage volume to delete."
+      }
+    },
+    "required": [
+      "pool",
+      "name",
+      "type"
+    ]
+  }
+}

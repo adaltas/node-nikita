@@ -1,0 +1,52 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "pool": {
+        "type": "string",
+        "description": "Name of the storage pool to create the volume in."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of the storage volume to create."
+      },
+      "type": {
+        "enum": [
+          "custom"
+        ],
+        "default": "custom",
+        "description": "Type of the storage volume to create."
+      },
+      "properties": {
+        "type": "object",
+        "patternProperties": {
+          "": {
+            "type": [
+              "string",
+              "boolean",
+              "number"
+            ]
+          }
+        },
+        "description": "Configuration to use to configure this storage volume. "
+      },
+      "content": {
+        "enum": [
+          "filesystem",
+          "block"
+        ],
+        "default": "filesystem",
+        "description": "Type of content to create in the storage volume.\nFilesystem is for containers and block is for virtual machines."
+      },
+      "description": {
+        "type": "string",
+        "description": "Description of the storage volume."
+      }
+    },
+    "required": [
+      "name",
+      "pool",
+      "type"
+    ]
+  }
+}

@@ -12,17 +12,17 @@ describe 'lxc.file.read', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxc.delete 'nikita-file-exists-1', force: true
+        @lxc.delete 'nikita-file-read-1', force: true
       await @clean()
       await @lxc.init
         image: "images:#{images.alpine}"
-        container: 'nikita-file-exists-1'
+        container: 'nikita-file-read-1'
         start: true
       await @lxc.exec
         command: "echo 'ok' > /root/a_file"
-        container: 'nikita-file-exists-1'
+        container: 'nikita-file-read-1'
       {data} = await @lxc.file.read
-        container: 'nikita-file-exists-1'
+        container: 'nikita-file-read-1'
         target: '/root/a_file'
       data.should.eql 'ok\n'
       await @clean()
@@ -33,18 +33,18 @@ describe 'lxc.file.read', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxc.delete 'nikita-file-exists-2', force: true
+        @lxc.delete 'nikita-file-read-2', force: true
       await @clean()
       await @lxc.init
         image: "images:#{images.alpine}"
-        container: 'nikita-file-exists-2'
+        container: 'nikita-file-read-2'
         start: true
       await @lxc.exec
         command: "touch /root/a_file"
-        container: 'nikita-file-exists-2'
+        container: 'nikita-file-read-2'
       {data} = await @lxc.file.read
         $debug: true
-        container: 'nikita-file-exists-2'
+        container: 'nikita-file-read-2'
         target: '/root/a_file'
       data.should.eql ''
       await @clean()
@@ -54,17 +54,17 @@ describe 'lxc.file.read', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxc.delete 'nikita-file-exists-3', force: true
+        @lxc.delete 'nikita-file-read-3', force: true
       await @clean()
       await @lxc.init
         image: "images:#{images.alpine}"
-        container: 'nikita-file-exists-3'
+        container: 'nikita-file-read-3'
         start: true
       await @lxc.exec
         command: "echo 'ok' > /root/a_file"
-        container: 'nikita-file-exists-3'
+        container: 'nikita-file-read-3'
       {data} = await @lxc.file.read
-        container: 'nikita-file-exists-3'
+        container: 'nikita-file-read-3'
         target: '/root/a_file'
         trim: true
       data.should.eql 'ok'

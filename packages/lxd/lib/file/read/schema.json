@@ -1,0 +1,22 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config/properties/container"
+      },
+      "target": {
+        "type": "string",
+        "description": "File destination in the form of \"<path>\"."
+      },
+      "trim": {
+        "type": "boolean",
+        "default": false,
+        "description": "Trim the file content."
+      }
+    },
+    "required": [
+      "container"
+    ]
+  }
+}

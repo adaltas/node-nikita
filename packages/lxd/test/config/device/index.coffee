@@ -64,7 +64,24 @@ describe 'lxc.config.device', ->
 
   describe 'action', ->
 
-    they 'Create device', ({ssh}) ->
+    they 'Create device without properties', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        @lxc.delete
+          container: 'nikita-config-device-4'
+          force: true
+        @lxc.init
+          image: "images:#{images.alpine}"
+          container: 'nikita-config-device-4'
+        {$status} = await @lxc.config.device
+          container: 'nikita-config-device-4'
+          device: 'test'
+          type: 'unix-char'
+          properties: {} 
+        $status.should.be.false()
+
+    they 'Create device with properties', ({ssh}) ->
       nikita
         $ssh: ssh
       , ->
