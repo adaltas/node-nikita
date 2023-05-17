@@ -1,0 +1,21 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "pool": {
+        "type": "string",
+        "description": "Name of the storage pool containing the volumes you want to list."
+      },
+      "type": {
+        "enum": [
+          "custom"
+        ],
+        "default": "custom",
+        "description": "Type of storage volumes to list."
+      }
+    },
+    "required": [
+      "pool"
+    ]
+  }
+}

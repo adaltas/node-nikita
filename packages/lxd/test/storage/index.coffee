@@ -15,8 +15,8 @@ describe 'lxc.storage', ->
         @lxc.storage.delete 'nikita-storage-1'
       await @clean()
       {$status} = await @lxc.storage
-        name: "nikita-storage-1"
-        driver: "zfs"
+        name: 'nikita-storage-1'
+        driver: 'zfs'
       $status.should.be.true()
       await @clean()
 
@@ -28,8 +28,8 @@ describe 'lxc.storage', ->
         @lxc.storage.delete 'nikita-storage-2'
       await @clean()
       {$status} = await @lxc.storage
-        name: "nikita-storage-2"
-        driver: "zfs"
+        name: 'nikita-storage-2'
+        driver: 'zfs'
         properties:
           size: '10GB'
           'zfs.clone_copy': false
@@ -44,16 +44,18 @@ describe 'lxc.storage', ->
         @lxc.storage.delete 'nikita-storage-3'
       await @clean()
       {$status} = await @lxc.storage
-        name: "nikita-storage-3"
-        driver: "zfs"
+        name: 'nikita-storage-3'
+        driver: 'zfs'
       $status.should.be.true()
       {$status} = await @lxc.storage
-        name: "nikita-storage-3"
-        driver: "zfs"
+        name: 'nikita-storage-3'
+        driver: 'zfs'
       $status.should.be.false()
       await @clean()
 
   they 'Update storage configuration', ({ssh}) ->
+    # Note, storage is set to expand and not to shrink. With the later,
+    # some configurations fail with the error "Pool cannot be shrunk".
     nikita
       $ssh: ssh
     , ({registry}) ->
@@ -61,15 +63,15 @@ describe 'lxc.storage', ->
         @lxc.storage.delete 'nikita-storage-4'
       await @clean()
       await @lxc.storage
-        name: "nikita-storage-4"
-        driver: "zfs"
+        name: 'nikita-storage-4'
+        driver: 'zfs'
         properties:
-          size: "20GB"
+          size: '10GB'
       {$status} = await @lxc.storage
-        name: "nikita-storage-4"
-        driver: "zfs"
+        name: 'nikita-storage-4'
+        driver: 'zfs'
         properties:
-          size: "10GB"
+          size: '20GB'
           'zfs.clone_copy': false
       $status.should.be.true()
       await @clean()

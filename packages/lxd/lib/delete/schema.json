@@ -1,0 +1,18 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config/properties/container"
+      },
+      "force": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, the container will be deleted even if running."
+      }
+    },
+    "required": [
+      "container"
+    ]
+  }
+}

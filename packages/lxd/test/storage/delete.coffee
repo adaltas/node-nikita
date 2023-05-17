@@ -12,10 +12,10 @@ describe 'lxc.storage.delete', ->
       $ssh: ssh
     , ->
       await @lxc.storage
-        name: "nikita-storage-delete-1"
-        driver: "zfs"
+        name: 'nikita-storage-delete-1'
+        driver: 'zfs'
       {$status} = await @lxc.storage.delete
-        name: "nikita-storage-delete-1"
+        name: 'nikita-storage-delete-1'
       $status.should.be.true()
       
   they 'Storage already deleted', ({ssh}) ->
@@ -23,11 +23,11 @@ describe 'lxc.storage.delete', ->
       $ssh: ssh
     , ->
       await @lxc.storage
-        name: "nikita-storage-delete-2"
-        driver: "zfs"
+        name: 'nikita-storage-delete-2'
+        driver: 'zfs'
       await @lxc.storage.delete
-        name: "nikita-storage-delete-2"
+        name: 'nikita-storage-delete-2'
       {$status} = await @lxc.storage.delete
-        name: "nikita-storage-delete-2"
+        name: 'nikita-storage-delete-2'
       $status.should.be.false()
   

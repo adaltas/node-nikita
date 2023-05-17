@@ -11,10 +11,10 @@ describe 'lxc.goodie.prlimit', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-goodies-prlimit-1'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{images.alpine}"
         container: 'nikita-goodies-prlimit-1'
         start: true

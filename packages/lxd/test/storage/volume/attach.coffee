@@ -223,7 +223,7 @@ describe 'lxc.storage.volume.attach', ->
           container: 'nikita-container-attach-4'
           device: 'osd'
           path: '/osd/'
-        .should.be.rejectedWith /^Missing requirement: Volume does not exist./
+        .should.be.rejectedWith 'NIKITA_LXD_VOLUME_ATTACH: volume "nikita-volume-attach-4" does not exist.'
         await @clean()
 
     they 'should forget the container', ({ssh}) ->
@@ -253,5 +253,5 @@ describe 'lxc.storage.volume.attach', ->
           container: 'nikita-container-attach-5'
           device: 'osd'
           path: '/osd/'
-        .should.be.rejectedWith /^Missing requirement: Container does not exist./
+        .should.be.rejectedWith 'NIKITA_LXD_VOLUME_ATTACH: container "nikita-container-attach-5" does not exist.'
         await @clean()
