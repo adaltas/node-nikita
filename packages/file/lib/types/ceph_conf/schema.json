@@ -1,0 +1,44 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "rootdir": {
+        "type": "string",
+        "description": "Path to the mount point corresponding to the root directory, optional."
+      },
+      "backup": {
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Create a backup, append a provided string to the filename extension or\na timestamp if value is not a string, only apply if the target file\nexists and is modified."
+      },
+      "clean": {
+        "type": "boolean",
+        "description": "Remove all the lines whithout a key and a value, default to \"true\"."
+      },
+      "content": {
+        "type": [
+          "object",
+          "string"
+        ],
+        "description": "Object to stringify."
+      },
+      "merge": {
+        "type": "boolean",
+        "description": "Read the target if it exists and merge its content."
+      },
+      "separator": {
+        "type": "string",
+        "description": "Default separator between keys and values, default to \" : \"."
+      },
+      "target": {
+        "type": "string",
+        "description": "File to write."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

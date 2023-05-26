@@ -12,7 +12,7 @@ describe 'file.properties.read', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file.properties"
         content: "another_key=another value"
       {properties} = await @file.properties.read
@@ -24,7 +24,7 @@ describe 'file.properties.read', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file.properties"
         content: "another_key:another value"
       {properties} = await @file.properties.read
@@ -37,7 +37,7 @@ describe 'file.properties.read', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file.properties"
         content: "another_key : another value"
       {properties} = await @file.properties.read

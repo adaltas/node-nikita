@@ -1,5 +1,5 @@
 
-{ini} = require '../../../src/utils'
+{ini} = require '../../../lib/utils'
 {tags} = require '../../test'
 
 return unless tags.api

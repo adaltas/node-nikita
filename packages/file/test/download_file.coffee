@@ -176,8 +176,10 @@ describe 'file.download file', ->
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
-        (data.includes "[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'null'").should.be.true()
-        (data.includes "[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'").should.be.true()
+        data.should.containEql "[WARN] Hash dont match, source is \"df8fede7ff71608e24a5576326e41c75\" and target is undefined"
+        data.should.containEql "[INFO] Hash matches as \"df8fede7ff71608e24a5576326e41c75\""
+        # (data.includes "[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'null'").should.be.true()
+        # (data.includes "[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'").should.be.true()
       
   describe 'error', ->
 

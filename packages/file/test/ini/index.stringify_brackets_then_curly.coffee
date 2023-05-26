@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core/lib'
-utils = require '../../src/utils'
+utils = require '../../lib/utils'
 {tags, config} = require '../test'
 they = require('mocha-they')(config)
 

@@ -69,7 +69,7 @@ describe 'file.types.yum_repo', ->
       {$status} = await @file.types.yum_repo
         target: "#{tmpdir}/test.repo"
         content:
-          "test-repo-0.0.3":
+          'test-repo-0.0.3':
             'name': 'CentOS'
             'mirrorlist': 'http://test/?infra=$infra'
             'baseurl': 'http://mirror.centos.org'

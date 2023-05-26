@@ -1,0 +1,15 @@
+{
+  "config": {
+    "type": "object",
+    "$ref": "module://@nikitajs/file/lib/ini/index#/definitions/config",
+    "properties": {
+      "target": {
+        "type": "string",
+        "description": "Path to the target directory to write the repository. It may be an absolute path or relative to \"/etc/yum.repos.d\"."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}
