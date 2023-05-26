@@ -12,8 +12,19 @@ describe 'file.download url', ->
 
   beforeEach (next) ->
     server = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end 'okay'
+      # res.writeHead 200, {'Content-Type': 'text/plain'}
+      # res.end 'okay'
+      # console.log('req:', req.url, req.headers)
+      switch req.url
+        when '/http_headers'
+          # res.setHeader 'Content-Type', 'application/json'
+          # res.writeHead 200, {'Content-Type': 'text/plain'}
+          # res.end 'okay'
+          res.writeHead 200, {'Content-Type': 'application/json'}
+          res.end JSON.stringify req.headers
+        else
+          res.writeHead 200, {'Content-Type': 'text/plain'}
+          res.end 'okay'
     server.listen 12345, next
 
   afterEach (next) ->
@@ -21,7 +32,7 @@ describe 'file.download url', ->
     server.on 'close', next
 
   they 'download without cache and md5', ({ssh}) ->
-    @timeout 100000
+    # @timeout 100000
     # Download a non existing file
     nikita
       $ssh: ssh
@@ -39,8 +50,8 @@ describe 'file.download url', ->
         target: "#{tmpdir}/download"
       .should.be.finally.containEql $status: false
 
-  they 'should chmod', ({ssh}) ->
-    @timeout 10000
+  they 'option `mode`', ({ssh}) ->
+    # @timeout 10000
     nikita
       $ssh: ssh
       $tmpdir: true
@@ -53,6 +64,22 @@ describe 'file.download url', ->
       @fs.assert
         target: "#{tmpdir}/download_test"
         mode: 0o0770
+
+  they 'option `header`', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @file.download
+        http_headers: [
+          'Authorization: Bearer MY_SECRET'
+        ]
+        source: 'http://localhost:12345/http_headers'
+        target: "#{tmpdir}/download_test"
+        mode: 0o0770
+      {data} = await @fs.base.readFile "#{tmpdir}/download_test"
+      data = JSON.parse(data)
+      data.should.match authorization: 'Bearer MY_SECRET'
 
   describe 'cache', ->
 

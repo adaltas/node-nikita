@@ -1,0 +1,104 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "cache": {
+        "type": "boolean",
+        "description": "Activate the cache, default to true if either \"cache_dir\" or\n\"cache_file\" is activated."
+      },
+      "cache_dir": {
+        "type": "string",
+        "description": "Path of the cache directory."
+      },
+      "cache_file": {
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Cache the file on the executing machine, equivalent to cache unless an\nssh connection is provided. If a string is provided, it will be the\ncache path. By default: basename of source"
+      },
+      "cookies": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Extra cookies  to include in the request when sending HTTP to a\nserver."
+      },
+      "force": {
+        "type": "boolean",
+        "description": "Overwrite the target file if it exists."
+      },
+      "force_cache": {
+        "type": "boolean",
+        "description": "Force cache overwrite if it exists"
+      },
+      "gid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+      },
+      "http_headers": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Extra header to include in the request when sending HTTP to a server."
+      },
+      "location": {
+        "type": "boolean",
+        "description": "If the server reports that the requested page has moved to a different\nlocation (indicated with a Location: header and a 3XX response code),\nthis option will make curl redo the request on the new place."
+      },
+      "md5": {
+        "default": false,
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Validate uploaded file with md5 checksum (only for binary upload for\nnow), may be the string checksum or will be deduced from source if\n\"true\"."
+      },
+      "mode": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+      },
+      "proxy": {
+        "type": "string",
+        "description": "Use the specified HTTP proxy. If the port number is not specified, it\nis assumed at port 1080. See curl(1) man page."
+      },
+      "sha1": {
+        "default": false,
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Validate uploaded file with sha1 checksum (only for binary upload for\nnow), may be the string checksum or will be deduced from source if\n\"true\"."
+      },
+      "sha256": {
+        "default": false,
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Validate uploaded file with sha1 checksum (only for binary upload for\nnow), may be the string checksum or will be deduced from source if\n\"true\"."
+      },
+      "source": {
+        "type": "string",
+        "description": "File, HTTP URL, GIT repository. File is the default protocol if source\nis provided without any."
+      },
+      "target": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "typeof": "function"
+          }
+        ],
+        "description": "File path where to write content to. Pass the content."
+      },
+      "uid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+      }
+    },
+    "required": [
+      "target",
+      "source"
+    ]
+  }
+}

@@ -12,19 +12,19 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
       .should.be.finally.containEql $status: true
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
       .should.be.finally.containEql $status: true
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
       .should.be.finally.containEql $status: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "another_key=another value\n"
 
@@ -33,21 +33,21 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
       .should.be.finally.containEql $status: true
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
       .should.be.finally.containEql $status: true
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
       .should.be.finally.containEql $status: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=a value\nanother_key=another value\n"
 
@@ -56,16 +56,16 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
         separator: ' '
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         separator: ' '
         merge: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key a value\nanother_key another value\n"
 
@@ -74,22 +74,22 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content:
           b_key: 'value'
           a_key: 'value'
         sort: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "b_key=value\na_key=value\n"
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content:
           b_key: 'value'
           a_key: 'value'
         sort: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=value\nb_key=value\n"
 
@@ -98,21 +98,21 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file.properties"
         content: """
         a_key=value
         # comment
         b_key=value
         """
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content:
           b_key: 'new value'
           a_key: 'new value'
         merge: true
         comment: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=new value\n# comment\nb_key=new value\n"
 
@@ -121,17 +121,17 @@ describe 'file.properties', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file.properties"
         content: """
         a_key = a value
         """
-      @file.properties
+      await @file.properties
         target: "#{tmpdir}/file.properties"
         content:
           'b_key ': ' b value'
         merge: true
         trim: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=a value\nb_key=b value\n"
