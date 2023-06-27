@@ -158,5 +158,13 @@ module.exports = {
       obj[snake_case(key)] = value;
     }
     return obj;
+  },
+  trim: function(obj) {
+    const result = {};
+    for (const k in obj) {
+      const v = obj[k]
+      result[k.trim()] = typeof v === "string" ? v.trim() : v;
+    }
+    return result;
   }
 };
