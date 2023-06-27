@@ -1,6 +1,6 @@
 
 {tags} = require '../test'
-{copy, diff, equals, filter, match} = require '../../lib/utils/object'
+{copy, diff, equals, filter, match, trim} = require '../../lib/utils/object'
 
 describe 'utils.object', ->
   return unless tags.api
@@ -197,3 +197,11 @@ describe 'utils.object', ->
           c:
             c1: /^\d$/
         .should.be.false()
+      
+  describe 'trim', ->
+
+    it 'trim keys and values', ->
+      trim
+        ' a ': ' b '
+      .should.eql
+        'a': 'b'
