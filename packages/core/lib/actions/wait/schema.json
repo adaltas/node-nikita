@@ -1,14 +1,18 @@
 {
   "config": {
     "type": "object",
-    "properties": {
-      "time": {
-        "type": "integer",
-        "description": "Time in millisecond to wait for."
-      }
-    },
-    "required": [
-      "time"
-    ]
+    "oneOf": [{
+      "properties": {
+        "time": {
+          "type": "integer",
+          "description": "Time in millisecond to wait for."
+        }
+      },
+      "required": [
+        "time"
+      ]
+    }, {
+      "additionalProperties": false
+    }]
   }
 }

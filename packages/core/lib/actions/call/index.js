@@ -11,10 +11,9 @@ module.exports = {
         return;
       }
       let mod = action.metadata.argument;
+      // When metadata.argument is a string, consider it as the module name to load.
       if (typeof mod === 'string') {
-        if (mod.substr(0, 1) === '.') {
-          // When metadata.argument is a string,
-          // `call` consider it to be the module name to load.
+        if (mod.startsWith('.')) {
           mod = path.resolve(process.cwd(), mod);
         }
         mod = require.main.require(mod);
@@ -23,7 +22,7 @@ module.exports = {
         // `action.metadata.argument` property.
         // We shall probably also clean up the action.args array.
         action.metadata.module = action.metadata.argument;
-        action.metadata.argument = void 0;
+        action.metadata.argument = undefined;
       }
       const on_action = mod.hooks?.on_action
       if (typeof mod === 'function') {
