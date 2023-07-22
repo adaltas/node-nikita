@@ -59,7 +59,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/network/src/register"
+      "@nikitajs/network/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 10000,
@@ -77,8 +77,10 @@
     "directory": "packages/network"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/network\\/src/@nikitajs\\/network\\/lib/g'",
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
+  },
+  "dependencies": {
+    "dedent": "^1.2.0"
   }
 }
