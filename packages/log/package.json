@@ -85,7 +85,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/log/src/register"
+      "@nikitajs/log/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 10000,
@@ -98,7 +98,6 @@
     "directory": "packages/log"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/log\\/src/@nikitajs\\/log\\/lib/g'",
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
   }

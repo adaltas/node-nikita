@@ -1,0 +1,51 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "end": {
+        "type": "boolean",
+        "default": true,
+        "description": "Close the writable stream with the session is finished or stoped on\nerror."
+      },
+      "serializer": {
+        "type": "object",
+        "description": "An object of key value pairs where keys are the event types and the\nvalue is a function which must be implemented to serialize the\ninformation.",
+        "properties": {
+          "diff": {
+            "typeof": "function"
+          },
+          "nikita:action:start": {
+            "typeof": "function"
+          },
+          "nikita:action:end": {
+            "typeof": "function"
+          },
+          "nikita:resolved": {
+            "typeof": "function"
+          },
+          "nikita:rejected": {
+            "typeof": "function"
+          },
+          "stdin": {
+            "typeof": "function"
+          },
+          "stdout_stream": {
+            "typeof": "function"
+          },
+          "text": {
+            "typeof": "function"
+          }
+        },
+        "additionalProperties": false
+      },
+      "stream": {
+        "instanceof": "Object",
+        "description": "The writable stream where to print the logs."
+      }
+    },
+    "required": [
+      "serializer",
+      "stream"
+    ]
+  }
+}
