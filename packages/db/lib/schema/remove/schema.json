@@ -1,0 +1,24 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "module://@nikitajs/db/lib/query#/definitions/db"
+      }
+    ],
+    "properties": {
+      "database": {
+        "type": "string",
+        "description": "The database name where the schema is registered."
+      },
+      "schema": {
+        "type": "string",
+        "description": "New schema name."
+      }
+    },
+    "required": [
+      "database",
+      "schema"
+    ]
+  }
+}

@@ -6,9 +6,13 @@
     "build",
     "cli",
     "deploy",
-    "fs",
     "install",
-    "masson",
+    "database",
+    "sql",
+    "query",
+    "schema",
+    "table",
+    "data",
     "ssh",
     "system",
     "task"
@@ -61,10 +65,10 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/db/src/register"
+      "@nikitajs/db/lib/register"
     ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "timeout": 400000,
     "reporter": "spec",
     "recursive": true
   },
@@ -79,9 +83,11 @@
     "directory": "packages/db"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/db\\/src/@nikitajs\\/db\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
+  },
+  "dependencies": {
+    "dedent": "^1.2.0"
   }
 }

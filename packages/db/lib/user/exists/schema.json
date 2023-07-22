@@ -1,0 +1,19 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "module://@nikitajs/db/lib/query#/definitions/db"
+      }
+    ],
+    "properties": {
+      "username": {
+        "type": "string",
+        "description": "Name of the user to check for existance."
+      }
+    },
+    "required": [
+      "username"
+    ]
+  }
+}

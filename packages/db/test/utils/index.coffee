@@ -1,4 +1,4 @@
-utils = require '../../src/utils'
+utils = require '../../lib/utils'
 {command, escape, jdbc} = utils.db
 
 describe 'db.utils', ->
