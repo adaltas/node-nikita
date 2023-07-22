@@ -1,0 +1,94 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "cookies": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Extra cookies to include in the request when sending HTTP to a server."
+      },
+      "data": {
+        "type": [
+          "array",
+          "boolean",
+          "null",
+          "number",
+          "object",
+          "string"
+        ],
+        "description": "The request HTTP body associated with \"POST\" and \"PUT\" requests. The\n`Accept: application/json` request header will be automatically\ninserted if not yet present and if `data` is not a string."
+      },
+      "fail": {
+        "type": "boolean",
+        "description": "Fail silently (no output at all) on HTTP errors."
+      },
+      "gid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid",
+        "description": "Group name or id who owns the target file; only apply if `target` is\nprovided."
+      },
+      "http_headers": {
+        "type": "object",
+        "default": {},
+        "description": "Extra header to include in the request when sending the HTTP request\nto a server."
+      },
+      "insecure": {
+        "type": "boolean",
+        "description": "Allow insecure server connections when using SSL; disabled if `cacert`\nis provided."
+      },
+      "location": {
+        "type": "boolean",
+        "description": "If the server reports that the requested page has moved to a different\nlocation (indicated with a Location: header and a 3XX response code),\nthis option will make curl redo the request on the new place."
+      },
+      "method": {
+        "type": "string",
+        "default": "GET",
+        "description": "Specify request command (HTTP method) to use."
+      },
+      "mode": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode",
+        "description": "Permissions of the target. If specified, nikita will chmod after\ndownload."
+      },
+      "negotiate": {
+        "type": "boolean",
+        "description": "Use HTTP Negotiate (SPNEGO) authentication."
+      },
+      "proxy": {
+        "type": "string",
+        "description": "Use the specified HTTP proxy. If the port number is not specified, it\nis assumed at port 1080. See curl(1) man page."
+      },
+      "password": {
+        "type": "string",
+        "description": "Password associated with the Kerberos principal, required if\n`principal` is provided."
+      },
+      "principal": {
+        "type": "string",
+        "description": "Kerberos principal name if a ticket must be generated along the\n`negociate` option."
+      },
+      "referer": {
+        "type": "string",
+        "description": "An alias for connection.http_headers['Referer']"
+      },
+      "target": {
+        "type": "string",
+        "description": "Write to file instead of stdout; mapped to the curl `output` argument."
+      },
+      "timeout": {
+        "$ref": "module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout",
+        "description": "Maximum time in millisecond for the HTTP request. Prevent the\nrequest from hanging."
+      },
+      "uid": {
+        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid",
+        "description": "User name or id who owns the target file; only apply if `target` is\nprovided."
+      },
+      "url": {
+        "type": "string",
+        "description": "HTTP URL endpoint, must be a valid URL."
+      }
+    },
+    "required": [
+      "url"
+    ]
+  }
+}
