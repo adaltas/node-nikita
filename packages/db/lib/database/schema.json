@@ -1,0 +1,26 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "module://@nikitajs/db/lib/query#/definitions/db"
+      }
+    ],
+    "properties": {
+      "database": {
+        "type": "string",
+        "description": "The name of the database to create."
+      },
+      "user": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "This users who will be granted superuser permissions."
+      }
+    },
+    "required": [
+      "database"
+    ]
+  }
+}

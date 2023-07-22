@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core/lib'
-{command} = require '../../src/query'
+{command} = require '../../lib/query'
 {tags, config, db} = require '../test'
 they = require('mocha-they')(config)
 
@@ -23,9 +23,9 @@ for engine, _ of db
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
-            '#/required config must have required property \'host\';'
             '#/required config must have required property \'password\';'
-            '#/required config must have required property \'username\'.'
+            '#/required config must have required property \'username\';'
+            'module://@nikitajs/db/lib/query#/definitions/db/required config must have required property \'host\'.'
           ].join ' '
     
     they 'requires admin_username, password, username', ({ssh}) ->
@@ -41,9 +41,9 @@ for engine, _ of db
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
-            '#/required config must have required property \'admin_username\';'
             '#/required config must have required property \'password\';'
-            '#/required config must have required property \'username\'.'
+            '#/required config must have required property \'username\';'
+            'module://@nikitajs/db/lib/query#/definitions/db/required config must have required property \'admin_username\'.'
           ].join ' '
 
     they 'add new user', ({ssh}) ->

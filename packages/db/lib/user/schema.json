@@ -1,0 +1,24 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "module://@nikitajs/db/lib/query#/definitions/db"
+      }
+    ],
+    "properties": {
+      "username": {
+        "type": "string",
+        "description": "The username of a user with privileges on the database, used unless\nadmin_username is provided."
+      },
+      "password": {
+        "type": "string",
+        "description": "The password of a user with privileges on the database, used unless\nadmin_password is provided."
+      }
+    },
+    "required": [
+      "password",
+      "username"
+    ]
+  }
+}
