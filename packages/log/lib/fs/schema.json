@@ -1,0 +1,27 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "archive": {
+        "type": "boolean",
+        "default": false,
+        "description": "Save a copy of the previous logs inside a dedicated directory."
+      },
+      "basedir": {
+        "type": "string",
+        "description": "Directory where to store logs relative to the process working\ndirectory. Default to the \"log\" directory. Note, when the `archive`\noption is activated, the log files will be stored accessible from\n\"./log/latest\"."
+      },
+      "filename": {
+        "type": "string",
+        "description": "Name of the log file. It could contain the directory path as well.\nIt defaults to `local.log` locally or `{hostname}.log` on a remote\nconnection."
+      },
+      "serializer": {
+        "type": "object",
+        "description": "An object of key value pairs where keys are the event types and the\nvalue is a function which must be implemented to serialize the\ninformation."
+      }
+    },
+    "required": [
+      "serializer"
+    ]
+  }
+}

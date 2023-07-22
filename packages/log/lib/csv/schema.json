@@ -1,0 +1,19 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "properties": {
+          "serializer": {
+            "type": "object",
+            "default": {},
+            "description": "Internal property, expose access to the serializer object passed\nto the `log.fs` action."
+          }
+        }
+      },
+      {
+        "$ref": "module://@nikitajs/log/lib/fs#/definitions/config"
+      }
+    ]
+  }
+}

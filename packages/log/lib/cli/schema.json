@@ -1,0 +1,118 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "color": {
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status_error": {
+                "typeof": "function",
+                "description": "Format the provided argument string on error."
+              },
+              "status_false": {
+                "typeof": "function",
+                "description": "Format the provided argument string when status is false."
+              },
+              "status_true": {
+                "typeof": "function",
+                "description": "Format the provided argument string when status is true."
+              }
+            }
+          }
+        ],
+        "description": "Activate or desactivate color output. The default is to detect if\nthere is a tty. For finer control, the formating function can be\ndefined inside an object."
+      },
+      "depth_max": {
+        "type": [
+          "boolean",
+          "number"
+        ],
+        "default": false,
+        "description": "Disable logging after a provided depth where the depth correponds to\nthe number of headers. It is desactivated by default with `false`."
+      },
+      "divider": {
+        "type": "string",
+        "default": " : ",
+        "description": "Separator between headers."
+      },
+      "enabled": {
+        "type": "boolean",
+        "default": true,
+        "description": "Activate or desactivate logging."
+      },
+      "end": {
+        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/end",
+        "default": false,
+        "description": "Close the stream when the Nikita session terminates. The default\nis to not close the stream for this action, in opposite to the default\n`log.stream` action, because the default stream is `process.stderr`\nwhich is expected to remain open."
+      },
+      "host": {
+        "type": "string",
+        "description": "Hostname to display. When not defined, the default is to print the ssh\nhostname or IP or `local` when the action is executed locally."
+      },
+      "pad": {
+        "type": "object",
+        "default": {},
+        "description": "Width of the columns, unconstrained layout by default.",
+        "properties": {
+          "header": {
+            "type": "integer",
+            "description": "Width of the header column."
+          },
+          "host": {
+            "type": "integer",
+            "description": "Width of the host column."
+          },
+          "time": {
+            "type": "integer",
+            "description": "Width of the time column."
+          }
+        }
+      },
+      "time": {
+        "type": "boolean",
+        "default": true,
+        "description": "Print the action execution time."
+      },
+      "separator": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "integer",
+                "description": "Separator for the host column."
+              },
+              "header": {
+                "type": "integer",
+                "description": "Separator for the header column."
+              },
+              "time": {
+                "type": "integer",
+                "description": "Separator for the time column."
+              }
+            }
+          }
+        ],
+        "default": {},
+        "description": "Separator between columns. A string value apply the same separator\nwhile it is also possible to target a specific sperator per column\nby setting an object."
+      },
+      "serializer": {
+        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/serializer",
+        "default": {},
+        "description": "Internal property, expose access to the serializer object passed\nto the `log.stream` action."
+      },
+      "stream": {
+        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/stream",
+        "description": "The writable stream where to print the logs, default to\n`process.stderr`."
+      }
+    }
+  }
+}
