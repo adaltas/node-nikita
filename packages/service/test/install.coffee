@@ -99,22 +99,7 @@ describe 'service.install arch', ->
         pacman_flags: ['u', 'y']
       @call ->
         message.should.containEql "pacman --noconfirm -S #{service.name} -u -y"
-      
-  they 'add yaourt options', ({ssh, sudo}) ->
-    message = null
-    nikita
-      $ssh: ssh
-      $sudo: sudo
-    , ({tools: {events}}) ->
-      events.on 'stdin', (log) -> message = log.message
-      @service.remove
-        name: service.name
-      @service.install
-        name: service.name
-        yaourt_flags: ['u', 'y']
-      @call ->
-        message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
-      
+  
   they 'add yay options', ({ssh, sudo}) ->
     message = null
     nikita

@@ -1,0 +1,29 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "installed": {
+        "type": "boolean",
+        "description": "Assert the package is installed."
+      },
+      "name": {
+        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/name"
+      },
+      "srv_name": {
+        "type": "string",
+        "description": "Name used by the service utility, default to \"name\"."
+      },
+      "started": {
+        "type": "boolean",
+        "description": "Assert if started."
+      },
+      "stopped": {
+        "type": "boolean",
+        "description": "Assert if stopped."
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+}

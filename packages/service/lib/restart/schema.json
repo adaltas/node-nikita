@@ -1,0 +1,13 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/name"
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+}

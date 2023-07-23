@@ -1,0 +1,21 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/name"
+      },
+      "startup": {
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "default": true,
+        "description": "Run service daemon on startup, required. A string represent a list of\nactivated levels, for example '2345' or 'multi-user'. An empty\nstring to not define any run level. Note: String argument is only\nused if SysVinit runlevel is installed on the OS (automatically\ndetected by nikita)."
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+}

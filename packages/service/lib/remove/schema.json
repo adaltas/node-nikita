@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "cache": {
+        "type": "boolean",
+        "description": "Run entirely from system cache to list installed and outdated\npackages."
+      },
+      "cacheonly": {
+        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/cacheonly"
+      },
+      "name": {
+        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/name"
+      }
+    },
+    "required": [
+      "name"
+    ]
+  }
+}

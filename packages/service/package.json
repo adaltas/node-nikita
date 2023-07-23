@@ -42,7 +42,8 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.3"
+    "@nikitajs/file": "^1.0.0-alpha.3",
+    "dedent": "^1.2.0"
   },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
@@ -65,7 +66,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/service/src/register"
+      "@nikitajs/service/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 20000,
@@ -83,7 +84,6 @@
     "directory": "packages/service"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/service\\/src/@nikitajs\\/service\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
