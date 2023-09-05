@@ -37,32 +37,40 @@ describe 'plugin.conditions if_os', ->
     $status.should.be.true()
 
   they 'match Linux version string', ({ssh}) ->
-    {$status} = await nikita
-      $if_os:
-        linux_version: conditions_if_os.linux_version
-      $handler: -> true
+    nikita
       $ssh: ssh
-    $status.should.be.true()
+    , ->
+      {stdout: conditions_if_os.linux_version} = await @execute 'uname -r', trim: true unless conditions_if_os.linux_version
+      {$status} = await @call
+        $if_os:
+          linux_version: conditions_if_os.linux_version
+        $handler: -> true
+      $status.should.be.true()
 
   they 'match distribution string and major version', ({ssh}) ->
-    # Arch Linux has only linux_version
-    if conditions_if_os.version
-    then condition = version: conditions_if_os.version
-    else condition = linux_version: conditions_if_os.linux_version
-    {$status} = await nikita
-      $if_os: condition,
-        distribution: conditions_if_os.distribution
-      $handler: -> true
+    nikita
       $ssh: ssh
-    $status.should.be.true()
+    , ->
+      {stdout: conditions_if_os.linux_version} = await @execute 'uname -r', trim: true unless conditions_if_os.linux_version
+      # Arch Linux has only linux_version
+      if conditions_if_os.version
+      then condition = version: conditions_if_os.version
+      else condition = linux_version: conditions_if_os.linux_version
+      {$status} = await @call
+        $if_os: {...condition, distribution: conditions_if_os.distribution}
+        $handler: -> true
+      $status.should.be.true()
 
   they 'match major Linux version', ({ssh}) ->
-    {$status} = await nikita
-      $if_os:
-        linux_version: conditions_if_os.linux_version.split('.')[0]
-      $handler: -> true
+    nikita
       $ssh: ssh
-    $status.should.be.true()
+    , ->
+      {stdout: conditions_if_os.linux_version} = await @execute 'uname -r', trim: true unless conditions_if_os.linux_version
+      {$status} = await @call
+        $if_os:
+          linux_version: conditions_if_os.linux_version.split('.')[0]
+        $handler: -> true
+      $status.should.be.true()
 
   they 'match arch string', ({ssh}) ->
     {$status} = await nikita
