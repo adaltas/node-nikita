@@ -6,7 +6,8 @@ module.exports =
   conditions_if_os:
     arch: 'x86_64'
     distribution: 'arch'
-    linux_version: '5.15.49'
+    # version is a moving target
+    # linux_version is automatically detected 
   config: [
     label: 'local'
   ,
