@@ -39,6 +39,9 @@
       "email": "sergei@adaltas.com"
     }
   ],
+  "dependencies": {
+    "dedent": "^1.2.0"
+  },
   "peerDependencies": {
     "@nikitajs/core": "^1.0.0-alpha.1"
   },
@@ -59,7 +62,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/java/src/register"
+      "@nikitajs/java/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 20000,
@@ -77,7 +80,6 @@
     "directory": "packages/java"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/java\\/src/@nikitajs\\/java\\/lib/g'",
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
   }
