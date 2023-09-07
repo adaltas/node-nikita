@@ -12,7 +12,7 @@ module.exports =
     # change the minor version according to the latest used in the Dockerfile,
     # run `cat /etc/redhat-release` to check the Centos version
     version: '7.9.2009'
-    linux_version: '5.15.49'
+    #linux_version: '5.15.49'
   config: [
     label: 'local'
   ,
