@@ -10,11 +10,6 @@ registry = require('@nikitajs/core/lib/registry');
 
 module.exports = {
   tools: {
-    apm: {
-      '': '@nikitajs/tools/lib/apm',
-      'installed': '@nikitajs/tools/lib/apm/installed',
-      'uninstall': '@nikitajs/tools/lib/apm/uninstall'
-    },
     backup: '@nikitajs/tools/lib/backup',
     compress: '@nikitajs/tools/lib/compress',
     cron: {
