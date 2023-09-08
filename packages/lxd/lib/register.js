@@ -21,6 +21,7 @@ module.exports = {
       },
       set: '@nikitajs/lxd/lib/config/set'
     },
+    exists: '@nikitajs/lxd/lib/exists',
     init: '@nikitajs/lxd/lib/init',
     delete: '@nikitajs/lxd/lib/delete',
     start: '@nikitajs/lxd/lib/start',

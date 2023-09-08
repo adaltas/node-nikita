@@ -1,0 +1,13 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config/properties/container"
+      }
+    },
+    "required": [
+      "container"
+    ]
+  }
+}
