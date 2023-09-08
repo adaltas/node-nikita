@@ -1,0 +1,31 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "indexes": {
+        "type": "object",
+        "description": "List of \"olcDbIndex\" values provided as key/value pairs."
+      },
+      "dn": {
+        "type": "string",
+        "description": "Distinguish name storing the \"olcDbIndex\" property, using the database\naddress (eg: \"olcDatabase={2}bdb,cn=config\")."
+      },
+      "suffix": {
+        "type": "string",
+        "description": "The suffix associated with the database (eg: \"dc=example,dc=org\"),\nused as an alternative to the `dn` configuration."
+      },
+      "binddn": {
+        "type": "string",
+        "description": "Distinguished Name to bind to the LDAP directory."
+      },
+      "passwd": {
+        "type": "string",
+        "description": "Password for simple authentication."
+      },
+      "uri": {
+        "type": "string",
+        "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
+      }
+    }
+  }
+}

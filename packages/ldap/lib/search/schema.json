@@ -1,0 +1,56 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "attributes": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "default": [],
+        "description": "List of attributes to return, default to all."
+      },
+      "continuous": {
+        "type": "boolean",
+        "description": "Continuous  operation  mode.  Errors  are reported, but ldapsearch\nwill continue with searches."
+      },
+      "base": {
+        "type": "string",
+        "description": "One or multiple DN to remove."
+      },
+      "filter": {
+        "type": "string",
+        "description": "The filter should conform to the string representation for search\nfilters as defined in RFC 4515. If not provided, the default filter,\n(objectClass=*), is used."
+      },
+      "scope": {
+        "type": "string",
+        "enum": [
+          "base",
+          "one",
+          "sub",
+          "children"
+        ],
+        "description": "Distinguish name storing the \"olcAccess\" property, using the database\naddress (eg: \"olcDatabase={2}bdb,cn=config\")."
+      },
+      "binddn": {
+        "type": "string",
+        "description": "Distinguished Name to bind to the LDAP directory."
+      },
+      "mesh": {
+        "type": "string",
+        "description": "Specify the SASL mechanism to be used for authentication. If it's not\nspecified, the program will choose the best  mechanism  the  server\nknows."
+      },
+      "passwd": {
+        "type": "string",
+        "description": "Password for simple authentication."
+      },
+      "uri": {
+        "type": "string",
+        "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
+      }
+    },
+    "required": [
+      "base"
+    ]
+  }
+}

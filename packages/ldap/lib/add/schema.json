@@ -1,0 +1,42 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "entry": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "dn": {
+              "type": "string",
+              "description": "Distinguish name of the entry"
+            }
+          },
+          "required": [
+            "dn"
+          ]
+        },
+        "description": "Object to be inserted or modified."
+      },
+      "binddn": {
+        "type": "string",
+        "description": "Distinguished Name to bind to the LDAP directory."
+      },
+      "mesh": {
+        "type": "string",
+        "description": "Specify the SASL mechanism to be used for authentication. If it's not\nspecified, the program will choose the best  mechanism  the  server\nknows."
+      },
+      "passwd": {
+        "type": "string",
+        "description": "Password for simple authentication."
+      },
+      "uri": {
+        "type": "string",
+        "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
+      }
+    },
+    "required": [
+      "entry"
+    ]
+  }
+}

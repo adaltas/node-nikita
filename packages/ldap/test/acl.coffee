@@ -2,7 +2,7 @@
 nikita = require '@nikitajs/core/lib'
 {tags, config, ldap} = require './test'
 they = require('mocha-they')(config)
-utils = require '../src/utils'
+utils = require '../lib/utils'
 
 return unless tags.ldap_acl
 
