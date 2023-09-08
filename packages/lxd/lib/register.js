@@ -23,6 +23,7 @@ module.exports = {
     },
     exists: '@nikitajs/lxd/lib/exists',
     init: '@nikitajs/lxd/lib/init',
+    info: '@nikitajs/lxd/lib/info',
     delete: '@nikitajs/lxd/lib/delete',
     start: '@nikitajs/lxd/lib/start',
     state: '@nikitajs/lxd/lib/state',
