@@ -149,93 +149,96 @@ describe 'tools.repo', ->
       $sudo: sudo
     , ->
       await @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      await @service.remove 'mongodb-org-shell'
+      await @service.remove 'mongodb-org-server'
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
-          'mongodb-org-3.2':
+          'mongodb-org-6.0':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/6.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-3.2.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-6.0.asc'
       await @service.install
-        name: 'mongodb-org-shell'
+        name: 'mongodb-org-server'
       await @execute
-        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
-          'mongodb-org-3.4':
+          'mongodb-org-7.0':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
       $status.should.be.true()
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
-          'mongodb-org-3.4':
+          'mongodb-org-7.0':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
       $status.should.be.false()
       await @execute
-        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
 
   they 'config `update` is `true`', ({ssh, sudo}) ->
+    return if ssh
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
       await @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      await @fs.remove '/etc/pki/rpm-gpg/server-3.2.asc'
-      await @fs.remove '/etc/pki/rpm-gpg/server-3.4.asc'
-      await @service.remove 'mongodb-org-shell'
+      await @fs.remove '/etc/pki/rpm-gpg/server-6.0.asc'
+      await @fs.remove '/etc/pki/rpm-gpg/server-7.0.asc'
+      await @service.remove 'mongodb-org-server'
       await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         content:
-          'mongodb-org-3.2':
+          'mongodb-org-6':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/6.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-3.2.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-6.0.asc'
       await @service.install
-        name: 'mongodb-org-shell'
+        name: 'mongodb-org-server'
       await @execute
-        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
+        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         update: true
         content:
-          'mongodb-org-3.4':
+          'mongodb-org-7':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
       $status.should.be.true()
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mongodb.repo'
         update: true
         content:
-          'mongodb-org-3.4':
+          'mongodb-org-7':
             'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/'
+            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
             'gpgcheck':'1'
             'enabled':'1'
-            'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
+            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
       $status.should.be.false()
       await @execute
-        command: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
-  they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh}) ->
+        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v7.0.1'"
+  
+  they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh, sudo}) ->
     nikita
       $ssh: ssh,
       $tmpdir: true
+      $sudo: sudo
     , ({metadata: {tmpdir}}) ->
       @tools.repo
         target: "/etc/yum.repos.d/jenkins.repo"
@@ -243,9 +246,11 @@ describe 'tools.repo', ->
         gpg_dir: tmpdir
         verify: true
       .should.be.rejectedWith 'Missing gpgkey'
-  they 'Download config `gpg_key`', ({ssh}) ->
+  
+  they 'Download config `gpg_key`', ({ssh, sudo}) ->
     nikita
-      $ssh: ssh,
+      $ssh: ssh
+      $sudo: sudo
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {$status} = await @tools.repo
