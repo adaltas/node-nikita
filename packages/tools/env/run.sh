@@ -3,7 +3,6 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-./apm/run.sh
 ./cron/run.sh
 ./dconf/run.sh
 # ./repo-centos/run.sh
