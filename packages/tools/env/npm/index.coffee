@@ -9,7 +9,7 @@ runner
   cluster:
     containers:
       'nikita-tools-npm':
-        image: 'images:centos/7'
+        image: 'images:almalinux/8'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/npm/test.coffee'
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
@@ -25,6 +25,7 @@ runner
         $header: 'Node.js'
         container: config.container
         command: '''
+        yum install -y tar
         if command -v node ; then exit 42; fi
         curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
