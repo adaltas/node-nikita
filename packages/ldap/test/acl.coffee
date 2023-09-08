@@ -26,7 +26,7 @@ describe 'ldap.acl', ->
     .filter (l) -> /^olcAccess: /.test l
     .map (line) -> line.split(':')[1].trim()
   afterEach ->
-    nikita.ldap.modify
+    await nikita.ldap.modify
       uri: ldap.uri
       binddn: ldap.config.binddn
       passwd: ldap.config.passwd
