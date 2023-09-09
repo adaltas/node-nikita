@@ -132,9 +132,10 @@ handler = async function({
       }
     }
   }
-  // Seriazile and write the content
+  // Serialize and write the content
   content = utils.tmpfs.stringify(content);
   ({$status} = (await this.file({
+    // $debug: true
     content: content,
     gid: config.gid,
     mode: config.mode,
@@ -146,13 +147,14 @@ handler = async function({
       message: `re-creating ${config.mount} tmpfs file`,
       level: 'INFO'
     });
-    this.execute({
+    await this.execute({
       command: `systemd-tmpfiles --remove ${config.target}`
     });
-    return this.execute({
+    await this.execute({
       command: `systemd-tmpfiles --create ${config.target}`
     });
   }
+  return void 0;
 };
 
 // ## Exports

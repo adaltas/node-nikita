@@ -108,9 +108,10 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           log message: "content has been merged", level: 'DEBUG'
         catch err
           throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
-      # Seriazile and write the content
+      # Serialize and write the content
       content = utils.tmpfs.stringify(content)
       {$status} = await @file
+        # $debug: true
         content: content
         gid: config.gid
         mode: config.mode
@@ -118,10 +119,11 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         uid: config.uid
       if $status
         log message: "re-creating #{config.mount} tmpfs file", level: 'INFO'
-        @execute
+        await @execute
           command: "systemd-tmpfiles --remove #{config.target}"
-        @execute
+        await @execute
           command: "systemd-tmpfiles --create #{config.target}"
+      undefined
 
 ## Exports
 

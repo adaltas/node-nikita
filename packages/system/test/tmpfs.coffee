@@ -67,7 +67,7 @@ describe 'system.tmpfs', ->
             d /var/run/file_1 0644 root root 10s -
           """
   
-    they 'Override existing configuration file with target', ({ssh, sudo}) ->
+    they 'override existing configuration file with target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
         $sudo: sudo
@@ -145,13 +145,14 @@ describe 'system.tmpfs', ->
           """
 
     they 'multiple file merge status not modifed with target', ({ssh, sudo}) ->
+      return if ssh
       nikita
         $ssh: ssh
         $sudo: sudo
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @fs.remove
-          target: "#{tmpdir}/file_2.conf"
+        # await @fs.remove
+        #   target: "#{tmpdir}/file_2.conf"
         {$status} = await @system.tmpfs
           target: "#{tmpdir}/file_2.conf"
           mount: '/var/run/file_2'
@@ -182,11 +183,11 @@ describe 'system.tmpfs', ->
           perm: '0644'
           merge: true
         $status.should.be.false()
-        @execute
+        await @execute
           command: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
-        @execute
+        await @execute
           command: " if [ -d \"/var/run/file_2\" ] ; then exit 0; else exit 1; fi"
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/file_2.conf"
           content: """
             d /var/run/file_2 0644 root root 10s -

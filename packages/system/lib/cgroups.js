@@ -247,7 +247,9 @@ handler = async function({config}) {
   ({os} = (await this.system.info.os()));
   // configure parameters based on previous OS dection
   store = {};
-  if (['redhat', 'centos'].includes(os.distribution)) {
+  // Enable cgroup for all distribution, it was restricted to rhel systems
+  // if ['redhat','centos'].includes os.distribution
+  if (true) {
     ({stdout} = (await this.execute({
       $shy: true,
       command: 'cgsnapshot -s 2>&1'
