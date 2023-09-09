@@ -12,6 +12,7 @@ describe 'system.authconfig', ->
     # the configuration file exists and is empty
     nikita
       $ssh: ssh
+      $debug: true
     , ->
       # Init
       @system.authconfig

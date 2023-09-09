@@ -6,7 +6,6 @@ registry = require '@nikitajs/core/lib/registry'
 
 module.exports =
   system:
-    authconfig: '@nikitajs/system/src/authconfig'
     cgroups: '@nikitajs/system/src/cgroups'
     group:
       '': '@nikitajs/system/src/group'
