@@ -1,4 +1,4 @@
-FROM centos:7.9.2009
+FROM almalinux:8
 MAINTAINER David Worms
 
 RUN \
@@ -26,10 +26,10 @@ RUN useradd nikita -d /home/nikita && \
 USER nikita
 
 # Install Node.js
-# Note, CentOS 7.9.2009 incompatible with Node.js >= 18
+ENV NODE_VERSION stable
 RUN \
-  curl -L https://git.io/n-install | bash -s -- -y 16.19
-ENV PATH /home/nikita/n/bin:$PATH
+  curl -L https://git.io/n-install | bash -s -- -y && \
+  . ~/.bashrc && n $NODE_VERSION
 
 RUN \
  ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \

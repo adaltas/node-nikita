@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM ubuntu:22.04
 MAINTAINER David Worms
 
 LABEL project=nikita \
@@ -14,10 +14,13 @@ RUN \
 
 # Install SSH
 RUN apt-get install -y openssh-server \
-  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
+  && ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' \
+  && cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -A \
   && mkdir -p /run/sshd
+
+# Install dbus-x11 required by dbus-launch in entrypoint.sh
+RUN apt install -y dbus-x11
 
 # Install local dependencies
 RUN apt-get install -y dconf-cli gnome-terminal

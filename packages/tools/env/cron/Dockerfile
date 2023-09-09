@@ -1,4 +1,4 @@
-FROM centos:7
+FROM almalinux:8
 MAINTAINER David Worms
 
 # Install Node.js

@@ -29,7 +29,7 @@ runner
         if command -v node ; then exit 42; fi
         curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
-        nvm install 16
+        nvm install 20
         '''
         trap: true
         code: [0, 42]
