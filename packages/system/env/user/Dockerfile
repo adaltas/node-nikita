@@ -26,11 +26,9 @@ USER nikita
 # Install Node.js
 ENV NODE_VERSION stable
 RUN curl -L https://git.io/n-install | bash -s -- -y
-# Note, bashrc not sourced unless running interactively
 ENV PATH /home/nikita/n/bin:$PATH
 
-RUN \
-  ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \
-  cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
+RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \
+    cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
 
 ENTRYPOINT ["/entrypoint.sh"]

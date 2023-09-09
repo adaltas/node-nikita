@@ -15,7 +15,5 @@ if test -t 0; then
     /bin/bash
   fi
 else
-  # Detached mode
-  . ~/.bashrc
   npm run test:local
 fi
