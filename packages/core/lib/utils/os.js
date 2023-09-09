@@ -30,7 +30,8 @@ module.exports = {
   command: dedent`
     #ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
     ARCH=$(uname -m)
-    LINUX_VERSION=\`uname -r | sed 's/\\(.*\\)-.*/\\1/'\`
+    #LINUX_VERSION=\`uname -r | sed 's/\\(.*\\)-.*/\\1/'\`
+    LINUX_VERSION=\`uname -r\`
     # RHEL 7 (CentOS 7), Ubuntu/Debian, Arch Linux
     if [ -f /etc/os-release ]; then
       DISTRIB=\`cat /etc/os-release | egrep '^ID=' | sed 's/^\\(ID="\\?\\)\\?\\([A-Za-z]*\\).*/\\2/'\`
