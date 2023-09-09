@@ -86,7 +86,7 @@ module.exports = {
       await exec(ssh, {
         command: [
           sudo(`mv '${config.target_tmp}' '${config.target}'`),
-          config.sudo ? sudo(`chown root '${config.target}'`) : undefined
+          config.sudo ? sudo(`chown root:root '${config.target}'`) : undefined
         ].join('\n')
       });
     }

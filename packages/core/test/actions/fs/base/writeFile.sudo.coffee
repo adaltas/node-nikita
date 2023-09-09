@@ -19,5 +19,6 @@ describe 'actions.fs.base.writeFile.sudo', ->
         content: 'some content'
       {stats} = await @fs.base.stat "{{parent.metadata.tmpdir}}/a_file"
       stats.uid.should.eql 0
+      stats.gid.should.eql 0
 
       
