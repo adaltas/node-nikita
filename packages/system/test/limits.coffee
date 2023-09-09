@@ -188,7 +188,7 @@ describe 'system.limits', ->
         @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
-          nofile: 1000000000
+          nofile: 10000000000000000000
         .should.be.rejectedWith
           message: /^Invalid nofile configuration property.*$/
 
