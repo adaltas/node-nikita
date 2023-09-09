@@ -9,7 +9,8 @@ runner
   cluster:
     containers:
       'nikita-system-cgroups':
-        image: 'images:centos/7'
+        vm: true
+        image: 'ubuntu:20.04'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/system/env/cgroups/test.coffee'
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
@@ -19,7 +20,7 @@ runner
           nikitadir:
             path: '/nikita'
             source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
-        ssh: enabled: true
+        ssh: enabled: false
     provision_container: ({config}) ->
       await @lxc.exec
         $header: 'Node.js'
@@ -28,7 +29,9 @@ runner
         if command -v node ; then exit 42; fi
         curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
-        nvm install 16
+        nvm install 20
+        # NVM is sourced from ~/.bashrc which is not loaded in non interactive mode
+        echo '. /root/.nvm/nvm.sh' >> /root/.profile
         '''
         trap: true
         code: [0, 42]
@@ -46,6 +49,12 @@ runner
       await @lxc.exec
         $header: 'Package'
         container: config.container
-        command: 'yum install -y libcgroup-tools'
+        # command: 'yum install -y libcgroup-tools'
+        command: 'apt update -y && apt install -y cgroup-tools'
+      await @lxc.exec
+        $header: 'cgroup configuration'
+        container: config.container
+        # Ubuntu specific, centos/7 didn't require it
+        command: 'cp -pr /usr/share/doc/cgroup-tools/examples/cgsnapshot_blacklist.conf /etc/cgsnapshot_blacklist.conf'
 .catch (err) ->
   console.error err
