@@ -7,7 +7,7 @@ module.exports =
     os:
       arch: 'x86_64'
       distribution: 'centos'
-      linux_version: /5\.10\.\d+/
+      # linux_version: /5\.10\.\d+/
       version: '6.10'
   config: [
     label: 'remote'

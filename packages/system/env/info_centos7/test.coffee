@@ -7,7 +7,7 @@ module.exports =
     os:
       arch: /x86_64|aarch64/
       distribution: 'centos'
-      linux_version: /5\.10\.\d+/
+      # linux_version: /5\.10\.\d+/
       version: /7\.9\.\d+/
   config: [
     label: 'local'

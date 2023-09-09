@@ -3,8 +3,8 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-npx coffee ./authconfig/index.coffee run
-npx coffee ./cgroups/index.coffee run
+# Require cgroup v1
+# npx coffee ./env/cgroups/index.coffee run
 ./info_archlinux/run.sh
 ./info_centos6/run.sh
 ./info_centos7/run.sh
