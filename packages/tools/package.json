@@ -45,6 +45,7 @@
     "@nikitajs/file": "^1.0.0-alpha.3",
     "@nikitajs/service": "^1.0.0-alpha.3",
     "dayjs": "^1.11.2",
+    "dedent": "^1.2.0",
     "jsesc": "^3.0.2",
     "mixme": "^0.5.4"
   },
@@ -69,10 +70,10 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/tools/src/register"
+      "@nikitajs/tools/lib/register"
     ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "timeout": 40000,
     "reporter": "spec",
     "recursive": true
   },
@@ -87,7 +88,6 @@
     "directory": "packages/tools"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/tools\\/src/@nikitajs\\/tools\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"

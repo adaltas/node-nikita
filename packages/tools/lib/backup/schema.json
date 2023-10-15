@@ -1,0 +1,54 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Backup file name, required."
+      },
+      "command": {
+        "type": "string",
+        "description": "Command from which to pipe the ouptut or generating a file if the\n\"target\" option is defined."
+      },
+      "format": {
+        "type": "string",
+        "description": "Format used to name the backup directory, used by [Moment.js], default\nto \"ISO-8601\"."
+      },
+      "locale": {
+        "type": "string",
+        "description": "Locale used to name the backup directory, used by [Moment.js], default\nto  UTC."
+      },
+      "compress": {
+        "oneOf": [
+          {
+            "$ref": "module://@nikitajs/tools/lib/compress#/definitions/config/properties/format"
+          },
+          {
+            "type": "boolean"
+          }
+        ],
+        "description": "One of \"tgz\", \"tar\", \"xz\", \"bz2\" or \"zip\", default to \"tgz\" if true or\na directory otherwise no compression."
+      },
+      "source": {
+        "type": [
+          "string",
+          "boolean"
+        ],
+        "description": "Path to a file or a directory to backup."
+      },
+      "target": {
+        "type": "string",
+        "description": "Directory storing the backup, required."
+      },
+      "timezone": {
+        "type": "string",
+        "default": "UTC",
+        "description": "The time zone to use. The only value implementations must recognize is\n\"UTC\"; the default is the runtime's default time zone. Implementations\nmay also recognize the time zone names of the [IANA time zone\ndatabase](https://www.iana.org/time-zones), such as \"Asia/Shanghai\",\n\"Asia/Kolkata\", \"America/New_York\"."
+      }
+    },
+    "required": [
+      "name",
+      "target"
+    ]
+  }
+}

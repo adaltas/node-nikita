@@ -1,5 +1,5 @@
 
-iptables = require '../../src/utils/iptables'
+iptables = require '../../lib/utils/iptables'
 {tags} = require '../test'
 
 return unless tags.tools_iptables
