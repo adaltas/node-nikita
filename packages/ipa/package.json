@@ -63,7 +63,7 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/ipa/src/register"
+      "@nikitajs/ipa/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 20000,
@@ -81,7 +81,6 @@
     "directory": "packages/ipa"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/ipa\\/src/@nikitajs\\/ipa\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"

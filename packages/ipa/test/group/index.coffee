@@ -55,6 +55,7 @@ describe 'ipa.group', ->
           'ipausergroup'
           'ipaobject'
           'posixgroup'
+          'ipantgroupattrs'
         ]
         dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita,dc=local'
         gidnumber: null

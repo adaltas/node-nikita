@@ -46,7 +46,7 @@ runner
         'dns.domain': 'nikita.local'
     containers:
       'nikita-ipa':
-        image: 'images:centos/7'
+        image: 'images:almalinux/8'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
@@ -70,6 +70,7 @@ runner
         $header: 'Node.js'
         code: [0, 42]
         command: '''
+        dnf install -y tar # Not present on almalinux
         bash -l -c "command -v node" && exit 42
         curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
         . ~/.bashrc
@@ -98,7 +99,10 @@ runner
         # echo admin_pw | kinit admin
         command: """
         [ -f /etc/ipa/default.conf ] && exit 42
-        yum install -y freeipa-server ipa-server-dns
+        # Enable the IDM – Identity Management system module,
+        # required on AlmaLinux
+        dnf install -y @idm:DL1
+        dnf install -y freeipa-server ipa-server-dns
         hostnamectl set-hostname ipa.nikita.local --static
         #{[
           'ipa-server-install', '-U'
@@ -119,6 +123,10 @@ runner
           "--setup-dns --auto-reverse --auto-forwarders"
           # Kerberos REALM
           "-r NIKITA.LOCAL"
+          # Chrony doesnt start inside a container, no permission to change clock
+          # Fatal error : adjtimex(0x8001) failed : Operation not permitted
+          # See https://bugs.launchpad.net/ubuntu/+source/chrony/+bug/1589780
+          "--no-ntp"
         ].join ' '}
         """
         container: config.container

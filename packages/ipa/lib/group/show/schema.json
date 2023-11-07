@@ -1,0 +1,23 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "cn": {
+        "type": "string",
+        "description": "Name of the group to show."
+      },
+      "connection": {
+        "type": "object",
+        "$ref": "module://@nikitajs/network/lib/http#/definitions/config",
+        "required": [
+          "principal",
+          "password"
+        ]
+      }
+    },
+    "required": [
+      "cn",
+      "connection"
+    ]
+  }
+}

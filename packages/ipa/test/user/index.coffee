@@ -5,6 +5,21 @@ they = require('mocha-they')(config)
 
 return unless tags.ipa
 
+userMatch = 
+  sn: [ 'Lastname' ],
+  loginshell: [ '/bin/sh' ],
+  krbprincipalname: [ 'user_add@NIKITA.LOCAL' ],
+  uidnumber: [ /\d+/ ],
+  uid: [ 'user_add' ],
+  mail: [ 'user@nikita.js.org' ],
+  gidnumber: [ /\d+/ ],
+  givenname: [ 'Firstname' ],
+  homedirectory: [ '/home/user_add' ],
+  krbcanonicalname: [ 'user_add@NIKITA.LOCAL' ],
+  has_password: false,
+  has_keytab: false,
+  memberof_group: [ 'ipausers' ]
+
 describe 'ipa.user', ->
 
   describe 'schema', ->
@@ -40,8 +55,7 @@ describe 'ipa.user', ->
         ].join ' '
 
     it 'coercion of `mail` attribute', ->
-      nikita
-      .ipa.user
+      nikita.ipa.user
         uid: 'username'
         attributes:
           givenname: 'Firstname'
@@ -58,7 +72,7 @@ describe 'ipa.user', ->
         @ipa.user.del
           uid: 'user_add'
           connection: ipa
-        {$status} = await @ipa.user
+        {$status, result} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
@@ -66,14 +80,7 @@ describe 'ipa.user', ->
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
         $status.should.be.true()
-        {$status} = await @ipa.user
-          uid: 'user_add'
-          attributes:
-            givenname: 'Firstname'
-            sn: 'Lastname'
-            mail: [ 'user@nikita.js.org' ]
-          connection: ipa
-        $status.should.be.false()
+        result.should.match userMatch
 
     they 'modify a user', ({ssh}) ->
       nikita
@@ -88,7 +95,7 @@ describe 'ipa.user', ->
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
-        {$status} = await @ipa.user
+        {$status, result} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname 2'
@@ -96,10 +103,31 @@ describe 'ipa.user', ->
             mail: [ 'user@nikita.js.org' ]
           connection: ipa
         $status.should.be.true()
-        {result} = await @ipa.user.show
+        result.should.match {...userMatch, givenname: ['Firstname 2']}
+
+    they 'dont modify a user', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        @ipa.user.del
           uid: 'user_add'
           connection: ipa
-        result.givenname.should.eql ['Firstname 2']
+        {$status} = await @ipa.user
+          uid: 'user_add'
+          attributes:
+            givenname: 'Firstname'
+            sn: 'Lastname'
+            mail: [ 'user@nikita.js.org' ]
+          connection: ipa
+        {$status, result} = await @ipa.user
+          uid: 'user_add'
+          attributes:
+            givenname: 'Firstname'
+            sn: 'Lastname'
+            mail: [ 'user@nikita.js.org' ]
+          connection: ipa
+        $status.should.be.false()
+        result.should.match userMatch
 
     they 'modify password', ({ssh}) ->
       nikita
