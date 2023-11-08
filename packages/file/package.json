@@ -54,6 +54,7 @@
   ],
   "dependencies": {
     "cson": "^7.20.0",
+    "dedent": "^1.2.0",
     "diff": "^5.1.0",
     "handlebars": "^4.7.7",
     "ini": "^3.0.0",
