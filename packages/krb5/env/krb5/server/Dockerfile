@@ -3,7 +3,6 @@
 # docker run --rm -it nikita_krb5
 
 FROM centos:7
-MAINTAINER SequenceIQ
 
 # EPEL
 RUN yum install -y epel-release

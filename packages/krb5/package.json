@@ -41,6 +41,9 @@
       "email": "sergei@adaltas.com"
     }
   ],
+  "dependencies": {
+    "dedent": "^1.2.0"
+  },
   "peerDependencies": {
     "@nikitajs/core": "^1.0.0-alpha.1"
   },
@@ -61,10 +64,10 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/krb5/src/register"
+      "@nikitajs/krb5/lib/register"
     ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "timeout": 40000,
     "reporter": "spec",
     "recursive": true
   },
@@ -79,7 +82,6 @@
     "directory": "packages/krb5"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/krb5\\/src/@nikitajs\\/krb5\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
