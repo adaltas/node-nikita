@@ -83,10 +83,18 @@
         "description": "Write a temporary file which exports the the environment variables defined in the `env` property. The value is always `true` when environment variables must be used with SSH."
       },
       "format": {
-        "type": "string",
-        "enum": [
-          "json",
-          "yaml"
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "json",
+              "jsonlines",
+              "yaml"
+            ]
+          },
+          {
+            "typeof": "function"
+          }
         ],
         "description": "Convert the stdout to a Javascript value or object."
       },

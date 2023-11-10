@@ -6,6 +6,7 @@ const fs = require('ssh2-fs');
 const yaml = require('js-yaml');
 const utils = require('../../utils');
 const definitions = require('./schema.json');
+const esa = utils.string.escapeshellarg;
 
 // Errors
 const errors = {
@@ -23,8 +24,7 @@ module.exports = {
   handler: async function({
     config,
     metadata,
-    parent,
-    tools: {dig, find, log, path, walk},
+    tools: {find, log, path},
     ssh
   }) {
     // Validate parameters
@@ -264,7 +264,7 @@ module.exports = {
         result.code = code;
         // Give it some time because the "exit" event is sometimes called
         // before the "stdout" "data" event when running `npm test`
-        return setImmediate(function() {
+        setImmediate(async function() {
           if (stdout_stream_open && config.stdout_log) {
             log({
               message: null,
@@ -289,15 +289,44 @@ module.exports = {
           if (config.trim || config.stderr_trim) {
             result.stderr = result.stderr.trim();
           }
-          if (config.format && config.code.true.indexOf(code) !== -1) {
-            result.data = (function() {
-              switch (config.format) {
-                case 'json':
-                  return JSON.parse(result.stdout);
-                case 'yaml':
-                  return yaml.load(result.stdout);
+          if (config.format && config.code.true.includes(code)) {
+              if (typeof config.format === "function") {
+                try {
+                  result.data = await config.format({
+                    ...result
+                  });
+                } catch (error) {
+                  reject(
+                    utils.error("NIKITA_EXECUTE_FORMAT_FN_FAILURE", [
+                      "failed to format output with a user defined function,",
+                      `original error message is ${esa(error.message)}`,
+                    ])
+                  );
+                }
+              } else {
+                try {
+                  result.data = (function () {
+                    switch (config.format) {
+                      case "json":
+                        return JSON.parse(result.stdout);
+                      case "jsonlines":
+                        return utils.string
+                          .lines(result.stdout.trim())
+                          .map(JSON.parse);
+                      case "yaml":
+                        return yaml.load(result.stdout);
+                    }
+                  })();
+                } catch (error) {
+                  reject(
+                    utils.error("NIKITA_EXECUTE_PARSING_FAILURE", [
+                      "failed to parse output,",
+                      `format is ${JSON.stringify(config.format)},`,
+                      `original error message is ${JSON.stringify(error.message)}`,
+                    ])
+                  );
+                }
               }
-            })();
           }
           if (result.stdout && result.stdout !== '' && config.stdout_log) {
             log({
