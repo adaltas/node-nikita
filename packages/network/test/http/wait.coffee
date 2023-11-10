@@ -37,7 +37,6 @@ server = ->
         clearTimeout hangTimeout if hangTimeout
         _.close resolve
 
-
 describe 'run', ->
 
   they 'code 200 with server started', ({ssh}) ->
