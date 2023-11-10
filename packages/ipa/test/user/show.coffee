@@ -10,8 +10,7 @@ describe 'ipa.user.show', ->
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
-      nikita
-      .ipa.user.show connection: ipa,
+      nikita.ipa.user.show connection: ipa,
         username: 'admin'
 
   describe 'action', ->
