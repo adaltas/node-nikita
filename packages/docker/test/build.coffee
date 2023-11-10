@@ -46,13 +46,14 @@ describe 'docker.build', ->
         docker: docker
       , ->
         @docker.rmi 'nikita/should_exists_1'
-        {$status, stdout} = await @docker.build
+        {$status, image, stdout} = await @docker.build
           image: 'nikita/should_exists_1'
           content: """
           FROM scratch
           CMD echo hello 1
           """
         $status.should.be.true()
+        image.should.match /^\w{12}$/
         stdout.should.containEql 'Step 2/2 : CMD echo hello'
         @docker.rmi 'nikita/should_exists_1'
 

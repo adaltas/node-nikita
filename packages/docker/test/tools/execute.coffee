@@ -9,12 +9,6 @@ describe 'docker.tools.execute', ->
   
   describe 'schema', ->
 
-    it 'valid', ->
-      nikita
-      .docker.tools.execute
-        command: 'ok'
-        dry: true
-
     it 'command is required', ->
       nikita
       .docker.tools.execute()
@@ -39,3 +33,24 @@ describe 'docker.tools.execute', ->
         invalid: 'property'
         command: 'ok'
       .should.be.rejectedWith /should NOT have additional properties/
+  
+  describe 'action', ->
+
+    it 'with a command', ->
+      (
+        await nikita
+          docker: docker
+        .docker.tools.execute
+          command: 'version'
+      )
+      .stdout.should.match /\s+Version:\s+\d+\./
+
+    it 'with a global docker option', ->
+      (
+        await nikita
+          docker: docker
+        .docker.tools.execute
+          command: ''
+          opts: version: true
+      )
+      .stdout.should.match /Docker version \d+/

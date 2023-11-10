@@ -1,0 +1,73 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "#/definitions/docker"
+      },
+      {
+        "properties": {
+          "bash": {
+            "type": [
+              "boolean",
+              "string"
+            ],
+            "description": "Serialize the command into a file and execute it with bash."
+          },
+          "command": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "typeof": "function"
+              }
+            ],
+            "description": "String, Object or array; Command to execute. A value provided as a\nfunction is interpreted as an action and will be called by forwarding\nthe config object. The result is the expected to be the command\nto execute."
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Current working directory from where to execute the command."
+          },
+          "code": {
+            "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code",
+            "default": {}
+          },
+          "docker": {
+            "$ref": "#/definitions/docker"
+          },
+          "format": {
+            "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/format"
+          }
+        }
+      }
+    ],
+    "required": [
+      "command"
+    ]
+  },
+  "docker": {
+    "type": "object",
+    "description": "Isolate all the parent configuration properties into a docker\nproperty, used when providing and cascading a docker configuration at\na global scale.",
+    "properties": {
+      "compose": {
+        "type": "boolean",
+        "description": "Use the `docker compose` (or `docker-compose`) command instead of\n`docker`."
+      },
+      "docker_host": {
+        "type": "string",
+        "description": "The value associated with the `DOCKER_HOST` environment variable,\nfor example `tcp://dind:2375`."
+      },
+      "machine": {
+        "type": "string",
+        "format": "hostname",
+        "description": "Name of the docker-machine, required if using docker-machine."
+      },
+      "opts": {
+        "type": "object",
+        "default": {},
+        "description": "Options passed to the `docker` or `docker compose` command."
+      }
+    }
+  }
+}

@@ -42,7 +42,8 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.3"
+    "@nikitajs/file": "^1.0.0-alpha.3",
+    "dedent": "^1.2.0"
   },
   "peerDependencies": {
     "@nikitajs/core": "^1.0.0-alpha.1"
@@ -65,8 +66,8 @@
     "require": [
       "should",
       "coffeescript/register",
-      "@nikitajs/docker/src/register",
-      "@nikitajs/network/src/register"
+      "@nikitajs/docker/lib/register",
+      "@nikitajs/network/lib/register"
     ],
     "inline-diffs": true,
     "timeout": 20000,
@@ -84,7 +85,6 @@
     "directory": "packages/docker"
   },
   "scripts": {
-    "build": "coffee -b -o lib src && find lib -type f | xargs sed -i -e 's/@nikitajs\\/docker\\/src/@nikitajs\\/docker\\/lib/g'",
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"

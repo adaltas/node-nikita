@@ -17,45 +17,39 @@ describe 'docker.load', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.remove
-        target: "#{tmpdir}/nikita_load.tar"
-      @docker.build
+      await @docker.build
         image: 'nikita/load_test'
         tag: 'latest'
         content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
-      @docker.save
+      await @docker.save
         image: 'nikita/load_test'
         tag: 'latest'
         output: "#{tmpdir}/nikita_load.tar"
-      @docker.rmi
+      await @docker.rmi
         image: 'nikita/load_test'
       {$status} = await @docker.load
-        image: 'nikita/load_test'
-        tag: 'latest'
         input: "#{tmpdir}/nikita_load.tar"
       $status.should.be.true()
-      @docker.rmi
+      await @docker.rmi
         image: 'nikita/load_test'
 
-  they 'not loading if checksum', ({ssh}) ->
+  they 'not loading if checksum match existing image', ({ssh}) ->
     nikita
       $ssh: ssh
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.remove
-        target: "#{tmpdir}/nikita_load.tar"
-      {checksum} = await @docker.build
+      {image} = await @docker.build
         image: 'nikita/load_test'
         tag: 'latest'
         content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
-      @docker.save
+      await @docker.save
         image: 'nikita/load_test'
         tag: 'latest'
         output: "#{tmpdir}/nikita_load.tar"
       {$status} = await @docker.load
         input: "#{tmpdir}/nikita_load.tar"
-        checksum: checksum
+        checksum: image
       $status.should.be.false()
 
   they 'status not modified if same image', ({ssh}) ->
@@ -65,21 +59,17 @@ describe 'docker.load', ->
       docker: docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.remove
-        target: "#{tmpdir}/nikita_load.tar"
-      @docker.rmi
+      await @docker.rmi
         image: 'nikita/load_test:latest'
-      @docker.build
+      await @docker.build
         image: 'nikita/load_test'
         tag: 'latest'
         content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
-      @docker.save
+      await @docker.save
         image: 'nikita/load_test:latest'
         output: "#{tmpdir}/load.tar"
-      @docker.load
-        image: 'nikita/nikita_load:latest'
+      await @docker.load
         input: "#{tmpdir}/load.tar"
       {$status} = await @docker.load
-        image: 'nikita/nikita_load:latest'
         input: "#{tmpdir}/load.tar"
       $status.should.be.false()

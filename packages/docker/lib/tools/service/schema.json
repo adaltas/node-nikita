@@ -1,0 +1,24 @@
+{
+  "config": {
+    "type": "object",
+    "allOf": [
+      {
+        "properties": {
+          "detach": {
+            "default": true
+          },
+          "rm": {
+            "default": false
+          }
+        }
+      },
+      {
+        "$ref": "module://@nikitajs/docker/lib/run"
+      }
+    ],
+    "required": [
+      "container",
+      "image"
+    ]
+  }
+}
