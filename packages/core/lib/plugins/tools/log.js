@@ -13,7 +13,8 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 const {EventEmitter} = require('events');
 const stackTrace = require('stack-trace');
 const path = require('path');
-const {merge} = require('mixme');
+const {is_object_literal, merge, mutate} = require('mixme');
+const utils = require('../../utils');
 
 module.exports = {
   name: '@nikitajs/core/lib/plugins/tools/log',
@@ -33,32 +34,45 @@ module.exports = {
         const debug = await action.tools.find(function(action) {
           return action.metadata.debug;
         });
-        return action.tools.log = function(log) {
-          var ref, ref1;
-          log = merge(log);
-          if (typeof log === 'string') {
-            log = {
-              message: log
-            };
+        action.tools.log = function(...args) {
+          const log = {}
+          let indexMessage = -1;
+          let indexLevel = -1;
+          for(const i in args) {
+            const arg = args[i];
+            if (is_object_literal(arg)) {
+              continue
+            } else if (typeof arg !== 'string') {
+              throw utils.error('TOOLS_LOGS_INVALID_ARGUMENT', [
+                '`tools.log` accept string and object arguments,',
+                `got ${JSON.stringify(arg)}.`,
+              ]);
+            }
+            if (indexMessage === -1 && indexLevel === -1) {
+              indexMessage = i;
+              args[i] = {message: arg}
+            } else if (indexMessage !== -1 && indexLevel === -1) {
+              log.level = log.message
+              log.message = arg
+              args[indexMessage] = {level: args[indexMessage].message}
+              args[i] = {message: arg}
+              indexLevel = indexMessage;
+              indexMessage = i;
+            } else {
+              throw utils.error('TOOLS_LOGS_INVALID_STRING_ARGUMENT', [
+                '`tools.log` accept only 2 strings, a level and a message,',
+                'additionnal string arguments are not supported,',
+                `got ${JSON.stringify(arg)}.`
+              ]);
+            }
           }
-          if (log.level == null) {
-            log.level = 'INFO';
-          }
-          if (log.time == null) {
-            log.time = Date.now();
-          }
-          if (log.index == null) {
-            log.index = action.metadata.index;
-          }
-          if (log.module == null) {
-            log.module = action.metadata.module;
-          }
-          if (log.namespace == null) {
-            log.namespace = action.metadata.namespace;
-          }
-          if (log.type == null) {
-            log.type = 'text';
-          }
+          mutate(log, ...args)
+          log.level ??= 'INFO';
+          log.time ??= Date.now();
+          log.index ??= action.metadata.index;
+          log.module ??= action.metadata.module;
+          log.namespace ??= action.metadata.namespace;
+          log.type ??= 'text';
           log.depth = action.metadata.depth;
           log.index = action.metadata.index;
           log.position = action.metadata.position;

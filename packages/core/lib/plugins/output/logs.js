@@ -21,8 +21,8 @@ module.exports = {
       handler: function(action) {
         action.state.logs = [];
         action.tools.log = (function(fn) {
-          return function(info) {
-            const log = fn.call(null, info);
+          return function(...info) {
+            const log = fn.call(null, ...info);
             if (!is_object_literal(log)) {
               // Note, log is undefined if `metadata.log` is `false`
               // or any value return by `metadata.log` when a function

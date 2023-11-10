@@ -8,7 +8,7 @@ describe 'plugins.tools.log', ->
 
   describe 'events', ->
     
-    it 'are emitted', ->
+    it 'emitted and readable by events', ->
       nikita ({tools: {events, log}}) ->
         new Promise (resolve) ->
           events.on 'text', (msg) ->
@@ -33,7 +33,80 @@ describe 'plugins.tools.log', ->
         true
       arg.should.eql key: 'value'
   
-  describe 'is a `boolean`', ->
+  describe 'tools.log', ->
+
+    it 'only strings and objects are accepted', ->
+      nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log 'a message', -1
+      .should.be.rejectedWith [
+        'TOOLS_LOGS_INVALID_ARGUMENT:'
+        '`tools.log` accept string and object arguments,'
+        'got -1.'
+      ].join ' '
+
+    it 'only 2 strings are accepted', ->
+      nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log 'a level', 'a message', 'an error'
+      .should.be.rejectedWith [
+        'TOOLS_LOGS_INVALID_STRING_ARGUMENT:'
+        '`tools.log` accept only 2 strings,'
+        'a level and a message, additionnal string arguments are not supported,'
+        'got "an error".'
+      ].join ' '
+
+    it 'accept message:string', ->
+      logs = []
+      await nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log 'a message'
+      logs.map( ({message}) => message).should.eql ['a message']
+
+    it 'accept level:string, message:string', ->
+      logs = []
+      await nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log 'INFO', 'an information'
+          log 'WARN', 'a warning'
+      logs
+        .map( ({level, message}) -> "#{level}: #{message}")
+        .should.eql ['INFO: an information', 'WARN: a warning']
+
+    it 'accept level:object, level:string, message:object, message:string', ->
+      logs = []
+      await nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log level: 'INFO', 'ERROR', message: 'an info', 'an error'
+          log level: 'DEBUG', 'WARN', message: 'a debug', 'a warning'
+      logs
+        .map( ({level, message}) -> "#{level}: #{message}")
+        .should.eql ['ERROR: an error', 'WARN: a warning']
+
+    it 'accept level:string, level:object, message:string, message:object', ->
+      logs = []
+      await nikita
+        .call
+          $log: ({log}) -> logs.push log
+        , ({tools: {log}}) ->
+          log 'INFO', level: 'ERROR', 'an info', message: 'an error'
+          log 'DEBUG', level: 'WARN', 'a warning', message: 'a warning'
+      logs
+        .map( ({level, message}) -> "#{level}: #{message}")
+        .should.eql ['ERROR: an error', 'WARN: a warning']
+
+  
+  describe 'metadata.log as a `boolean`', ->
       
     it 'equals `true`', ->
       data = []
@@ -69,7 +142,7 @@ describe 'plugins.tools.log', ->
           log message: 'enabled child'
       data.should.eql ['enabled parent', 'enabled child']
   
-  describe 'is a `function`', ->
+  describe 'metadata.log as a `function`', ->
   
     it 'argument `log`', ->
       data = []
