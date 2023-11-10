@@ -8,4 +8,4 @@ services:
     volumes:
       - ../../../../:/nikita
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/tools/env/repo-centos7/test.coffee
+      NIKITA_TEST_MODULE: /nikita/packages/tools/env/repo-alma8/test.coffee

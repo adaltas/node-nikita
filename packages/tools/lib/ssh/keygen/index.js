@@ -1,7 +1,7 @@
 
 // Dependencies
 const definitions = require("./schema.json");
-const esa = require('@nikitajs/core/lib/utils').string.escapeshellarg;;
+const esa = require('@nikitajs/core/lib/utils').string.escapeshellarg;
 
 // Action
 module.exports = {
