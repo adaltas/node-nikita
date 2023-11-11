@@ -3,7 +3,7 @@ const dedent = require('dedent');
 const utils = require('@nikitajs/core/lib/utils');
 const definitions = require('./schema.json');
 
-// ## Errors
+// Errors
 const errors = {
   NIKITA_TCP_WAIT_TIMEOUT: function({config}) {
     return utils.error('NIKITA_TCP_WAIT_TIMEOUT', [`timeout reached after ${config.timeout}ms.`]);
