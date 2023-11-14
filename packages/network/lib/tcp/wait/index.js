@@ -35,17 +35,20 @@ module.exports = {
     try {
       // Note, dedent failed to escape `host="\${address%%:*}"`
       // It output  `\${` instead of `${`
+      // Selected solution is to separate `$` from `{` with `${''}`
       await this.execute({
         bash: true,
         command: dedent`
           function compute_md5 {
-            echo $1 | openssl md5 | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
+            echo $1 | openssl md5 | sed 's/^.* \([a-z0-9]*\)$/\1/g'
           }
           addresses=( ${config.server.map( ({host, port}) => "'" + host + "':'" + port + "'").join(" ")})
           timeout=${config.timeout || ""}
           md5=\`compute_md5 $${''}{addresses[@]}\`
           randdir="${config.randdir || ""}"
           if [ -z $randir ]; then
+            # shm and shmfs is also known as tmpfs
+            # Provide in-memory temporary file storage
             if [ -w /dev/shm ]; then
               randdir="/dev/shm/$md5"
             else
@@ -113,6 +116,7 @@ module.exports = {
             fi
           }
           start_time=\`get_time\`
+          # Block until all connections are open
           for address in "$${''}{addresses[@]}" ; do
             host="$${''}{address%%:*}"
             port="$${''}{address##*:}"
