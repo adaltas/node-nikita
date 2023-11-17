@@ -50,6 +50,7 @@ const session = function(args, options = {}) {
   };
   // Building the namespace before calling an action
   const on_get = function(target, name) {
+    // Return static properties
     if ((target[name] != null) && !action.registry.registered(name)) {
       if (typeof target[name] === 'function') {
         return target[name].bind(target);
@@ -57,6 +58,7 @@ const session = function(args, options = {}) {
         return target[name];
       }
     }
+    // Return the plugins instance in the root session
     if (namespace.length === 0) {
       switch (name) {
         case 'plugins':

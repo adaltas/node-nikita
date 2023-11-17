@@ -65,7 +65,7 @@ module.exports = {
               switch (protocol) {
                 case 'module:':
                   try {
-                    const act = require.main.require(pathname);
+                    const act = await require.main.require(pathname);
                     return accept({
                       definitions: act.metadata.definitions
                     });

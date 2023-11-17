@@ -6,7 +6,7 @@ const {mutate} = require('mixme');
 // Action
 module.exports = {
   hooks: {
-    on_action: function(action) {
+    on_action: async function(action) {
       if (typeof action.metadata.argument !== 'string') {
         return;
       }
@@ -16,7 +16,7 @@ module.exports = {
         if (mod.startsWith('.')) {
           mod = path.resolve(process.cwd(), mod);
         }
-        mod = require.main.require(mod);
+        mod = await require.main.require(mod);
         // The loaded action can have its own interpretation of an argument.
         // In order to avoid any conflict, we simply remove the
         // `action.metadata.argument` property.

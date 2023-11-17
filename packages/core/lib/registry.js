@@ -51,11 +51,11 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   Load an action from the module name.
   
   */
-  obj.load = function(module) {
+  obj.load = async function(module) {
     if (typeof module !== 'string') {
       throw Error(`Invalid Argument: module must be a string, got ${module.toString()}`);
     }
-    const action = require.main.require(module);
+    const action = await require.main.require(module);
     if (typeof action === 'function') {
       action = {
         handler: action
@@ -265,7 +265,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         return obj.chain || obj;
       }
       if (typeof action === 'string') {
-        action = obj.load(action);
+        action = await obj.load(action);
       } else if (typeof action === 'function') {
         action = {
           handler: action
@@ -293,7 +293,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
             results.push((await walk(namespace, action)));
           } else {
             if (typeof action === 'string') {
-              action = obj.load(action);
+              action = await obj.load(action);
             } else if (typeof action === 'function') {
               action = {
                 handler: action
@@ -336,14 +336,14 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   ```
 
    */
-  obj.deprecate = function(old_name, new_name, action) {
+  obj.deprecate = async function(old_name, new_name, action) {
     let handler;
     if (arguments.length === 2) {
       handler = new_name;
       new_name = null;
     }
     if (typeof action === 'string') {
-      action = obj.load(action);
+      action = await obj.load(action);
     }
     if (typeof handler === 'function') {
       action = {
