@@ -1,0 +1,40 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "output": {
+        "type": "array",
+        "default": [
+          "source",
+          "fstype",
+          "itotal",
+          "iused",
+          "iavail",
+          "ipcent",
+          "size",
+          "used",
+          "avail",
+          "pcent",
+          "target"
+        ],
+        "items": {
+          "type": "string",
+          "enum": [
+            "source",
+            "fstype",
+            "itotal",
+            "iused",
+            "iavail",
+            "ipcent",
+            "size",
+            "used",
+            "avail",
+            "pcent",
+            "target"
+          ]
+        },
+        "description": "The list of properties to be returned, default to all of them."
+      }
+    }
+  }
+}

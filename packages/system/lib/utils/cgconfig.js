@@ -5,25 +5,23 @@ utils = require('@nikitajs/core/lib/utils');
 
 module.exports = {
   parse: function(str) {
-    var current_controller_name, current_default, current_group, current_group_controller, current_group_name, current_group_perm, current_group_perm_content, current_group_section, current_group_section_perm_name, current_mount, current_mount_section, lines, list_of_group_sections, list_of_mount_sections;
-    lines = utils.string.lines(str);
-    list_of_mount_sections = [];
-    list_of_group_sections = {};
+    let list_of_mount_sections = [];
+    let list_of_group_sections = {};
     // variable which hold the cursor position
-    current_mount = false;
-    current_group = false;
-    current_group_name = '';
-    current_group_controller = false;
-    current_group_perm = false;
-    current_group_perm_content = false;
-    current_default = false;
+    let current_mount = false;
+    let current_group = false;
+    let current_group_name = '';
+    let current_group_controller = false;
+    let current_group_perm = false;
+    let current_group_perm_content = false;
+    let current_default = false;
     // variables which hold the data
-    current_mount_section = null;
-    current_group_section = null; // group section is a tree but only of group
-    current_controller_name = null;
-    current_group_section_perm_name = null;
-    lines.forEach(function(line, _, __) {
-      var base, base1, match, match_admin, name, name1, name2, name3, name4, sep, type, value;
+    let current_mount_section = null;
+    let current_group_section = null; // group section is a tree but only of group
+    let current_controller_name = null;
+    let current_group_section_perm_name = null;
+    utils.string.lines(str).forEach(function(line, _, __) {
+      var base, base1, match, match_admin, name, name1, name2, name4, sep, type, value;
       if (!line || line.match(/^\s*$/)) {
         return;
       }
@@ -104,7 +102,7 @@ module.exports = {
                 current_group_controller = true;
                 current_controller_name = match[1];
                 current_group_section[`${current_controller_name}`] = {};
-                return (base = list_of_group_sections[`${current_group_name}`])[name3 = `${current_controller_name}`] != null ? base[name3] : base[name3] = {};
+                return (base = list_of_group_sections[`${current_group_name}`])[current_controller_name] != null ? base[current_controller_name] : base[current_controller_name] = {};
               }
             } else if (current_group_perm && current_group_perm_content) { // perm config
               line = line.replace(';', '');
@@ -141,14 +139,13 @@ module.exports = {
     };
   },
   stringify: function(obj, config = {}) {
-    var count, group, group_render, i, indent, j, k, key, l, len, mount, mount_render, name, prop, ref, ref1, ref2, ref3, ref4, render, sections, val, value;
+    var i, indent, j, k, l, len, mount, name, ref, ref1, val;
     if (obj.mounts == null) {
       obj.mounts = [];
     }
     if (obj.groups == null) {
       obj.groups = {};
     }
-    render = "";
     if (config.indent == null) {
       config.indent = 2;
     }
@@ -156,9 +153,9 @@ module.exports = {
     for (i = j = 1, ref = config.indent; (1 <= ref ? j <= ref : j >= ref); i = 1 <= ref ? ++j : --j) {
       indent += ' ';
     }
-    sections = [];
+    const sections = [];
     if (obj.mounts.length !== 0) {
-      mount_render = "mount {\n";
+      let mount_render = "mount {\n";
       ref1 = obj.mounts;
       for (k = l = 0, len = ref1.length; l < len; k = ++l) {
         mount = ref1[k];
@@ -167,29 +164,26 @@ module.exports = {
       mount_render += '}';
       sections.push(mount_render);
     }
-    count = 0;
-    ref2 = obj.groups;
-    for (name in ref2) {
-      group = ref2[name];
-      group_render = (name === '') || (name === 'default') ? 'default {\n' : `group ${name} {\n`;
-      for (key in group) {
-        value = group[key];
+    let count = 0;
+    for (name in obj.groups) {
+      const group = obj.groups[name];
+      let group_render = (name === '') || (name === 'default') ? 'default {\n' : `group ${name} {\n`;
+      for (const key in group) {
+        const value = group[key];
         if (key === 'perm') {
           group_render += `${indent}perm {\n`;
           if (value['admin'] != null) {
             group_render += `${indent}${indent}admin {\n`;
-            ref3 = value['admin'];
-            for (prop in ref3) {
-              val = ref3[prop];
+            for (const prop in value['admin']) {
+              val = value['admin'][prop];
               group_render += `${indent}${indent}${indent}${prop} = ${val};\n`;
             }
             group_render += `${indent}${indent}}\n`;
           }
           if (value['task'] != null) {
             group_render += `${indent}${indent}task {\n`;
-            ref4 = value['task'];
-            for (prop in ref4) {
-              val = ref4[prop];
+            for (const prop in value['task']) {
+              const val = value['task'][prop];
               group_render += `${indent}${indent}${indent}${prop} = ${val};\n`;
             }
             group_render += `${indent}${indent}}\n`;
@@ -197,8 +191,8 @@ module.exports = {
           group_render += `${indent}}\n`;
         } else {
           group_render += `${indent}${key} {\n`;
-          for (prop in value) {
-            val = value[prop];
+          for (const prop in value) {
+            const val = value[prop];
             group_render += `${indent}${indent}${prop} = ${val};\n`;
           }
           group_render += `${indent}}\n`;

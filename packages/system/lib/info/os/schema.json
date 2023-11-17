@@ -1,0 +1,28 @@
+{
+  "output": {
+    "type": "object",
+    "properties": {
+      "os": {
+        "type": "object",
+        "properties": {
+          "arch": {
+            "type": "string",
+            "description": "Print the machine architecte, eg `x86_64`, same as `uname -m`."
+          },
+          "distribution": {
+            "type": "string",
+            "description": "Linux distribution. Current values include 'rhel', 'centos',\n'ubuntu', 'debian' and 'arch'."
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the distribution, for example '6.10' on CENTOS 6 or\n`7.9.2009` on CENTOS 7."
+          },
+          "linux_version": {
+            "type": "string",
+            "description": "Linux kernel version, extracted from `uname -r`."
+          }
+        }
+      }
+    }
+  }
+}
