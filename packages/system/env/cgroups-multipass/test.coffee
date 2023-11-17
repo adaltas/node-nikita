@@ -3,8 +3,8 @@ module.exports =
   tags:
     system_cgroups: true
   config: [
-    # label: 'local'
-  # ,
+    label: 'local'
+  ,
     label: 'remote'
     ssh:
       host: '127.0.0.1', username: process.env.USER,
