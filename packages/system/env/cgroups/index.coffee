@@ -10,7 +10,7 @@ runner
     containers:
       'nikita-system-cgroups':
         vm: true
-        image: 'ubuntu:20.04'
+        image: 'images:ubuntu/20.04'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/system/env/cgroups/test.coffee'
           'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
