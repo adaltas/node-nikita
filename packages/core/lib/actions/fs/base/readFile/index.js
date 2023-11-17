@@ -1,5 +1,6 @@
 
 // Dependencies
+const utils = require('../../../../utils');
 const definitions = require('./schema.json');
 
 // Action
@@ -20,6 +21,9 @@ module.exports = {
     let data = Buffer.concat(buffers);
     if (config.encoding) {
       data = data.toString(config.encoding);
+    }
+    if (config.format) {
+      data = await utils.string.format(data, config.format)
     }
     return {
       data: data

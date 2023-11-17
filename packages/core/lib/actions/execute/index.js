@@ -2,11 +2,8 @@
 // Dependencies
 const exec = require('ssh2-exec');
 const execProm = require('ssh2-exec/promise');
-const fs = require('ssh2-fs');
-const yaml = require('js-yaml');
 const utils = require('../../utils');
 const definitions = require('./schema.json');
-const esa = utils.string.escapeshellarg;
 
 // Errors
 const errors = {
@@ -290,43 +287,9 @@ module.exports = {
             result.stderr = result.stderr.trim();
           }
           if (config.format && config.code.true.includes(code)) {
-              if (typeof config.format === "function") {
-                try {
-                  result.data = await config.format({
-                    ...result
-                  });
-                } catch (error) {
-                  reject(
-                    utils.error("NIKITA_EXECUTE_FORMAT_FN_FAILURE", [
-                      "failed to format output with a user defined function,",
-                      `original error message is ${esa(error.message)}`,
-                    ])
-                  );
-                }
-              } else {
-                try {
-                  result.data = (function () {
-                    switch (config.format) {
-                      case "json":
-                        return JSON.parse(result.stdout);
-                      case "jsonlines":
-                        return utils.string
-                          .lines(result.stdout.trim())
-                          .map(JSON.parse);
-                      case "yaml":
-                        return yaml.load(result.stdout);
-                    }
-                  })();
-                } catch (error) {
-                  reject(
-                    utils.error("NIKITA_EXECUTE_PARSING_FAILURE", [
-                      "failed to parse output,",
-                      `format is ${JSON.stringify(config.format)},`,
-                      `original error message is ${JSON.stringify(error.message)}`,
-                    ])
-                  );
-                }
-              }
+            result.data = await utils.string
+              .format(result.stdout, config.format, result)
+              .catch(reject);
           }
           if (result.stdout && result.stdout !== '' && config.stdout_log) {
             log({

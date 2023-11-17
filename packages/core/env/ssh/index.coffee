@@ -11,7 +11,6 @@ runner
     containers:
       'nikita-core-ssh':
         image: 'images:almalinux/8'
-        # image: 'ubuntu'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/ssh/test.coffee'
           'environment.HOME': '/home/source' # Fix, LXD doesnt set HOME with --user

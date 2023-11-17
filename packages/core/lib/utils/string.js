@@ -1,11 +1,10 @@
-
-const crypto = require('crypto');
+const crypto = require("crypto");
+const yaml = require("js-yaml");
+const error = require("./error");
 
 module.exports = {
-  escapeshellarg: function(arg) {
-    const result = arg.replace(/'/g, function(match) {
-      return '\'"\'"\'';
-    });
+  escapeshellarg: function (arg) {
+    const result = arg.replace(/'/g, (match) => "'\"'\"'");
     return `'${result}'`;
   },
   /*
@@ -14,13 +13,13 @@ module.exports = {
   Output the hash of a supplied string in hexadecimal
   form. The default algorithm to compute the hash is md5.
   */
-  hash: function(data, algorithm) {
+  hash: function (data, algorithm) {
     if (arguments.length === 1) {
-      algorithm = 'md5';
+      algorithm = "md5";
     }
-    return crypto.createHash(algorithm).update(data).digest('hex');
+    return crypto.createHash(algorithm).update(data).digest("hex");
   },
-  repeat: function(str, l) {
+  repeat: function (str, l) {
     return Array(l + 1).join(str);
   },
   /*
@@ -31,23 +30,59 @@ module.exports = {
   This method has been added to the ECMAScript 6 specification and its code
   was borrowed from [Mozilla](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith)
   */
-  endsWith: function(str, search, position) {
+  endsWith: function (str, search, position) {
     position = position || str.length;
     position = position - search.length;
     const lastIndex = str.lastIndexOf(search);
     return lastIndex !== -1 && lastIndex === position;
   },
-  lines: function(str) {
+  format: async function (data, format, args = {}) {
+    const esa = this.escapeshellarg;
+    const lines = this.lines;
+    if (typeof format === "function") {
+      try {
+        return await format({
+          data: data,
+          ...args,
+        });
+      } catch (err) {
+        throw error("NIKITA_UTILS_STRING_FORMAT_UDF_FAILURE", [
+          "failed to format output with a user defined function,",
+          `original error message is ${esa(err.message)}.`,
+        ]);
+      }
+    } else {
+      try {
+        return (function () {
+          switch (format) {
+            case "json":
+              return JSON.parse(data);
+            case "jsonlines":
+              return lines(data.trim()).map(JSON.parse);
+            case "yaml":
+              return yaml.load(data);
+          }
+        })();
+      } catch (err) {
+        throw error("NIKITA_UTILS_STRING_FORMAT_PARSING_FAILURE", [
+          "failed to parse output,",
+          `format is ${JSON.stringify(format)},`,
+          `original error message is ${JSON.stringify(err.message)}.`,
+        ]);
+      }
+    }
+  },
+  lines: function (str) {
     return str.split(/\r\n|[\n\r\u0085\u2028\u2029]/g);
   },
-  max: function(str, max) {
+  max: function (str, max) {
     if (str.length > max) {
-      return str.slice(0, max) + '…';
+      return str.slice(0, max) + "…";
     } else {
       return str;
     }
   },
-  print_time: function(time) {
+  print_time: function (time) {
     if (time > 1000 * 60) {
       `${time / 1000}m`;
     }
@@ -57,7 +92,10 @@ module.exports = {
       return `${time}ms`;
     }
   },
-  snake_case: function(str) {
-    return str.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
-  }
+  snake_case: function (str) {
+    return str
+      .replace(/([a-z\d])([A-Z]+)/g, "$1_$2")
+      .replace(/[-\s]+/g, "_")
+      .toLowerCase();
+  },
 };

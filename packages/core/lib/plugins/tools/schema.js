@@ -223,12 +223,6 @@ module.exports = {
               };
               validate = await ajv.compileAsync(schema);
             } catch (error) {
-              // if (!error.code) {
-              //   console.log('>', action.metadata.namespace, action.metadata.module)
-              //   error.code = 'NIKITA_SCHEMA_INVALID_DEFINITION';
-              //   error.message = `${error.code}: ${error.message}`;
-              // }
-              // throw error;
               if (!error.code) {
                 return utils.error('NIKITA_SCHEMA_INVALID_DEFINITION', [
                   'schema failed to compile in ',
