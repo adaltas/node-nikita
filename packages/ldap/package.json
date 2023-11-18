@@ -78,6 +78,6 @@
     "test:local": "mocha 'test/**/*.coffee'"
   },
   "dependencies": {
-    "mixme": "^0.5.4"
+    "mixme": "^1.0.0"
   }
 }

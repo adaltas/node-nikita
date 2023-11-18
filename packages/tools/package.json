@@ -47,7 +47,7 @@
     "dayjs": "^1.11.2",
     "dedent": "^1.2.0",
     "jsesc": "^3.0.2",
-    "mixme": "^0.5.4"
+    "mixme": "^1.0.0"
   },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",

@@ -69,7 +69,7 @@
     "each": "^2.4.0",
     "js-yaml": "^4.1.0",
     "minimatch": "^5.1.0",
-    "mixme": "^0.5.4",
+    "mixme": "^1.0.0",
     "pad": "^3.2.0",
     "plug-and-play": "^2.5.6",
     "regexp-quote": "^0.0.0",

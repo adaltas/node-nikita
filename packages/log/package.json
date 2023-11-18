@@ -54,7 +54,7 @@
   ],
   "dependencies": {
     "colors": "^1.4.0",
-    "mixme": "^0.5.4",
+    "mixme": "^1.0.0",
     "pad": "^3.2.0"
   },
   "devDependencies": {
