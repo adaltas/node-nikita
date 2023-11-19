@@ -1,5 +1,6 @@
 {
   "name": "@nikitajs/ldap",
+  "version": "1.0.0-alpha.3",
   "description": "Provides Nikita actions for various OpenLDAP operations.",
   "keywords": [
     "nikita",
@@ -11,7 +12,6 @@
     "system",
     "task"
   ],
-  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -47,20 +47,26 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    "./register": "./lib/register.js",
+    "./utils": "./lib/utils/index.js",
+    "./utils/*": "./lib/utils/*.js",
+    "./*": "./lib/*/index.js"
+  },
   "files": [
     "/lib"
   ],
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register",
-      "@nikitajs/ldap/lib/register"
-    ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "@nikitajs/ldap/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 20000
   },
   "publishConfig": {
     "access": "public"
@@ -79,5 +85,6 @@
   },
   "dependencies": {
     "mixme": "^1.0.0"
-  }
+  },
+  "type": "module"
 }

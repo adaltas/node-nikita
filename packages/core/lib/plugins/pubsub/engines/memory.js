@@ -3,7 +3,7 @@ Default in-memory engine implementation.
 */
 
 // Plugin
-module.exports = function() {
+export default function() {
   const store = {};
   return {
     set: function(key, value) {

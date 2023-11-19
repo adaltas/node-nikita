@@ -1,13 +1,14 @@
 
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.chown', ->
   
   describe 'schema', ->
 
-    return unless tags.api
+    return unless test.tags.api
     
     it 'require target', ->
       nikita.fs.chown()
@@ -21,7 +22,7 @@ describe 'actions.fs.chown', ->
   
   describe 'usage', ->
 
-    return unless tags.chown
+    return unless test.tags.chown
 
     they 'throw error if target does not exists', ({ssh}) ->
       nikita

@@ -1,11 +1,11 @@
 
-connect = require 'ssh2-connect'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config.filter( ({ssh}) -> !!ssh))
 
 describe 'actions.ssh.close', ->
-  return unless tags.ssh
+  return unless test.tags.ssh
   
   describe 'provided connection', ->
 

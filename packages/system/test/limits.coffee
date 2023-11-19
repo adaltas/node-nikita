@@ -1,13 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.limits', ->
   
   describe 'schema', ->
-
-    return unless tags.api
+    return unless test.tags.api
 
     it 'system or user is required', ->
       nikita
@@ -37,8 +37,7 @@ describe 'system.limits', ->
           code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
   
   describe 'usage', ->
-
-    return unless tags.system_limits
+    return unless test.tags.system_limits
 
     they 'do nothing without any limits', ({ssh}) ->
       nikita
@@ -116,7 +115,7 @@ describe 'system.limits', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @system.limits
+        await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2048
@@ -134,7 +133,7 @@ describe 'system.limits', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @system.limits
+        await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 2048
@@ -152,7 +151,7 @@ describe 'system.limits', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.assert
+        await @fs.assert
           target: '/proc/sys/fs/file-max'
         {stdout: nofile} = await @execute
           command: 'cat /proc/sys/fs/file-max'
@@ -168,7 +167,7 @@ describe 'system.limits', ->
           nofile: true
           nproc: true
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
           me    -    nofile    #{nofile}
@@ -177,15 +176,14 @@ describe 'system.limits', ->
           """
   
   describe 'system values', ->
-
-    return unless tags.system_limits
+    return unless test.tags.system_limits
 
     they 'raise an error if nofile is too high', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @system.limits
+        await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nofile: 10000000000000000000
@@ -197,7 +195,7 @@ describe 'system.limits', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @system.limits
+        await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nproc: 1000000000
@@ -209,7 +207,7 @@ describe 'system.limits', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @system.limits
+        await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
           nproc:
@@ -229,7 +227,7 @@ describe 'system.limits', ->
           nofile: 2048
           nproc: 'unlimited'
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/limits.conf"
           content: """
           me    -    nofile    2048

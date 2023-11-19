@@ -1,12 +1,12 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
-session = require '../../../lib/session'
+import nikita from '@nikitajs/core'
+import session from '@nikitajs/core/session'
+import test from '../../test.coffee'
 
 # Test the construction of the session namespace stored in state
 
 describe 'session.plugins.session.register', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'alter action - sync', ->
     nikita ({plugins, registry}) ->

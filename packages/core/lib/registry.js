@@ -7,8 +7,8 @@ Management facility to register and unregister actions.
 */
 
 // Dependencies
-const {is_object, merge, mutate} = require('mixme');
-const normalize = require('./session/normalize');
+import {is_object, merge, mutate} from 'mixme';
+import normalize from '@nikitajs/core/session/normalize';
 
 // Register all functions
 const create = function({chain, on_register, parent, plugins} = {}) {
@@ -55,7 +55,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     if (typeof module !== 'string') {
       throw Error(`Invalid Argument: module must be a string, got ${module.toString()}`);
     }
-    const action = await require.main.require(module);
+    const action = (await import(module)).default;
     if (typeof action === 'function') {
       action = {
         handler: action
@@ -161,7 +161,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     let child_store = store;
     const namespaceTemp = namespace.concat(['']);
     for (let i = 0; i < namespaceTemp.length; i++) {
-      n = namespaceTemp[i];
+      const n = namespaceTemp[i];
       if (!child_store[n]) {
         break;
       }
@@ -191,12 +191,12 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       return (await plugins.call({
         name: 'nikita:registry:normalize',
         args: action,
-        handler: function(action) {
-          return normalize(action);
+        handler: async function(action) {
+          return await normalize(action);
         }
       }));
     } else {
-      return normalize(action);
+      return await normalize(action);
     }
   };
   /*
@@ -429,4 +429,4 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   return obj;
 };
 
-module.exports = create();
+export default create();

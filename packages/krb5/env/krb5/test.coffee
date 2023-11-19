@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     krb5: true
     krb5_addprinc: true
@@ -16,5 +16,5 @@ module.exports =
     label: 'remote'
     ssh:
       host: '127.0.0.1', username: process.env.USER,
-      private_key_path: '~/.ssh/id_rsa'
+      private_key_path: '~/.ssh/id_ed25519'
   ]

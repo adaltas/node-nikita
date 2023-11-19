@@ -1,14 +1,15 @@
 
-connect = require 'ssh2-connect'
-nikita = require '../../../lib'
-utils = require '../../../lib/utils'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import connect from 'ssh2-connect'
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config.filter( ({ssh}) -> !!ssh))
 
 describe 'actions.ssh.open', ->
   
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
     
     they 'config.host', ({ssh}) ->
       nikita
@@ -16,7 +17,7 @@ describe 'actions.ssh.open', ->
       .should.be.rejectedWith code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       
   describe 'usage', ->
-    return unless tags.ssh
+    return unless test.tags.ssh
 
     they 'from config', ({ssh}) ->
       nikita ->

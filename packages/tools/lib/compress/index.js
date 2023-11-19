@@ -1,7 +1,7 @@
 
 
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 /**
 ## Extention to type
@@ -26,7 +26,7 @@ const ext_to_type = function(name, path) {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {path}

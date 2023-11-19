@@ -1,12 +1,12 @@
 
-nikita = require '../../../../lib'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
-exec = require 'ssh2-exec/promise'
-
-return unless tags.sudo
+import exec from 'ssh2-exec/promises'
+import nikita from '@nikitajs/core'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.createReadStream.sudo', ->
+  return unless test.tags.sudo
 
   they 'read file', ({ssh}) ->
     nikita

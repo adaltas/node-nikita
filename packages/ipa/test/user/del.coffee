@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.user.del', ->
+  return unless test.tags.ipa
   
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
         $ssh: ssh
-      .ipa.user.del connection: ipa,
+      .ipa.user.del connection: test.ipa,
         username: 'test_user_del'
 
   describe 'action', ->
@@ -21,9 +21,9 @@ describe 'ipa.user.del', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del connection: ipa,
+        @ipa.user.del connection: test.ipa,
           uid: 'test_user_del'
-        {$status} = await @ipa.user.del connection: ipa,
+        {$status} = await @ipa.user.del connection: test.ipa,
           uid: 'test_user_del'
         $status.should.be.false()
 
@@ -31,7 +31,7 @@ describe 'ipa.user.del', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user connection: ipa,
+        @ipa.user connection: test.ipa,
           uid: 'test_user_del'
           attributes:
             givenname: 'User'
@@ -39,6 +39,6 @@ describe 'ipa.user.del', ->
             mail: [
               'test_user_del@nikita.js.org'
             ]
-        {$status} = await @ipa.user.del connection: ipa,
+        {$status} = await @ipa.user.del connection: test.ipa,
           uid: 'test_user_del'
         $status.should.be.true()

@@ -1,29 +1,31 @@
 // Dependencies
-const connect = require('ssh2-connect');
-const fs = require('fs').promises;
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import connect from "ssh2-connect";
+import fs from "node:fs/promises";
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
-  handler: async function({ config, tools: {log} }) {
+export default {
+  handler: async function ({ config, tools: { log } }) {
     if (!(config.private_key || config.password || config.private_key_path)) {
       // Validate authentication
-      throw utils.error('NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', ['unable to authenticate the SSH connection,', 'one of the "private_key", "password", "private_key_path"', 'configuration properties must be provided']);
+      throw utils.error("NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND", [
+        "unable to authenticate the SSH connection,",
+        'one of the "private_key", "password", "private_key_path"',
+        "configuration properties must be provided",
+      ]);
     }
     // Read private key if option is a path
     if (!config.private_key && !config.password) {
       log({
         message: `Read Private Key from: ${config.private_key_path}`,
-        level: 'DEBUG'
+        level: "DEBUG",
       });
       const location = await utils.tilde.normalize(config.private_key_path);
       try {
-        ({
-          data: config.private_key
-        } = (await fs.readFile(location, 'ascii')));
+        ({ data: config.private_key } = await fs.readFile(location, "ascii"));
       } catch (error) {
-        if (error.code === 'ENOENT') {
+        if (error.code === "ENOENT") {
           throw Error(`Private key doesnt exists: ${JSON.stringify(location)}`);
         }
         throw error;
@@ -33,20 +35,20 @@ module.exports = {
       // Establish connection
       log({
         message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-        level: 'DEBUG'
+        level: "DEBUG",
       });
       const conn = await connect(config);
       log({
         message: "Connection is established",
-        level: 'INFO'
+        level: "INFO",
       });
       return {
-        ssh: conn
+        ssh: conn,
       };
     } catch (error) {
       log({
         message: "Connection failed",
-        level: 'WARN'
+        level: "WARN",
       });
       // Continue to bootstrap root access
     }
@@ -54,24 +56,27 @@ module.exports = {
     if (config.root.username) {
       log({
         message: "Bootstrap Root Access",
-        level: 'INFO'
+        level: "INFO",
       });
       await this.ssh.root(config.root);
     }
     log({
       message: "Establish Connection: attempt after enabling root access",
-      level: 'DEBUG'
+      level: "DEBUG",
     });
-    return await this.call({
-      $retry: 3
-    }, async function() {
-      return {
-        ssh: await connect(config)
-      };
-    });
+    return await this.call(
+      {
+        $retry: 3,
+      },
+      async function () {
+        return {
+          ssh: await connect(config),
+        };
+      }
+    );
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       if (config.private_key == null) {
         config.private_key = config.privateKey;
       }
@@ -92,9 +97,9 @@ module.exports = {
       if (config.root.port == null) {
         config.root.port = config.port;
       }
-    }
+    },
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

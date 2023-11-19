@@ -1,12 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.user', ->
 
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
   
     it 'config.shell', ->
       {shell} = await nikita.system.user
@@ -25,15 +26,15 @@ describe 'system.user', ->
       shell.should.eql '/sbin/nologin'
   
   describe 'usage', ->
-    return unless tags.system_user
+    return unless test.tags.system_user
     
     they 'accept only user name', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
         $sudo: sudo
       , ->
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
         {$status} = await @system.user 'toto'
         $status.should.be.true()
         {$status} = await @system.user 'toto'
@@ -44,8 +45,8 @@ describe 'system.user', ->
         $ssh: ssh
         $sudo: sudo
       , ->
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
         {$status} = await @system.user 'toto', uid: 1234
         $status.should.be.true()
         {$status} = await @system.user 'toto', uid: 1235
@@ -60,8 +61,8 @@ describe 'system.user', ->
         $ssh: ssh
         $sudo: sudo
       , ->
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
         {$status} = await @system.user 'toto'
         $status.should.be.true()
         {$status} = await @system.user 'toto', uid: 1235
@@ -81,7 +82,7 @@ describe 'system.user', ->
         {$status} = await @system.user 'toto',
           home: "#{tmpdir}/toto/subdir"
         $status.should.be.true()
-        @fs.assert "#{tmpdir}/toto",
+        await @fs.assert "#{tmpdir}/toto",
           mode: [0o0644, 0o0755]
           uid: 0
           gid: 0

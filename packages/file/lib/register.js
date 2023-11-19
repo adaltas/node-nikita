@@ -1,50 +1,43 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions = {
   file: {
-    '': '@nikitajs/file/lib',
-    cache: '@nikitajs/file/lib/cache',
-    cson: '@nikitajs/file/lib/cson',
-    download: '@nikitajs/file/lib/download',
+    '': '@nikitajs/file',
+    cache: '@nikitajs/file/cache',
+    cson: '@nikitajs/file/cson',
+    download: '@nikitajs/file/download',
     ini: {
-      '': '@nikitajs/file/lib/ini',
-      'read': '@nikitajs/file/lib/ini/read'
+      '': '@nikitajs/file/ini',
+      'read': '@nikitajs/file/ini/read'
     },
-    json: '@nikitajs/file/lib/json',
+    json: '@nikitajs/file/json',
     properties: {
-      '': '@nikitajs/file/lib/properties',
-      read: '@nikitajs/file/lib/properties/read'
+      '': '@nikitajs/file/properties',
+      read: '@nikitajs/file/properties/read'
     },
-    render: '@nikitajs/file/lib/render',
-    touch: '@nikitajs/file/lib/touch',
+    render: '@nikitajs/file/render',
+    touch: '@nikitajs/file/touch',
     types: {
       'systemd': {
-        'resolved': '@nikitajs/file/lib/types/systemd/resolved',
-        'timesyncd': '@nikitajs/file/lib/types/systemd/timesyncd'
+        'resolved': '@nikitajs/file/types/systemd/resolved',
+        'timesyncd': '@nikitajs/file/types/systemd/timesyncd'
       },
-      'ceph_conf': '@nikitajs/file/lib/types/ceph_conf',
-      'hfile': '@nikitajs/file/lib/types/hfile',
-      'krb5_conf': '@nikitajs/file/lib/types/krb5_conf',
-      'locale_gen': '@nikitajs/file/lib/types/locale_gen',
-      'my_cnf': '@nikitajs/file/lib/types/my_cnf',
-      'pacman_conf': '@nikitajs/file/lib/types/pacman_conf',
-      'ssh_authorized_keys': '@nikitajs/file/lib/types/ssh_authorized_keys',
-      'wireguard_conf': '@nikitajs/file/lib/types/wireguard_conf',
-      'yum_repo': '@nikitajs/file/lib/types/yum_repo'
+      'ceph_conf': '@nikitajs/file/types/ceph_conf',
+      'hfile': '@nikitajs/file/types/hfile',
+      'krb5_conf': '@nikitajs/file/types/krb5_conf',
+      'locale_gen': '@nikitajs/file/types/locale_gen',
+      'my_cnf': '@nikitajs/file/types/my_cnf',
+      'pacman_conf': '@nikitajs/file/types/pacman_conf',
+      'ssh_authorized_keys': '@nikitajs/file/types/ssh_authorized_keys',
+      'wireguard_conf': '@nikitajs/file/types/wireguard_conf',
+      'yum_repo': '@nikitajs/file/types/yum_repo'
     },
-    upload: '@nikitajs/file/lib/upload',
-    yaml: '@nikitajs/file/lib/yaml'
+    upload: '@nikitajs/file/upload',
+    yaml: '@nikitajs/file/yaml'
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

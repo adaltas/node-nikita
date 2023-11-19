@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     service_install: true
     service_startup: true
@@ -13,8 +13,8 @@ module.exports =
     sudo: true
   ,
     label: 'remote'
-    sudo: true
+    # sudo: true
     ssh:
-      host: '127.0.0.1', username: process.env.USER,
-      private_key_path: '~/.ssh/id_rsa'
+      host: '127.0.0.1', username: 'root',
+      private_key_path: '~/.ssh/id_ed25519'
   ]

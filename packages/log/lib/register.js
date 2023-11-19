@@ -1,23 +1,15 @@
-
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions = {
   log: {
-    cli: '@nikitajs/log/lib/cli',
-    csv: '@nikitajs/log/lib/csv',
-    fs: '@nikitajs/log/lib/fs',
-    md: '@nikitajs/log/lib/md',
-    stream: '@nikitajs/log/lib/stream'
-  }
+    cli: "@nikitajs/log/cli",
+    csv: "@nikitajs/log/csv",
+    fs: "@nikitajs/log/fs",
+    md: "@nikitajs/log/md",
+    stream: "@nikitajs/log/stream",
+  },
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions);

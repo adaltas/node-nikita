@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.backup', ->
+  return unless test.tags.posix
 
   describe 'file', ->
 
@@ -14,9 +14,12 @@ describe 'tools.backup', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @file
+          content: 'Hello'
+          target: "#{tmpdir}/a_file"
         {$status, filename} = await @tools.backup
           name: 'my_backup'
-          source: "#{__filename}"
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/backup"
         $status.should.be.true()
         @fs.assert
@@ -25,7 +28,7 @@ describe 'tools.backup', ->
         @wait 1000
         {$status, filename} = await @tools.backup
           name: 'my_backup'
-          source: "#{__filename}"
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/backup"
         $status.should.be.true()
         @fs.assert
@@ -37,9 +40,12 @@ describe 'tools.backup', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @file
+          content: 'Hello'
+          target: "#{tmpdir}/a_file"
         {$status, base_dir, name, filename, target} = await @tools.backup
           name: 'my_backup'
-          source: "#{__filename}"
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/backup"
           compress: true
         $status.should.be.true()

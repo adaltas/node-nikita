@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, service} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.service_startup or tags.service_systemctl
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'service#config.startup', ->
+  return unless test.tags.service_startup or test.tags.service_systemctl
 
   describe 'schema', ->
 
@@ -33,16 +33,16 @@ describe 'service#config.startup', ->
         $ssh: ssh
         $sudo: sudo
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: true
         $status.should.be.true()
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: true
         $status.should.be.false()
     
@@ -51,16 +51,16 @@ describe 'service#config.startup', ->
         $ssh: ssh
         $sudo: sudo
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: false
         $status.should.be.true()
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: false
         $status.should.be.false()
 
@@ -76,15 +76,15 @@ describe 'service#config.startup', ->
       , ->
         {$status} = await @execute 'command -v chkconfig', code: [0, 127], $relax: true
         return unless $status
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: '235'
         $status.should.be.true()
         {$status} = await @service
-          chk_name: service.chk_name
+          chk_name: test.service.chk_name
           startup: '235'
         $status.should.be.false()
 
@@ -97,14 +97,14 @@ describe 'service#config.startup', ->
         $sudo: sudo
         $if_exec: 'command -v chkconfig && ! command -v systemctl'
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          chk_name: service.chk_name
+          name: test.service.name
+          chk_name: test.service.chk_name
           startup: '2345'
         $status.should.be.true()
         {$status} = await @service
-          chk_name: service.chk_name
+          chk_name: test.service.chk_name
           startup: '2345'
         $status.should.be.false()

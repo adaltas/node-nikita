@@ -1,0 +1,11 @@
+
+services:
+  nodejs:
+    build: .
+    image: nikita_tools_repo_rocky9
+    container_name: nikita_tools_repo_rocky9
+    # platform: linux/amd64 # MongoDB repo used in tests only available on x64 arch
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/tools/env/repo-rocky9/test.coffee

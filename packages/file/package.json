@@ -77,6 +77,13 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./register": "./lib/register.js",
+    "./utils": "./lib/utils/index.js",
+    "./utils/*": "./lib/utils/*.js",
+    "./*": "./lib/*/index.js"
+  },
   "files": [
     "/lib"
   ],
@@ -87,17 +94,17 @@
   "license": "MIT",
   "main": "./lib/index",
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register",
-      "@nikitajs/file/lib/register",
-      "@nikitajs/log/lib/register"
-    ],
     "inline-diffs": true,
-    "timeout": 10000,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "@nikitajs/file/register",
+      "@nikitajs/log/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 10000
   },
   "repository": {
     "type": "git",
@@ -107,5 +114,6 @@
   "scripts": {
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.coffee'"
-  }
+  },
+  "type": "module"
 }

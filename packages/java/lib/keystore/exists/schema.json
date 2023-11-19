@@ -1,0 +1,29 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "keytool": {
+        "type": "string",
+        "default": "keytool",
+        "description": "Path to the `keytool` command, detetected from `$PATH` by default."
+      },
+      "keystore": {
+        "type": "string",
+        "description": "Path to the keystore."
+      },
+      "storepass": {
+        "type": "string",
+        "description": "Password to manage the keystore."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name (aka alias) under which is referenced the certificate inside the keystore."
+      }
+    },
+    "required": [
+      "keystore",
+      "storepass",
+      "name"
+    ]
+  }
+}

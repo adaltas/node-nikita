@@ -3,34 +3,34 @@
     "type": "object",
     "properties": {
       "content": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/content"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/content"
       },
       "context": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/context"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/context"
       },
       "engine": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/engine"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/engine"
       },
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "local": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/local"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/local"
       },
       "remove_empty_lines": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/remove_empty_lines"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/remove_empty_lines"
       },
       "source": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/source"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/source"
       },
       "target": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/target"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/target"
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       }
     },
     "required": [

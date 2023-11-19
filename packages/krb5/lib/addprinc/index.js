@@ -1,10 +1,10 @@
 
 // Dependencies
-const utils = require('@nikitajs/core/lib/utils');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // ## Exports
-module.exports = {
+export default {
   handler: async function({config}) {
     if (/.*@.*/.test(config.admin?.principal)) {
       // Normalize realm and principal for later usage of config

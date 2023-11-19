@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'session.scheduler.flow', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'executed 1 args with 2 actions sequentially', ->
     stack = []

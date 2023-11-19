@@ -1,9 +1,9 @@
 
 // Dependencies
-const fs = require('ssh2-fs');
-const exec = require('ssh2-exec/promise');
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import fs from 'ssh2-fs';
+import exec from 'ssh2-exec/promises';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_CRS_NO_EVENT_HANDLER: () =>
@@ -35,7 +35,7 @@ const errors = {
 };
 
 // ## Exports
-module.exports = {
+export default {
   handler: async function({
     config,
     metadata,
@@ -124,11 +124,11 @@ module.exports = {
   hooks: {
     on_action: {
       after: [
-        '@nikitajs/core/lib/plugins/execute'
+        '@nikitajs/core/plugins/execute'
       ],
       before: [
-        '@nikitajs/core/lib/plugins/metadata/schema',
-        '@nikitajs/core/lib/plugins/metadata/tmpdir'
+        '@nikitajs/core/plugins/metadata/schema',
+        '@nikitajs/core/plugins/metadata/tmpdir'
       ],
       handler: async function({
         config,

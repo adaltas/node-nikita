@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.run', ->
+  return unless test.tags.docker
 
   they 'simple command', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       {$status, stdout} = await @docker.run
         command: "/bin/echo 'test'"
@@ -21,9 +21,9 @@ describe 'docker.run', ->
   they '--rm (flag option)', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test_rm'
       {stdout} = await @docker.run
@@ -32,7 +32,7 @@ describe 'docker.run', ->
         container: 'nikita_test_rm'
         rm: false
       stdout.should.match /^test.*/
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test_rm'
 
@@ -40,51 +40,48 @@ describe 'docker.run', ->
     @timeout 0
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_unique'
         force: true
-      @docker.run
+      await @docker.run
         image: 'httpd'
         port: '499:80'
         container: 'nikita_test_unique'
         detach: true
         rm: false
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test_unique'
 
   they 'array options', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test_array'
-      @docker.run
+      await @docker.run
         image: 'httpd'
         port: [ '500:80', '501:81' ]
         container: 'nikita_test_array'
         detach: true
         rm: false
-      # .wait_connect
-      #   host: ipadress of docker, docker-machine...
-      #   port: 500
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test_array'
 
   they 'existing container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'
-      @docker.run
+      await @docker.run
         command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
@@ -95,19 +92,19 @@ describe 'docker.run', ->
         container: 'nikita_test'
         rm: false
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'
 
   they 'status not modified', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'
-      @docker.run
+      await @docker.run
         command: 'echo test'
         image: 'alpine'
         container: 'nikita_test'
@@ -118,6 +115,6 @@ describe 'docker.run', ->
         container: 'nikita_test'
         rm: false
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'

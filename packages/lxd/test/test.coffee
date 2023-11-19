@@ -1,45 +1,24 @@
 
-fs = require 'fs'
+import fs from 'node:fs/promises'
+import * as url from 'node:url'
+dirname = new URL( '.', import.meta.url).pathname
+
+exists = (path) ->
+  try
+    await fs.access path, fs.constants.F_OK
+    true
+  catch
+    false
+
 # Write default configuration
 if not process.env['NIKITA_TEST_MODULE'] and (
-  not fs.existsSync("#{__dirname}/../test.js") and
-  not fs.existsSync("#{__dirname}/../test.json") and
-  not fs.existsSync("#{__dirname}/../test.coffee")
+  not await exists("#{dirname}/../test.js") and
+  not await exists("#{dirname}/../test.json") and
+  not await exists("#{dirname}/../test.coffee")
 )
-  config = fs.readFileSync "#{__dirname}/../test.sample.coffee"
-  fs.writeFileSync "#{__dirname}/../test.coffee", config
+  config = await fs.readFile "#{dirname}/../test.sample.coffee"
+  await fs.writeFile "#{dirname}/../test.coffee", config
 # Read configuration
-config = require process.env['NIKITA_TEST_MODULE'] or "../test.coffee"
+config = await import(process.env['NIKITA_TEST_MODULE'] or "../test.coffee")
 # Export configuration
-module.exports = config
-
-# Cache container and vm images
-
-return unless config.tags.lxd
-nikita = require '@nikitajs/core/lib'
-they = require('mocha-they')(config.config)
-
-they 'cache container image to avoid timeout later', ({ssh}) ->
-  @timeout 0
-  nikita
-    $ssh: ssh
-  .execute
-    command: "lxc image copy images:#{config.images.alpine} `lxc remote get-default`:"
-
-return unless config.tags.lxd_vm
-they 'cache vm image to avoid timeout later', ({ssh}) ->
-  @timeout 0
-  nikita
-    $ssh: ssh
-  .execute
-    command: "lxc image copy images:#{config.images.alpine} `lxc remote get-default`: --vm"
-  # It takes time to retrieve files from a VM image archive the first
-  # time after downloading. It is way faster for a container image, so
-  # we don't need it.
-  .execute
-    command: """
-    lxc info vm1 >/dev/null && exit 42
-    echo "" | lxc init images:#{config.images.alpine} vm1 --vm
-    lxc rm -f vm1
-    """
-    code: [0, 42]
+export default config.default

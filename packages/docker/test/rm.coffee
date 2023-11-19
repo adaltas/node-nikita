@@ -1,22 +1,22 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.rm', ->
+  return unless test.tags.docker
 
   they 'status', ({ssh}) ->
     @timeout 30000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_rm'
-      @docker.run
+      await @docker.run
         command: "/bin/echo 'test'"
         image: 'alpine'
         name: 'nikita_rm'
@@ -32,13 +32,13 @@ describe 'docker.rm', ->
     @timeout 30000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       try
-        @docker.rm
+        await @docker.rm
           container: 'nikita_rm'
           force: true
-        @docker.tools.service
+        await @docker.tools.service
           image: 'httpd'
           port: '499:80'
           container: 'nikita_rm'
@@ -50,16 +50,16 @@ describe 'docker.rm', ->
         # Container must be stopped to be removed without force
         err.message.should.match /(You cannot remove a running container)|(Container must be stopped)/
       finally
-        @docker.stop
+        await @docker.stop
           container: 'nikita_rm'
-        @docker.rm
+        await @docker.rm
           container: 'nikita_rm'
 
   they 'remove live container (with force)', ({ssh}) ->
     @timeout 30000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       await @docker.rm
         container: 'nikita_rm'

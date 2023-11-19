@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.network.detach', ->
+  return unless test.tags.lxd
 
   they 'Detach a network from a container', ({ssh}) ->
     nikita
@@ -20,7 +20,7 @@ describe 'lxc.network.detach', ->
       try
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'u0'
         await @lxc.network
           network: "nkt-detach-1"
@@ -47,7 +47,7 @@ describe 'lxc.network.detach', ->
       try
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'u0'
         await @lxc.network
           network: "nkt-detach-2"

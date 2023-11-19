@@ -1,9 +1,9 @@
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../../utils');
+import definitions from "./schema.json" assert { type: "json" };
+import utils from "@nikitajs/file/utils";
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     let org_props = {};
     let fnl_props = {};

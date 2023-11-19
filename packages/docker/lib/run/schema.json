@@ -73,7 +73,7 @@
         "description": "Set custom DNS search domain(s)."
       },
       "docker": {
-        "$ref": "module://@nikitajs/docker/lib/tools/execute#/definitions/docker"
+        "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"
       },
       "entrypoint": {
         "type": "string",

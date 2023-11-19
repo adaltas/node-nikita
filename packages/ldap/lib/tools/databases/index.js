@@ -1,9 +1,9 @@
 // Dependencies
-const utils = require("../../utils");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/tools/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     const { stdout } = await this.ldap.search(config, {
       base: config.base,

@@ -1,11 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
-registry = require '../../../lib/registry'
-register = require '../../../lib/register'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.metadata.position', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'start at 0', ->
     nikita ({metadata}) ->

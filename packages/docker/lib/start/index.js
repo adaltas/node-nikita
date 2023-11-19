@@ -1,9 +1,9 @@
 
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {log}
@@ -15,13 +15,11 @@ module.exports = {
       log({
         message: `Container already started ${config.container} (Skipping)`,
         level: 'INFO',
-        module: 'nikita/lib/docker/start'
       });
     } else {
       log({
         message: `Starting container ${config.container}`,
         level: 'INFO',
-        module: 'nikita/lib/docker/start'
       });
     }
     await this.docker.tools.execute({

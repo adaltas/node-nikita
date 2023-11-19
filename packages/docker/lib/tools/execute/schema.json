@@ -30,14 +30,14 @@
             "description": "Current working directory from where to execute the command."
           },
           "code": {
-            "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code",
+            "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
             "default": {}
           },
           "docker": {
             "$ref": "#/definitions/docker"
           },
           "format": {
-            "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/format"
+            "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/format"
           }
         }
       }

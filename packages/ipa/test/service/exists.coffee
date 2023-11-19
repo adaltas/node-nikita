@@ -1,19 +1,19 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.service.exists', ->
+  return unless test.tags.ipa
 
   they 'service doesnt exist', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service.del connection: ipa,
+      @ipa.service.del connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
-      {$status, exists} = await @ipa.service.exists connection: ipa,
+      {$status, exists} = await @ipa.service.exists connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
       $status.should.be.false()
       exists.should.be.false()
@@ -22,11 +22,11 @@ describe 'ipa.service.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service connection: ipa,
+      @ipa.service connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
-      {$status, exists} = await @ipa.service.exists connection: ipa,
+      {$status, exists} = await @ipa.service.exists connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
       $status.should.be.true()
       exists.should.be.true()
-      @ipa.service.del connection: ipa,
+      @ipa.service.del connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'

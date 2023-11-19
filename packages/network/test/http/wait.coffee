@@ -1,43 +1,43 @@
 
-http = require 'http'
-url = require 'url'
-querystring = require 'querystring'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import http from 'node:http'
+import url from 'node:url'
+import querystring from 'node:querystring'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
-return unless tags.posix
+describe 'network.http.wait', ->
+  return unless test.tags.posix
 
-portincr = 22345
-hangTimeout = null
-server = ->
-  _ = null
-  port = portincr++
-  srv =
-    port: port
-    listen: ->
-      countInvalidStatus = 500
-      new Promise (resolve, reject) ->
-        _ = http.createServer (req, res) ->
-          switch req.url
-            when '/hang'
-              hangTimeout = setTimeout((->), 100000)
-            when '/200'
-              res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
-              res.end '{"key": "value"}'
-            when '/200/invalid/status'
-              res.writeHead countInvalidStatus, 'OK', {'Content-Type': 'application/json'}
-              res.end '{"key": "value"}'
-              countInvalidStatus = countInvalidStatus - 100
-        _.listen port
-        .on 'listening', -> resolve srv
-        .on 'error', (err) -> reject err
-    close: ->
-      new Promise (resolve) ->
-        clearTimeout hangTimeout if hangTimeout
-        _.close resolve
-
-describe 'run', ->
+  portincr = 22345
+  hangTimeout = null
+  server = ->
+    _ = null
+    port = portincr++
+    srv =
+      port: port
+      listen: ->
+        countInvalidStatus = 500
+        new Promise (resolve, reject) ->
+          _ = http.createServer (req, res) ->
+            switch req.url
+              when '/hang'
+                hangTimeout = setTimeout((->), 100000)
+              when '/200'
+                res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
+                res.end '{"key": "value"}'
+              when '/200/invalid/status'
+                res.writeHead countInvalidStatus, 'OK', {'Content-Type': 'application/json'}
+                res.end '{"key": "value"}'
+                countInvalidStatus = countInvalidStatus - 100
+          _.listen port
+          .on 'listening', -> resolve srv
+          .on 'error', (err) -> reject err
+      close: ->
+        new Promise (resolve) ->
+          clearTimeout hangTimeout if hangTimeout
+          _.close resolve
 
   they 'code 200 with server started', ({ssh}) ->
     srv = server()
@@ -56,7 +56,7 @@ describe 'run', ->
       $ssh: ssh
     , ({tools: {events}}) ->
       events.on 'text', ({attempt, module}) ->
-        return unless module is '@nikitajs/network/src/http/wait'
+        return unless module is '@nikitajs/network/http/wait'
         srv.listen() if attempt is 0
       {$status} = await @network.http.wait
         url: "http://localhost:#{srv.port}/200"

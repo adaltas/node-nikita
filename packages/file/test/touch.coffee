@@ -1,12 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.touch', ->
   
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
     
     it 'inheric file schema', ->
       nikita.file.touch
@@ -20,7 +21,7 @@ describe 'file.touch', ->
         config.target.should.eql '/tmp/fake'
     
   describe 'usage', ->
-    return unless tags.posix
+    return unless test.tags.posix
     
     they 'as a target option', ({ssh}) ->
       nikita

@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.user.show', ->
+  return unless test.tags.ipa
   
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
-      nikita.ipa.user.show connection: ipa,
+      nikita.ipa.user.show connection: test.ipa,
         username: 'admin'
 
   describe 'action', ->
@@ -19,7 +19,7 @@ describe 'ipa.user.show', ->
       nikita
         $ssh: ssh
       , ->
-        {result} = await @ipa.user.show connection: ipa,
+        {result} = await @ipa.user.show connection: test.ipa,
           uid: 'admin'
         result.dn.should.match /^uid=admin,cn=users,cn=accounts,/
 
@@ -27,7 +27,7 @@ describe 'ipa.user.show', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.show connection: ipa,
+        @ipa.user.show connection: test.ipa,
           uid: 'missing'
         .should.be.rejectedWith
           code: 4001

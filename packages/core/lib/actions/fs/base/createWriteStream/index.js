@@ -1,11 +1,11 @@
 
 // Dependencies
-const fs = require('ssh2-fs');
-const exec = require('ssh2-exec/promise');
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import fs from 'ssh2-fs';
+import exec from 'ssh2-exec/promises';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
-// ## Errors
+// Errors
 const errors = {
   NIKITA_FS_CWS_TARGET_ENOENT: ({config}) =>
     utils.error('NIKITA_FS_CWS_TARGET_ENOENT', [
@@ -21,7 +21,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
       config,
       metadata,
@@ -40,36 +40,30 @@ module.exports = {
       // config.mode ?= 0o644 # Node.js default to 0o666
       // In append mode, we write to a copy of the target file located in a temporary location
       if (config.flags[0] === 'a') {
-        const whoami = utils.os.whoami(ssh);
+        const whoami = utils.os.whoami({ssh});
         await exec(ssh, [
           sudo(`[ ! -f '${config.target}' ] && exit`),
           sudo(`cp '${config.target}' '${config.target_tmp}'`),
           sudo(`chown ${whoami} '${config.target_tmp}'`)].join('\n')
         );
-        log({
-          message: "Append prepared by placing a copy of the original file in a temporary path",
-          level: 'INFO'
-        });
+        log('INFO', "Append prepared by placing a copy of the original file in a temporary path");
       }
     } catch (error) {
-      log({
-        message: "Failed to place original file in temporary path",
-        level: 'ERROR'
-      });
+      log('ERROR', "Failed to place original file in temporary path");
       throw error;
     }
     // Start writing the content
-    log({
-      message: 'Start writing bytes',
-      level: 'DEBUG'
-    });
+    log('DEBUG', 'Start writing bytes');
     await new Promise(async function(resolve, reject) {
-      const ws = (await fs.createWriteStream(ssh, config.target_tmp || config.target, {
-        flags: config.flags,
-        mode: config.mode
-      }));
+      const ws = await fs.createWriteStream(
+        ssh,
+        config.target_tmp || config.target,
+        {
+          flags: config.flags,
+          mode: config.mode,
+        }
+      );
       config.stream(ws);
-      const error = false; // Quick fix ws sending both the error and close events on error
       ws.on('error', function(error) {
         if (error.code === 'ENOENT') {
           error = errors.NIKITA_FS_CWS_TARGET_ENOENT({
@@ -79,7 +73,7 @@ module.exports = {
         reject(error);
       });
       ws.on('end', () => ws.destroy() );
-      ws.on('close', () => error || resolve() );
+      ws.on('close', () => resolve() );
     });
     // Replace the target file in append or sudo mode
     if (config.target_tmp) {
@@ -100,11 +94,11 @@ module.exports = {
   hooks: {
     on_action: {
       after: [
-        '@nikitajs/core/lib/plugins/execute'
+        '@nikitajs/core/plugins/execute'
       ],
       before: [
-        '@nikitajs/core/lib/plugins/metadata/schema',
-        '@nikitajs/core/lib/plugins/metadata/tmpdir'
+        '@nikitajs/core/plugins/metadata/schema',
+        '@nikitajs/core/plugins/metadata/tmpdir'
       ],
       handler: async function({
         config,

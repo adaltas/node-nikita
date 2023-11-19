@@ -8,7 +8,7 @@
         "description": "Pull all tagged images in the repository."
       },
       "docker": {
-        "$ref": "module://@nikitajs/docker/lib/tools/execute#/definitions/docker"
+        "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"
       },
       "image": {
         "type": "string",

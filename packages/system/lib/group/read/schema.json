@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid",
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid",
         "description": "Retrieve the information for a specific group name or gid."
       },
       "target": {

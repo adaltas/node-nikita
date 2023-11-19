@@ -1,9 +1,9 @@
 // Dependencies
-const definitions = require('./schema.json');
-const {db} = require('../../utils');
+import definitions from "./schema.json" assert { type: "json" };
+import { db } from "@nikitajs/db/utils";
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const {stdout} = await this.db.query(db.connection_config(config), {
       database: undefined,

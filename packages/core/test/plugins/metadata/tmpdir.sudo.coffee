@@ -1,13 +1,14 @@
 
-path = require 'path'
-os = require 'os'
-fs = require 'ssh2-fs'
-{tags, config} = require '../../test'
-nikita = require '../../../lib'
-they = require('mocha-they')(config)
+import path from 'node:path'
+import os from 'node:os'
+import fs from 'ssh2-fs'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'plugins.metadata.tmpdir', ->
-  return unless tags.sudo
+  return unless test.tags.sudo
 
   they 'root ownership', ({ssh}) ->
     nikita

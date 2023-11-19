@@ -1,22 +1,20 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, service} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.service_systemctl
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'service.restart', ->
-  
-  @timeout 20000
+  return unless test.tags.service_systemctl
 
   they 'should restart', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @service
-        name: service.name
-      @service.start
-        name: service.srv_name
+      await @service
+        name: test.service.name
+      await @service.start
+        name: test.service.srv_name
       {$status} = await @service.restart
-        name: service.srv_name
+        name: test.service.srv_name
       $status.should.be.true()

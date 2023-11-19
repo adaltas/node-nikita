@@ -1,13 +1,13 @@
 
-http = require 'http'
-path = require 'path'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import http from 'node:http'
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.cache http', ->
+  return unless test.tags.posix
 
   portincr = 22345
   server = ->
@@ -141,7 +141,7 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/missing"
             cache_dir: "#{tmpdir}/cache"
             md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-          .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/cache/missing\" got 9e076f5885f5cc16a4b5aeb8de4adff5 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/cache/missing\" got \"9e076f5885f5cc16a4b5aeb8de4adff5\" instead of \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"."
       finally
         srv.close()
 
@@ -184,6 +184,6 @@ describe 'file.cache http', ->
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-          .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/target\" got \"df8fede7ff71608e24a5576326e41c75\" instead of \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"."
       finally
         srv.close()

@@ -1,35 +1,34 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, db} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.db
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'db.schema.list postgres', ->
-
-  return unless db.postgresql
+  return unless test.tags.db
+  return unless test.db.postgresql
 
   they 'list', ({ssh}) ->
     nikita
       $ssh: ssh
-      db: db.postgresql
+      db: test.db.postgresql
     , ->
       # Clean
-      @db.database.remove 'db_schema_list_0_db'
-      @db.user.remove 'db_schema_list_0_usr'
+      await @db.database.remove 'db_schema_list_0_db'
+      await @db.user.remove 'db_schema_list_0_usr'
       # Prepare
-      @db.user
+      await @db.user
         username: 'db_schema_list_0_usr'
         password: 'secret'
-      @db.database
+      await @db.database
         user: 'db_schema_list_0_usr'
         database: 'db_schema_list_0_db'
       # Without a user
-      @db.schema
+      await @db.schema
         database: 'db_schema_list_0_db'
         schema: 'db_schema_list_0_sch_0'
       # With a user
-      @db.schema
+      await @db.schema
         database: 'db_schema_list_0_db'
         schema: 'db_schema_list_0_sch_1'
         owner: 'db_schema_list_0_usr'
@@ -38,8 +37,8 @@ describe 'db.schema.list postgres', ->
       schemas.should.eql [
         { name: 'db_schema_list_0_sch_0', owner: 'root' }
         { name: 'db_schema_list_0_sch_1', owner: 'db_schema_list_0_usr' }
-        { name: 'public', owner: 'root' }
+        { name: 'public', owner: 'pg_database_owner' }
       ]
       # Clean
-      @db.database.remove 'db_schema_list_0_db'
-      @db.user.remove 'db_schema_list_0_usr'
+      await @db.database.remove 'db_schema_list_0_db'
+      await @db.user.remove 'db_schema_list_0_usr'

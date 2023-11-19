@@ -1,5 +1,6 @@
 {
   "name": "@nikitajs/ipa",
+  "version": "1.0.0-alpha.3",
   "description": "Provides Nikita actions for various FreeIPA operations.",
   "keywords": [
     "nikita",
@@ -10,7 +11,6 @@
     "tls",
     "ssl"
   ],
-  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -41,9 +41,6 @@
   "dependencies": {
     "object-diff": "^0.0.4"
   },
-  "peerDependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.1"
-  },
   "devDependencies": {
     "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
     "coffeescript": "^2.7.0",
@@ -55,26 +52,33 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    "./register": "./lib/register.js",
+    "./*": "./lib/*/index.js"
+  },
+  "homepage": "https://nikita.js.org/",
   "files": [
     "/lib"
   ],
+  "license": "MIT",
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register",
-      "@nikitajs/ipa/lib/register"
-    ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "@nikitajs/ipa/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 20000
+  },
+  "peerDependencies": {
+    "@nikitajs/core": "^1.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://nikita.js.org/",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/adaltas/node-nikita",
@@ -84,5 +88,6 @@
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
-  }
+  },
+  "type": "module"
 }

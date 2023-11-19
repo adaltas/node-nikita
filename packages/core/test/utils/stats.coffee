@@ -1,32 +1,32 @@
 
-utils = require '../../lib/utils'
-{tags} = require '../test'
+import stats from '@nikitajs/core/utils/stats'
+import test from '../test.coffee'
 
 describe 'utils.stats', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'type', ->
 
     it 'directory is true', ->
       mode = parseInt '40755', 8
-      utils.stats.isDirectory(mode).should.be.true()
+      stats.isDirectory(mode).should.be.true()
 
     it 'directory is false', ->
       mode = parseInt '100644', 8
-      utils.stats.isDirectory(mode).should.be.false()
+      stats.isDirectory(mode).should.be.false()
       
   describe 'type', ->
 
     it 'file is true', ->
       mode = parseInt '100644', 8
-      utils.stats.isFile(mode).should.be.true()
+      stats.isFile(mode).should.be.true()
 
     it 'file is false', ->
       mode = parseInt '40755', 8
-      utils.stats.isFile(mode).should.be.false()
+      stats.isFile(mode).should.be.false()
       
   describe 'type', ->
 
     it 'file is false', ->
-      utils.stats.type(parseInt('40755', 8)).should.eql 'Directory'
-      utils.stats.type(parseInt('100644', 8)).should.eql 'File'
+      stats.type(parseInt('40755', 8)).should.eql 'Directory'
+      stats.type(parseInt('100644', 8)).should.eql 'File'

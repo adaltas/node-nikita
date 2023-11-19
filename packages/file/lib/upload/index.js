@@ -1,11 +1,11 @@
 // Dependencies
-const fs = require('fs');
-const path = require('path');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import fs from 'node:fs'
+import path from 'node:path'
+import utils from "@nikitajs/file/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     const algo = config.sha1 != null ? "sha1" : "md5";
     log({
@@ -89,12 +89,10 @@ module.exports = {
           ? {
               message: `Hash matches as '${hash_source}'`,
               level: "INFO",
-              module: "nikita/lib/file/download",
             }
           : {
               message: `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
               level: "WARN",
-              module: "nikita/lib/file/download",
             }
       );
       return !match;

@@ -1,12 +1,12 @@
 
-nikita = require '@nikitajs/core/lib'
-utils = require '@nikitajs/core/lib/utils'
-{config, images, tags} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.exec', ->
+  return unless test.tags.lxd
   
   describe 'schema', ->
     
@@ -27,7 +27,7 @@ describe 'lxc.exec', ->
         @lxc.delete 'nikita-exec-1', force: true
       await @clean()
       await @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-exec-1'
         start: true
       {$status, stdout} = await @lxc.exec
@@ -49,7 +49,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-2', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-2'
           start: true
         {stdout} = await @lxc.exec
@@ -67,7 +67,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-3', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-3'
           start: true
         await @lxc.exec
@@ -92,7 +92,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-4', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-4'
           start: true
         @lxc.exec
@@ -114,7 +114,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-5', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-5'
           start: true
         {$status, code} = await @lxc.exec
@@ -138,7 +138,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-6', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-6'
           start: true
         {stdout} = await @lxc.exec
@@ -163,7 +163,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-7', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-7'
           start: true
         @lxc.exec
@@ -187,7 +187,7 @@ describe 'lxc.exec', ->
           @lxc.delete 'nikita-exec-8', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-exec-8'
           start: true
         {stdout} = await @lxc.exec

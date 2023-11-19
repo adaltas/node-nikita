@@ -1,23 +1,23 @@
 
-{merge} = require 'mixme'
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import {merge} from 'mixme'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.group', ->
+  return unless test.tags.ipa
 
   they 'create a group', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: ipa,
+      @ipa.group.del connection: test.ipa,
         cn: 'group_add'
-      {$status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
       $status.should.be.true()
-      {$status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
       $status.should.be.false()
 
@@ -25,12 +25,12 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: ipa,
+      @ipa.group.del connection: test.ipa,
         cn: 'group_add'
-      {$status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
       $status.should.be.true()
-      {$status} = await @ipa.group connection: ipa,
+      {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
         attributes:
           description: 'group_add description'
@@ -40,9 +40,9 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: ipa,
+      @ipa.group.del connection: test.ipa,
         cn: 'group_add'
-      {$status, result} = await @ipa.group connection: ipa,
+      {$status, result} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
       $status.should.be.true()
       result.gidnumber.length.should.eql 1
@@ -66,11 +66,11 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: ipa,
+      @ipa.group.del connection: test.ipa,
         cn: 'group_add'
-      @ipa.group connection: ipa,
+      @ipa.group connection: test.ipa,
         cn: 'group_add'
-      {$status, result} = await @ipa.group connection: ipa,
+      {$status, result} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
       $status.should.be.false()
       result.gidnumber.length.should.eql 1

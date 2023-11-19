@@ -1,12 +1,12 @@
 
-nikita = require '@nikitajs/core/lib'
-utils = require '../../lib/utils'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/file/utils'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.ini option stringify_brackets_then_curly', ->
+  return unless test.tags.posix
   
   # TODO: move to `utils.ini` tests
 

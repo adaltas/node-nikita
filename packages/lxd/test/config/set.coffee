@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.config.set', ->
+  return unless test.tags.lxd
 
   they 'Set multiple keys', ({ssh}) ->
     nikita
@@ -15,7 +15,7 @@ describe 'lxc.config.set', ->
         container: 'nikita-config-set-1'
         force: true
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-config-set-1'
       {$status} = await @lxc.config.set
         container: 'nikita-config-set-1'
@@ -42,7 +42,7 @@ describe 'lxc.config.set', ->
         container: 'nikita-config-set-2'
         force: true
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-config-set-2'
       {$status} = await @lxc.config.set
         container: 'nikita-config-set-2'

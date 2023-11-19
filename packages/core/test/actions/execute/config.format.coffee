@@ -1,12 +1,13 @@
 
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.execute.config.format', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
-  describe 'function', ->
+  describe 'udf', ->
 
     they 'return user value', ({ssh}) ->
       nikita
@@ -30,7 +31,7 @@ describe 'actions.execute.config.format', ->
           'failed to format output with a user defined function, original error message is \'catchme\'.'
         ].join ' '
   
-  describe 'enum', ->
+  describe 'constant', ->
 
     they 'yaml', ({ssh}) ->
       nikita
@@ -46,18 +47,19 @@ describe 'actions.execute.config.format', ->
         stdout.should.eql 'key: value\n'
         data.should.eql key: "value"
 
-    they 'with error', ({ssh}) ->
+    they 'json with error', ({ssh}) ->
       nikita
         $ssh: ssh
       , ->
-        {stdout, data} = await @execute
+        {stdout, stderr, data} = await @execute
           command: 'exit 1'
           format: 'json'
           code: [, 1]
         stdout.should.eql ''
+        stderr.should.eql ''
         should.not.exist(data)
 
-    they 'parsing error', ({ssh}) ->
+    they 'json parsing error', ({ssh}) ->
       nikita
         $ssh: ssh
       , ->
@@ -69,4 +71,16 @@ describe 'actions.execute.config.format', ->
           'failed to parse output, format is "json",'
           'original error message is "Unexpected token \'i\', \\"invalid\\n\\" is not valid JSON".'
         ].join ' '
+
+    they 'jsonline empty', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        {stdout, stderr, data} = await @execute
+          command: 'echo -n ""'
+          format: 'jsonlines'
+          bash: true
+        stdout.should.eql ''
+        stderr.should.eql ''
+        data.should.eql []
         

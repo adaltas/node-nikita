@@ -1,7 +1,7 @@
 // Dependencies
-const dedent = require('dedent');
-const utils = require('@nikitajs/core/lib/utils');
-const definitions = require('./schema.json');
+import dedent from "dedent";
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Errors
 const errors = {
@@ -11,7 +11,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (!config.server?.length) {
       log({

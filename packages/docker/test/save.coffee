@@ -1,19 +1,19 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.save', ->
+  return unless test.tags.docker
 
   they 'saves a simple image', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.build
+      await @docker.build
         image: 'nikita/load_test'
         content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
       {$status} = await @docker.save
@@ -25,13 +25,13 @@ describe 'docker.save', ->
     # For now, there are no mechanism to compare the checksum between an old and a new target
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @docker.build
+      await @docker.build
         image: 'nikita/load_test'
         content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
-      @docker.save
+      await @docker.save
         debug: true
         image: 'nikita/load_test:latest'
         output: "#{tmpdir}/nikita_saved.tar"

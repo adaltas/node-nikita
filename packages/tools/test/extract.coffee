@@ -1,11 +1,12 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
+__dirname = new URL( '.', import.meta.url).pathname
 
 describe 'tools.extract', ->
+  return unless test.tags.posix
 
   they 'should see extension .tgz', ({ssh}) ->
     # Test a non existing extracted dir
@@ -88,9 +89,9 @@ describe 'tools.extract', ->
       $ssh: ssh
     , ->
       @tools.extract
-        source: __filename
+        source: "a_file.invalid"
       .should.be.rejectedWith
-        message: 'Unsupported extension, got ".coffee"'
+        message: 'Unsupported extension, got ".invalid"'
 
   they 'should pass error for missing source file', ({ssh}) ->
     nikita

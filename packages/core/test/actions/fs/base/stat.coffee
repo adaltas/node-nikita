@@ -1,12 +1,12 @@
 
-nikita = require '../../../../lib'
-utils = require '../../../../lib/utils'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.stat', ->
+  return unless test.tags.posix
 
   they 'NIKITA_FS_STAT_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita

@@ -1,24 +1,31 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, service} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.service_install
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'service.remove', ->
-  
-  @timeout 20000
+  return unless test.tags.service_install
+
+  they 'package is not installed', ({ssh, sudo}) ->
+    {$status} = await nikita
+      $ssh: ssh
+      $sudo: sudo
+    .service.remove
+      name: 'XXXX'
+    $status.should.be.false()
+
 
   they 'new package', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      @service.install
-        name: service.name
+      await @service.install
+        name: test.service.name
       {$status} = await @service.remove
-        name: service.name
+        name: test.service.name
       $status.should.be.true()
       {$status} = await @service.remove
-        name: service.name
+        name: test.service.name
       $status.should.be.false()

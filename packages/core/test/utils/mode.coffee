@@ -1,9 +1,9 @@
 
-mode = require '../../lib/utils/mode'
-{tags} = require '../test'
+import mode from '@nikitajs/core/utils/mode'
+import test from '../test.coffee'
 
 describe 'utils.mode', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'stringify', ->
     

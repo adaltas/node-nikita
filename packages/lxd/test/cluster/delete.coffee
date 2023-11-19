@@ -1,12 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-path = require('path')
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.cluster.delete', ->
+  return unless test.tags.lxd
 
   they 'delete a cluster', ({ssh}) ->
     @timeout -1 # yum install take a lot of time
@@ -21,10 +20,10 @@ describe 'lxc.cluster.delete', ->
             'ipv6.address': 'none'
         containers:
           'nikita-cluster-del-1':
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
             nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
           'nikita-cluster-del-2':
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
             nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
       await registry.register 'clean', ->
         # Status modified if cluster deleted
@@ -62,10 +61,10 @@ describe 'lxc.cluster.delete', ->
               'ipv6.address': 'none'
           containers:
             'nikita-cluster-del-1':
-              image: "images:#{images.alpine}"
+              image: "images:#{test.images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
             'nikita-cluster-del-2':
-              image: "images:#{images.alpine}"
+              image: "images:#{test.images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
         await @lxc.cluster cluster
         await @wait time: 200
@@ -86,10 +85,10 @@ describe 'lxc.cluster.delete', ->
               'ipv6.address': 'none'
           containers:
             'nikita-cluster-del-1':
-              image: "images:#{images.alpine}"
+              image: "images:#{test.images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
             'nikita-cluster-del-2':
-              image: "images:#{images.alpine}"
+              image: "images:#{test.images.alpine}"
               nic: eth0: name: 'eth0', nictype: 'bridged', parent: 'nktlxdpub'
         await registry.register 'clean', ->
           await @lxc.cluster.delete

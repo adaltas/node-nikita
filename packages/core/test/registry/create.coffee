@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-registry = require '../../lib/registry'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
 
 describe 'registry.create', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'static', ->
     registry.create.should.be.a.Function()

@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file config diff', ->
+  return unless test.tags.posix
 
   they 'type is a function', ({ssh}) ->
     diffcalled = false

@@ -2,18 +2,37 @@
 services:
   nodejs:
     build: .
-    image: nikita_db_mariadb_nodejs
     container_name: nikita_db_mariadb_nodejs
-    volumes:
-      - ../../../../:/nikita
     depends_on:
       - mariadb
+      # Not fully working for now, waiting is implemented inside entrypoint.sh
+      # mariadb:
+      #   condition: service_healthy
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/db/env/mariadb/test.coffee
+    image: nikita_db_mariadb_nodejs
+    networks:
+      - nikita
+    volumes:
+      - ../../../../:/nikita
   mariadb:
-    image: mariadb:latest
     container_name: nikita_db_mariadb_db
     environment:
       MARIADB_ROOT_PASSWORD: rootme
     expose:
       - "3306"
+    # healthcheck:
+    #   test: "bash -c 'echo > /dev/tcp/mariadb/3306'"
+    #   interval: 1s
+    #   timeout: 1s
+    #   retries: 5
+    image: mariadb:latest
+    # logging:
+    #   driver: none
+    networks:
+      - nikita
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge

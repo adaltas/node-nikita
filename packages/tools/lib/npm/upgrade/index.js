@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // Get outdated packages
     const { packages } = await this.tools.npm.outdated({
@@ -10,8 +10,8 @@ module.exports = {
       global: config.global,
     });
     let outdated = Object.keys(packages).filter((name) => {
-      const package = packages[name];
-      return package.current !== package.wanted;
+      const pck = packages[name];
+      return pck.current !== pck.wanted;
     });
     if (config.name) {
       const names = config.name.map((name) => name.split("@")[0]);

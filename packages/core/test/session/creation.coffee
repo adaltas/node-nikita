@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-session = require '../../lib/session'
+import nikita from '@nikitajs/core'
+import session from '@nikitajs/core/session'
+import test from '../test.coffee'
 
 describe 'session.creation', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'args is array of actions', ->
 

@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-registry = require '../../lib/registry'
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
 
 describe 'registry', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'statically', ->
     registry.register 'my_function', (->)

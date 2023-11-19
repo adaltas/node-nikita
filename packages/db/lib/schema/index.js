@@ -1,9 +1,9 @@
 // Dependencies
-const definitions = require("./schema.json");
-const utils = require("../utils");
+import definitions from "./schema.json" assert { type: "json" };
+import utils from "@nikitajs/db/utils";
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const {$status} = await this.execute({
       $shy: true,

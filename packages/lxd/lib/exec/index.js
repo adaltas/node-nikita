@@ -1,14 +1,13 @@
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../utils');
-const esa = utils.string.escapeshellarg;
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const opt = [
       config.user ? `--user ${config.user}` : void 0,
-      config.cwd ? `--cwd ${utils.string.escapeshellarg(config.cwd)}` : void 0,
+      config.cwd ? `--cwd ${esa(config.cwd)}` : void 0,
       ...Object.keys(config.env).map(
         (k) => `--env ${esa(k)}=${esa(config.env[k])}`
       ),

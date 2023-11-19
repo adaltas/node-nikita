@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, images} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.query', ->
+  return unless test.tags.lxd
 
   describe 'base options', ->
 
@@ -72,7 +72,7 @@ describe 'lxc.query', ->
           @lxc.delete 'nikita-query-1', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-query-1'
           start: true
         {$status, data} = await @lxc.query

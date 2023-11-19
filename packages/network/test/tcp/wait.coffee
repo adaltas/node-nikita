@@ -1,12 +1,12 @@
 
-http = require 'http'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import http from 'node:http'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'network.tcp.wait', ->
+  return unless test.tags.posix
 
   portincr = 22545
   server = ->

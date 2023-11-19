@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.load', ->
+  return unless test.tags.docker
 
   # timestamp ensures that hash of the built image will be unique and
   # image checksum is also unique
@@ -14,7 +14,7 @@ describe 'docker.load', ->
     @timeout 30000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.build
@@ -36,10 +36,10 @@ describe 'docker.load', ->
   they 'not loading if checksum match existing image', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {image} = await @docker.build
+      {image_id} = await @docker.build
         image: 'nikita/load_test'
         tag: 'latest'
         content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
@@ -49,14 +49,14 @@ describe 'docker.load', ->
         output: "#{tmpdir}/nikita_load.tar"
       {$status} = await @docker.load
         input: "#{tmpdir}/nikita_load.tar"
-        checksum: image
+        checksum: image_id
       $status.should.be.false()
 
   they 'status not modified if same image', ({ssh}) ->
     @timeout 30000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.rmi

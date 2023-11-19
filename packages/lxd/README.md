@@ -13,7 +13,31 @@ The tests require a local LXD client. On a Linux hosts, you can follow the [inst
 npm test
 ```
 
+## Usage
+
+```js
+import "@nikitajs/lxd/register";
+import nikita from "@nikitajs/core";
+
+const {$status} = await nikita.lxc.init({
+  image: "images:alpine/latest",
+  container: "nikita-list-vm1",
+  vm: true,
+});
+console.info("Machine was created:", $status);
+```
+
 ## Notes
+
+### Windows and MacOS users
+
+LXD is only available on Linux. To work around this limitation, we run LXD in a virtual machine.
+
+We provide a script to run LXD inside Multipass which also run on MacOS ARM architecture:
+
+```bash
+./assets/multipass.sh
+```
 
 ### Networks
 
@@ -23,50 +47,3 @@ The LXD tests create two bridge networks:
 * Nikita LXD private: `nktlxdprv`, `192.0.2.5/30` (reserved IP subnet ssigned as TEST-NET-1)
 
 To avoid collision, other tests must create and use their own bridge.
-
-### Windows and MacOS users
-
-LXD is only available on Linux. To work around this limitation, we run LXD in a virtual machine which is managed by [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/).
-
-The Nikita project folder is mounted in `/nikita` inside the VM. The LXD tests don't need to know about it because they only interact with the local `lxc` command. For the tests who need to know this path, the location of the Nikita folder inside the VM can be defined with `export NIKITA_HOME=/nikita`. For example, the FreeIPA tests in 'packages/ipa/env/ipa' use it.
-
-The procedure is abstracted inside the `./bin/cluster start` command. Below are the manual commands to make it work if you wish to do it yourself.
-
-Install:
-
-```bash
-# Initialize the VM with multipass
-# (compatible with macos silicon)
-cd assets && ./multipass.sh && cd ..
-# Initialize the VM with Vagrant
-# cd assets && vagrant up && cd ..
-# Set up LXD client
-lxc remote add nikita 127.0.0.1:8443
-lxc remote switch nikita
-# Initialize the container
-npx coffee start.coffee
-```
-
-Update the VM:
-
-```bash
-lxc remote switch local
-lxc remote remove nikita
-lxc remote add nikita --accept-certificate --password secret 127.0.0.1:8443
-lxc remote switch nikita
-```
-
-When using a host VM, the test `test/goodies/prlimit.coffee` will fail because
-it is expected to run on the LXC host machine and the not machine where Nikita
-is executed. The property `tags.lxd_prlimit` must be `false` in `test.coffee`.
-
-### Permission denied on tmp
-
-[FreeIPA install issue](https://bugzilla.redhat.com/show_bug.cgi?id=1678793)
-
-```
-[1/29]: configuring certificate server instance
-[error] IOError: [Errno 13] Permission denied: '/tmp/tmp_Tm1l_'
-```
-
-Host must have `fs.protected_regular` set to `0`, eg `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a`. In our Physical -> VM -> LXD setup, the parameters shall be set in the VM, no restart is required to install the FreeIPA server, just uninstall it first with `ipa-server-install --uninstall` before re-executing the install command.

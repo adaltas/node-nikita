@@ -1,22 +1,30 @@
 
 services:
-  target:
-    build:
-      context: .
-      dockerfile: ./target/Dockerfile
-    image: nikita_system_info_centos6_target
-    container_name: nikita_system_info_centos6_target
-    platform: linux/amd64 # Required on Apple M1
   nodejs:
     build:
       context: .
       dockerfile: ./nodejs/Dockerfile
-    image: nikita_system_info_centos6_nodejs
     container_name: nikita_system_info_centos6_nodejs
-    platform: linux/amd64 # Required on Apple M1
     depends_on:
       - target
-    volumes:
-      - ../../../../:/nikita
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/system/env/info_centos6/test.coffee
+    image: nikita_system_info_centos6_nodejs
+    networks:
+      - nikita
+    volumes:
+      - ../../../../:/nikita
+  target:
+    build:
+      context: .
+      dockerfile: ./target/Dockerfile
+    container_name: nikita_system_info_centos6_target
+    image: nikita_system_info_centos6_target
+    networks:
+      - nikita
+    platform: linux/amd64 # Required on Apple M1
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge

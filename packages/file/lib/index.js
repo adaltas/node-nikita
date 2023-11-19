@@ -1,21 +1,17 @@
 // Dependencies
-const path = require('path');
-const utils = require('./utils');
-const definitions = require('./schema.json');
+import path from "node:path";
+import utils from "@nikitajs/file/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // Content: pass all arguments to function calls
     const context = arguments[0];
-    log({
-      message: `Source is \"${config.source}\"`,
-      level: "DEBUG",
-    });
-    log({
-      message: `Destination is \"${config.target}\"`,
-      level: "DEBUG",
-    });
+    if(config.source){
+      log("DEBUG", `Source is ${JSON.stringify(config.source)}.`);
+    }
+    log("DEBUG", `Write to destination ${JSON.stringify(config.target)}.`);
     if (typeof config.content === "function") {
       config.content = config.content.call(this, context);
     }
@@ -35,7 +31,8 @@ module.exports = {
       case "unicode":
         config.eof = "\u2028";
     }
-    let targetContent = targetContentHash = null;
+    let targetContent = null;
+    let targetContentHash = null;
     if (config.write == null) {
       config.write = [];
     }
@@ -332,20 +329,27 @@ module.exports = {
     }
   },
   hooks: {
-    on_action: function({config}) {
-      if (!((config.source || config.content != null) || config.replace != null || config.write != null)) {
+    on_action: function ({ config }) {
+      if (
+        !(
+          config.source ||
+          config.content != null ||
+          config.replace != null ||
+          config.write != null
+        )
+      ) {
         // Validate parameters
         // TODO: try to express this in JSON schema
-        throw Error('Missing source or content or replace or write');
+        throw Error("Missing source or content or replace or write");
       }
-      if (config.source && (config.content != null)) {
-        throw Error('Define either source or content');
+      if (config.source && config.content != null) {
+        throw Error("Define either source or content");
       }
       if (config.content) {
-        if (typeof config.content === 'number') {
-          return config.content = `${config.content}`;
+        if (typeof config.content === "number") {
+          return (config.content = `${config.content}`);
         } else if (Buffer.isBuffer(config.content)) {
-          return config.content = config.content.toString();
+          return (config.content = config.content.toString());
         }
       }
     },

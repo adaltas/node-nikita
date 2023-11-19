@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-promise = require '../../lib/utils/promise'
+import promise from '@nikitajs/core/utils/promise'
+import test from '../test.coffee'
 
 describe 'utils.promise', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'array_filter', ->
     

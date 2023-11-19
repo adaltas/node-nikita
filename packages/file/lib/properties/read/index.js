@@ -1,9 +1,9 @@
 // Dependencies
-const quote = require('regexp-quote');
-const definitions = require('./schema.json');
+import quote from "regexp-quote";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Actions
-module.exports = {
+export default {
   handler: async function({config}) {
     const {data} = (await this.fs.base.readFile({
       target: config.target,

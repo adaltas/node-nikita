@@ -1,24 +1,24 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require './test'
-they = require('mocha-they')(config)
-utils = require '../lib/utils'
-
-return unless tags.ldap_acl
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/ldap/utils'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ldap.acl', ->
+  return unless test.tags.ldap_acl
   
   client = olcAccesses = olcDatabase = null
   beforeEach ->
     {database: olcDatabase} = await nikita.ldap.tools.database
-      uri: ldap.uri
-      binddn: ldap.config.binddn
-      passwd: ldap.config.passwd
-      suffix: ldap.suffix_dn
+      uri: test.ldap.uri
+      binddn: test.ldap.config.binddn
+      passwd: test.ldap.config.passwd
+      suffix: test.ldap.suffix_dn
     {stdout} = await nikita.ldap.search
-      uri: ldap.uri
-      binddn: ldap.config.binddn
-      passwd: ldap.config.passwd
+      uri: test.ldap.uri
+      binddn: test.ldap.config.binddn
+      passwd: test.ldap.config.passwd
       base: "olcDatabase=#{olcDatabase},cn=config"
       attributes: ['olcAccess']
       scope: 'base'
@@ -27,9 +27,9 @@ describe 'ldap.acl', ->
     .map (line) -> line.split(':')[1].trim()
   afterEach ->
     await nikita.ldap.modify
-      uri: ldap.uri
-      binddn: ldap.config.binddn
-      passwd: ldap.config.passwd
+      uri: test.ldap.uri
+      binddn: test.ldap.config.binddn
+      passwd: test.ldap.config.passwd
       operations:
         dn: "olcDatabase=#{olcDatabase},cn=config"
         changetype: 'modify'
@@ -46,13 +46,13 @@ describe 'ldap.acl', ->
   they 'create a new permission', ({ssh}) ->
     nikita
       ldap:
-        uri: ldap.uri
-        binddn: ldap.config.binddn
-        passwd: ldap.config.passwd
+        uri: test.ldap.uri
+        binddn: test.ldap.config.binddn
+        passwd: test.ldap.config.passwd
       $ssh: ssh
     , ->
       {$status} = await @ldap.acl
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="dc=test,dc=com"'
           by: [
@@ -60,7 +60,7 @@ describe 'ldap.acl', ->
           ]
       $status.should.be.true()
       {$status} = await @ldap.acl
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="dc=test,dc=com"'
           by: [
@@ -71,27 +71,27 @@ describe 'ldap.acl', ->
   they 'respect order in creation', ({ssh}) ->
     nikita
       ldap:
-        uri: ldap.uri
-        binddn: ldap.config.binddn
-        passwd: ldap.config.passwd
+        uri: test.ldap.uri
+        binddn: test.ldap.config.binddn
+        passwd: test.ldap.config.passwd
       $ssh: ssh
     , ->
       @ldap.acl
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=test1,dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
           ]
       @ldap.acl
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=test2,dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
           ]
       @ldap.acl
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
           place_before: 'dn.base="ou=test2,dc=test,dc=com"'
@@ -99,7 +99,7 @@ describe 'ldap.acl', ->
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
           ]
       {dn} = await @ldap.tools.database
-        suffix: ldap.suffix_dn
+        suffix: test.ldap.suffix_dn
       {stdout} = await @ldap.search
         base: dn
         scope: 'base'

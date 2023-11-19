@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-{trim} = require '../../lib/utils/buffer'
+import {trim} from '@nikitajs/core/utils/buffer'
+import test from '../test.coffee'
 
 describe 'utils.buffer', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'trim', ->
   

@@ -2,12 +2,19 @@
 services:
   nodejs:
     build: .
-    image: nikita_core_arch_chroot
+    cap_add:
+      - SYS_ADMIN # Required to use `mount`
     container_name: nikita_core_arch_chroot_nodejs
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/core/env/arch_chroot/test.coffee
+    image: nikita_core_arch_chroot
+    networks:
+      - nikita
     platform: linux/amd64 # Required on Apple M1
     volumes:
       - ../../../../:/nikita
-    environment:
-      NIKITA_TEST_MODULE: /nikita/packages/core/env/arch_chroot/test.coffee
-    cap_add:
-      - SYS_ADMIN # Required to use `mount`
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge

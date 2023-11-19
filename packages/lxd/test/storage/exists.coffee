@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.storage.exists', ->
+  return unless test.tags.lxd
 
   they 'argument is a string', ({ssh}) ->
     await nikita.lxc.storage.exists 'nikita-storage-exists-1', ({config}) ->

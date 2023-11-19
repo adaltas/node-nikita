@@ -1,10 +1,10 @@
 // ## Dependencies
-const {merge} = require('mixme');
-const cson = require('cson');
-const definitions = require('./schema.json');
+import {merge} from 'mixme';
+import cson from 'cson';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (config.merge) {
       log({

@@ -1,9 +1,9 @@
 
-string = require '../../lib/utils/string'
-{tags} = require '../test'
+import string from '@nikitajs/core/utils/string'
+import test from '../test.coffee'
 
 describe 'utils.string', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'escapeshellarg', ->
     string.escapeshellarg("try to 'parse this").should.eql "'try to '\"'\"'parse this'"

@@ -1,11 +1,12 @@
 
-crypto = require 'crypto'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import crypto from 'node:crypto'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.hash', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   they 'error if target does not exist', ({ssh}) ->
     nikita

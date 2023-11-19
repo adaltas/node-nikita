@@ -1,10 +1,10 @@
 // Dependencies
-const dedent = require('dedent');
-const definitions = require('./schema.json');
-const esa = require('../../utils').string.escapeshellarg;
+import dedent from "dedent";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     //Build command
     const command_attach = [

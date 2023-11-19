@@ -6,7 +6,7 @@ Retrieve file information.
 ## File information
 
 The `mode` parameter indicates the file type. For conveniency, the
-`@nikitajs/core/lib/utils/stats` module provide functions to check each
+`@nikitajs/core/utils/stats` module provide functions to check each
 possible file types.
 
 ## Example
@@ -14,20 +14,20 @@ possible file types.
 Check if target is a file:
 
 ```js
-const utils = require('@nikitajs/core/lib/utils');
+import utils from '@nikitajs/core/utils';
 const {stats} = await nikita
-.file.touch("/tmp/a_file")
-.fs.base.stat("/tmp/a_file");
+  .file.touch("/tmp/a_file")
+  .fs.base.stat("/tmp/a_file");
 assert(utils.stats.isFile(stats.mode) === true);
 ```
 
 Check if target is a directory:
 
 ```js
-const utils = require('@nikitajs/core/lib/utils');
+import utils from '@nikitajs/core/utils';
 const {stats} = await nikita
-.fs.base.mkdir("/tmp/a_file")
-.fs.base.stat("/tmp/a_file");
+  .fs.base.mkdir("/tmp/a_file")
+  .fs.base.stat("/tmp/a_file");
 assert(utils.stats.isDirectory(stats.mode) === true);
 ```
 

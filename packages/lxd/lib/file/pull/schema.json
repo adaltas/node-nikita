@@ -3,11 +3,11 @@
     "type": "object",
     "properties": {
       "algo": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/hash#/definitions/config/properties/algo",
+        "$ref": "module://@nikitajs/core/actions/fs/hash#/definitions/config/properties/algo",
         "default": "md5"
       },
       "container": {
-        "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config/properties/container",
+        "$ref": "module://@nikitajs/lxd/init#/definitions/config/properties/container",
         "description": "Name of the container in lxd."
       },
       "source": {

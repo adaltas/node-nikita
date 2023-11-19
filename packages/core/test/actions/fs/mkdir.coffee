@@ -1,12 +1,13 @@
 
-path = require 'path'
-nikita = require '../../../lib'
-utils = require '../../../lib/utils'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.mkdir', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   they 'argument', ({ssh}) ->
     nikita
@@ -241,7 +242,7 @@ describe 'actions.fs.mkdir', ->
           ].join ' '
 
 describe 'system.mkdir options uid/gid', ->
-  return unless tags.chown
+  return unless test.tags.chown
 
   they 'change owner uid/gid on creation', ({ssh}) ->
     nikita

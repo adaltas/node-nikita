@@ -1,10 +1,11 @@
 
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'plugin.conditions if_execute', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   they 'pass if string command is successfull', ({ssh}) ->
     {$status} = await nikita

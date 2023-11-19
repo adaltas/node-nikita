@@ -2,19 +2,40 @@
 services:
   nodejs:
     build: .
-    image: nikita_db_postgresql_nodejs
     container_name: nikita_db_postgresql_nodejs
-    volumes:
-      - ../../../../:/nikita
     depends_on:
       - postgres
+      # Not fully working for now, waiting is implemented inside entrypoint.sh
+      # dind:
+      #   condition: service_healthy
+      # postgres:
+      #   condition: service_healthy
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/db/env/postgresql/test.coffee
+    image: nikita_db_postgresql_nodejs
+    networks:
+      - nikita
+    volumes:
+      - ../../../../:/nikita
   postgres:
-    image: postgres:9.5
+    image: postgres:16
     container_name: nikita_db_postgresql_db
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: rootme
     expose:
       - "5432"
+    # healthcheck:
+    #   test: "bash -c 'echo > /dev/tcp/postgres/5432'"
+    #   interval: 1s
+    #   timeout: 1s
+    #   retries: 5
+    logging:
+      driver: none
+    networks:
+      - nikita
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge

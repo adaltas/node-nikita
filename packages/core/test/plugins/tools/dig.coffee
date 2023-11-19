@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.tools.dig', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'root action', ->
     nikita a_key: 'a value', ({tools: {dig}}) ->

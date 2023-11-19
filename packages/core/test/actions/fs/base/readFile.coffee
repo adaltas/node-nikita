@@ -1,12 +1,12 @@
 
-fs = require 'ssh2-fs'
-nikita = require '../../../../lib'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import fs from 'ssh2-fs'
+import nikita from '@nikitajs/core'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.readFile', ->
+  return unless test.tags.posix
 
   they 'argument `target`', ({ssh}) ->
     nikita

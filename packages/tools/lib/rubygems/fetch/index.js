@@ -1,10 +1,10 @@
 
 // Dependencies
-const path = require('path');
-const definitions = require("./schema.json");
+import path from 'node:path'
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Get version
     if (!config.version) {

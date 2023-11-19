@@ -12,7 +12,7 @@
         }
       },
       {
-        "$ref": "module://@nikitajs/log/lib/fs#/definitions/config"
+        "$ref": "module://@nikitajs/log/fs#/definitions/config"
       }
     ]
   }

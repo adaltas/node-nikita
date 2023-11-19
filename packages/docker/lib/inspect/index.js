@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     const isCointainerArray = Array.isArray(config.container);
     const { data: info } = await this.docker.tools.execute({

@@ -1,13 +1,13 @@
 
-http = require 'http'
-path = require 'path'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import http from 'node:http'
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.cache file', ->
+  return unless test.tags.posix
 
   they 'current cache file match provided hash', ({ssh}) ->
     nikita
@@ -62,23 +62,24 @@ describe 'file.cache file', ->
         source: "#{tmpdir}/my_file"
         cache_dir: "#{tmpdir}/cache"
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-      .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/cache/my_file\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/cache/my_file\" got \"df8fede7ff71608e24a5576326e41c75\" instead of \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"."
 
   they 'into local cache_dir', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
+      await @file.touch "#{tmpdir}/a_file"
       {$status} = await @file.cache
-        source: "#{__filename}"
+        source: "#{tmpdir}/a_file"
         cache_dir: "#{tmpdir}/my_cache_dir"
       $status.should.be.true()
       {$status} = await @file.cache
-        source: "#{__filename}"
+        source: "#{tmpdir}/a_file"
         cache_dir: "#{tmpdir}/my_cache_dir"
       $status.should.be.false()
       @fs.assert
-        target: "#{tmpdir}/my_cache_dir/#{path.basename __filename}"
+        target: "#{tmpdir}/my_cache_dir/a_file"
 
   describe 'md5', ->
 
@@ -119,4 +120,4 @@ describe 'file.cache file', ->
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-        .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/target\" got \"df8fede7ff71608e24a5576326e41c75\" instead of \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"."

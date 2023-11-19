@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     system_info_disks: false
     system_info_os: true
@@ -13,6 +13,5 @@ module.exports =
     label: 'remote'
     ssh:
       host: 'target', username: 'nikita',
-      # private_key_path: '~/.ssh/id_rsa'
       password: 'secret'
   ]

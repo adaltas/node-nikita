@@ -1,37 +1,42 @@
-FROM centos:7.9.2009
-MAINTAINER David Worms
+FROM ubuntu:22.04
+LABEL org.opencontainers.image.authors="David Worms <david@adaltas.com>"
 
-RUN \
-     # Install Node dependencies
-     yum install -y git make \
-     # Install SSH and sudo
-  && yum install -y openssh-server openssh-clients sudo \
-  && ssh-keygen -A
-
-# Install PostgreSQL client
-RUN yum install -y postgresql
-
-RUN yum clean all
+RUN apt update -y && \
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
+    apt install -y \
+      # System
+      tzdata \
+      # Node.js dependencies
+      build-essential curl git iputils-ping \
+      # SSH server and client
+      openssh-server \
+      # Sudo to start ssh
+      sudo \
+      # Mysql client
+      postgresql-client && \
+    # SSH configuration
+    ssh-keygen -A && \
+    mkdir -p /run/sshd
 
 ADD ./entrypoint.sh /entrypoint.sh
 RUN mkdir -p /nikita
 WORKDIR /nikita/packages/db
 
-# Sudo User
-RUN useradd nikita -d /home/nikita \
- && mkdir -p /home/nikita \
- && chown nikita /home/nikita \
- && chmod 700 /home/nikita \
- && echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
+# User as sudoer
+RUN useradd nikita -d /home/nikita -m -s /bin/bash && \
+    mkdir -p /home/nikita && \
+    chown nikita /home/nikita && \
+    chmod 700 /home/nikita && \
+    echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
 USER nikita
 
-# Install Node.js
-# Note, CentOS 7.9.2009 incompatible with Node.js >= 18
-RUN \
-  curl -L https://git.io/n-install | bash -s -- -y 16.19
-ENV PATH /home/nikita/n/bin:$PATH
+# SSH certificate
+RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \
+    cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
 
-RUN ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' \
- && cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
+# Node.js
+ENV NODE_VERSION stable
+RUN curl -L https://git.io/n-install | bash -s -- -y
+ENV PATH /home/nikita/n/bin:$PATH
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.tools.schema.$ref', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'invalid ref definition', ->
     nikita
@@ -91,18 +91,14 @@ describe '$ref with `module:` protocol', ->
     , (->)
     .should.be.rejectedWith
       code: 'NIKITA_SCHEMA_INVALID_MODULE'
-      message: [
-        'NIKITA_SCHEMA_INVALID_MODULE:'
-        'the module location is not resolvable,'
-        'module name is "invalid/action".'
-      ].join ' '
+      message: /NIKITA_SCHEMA_INVALID_MODULE: the module location is not resolvable, module name is "invalid\/action", error message is ".*"\./
 
   it 'valid ref location', ->
     nikita
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.writeFile
-        target: "#{tmpdir}/a_module"
+        target: "#{tmpdir}/a_module.js"
         content: '''
         module.exports = {
           metadata: {
@@ -125,7 +121,7 @@ describe '$ref with `module:` protocol', ->
           config:
             type: 'object'
             properties:
-              'a_source': $ref: "module://#{tmpdir}/a_module#/definitions/config"
+              'a_source': $ref: "module://#{tmpdir}/a_module.js#/definitions/config"
         a_source: an_integer: '123'
       , ({config}) -> config: config
       config.should.eql

@@ -1,12 +1,12 @@
 
-path = require 'path'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.download file', ->
+  return unless test.tags.posix
   
   describe 'source', ->
 
@@ -15,15 +15,18 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
-          source: "file://#{__filename}"
+        await @file
+          content: 'Where is my precious?'
+          target: "#{tmpdir}/a_file"
+        await @file.download
+          source: "file://#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test" # Download a non existing file
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/download_test"
-          content: /yeah/
-        @file.download
-          source: "file://#{__filename}"
+          content: /precious/
+        await @file.download
+          source: "file://#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test" # Download on an existing file
         .should.be.finally.containEql $status: false
 
@@ -33,15 +36,18 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
-          source: "#{__filename}"
+        await @file
+          content: 'Where is my precious?'
+          target: "#{tmpdir}/a_file"
+        await @file.download
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/download_test"
-          content: /yeah/
-        @file.download # Download on an existing file
-          source: "#{__filename}"
+          content: /precious/
+        await @file.download # Download on an existing file
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
         .should.be.finally.containEql $status: false
 
@@ -50,54 +56,44 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
-          source: "#{__dirname}/doesnotexists"
+        await @file.download
+          source: "#{tmpdir}/doesnotexists"
           target: "#{tmpdir}/download_test"
-        .should.be.rejectedWith message: "NIKITA_FS_STAT_TARGET_ENOENT: failed to stat the target, no file exists for target, got \"#{__dirname}/doesnotexists\""
+        .should.be.rejectedWith message: "NIKITA_FS_STAT_TARGET_ENOENT: failed to stat the target, no file exists for target, got \"#{tmpdir}/doesnotexists\""
 
     they 'into an existing directory', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir
+        await @file.touch
+          target: "#{tmpdir}/a_file"
+        await @fs.mkdir
           target: "#{tmpdir}/download_test"
-        @file.download
-          source: "#{__filename}"
+        await @file.download
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
-        @fs.assert
-          target: "#{tmpdir}/download_test/#{path.basename __filename}"
+        await @fs.assert
+          target: "#{tmpdir}/download_test/a_file"
 
   describe 'cache', ->
-
-    they 'validate md5', ({ssh}) ->
-      source = "#{__dirname}/download.zip"
-      nikita
-        $tmpdir: true
-      , ({metadata: {tmpdir}}) ->
-        @file.download
-          $ssh: ssh
-          source: source
-          target: "#{tmpdir}/download_test"
-          cache: true
-          cache_dir: "#{tmpdir}/cache_dir"
-          md5: '3f104676a5f72de08b811dbb725244ff'
-        .should.be.finally.containEql $status: true
-        @fs.assert "#{tmpdir}/cache_dir/#{path.basename source}"
 
     they 'cache dir', ({ssh}) ->
       # Download a non existing file
       nikita
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file
+          content: 'Where is my precious?'
+          target: "#{tmpdir}/a_file"
+        await @file.download
           $ssh: ssh
-          source: "#{__filename}"
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
         .should.be.finally.containEql $status: true
-        @fs.assert "#{tmpdir}/cache_dir/#{path.basename __filename}"
+        await @fs.assert "#{tmpdir}/cache_dir/a_file"
 
     they 'detect file already present', ({ssh}) ->
       ssh = null
@@ -105,22 +101,25 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
-          source: "#{__filename}"
+        await @file
+          content: 'Where is my precious?'
+          target: "#{tmpdir}/a_file"
+        await @file.download
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        @file.download
-          source: "#{__filename}"
+        await @file.download
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
         .should.be.finally.containEql $status: false
-        @file
+        await @file
           content: 'abc'
           target: "#{tmpdir}/download_test"
-        @file.download
-          source: "#{__filename}"
+        await @file.download
+          source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
@@ -128,28 +127,49 @@ describe 'file.download file', ->
   
   describe 'md5', ->
 
-    they 'cache dir with md5 string', ({ssh}) ->
+    they 'cache dir with valid md5', ({ssh}) ->
       # Download a non existing file
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file
+        await @file
           target: "#{tmpdir}/a_file"
-          content: 'okay'
-        @file.download
+          content: 'Where is my precious?'
+        await @file.download
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-          md5: 'df8fede7ff71608e24a5576326e41c75'
+          md5: '2317728a5e7fbd40c1acbe01378f0230'
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/cache_dir/a_file"
-          content: 'okay'
-        @fs.assert
+          content: /precious/
+        await @fs.assert
           target: "#{tmpdir}/download_test"
-          content: 'okay'
+          content: /precious/
+
+    they 'cache dir with invalid md5', ({ssh}) ->
+      # Download a non existing file
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @file
+          target: "#{tmpdir}/a_file"
+          content: 'Where is my precious?'
+        await @file.download
+          source: "#{tmpdir}/a_file"
+          target: "#{tmpdir}/download_test"
+          cache: true
+          cache_dir: "#{tmpdir}/cache_dir"
+          md5: 'XXXXX'
+        .should.be.rejectedWith [
+          'NIKITA_FILE_INVALID_TARGET_HASH:'
+          "target \"#{tmpdir}/cache_dir/a_file\""
+          'got "2317728a5e7fbd40c1acbe01378f0230" instead of "XXXXX".'
+        ].join ' '
 
     they 'is computed if true', ({ssh}) ->
       # Download with invalid checksum
@@ -157,18 +177,18 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @log.fs
+        await @log.fs
           basedir: tmpdir
           serializer: text: (log) -> "[#{log.level}] #{log.message}\n"
-        @file
+        await @file
           target: "#{tmpdir}/source"
           content: "okay"
-        @file.download
+        await @file.download
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
         .should.be.finally.containEql $status: true
-        @file.download
+        await @file.download
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
@@ -189,9 +209,9 @@ describe 'file.download file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
-        @file.download
+        await @file.download
           source: "#{tmpdir}/a_file"
           target: "a_dir/download_test"
         .should.be.rejectedWith message: 'Non Absolute Path: target is "a_dir/download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'

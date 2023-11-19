@@ -1,15 +1,12 @@
 
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
-    var base, data, error;
-    if ((base = config.connection.http_headers)['Referer'] == null) {
-      base['Referer'] = config.connection.referer || config.connection.url;
-    }
-    ({data} = (await this.network.http(config.connection, {
+    config.connection.http_headers['Referer'] ??= config.connection.referer || config.connection.url;
+    const {data} = await this.network.http(config.connection, {
       negotiate: true,
       method: 'POST',
       data: {
@@ -17,9 +14,9 @@ module.exports = {
         params: [[config.uid], {}],
         id: 0
       }
-    })));
+    });
     if (data.error) {
-      error = Error(data.error.message);
+      const error = Error(data.error.message);
       error.code = data.error.code;
       throw error;
     } else {

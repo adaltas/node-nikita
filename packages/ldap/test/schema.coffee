@@ -1,22 +1,22 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.ldap
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ldap.schema', ->
+  return unless test.tags.ldap
   
   they 'entry with password', ({ssh}) ->
     nikita
       ldap:
-        binddn: ldap.binddn
-        passwd: ldap.passwd
-        uri: ldap.uri
+        binddn: test.ldap.binddn
+        passwd: test.ldap.passwd
+        uri: test.ldap.uri
       $ssh: ssh
     , ->
       entry =
-        dn: "cn=nikita,#{ldap.suffix_dn}"
+        dn: "cn=nikita,#{test.ldap.suffix_dn}"
         userPassword: 'secret'
         uid: 'nikita'
         objectClass: [ 'top', 'account', 'posixAccount' ]
@@ -32,7 +32,7 @@ describe 'ldap.schema', ->
           value: 'newsecret'
         ]
       ]
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn
       {$status} = await @ldap.add
         entry: entry
@@ -42,6 +42,6 @@ describe 'ldap.schema', ->
       {$status} = await @ldap.modify
         operations: operations
       $status.should.be.false()
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn
     

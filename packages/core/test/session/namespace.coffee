@@ -1,12 +1,12 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-registry = require '../../lib/registry'
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
 
 # Test the construction of the session namespace stored in state
 
 describe 'session.namespace', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'call registered action', ->
     nikita ({registry}) ->

@@ -1,11 +1,10 @@
 
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../utils');
-const esa = utils.string.escapeshellarg;
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // throw Error 'Invalid gid option' if config.gid? and isNaN config.gid
     const { groups } = await this.system.group.read();

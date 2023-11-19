@@ -6,14 +6,14 @@ Note, does not throw an error if service is not installed.
 
 ## Output
 
-* `$status`   
+* `started`   
   Indicates if the startup behavior has changed.   
 
 ## Example
 
 ```js
-const {$status} = await nikita.service.status([{
+const {started} = await nikita.service.status([{
   name: 'gmetad'
 })
-console.info(`Service status: ${$status}`)
+console.info(`Service status: ${started ? 'started' : 'stopped'}`)
 ```

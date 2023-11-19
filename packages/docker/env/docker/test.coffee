@@ -1,5 +1,6 @@
+import os from "node:os"
 
-module.exports =
+export default
   tags:
     docker: true
     docker_volume: true
@@ -17,6 +18,6 @@ module.exports =
   ,
     label: 'remote'
     ssh:
-      host: '127.0.0.1', username: process.env.USER,
-      private_key_path: '~/.ssh/id_rsa'
+      host: '127.0.0.1', username: os.userInfo().username,
+      private_key_path: '~/.ssh/id_ed25519'
   ]

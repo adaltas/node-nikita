@@ -1,0 +1,13 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "$ref": "module://@nikitajs/service/install#/definitions/config/properties/name"
+      },
+      "cacheonly": {
+        "$ref": "module://@nikitajs/service/install#/definitions/config/properties/cacheonly"
+      }
+    }
+  }
+}

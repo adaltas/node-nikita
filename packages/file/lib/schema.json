@@ -25,7 +25,7 @@
         "description": "Create a backup, append a provided string to the filename extension or\na timestamp if value is not a string, only apply if the target file\nexists and is modified."
       },
       "backup_mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode",
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode",
         "description": "Backup file mode (permission and sticky bits), defaults to `0o0400`,\nin the  form of `{mode: 0o0400}` or `{mode: \"0400\"}`."
       },
       "content": {
@@ -76,7 +76,7 @@
         "description": "Name of the marker from where the content will be replaced."
       },
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid"
       },
       "local": {
         "type": "boolean",
@@ -95,7 +95,7 @@
         "description": "Replace this marker, default to the replaced string if missing."
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode"
       },
       "place_before": {
         "oneOf": [
@@ -152,7 +152,7 @@
         "description": "Name of the marker until where the content will be replaced."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"
       },
       "unlink": {
         "type": "boolean",

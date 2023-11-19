@@ -1,14 +1,14 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.ldap
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ldap.add', ->
+  return unless test.tags.ldap
   
   user =
-    dn: "cn=nikita,#{ldap.suffix_dn}"
+    dn: "cn=nikita,#{test.ldap.suffix_dn}"
     userPassword: 'test'
     uid: 'nikita'
     objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
@@ -24,35 +24,35 @@ describe 'ldap.add', ->
   they 'add new entry', ({ssh}) ->
     nikita
       ldap:
-        binddn: ldap.binddn
-        passwd: ldap.passwd
-        uri: ldap.uri
+        binddn: test.ldap.binddn
+        passwd: test.ldap.passwd
+        uri: test.ldap.uri
       $ssh: ssh
     , ->
       @ldap.delete
-        dn: "cn=nikita,#{ldap.suffix_dn}"
+        dn: "cn=nikita,#{test.ldap.suffix_dn}"
       {$status} = await @ldap.add
         entry: user
       $status.should.be.true()
       @ldap.delete
-        dn: "cn=nikita,#{ldap.suffix_dn}"
+        dn: "cn=nikita,#{test.ldap.suffix_dn}"
 
   they 'add existing entry', ({ssh}) ->
     nikita
       ldap:
-        binddn: ldap.binddn
-        passwd: ldap.passwd
-        uri: ldap.uri
+        binddn: test.ldap.binddn
+        passwd: test.ldap.passwd
+        uri: test.ldap.uri
       $ssh: ssh
     , ->
       @ldap.delete
-        dn: "cn=nikita,#{ldap.suffix_dn}"
+        dn: "cn=nikita,#{test.ldap.suffix_dn}"
       {$status} = await @ldap.add
         entry: user
-        exclude: ['userPassword']
+        # exclude: ['userPassword']
       {$status} = await @ldap.add
         entry: user
-        exclude: ['userPassword']
+        # exclude: ['userPassword']
       $status.should.be.false()
       @ldap.delete
-        dn: "cn=nikita,#{ldap.suffix_dn}"
+        dn: "cn=nikita,#{test.ldap.suffix_dn}"

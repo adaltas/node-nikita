@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "code": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code"
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code"
       },
       "data": {
         "type": "string",

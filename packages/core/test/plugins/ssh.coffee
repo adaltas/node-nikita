@@ -1,11 +1,12 @@
 
-nikita = require '../../lib'
-utils = require '../../lib/utils'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config.filter ({ssh}) -> !!ssh)
 
 describe '`plugins.ssh`', ->
-  return unless tags.ssh
+  return unless test.tags.ssh
   
   describe 'from parent (action.ssh)', ->
 
@@ -14,13 +15,13 @@ describe '`plugins.ssh`', ->
         utils.ssh.compare(conn, ssh).should.be.true()
 
     they 'from config in child action', ({ssh}) ->
-      nikita $ssh: ssh, ({ssh: conn}) ->
-        @call -> @call ->
+      nikita $ssh: ssh, ->
+        @call -> @call ({ssh: conn}) ->
           utils.ssh.compare(conn, ssh).should.be.true()
 
     they 'from connection', ({ssh}) ->
       {ssh: conn} = await nikita.ssh.open ssh
-      await nikita $ssh: conn, (action) ->
+      await nikita $ssh: conn, ({ssh: conn}) ->
         @call -> @call ->
           utils.ssh.compare(conn, ssh).should.be.true()
       nikita.ssh.close ssh: conn

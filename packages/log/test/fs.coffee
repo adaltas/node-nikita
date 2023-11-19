@@ -1,12 +1,12 @@
 
-utils = require '@nikitajs/core/lib/utils'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'log.fs', ->
+  return unless test.tags.posix
 
   they 'requires option "serializer"', ({ssh}) ->
     nikita
@@ -23,6 +23,7 @@ describe 'log.fs', ->
         ].join ' '
 
   they 'serializer can be empty', ({ssh}) ->
+    return unless ssh
     nikita
       $ssh: ssh
       $tmpdir: true
@@ -55,7 +56,6 @@ describe 'log.fs', ->
     nikita
       $ssh: ssh
       $tmpdir: true
-      $dirty: true
     , ({metadata: {tmpdir}}) ->
       await @log.fs
         basedir: tmpdir
@@ -90,7 +90,6 @@ describe 'log.fs', ->
       nikita
         $ssh: ssh
         $tmpdir: true
-        # $dirty: true
       , ({metadata: {tmpdir}})->
         await @log.fs
           basedir: tmpdir

@@ -1,12 +1,12 @@
 
-fs = require 'fs'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import fs from 'node:fs'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.assert', ->
+  return unless test.tags.posix
   
   describe 'schema', ->
     

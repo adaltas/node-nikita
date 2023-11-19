@@ -1,11 +1,13 @@
 
-const utils = require('@nikitajs/core/lib/utils');
-const diff = require('./diff');
-const hfile = require('./hfile');
-const ini = require('./ini');
-const partial = require('./partial');
+import utils from "@nikitajs/core/utils";
+import diff from '@nikitajs/file/utils/diff';
+import hfile from '@nikitajs/file/utils/hfile';
+import ini from '@nikitajs/file/utils/ini';
+import partial from '@nikitajs/file/utils/partial';
 
-module.exports = {
+export { diff, hfile, ini, partial };
+
+export default {
   ...utils,
   diff: diff,
   hfile: hfile,

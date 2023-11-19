@@ -1,23 +1,23 @@
 // Dependencies
-const path = require('path');
-const url = require('url');
-const utils = require('../utils');
-const definitions = require('./schema.json');
-
-const protocols_http = ['http:', 'https:'];
-module.exports.protocols_http = protocols_http;
-const protocols_ftp = ['ftp:', 'ftps:'];
-module.exports.protocols_ftp = protocols_ftp;
+import path from 'node:path'
+import url from "node:url";
+import utils from "@nikitajs/file/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Errors
 const errors = {
   NIKITA_FILE_INVALID_TARGET_HASH: function({config, hash, _hash}) {
-    return utils.error('NIKITA_FILE_INVALID_TARGET_HASH', [`target ${JSON.stringify(config.target)} got ${hash} instead of ${_hash}`]);
+    return utils.error('NIKITA_FILE_INVALID_TARGET_HASH', [`target ${JSON.stringify(config.target)} got ${JSON.stringify(hash)} instead of ${JSON.stringify(_hash)}.`]);
   }
 };
 
+const protocols_http = ['http:', 'https:'];
+const protocols_ftp = ['ftp:', 'ftps:'];
+
+export { protocols_http, protocols_ftp };
+
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (config.target == null) {
       config.target = config.cache_file;

@@ -1,11 +1,11 @@
 
 // Dependencies
-const semver = require('semver');
-const utils = require('../../utils');
-const definitions = require("./schema.json");
+import semver from 'semver';
+import utils from "@nikitajs/tools/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { path } }) {
     const gems = {};
     if (gems[config.name] == null) {

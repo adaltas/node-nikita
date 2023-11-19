@@ -1,9 +1,9 @@
 
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const mode = typeof config.mode === 'number'
       ? config.mode.toString(8).substr(-4)

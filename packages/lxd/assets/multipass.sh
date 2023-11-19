@@ -3,12 +3,6 @@ set -e
 
 # Logs: `ll /Library/Logs/Multipass`
 
-# MacOS crash and image cant start:
-# see https://github.com/canonical/multipass/issues/1924
-# Restart multipass:
-# sudo pkill multipassd
-# multipass start nikita
-
 brew list | grep -x "bash-completion" || brew install bash-completion
 brew list | grep -x "multipass" || brew install --cask multipass
 
@@ -34,6 +28,22 @@ multipass launch \
 # Solution:
 # Re-run `multipass mount $HOME nikita`
 
+# Multipass does not respond
+# Solution:
+# restart multipass
+# sudo launchctl stop com.canonical.multipassd
+# sudo launchctl start com.canonical.multipassd
+
+# MacOS crash and image cant start:
+# see https://github.com/canonical/multipass/issues/1924
+# Force kill multipass, it shall restart:
+# sudo pkill multipassd
+# multipass start nikita
+
+# Fix DNS
+multipass exec nikita -- sudo bash -c "echo 'DNS=8.8.8.8' >> /etc/systemd/resolved.conf"
+multipass exec nikita -- sudo systemctl restart systemd-resolved
+
 # LXD installation
 multipass exec nikita -- sudo apt update
 multipass exec nikita -- sudo apt upgrade -y
@@ -45,7 +55,7 @@ multipass exec nikita -- sudo truncate -s 100G /opt/zfs.img
 multipass exec nikita -- sudo zpool create lxd /opt/zfs.img
 multipass exec nikita -- lxd init --auto --storage-backend=zfs --storage-pool=lxd
 
-# LXD configurqtion
+# LXD configuration
 multipass exec nikita -- lxc config set core.https_address '[::]:8443'
 multipass exec nikita -- lxc config set core.trust_password "secret"
 multipass exec nikita -- lxc config set images.remote_cache_expiry 30

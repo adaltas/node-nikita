@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { path } }) {
     // check if file is target is directory
     // detect daemon loader provider to construct target
@@ -15,36 +15,35 @@ module.exports = {
     if (config.target == null) {
       config.target = `/etc/init.d/${config.name}`;
     }
-    const { loader } = await this.service.discover({});
+    const { loader } = await this.service.discover();
     if (config.loader == null) {
       config.loader = loader;
     }
     // discover loader to put in cache
-    await this.file.render({
-      target: config.target,
-      source: config.source,
-      mode: config.mode,
-      uid: config.uid,
-      gid: config.gid,
+    const args = {
       backup: config.backup,
+      content: config.content,
       context: config.context,
-      local: config.local,
       engine: config.engine,
-    });
-    if (config.loader !== "systemctl") {
-      return;
+      gid: config.gid,
+      local: config.local,
+      mode: config.mode,
+      source: config.source,
+      target: config.target,
+      uid: config.uid,
     }
-    const { $status } = await this.execute({
-      $shy: true,
-      command: `systemctl status ${config.name} 2>\&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
-      code: [0, 1],
-    });
-    if (!$status) {
-      return;
+    await (config.context ? this.file.render(args) : this.file(args));
+    if (config.loader === "systemctl") {
+      const reload = await this.execute({
+        $shy: true,
+        command: `systemctl status ${config.name} 2>\&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
+        code: [0, 1],
+      }).then(({ $status }) => $status);
+      await this.execute({
+        $if: reload,
+        command: "systemctl daemon-reload; systemctl reset-failed",
+      });
     }
-    return await this.execute({
-      command: "systemctl daemon-reload; systemctl reset-failed",
-    });
   },
   metadata: {
     definitions: definitions,

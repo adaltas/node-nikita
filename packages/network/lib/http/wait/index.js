@@ -1,6 +1,6 @@
 // Dependencies
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/network/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Errors
 const errors = {
@@ -10,7 +10,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     const start = Date.now();
     config.status_code = config.status_code.map(function (item) {

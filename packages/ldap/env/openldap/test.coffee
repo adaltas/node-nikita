@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     api: true
     ldap: true

@@ -1,10 +1,11 @@
 
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.execute.config.cwd', ->
-  return unless tags.system_execute_arc_chroot
+  return unless test.tags.system_execute_arc_chroot
 
   they 'execute in the context of directory', ({ssh}) ->
     nikita

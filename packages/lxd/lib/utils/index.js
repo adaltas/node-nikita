@@ -1,8 +1,8 @@
 // Dependencies
-const utils = require('@nikitajs/core/lib/utils');
-const stderr_to_error_message = require('./stderr_to_error_message');
+import utils from "@nikitajs/core/utils";
+import stderr_to_error_message from '@nikitajs/lxd/utils/stderr_to_error_message';
 
-module.exports = {
+export default {
   ...utils,
   stderr_to_error_message: stderr_to_error_message
 };

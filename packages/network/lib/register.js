@@ -1,26 +1,19 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions ={
   network: {
     http: {
-      '': '@nikitajs/network/lib/http',
-      'wait': '@nikitajs/network/lib/http/wait'
+      '': '@nikitajs/network/http',
+      'wait': '@nikitajs/network/http/wait'
     },
     tcp: {
-      'assert': '@nikitajs/network/lib/tcp/assert',
-      'wait': '@nikitajs/network/lib/tcp/wait'
+      'assert': '@nikitajs/network/tcp/assert',
+      'wait': '@nikitajs/network/tcp/wait'
     }
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

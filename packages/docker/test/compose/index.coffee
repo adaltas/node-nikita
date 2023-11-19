@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.compose', ->
+  return unless test.tags.docker
 
   @timeout 90000
 
   they 'up from content', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       await @docker.rm
         container: 'nikita_docker_compose_up_content'
@@ -43,7 +43,7 @@ describe 'docker.compose', ->
   they 'up from content to file', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.rm
@@ -76,7 +76,7 @@ describe 'docker.compose', ->
   they 'up from file', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.rm
@@ -110,7 +110,7 @@ describe 'docker.compose', ->
   they 'up with service name', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.rm
@@ -145,7 +145,7 @@ describe 'docker.compose', ->
   they 'status not modified', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @docker.rm

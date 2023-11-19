@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugin.condition', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'normalize', ->
     nikita ->

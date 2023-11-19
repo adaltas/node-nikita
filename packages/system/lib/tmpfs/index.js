@@ -1,19 +1,23 @@
 
 // Dependencies
-const {merge} = require('mixme');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import {merge} from 'mixme';
+import utils from "@nikitajs/system/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // for now only support directory type path option
-    let content = {};
-    content[config.mount] = {};
+    let content = {
+      [config.mount]: {
+        type: "d",
+      },
+    };
+    // content[config.mount] = {};
     for (const key of ["mount", "perm", "uid", "gid", "age", "argu"]) {
       content[config.mount][key] = config[key];
     }
-    content[config.mount]["type"] = "d";
+    // content[config.mount]["type"] = "d";
     if (config.uid != null) {
       if (!/^[0-9]+/.exec(config.uid)) {
         if (config.name == null) {
@@ -27,10 +31,7 @@ module.exports = {
           ? `/etc/tmpfiles.d/${config.name}.conf`
           : "/etc/tmpfiles.d/default.conf";
     }
-    log({
-      message: `target set to ${config.target}`,
-      level: "DEBUG",
-    });
+    log("DEBUG", `target set to ${config.target}`);
     if (config.merge) {
       log("DEBUG", "opening target file for merge");
       try {
@@ -39,10 +40,7 @@ module.exports = {
           encoding: "utf8",
         });
         content = merge(utils.tmpfs.parse(data), content);
-        log({
-          message: "content has been merged",
-          level: "DEBUG",
-        });
+        log("DEBUG", "content has been merged");
       } catch (error) {
         if (error.code !== "NIKITA_FS_CRS_TARGET_ENOENT") {
           throw error;
@@ -59,10 +57,7 @@ module.exports = {
       uid: config.uid,
     });
     if ($status) {
-      log({
-        message: `re-creating ${config.mount} tmpfs file`,
-        level: "INFO",
-      });
+      log("INFO", `re-creating ${config.mount} tmpfs file`);
       await this.execute({
         command: `systemd-tmpfiles --remove ${config.target}`,
       });

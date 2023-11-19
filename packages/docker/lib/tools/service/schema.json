@@ -13,7 +13,7 @@
         }
       },
       {
-        "$ref": "module://@nikitajs/docker/lib/run"
+        "$ref": "module://@nikitajs/docker/run"
       }
     ],
     "required": [

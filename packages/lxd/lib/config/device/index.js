@@ -1,10 +1,11 @@
 // Dependencies
-const diff = require('object-diff');
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import diff from 'object-diff';
+import utils from "@nikitajs/lxd/utils";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // No properties, dont go further
     if (Object.keys(config.properties).length === 0) return false;
@@ -34,9 +35,9 @@ module.exports = {
             config.type,
             ...Object.keys(config.properties).map(
               (key) =>
-                utils.string.escapeshellarg(key) +
+                esa(key) +
                 "=" +
-                utils.string.escapeshellarg(config.properties[key])
+                esa(config.properties[key])
             ),
           ].join(" "),
         });
@@ -56,7 +57,7 @@ module.exports = {
               config.container,
               config.device,
               key,
-              utils.string.escapeshellarg(value),
+              esa(value),
             ].join(" "),
           });
         }

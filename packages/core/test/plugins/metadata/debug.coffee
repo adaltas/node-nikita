@@ -1,10 +1,10 @@
 
-{tags} = require '../../test'
-stream = require 'stream'
-nikita = require '../../../lib'
+import stream from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'metadata "debug"', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'validation', ->
   

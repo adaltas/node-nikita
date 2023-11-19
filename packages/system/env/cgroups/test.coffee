@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     system_cgroups: true
   config: [

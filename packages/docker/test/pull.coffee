@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.pull', ->
+  return unless test.tags.docker
 
   they 'pull image', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rmi
+      await @docker.rmi
         image: 'alpine'
         force: true
       {$status} = await @docker.pull
@@ -22,12 +22,12 @@ describe 'docker.pull', ->
   they '$status not modified if same image', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rmi
+      await @docker.rmi
         image: 'alpine'
         force: true
-      @docker.pull
+      await @docker.pull
         image: 'alpine'
       {$status} = await @docker.pull
         image: 'alpine'
@@ -36,9 +36,9 @@ describe 'docker.pull', ->
   they 'pull specific image tag', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rmi
+      await @docker.rmi
         image: 'alpine'
         tag: 'edge'
         force: true
@@ -55,9 +55,9 @@ describe 'docker.pull', ->
     # we need to find an image with a few tags
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rmi
+      await @docker.rmi
         image: 'alpine'
         force: true
       {$status} = await @docker.pull

@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     conditions_if_os: true
     system_execute_arc_chroot: true

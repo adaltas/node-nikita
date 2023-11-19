@@ -1,10 +1,9 @@
 
-ldap = require '../../lib/utils/ldap'
-{tags} = require '../test'
-
-return unless tags.api
+import ldap from '@nikitajs/ldap/utils/ldap'
+import test from '../test.coffee'
 
 describe 'utils.ldap acl', ->
+  return unless test.tags.api
 
   it 'parse', ->
     ldap.acl

@@ -1,17 +1,17 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, krb5} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.krb5_ktadd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'krb5.kutil.add', ->
+  return unless test.tags.krb5_ktadd
 
   describe 'schema', ->
 
     it 'principal, keyta and password must be provided', ->
       nikita
-        krb5: admin: krb5
+        krb5: admin: test.krb5
       , ->
         @krb5.ktutil.add {}
         .should.be.rejectedWith
@@ -29,19 +29,19 @@ describe 'krb5.kutil.add', ->
     they 'create a new keytab', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           password: 'nikita123-1'
         {$status} = await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita.keytab"
           password: 'nikita123-1'
         $status.should.be.true()
         {$status} = await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita.keytab"
           password: 'nikita123-1'
         $status.should.be.false()
@@ -49,27 +49,27 @@ describe 'krb5.kutil.add', ->
     they 'detect kvno', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           password: 'nikita123-1'
         await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-1'
         await @krb5.execute
           command: """
-          change_password -pw nikita123-2 nikita@#{krb5.realm}
+          change_password -pw nikita123-2 nikita@#{test.krb5.realm}
           """
         {$status} = await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-2'
         $status.should.be.true()
         {$status} = await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-2'
         $status.should.be.false()
@@ -77,19 +77,19 @@ describe 'krb5.kutil.add', ->
     they 'change permission', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           password: 'nikita123-1'
         await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-1'
           mode: 0o0755
         {$status} = await @krb5.ktutil.add
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           keytab: "#{tmpdir}/nikita_1.keytab"
           password: 'nikita123-1'
           mode: 0o0707

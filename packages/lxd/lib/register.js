@@ -1,79 +1,74 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-require('@nikitajs/file/lib/register');
-require('@nikitajs/network/lib/register');
-module.exports = {
+import '@nikitajs/file/register';
+import '@nikitajs/network/register';
+
+// Actions
+const actions = {
   lxc: {
     cluster: {
-      '': '@nikitajs/lxd/lib/cluster',
-      stop: '@nikitajs/lxd/lib/cluster/stop',
-      delete: '@nikitajs/lxd/lib/cluster/delete'
+      '': '@nikitajs/lxd/cluster',
+      stop: '@nikitajs/lxd/cluster/stop',
+      delete: '@nikitajs/lxd/cluster/delete'
     },
     config: {
       device: {
-        '': '@nikitajs/lxd/lib/config/device',
-        delete: '@nikitajs/lxd/lib/config/device/delete',
-        exists: '@nikitajs/lxd/lib/config/device/exists',
-        show: '@nikitajs/lxd/lib/config/device/show'
+        '': '@nikitajs/lxd/config/device',
+        delete: '@nikitajs/lxd/config/device/delete',
+        exists: '@nikitajs/lxd/config/device/exists',
+        show: '@nikitajs/lxd/config/device/show'
       },
-      set: '@nikitajs/lxd/lib/config/set'
+      set: '@nikitajs/lxd/config/set'
     },
-    exists: '@nikitajs/lxd/lib/exists',
-    init: '@nikitajs/lxd/lib/init',
-    info: '@nikitajs/lxd/lib/info',
-    delete: '@nikitajs/lxd/lib/delete',
-    start: '@nikitajs/lxd/lib/start',
-    state: '@nikitajs/lxd/lib/state',
-    stop: '@nikitajs/lxd/lib/stop',
-    exec: '@nikitajs/lxd/lib/exec',
+    exists: '@nikitajs/lxd/exists',
+    init: '@nikitajs/lxd/init',
+    info: '@nikitajs/lxd/info',
+    delete: '@nikitajs/lxd/delete',
+    start: '@nikitajs/lxd/start',
+    state: '@nikitajs/lxd/state',
+    stop: '@nikitajs/lxd/stop',
+    exec: '@nikitajs/lxd/exec',
     file: {
-      exists: '@nikitajs/lxd/lib/file/exists',
-      pull: '@nikitajs/lxd/lib/file/pull',
-      push: '@nikitajs/lxd/lib/file/push',
-      read: '@nikitajs/lxd/lib/file/read'
+      exists: '@nikitajs/lxd/file/exists',
+      pull: '@nikitajs/lxd/file/pull',
+      push: '@nikitajs/lxd/file/push',
+      read: '@nikitajs/lxd/file/read'
     },
     goodies: {
-      prlimit: '@nikitajs/lxd/lib/goodies/prlimit'
+      prlimit: '@nikitajs/lxd/goodies/prlimit'
     },
     network: {
-      '': '@nikitajs/lxd/lib/network',
-      create: '@nikitajs/lxd/lib/network',
-      attach: '@nikitajs/lxd/lib/network/attach',
-      detach: '@nikitajs/lxd/lib/network/detach',
-      delete: '@nikitajs/lxd/lib/network/delete',
-      list: '@nikitajs/lxd/lib/network/list'
+      '': '@nikitajs/lxd/network',
+      create: '@nikitajs/lxd/network',
+      attach: '@nikitajs/lxd/network/attach',
+      detach: '@nikitajs/lxd/network/detach',
+      delete: '@nikitajs/lxd/network/delete',
+      list: '@nikitajs/lxd/network/list'
     },
-    query: '@nikitajs/lxd/lib/query',
-    list: '@nikitajs/lxd/lib/list',
-    running: '@nikitajs/lxd/lib/running',
+    query: '@nikitajs/lxd/query',
+    list: '@nikitajs/lxd/list',
+    running: '@nikitajs/lxd/running',
     storage: {
-      '': '@nikitajs/lxd/lib/storage',
-      delete: '@nikitajs/lxd/lib/storage/delete',
-      exists: '@nikitajs/lxd/lib/storage/exists',
-      list: '@nikitajs/lxd/lib/storage/list',
+      '': '@nikitajs/lxd/storage',
+      delete: '@nikitajs/lxd/storage/delete',
+      exists: '@nikitajs/lxd/storage/exists',
+      list: '@nikitajs/lxd/storage/list',
       volume: {
-        '': '@nikitajs/lxd/lib/storage/volume',
-        delete: '@nikitajs/lxd/lib/storage/volume/delete',
-        list: '@nikitajs/lxd/lib/storage/volume/list',
-        get: '@nikitajs/lxd/lib/storage/volume/get',
-        attach: '@nikitajs/lxd/lib/storage/volume/attach'
+        '': '@nikitajs/lxd/storage/volume',
+        delete: '@nikitajs/lxd/storage/volume/delete',
+        list: '@nikitajs/lxd/storage/volume/list',
+        get: '@nikitajs/lxd/storage/volume/get',
+        attach: '@nikitajs/lxd/storage/volume/attach'
       }
     },
     wait: {
-      ready: '@nikitajs/lxd/lib/wait/ready'
+      ready: '@nikitajs/lxd/wait/ready'
     },
-    resources: '@nikitajs/lxd/lib/resources'
+    resources: '@nikitajs/lxd/resources'
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

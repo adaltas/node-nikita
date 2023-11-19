@@ -1,10 +1,10 @@
 // Dependencies
-const dedent = require('dedent');
-const definitions = require("./schema.json");
-const utils = require("../utils");
+import dedent from "dedent";
+import definitions from "./schema.json" assert { type: "json" };
+import utils from "@nikitajs/db/utils";
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     // Commands
     const engine = config.engine === 'mysql' || config.engine === 'mariadb'
@@ -45,21 +45,24 @@ module.exports = {
         },
         "\\dt"
       ) +
-      " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
-    const command_password_change = engine === "mysql"
-      ? utils.db.command(
-          config,
-          `SET PASSWORD FOR ${config.username} = PASSWORD ('${config.password}');`
-        )
-      :  engine === "mariadb"
-      ? utils.db.command(
-        config,
-        `ALTER USER ${config.username} IDENTIFIED BY '${config.password}';`
-      )
-      : utils.db.command(
-        config,
-        `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`
-      )
+      " 2>&1 >/dev/null | grep -e '^.*\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
+    const command_password_change =
+      engine === "mysql"
+        ? utils.db.command(
+            config,
+            // Old mysql version for MySQL 5.7.5 and earlier or MariaDB 10.1.20 and earlier
+            // `SET PASSWORD FOR ${config.username} = PASSWORD ('${config.password}');`
+            `ALTER USER ${config.username} IDENTIFIED BY '${config.password}';`
+          )
+        : engine === "mariadb"
+        ? utils.db.command(
+            config,
+            `ALTER USER ${config.username} IDENTIFIED BY '${config.password}';`
+          )
+        : utils.db.command(
+            config,
+            `ALTER USER ${config.username} WITH PASSWORD '${config.password}';`
+          );
     return await this.execute({
       command: dedent`
         signal=3

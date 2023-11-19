@@ -1,6 +1,6 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/tools/log`
+# Plugin `@nikitajs/core/plugins/tools/log`
 
 The `log` plugin inject a log function into the action.handler argument.
 
@@ -10,17 +10,16 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 
 */
 
-const {EventEmitter} = require('events');
-const stackTrace = require('stack-trace');
-const path = require('path');
-const {is_object_literal, merge, mutate} = require('mixme');
-const utils = require('../../utils');
+import path from 'node:path';
+import stackTrace from 'stack-trace';
+import {is_object_literal, mutate} from 'mixme';
+import utils from '@nikitajs/core/utils';
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools/log',
+export default {
+  name: '@nikitajs/core/plugins/tools/log',
   require: [
-    '@nikitajs/core/lib/plugins/tools/events',
-    '@nikitajs/core/lib/plugins/tools/find'
+    '@nikitajs/core/plugins/tools/events',
+    '@nikitajs/core/plugins/tools/find'
   ],
   hooks: {
     'nikita:normalize': function(action) {
@@ -29,7 +28,7 @@ module.exports = {
       }
     },
     'nikita:action': {
-      after: ['@nikitajs/core/lib/plugins/tools/events', '@nikitajs/core/lib/plugins/metadata/debug'],
+      after: ['@nikitajs/core/plugins/tools/events', '@nikitajs/core/plugins/metadata/debug'],
       handler: async function(action) {
         const debug = await action.tools.find(function(action) {
           return action.metadata.debug;

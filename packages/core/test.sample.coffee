@@ -1,10 +1,10 @@
 
-module.exports =
+export default
   tags:
     api: true
     conditions_if_os: false
     chown: false
-    ssh: false
+    ssh: true
     sudo: false
     posix: true
     system_execute_arc_chroot: false
@@ -18,5 +18,5 @@ module.exports =
     # Exemple with vagrant:
     # ssh:
     #   host: '127.0.0.1', port: 2222, username: 'vagrant'
-    #   private_key_path: "#{require('os').homedir()}/.vagrant.d/insecure_private_key"
+    #   private_key_path: "#{os.homedir()}/.vagrant.d/insecure_private_key"
   ]

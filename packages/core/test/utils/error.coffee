@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-error = require '../../lib/utils/error'
+import error from '@nikitajs/core/utils/error'
+import test from '../test.coffee'
 
 describe 'utils.error', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'function', ->
   

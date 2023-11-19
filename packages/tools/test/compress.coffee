@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.compress', ->
+  return unless test.tags.posix
 
   they 'should see extension .tgz', ({ssh}) ->
     nikita
@@ -107,7 +107,7 @@ describe 'tools.compress', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @tools.compress
-        source: __filename
-        target: __filename
+        source: "a_file.invalid"
+        target: "a_file.invalid"
       .should.be.rejectedWith
-        message: 'Unsupported Extension: ".coffee"'
+        message: 'Unsupported Extension: ".invalid"'

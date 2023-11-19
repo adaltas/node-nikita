@@ -1,10 +1,10 @@
 // Dependencies
-const utils = require("../utils");
-const path = require("path");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/docker/utils";
+import path from "node:path";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { find, log } }) {
     // Validate parameters
     if (config.target == null && config.content == null) {

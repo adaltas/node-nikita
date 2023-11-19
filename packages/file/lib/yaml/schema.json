@@ -29,7 +29,7 @@
         "description": "Replace from after this marker, a string or a regular expression."
       },
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "indent": {
         "type": "integer",
@@ -63,7 +63,7 @@
         "description": "Read the target if it exists and merge its content."
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "replace": {
         "type": "array",
@@ -109,7 +109,7 @@
         "description": "Replace to before this marker, a string or a regular expression."
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       }
     },
     "required": [

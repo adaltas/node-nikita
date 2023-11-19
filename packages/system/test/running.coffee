@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.running', ->
+  return unless test.tags.posix
 
   they 'pid not running', ({ssh}) ->
     {$logs, running} = await nikita({ssh: ssh}).system.running
@@ -52,7 +52,7 @@ describe 'system.running', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @file
+      await @file
         target: "#{tmpdir}/pid.lock"
         content: '9999999'
       {$logs, running} = await @system.running

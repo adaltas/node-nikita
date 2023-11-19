@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.user.exists', ->
+  return unless test.tags.ipa
 
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
         $ssh: ssh
-      .ipa.user.exists connection: ipa,
+      .ipa.user.exists connection: test.ipa,
         username: 'user_exists'
 
   describe 'action', ->
@@ -21,9 +21,9 @@ describe 'ipa.user.exists', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del connection: ipa,
+        @ipa.user.del connection: test.ipa,
           uid: 'user_exists'
-        {$status, exists} = await @ipa.user.exists connection: ipa,
+        {$status, exists} = await @ipa.user.exists connection: test.ipa,
           uid: 'user_exists'
         $status.should.be.false()
         exists.should.be.false()
@@ -32,7 +32,7 @@ describe 'ipa.user.exists', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user connection: ipa,
+        @ipa.user connection: test.ipa,
           uid: 'user_exists'
           attributes:
             givenname: 'Firstname'
@@ -40,7 +40,7 @@ describe 'ipa.user.exists', ->
             mail: [
               'user@nikita.js.org'
             ]
-        {$status, exists} = await @ipa.user.exists connection: ipa,
+        {$status, exists} = await @ipa.user.exists connection: test.ipa,
           uid: 'user_exists'
         $status.should.be.true()
         exists.should.be.true()

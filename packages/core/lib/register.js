@@ -1,52 +1,52 @@
 
 // Dependencies
-const registry = require('./registry');
+import registry from '@nikitajs/core/registry';
 
 // Action registration
-module.exports = {
+const actions = {
   '': {
     handler: (function() {})
   },
-  'assert': '@nikitajs/core/lib/actions/assert',
+  'assert': '@nikitajs/core/actions/assert',
   'call': {
-    '': '@nikitajs/core/lib/actions/call'
+    '': '@nikitajs/core/actions/call'
   },
   'execute': {
-    '': '@nikitajs/core/lib/actions/execute',
-    'assert': '@nikitajs/core/lib/actions/execute/assert',
-    'wait': '@nikitajs/core/lib/actions/execute/wait'
+    '': '@nikitajs/core/actions/execute',
+    'assert': '@nikitajs/core/actions/execute/assert',
+    'wait': '@nikitajs/core/actions/execute/wait'
   },
   'fs': {
     'base': {
-      'chmod': '@nikitajs/core/lib/actions/fs/base/chmod',
-      'chown': '@nikitajs/core/lib/actions/fs/base/chown',
-      'copy': '@nikitajs/core/lib/actions/fs/base/copy',
-      'createReadStream': '@nikitajs/core/lib/actions/fs/base/createReadStream',
-      'createWriteStream': '@nikitajs/core/lib/actions/fs/base/createWriteStream',
-      'exists': '@nikitajs/core/lib/actions/fs/base/exists',
-      'lstat': '@nikitajs/core/lib/actions/fs/base/lstat',
-      'mkdir': '@nikitajs/core/lib/actions/fs/base/mkdir',
-      'readdir': '@nikitajs/core/lib/actions/fs/base/readdir',
-      'readFile': '@nikitajs/core/lib/actions/fs/base/readFile',
-      'readlink': '@nikitajs/core/lib/actions/fs/base/readlink',
-      'rename': '@nikitajs/core/lib/actions/fs/base/rename',
-      'rmdir': '@nikitajs/core/lib/actions/fs/base/rmdir',
-      'stat': '@nikitajs/core/lib/actions/fs/base/stat',
-      'symlink': '@nikitajs/core/lib/actions/fs/base/symlink',
-      'unlink': '@nikitajs/core/lib/actions/fs/base/unlink',
-      'writeFile': '@nikitajs/core/lib/actions/fs/base/writeFile'
+      'chmod': '@nikitajs/core/actions/fs/base/chmod',
+      'chown': '@nikitajs/core/actions/fs/base/chown',
+      'copy': '@nikitajs/core/actions/fs/base/copy',
+      'createReadStream': '@nikitajs/core/actions/fs/base/createReadStream',
+      'createWriteStream': '@nikitajs/core/actions/fs/base/createWriteStream',
+      'exists': '@nikitajs/core/actions/fs/base/exists',
+      'lstat': '@nikitajs/core/actions/fs/base/lstat',
+      'mkdir': '@nikitajs/core/actions/fs/base/mkdir',
+      'readdir': '@nikitajs/core/actions/fs/base/readdir',
+      'readFile': '@nikitajs/core/actions/fs/base/readFile',
+      'readlink': '@nikitajs/core/actions/fs/base/readlink',
+      'rename': '@nikitajs/core/actions/fs/base/rename',
+      'rmdir': '@nikitajs/core/actions/fs/base/rmdir',
+      'stat': '@nikitajs/core/actions/fs/base/stat',
+      'symlink': '@nikitajs/core/actions/fs/base/symlink',
+      'unlink': '@nikitajs/core/actions/fs/base/unlink',
+      'writeFile': '@nikitajs/core/actions/fs/base/writeFile'
     },
-    'assert': '@nikitajs/core/lib/actions/fs/assert',
-    'chmod': '@nikitajs/core/lib/actions/fs/chmod',
-    'chown': '@nikitajs/core/lib/actions/fs/chown',
-    'copy': '@nikitajs/core/lib/actions/fs/copy',
-    'glob': '@nikitajs/core/lib/actions/fs/glob',
-    'hash': '@nikitajs/core/lib/actions/fs/hash',
-    'link': '@nikitajs/core/lib/actions/fs/link',
-    'mkdir': '@nikitajs/core/lib/actions/fs/mkdir',
-    'move': '@nikitajs/core/lib/actions/fs/move',
-    'remove': '@nikitajs/core/lib/actions/fs/remove',
-    'wait': '@nikitajs/core/lib/actions/fs/wait'
+    'assert': '@nikitajs/core/actions/fs/assert',
+    'chmod': '@nikitajs/core/actions/fs/chmod',
+    'chown': '@nikitajs/core/actions/fs/chown',
+    'copy': '@nikitajs/core/actions/fs/copy',
+    'glob': '@nikitajs/core/actions/fs/glob',
+    'hash': '@nikitajs/core/actions/fs/hash',
+    'link': '@nikitajs/core/actions/fs/link',
+    'mkdir': '@nikitajs/core/actions/fs/mkdir',
+    'move': '@nikitajs/core/actions/fs/move',
+    'remove': '@nikitajs/core/actions/fs/remove',
+    'wait': '@nikitajs/core/actions/fs/wait'
   },
   'registry': {
     'get': {
@@ -62,7 +62,7 @@ module.exports = {
         raw: true
       },
       handler: function({parent, args: [namespace, action]}) {
-        return parent.registry.register(namespace, action);
+        parent.registry.register(namespace, action);
       }
     },
     'registered': {
@@ -78,23 +78,16 @@ module.exports = {
         raw: true
       },
       handler: function({parent, args: [namespace]}) {
-        return parent.registry.unregister(namespace);
+        parent.registry.unregister(namespace);
       }
     }
   },
   'ssh': {
-    'open': '@nikitajs/core/lib/actions/ssh/open',
-    'close': '@nikitajs/core/lib/actions/ssh/close',
-    'root': '@nikitajs/core/lib/actions/ssh/root'
+    'open': '@nikitajs/core/actions/ssh/open',
+    'close': '@nikitajs/core/actions/ssh/close',
+    'root': '@nikitajs/core/actions/ssh/root'
   },
-  'wait': '@nikitajs/core/lib/actions/wait'
+  'wait': '@nikitajs/core/actions/wait'
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

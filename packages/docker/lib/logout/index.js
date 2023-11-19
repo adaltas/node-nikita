@@ -1,11 +1,10 @@
 
 // Dependencies
-const definitions = require("./schema.json");
-const utils = require("../../utils");
-const esa = utils.string.escapeshellarg;
+import definitions from "./schema.json" assert { type: "json" };
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const command = [
       'logout',

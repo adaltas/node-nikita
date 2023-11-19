@@ -1,11 +1,12 @@
 
-stream = require 'stream'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import stream from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.execute', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   describe 'config `command`', ->
 
@@ -54,8 +55,6 @@ describe 'actions.execute', ->
       out._write = (chunk, encoding, callback) ->
         data += chunk.toString()
         callback()
-      search1 = 'search_toto'
-      search2 = 'search_lulu'
       unpiped = 0
       out.on 'unpipe', ->
         unpiped++
@@ -63,16 +62,23 @@ describe 'actions.execute', ->
         false.should.be.true()
       await nikita
         $ssh: ssh
-      , (->)
-      .execute
-        command: "cat #{__filename} | grep #{search1}"
-        stdout: out
-      .execute
-        command: "cat #{__filename} | grep #{search2}"
-        stdout: out
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          content: '''
+          Test search_1.
+          Test search_2.
+          '''
+          target: "#{tmpdir}/a_file"
+        await @execute
+          command: "cat #{tmpdir}/a_file | grep search_1"
+          stdout: out
+        await @execute
+          command: "cat #{tmpdir}/a_file | grep search_2"
+          stdout: out
       unpiped.should.eql 2
-      data.should.containEql search1
-      data.should.containEql search2
+      data.should.containEql 'search_1'
+      data.should.containEql 'search_2'
 
     they 'stdout and stderr return empty on command error', ({ssh}) ->
       nikita
@@ -87,29 +93,31 @@ describe 'actions.execute', ->
   describe 'trim', ->
 
     they 'both stdout and stderr', ({ssh}) ->
-      nikita $ssh: ssh, ->
-        @execute
-          command: """
-          echo '  bonjour  '
-          echo ' monde  ' >&2
-          """
-          trim: true
-        .should.be.finally.containEql
-          stdout: 'bonjour'
-          stderr: 'monde'
+      nikita
+        $ssh: ssh
+      .execute
+        command: """
+        echo '  bonjour  '
+        echo ' monde  ' >&2
+        """
+        trim: true
+      .should.be.finally.containEql
+        stdout: 'bonjour'
+        stderr: 'monde'
 
     they 'with trim_stdout and trim_stderr', ({ssh}) ->
-      nikita $ssh: ssh, ->
-        @execute
-          command: """
-          echo '  bonjour  '
-          echo ' monde  ' >&2
-          """
-          stdout_trim: true
-          stderr_trim: true
-        .should.be.finally.containEql
-          stdout: 'bonjour'
-          stderr: 'monde'
+      nikita
+        $ssh: ssh
+      .execute
+        command: """
+        echo '  bonjour  '
+        echo ' monde  ' >&2
+        """
+        stdout_trim: true
+        stderr_trim: true
+      .should.be.finally.containEql
+        stdout: 'bonjour'
+        stderr: 'monde'
 
   describe 'log', ->
 
@@ -152,12 +160,12 @@ describe 'actions.execute', ->
 
     they 'trap on error', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute
+        await @execute
           command: """
           sh -c '>&2 echo "exit 2'
           echo 'ok'
           """
-        @execute
+        await @execute
           command: """
           sh -c '>&2 echo "exit 2'
           echo 'ok'
@@ -168,31 +176,33 @@ describe 'actions.execute', ->
   describe 'error', ->
 
     they 'provide `stdout` and `stderr`', ({ssh}) ->
-      nikita $ssh: ssh, ->
-        @execute
-          command: """
-          sh -c '>&2 echo "Some Error"; exit 2'
-          """
-        .should.be.rejectedWith
-          code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-          message: [
-            'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered,'
-            'command is "sh -c \'>&2 echo \\"Some Error\\"; exit 2\'",'
-            'got 2 instead of {"true":[0],"false":[]}.'
-          ].join ' '
-          command: 'sh -c \'>&2 echo "Some Error"; exit 2\''
-          exit_code: 2
-          stdout: ''
-          stderr: 'Some Error\n'
-          $status: false
+      nikita
+        $ssh: ssh
+      .execute
+        command: """
+        sh -c '>&2 echo "Some Error"; exit 2'
+        """
+      .should.be.rejectedWith
+        code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+        message: [
+          'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered,'
+          'command is "sh -c \'>&2 echo \\"Some Error\\"; exit 2\'",'
+          'got 2 instead of {"true":[0],"false":[]}.'
+        ].join ' '
+        command: 'sh -c \'>&2 echo "Some Error"; exit 2\''
+        exit_code: 2
+        stdout: ''
+        stderr: 'Some Error\n'
+        $status: false
 
   describe 'dry', ->
     
     they 'dont execute the command', ({ssh}) ->
-      res = await nikita.execute
-        command: "exit 1"
-        dry: true
-      res.should.match
+      (
+        await nikita.execute
+          command: "exit 1"
+          dry: true
+      ).should.match
         stdout: []
         stderr: []
         code: null

@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     tools_dconf: true
   config: [

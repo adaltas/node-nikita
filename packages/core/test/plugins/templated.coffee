@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
+import test from '../test.coffee'
+import nikita from '@nikitajs/core'
 
 describe 'plugins.templated', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'access config', ->
     nikita

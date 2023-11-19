@@ -2,10 +2,17 @@
 services:
   nodejs:
     build: .
-    image: nikita_system_info_archlinux
     container_name: nikita_system_info_archlinux
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/system/env/info_archlinux/test.coffee
+    image: nikita_system_info_archlinux
+    networks:
+      - nikita
     platform: linux/amd64 # Required on Apple M1
     volumes:
       - ../../../../:/nikita
-    environment:
-      NIKITA_TEST_MODULE: /nikita/packages/system/env/info_archlinux/test.coffee
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge

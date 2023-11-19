@@ -1,9 +1,9 @@
 
 // Dependencies
-const {Dirent, constants} = require('fs');
-const dedent = require('dedent');
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import {Dirent, constants} from 'fs';
+import dedent from 'dedent';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_READDIR_TARGET_ENOENT: ({config, error}) =>
@@ -16,7 +16,7 @@ const errors = {
 }
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Note: -w work on macos, not on linux, it force raw printing of
     // non-printable characters. This is the default when output is not to a

@@ -1,22 +1,21 @@
-
 /*
-# Plugin `@nikitajs/core/lib/plugins/templated`
+# Plugin `@nikitajs/core/plugins/templated`
 
 The templated plugin transform any string pass as an argument, for example a
 metadata or a configuration property, into a template.
 */
 
-const selfTemplated = require('self-templated');
+import selfTemplated from "self-templated";
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/templated',
+export default {
+  name: "@nikitajs/core/plugins/templated",
   hooks: {
-    'nikita:action': {
+    "nikita:action": {
       // Note, conditions plugins define templated as a dependency
-      before: ['@nikitajs/core/lib/plugins/metadata/schema'],
-      handler: async function(action) {
-        const templated = await action.tools.find((action) =>
-          action.metadata.templated
+      before: ["@nikitajs/core/plugins/metadata/schema"],
+      handler: async function (action) {
+        const templated = await action.tools.find(
+          (action) => action.metadata.templated
         );
         if (templated !== true) {
           return;
@@ -29,10 +28,10 @@ module.exports = {
             assertions: true,
             conditions: true,
             config: true,
-            metadata: true
-          }
+            metadata: true,
+          },
         });
-      }
-    }
-  }
+      },
+    },
+  },
 };

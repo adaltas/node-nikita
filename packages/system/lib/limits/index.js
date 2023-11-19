@@ -1,9 +1,9 @@
 // Dependencies
-const { regexp } = require("../utils");
-const definitions = require("./schema.json");
+import regexp from "@nikitajs/core/utils/regexp";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     if (config.system && config.user) {
       throw Error(

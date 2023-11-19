@@ -1,10 +1,10 @@
 
-nikita = require '../../../lib'
-{tags} = require '../../test'
-err = require '../../../lib/utils/error'
+import nikita from '@nikitajs/core'
+import err from '@nikitajs/core/utils/error'
+import test from '../../test.coffee'
 
 describe 'plugins.metadata.relax', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'handler throw error', ->
     {error} = await nikita.call $relax: true, ->

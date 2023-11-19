@@ -1,20 +1,20 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.ldap
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ldap.search', ->
+  return unless test.tags.ldap
 
   they 'with scope base', ({ssh}) ->
     nikita
       ldap:
-        binddn: ldap.binddn
-        passwd: ldap.passwd
-        uri: ldap.uri
+        binddn: test.ldap.binddn
+        passwd: test.ldap.passwd
+        uri: test.ldap.uri
       $ssh: ssh
     , ->
       {stdout} = await @ldap.search
-        base: "#{ldap.suffix_dn}"
+        base: "#{test.ldap.suffix_dn}"
       stdout.should.containEql 'dn: dc=example,dc=org'

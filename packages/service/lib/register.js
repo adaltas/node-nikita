@@ -1,29 +1,25 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
+import "@nikitajs/file/register";
 
 // Action registration
-module.exports = {
+const actions = {
   service: {
-    '': '@nikitajs/service/lib',
-    assert: '@nikitajs/service/lib/assert',
-    discover: '@nikitajs/service/lib/discover',
-    install: '@nikitajs/service/lib/install',
-    init: '@nikitajs/service/lib/init',
-    remove: '@nikitajs/service/lib/remove',
-    restart: '@nikitajs/service/lib/restart',
-    start: '@nikitajs/service/lib/start',
-    startup: '@nikitajs/service/lib/startup',
-    status: '@nikitajs/service/lib/status',
-    stop: '@nikitajs/service/lib/stop'
+    '': '@nikitajs/service',
+    assert: '@nikitajs/service/assert',
+    discover: '@nikitajs/service/discover',
+    install: '@nikitajs/service/install',
+    installed: '@nikitajs/service/installed',
+    init: '@nikitajs/service/init',
+    outdated: '@nikitajs/service/outdated',
+    remove: '@nikitajs/service/remove',
+    restart: '@nikitajs/service/restart',
+    start: '@nikitajs/service/start',
+    startup: '@nikitajs/service/startup',
+    status: '@nikitajs/service/status',
+    stop: '@nikitajs/service/stop'
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

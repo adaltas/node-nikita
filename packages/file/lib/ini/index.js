@@ -1,10 +1,10 @@
 // Dependencies
-const utils = require('../utils');
-const {merge} = require('mixme');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/file/utils";
+import {merge} from 'mixme';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     let content;
     let org_props = {};

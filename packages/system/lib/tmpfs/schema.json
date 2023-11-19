@@ -19,7 +19,7 @@
         "description": "Create a backup, append a provided string to the filename extension or\na timestamp if value is not a string, only apply if the target file\nexists and is modified."
       },
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid",
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid",
         "description": "File group name or group id."
       },
       "merge": {
@@ -32,7 +32,7 @@
         "description": "The mount point dir to create on system startup."
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode",
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode",
         "description": "Mode of the target configuration file"
       },
       "name": {
@@ -49,7 +49,7 @@
         "description": "File path where to write content to. Defined to\n/etc/tmpfiles.d/{config.uid}.conf if uid is defined or\n/etc/tmpfiles.d/default.conf."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid",
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid",
         "description": "File user name or user id."
       }
     },

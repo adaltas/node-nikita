@@ -1,21 +1,21 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.kill', ->
+  return unless test.tags.docker
 
   they 'running container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_kill'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         port: '499:80'
         container: 'nikita_test_kill'
@@ -27,16 +27,16 @@ describe 'docker.kill', ->
     @timeout 120000
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_kill'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         port: '499:80'
         container: 'nikita_test_kill'
-      @docker.kill
+      await @docker.kill
         container: 'nikita_test_kill'
       {$status} = await @docker.kill
         container: 'nikita_test_kill'
@@ -45,11 +45,11 @@ describe 'docker.kill', ->
   they 'status not modified (not living)', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_kill'
-      @docker.run
+      await @docker.run
         command: "/bin/echo 'test'"
         image: 'alpine'
         rm: false
@@ -57,5 +57,5 @@ describe 'docker.kill', ->
       {$status} = await @docker.kill
         container: 'nikita_test_kill'
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_kill'

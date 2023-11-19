@@ -1,9 +1,10 @@
 // Dependencies
-const dedent = require('dedent');
-const definitions = require("./schema.json");
+import dedent from "dedent";
+import utils from '@nikitajs/core/utils'
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     if (config.srv_name == null) {
       config.srv_name = config.name;
@@ -11,29 +12,16 @@ module.exports = {
     config.name = [config.name];
     // Assert a Package is installed
     if (config.installed != null) {
-      try {
-        await this.execute({
-          $shy: true,
-          command: dedent`
-            if command -v yum >/dev/null 2>&1; then
-              rpm -qa --qf "%{NAME}\n" | grep '^${config.name.join('|')}$'
-            elif command -v pacman >/dev/null 2>&1; then
-              pacman -Qqe | grep '^${config.name.join('|')}$'
-            elif command -v apt-get >/dev/null 2>&1; then
-              dpkg -l | grep \'^ii\' | awk \'{print $2}\' | grep '^${config.name.join('|')}$'
-            else
-              echo "Unsupported Package Manager" >&2
-              exit 2
-            fi
-          `,
-          stdin_log: true,
-          stdout_log: false
-        });
-      } catch (error) {
-        if (error.exit_code === 2) {
-          throw Error("Unsupported Package Manager");
-        }
-        throw Error(`Uninstalled Package: ${config.name}`);
+      const {packages} = await this.service.installed();
+      const notInstalled = config.name.filter( pck => !packages.includes(pck));
+      if (notInstalled.length) {
+        throw utils.error("NIKITA_SERVICE_ASSERT_NOT_INSTALLED", [
+          notInstalled.length > 1
+            ? `services ${notInstalled
+                .map(JSON.stringify)
+                .join(", ")} are not installed.`
+            : `service ${JSON.stringify(notInstalled[0])} is not installed.`,
+        ]);
       }
     }
     // Assert a Service is started or stopped

@@ -1,23 +1,23 @@
 /*
-# Plugin `@nikitajs/core/lib/plugins/output/logs`
+# Plugin `@nikitajs/core/plugins/output/logs`
 
 Return events emitted inside the action.
 */
 
-const {is_object_literal} = require('mixme');
-const stackTrace = require('stack-trace');
-const path = require('path');
+import {is_object_literal} from 'mixme';
+import stackTrace from 'stack-trace';
+import path from 'node:path';
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/output/logs',
+export default {
+  name: '@nikitajs/core/plugins/output/logs',
   require: [
-    '@nikitajs/core/lib/plugins/tools/log',
-    '@nikitajs/core/lib/plugins/output/status',
-    '@nikitajs/core/lib/plugins/metadata/raw'
+    '@nikitajs/core/plugins/tools/log',
+    '@nikitajs/core/plugins/output/status',
+    '@nikitajs/core/plugins/metadata/raw'
   ],
   hooks: {
     'nikita:action': {
-      after: '@nikitajs/core/lib/plugins/tools/log',
+      after: '@nikitajs/core/plugins/tools/log',
       handler: function(action) {
         action.state.logs = [];
         action.tools.log = (function(fn) {
@@ -41,7 +41,7 @@ module.exports = {
       }
     },
     'nikita:result': {
-      after: '@nikitajs/core/lib/plugins/output/status',
+      after: '@nikitajs/core/plugins/output/status',
       handler: function({action, output}, handler) {
         if (action.metadata.raw_output) {
           return handler;

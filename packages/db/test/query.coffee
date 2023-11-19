@@ -1,110 +1,108 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, db} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.db
-
-describe "db.query", ->
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
   
-  for engine, _ of db then do (engine) ->
+for engine, _ of test.db then do (engine) ->
 
-    describe "#{engine}", ->
+  describe "db.query #{engine}", ->
+    return unless test.tags.db
 
-      they 'schema required', ({ssh}) ->
-        nikita
-          $ssh: ssh
-        .db.query
-          command: 'select * from doesntmatter'
-        .should.be.rejectedWith [
-          "NIKITA_SCHEMA_VALIDATION_CONFIG:"
-          "multiple errors were found in the configuration of action `db.query`:"
-          "module://@nikitajs/db/lib/query#/definitions/db/required config must have required property 'admin_password';"
-          "module://@nikitajs/db/lib/query#/definitions/db/required config must have required property 'admin_username';"
-          "module://@nikitajs/db/lib/query#/definitions/db/required config must have required property 'engine';"
-          "module://@nikitajs/db/lib/query#/definitions/db/required config must have required property 'host'."
-        ].join ' '
+    they 'schema required', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      .db.query
+        command: 'select * from doesntmatter'
+      .should.be.rejectedWith [
+        "NIKITA_SCHEMA_VALIDATION_CONFIG:"
+        "multiple errors were found in the configuration of action `db.query`:"
+        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'admin_password';"
+        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'admin_username';"
+        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'engine';"
+        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'host'."
+      ].join ' '
 
-      they 'config command', ({ssh}) ->
-        nikita
-          $ssh: ssh
-          db: db[engine]
-        , ->
-          @db.database.remove 'test_query_1'
-          @db.database 'test_query_1'
-          {$status, stdout} = await @db.query
-            database: 'test_query_1'
-            command: """
-            CREATE TABLE a_table (a_col CHAR(5));
-            INSERT INTO a_table (a_col) VALUES ('value');
-            select * from a_table
-            """
-          $status.should.be.true()
-          stdout.should.eql 'value\n'
+    they 'config command', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        db: test.db[engine]
+      , ->
+        @db.database.remove 'test_query_1'
+        @db.database 'test_query_1'
+        {$status, stdout} = await @db.query
+          database: 'test_query_1'
+          command: """
+          CREATE TABLE a_table (a_col CHAR(5));
+          INSERT INTO a_table (a_col) VALUES ('value');
+          select * from a_table
+          """
+        $status.should.be.true()
+        stdout.should.eql 'value\n'
 
-      they 'config trim', ({ssh}) ->
-        nikita
-          $ssh: ssh
-          db: db[engine]
-        , ->
-          @db.database.remove 'test_query_1'
-          @db.database 'test_query_1'
-          {stdout} = await @db.query
-            database: 'test_query_1'
-            command: """
-            CREATE TABLE a_table (a_col CHAR(5));
-            INSERT INTO a_table (a_col) VALUES ('value');
-            select * from a_table
-            """
-            trim: true
-          stdout.should.eql 'value'
+    they 'config trim', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        db: test.db[engine]
+      , ->
+        @db.database.remove 'test_query_1'
+        @db.database 'test_query_1'
+        {stdout} = await @db.query
+          database: 'test_query_1'
+          command: """
+          CREATE TABLE a_table (a_col CHAR(5));
+          INSERT INTO a_table (a_col) VALUES ('value');
+          select * from a_table
+          """
+          trim: true
+        stdout.should.eql 'value'
 
-      they 'config grep with string', ({ssh}) ->
-        nikita
-          $ssh: ssh
-          db: db[engine]
-        , ->
-          @db.database.remove 'test_query_1'
-          @db.database 'test_query_1'
-          @db.query
-            database: 'test_query_1'
-            command: '''
-            CREATE TABLE a_table (a_col CHAR(5));
-            INSERT INTO a_table (a_col) VALUES ('value');
-            '''
-          {$status} = await @db.query
-            database: 'test_query_1'
-            command: '''
-            select * from a_table
-            '''
-            grep: 'value'
-          $status.should.be.true()
-          {$status} = await @db.query
-            database: 'test_query_1'
-            command: 'select * from a_table'
-            grep: 'invalid value'
-          $status.should.be.false()
+    they 'config grep with string', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        db: test.db[engine]
+      , ->
+        @db.database.remove 'test_query_1'
+        @db.database 'test_query_1'
+        @db.query
+          database: 'test_query_1'
+          command: '''
+          CREATE TABLE a_table (a_col CHAR(5));
+          INSERT INTO a_table (a_col) VALUES ('value');
+          '''
+        {$status} = await @db.query
+          database: 'test_query_1'
+          command: '''
+          select * from a_table
+          '''
+          grep: 'value'
+        $status.should.be.true()
+        {$status} = await @db.query
+          database: 'test_query_1'
+          command: 'select * from a_table'
+          grep: 'invalid value'
+        $status.should.be.false()
 
-      they 'config grep with regexp', ({ssh}) ->
-        nikita
-          $ssh: ssh
-          db: db[engine]
-        , ->
-          @db.database.remove 'test_query_1'
-          @db.database 'test_query_1'
-          @db.query
-            database: 'test_query_1'
-            command: '''
-            CREATE TABLE a_table (a_col CHAR(5));
-            INSERT INTO a_table (a_col) VALUES ('value');
-            '''
-          {$status} = await @db.query
-            database: 'test_query_1'
-            command: 'select * from a_table'
-            grep: /^val.*$/
-          $status.should.be.true()
-          {$status} = await @db.query
-            database: 'test_query_1'
-            command: 'select * from a_table'
-            grep: /^val$/
-          $status.should.be.false()
+    they 'config grep with regexp', ({ssh}) ->
+      nikita
+        $ssh: ssh
+        db: test.db[engine]
+      , ->
+        @db.database.remove 'test_query_1'
+        @db.database 'test_query_1'
+        @db.query
+          database: 'test_query_1'
+          command: '''
+          CREATE TABLE a_table (a_col CHAR(5));
+          INSERT INTO a_table (a_col) VALUES ('value');
+          '''
+        {$status} = await @db.query
+          database: 'test_query_1'
+          command: 'select * from a_table'
+          grep: /^val.*$/
+        $status.should.be.true()
+        {$status} = await @db.query
+          database: 'test_query_1'
+          command: 'select * from a_table'
+          grep: /^val$/
+        $status.should.be.false()

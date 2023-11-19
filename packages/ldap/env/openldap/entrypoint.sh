@@ -1,21 +1,21 @@
 #!/bin/bash
 set -e
 
+# Source Node.js
+. ~/.bashrc
 # Start ssh daemon
 sudo /usr/sbin/sshd
+# We have TTY, so probably an interactive container...
 if test -t 0; then
-  # We have TTY, so probably an interactive container...
+  # Some command(s) has been passed to container? Execute them and exit.
+  # No commands provided? Run bash.
   if [[ $@ ]]; then
-    # Transfer arguments to mocha
-    . ~/.bashrc
-    npx mocha $@
+    node_modules/.bin/mocha $@
   else
-    # Run bash when no argument
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi
+# Detached mode
 else
-  # Detached mode
-  . ~/.bashrc
   npm run test:local
 fi

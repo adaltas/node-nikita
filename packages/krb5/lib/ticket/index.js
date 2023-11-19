@@ -1,11 +1,11 @@
 
 // Dependencies
-const dedent = require('dedent');
-const utils = require('@nikitajs/krb5/lib/utils');
-const definitions = require('./schema.json');
+import dedent from "dedent";
+import utils from '@nikitajs/krb5/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     await this.execute({
       command: dedent`

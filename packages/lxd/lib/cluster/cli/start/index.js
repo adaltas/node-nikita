@@ -1,16 +1,16 @@
 // Dependencies
-const path = require('path');
-const dedent = require('dedent');
-const nikita = require('@nikitajs/core/lib');
-require('@nikitajs/lxd/lib/register');
-require('@nikitajs/log/src/register');
+import path from 'node:path'
+import dedent from "dedent";
+import nikita from '@nikitajs/core';
+import '@nikitajs/lxd/register';
+import '@nikitajs/log/register';
 
 const key = path.relative(
   process.cwd(),
   `${__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key`
 );
 
-module.exports = async function({params}) {
+export default async function({params}) {
   await nikita({
     $debug: params.debug
   }).log.cli({

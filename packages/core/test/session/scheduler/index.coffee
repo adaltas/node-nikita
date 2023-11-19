@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'session.scheduler', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'arguments', ->
 

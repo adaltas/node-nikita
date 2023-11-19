@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ruby} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_rubygems
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.rubygems.install', ->
+  return unless test.tags.tools_rubygems
 
   they 'install a non existing package', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.remove
         name: 'execjs'
@@ -23,7 +23,7 @@ describe 'tools.rubygems.install', ->
   they 'bypass existing package', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.remove
         name: 'execjs'
@@ -38,7 +38,7 @@ describe 'tools.rubygems.install', ->
   they 'install multiple versions', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.remove
         name: 'execjs'
@@ -63,7 +63,7 @@ describe 'tools.rubygems.install', ->
   they 'local gem from file', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @tools.rubygems.remove
@@ -86,7 +86,7 @@ describe 'tools.rubygems.install', ->
   they 'local gem from glob', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @tools.rubygems.remove

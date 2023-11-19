@@ -1,15 +1,15 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/assertions/exists`
+# Plugin `@nikitajs/core/plugins/assertions/exists`
 
 Assert that a file exist.
 
 The plugin register two action properties, `$assert_exists` and `$unassert_exists`.
 */
 
-const session = require('../../session');
-const utils = require('../../utils');
-const {mutate} = require('mixme');
+import session from '@nikitajs/core/session';
+import utils from '@nikitajs/core/utils';
+import {mutate} from 'mixme';
 
 const handlers = {
   assert_exists: async function(action) {
@@ -52,17 +52,17 @@ const handlers = {
   }
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/assertions/exists',
+export default {
+  name: '@nikitajs/core/plugins/assertions/exists',
   require: [
-    '@nikitajs/core/lib/plugins/metadata/raw',
-    '@nikitajs/core/lib/plugins/metadata/disabled'
+    '@nikitajs/core/plugins/metadata/raw',
+    '@nikitajs/core/plugins/metadata/disabled'
   ],
   hooks: {
     'nikita:normalize': {
       // This is hanging, no time for investigation
       // after: [
-      //   '@nikitajs/core/lib/plugins/assertions'
+      //   '@nikitajs/core/plugins/assertions'
       // ]
       handler: function(action, handler) {
         // Ventilate assertions properties defined at root

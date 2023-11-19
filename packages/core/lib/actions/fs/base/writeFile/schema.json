@@ -27,7 +27,7 @@
         "description": "Location where to write the temporary uploaded file before it is copied into its final destination, default to \"{tmpdir}/nikita_{YYMMDD}_{pid}_{rand}/{hash target}\""
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/base/createWriteStream#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/core/actions/fs/base/createWriteStream#/definitions/config/properties/mode"
       },
       "target": {
         "oneOf": [

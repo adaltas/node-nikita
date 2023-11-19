@@ -1,8 +1,8 @@
 
-const xmldom = require('xmldom');
-const builder = require('xmlbuilder');
+import xmldom from 'xmldom';
+import builder from 'xmlbuilder';
 
-module.exports = {
+export default {
   /*
   `parse(xml, [property])`
   
@@ -61,8 +61,7 @@ module.exports = {
   ```
   */
   stringify: function(properties) {
-    var i, j, k, ks, len, len1, markup, name, property, value;
-    markup = builder.create('configuration', {
+    const markup = builder.create('configuration', {
       version: '1.0',
       encoding: 'UTF-8'
     });
@@ -70,18 +69,15 @@ module.exports = {
       properties.sort(function(el1, el2) {
         return el1.name > el2.name;
       });
-      for (i = 0, len = properties.length; i < len; i++) {
-        ({name, value} = properties[i]);
-        property = markup.ele('property');
+      for (const {name, value} of properties) {
+        const property = markup.ele('property');
         property.ele('name', name);
         property.ele('value', value);
       }
     } else {
-      ks = Object.keys(properties);
-      ks.sort();
-      for (j = 0, len1 = ks.length; j < len1; j++) {
-        k = ks[j];
-        property = markup.ele('property');
+      const ks = Object.keys(properties).sort();
+      for (const k of ks) {
+        const property = markup.ele('property');
         property.ele('name', k);
         property.ele('value', properties[k]);
       }

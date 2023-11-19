@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // note, getting the volume to make sure it exists
     const { $status: volumeExists, data: volume } =

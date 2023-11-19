@@ -1,13 +1,13 @@
 // Dependencies
-const dedent = require("dedent");
-const yaml = require('js-yaml');
-const diff = require('object-diff');
-const {merge} = require('mixme');
-const definitions = require("./schema.json");
-const isa = require('../utils').string.escapeshellarg;
+import dedent from "dedent";
+import yaml from 'js-yaml';
+import diff from 'object-diff';
+import {merge} from 'mixme';
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // ## Exports
-module.exports = {
+export default {
   handler: async function({config}) {
     // Normalize config
     for (const key in config.properties) {
@@ -25,7 +25,7 @@ module.exports = {
           "create",
           config.network,
           ...Object.keys(config.properties).map(
-            (key) => isa(key) + "=" + isa(config.properties[key])
+            (key) => esa(key) + "=" + esa(config.properties[key])
           ),
         ].join(" ")}
       `,
@@ -57,9 +57,9 @@ module.exports = {
           "lxc",
           "network",
           "set",
-          isa(config.network),
-          isa(key),
-          isa(value),
+          esa(config.network),
+          esa(key),
+          esa(value),
         ].join(" "),
       });
     }

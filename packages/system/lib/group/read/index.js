@@ -1,7 +1,7 @@
 
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../../utils');
+import definitions from "./schema.json" assert { type: "json" };
+import utils from "@nikitajs/system/utils";
 
 // Parse the groups output
 const str2groups = function (data) {
@@ -22,7 +22,7 @@ const str2groups = function (data) {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     if (typeof config.gid === "string" && /\d+/.test(config.gid)) {
       config.gid = parseInt(config.gid, 10);

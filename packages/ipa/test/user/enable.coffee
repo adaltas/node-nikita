@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.user.enable', ->
+  return unless test.tags.ipa
   
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
         $ssh: ssh
-      .ipa.user.enable connection: ipa,
+      .ipa.user.enable connection: test.ipa,
         username: 'test_user_enable'
       , ({config: {uid}}) ->
         uid.should.eql 'test_user_enable'
@@ -23,7 +23,7 @@ describe 'ipa.user.enable', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.enable connection: ipa,
+        @ipa.user.enable connection: test.ipa,
           uid: 'test_user_enable_missing'
         .should.be.rejectedWith
           code: 4001
@@ -33,10 +33,10 @@ describe 'ipa.user.enable', ->
       nikita
         $ssh: ssh
       , ->
-        await @ipa.user.del connection: ipa,
+        await @ipa.user.del connection: test.ipa,
           $relax: true
           uid: 'test_user_enable_active'
-        await @ipa.user connection: ipa,
+        await @ipa.user connection: test.ipa,
           uid: 'test_user_enable_active'
           attributes:
             givenname: 'User'
@@ -45,7 +45,7 @@ describe 'ipa.user.enable', ->
               'test_user_enable@nikita.js.org'
             ]
             nsaccountlock: true
-        {$status} = await @ipa.user.enable connection: ipa,
+        {$status} = await @ipa.user.enable connection: test.ipa,
           uid: 'test_user_enable_active'
         $status.should.be.true()
 
@@ -53,10 +53,10 @@ describe 'ipa.user.enable', ->
     nikita
       $ssh: ssh
     , ->
-      await @ipa.user.del connection: ipa,
+      await @ipa.user.del connection: test.ipa,
         $relax: true
         uid: 'test_user_enable_inactive'
-      await @ipa.user connection: ipa,
+      await @ipa.user connection: test.ipa,
         uid: 'test_user_enable_inactive'
         attributes:
           givenname: 'User'
@@ -65,8 +65,8 @@ describe 'ipa.user.enable', ->
             'test_user_enable@nikita.js.org'
           ]
           nsaccountlock: true
-      await @ipa.user.enable connection: ipa,
+      await @ipa.user.enable connection: test.ipa,
         uid: 'test_user_enable_inactive'
-      {$status} = await @ipa.user.enable connection: ipa,
+      {$status} = await @ipa.user.enable connection: test.ipa,
         uid: 'test_user_enable_inactive'
       $status.should.be.false()

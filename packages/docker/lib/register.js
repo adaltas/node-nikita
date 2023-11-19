@@ -1,48 +1,42 @@
 
 // Dependencies
-require('@nikitajs/file/lib/register');
-const registry = require('@nikitajs/core/lib/registry');
+import '@nikitajs/file/register';
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions = {
   docker: {
-    build: '@nikitajs/docker/lib/build',
+    build: '@nikitajs/docker/build',
     compose: {
-      '': '@nikitajs/docker/lib/compose',
-      up: '@nikitajs/docker/lib/compose'
+      '': '@nikitajs/docker/compose',
+      up: '@nikitajs/docker/compose'
     },
-    cp: '@nikitajs/docker/lib/cp',
-    exec: '@nikitajs/docker/lib/exec',
-    inspect: '@nikitajs/docker/lib/inspect',
-    kill: '@nikitajs/docker/lib/kill',
-    load: '@nikitajs/docker/lib/load',
-    pause: '@nikitajs/docker/lib/pause',
-    pull: '@nikitajs/docker/lib/pull',
-    restart: '@nikitajs/docker/lib/restart',
-    rm: '@nikitajs/docker/lib/rm',
-    rmi: '@nikitajs/docker/lib/rmi',
-    run: '@nikitajs/docker/lib/run',
-    save: '@nikitajs/docker/lib/save',
-    start: '@nikitajs/docker/lib/start',
-    stop: '@nikitajs/docker/lib/stop',
+    cp: '@nikitajs/docker/cp',
+    exec: '@nikitajs/docker/exec',
+    images: '@nikitajs/docker/images',
+    inspect: '@nikitajs/docker/inspect',
+    kill: '@nikitajs/docker/kill',
+    load: '@nikitajs/docker/load',
+    pause: '@nikitajs/docker/pause',
+    pull: '@nikitajs/docker/pull',
+    restart: '@nikitajs/docker/restart',
+    rm: '@nikitajs/docker/rm',
+    rmi: '@nikitajs/docker/rmi',
+    run: '@nikitajs/docker/run',
+    save: '@nikitajs/docker/save',
+    start: '@nikitajs/docker/start',
+    stop: '@nikitajs/docker/stop',
     tools: {
-      checksum: '@nikitajs/docker/lib/tools/checksum',
-      execute: '@nikitajs/docker/lib/tools/execute',
-      service: '@nikitajs/docker/lib/tools/service',
-      status: '@nikitajs/docker/lib/tools/status'
+      checksum: '@nikitajs/docker/tools/checksum',
+      execute: '@nikitajs/docker/tools/execute',
+      service: '@nikitajs/docker/tools/service',
+      status: '@nikitajs/docker/tools/status'
     },
-    // unpause: '@nikitajs/docker/lib/unpause'
-    volume_create: '@nikitajs/docker/lib/volume_create',
-    volume_rm: '@nikitajs/docker/lib/volume_rm',
-    wait: '@nikitajs/docker/lib/wait'
+    // unpause: '@nikitajs/docker/unpause'
+    volume_create: '@nikitajs/docker/volume_create',
+    volume_rm: '@nikitajs/docker/volume_rm',
+    wait: '@nikitajs/docker/wait'
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

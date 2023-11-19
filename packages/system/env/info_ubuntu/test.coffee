@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     system_info_disks: true
     system_info_os: true
@@ -8,7 +8,7 @@ module.exports =
       arch: /x86_64|aarch64/
       distribution: 'ubuntu'
       # linux_version: /5\.10\.\d+/
-      version: '20.04'
+      version: '22.04'
   config: [
     label: 'local'
   ,

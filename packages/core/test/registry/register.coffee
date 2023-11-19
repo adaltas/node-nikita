@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-registry = require '../../lib/registry'
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
 
 describe 'registry.register', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'namespace', ->
 
@@ -98,11 +98,11 @@ describe 'registry.register', ->
     it 'is a string, function style', ->
       # Room for improvement in the future
       nikita ({registry}) ->
-        await registry.register 'an_action', '@nikitajs/core/lib/actions/execute'
+        await registry.register 'an_action', '@nikitajs/core/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
 
     it 'is a string, object style', ->
@@ -110,17 +110,17 @@ describe 'registry.register', ->
       nikita ({registry}) ->
         await registry.register
           'an_action':
-            '': '@nikitajs/core/lib/actions/execute'
-            'child': '@nikitajs/core/lib/actions/execute'
+            '': '@nikitajs/core/actions/execute'
+            'child': '@nikitajs/core/actions/execute'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
         result = await @registry.registered ['an_action', 'child']
         .should.resolvedWith true
         {metadata, config} = await @registry.get 'an_action'
-        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
         {metadata, config} = await @registry.get ['an_action', 'child']
-        metadata.module.should.eql '@nikitajs/core/lib/actions/execute'
+        metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
 
     it.skip 'receive config', ->

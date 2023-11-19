@@ -1,10 +1,10 @@
 
 // Dependencies
-const path = require('path');
-const {mutate} = require('mixme');
+import path from 'node:path';
+import {mutate} from 'mixme';
 
 // Action
-module.exports = {
+export default {
   hooks: {
     on_action: async function(action) {
       if (typeof action.metadata.argument !== 'string') {
@@ -16,7 +16,7 @@ module.exports = {
         if (mod.startsWith('.')) {
           mod = path.resolve(process.cwd(), mod);
         }
-        mod = await require.main.require(mod);
+        mod = (await import(mod)).default;
         // The loaded action can have its own interpretation of an argument.
         // In order to avoid any conflict, we simply remove the
         // `action.metadata.argument` property.

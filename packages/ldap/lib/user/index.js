@@ -1,10 +1,10 @@
 // Dependencies
-const {merge} = require('mixme');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import {merge} from 'mixme';
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (!Array.isArray(config.user)) {
       // User related config
@@ -29,17 +29,9 @@ module.exports = {
         passwd: config.passwd,
       });
       if (added) {
-        log({
-          message: "User added",
-          level: "WARN",
-          module: "nikita/ldap/user",
-        });
+        log("WARN", "User added");
       } else if (updated) {
-        log({
-          message: "User updated",
-          level: "WARN",
-          module: "nikita/ldap/user",
-        });
+        log("WARN", "User updated");
       }
       if (updated || added) {
         modified = true;
@@ -66,25 +58,22 @@ module.exports = {
           command: [
             "ldappasswd",
             config.mesh
-              ? `-Y ${utils.string.escapeshellarg(config.mesh)}`
+              ? `-Y ${esa(config.mesh)}`
               : void 0,
             config.binddn
-              ? `-D ${utils.string.escapeshellarg(config.binddn)}`
+              ? `-D ${esa(config.binddn)}`
               : void 0,
             config.passwd
-              ? `-w ${utils.string.escapeshellarg(config.passwd)}`
+              ? `-w ${esa(config.passwd)}`
               : void 0,
             config.uri
-              ? `-H ${utils.string.escapeshellarg(config.uri)}`
+              ? `-H ${esa(config.uri)}`
               : void 0,
             `-s ${user.userPassword}`,
-            `${utils.string.escapeshellarg(user.dn)}`,
+            `${esa(user.dn)}`,
           ].join(" "),
         });
-        log({
-          message: "Password modified",
-          level: "WARN",
-        });
+        log("WARN", "Password modified");
         modified = true;
       }
     }

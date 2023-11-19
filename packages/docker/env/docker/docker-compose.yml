@@ -8,6 +8,9 @@ services:
       - ../../../../:/nikita
     depends_on:
       - dind
+      # Not working for now, waiting is implemented inside entrypoint.sh
+      # dind:
+      #   condition: service_healthy
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/docker/env/docker/test.coffee
       # DOCKER_HOST: 'tcp://dind:2375'
@@ -15,8 +18,13 @@ services:
     image: docker:dind
     privileged: true
     environment:
-      - DOCKER_TLS_CERTDIR=
+      DOCKER_TLS_CERTDIR: ''
     expose:
       - "2375"
-    logging:
-      driver: none
+    # healthcheck:
+    #   test: "bash -c 'echo > /dev/tcp/localhost/2375'"
+    #   interval: 1s
+    #   timeout: 5s
+    #   retries: 50
+    # logging:
+    #   driver: none

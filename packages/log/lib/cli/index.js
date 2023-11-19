@@ -1,9 +1,9 @@
 // Dependencies
-const colors = require('colors/safe');
-const {merge} = require('mixme');
-const pad = require('pad');
-const utils = require('@nikitajs/core/lib/utils');
-const definitions = require('./schema.json');
+import colors from 'colors/safe.js';
+import {merge} from 'mixme';
+import pad from 'pad';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Utils
 const format_line = function ({ host, header, status, time }, config) {
@@ -28,7 +28,7 @@ const format_line = function ({ host, header, status, time }, config) {
 };
 
 // Action
-module.exports = {
+export default {
   ssh: false,
   handler: function ({ config }) {
     // Normalize

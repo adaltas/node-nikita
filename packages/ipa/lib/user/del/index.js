@@ -1,9 +1,9 @@
 
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     config.connection.http_headers['Referer'] ??= config.connection.referer || config.connection.url;
     const {$status} = await this.ipa.user.exists({

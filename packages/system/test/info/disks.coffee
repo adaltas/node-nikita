@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.system_info_disks
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.info.disks', ->
+  return unless test.tags.system_info_disks
 
   they 'with no options', ({ssh}) ->
     nikita

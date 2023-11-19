@@ -1,9 +1,8 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 userMatch = 
   sn: [ 'Lastname' ],
@@ -21,6 +20,7 @@ userMatch =
   memberof_group: [ 'ipausers' ]
 
 describe 'ipa.user', ->
+  return unless test.tags.ipa
 
   describe 'schema', ->
   
@@ -61,7 +61,7 @@ describe 'ipa.user', ->
           givenname: 'Firstname'
           sn: 'Lastname'
           mail: 'user@nikita.js.org'
-        connection: ipa
+        connection: test.ipa
 
   describe 'action', ->
 
@@ -71,14 +71,14 @@ describe 'ipa.user', ->
       , ->
         @ipa.user.del
           uid: 'user_add'
-          connection: ipa
+          connection: test.ipa
         {$status, result} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
-          connection: ipa
+          connection: test.ipa
         $status.should.be.true()
         result.should.match userMatch
 
@@ -86,7 +86,7 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del connection: ipa,
+        @ipa.user.del connection: test.ipa,
           uid: 'user_add'
         @ipa.user
           uid: 'user_add'
@@ -94,14 +94,14 @@ describe 'ipa.user', ->
             givenname: 'Firstname 1'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
-          connection: ipa
+          connection: test.ipa
         {$status, result} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname 2'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
-          connection: ipa
+          connection: test.ipa
         $status.should.be.true()
         result.should.match {...userMatch, givenname: ['Firstname 2']}
 
@@ -111,21 +111,21 @@ describe 'ipa.user', ->
       , ->
         @ipa.user.del
           uid: 'user_add'
-          connection: ipa
+          connection: test.ipa
         {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
-          connection: ipa
+          connection: test.ipa
         {$status, result} = await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname'
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
-          connection: ipa
+          connection: test.ipa
         $status.should.be.false()
         result.should.match userMatch
 
@@ -134,7 +134,7 @@ describe 'ipa.user', ->
         $ssh: ssh
       , ->
         @ipa.user.del
-          connection: ipa
+          connection: test.ipa
           uid: 'user_add'
         @ipa.user
           attributes:
@@ -142,13 +142,13 @@ describe 'ipa.user', ->
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
             userpassword: 'toto'
-          connection: ipa
+          connection: test.ipa
           uid: 'user_add'
         {$status} = await @ipa.user
           uid: 'user_add'
           attributes:
             userpassword: 'toto'
-          connection: ipa
+          connection: test.ipa
         $status.should.be.false()
         
     they 'modify password', ({ssh}) ->
@@ -156,7 +156,7 @@ describe 'ipa.user', ->
         $ssh: ssh
       , ->
         @ipa.user.del
-          connection: ipa
+          connection: test.ipa
           uid: 'user_add'
         @ipa.user
           attributes:
@@ -164,12 +164,12 @@ describe 'ipa.user', ->
             sn: 'Lastname'
             mail: [ 'user@nikita.js.org' ]
             userpassword: 'toto'
-          connection: ipa
+          connection: test.ipa
           uid: 'user_add'
         {$status} = await @ipa.user
           attributes:
             userpassword: 'toto'
-          connection: ipa
+          connection: test.ipa
           force_userpassword: true
           uid: 'user_add'
         $status.should.be.true()

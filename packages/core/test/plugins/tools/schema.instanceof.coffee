@@ -1,10 +1,10 @@
 
-stream = require 'stream'
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import stream from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.tools.schema.instanceof', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'Error with valid property', ->
     nikita ({registry}) ->

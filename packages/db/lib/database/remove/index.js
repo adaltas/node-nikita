@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Avoid errors when database argument is provided in the command:
     // - Postgres: "ERROR:  cannot drop the currently open database"

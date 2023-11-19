@@ -76,7 +76,7 @@
     "self-templated": "^0.2.3",
     "semver": "^7.3.7",
     "ssh2-connect": "^3.4.1",
-    "ssh2-exec": "^0.7.3",
+    "ssh2-exec": "^0.7.6",
     "ssh2-fs": "^1.1.2",
     "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",
@@ -96,6 +96,12 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./actions/*": "./lib/actions/*/index.js",
+    "./utils": "./lib/utils/index.js",
+    "./*": "./lib/*.js"
+  },
   "files": [
     "/lib"
   ],
@@ -104,17 +110,16 @@
   },
   "homepage": "https://nikita.js.org/",
   "license": "MIT",
-  "main": "./lib/index",
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register"
-    ],
     "inline-diffs": true,
-    "timeout": 30000,
+    "loader": "./test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 10000
   },
   "repository": {
     "type": "git",
@@ -127,5 +132,6 @@
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'"
-  }
+  },
+  "type": "module"
 }

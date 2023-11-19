@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-contextualize = require '../../lib/session/contextualize'
-normalize = require '../../lib/session/normalize'
+import contextualize from '@nikitajs/core/session/contextualize'
+import normalize from '@nikitajs/core/session/normalize'
+import test from '../test.coffee'
 
 describe 'session.normalize', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'handle function as handler', ->
     expect =

@@ -5,7 +5,7 @@
       "type": "object",
       "properties": {
         "mode": {
-          "$ref": "module://@nikitajs/core/lib/actions/fs/base/chmod#/definitions/config/properties/mode"
+          "$ref": "module://@nikitajs/core/actions/fs/base/chmod#/definitions/config/properties/mode"
         },
         "uid": {
           "type": "integer",

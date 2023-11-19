@@ -1,12 +1,10 @@
 
-fs = require 'fs'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
+import { Writable } from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
-return unless tags.posix
-
-Writable = require('stream').Writable
 class MyWritable extends Writable
   constructor: (data) ->
     super()
@@ -16,6 +14,7 @@ class MyWritable extends Writable
     callback()
 
 describe 'log.cli', ->
+  return unless test.tags.posix
   
   describe 'schema', ->
     

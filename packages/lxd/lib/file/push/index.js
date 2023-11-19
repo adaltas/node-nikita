@@ -1,11 +1,11 @@
 // Dependencies
-const path = require('path');
-const dedent = require('dedent');
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import path from 'node:path'
+import dedent from "dedent";
+import utils from "@nikitajs/lxd/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, metadata: { tmpdir } }) {
     // Make source file with content
     if (config.content != null) {

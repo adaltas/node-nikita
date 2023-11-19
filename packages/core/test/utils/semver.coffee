@@ -1,9 +1,9 @@
 
-semver = require '../../lib/utils/semver'
-{tags} = require '../test'
+import semver from '@nikitajs/core/utils/semver'
+import test from '../test.coffee'
 
 describe 'utils.semver', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'sanitize', ->
     semver.sanitize('5').should.eql '5.x.x'

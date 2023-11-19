@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ruby} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_rubygems
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.rubygems.remove', ->
+  return unless test.tags.tools_rubygems
 
   they 'remove an existing package', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.install
         name: 'execjs'
@@ -21,7 +21,7 @@ describe 'tools.rubygems.remove', ->
   they 'remove a non existing package', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.install
         name: 'execjs'
@@ -34,7 +34,7 @@ describe 'tools.rubygems.remove', ->
   they 'remove multiple versions', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
     , ->
       await @tools.rubygems.install
         name: 'execjs'

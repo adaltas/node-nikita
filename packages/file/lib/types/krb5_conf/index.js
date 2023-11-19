@@ -1,9 +1,9 @@
 // Dependencies
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/file/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     return await this.file.ini({
       parse: utils.ini.parse_brackets_then_curly,

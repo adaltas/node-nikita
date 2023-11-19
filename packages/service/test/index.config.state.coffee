@@ -1,18 +1,19 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, service} = require './test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'service#config.state', ->
 
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
 
     it 'fail on invalid state', ->
       nikita
       .service
-        name: service.name
-        srv_name: service.srv_name
+        name: test.service.name
+        srv_name: test.service.srv_name
         state: 'invalidstate'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
@@ -23,7 +24,7 @@ describe 'service#config.state', ->
           'allowedValues is ["started","stopped","restarted"].'
         ].join ' '
     
-    it.only 'requires config `name`, `srv_name` or `chk_name`', ->
+    it 'requires config `name`, `srv_name` or `chk_name`', ->
       nikita
       .service
         state: 'started'
@@ -41,15 +42,15 @@ describe 'service#config.state', ->
     it 'split multiple states', ->
       nikita
       .service
-        name: service.name
-        srv_name: service.srv_name
+        name: test.service.name
+        srv_name: test.service.srv_name
         state: 'started,stopped'
       , ({config}) ->
         config.state
       .should.be.fulfilledWith ['started', 'stopped']
 
   describe 'action', ->
-    return unless tags.service_systemctl
+    return unless test.tags.service_systemctl
     
     @timeout 30000
 
@@ -57,18 +58,18 @@ describe 'service#config.state', ->
       nikita
         $ssh: ssh
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          srv_name: service.srv_name
+          name: test.service.name
+          srv_name: test.service.srv_name
           state: 'started'
         $status.should.be.true()
-        {$status} = await @service.status
-          name: service.srv_name
-        $status.should.be.true()
+        {started} = await @service.status
+          name: test.service.srv_name
+        started.should.be.true()
         {$status} = await @service # Detect already started
-          srv_name: service.srv_name
+          srv_name: test.service.srv_name
           state: 'started'
         $status.should.be.false()
 
@@ -76,18 +77,18 @@ describe 'service#config.state', ->
       nikita
         $ssh: ssh
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          srv_name: service.srv_name
+          name: test.service.name
+          srv_name: test.service.srv_name
           state: 'stopped'
         $status.should.be.true()
-        {$status} = await @service.status
-          name: service.srv_name
-        $status.should.be.false()
+        {started} = await @service.status
+          name: test.service.srv_name
+        started.should.be.false()
         {$status} = await @service # Detect already stopped
-          srv_name: service.srv_name
+          srv_name: test.service.srv_name
           state: 'stopped'
         $status.should.be.false()
 
@@ -95,20 +96,20 @@ describe 'service#config.state', ->
       nikita
         $ssh: ssh
       , ->
-        @service.remove
-          name: service.name
-        @service
-          name: service.name
-          srv_name: service.srv_name
+        await @service.remove
+          name: test.service.name
+        await @service
+          name: test.service.name
+          srv_name: test.service.srv_name
           state: 'started'
         {$status} = await @service
-          srv_name: service.srv_name
+          srv_name: test.service.srv_name
           state: 'restarted'
         $status.should.be.true()
-        @service.stop
-          name: service.srv_name
+        await @service.stop
+          name: test.service.srv_name
         {$status} = await @service
-          srv_name: service.srv_name
+          srv_name: test.service.srv_name
           state: 'restarted'
         $status.should.be.false()
 
@@ -116,15 +117,15 @@ describe 'service#config.state', ->
       nikita
         $ssh: ssh
       , ->
-        @service.remove
-          name: service.name
+        await @service.remove
+          name: test.service.name
         {$status} = await @service
-          name: service.name
-          srv_name: service.srv_name
+          name: test.service.name
+          srv_name: test.service.srv_name
           state: 'stopped,started,restarted'
         $status.should.be.true()
         {$status} = await @service
-          name: service.name
-          srv_name: service.srv_name
+          name: test.service.name
+          srv_name: test.service.srv_name
           state: ['stopped', 'started', 'restarted']
         $status.should.be.true()

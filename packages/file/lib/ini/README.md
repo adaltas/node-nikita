@@ -17,7 +17,7 @@ provided in the `content` option.
 Available values for the `stringify` option are:
 
 * `stringify`
-  Default, implemented by `require('nikita/file/lib/utils/ini').stringify`
+  Default, implemented by `nikita/file/utils/ini#stringify`
 
 The default stringify function accepts:
 

@@ -8,7 +8,7 @@
         "description": "Preserve comments, key is the comment while value is \"null\"."
       },
       "encoding": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/encoding",
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/encoding",
         "default": "utf8"
       },
       "separator": {

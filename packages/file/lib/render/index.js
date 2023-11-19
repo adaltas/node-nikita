@@ -1,10 +1,10 @@
 // Dependencies
-const path = require('path');
-const handlebars = require('handlebars');
-const definitions = require('./schema.json');
+import path from 'node:path'
+import handlebars from 'handlebars';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // Read source
     if (config.source) {

@@ -1,12 +1,12 @@
 
 // Dependencies
-const path = require('path');
-const {merge} = require('mixme');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import path from 'node:path'
+import {merge} from 'mixme';
+import utils from "@nikitajs/system/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     config.mounts ??= []
     config.groups ??= {};

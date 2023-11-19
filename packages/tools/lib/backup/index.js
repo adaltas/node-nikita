@@ -1,16 +1,14 @@
-
 // Dependencies
-const definitions = require("./schema.json");
-const dayjs = require('dayjs');
-dayjs.extend(require('dayjs/plugin/utc'));
-dayjs.extend(require('dayjs/plugin/timezone'));
+import dayjs from "dayjs";
+import dayjsUtc from "dayjs/plugin/utc.js";
+import dayjsTimezone from "dayjs/plugin/timezone.js";
+import definitions from "./schema.json" assert { type: "json" };
+dayjs.extend(dayjsUtc);
+dayjs.extend(dayjsTimezone);
 
 // Action
-module.exports = {
-  handler: async function({
-    config,
-    tools: {log, path}
-  }) {
+export default {
+  handler: async function ({ config, tools: { log, path } }) {
     let filename = dayjs();
     if (config.local) {
       filename = filename.locale(config.locale);
@@ -25,48 +23,42 @@ module.exports = {
     } else {
       filename = filename.toISOString();
     }
-    const compress = config.compress === true ? 'tgz' : config.compress;
+    const compress = config.compress === true ? "tgz" : config.compress;
     if (compress) {
       filename = `${filename}.${compress}`;
     }
     const target = `${config.target}/${config.name}/${filename}`;
-    log({
-      message: `Source is ${JSON.stringify(config.source)}`,
-      level: 'INFO'
-    });
-    log({
-      message: `Target is ${JSON.stringify(target)}`,
-      level: 'INFO'
-    });
+    log("INFO", `Source is ${JSON.stringify(config.source)}`);
+    log("INFO", `Target is ${JSON.stringify(target)}`);
     await this.fs.mkdir(`${path.dirname(target)}`);
     if (config.source && !config.compress) {
       await this.fs.copy({
         source: `${config.source}`,
-        target: `${target}`
+        target: `${target}`,
       });
     }
     if (config.source && config.compress) {
       await this.tools.compress({
         format: `${compress}`,
         source: `${config.source}`,
-        target: `${target}`
+        target: `${target}`,
       });
     }
     if (config.command) {
       await this.execute({
-        command: `${config.command} > ${target}`
+        command: `${config.command} > ${target}`,
       });
     }
     return {
       base_dir: config.target,
       name: config.name,
       filename: filename,
-      target: target
+      target: target,
     };
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };
 
 // ## Dependencies

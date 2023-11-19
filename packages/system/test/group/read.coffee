@@ -1,19 +1,20 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.group.read', ->
   
   describe 'with option `target`', ->
-    return unless tags.posix
+    return unless test.tags.posix
   
     they 'shy doesnt modify the status', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/group"
           content: """
           root:x:0:root
@@ -28,7 +29,7 @@ describe 'system.group.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/group"
           content: """
           root:x:0:root
@@ -41,15 +42,15 @@ describe 'system.group.read', ->
           bin: group: 'bin', password: 'x', gid: 1, users: [ 'root', 'bin', 'daemon' ]
 
   describe 'without option `target`', ->
-    return unless tags.system_user
+    return unless test.tags.system_user
 
     they 'use `getent` without target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
         $sudo: sudo
       , ->
-        @system.group.remove 'toto'
-        @system.group
+        await @system.group.remove 'toto'
+        await @system.group
           name: 'toto'
           gid: 1010
         {group} = await @system.group.read
@@ -62,14 +63,14 @@ describe 'system.group.read', ->
         @system.group.remove 'toto'
   
   describe 'option "gid"', ->
-    return unless tags.posix
+    return unless test.tags.posix
   
     they 'map a username to group record', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/group"
           content: """
           root:x:0:root
@@ -86,7 +87,7 @@ describe 'system.group.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/group"
           content: """
           root:x:0:root

@@ -1,11 +1,11 @@
 // Dependencies
-const utils = require("../utils");
-const yaml = require("js-yaml");
-const { merge } = require("mixme");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/file/utils";
+import yaml from "js-yaml";
+import { merge } from "mixme";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     try {
       if (config.merge) {

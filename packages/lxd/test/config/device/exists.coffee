@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.config.device.exists', ->
+  return unless test.tags.lxd
 
   they 'Device does not exist', ({ssh}) ->
     nikita
@@ -15,7 +15,7 @@ describe 'lxc.config.device.exists', ->
         container: 'nikita-config-device-exists-1'
         force: true
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-config-device-exists-1'
       {exists} = await @lxc.config.device.exists
         container: 'nikita-config-device-exists-1'
@@ -30,7 +30,7 @@ describe 'lxc.config.device.exists', ->
         container: 'nikita-config-device-exists-2'
         force: true
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-config-device-exists-2'
       @lxc.config.device
         container: 'nikita-config-device-exists-2'

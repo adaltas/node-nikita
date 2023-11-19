@@ -1,15 +1,15 @@
 
 /*
-# @nikitajs/core/lib/plugins/metadata/retry
+# @nikitajs/core/plugins/metadata/retry
 
 Reschedule the execution of an action on error.
 */
 
-const {merge} = require('mixme');
-const utils = require('../../utils');
+import {merge} from 'mixme';
+import utils from '@nikitajs/core/utils';
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/retry',
+export default {
+  name: '@nikitajs/core/plugins/metadata/retry',
   hooks: {
     'nikita:action': function(action, handler) {
       if (action.metadata.attempt == null) {

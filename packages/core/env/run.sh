@@ -5,8 +5,8 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 
 ./arch_chroot/run.sh
 ./centos7/run.sh
-npx coffee env/chown/index.coffee run
-npx coffee env/ssh/index.coffee run
+node ./chown/index.js run
+node ./ssh/index.js run
 ./sudo/run.sh
 ./ubuntu-14.04/run.sh
 ./ubuntu-22.04/run.sh

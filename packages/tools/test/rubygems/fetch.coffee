@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ruby} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_rubygems
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.rubygems.fetch', ->
+  return unless test.tags.tools_rubygems
 
   they 'with a version', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {$status, filename, filepath} = await @tools.rubygems.fetch
@@ -26,7 +26,7 @@ describe 'tools.rubygems.fetch', ->
   they 'without a version', ({ssh}) ->
     nikita
       $ssh: ssh
-      ruby: ruby
+      ruby: test.ruby
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {$status, filename, filepath} = await @tools.rubygems.fetch

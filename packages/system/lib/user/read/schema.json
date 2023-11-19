@@ -7,7 +7,7 @@
         "description": "Path to the passwd definition file, use the `getent passwd` command by\ndefault which use to \"/etc/passwd\"."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid",
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid",
         "description": "Retrieve the information for a specific username or uid."
       }
     }

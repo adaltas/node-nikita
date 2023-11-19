@@ -1,19 +1,17 @@
 FROM almalinux:8
-MAINTAINER David Worms
+LABEL org.opencontainers.image.authors="David Worms <david@adaltas.com>"
 
 # Install Node.js
 ENV NODE_VERSION stable
-RUN \
-     yum install -y git make \
-  && curl -L https://git.io/n-install | bash -s -- -y \
-  && . ~/.bashrc && n $NODE_VERSION
+RUN yum install -y git make && \
+    curl -L https://git.io/n-install | bash -s -- -y && \
+    . ~/.bashrc && n $NODE_VERSION
 
 # Install SSH
-RUN \
-     yum install -y openssh-server openssh-clients \
-  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
-  && ssh-keygen -A
+RUN yum install -y openssh-server openssh-clients && \
+    ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' && \
+    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys && \
+    ssh-keygen -A
 
 # Install openssl
 # RUN yum install -y openssl

@@ -1,13 +1,14 @@
 
-nikita = require '../../../lib'
-utils = require '../../../lib/utils'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.chmod', ->
   
   describe 'usage', ->
-    return unless tags.posix
+    return unless test.tags.posix
 
     they 'change a permission of a file', ({ssh}) ->
       nikita

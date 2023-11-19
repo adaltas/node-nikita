@@ -1,88 +1,121 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
-return unless tags.service_systemctl
+write_srv = ({config}) ->
+  @file
+    content: '''
+    #!/bin/sh
+    # Provides: srv
+    # Description: {{description}}
+    pid_file=/var/run/nikita_test
+    start() {
+        ( status ) && exit 0;
+        nc -l 13370 1>/dev/null 2>/dev/null &
+        echo $! > $pid_file
+    }
 
-describe 'service.init', ->
-  
-  @timeout 60000
+    stop() {
+        ( status ) || exit 0;
+        kill `cat $pid_file`
+        rm -rf $pid_file
+    }
+    status() {
+        [ ! -e $pid_file ] && exit 1;
+        pid=`cat $pid_file`
+        kill -0 $pid
+    }
+    case "$1" in
+        start) $1 ;;
+        stop) $1 ;;
+        status) $1 ;;
+        *) echo $"Usage: $0 {start|stop|status}"; exit 2
+    esac
+    exit $?
+    '''
+  ,
+    config
 
-  they 'init file with target and source (default)', ({ssh}) ->
+describe 'service.init.service', ->
+  return unless test.tags.service_install
+
+  they 'init file with target and source (default)', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
+      $sudo: sudo
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @service.remove 'cronie'
-      @fs.remove
-        target: '/etc/init.d/crond'
-      @service.init
-        source: "#{__dirname}/crond.hbs"
-        target: '/etc/init.d/crond'
-      @fs.assert '/etc/init.d/crond'
+      await @fs.remove "#{tmpdir}/source/srv"
+      await @call write_srv, target: "#{tmpdir}/source/srv"
+      await @service.init
+        source: "#{tmpdir}/source/srv"
+        target: '/etc/init.d/srv'
+      await @fs.assert '/etc/init.d/srv'
   
-  they 'init file with source only (default)', ({ssh}) ->
+  they 'init file with source only (default)', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
-    , ->
-      @service.remove 'cronie'
-      @fs.remove
-        target: '/etc/init.d/crond'
-      @service.init
-        source: "#{__dirname}/crond.hbs"
-      @fs.assert '/etc/init.d/crond'
+      $sudo: sudo
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @fs.remove '/etc/init.d/srv'
+      await @call write_srv, target: "#{tmpdir}/source/srv"
+      await @service.init
+        source: "#{tmpdir}/source/srv"
+      await @fs.assert '/etc/init.d/srv'
   
-  they 'init file with source and name (default)', ({ssh}) ->
+  they 'init file with source and name (default)', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
-    , ->
-      @service.remove 'cronie'
-      @fs.remove
-        target: '/etc/init.d/crond'
-      @service.init
-        source: "#{__dirname}/crond.hbs"
-        name: 'crond-name'
-      @fs.assert '/etc/init.d/crond-name'
+      $sudo: sudo
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @fs.remove '/etc/init.d/srv_new'
+      await @call write_srv, target: "#{tmpdir}/source/srv"
+      await @service.init
+        source: "#{tmpdir}/source/srv"
+        name: 'srv_new'
+      await @fs.assert '/etc/init.d/srv_new'
   
-  describe 'daemon-reload', ->
-  
-    they 'with systemctl sysv-generator', ({ssh}) ->
-      nikita
-        $ssh: ssh
-        $if_os: name: ['redhat','centos'], version: '7'
-      , ->
-        @service.remove 'cronie'
-        @service.install 'cronie'
-        @fs.remove
-          target: '/etc/init.d/crond'
-        @execute
-          command: 'systemctl daemon-reload;systemctl reset-failed'
-        @service.init
-          source: "#{__dirname}/crond.hbs"
-          name: 'crond'
-        @fs.assert '/etc/init.d/crond'
-        @service.start
-          name: 'crond'
-        @service.start
-          name: 'stop'
+describe 'service.init.systemctl', ->
+  return unless test.tags.service_systemctl
 
-    they 'with systemctl systemd script', ({ssh}) ->
-      nikita
-        $ssh: ssh
-        $if_os: name: ['redhat','centos'], version: '7'
-      , ->
-        @service.remove 'cronie'
-        @service.install 'cronie'
-        @fs.remove
-          target: '/etc/init.d/crond'
-        @fs.remove
-          target: '/usr/lib/systemd/system/crond.service'
-        {$status} = await @service.init
-          source: "#{__dirname}/crond-systemd.hbs"
-          context: description: 'Command Scheduler Test 1'
-          target: '/usr/lib/systemd/system/crond.service'
-        $status.should.be.true()
-        @fs.assert '/usr/lib/systemd/system/crond.service'
-        @service.start
-          name: 'crond'
+  they 'with systemctl systemd script', ({ssh, sudo}) ->
+    nikita
+      $ssh: ssh
+      $if_os: name: ['redhat','centos'], version: '7'
+      $sudo: sudo
+      $tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      await @service.remove 'cronie'
+      await @service.install 'cronie'
+      await @fs.remove
+        target: '/etc/init.d/crond'
+      await @fs.remove
+        target: '/usr/lib/systemd/system/crond.service'
+      await @file
+        content: '''
+        [Unit]
+        Description={{description}}
+        After=auditd.service systemd-user-sessions.service time-sync.target
+
+        [Service]
+        EnvironmentFile=/etc/sysconfig/crond
+        ExecStart=/usr/sbin/crond -n $CRONDARGS
+        ExecReload=/bin/kill -HUP $MAINPID
+        KillMode=process
+
+        [Install]
+        WantedBy=multi-user.target
+        '''
+        target: "#{tmpdir}/crond-systemd.hbs"
+      {$status} = await @service.init
+        source: "#{tmpdir}/crond-systemd.hbs"
+        context: description: 'Command Scheduler Test 1'
+        target: '/usr/lib/systemd/system/crond.service'
+      $status.should.be.true()
+      await @fs.assert '/usr/lib/systemd/system/crond.service'
+      await @service.start
+        name: 'crond'

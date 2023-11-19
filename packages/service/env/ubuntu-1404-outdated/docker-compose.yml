@@ -1,0 +1,21 @@
+
+version: '3'
+services:
+  nodejs:
+    build:
+      context: .
+      dockerfile: ./nodejs/Dockerfile
+    image: nikita_service_ubuntu_nodejs
+    container_name: nikita_service_ubuntu_outdated_nodejs
+    depends_on:
+      - target
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/service/env/ubuntu-1404-outdated/test.coffee
+  target:
+    build:
+      context: .
+      dockerfile: ./target/Dockerfile
+    image: nikita_service_ubuntu_outdated_target
+    container_name: nikita_service_ubuntu_outdated_target

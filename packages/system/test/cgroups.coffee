@@ -1,12 +1,12 @@
 
-utils = require '../lib/utils'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.system_cgroups
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/system/utils'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.cgroups', ->
+  return unless test.tags.system_cgroups
   
   describe 'generate without merge', ->
     
@@ -50,7 +50,7 @@ describe 'system.cgroups', ->
           mounts: mounts
           merge:false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file_mount_only.cgconfig.conf"
           content:  """
             mount {
@@ -73,7 +73,7 @@ describe 'system.cgroups', ->
           groups: groups
           merge: false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file_cgroup_only.cgconfig.conf"
           content: """
             group toto {
@@ -106,7 +106,7 @@ describe 'system.cgroups', ->
           default: def
           merge: false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file_default_only.cgconfig.conf"
           content: """
             default {
@@ -141,7 +141,7 @@ describe 'system.cgroups', ->
           mounts: mounts
           merge: false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
           content: """
             mount {
@@ -192,7 +192,7 @@ describe 'system.cgroups', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @system.cgroups
+        await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
           mode: 0o0754
           default: def
@@ -264,7 +264,7 @@ describe 'system.cgroups', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @system.cgroups
+        await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           mode: 0o0754
           groups: groups

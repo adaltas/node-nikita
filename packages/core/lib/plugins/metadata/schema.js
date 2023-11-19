@@ -1,6 +1,6 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/metadata/schema`
+# Plugin `@nikitajs/core/plugins/metadata/schema`
 
 The plugin enrich the config object with default values defined in the JSON
 schema. Thus, it mst be defined after every module which modify the config
@@ -8,14 +8,14 @@ object.
 */
 
 // Dependencies
-const dedent = require('dedent');
-const {mutate} = require('mixme');
-const utils = require('../../utils');
+import dedent from 'dedent';
+import {mutate} from 'mixme';
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/schema',
+// Plugin
+export default {
+  name: '@nikitajs/core/plugins/metadata/schema',
   require: [
-    '@nikitajs/core/lib/plugins/tools/schema'
+    '@nikitajs/core/plugins/tools/schema'
   ],
   hooks: {
     'nikita:schema': function({schema}) {
@@ -31,8 +31,8 @@ module.exports = {
     },
     'nikita:action': {
       after: [
-        '@nikitajs/core/lib/plugins/global',
-        '@nikitajs/core/lib/plugins/metadata/disabled'
+        '@nikitajs/core/plugins/global',
+        '@nikitajs/core/plugins/metadata/disabled'
       ],
       handler: async function(action) {
         if (action.metadata.schema === false) {

@@ -20,10 +20,10 @@
         "description": "Overwrite permissions on the target directory. By default,\npermissions on only set on directory creation. It does not impact\nthe parent directory permissions."
       },
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid"
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode"
       },
       "parent": {
         "oneOf": [
@@ -34,13 +34,13 @@
             "type": "object",
             "properties": {
               "gid": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/gid"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/gid"
               },
               "mode": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/mode"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/mode"
               },
               "uid": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/uid"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/uid"
               }
             }
           }
@@ -52,7 +52,7 @@
         "description": "Location of the directory to create."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"
       }
     },
     "required": [

@@ -13,7 +13,7 @@ Iptables rules are only inserted if the service is started on the target system.
 
 ## Usage
 
-Iptables comes with many modules. Each of them which must be specifically 
+Iptables comes with many modules. Each of them must be specifically 
 integrated to the parser part of this code. For this reason, we could only
 integrate a limited set of modules and more are added based on usages. Supported
 modules are:
@@ -35,7 +35,7 @@ modules are:
 ## Example
 
 ```js
-var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
+const after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
 const {$status} = await nikita.tools.iptables({
   rules: [
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
@@ -43,3 +43,8 @@ const {$status} = await nikita.tools.iptables({
 })
 console.info(`Iptables was updated: ${$status}`)
 ```
+
+## Command references
+
+List rules in readable format: `iptables -L --line-numbers -nv`
+List rules in save format: `iptables -S -v`

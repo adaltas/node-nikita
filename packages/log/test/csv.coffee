@@ -1,12 +1,11 @@
 
-fs = require 'fs'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'log.csv', ->
+  return unless test.tags.posix
   
   they 'write message', ({ssh}) ->
     nikita

@@ -1,8 +1,20 @@
 #!/bin/bash
-set -e
+
+# Note, we had to disable the exit builtin because the until condition kill the
+# script despite the documentation which state "the shell does not exit if the
+# command that fails is part of the command list immediately following a while
+# or until keyword"
+# set -e
 
 # Start ssh daemon
-/usr/sbin/sshd
+sudo /usr/sbin/sshd
+# Wait until Docker is ready
+i=0; until echo > /dev/tcp/dind/2375; do
+   [[ i -eq 20 ]] && >&2 echo 'Docker not yet started after 20s' && exit 1
+   ((i++))
+   sleep 1
+done
+# Test execution
 if test -t 0; then
   # We have TTY, so probably an interactive container...
   if [[ $@ ]]; then
@@ -15,7 +27,5 @@ if test -t 0; then
     /bin/bash
   fi
 else
-  # Detached mode
-  . ~/.bashrc
   npm run test:local
 fi

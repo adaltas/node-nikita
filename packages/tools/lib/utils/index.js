@@ -1,9 +1,9 @@
 
-const utils = require('@nikitajs/core/lib/utils');
-const diff = require('@nikitajs/file/lib/utils/diff');
-const iptables = require('./iptables');
+import utils from "@nikitajs/core/utils";
+import { diff } from '@nikitajs/file/utils';
+import iptables from '@nikitajs/tools/utils/iptables';
 
-module.exports = {
+export default {
   ...utils,
   diff: diff,
   iptables: iptables

@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.tools.service', ->
+  return unless test.tags.docker
   
   describe 'schema', ->
     
     they 'honors docker.run', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       .docker.tools.service
         image: 'httpd'
         container: 'nikita_test_unique'
@@ -23,7 +23,7 @@ describe 'docker.tools.service', ->
     they 'overwrite default', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       .docker.tools.service
         image: 'httpd'
         container: 'nikita_test_unique'
@@ -35,19 +35,19 @@ describe 'docker.tools.service', ->
     they 'simple service', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       , ->
-        @docker.rm
+        await @docker.rm
           force: true
           container: 'nikita_test_unique'
-        @docker.tools.service
+        await @docker.tools.service
           image: 'httpd'
           container: 'nikita_test_unique'
           port: '499:80'
         # .wait_connect
         #   port: 499
         #   host: ipadress of docker, docker-machine...
-        @docker.rm
+        await @docker.rm
           force: true
           container: 'nikita_test_unique'
 
@@ -76,12 +76,12 @@ describe 'docker.tools.service', ->
   they 'status not modified', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'
-      @docker.tools.service
+      await @docker.tools.service
         container: 'nikita_test'
         image: 'httpd'
         port: '499:80'
@@ -90,6 +90,6 @@ describe 'docker.tools.service', ->
         image: 'httpd'
         port: '499:80'
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         force: true
         container: 'nikita_test'

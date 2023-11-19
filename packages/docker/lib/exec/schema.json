@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "code": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/code",
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
         "default": {}
       },
       "container": {
@@ -11,10 +11,10 @@
         "description": "Name/ID of the container"
       },
       "docker": {
-        "$ref": "module://@nikitajs/docker/lib/tools/execute#/definitions/docker"
+        "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"
       },
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/base/chown#/definitions/config/properties/uid"
       },
       "service": {
         "type": "boolean",
@@ -22,7 +22,7 @@
         "description": "If true, run container as a service, else run as a command, true by\ndefault."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/base/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/base/chown#/definitions/config/properties/uid"
       }
     },
     "required": [

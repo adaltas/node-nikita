@@ -1,13 +1,14 @@
 
-{merge} = require 'mixme'
-nikita = require '../../lib'
-utils = require '../../lib/utils'
-{tags, config} = require '../test'
+import {merge} from 'mixme'
+import mochaThey from 'mocha-they'
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../test.coffee'
 # All test are executed with an ssh connection passed as an argument
-they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
+they = mochaThey(test.config.filter ({ssh}) -> !!ssh)
 
 describe 'utils.ssh', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'compare', ->
 

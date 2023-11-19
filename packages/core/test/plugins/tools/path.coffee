@@ -1,11 +1,12 @@
 
-p = require 'path'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import p from 'node:path'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'plugins.tools.path', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   they 'ssh defined in current action', ({ssh}) ->
     nikita

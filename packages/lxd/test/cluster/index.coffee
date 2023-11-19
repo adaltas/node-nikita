@@ -1,12 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-path = require('path')
-
-return unless tags.lxd
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
+__dirname = new URL( '.', import.meta.url).pathname
 
 describe 'lxc.cluster', ->
+  return unless test.tags.lxd
   
   describe 'validation', ->
     
@@ -64,7 +65,7 @@ describe 'lxc.cluster', ->
             'dns.domain': 'nikita.local'
         containers:
           'nikita-cluster-1':
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
             disk:
               nikitadir:
                 source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
@@ -126,7 +127,7 @@ describe 'lxc.cluster', ->
               'dns.domain': 'nikita.local'
           containers:
             'nikita-cluster-2':
-              image: "images:#{images.alpine}"
+              image: "images:#{test.images.alpine}"
               nic:
                 eth0: # Overwrite the default DHCP Nat enabled interface
                   name: 'eth0', nictype: 'bridged', parent: 'nktlxdprv'
@@ -149,7 +150,7 @@ describe 'lxc.cluster', ->
       finally
         await @clean()
 
-  return unless tags.lxd_vm
+  return unless test.tags.lxd_vm
 
   they 'init properties with vm', ({ssh}) ->
     @timeout -1

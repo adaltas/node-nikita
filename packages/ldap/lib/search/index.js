@@ -1,10 +1,9 @@
 // Dependencies
-const utils = require('../utils');
-const definitions = require('./schema.json');
-const esa = utils.string.escapeshellarg;
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // ## Exports
-module.exports = {
+export default {
   handler: async function({config}) {
     // TODO: use nikita.ldap.search
     // Auth related config

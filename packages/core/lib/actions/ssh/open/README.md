@@ -57,7 +57,7 @@ provided for conveniency and is often used to pass `ssh` information when
 initializing the session.
 
 ```js
-require('nikita')({
+nikita({
   ssh: {
     host: 'localhost',
     user: 'my_account',

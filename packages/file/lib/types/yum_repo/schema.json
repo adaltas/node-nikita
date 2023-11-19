@@ -1,7 +1,7 @@
 {
   "config": {
     "type": "object",
-    "$ref": "module://@nikitajs/file/lib/ini/index#/definitions/config",
+    "$ref": "module://@nikitajs/file/ini#/definitions/config",
     "properties": {
       "target": {
         "type": "string",

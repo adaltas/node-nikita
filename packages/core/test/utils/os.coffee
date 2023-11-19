@@ -1,16 +1,16 @@
 
-{tags} = require '../test'
-{merge} = require 'mixme'
-{whoami} = require '../../lib/utils/os'
+import {merge} from 'mixme'
+import {whoami} from '@nikitajs/core/utils/os'
+import test from '../test.coffee'
+
 cleanup = (property, value) ->
   if value?
     process.env[property] = value
   else
     delete process.env[property]
 
-
 describe 'utils.os', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'whoami', ->
   

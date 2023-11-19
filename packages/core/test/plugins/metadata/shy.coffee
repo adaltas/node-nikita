@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.metadata.shy', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'dont alter status', ->
     {$status} = await nikita ->

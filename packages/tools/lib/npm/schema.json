@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "cwd": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/cwd"
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/cwd"
       },
       "global": {
         "type": "boolean",
@@ -18,7 +18,7 @@
         "description": "Name of the package(s) to install or upgrade if config \"upgrade\" is\n\"true\"."
       },
       "sudo": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/sudo"
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/sudo"
       },
       "upgrade": {
         "default": false,

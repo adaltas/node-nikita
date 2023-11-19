@@ -1,13 +1,8 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_cron
-
-before ->
-  @timeout 5*60*1000 # 5mn
-  nikita.service 'cronie'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 ###
 Note on OSX, by default, I got the message "crontab: no crontab for {user} - using an empty one"
@@ -20,6 +15,11 @@ crontab -l
 ###
 
 describe 'tools.cron.add', ->
+  return unless test.tags.tools_cron
+
+  before ->
+    @timeout 5*60*1000 # 5mn
+    nikita.service 'cronie'
 
   describe 'schema', ->
 

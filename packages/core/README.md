@@ -38,13 +38,13 @@ Nikita is commonly imported by refering to the `nikita` package. However, it wil
 To import the module:
 
 ```js
-const nikita = require('@nikitajs/core');
+import nikita from "@nikitajs/core";
 ```
 
 Then, call the `register` scripts to register additionnal actions, for example the `lxd` actions:
 
 ```js
-require('@nikitajs/lxd/lib/register');
+import "@nikitajs/lxd/lib/register";
 ```
 
 Following this example, you can now use any action present in the `core` and the `lxd` packages:

@@ -46,7 +46,7 @@
         "description": "Activate or desactivate logging."
       },
       "end": {
-        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/end",
+        "$ref": "module://@nikitajs/log/stream#/definitions/config/properties/end",
         "default": false,
         "description": "Close the stream when the Nikita session terminates. The default\nis to not close the stream for this action, in opposite to the default\n`log.stream` action, because the default stream is `process.stderr`\nwhich is expected to remain open."
       },
@@ -105,12 +105,12 @@
         "description": "Separator between columns. A string value apply the same separator\nwhile it is also possible to target a specific sperator per column\nby setting an object."
       },
       "serializer": {
-        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/serializer",
+        "$ref": "module://@nikitajs/log/stream#/definitions/config/properties/serializer",
         "default": {},
         "description": "Internal property, expose access to the serializer object passed\nto the `log.stream` action."
       },
       "stream": {
-        "$ref": "module://@nikitajs/log/lib/stream#/definitions/config/properties/stream",
+        "$ref": "module://@nikitajs/log/stream#/definitions/config/properties/stream",
         "description": "The writable stream where to print the logs, default to\n`process.stderr`."
       }
     }

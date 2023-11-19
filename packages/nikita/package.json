@@ -1,5 +1,6 @@
 {
   "name": "nikita",
+  "version": "1.0.0-alpha.3",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "nikita",
@@ -11,7 +12,6 @@
     "system",
     "task"
   ],
-  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
@@ -58,6 +58,9 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "files": [
     "/lib"
   ],
@@ -72,5 +75,6 @@
   "scripts": {
     "test": "npm run test:local",
     "test:local": "mocha 'test/**/*.js'"
-  }
+  },
+  "type": "module"
 }

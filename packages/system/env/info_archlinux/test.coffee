@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     system_info_disks: true
     system_info_os: true

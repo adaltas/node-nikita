@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (!(config.uid != null || config.gid != null)) {
       throw Error("Missing one of uid or gid option");
@@ -19,8 +19,7 @@ module.exports = {
       gid =
         typeof config.gid === "number"
           ? config.gid
-          : (({ stdout } = await this.execute(`id -g '${config.gid}'`)),
-            parseInt(stdout.trim()));
+          : parseInt((await this.execute(`id -g '${config.gid}'`)).stdout.trim());
     }
     // Retrieve target stats
     let stats;

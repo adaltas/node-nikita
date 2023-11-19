@@ -1,11 +1,12 @@
 
-nikita = require '../../lib'
-registry = require '../../lib/registry'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.call', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'call action from global registry', ->
     try

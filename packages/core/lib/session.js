@@ -1,18 +1,18 @@
 
-const {merge} = require('mixme');
-const each = require('each');
-const registry = require('./registry');
-const {plugandplay} = require('plug-and-play');
-const contextualize = require('./session/contextualize');
-const normalize = require('./session/normalize');
-const utils = require('./utils');
+import {merge} from 'mixme';
+import each from 'each';
+import {plugandplay} from 'plug-and-play';
+import registry from '@nikitajs/core/registry';
+import contextualize from '@nikitajs/core/session/contextualize';
+import normalize from '@nikitajs/core/session/normalize';
+import utils from '@nikitajs/core/utils';
 
 const session = function(args, options = {}) {
   // Catch calls to new actions
   let namespace = [];
   const on_call = function(...args) {
     let nm;
-    // Extract action namespace and reset the state
+    // Extract action namespace and reset its value
     [namespace, nm] = [[], namespace];
     // Schedule the action and get the result as a promise
     const prom = action.scheduler.call(async function() {
@@ -21,9 +21,7 @@ const session = function(args, options = {}) {
       if (!child) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }
-      const args_is_array = args.some(function(arg) {
-        return Array.isArray(arg);
-      });
+      const args_is_array = args.some( (arg) => Array.isArray(arg) );
       if (!args_is_array || child.metadata?.raw_input) {
         return session(args, {
           namespace: nm,
@@ -146,11 +144,15 @@ const session = function(args, options = {}) {
     }
     // Load action from registry
     if (action.metadata.namespace) {
-      const action_from_registry = (await action.registry.get(action.metadata.namespace));
-      // Merge the registry action with the user action properties
-      for (const k in action_from_registry) {
-        const v = action_from_registry[k];
-        action[k] = merge(action_from_registry[k], action[k]);
+      try{
+        const action_from_registry = await action.registry.get(action.metadata.namespace);
+        // Merge the registry action with the user action properties
+        for (const k in action_from_registry) {
+          const v = action_from_registry[k];
+          action[k] = merge(action_from_registry[k], action[k]);
+        }
+      }catch(err){
+        return reject(err);
       }
     }
     // Switch the scheduler to register actions inside the handler
@@ -230,10 +232,10 @@ const session = function(args, options = {}) {
   });
 };
 
-module.exports = function(...args) {
+export default function(...args) {
   return session(args);
 };
 
-module.exports.with_options = function(args, options) {
+export const with_options = function(args, options) {
   return session(args, options);
 };

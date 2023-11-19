@@ -1,6 +1,6 @@
 // Dependencies
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Errors
 const errors = {
@@ -17,7 +17,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log, path }, ssh }) {
     if (!ssh && (config.cwd === true || !config.cwd)) {
       // Configuration validation

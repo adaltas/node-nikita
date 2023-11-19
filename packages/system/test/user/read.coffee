@@ -1,20 +1,20 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.user.read', ->
   
   describe 'with option `target`', ->
-    return unless tags.posix
+    return unless test.tags.posix
 
     they 'shy doesnt modify the status', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:0:root:/root:/bin/bash
@@ -29,7 +29,7 @@ describe 'system.user.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:0:root:/root:/bin/bash
@@ -42,16 +42,16 @@ describe 'system.user.read', ->
           bin: user: 'bin', uid: 1, gid: 1, comment: 'bin', home: '/bin', shell: '/usr/bin/nologin'
 
   describe 'without option `target`', ->
-    return unless tags.system_user
+    return unless test.tags.system_user
 
     they 'use `getent` without target', ({ssh, sudo}) ->
       nikita
         $ssh: ssh
         $sudo: sudo
       , ->
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
-        @system.user
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
+        await @system.user
           name: 'toto'
           system: true
           uid: 1010
@@ -67,14 +67,14 @@ describe 'system.user.read', ->
         @system.group.remove 'toto'
 
   describe 'option "uid"', ->
-    return unless tags.posix
+    return unless test.tags.posix
 
     they 'map a username to group record', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:root
@@ -91,7 +91,7 @@ describe 'system.user.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:0:root:/root:/bin/bash
@@ -108,13 +108,13 @@ describe 'system.user.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:root
           bin:x:1:root,bin,daemon
           """
-        @system.user.read
+        await @system.user.read
           target: "#{tmpdir}/etc/passwd"
           uid: 'nobody'
         .should.be.rejectedWith
@@ -125,13 +125,13 @@ describe 'system.user.read', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @file
+        await @file
           target: "#{tmpdir}/etc/passwd"
           content: """
           root:x:0:root
           bin:x:1:root,bin,daemon
           """
-        @system.user.read
+        await @system.user.read
           target: "#{tmpdir}/etc/passwd"
           uid: '99'
         .should.be.rejectedWith

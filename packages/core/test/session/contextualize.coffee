@@ -1,10 +1,9 @@
 
-{tags} = require '../test'
-contextualize = require '../../lib/session/contextualize'
-normalize = require '../../lib/session/normalize'
+import test from '../test.coffee'
+import contextualize from '../../lib/session/contextualize.js'
 
 describe 'session.contextualize', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'handle function as handler', ->
     expect =

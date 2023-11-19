@@ -28,7 +28,7 @@
         "description": "Characters for line delimiter, usage depends on the stringify option,\nwith  the default stringify option, default to unix style if executed\nremotely  (SSH) or to the platform if executed locally (\"\r\n for\nwindows\",  \"\n\" otherwise). The name stands for End Of Line."
       },
       "encoding": {
-        "$ref": "module://@nikitajs/file/lib/ini/read#/definitions/config/properties/encoding",
+        "$ref": "module://@nikitajs/file/ini/read#/definitions/config/properties/encoding",
         "default": "utf8"
       },
       "escape": {
@@ -37,7 +37,7 @@
         "description": "Escape the section's header title replace '.' by '.'; \"true\" by\ndefault."
       },
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "local": {
         "type": "boolean",
@@ -48,17 +48,17 @@
         "description": "Read the target if it exists and merge its content."
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "parse": {
-        "$ref": "module://@nikitajs/file/lib/ini/read#/definitions/config/properties/parse"
+        "$ref": "module://@nikitajs/file/ini/read#/definitions/config/properties/parse"
       },
       "stringify": {
         "typeof": "function",
-        "description": "User-defined function to stringify the content to ini format, default\nto `require('ini').stringify`, see\n'nikita.file.utils.ini.stringify_brackets_then_curly' for an\nexample."
+        "description": "User-defined function to stringify the content to ini format, default\nto `@nikitajs/file/utils/ini#stringify`."
       },
       "source": {
-        "$ref": "module://@nikitajs/file/lib/ini/read#/definitions/config/properties/target",
+        "$ref": "module://@nikitajs/file/ini/read#/definitions/config/properties/target",
         "description": "Path to a ini file providing default options; lower precedence than\nthe content object; may be used conjointly with the local option;\noptional, use should_exists to enforce its presence."
       },
       "target": {
@@ -66,7 +66,7 @@
         "description": "File path where to write content to or a callback."
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       }
     },
     "required": [

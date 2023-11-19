@@ -1,9 +1,9 @@
 // Dependencies
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Exports
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     // Start real work
     const { files } = await this.fs.glob(config.target);

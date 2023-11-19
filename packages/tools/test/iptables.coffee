@@ -1,18 +1,17 @@
 
-nikita = require '@nikitajs/core/lib'
-require '@nikitajs/service/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_iptables
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.iptables', ->
+  return unless test.tags.tools_iptables
 
   they 'insert a rule after existing', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @service
+      await @service
         name: 'iptables-services'
         srv_name: 'iptables'
         state: ['started']

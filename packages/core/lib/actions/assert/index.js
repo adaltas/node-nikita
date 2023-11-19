@@ -1,10 +1,10 @@
 
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../../utils');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   hooks: {
     on_action: function(action) {
       action.handler = ((handler) =>

@@ -1,11 +1,10 @@
 
-{ini} = require '../../../lib/utils'
-{tags} = require '../../test'
+import {ini} from '@nikitajs/file/utils'
+import test from '../../test.coffee'
 should.config.checkProtoEql = false
 
-return unless tags.api
-
 describe 'utils.ini.split_by_dots', ->
+  return unless test.tags.api
 
   it 'several dot', ->
     splits = ini.split_by_dots('a.bb.ddd').should.eql [

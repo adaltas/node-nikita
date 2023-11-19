@@ -1,15 +1,14 @@
-
 /*
-# Plugin `@nikitajs/core/lib/plugins/history`
+# Plugin `@nikitajs/core/plugins/history`
 
 The history plugin fill the `children`, `siblings`, and `sibling` properties.
 */
 
 // Plugin
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/history',
+export default {
+  name: "@nikitajs/core/plugins/history",
   hooks: {
-    'nikita:normalize': function(action) {
+    "nikita:normalize": function (action) {
       action.children = [];
       if (action.siblings == null) {
         action.siblings = [];
@@ -21,7 +20,7 @@ module.exports = {
         action.sibling = action.siblings.slice(-1)[0];
       }
     },
-    'nikita:result': function({action, error, output}) {
+    "nikita:result": function ({ action, error, output }) {
       if (!action.parent) {
         return;
       }
@@ -35,8 +34,8 @@ module.exports = {
         metadata: action.metadata,
         config: action.config,
         error: error,
-        output: output
+        output: output,
       });
-    }
-  }
+    },
+  },
 };

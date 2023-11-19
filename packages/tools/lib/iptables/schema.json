@@ -10,7 +10,7 @@
         "description": "One or more objects containing iptables rule definitions."
       },
       "sudo": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/sudo"
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/sudo"
       }
     },
     "required": [

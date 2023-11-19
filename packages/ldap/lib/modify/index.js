@@ -1,11 +1,10 @@
 // Dependencies
-const dedent = require('dedent');
-const utils = require('../utils');
-const definitions = require('./schema.json');
-const esa = utils.string.escapeshellarg;
+import dedent from "dedent";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Auth related config
     if (config.uri === true) {
@@ -14,7 +13,7 @@ module.exports = {
       }
       config.uri = 'ldapi:///';
     }
-    const uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided
+    // const uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided
     // Add related config
     let ldif = '';
     const originals = [];

@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.state', ->
+  return unless test.tags.lxd
 
   they 'argument is a string', ({ssh}) ->
     await nikita.lxc.state 'nikita-state-1', ({config}) ->
@@ -19,7 +19,7 @@ describe 'lxc.state', ->
         @lxc.delete 'nikita-state-2', force: true
       await @clean()
       await @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-state-2'
       {$status, config} = await @lxc.state
         container: 'nikita-state-2'

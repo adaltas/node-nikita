@@ -1,9 +1,9 @@
 // Dependencies
-const utils = require("../../utils");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/system/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     const { stdout } = await this.execute({
       command: `df --output='${config.output.join(",")}'`,

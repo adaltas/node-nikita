@@ -1,10 +1,10 @@
 // Dependencies
-const connect = require('ssh2-connect');
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import connect from 'ssh2-connect';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: function({config, siblings}) {
     if (config.ssh == null) {
       config.ssh = siblings.map( ({output}) =>

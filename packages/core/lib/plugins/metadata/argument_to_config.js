@@ -1,16 +1,16 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/metadata/argument_to_config`
+# Plugin `@nikitajs/core/plugins/metadata/argument_to_config`
 
 The `argument` plugin map an argument which is not an object into a configuration property.
 */
 
 // Dependencies
-const {mutate} = require('mixme');
+import {mutate} from 'mixme';
 
 // Plugin
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/argument_to_config',
+export default {
+  name: '@nikitajs/core/plugins/metadata/argument_to_config',
   hooks: {
     'nikita:schema': function({schema}) {
       mutate(schema.definitions.metadata.properties, {
@@ -21,7 +21,7 @@ module.exports = {
       });
     },
     'nikita:action': {
-      before: ['@nikitajs/core/lib/plugins/metadata/schema'],
+      before: ['@nikitajs/core/plugins/metadata/schema'],
       handler: function(action) {
         if (action.metadata.argument_to_config && action.config[action.metadata.argument_to_config] === undefined) {
           action.config[action.metadata.argument_to_config] = action.metadata.argument;

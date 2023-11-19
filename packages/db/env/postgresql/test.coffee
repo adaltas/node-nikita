@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     db: true
   db:
@@ -9,7 +9,6 @@ module.exports =
       engine: 'postgresql'
       host: 'postgres'
       port: 5432
-      admin_db: 'root'
   config: [
     label: 'local'
   ,

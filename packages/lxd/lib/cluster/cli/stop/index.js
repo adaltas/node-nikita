@@ -1,9 +1,9 @@
 // Dependencies
-const nikita = require("@nikitajs/core/lib");
-require("@nikitajs/lxd/lib/register");
-require("@nikitajs/log/src/register");
+import nikita from '@nikitajs/core';
+import "@nikitajs/lxd/register";
+import "@nikitajs/log/register";
 
-module.exports = function ({ params }) {
+export default function ({ params }) {
   nikita({
     $debug: params.debug,
   })

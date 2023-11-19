@@ -7,18 +7,18 @@
         "description": "Initialize a Linux Container with given image name, container name and\nconfig.",
         "patternProperties": {
           "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)": {
-            "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config",
+            "$ref": "module://@nikitajs/lxd/init#/definitions/config",
             "type": "object",
             "properties": {
               "properties": {
-                "$ref": "module://@nikitajs/lxd/lib/config/set#/definitions/config/properties/properties"
+                "$ref": "module://@nikitajs/lxd/config/set#/definitions/config/properties/properties"
               },
               "disk": {
                 "type": "object",
                 "default": {},
                 "patternProperties": {
                   ".*": {
-                    "$ref": "module://@nikitajs/lxd/lib/config/device#/definitions/disk/properties/properties"
+                    "$ref": "module://@nikitajs/lxd/config/device#/definitions/disk/properties/properties"
                   }
                 }
               },
@@ -43,7 +43,7 @@
                         }
                       },
                       {
-                        "$ref": "module://@nikitajs/lxd/lib/config/device#/definitions/nic/properties/properties"
+                        "$ref": "module://@nikitajs/lxd/config/device#/definitions/nic/properties/properties"
                       }
                     ]
                   }
@@ -54,7 +54,7 @@
                 "default": {},
                 "patternProperties": {
                   ".*": {
-                    "$ref": "module://@nikitajs/lxd/lib/config/device#/definitions/proxy/properties/properties"
+                    "$ref": "module://@nikitajs/lxd/config/device#/definitions/proxy/properties/properties"
                   }
                 }
               },
@@ -98,7 +98,7 @@
         "default": {},
         "patternProperties": {
           ".*": {
-            "$ref": "module://@nikitajs/lxd/lib/network#/definitions/config/properties/properties"
+            "$ref": "module://@nikitajs/lxd/network#/definitions/config/properties/properties"
           }
         }
       },

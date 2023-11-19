@@ -1,8 +1,8 @@
 
-const utils = require('@nikitajs/core/lib/utils');
-const ldap = require('./ldap');
+import utils from "@nikitajs/core/utils";
+import ldap from '@nikitajs/ldap/utils/ldap';
 
-module.exports = {
+export default {
   ...utils,
   ldap: ldap
 };

@@ -1,13 +1,13 @@
 
-nikita = require '../../../../lib'
-fs = require('fs').promises
-{Dirent} = require 'fs'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import fs from 'node:fs/promises'
+import {Dirent} from  'node:fs'
+import nikita from '@nikitajs/core'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.readdir', ->
+  return unless test.tags.posix
   
   it 'get native behavior', ->
     nikita

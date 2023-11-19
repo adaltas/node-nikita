@@ -18,7 +18,7 @@
         ]
       },
       {
-        "$ref": "module://@nikitajs/ldap/lib/search"
+        "$ref": "module://@nikitajs/ldap/search"
       }
     ]
   }

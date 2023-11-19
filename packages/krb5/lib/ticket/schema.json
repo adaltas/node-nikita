@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "principal": {
         "type": "string",
@@ -18,7 +18,7 @@
         "description": "Path to the file storing key entries."
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       }
     },
     "oneOf": [

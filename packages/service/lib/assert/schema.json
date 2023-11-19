@@ -7,7 +7,7 @@
         "description": "Assert the package is installed."
       },
       "name": {
-        "$ref": "module://@nikitajs/service/lib/install#/definitions/config/properties/name"
+        "$ref": "module://@nikitajs/service/install#/definitions/config/properties/name"
       },
       "srv_name": {
         "type": "string",

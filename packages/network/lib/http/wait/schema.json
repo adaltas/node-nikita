@@ -1,11 +1,11 @@
 {
   "config": {
     "type": "object",
-    "$ref": "module://@nikitajs/network/lib/http#/definitions/config",
+    "$ref": "module://@nikitajs/network/http#/definitions/config",
     "properties": {
       "interval": {
         "default": 2000,
-        "$ref": "module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/interval"
+        "$ref": "module://@nikitajs/network/tcp/wait#/definitions/config/properties/interval"
       },
       "status_code": {
         "type": "array",
@@ -27,7 +27,7 @@
         "description": "Accepted status codes. Accepted values are strings and regular\nexpressions. String patterns are defined using the `x` character.\nFor example the value `5xx` accept all HTTP status code from the 5\nclass."
       },
       "timeout": {
-        "$ref": "module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout",
+        "$ref": "module://@nikitajs/network/tcp/wait#/definitions/config/properties/timeout",
         "description": "Maximum time in millisecond to wait until this action is considered\nto have failed. When defined, the timeout is applied set to http\nrequest to avoid request hanging."
       }
     }

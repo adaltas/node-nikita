@@ -1,10 +1,9 @@
 
-{ini} = require '../../../lib/utils'
-{tags} = require '../../test'
-
-return unless tags.api
+import {ini} from '@nikitajs/file/utils'
+import test from '../../test.coffee'
 
 describe 'utils.ini.parse_multi_brackets_multi_lines', ->
+  return unless test.tags.api
 
   it 'parse', ->
     ini.parse_multi_brackets_multi_lines """

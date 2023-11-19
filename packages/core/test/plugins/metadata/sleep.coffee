@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.metadata.sleep (plugin.retry)', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'validation', ->
     

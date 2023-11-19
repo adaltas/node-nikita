@@ -1,14 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{command} = require '../../lib/query'
-{tags, config, db} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
-return unless tags.db
-
-for engine, _ of db
+for engine, _ of test.db
 
   describe "db.user #{engine}", ->
+    return unless test.tags.db
 
     they 'requires host, hostname, username', ({ssh}) ->
       nikita
@@ -17,15 +16,15 @@ for engine, _ of db
         @db.user
           port: 5432
           engine: engine
-          admin_username: db[engine].admin_username
-          admin_password: db[engine].admin_password
+          admin_username: test.db[engine].admin_username
+          admin_password: test.db[engine].admin_password
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
             '#/required config must have required property \'password\';'
             '#/required config must have required property \'username\';'
-            'module://@nikitajs/db/lib/query#/definitions/db/required config must have required property \'host\'.'
+            'module://@nikitajs/db/query#/definitions/db/required config must have required property \'host\'.'
           ].join ' '
     
     they 'requires admin_username, password, username', ({ssh}) ->
@@ -36,22 +35,22 @@ for engine, _ of db
           host: 'localhost'
           port: 5432
           engine: engine
-          admin_password: db[engine].admin_password
+          admin_password: test.db[engine].admin_password
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
             '#/required config must have required property \'password\';'
             '#/required config must have required property \'username\';'
-            'module://@nikitajs/db/lib/query#/definitions/db/required config must have required property \'admin_username\'.'
+            'module://@nikitajs/db/query#/definitions/db/required config must have required property \'admin_username\'.'
           ].join ' '
 
     they 'add new user', ({ssh}) ->
       nikita
         $ssh: ssh
-        db: db[engine]
+        db: test.db[engine]
       , ->
-        @db.user.remove 'test_user_1_user'
+        await @db.user.remove 'test_user_1_user'
         {$status} = await @db.user
           username: 'test_user_1_user'
           password: 'test_user_1_password'
@@ -63,28 +62,28 @@ for engine, _ of db
         {exists} = await @db.user.exists
           username: 'test_user_1_user'
         exists.should.be.true()
-        @db.user.remove 'test_user_1_user'
+        await @db.user.remove 'test_user_1_user'
 
     they 'change password', ({ssh}) ->
       nikita
         $ssh: ssh
-        db: db[engine]
+        db: test.db[engine]
       , ->
-        @db.database.remove 'test_user_2_db'
-        @db.user.remove 'test_user_2_user'
-        @db.user
+        await @db.database.remove 'test_user_2_db'
+        await @db.user.remove 'test_user_2_user'
+        await @db.user
           username: 'test_user_2_user'
           password: 'test_user_2_invalid'
-        @db.database
+        await @db.database
           database: 'test_user_2_db'
           user: 'test_user_2_user'
-        @db.user
+        await @db.user
           username: 'test_user_2_user'
           password: 'test_user_2_valid'
-        @db.query
+        await @db.query
           engine: engine
-          host: db[engine].host
-          port: db[engine].port
+          host: test.db[engine].host
+          port: test.db[engine].port
           database: 'test_user_2_db'
           admin_username: 'test_user_2_user'
           admin_password: 'test_user_2_valid'
@@ -93,5 +92,5 @@ for engine, _ of db
               'show tables'
             when 'postgresql'
               '\\dt'
-        @db.database.remove 'test_user_2_db'
-        @db.user.remove 'test_user_2_user'
+        await @db.database.remove 'test_user_2_db'
+        await @db.user.remove 'test_user_2_user'

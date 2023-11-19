@@ -3,10 +3,10 @@
     "type": "object",
     "properties": {
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid"
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode"
       },
       "parent": {
         "oneOf": [
@@ -17,13 +17,13 @@
             "type": "object",
             "properties": {
               "gid": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/gid"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/gid"
               },
               "mode": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/mode"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/mode"
               },
               "uid": {
-                "$ref": "module://@nikitajs/core/lib/actions/fs/mkdir#/definitions/config/properties/uid"
+                "$ref": "module://@nikitajs/core/actions/fs/mkdir#/definitions/config/properties/uid"
               }
             }
           }
@@ -42,7 +42,7 @@
       "source_stats": {
         "type": "object",
         "description": "Short-circuit to prevent source stat retrieval if already at our\ndisposal.",
-        "$ref": "module://@nikitajs/core/lib/actions/fs/base/stat#/definitions/output/properties/stats"
+        "$ref": "module://@nikitajs/core/actions/fs/base/stat#/definitions/output/properties/stats"
       },
       "target": {
         "type": "string",
@@ -51,10 +51,10 @@
       "target_stats": {
         "type": "object",
         "description": "Short-circuit to prevent target stat retrieval if already at our\ndisposal.",
-        "$ref": "module://@nikitajs/core/lib/actions/fs/base/stat#/definitions/output/properties/stats"
+        "$ref": "module://@nikitajs/core/actions/fs/base/stat#/definitions/output/properties/stats"
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"
       }
     },
     "required": [

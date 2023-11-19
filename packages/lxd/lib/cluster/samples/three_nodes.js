@@ -1,9 +1,9 @@
 // Dependencies
-const path = require("path");
-const nikita = require("@nikitajs/core/lib");
-require("@nikitajs/log/lib/register");
-require("@nikitajs/lxd/lib/register");
-require("@nikitajs/tools/lib/register");
+import path from "node:path";
+import nikita from '@nikitajs/core';
+import "@nikitajs/log/register";
+import "@nikitajs/lxd/register";
+import "@nikitajs/tools/register";
 
 /*
 Notes:

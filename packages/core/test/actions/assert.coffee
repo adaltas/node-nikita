@@ -1,10 +1,10 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-registry = require '../../lib/registry'
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../test.coffee'
 
 describe 'actions.assert', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'returned value', ->
 

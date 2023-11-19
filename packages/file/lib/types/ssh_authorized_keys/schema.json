@@ -15,7 +15,7 @@
         "description": "Read the target if it exists and merge its content."
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "target": {
         "type": "string",

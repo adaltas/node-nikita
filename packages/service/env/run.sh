@@ -10,5 +10,6 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 # "install # specific # add pacman options"
 ./archlinux/run.sh
 ./centos7/run.sh
-npx coffee ./systemctl/index.coffee run
-./ubuntu/run.sh
+node ./systemctl/index.js run
+./ubuntu-1404/run.sh
+./ubuntu-1404-outdated/run.sh

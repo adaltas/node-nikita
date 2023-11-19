@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'session.plugins.on_action', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'call action from global registry', ->
     nikita.call

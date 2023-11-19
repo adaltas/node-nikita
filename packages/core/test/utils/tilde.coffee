@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-tilde = require '../../lib/utils/tilde'
+import tilde from '@nikitajs/core/utils/tilde'
+import test from '../test.coffee'
 
 describe 'utils.tilde', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'normalize', ->
 

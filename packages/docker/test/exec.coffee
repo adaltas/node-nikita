@@ -1,16 +1,16 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.exec', ->
+  return unless test.tags.docker
 
   they 'simple command', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       await @docker.rm
         container: 'nikita_test_exec'
@@ -30,16 +30,16 @@ describe 'docker.exec', ->
   they 'on stopped container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
       try
-        @docker.rm
+        await @docker.rm
           container: 'nikita_test_exec'
           force: true
-        @docker.tools.service
+        await @docker.tools.service
           image: 'httpd'
           container: 'nikita_test_exec'
-        @docker.stop
+        await @docker.stop
           container: 'nikita_test_exec'
         await @docker.exec
           container: 'nikita_test_exec'
@@ -55,22 +55,22 @@ describe 'docker.exec', ->
   they 'on non existing container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.exec
+      await @docker.exec
         container: 'nikita_fake_container'
         command: 'echo toto'
-      .should.be.rejectedWith 'Error: No such container: nikita_fake_container'
+      .should.be.rejectedWith /No such container: nikita_fake_container/
 
   they 'skip exit code', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_exec'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_exec'
       {$status} = await @docker.exec
@@ -78,6 +78,6 @@ describe 'docker.exec', ->
         command: 'toto'
         code: [0, 126]
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_exec'
         force: true

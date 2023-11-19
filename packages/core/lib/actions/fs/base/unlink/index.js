@@ -1,8 +1,8 @@
 
 // ## Dependencies
-const dedent = require('dedent');
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import dedent from 'dedent';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_UNLINK_ENOENT: function({config}) {
@@ -20,7 +20,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     try {
       // `! -e`: file does not exist

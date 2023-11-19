@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_dconf
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.dconf', ->
+  return unless test.tags.tools_dconf
   
   # Note, dconf inside docker fail to work and print
   # "error: Cannot autolaunch D-Bus without X11 $DISPLAY"

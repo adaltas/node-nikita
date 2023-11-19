@@ -1,12 +1,12 @@
 
-http = require 'http'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import http from 'node:http'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'file.download url', ->
+  return unless test.tags.posix
   
   server = null
 
@@ -38,14 +38,14 @@ describe 'file.download url', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.download
+      await @file.download
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/download"
         content: /okay/
-      @file.download # Download on an existing file
+      await @file.download # Download on an existing file
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
       .should.be.finally.containEql $status: false
@@ -56,12 +56,12 @@ describe 'file.download url', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.download
+      await @file.download
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download_test"
         mode: 0o0770
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/download_test"
         mode: 0o0770
 
@@ -90,16 +90,16 @@ describe 'file.download url', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           cache: true
           cache_file: "#{tmpdir}/cache_file"
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/cache_file"
           content: /okay/
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/target"
           content: /okay/
 
@@ -128,14 +128,14 @@ describe 'file.download url', ->
       nikita
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           $ssh: ssh
           source: 'http://localhost:12345'
           target: "#{tmpdir}/download"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           $ssh: null
           target: "#{tmpdir}/cache_dir/localhost:12345"
 
@@ -146,13 +146,13 @@ describe 'file.download url', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @log.fs
+        await @log.fs
           basedir: tmpdir
           serializer: text: (log) -> "[#{log.level}] #{log.message}\n"
-        @file
+        await @file
           content: 'okay'
           target: "#{tmpdir}/target"
-        @file.download
+        await @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -167,15 +167,15 @@ describe 'file.download url', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file
+        await @file
           content: "not okay"
           target: "#{tmpdir}/target"
-        @file.download
+        await @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/target"
           content: /okay/
 
@@ -185,7 +185,7 @@ describe 'file.download url', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           md5: '2f74dbbee4142b7366c93b115f914fff'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
@@ -197,7 +197,7 @@ describe 'file.download url', ->
         $tmpdir: true
         $ssh: ssh
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
@@ -209,10 +209,10 @@ describe 'file.download url', ->
         $tmpdir: true
         $ssh: ssh
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-        @file.download
+        await @file.download
           md5: 'df8fede7ff71608e24a5576326e41c75'
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
@@ -226,7 +226,7 @@ describe 'file.download url', ->
         $tmpdir: true
         $ssh: ssh
       , ({metadata: {tmpdir}}) ->
-        @file.download
+        await @file.download
           source: "http://localhost/sth"
           target: "a_dir/download_test"
         .should.be.rejectedWith message: 'Non Absolute Path: target is "a_dir/download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'

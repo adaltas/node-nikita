@@ -1,10 +1,9 @@
 
-module.exports =
+export default
   tags:
     db: true
   db:
     mariadb:
-      admin_db: 'root'
       admin_password: 'rootme'
       admin_username: 'root'
       engine: 'mariadb'

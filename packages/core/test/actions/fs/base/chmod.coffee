@@ -1,13 +1,14 @@
 
-nikita = require '../../../../lib'
-utils = require '../../../../lib/utils'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.chmod', ->
   
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
     
     it 'absolute mode', ->
       nikita.fs.base.chmod
@@ -31,7 +32,7 @@ describe 'actions.fs.base.chmod', ->
         config.mode.should.eql 0o0744
   
   describe 'usage', ->
-    return unless tags.posix
+    return unless test.tags.posix
 
     they 'create', ({ssh}) ->
       nikita

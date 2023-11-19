@@ -1,10 +1,9 @@
 
-iptables = require '../../lib/utils/iptables'
-{tags} = require '../test'
-
-return unless tags.tools_iptables
+import iptables from '@nikitajs/tools/utils/iptables'
+import test from '../test.coffee'
 
 describe 'utils.iptables', ->
+  return unless test.tags.api
 
   describe 'normalize', ->
 

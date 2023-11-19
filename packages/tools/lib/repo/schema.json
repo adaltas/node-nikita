@@ -11,7 +11,7 @@
       },
       "clean": {
         "type": "string",
-        "description": "Globing expression used to match replaced files. When relative, the\npath is resolved to the parent target directory which is\n'/etc/yum.repos.d' when the target is a filename."
+        "description": "Globing expression used to match replaced files. When relative, the path is relative to the target parent directory, eg `/etc/yum.repos.d` when the target is a filename."
       },
       "gpg_dir": {
         "type": "string",
@@ -20,11 +20,16 @@
       },
       "gpg_key": {
         "type": "string",
-        "description": "Import specified key into the gpg_dir specified, downloads\nthe file if it's an url."
+        "description": "Import specified key into the gpg_dir specified, downloads the file if it's an url."
       },
       "local": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/local",
-        "default": false
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/local",
+        "default": false,
+        "description": "Import file from local host to remote host, only active if source is a file and with an SSH connection."
+      },
+      "location": {
+        "$ref": "module://@nikitajs/file/download#/definitions/config/properties/location",
+        "default": true
       },
       "source": {
         "type": "string",
@@ -32,7 +37,7 @@
       },
       "target": {
         "type": "string",
-        "description": "Path of the repository definition file, relative to\n'/etc/yum.repos.d'."
+        "description": "Path of the repository definition file, relative to '/etc/yum.repos.d'."
       },
       "update": {
         "type": "boolean",
@@ -42,7 +47,7 @@
       "verify": {
         "type": "boolean",
         "default": true,
-        "description": "Download the PGP keys if it's enabled in the repo file, keys are by\ndefault placed inside \"/etc/pki/rpm-gpg\" defined by the gpg_dir option\nand the filename is derivated from the url."
+        "description": "Download the PGP keys if it's enabled in the repo file, keys are by default placed inside \"/etc/pki/rpm-gpg\" defined by the gpg_dir option and the filename is derivated from the url."
       }
     },
     "oneOf": [

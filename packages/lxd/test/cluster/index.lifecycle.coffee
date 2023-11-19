@@ -1,12 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-path = require('path')
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.cluster.lifecycle', ->
+  return unless test.tags.lxd
   
   they 'prevision and provision', ({ssh}) ->
     @timeout -1
@@ -17,7 +16,7 @@ describe 'lxc.cluster.lifecycle', ->
       cluster =
         containers:
           'nikita-cluster-lifecycle-1':
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
       await registry.register 'clean', ->
         await @lxc.cluster.delete cluster, force: true
       await registry.register 'test', ->

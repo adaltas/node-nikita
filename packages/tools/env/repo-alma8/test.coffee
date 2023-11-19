@@ -1,7 +1,10 @@
 
-module.exports =
+export default
   tags:
     tools_repo: true
+  mariadb:
+    distrib: 'almalinux8'
+    basearch: '$arch'
   config: [
     label: 'local'
     sudo: true

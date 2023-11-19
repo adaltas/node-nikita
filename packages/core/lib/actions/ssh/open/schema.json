@@ -38,7 +38,7 @@
         "description": "Local file location of the private key used to authenticate the user\nand create the SSH connection. It is only used if `password` and\n`private_key` are not provided."
       },
       "root": {
-        "$ref": "module://@nikitajs/core/lib/actions/ssh/root",
+        "$ref": "module://@nikitajs/core/actions/ssh/root",
         "description": "Configuration passed to `nikita.ssh.root` to enable password-less root\nlogin."
       },
       "username": {

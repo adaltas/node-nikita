@@ -1,13 +1,13 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/tools/find`
+# Plugin `@nikitajs/core/plugins/tools/find`
 
 Traverse the parent hierarchy until it find a value. The traversal will only
 stop if the user function return anything else than `undefined`, including
 `null` or `false`.
 */
 
-const utils = require('../../utils');
+import utils from '@nikitajs/core/utils';
 
 const find = async function(action, finder) {
   const precious = await finder(action, finder);
@@ -53,8 +53,8 @@ const validate = function(action, args) {
   return [action, finder];
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools/find',
+export default {
+  name: '@nikitajs/core/plugins/tools/find',
   hooks: {
     'nikita:normalize': function(action, handler) {
       return async function() {

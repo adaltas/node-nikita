@@ -1,8 +1,5 @@
-# docker build --tag nikita_krb5 .
-# Run the container and tail /var/log/kerberos/krb5kdc.log
-# docker run --rm -it nikita_krb5
-
 FROM centos:7
+LABEL org.opencontainers.image.authors="David Worms <david@adaltas.com>"
 
 # EPEL
 RUN yum install -y epel-release

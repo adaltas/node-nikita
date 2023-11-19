@@ -1,33 +1,24 @@
 // Dependencies
-const {is_object_literal, merge} = require('mixme');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import {is_object_literal, merge} from 'mixme';
+import utils from "@nikitajs/ldap/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     let $status = false;
     // Get DN
     if (!config.dn) {
-      log({
-        message: "Get DN of the database to modify",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Get DN of the database to modify");
       const { dn } = await this.ldap.tools.database(config, {
         suffix: config.suffix,
       });
       config.dn = dn;
-      log({
-        message: `Database DN is ${dn}`,
-        level: "INFO",
-      });
+      log("INFO", `Database DN is ${dn}`);
     }
     for (const acl of config.acls) {
       // Get ACLs
-      log({
-        message: "List all ACL of the directory",
-        level: "DEBUG",
-      });
+      log("DEBUG", "List all ACL of the directory");
       const { stdout } = await this.ldap.search(config, {
         attributes: ["olcAccess"],
         base: `${config.dn}`,
@@ -87,36 +78,21 @@ module.exports = {
           }
         }
         if (is_perfect_match) {
-          log({
-            message: "No modification to apply",
-            level: "INFO",
-          });
+          log("INFO", "No modification to apply");
           continue;
         }
         if (not_found_acl.length) {
-          log({
-            message: "Modify access after undefined acl",
-            level: "INFO",
-          });
+          log("INFO", "Modify access after undefined acl");
           for (const access_by of olcAccess.by) {
             not_found_acl.push(access_by);
           }
           olcAccess.by = not_found_acl;
         } else {
-          log({
-            message: "Modify access after reorder",
-            level: "INFO",
-          });
-          if (typeof log === "function") {
-            log("nikita `ldap.acl`: m");
-          }
+          log("INFO", "Modify access after reorder");
           olcAccess.by = acl.by;
         }
       } else {
-        log({
-          message: "Insert a new access",
-          level: "INFO",
-        });
+        log("INFO", "Insert a new access");
         let index = olcAccesses.length;
         if (acl.first) {
           // not tested

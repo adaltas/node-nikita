@@ -1,13 +1,12 @@
 // Dependencies
-const fs = require('fs');
-const url = require('url');
-const utils = require('../utils');
-const definitions = require('./schema.json');
-
-const esa = utils.string.escapeshellarg;
+import fs from "node:fs";
+import url from "node:url";
+import utils from "@nikitajs/file/utils";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, ssh, tools: { log, path } }) {
     // Only move the file at the end of action if match is true
     let match = false;
@@ -27,7 +26,7 @@ module.exports = {
       algo = "sha1";
       source_hash = config.sha1;
     } else if (config.sha256 != null) {
-      const sha256Type = typeof config.sha256
+      const sha256Type = typeof config.sha256;
       if (sha256Type !== "string" && sha256Type !== "boolean") {
         throw Error(`Invalid SHA-256 Hash:${config.sha256}`);
       }
@@ -39,10 +38,7 @@ module.exports = {
     const protocols_http = ["http:", "https:"];
     // const protocols_ftp = ["ftp:", "ftps:"];
     if (config.force) {
-      log({
-        message: `Using force: ${JSON.stringify(config.force)}`,
-        level: "DEBUG",
-      });
+      log("DEBUG", `Using force: ${JSON.stringify(config.force)}`);
     }
     let source_url = url.parse(config.source);
     if (config.cache == null && source_url.protocol === null) {
@@ -78,10 +74,7 @@ module.exports = {
           $shy: true,
         },
         async function () {
-          log({
-            message: "Shortcircuit check if provided hash match target",
-            level: "WARN",
-          });
+          log("WARN", "Shortcircuit check if provided hash match target");
           try {
             const { hash } = await this.fs.hash(config.target, {
               algo: algo,
@@ -102,10 +95,7 @@ module.exports = {
       if (shortcircuit) {
         return true;
       }
-      log({
-        message: "Destination with valid signature, download aborted",
-        level: "INFO",
-      });
+      log("INFO", "Destination with valid signature, download aborted");
     }
     // Download the file and place it inside local cache
     // Overwrite the config.source and source_url properties to make them
@@ -135,10 +125,7 @@ module.exports = {
         target: config.target,
       });
       if (utils.stats.isDirectory(stats != null ? stats.mode : void 0)) {
-        log({
-          message: "Destination is a directory",
-          level: "DEBUG",
-        });
+        log("DEBUG", "Destination is a directory");
         config.target = path.join(config.target, path.basename(config.source));
       }
     } catch (error) {
@@ -150,10 +137,7 @@ module.exports = {
       Math.random() * 1000
     )}`;
     if (protocols_http.includes(source_url.protocol) === true) {
-      log({
-        message: "HTTP download target url",
-        level: "DEBUG",
-      });
+      log("DEBUG", "HTTP download target url");
       // Ensure target directory exists
       await this.fs.mkdir({
         $shy: true,
@@ -188,37 +172,29 @@ module.exports = {
       const { exists } = await this.fs.base.exists({
         target: config.target,
       });
-      const { hash: hash_target } = exists && await this.fs.hash({
-        target: config.target,
-        algo: algo,
-      });
+      const { hash: hash_target } =
+        exists &&
+        (await this.fs.hash({
+          target: config.target,
+          algo: algo,
+        }));
       match = hash_source === hash_target;
-      log(
-        match
-          ? {
-              message: `Hash matches as ${JSON.stringify(hash_source)}`,
-              level: "INFO",
-              module: "nikita/lib/file/download",
-            }
-          : {
-              message: `Hash dont match, source is ${JSON.stringify(hash_source)} and target is ${JSON.stringify(hash_target)}`,
-              level: "WARN",
-              module: "nikita/lib/file/download",
-            }
-      );
+      match
+        ? log("INFO", `Hash matches as "${hash_source}".`)
+        : log(
+            "WARN",
+            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
+          );
       if (match) {
         await this.fs.remove({
           $shy: true,
           target: stageDestination,
         });
       }
-    } else if (
-      protocols_http.includes(source_url.protocol) === false && !ssh
-    ) {
-      log({
-        message: `File download without ssh (cache ${config.cache ? "enabled" : "disabled"})`,
-        level: "DEBUG",
-      });
+    } else if (protocols_http.includes(source_url.protocol) === false && !ssh) {
+      log("DEBUG", `File download without ssh (cache ${
+          config.cache ? "enabled" : "disabled"
+        })`);
       const { hash: hash_source } = await this.fs.hash({
         target: config.source,
         algo: algo,
@@ -226,24 +202,19 @@ module.exports = {
       const { exists } = await this.fs.base.exists({
         target: config.target,
       });
-      const { hash: hash_target } = exists && await this.fs.hash({
-        target: config.target,
-        algo: algo,
-      });
+      const { hash: hash_target } =
+        exists &&
+        (await this.fs.hash({
+          target: config.target,
+          algo: algo,
+        }));
       match = hash_source === hash_target;
-      log(
-        match
-          ? {
-              message: `Hash matches as ${JSON.stringify(hash_source)}`,
-              level: "INFO",
-              module: "nikita/lib/file/download",
-            }
-          : {
-              message: `Hash dont match, source is ${JSON.stringify(hash_source)} and target is ${JSON.stringify(hash_target)}`,
-              level: "WARN",
-              module: "nikita/lib/file/download",
-            }
-      );
+      match
+        ? log("INFO", `Hash matches as "${hash_source}'`)
+        : log(
+            "WARN",
+            `Hash dont match, source is "${hash_source}" and target is "${hash_target}"`
+          );
       if (!match) {
         await this.fs.mkdir({
           $shy: true,
@@ -254,13 +225,10 @@ module.exports = {
           target: stageDestination,
         });
       }
-    } else if (
-      protocols_http.includes(source_url.protocol) === false && ssh
-    ) {
-      log({
-        message: `File download with ssh (cache ${config.cache ? "enabled" : "disabled"})`,
-        level: "DEBUG",
-      });
+    } else if (protocols_http.includes(source_url.protocol) === false && ssh) {
+      log("DEBUG", `File download with ssh (cache ${
+          config.cache ? "enabled" : "disabled"
+        })`);
       const { hash: hash_source } = await this.fs.hash({
         $ssh: false,
         $sudo: false,
@@ -270,24 +238,19 @@ module.exports = {
       const { exists } = await this.fs.base.exists({
         target: config.target,
       });
-      const { hash: hash_target } = exists && await this.fs.hash({
-        target: config.target,
-        algo: algo,
-      });
+      const { hash: hash_target } =
+        exists &&
+        (await this.fs.hash({
+          target: config.target,
+          algo: algo,
+        }));
       match = hash_source === hash_target;
-      log(
-        match
-          ? {
-              message: `Hash matches as ${JSON.stringify(hash_source)}`,
-              level: "INFO",
-              module: "nikita/lib/file/download",
-            }
-          : {
-              message: `Hash dont match, source is ${JSON.stringify(hash_source)} and target is ${JSON.stringify(hash_target)}.`,
-              level: "WARN",
-              module: "nikita/lib/file/download",
-            }
-      );
+      match
+        ? log("INFO", `Hash matches as "${hash_source}".`)
+        : log(
+            "WARN",
+            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
+          );
       if (!match) {
         await this.fs.mkdir({
           $shy: true,
@@ -300,27 +263,24 @@ module.exports = {
               return fs.createReadStream(config.source).pipe(ws);
             },
           });
-          log({
-            message: `Downloaded local source ${JSON.stringify(
+          log(
+            "INFO",
+            `Downloaded local source ${JSON.stringify(
               config.source
-            )} to remote target ${JSON.stringify(stageDestination)}`,
-            level: "INFO",
-          });
+            )} to remote target ${JSON.stringify(stageDestination)}.`
+          );
         } catch (error) {
-          log({
-            message: `Downloaded local source ${JSON.stringify(
+          log(
+            "ERROR",
+            `Downloaded local source ${JSON.stringify(
               config.source
-            )} to remote target ${JSON.stringify(stageDestination)} failed`,
-            level: "ERROR",
-          });
+            )} to remote target ${JSON.stringify(stageDestination)} failed.`
+          );
           throw error;
         }
       }
     }
-    log({
-      message: "Unstage downloaded file",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Unstage downloaded file");
     if (!match) {
       await this.fs.move({
         source: stageDestination,
@@ -342,31 +302,18 @@ module.exports = {
     }
   },
   hooks: {
-    on_action: async function({
-      config,
-      tools: {find}
-    }) {
-    config.cache = await find(function({
-        config: {cache}
-      }) {
-      return cache;
-    });
-    config.cache_file = await find(function({
-        config: {cache_file}
-      }) {
-      return cache_file;
-    });
-    config.cache_dir = await find(function({
-        config: {cache_dir}
-      }) {
-      return cache_dir;
-    });
-    if (/^file:\/\//.test(config.source)) {
-      return config.source = config.source.substr(7);
-    }
-  }
+    on_action: async function ({ config, tools: { find } }) {
+      config.cache = await find(({ config: { cache } }) => cache);
+      config.cache_file = await find(
+        ({ config: { cache_file } }) => cache_file
+      );
+      config.cache_dir = await find(({ config: { cache_dir } }) => cache_dir);
+      if (/^file:\/\//.test(config.source)) {
+        return (config.source = config.source.substr(7));
+      }
+    },
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

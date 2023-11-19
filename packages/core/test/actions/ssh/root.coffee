@@ -1,14 +1,15 @@
 
-connect = require 'ssh2-connect'
-nikita = require '../../../lib'
-utils = require '../../../lib/utils'
-{tags, config} = require '../../test'
+import connect from 'ssh2-connect'
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
 # All test are executed with an ssh connection passed as an argument
-they = require('mocha-they')(config.filter ({ssh}) -> !!ssh)
+they = mochaThey(test.config.filter ({ssh}) -> !!ssh)
 
-return unless tags.posix
 
 describe 'actions.ssh.root', ->
+  return unless test.tags.posix
   
   describe 'schema', ->
     

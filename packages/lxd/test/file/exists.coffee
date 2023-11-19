@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.file.exists', ->
+  return unless test.tags.lxd
 
   they 'when present', ({ssh}) ->
     nikita
@@ -15,7 +15,7 @@ describe 'lxc.file.exists', ->
         @lxc.delete 'nikita-file-exists-1', force: true
       await @clean()
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-file-exists-1'
         start: true
       @execute
@@ -34,7 +34,7 @@ describe 'lxc.file.exists', ->
         @lxc.delete 'nikita-file-exists-2', force: true
       await @clean()
       @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-file-exists-2'
         start: true
       {exists} = await @lxc.file.exists
@@ -51,7 +51,7 @@ describe 'lxc.file.exists', ->
         await @lxc.delete 'nikita-file-exists-3', force: true
       registry.register 'test', ->
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-exists-3'
           start: true
         # check is exists is true

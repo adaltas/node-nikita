@@ -1,20 +1,20 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ldap} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ldap
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ldap.databases', ->
+  return unless test.tags.ldap
   
   they 'create a new index', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
       {databases} = await @ldap.tools.databases
-        suffix: ldap.suffix_dn
-        uri: ldap.uri
-        binddn: ldap.config.binddn
-        passwd: ldap.config.passwd
+        suffix: test.ldap.suffix_dn
+        uri: test.ldap.uri
+        binddn: test.ldap.config.binddn
+        passwd: test.ldap.config.passwd
       for database in databases
         database.should.match /^\{-?\d+\}\w+$/

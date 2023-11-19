@@ -1,42 +1,35 @@
 
 // Dependencies
-require('@nikitajs/network/lib/register');
-const registry = require('@nikitajs/core/lib/registry');
+import '@nikitajs/network/register';
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions = {
   ipa: {
     group: {
-      '': '@nikitajs/ipa/lib/group',
-      add_member: '@nikitajs/ipa/lib/group/add_member',
-      del: '@nikitajs/ipa/lib/group/del',
-      exists: '@nikitajs/ipa/lib/group/exists',
-      show: '@nikitajs/ipa/lib/group/show'
+      '': '@nikitajs/ipa/group',
+      add_member: '@nikitajs/ipa/group/add_member',
+      del: '@nikitajs/ipa/group/del',
+      exists: '@nikitajs/ipa/group/exists',
+      show: '@nikitajs/ipa/group/show'
     },
     user: {
-      '': '@nikitajs/ipa/lib/user',
-      disable: '@nikitajs/ipa/lib/user/disable',
-      del: '@nikitajs/ipa/lib/user/del',
-      enable: '@nikitajs/ipa/lib/user/enable',
-      exists: '@nikitajs/ipa/lib/user/exists',
-      find: '@nikitajs/ipa/lib/user/find',
-      show: '@nikitajs/ipa/lib/user/show',
-      status: '@nikitajs/ipa/lib/user/status'
+      '': '@nikitajs/ipa/user',
+      disable: '@nikitajs/ipa/user/disable',
+      del: '@nikitajs/ipa/user/del',
+      enable: '@nikitajs/ipa/user/enable',
+      exists: '@nikitajs/ipa/user/exists',
+      find: '@nikitajs/ipa/user/find',
+      show: '@nikitajs/ipa/user/show',
+      status: '@nikitajs/ipa/user/status'
     },
     service: {
-      '': '@nikitajs/ipa/lib/service',
-      del: '@nikitajs/ipa/lib/service/del',
-      exists: '@nikitajs/ipa/lib/service/exists',
-      show: '@nikitajs/ipa/lib/service/show'
+      '': '@nikitajs/ipa/service',
+      del: '@nikitajs/ipa/service/del',
+      exists: '@nikitajs/ipa/service/exists',
+      show: '@nikitajs/ipa/service/show'
     }
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

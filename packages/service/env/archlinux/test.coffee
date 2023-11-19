@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     service_install: true
     service_install_arch: true

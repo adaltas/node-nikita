@@ -1,6 +1,6 @@
 // Dependencies
-const utils = require("../../utils");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/system/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Parse the passwd output
 const str2passwd = function (data) {
@@ -23,7 +23,7 @@ const str2passwd = function (data) {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     if (typeof config.uid === "string" && /\d+/.test(config.uid)) {
       config.uid = parseInt(config.uid, 10);

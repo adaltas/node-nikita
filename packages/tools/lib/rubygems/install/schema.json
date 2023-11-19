@@ -11,7 +11,7 @@
         "description": "Pass flags to the compiler."
       },
       "bash": {
-        "$ref": "module://@nikitajs/core/lib/actions/execute#/definitions/config/properties/bash"
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/bash"
       },
       "gem_bin": {
         "type": "string",

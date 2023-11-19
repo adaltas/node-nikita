@@ -1,36 +1,29 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
+import registry from "@nikitajs/core/registry";
 
 // Action registration
-module.exports = {
+const actions = {
   db: {
     database: {
-      '': '@nikitajs/db/lib/database',
-      exists: '@nikitajs/db/lib/database/exists',
-      remove: '@nikitajs/db/lib/database/remove',
-      wait: '@nikitajs/db/lib/database/wait'
+      '': '@nikitajs/db/database',
+      exists: '@nikitajs/db/database/exists',
+      remove: '@nikitajs/db/database/remove',
+      wait: '@nikitajs/db/database/wait'
     },
-    query: '@nikitajs/db/lib/query',
+    query: '@nikitajs/db/query',
     schema: {
-      '': '@nikitajs/db/lib/schema',
-      exists: '@nikitajs/db/lib/schema/exists',
-      list: '@nikitajs/db/lib/schema/list',
-      remove: '@nikitajs/db/lib/schema/remove'
+      '': '@nikitajs/db/schema',
+      exists: '@nikitajs/db/schema/exists',
+      list: '@nikitajs/db/schema/list',
+      remove: '@nikitajs/db/schema/remove'
     },
     user: {
-      '': '@nikitajs/db/lib/user',
-      exists: '@nikitajs/db/lib/user/exists',
-      remove: '@nikitajs/db/lib/user/remove'
+      '': '@nikitajs/db/user',
+      exists: '@nikitajs/db/user/exists',
+      remove: '@nikitajs/db/user/remove'
     }
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions)

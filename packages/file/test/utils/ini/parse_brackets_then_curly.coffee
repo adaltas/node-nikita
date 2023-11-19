@@ -1,10 +1,9 @@
 
-{ini} = require '../../../lib/utils'
-{tags} = require '../../test'
-
-return unless tags.api
+import { ini } from '@nikitajs/file/utils'
+import test from '../../test.coffee'
 
 describe 'utils.ini.parse_brackets_then_curly', ->
+  return unless test.tags.api
 
   it 'parse braket, no values', ->
     ini.parse_brackets_then_curly """

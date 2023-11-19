@@ -14,6 +14,6 @@ const {exists} = nikita.db.database.exists({
   engine: 'postgresql',
   host: 'postgres',
   port: 5432,
-  admin_db: 'root',
+  database: 'root',
 })
 ```

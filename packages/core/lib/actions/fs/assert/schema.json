@@ -54,12 +54,12 @@
       "mode": {
         "type": "array",
         "items": {
-          "$ref": "module://@nikitajs/core/lib/actions/fs/base/chmod#/definitions/config/properties/mode"
+          "$ref": "module://@nikitajs/core/actions/fs/base/chmod#/definitions/config/properties/mode"
         },
         "description": "Validate file permissions."
       },
       "not": {
-        "$ref": "module://@nikitajs/core/lib/actions/assert#/definitions/config/properties/not"
+        "$ref": "module://@nikitajs/core/actions/assert#/definitions/config/properties/not"
       },
       "sha1": {
         "type": "string",

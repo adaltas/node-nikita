@@ -1,10 +1,10 @@
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.storage.volume.attach', ->
+  return unless test.tags.lxd
 
   describe 'attach', ->
 
@@ -30,7 +30,7 @@ describe 'lxc.storage.volume.attach', ->
           pool: 'nikita-storage-attach-1' 
         # Create instance 
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-1'
         # Attach volume to instance
         {$status} = await @lxc.storage.volume.attach
@@ -47,7 +47,7 @@ describe 'lxc.storage.volume.attach', ->
         data.devices.should.containEql {'osd': {type: 'disk', source: 'nikita-volume-attach-1', pool: 'nikita-storage-attach-1', path: '/osd/'}}
         await @clean()
 
-    return unless tags.lxd_vm
+    return unless test.tags.lxd_vm
     
     they 'should attach a block volume on a vm', ({ssh}) ->
       nikita
@@ -72,7 +72,7 @@ describe 'lxc.storage.volume.attach', ->
           content: 'block'
         # Create instance 
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-2'
           vm:true
         # Attach volume to instance
@@ -113,7 +113,7 @@ describe 'lxc.storage.volume.attach', ->
           pool: 'nikita-storage-attach-1' 
         # Create instance 
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-1'
         # Attach volume to instance
         await @lxc.storage.volume.attach
@@ -124,7 +124,7 @@ describe 'lxc.storage.volume.attach', ->
         .should.be.rejectedWith /^Missing requirement: Path is required for filesystem type volumes./
         await @clean()
 
-    return unless tags.lxd_vm
+    return unless test.tags.lxd_vm
 
     they 'should attach a filesystem to a vm', ({ssh}) ->
       nikita
@@ -148,7 +148,7 @@ describe 'lxc.storage.volume.attach', ->
           pool: 'nikita-storage-attach-2' 
         # Create instance 
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-2'
           vm: true
         # Attach volume to instance
@@ -184,7 +184,7 @@ describe 'lxc.storage.volume.attach', ->
           content: 'block'
         # Create instance 
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-3'
         # Attach volume to instance
         await @lxc.storage.volume.attach
@@ -214,7 +214,7 @@ describe 'lxc.storage.volume.attach', ->
           name: 'nikita-storage-attach-4'
           driver: "zfs"
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-4'
         # Attach volume to instance
         await @lxc.storage.volume.attach

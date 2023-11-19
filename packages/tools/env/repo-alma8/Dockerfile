@@ -1,15 +1,15 @@
 FROM almalinux:8
-MAINTAINER David Worms
+LABEL org.opencontainers.image.authors="David Worms <david@adaltas.com>"
 
 RUN \
-  # Install Node dependencies
-  yum install -y git make && \
-  # Install SSH and sudo
-  yum install -y openssh-server openssh-clients sudo && \
-  ssh-keygen -A && \
-  # Install package dependencies
-  # java
-  yum install -y openssl git zip unzip bzip2
+    # Install Node dependencies
+    yum install -y git make && \
+    # Install SSH and sudo
+    yum install -y openssh-server openssh-clients sudo && \
+    ssh-keygen -A && \
+    # Install package dependencies
+    # java
+    yum install -y openssl git zip unzip bzip2
 
 RUN yum clean all
 
@@ -19,10 +19,10 @@ WORKDIR /nikita/packages/tools
 
 # Sudo User
 RUN useradd nikita -d /home/nikita && \
- mkdir -p /home/nikita && \
- chown nikita /home/nikita && \
- chmod 700 /home/nikita && \
- echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
+    mkdir -p /home/nikita && \
+    chown nikita /home/nikita && \
+    chmod 700 /home/nikita && \
+    echo 'nikita ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nikita
 USER nikita
 
 # Install Node.js
@@ -32,7 +32,7 @@ RUN \
   . ~/.bashrc && n $NODE_VERSION
 
 RUN \
- ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \
- cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
+  ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' && \
+  cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, krb5} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.krb5_addprinc
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'krb5.addprinc', ->
+  return unless test.tags.krb5_addprinc
 
   describe 'schema', ->
     
@@ -25,8 +25,8 @@ describe 'krb5.addprinc', ->
     it 'one of password or randkey must be provided', ->
       nikita
       .krb5.addprinc
-        admin: krb5
-        principal: "nikita@#{krb5.realm}"
+        admin: test.krb5
+        principal: "nikita@#{test.krb5.realm}"
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -42,81 +42,81 @@ describe 'krb5.addprinc', ->
     they 'create a new principal with a randkey', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
       , ->
         await @krb5.delprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           randkey: true
         $status.should.be.true()
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           randkey: true
         $status.should.be.false()
 
     they 'create a new principal with a password', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
       , ->
         await @krb5.delprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
-          password: 'password1'
+          principal: "nikita@#{test.krb5.realm}"
+          password: 'secret_1'
+        # Change password
         $status.should.be.true()
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
-          password: 'password2'
+          principal: "nikita@#{test.krb5.realm}"
+          password: 'secret_2'
           password_sync: true
         $status.should.be.true()
+        # Check status
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
-          password: 'password2'
+          principal: "nikita@#{test.krb5.realm}"
+          password: 'secret_2'
           password_sync: true
         $status.should.be.false()
+        # Check token
+        {$status} = await @execute
+          command: "echo secret_2 | kinit nikita@#{test.krb5.realm}"
+        $status.should.be.true()
 
     they 'dont overwrite password', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
       , ->
         await @krb5.delprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           password: 'password1'
         $status.should.be.true()
         {$status} = await @krb5.addprinc
-          principal: "nikita@#{krb5.realm}"
+          principal: "nikita@#{test.krb5.realm}"
           password: 'password2'
           password_sync: false # Default
         $status.should.be.false()
         await @execute
-          command: "echo password1 | kinit nikita@#{krb5.realm}"
+          command: "echo password1 | kinit nikita@#{test.krb5.realm}"
 
-    they 'call function with new style', ({ssh}) ->
-      user =
-        password: 'user123'
-        password_sync: true
-        principal: 'user2@NODE.DC1.CONSUL'
+    they 'with keybab', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
-      , ->
+        krb5: admin: test.krb5
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
         await @fs.remove
-          target: '/etc/security/keytabs/user1.service.keytab'
+          target: "#{tmpdir}/user1.service.keytab"
         await @krb5.delprinc
-          principal: user.principal
-        await @krb5.delprinc
-          principal: "user1/krb5@NODE.DC1.CONSUL"
-        await @krb5.addprinc
-          principal: "user1/krb5@NODE.DC1.CONSUL"
+          principal: "user1/krb5@#{test.krb5.realm}"
+        {$status} = await @krb5.addprinc
+          principal: "user1/krb5@#{test.krb5.realm}"
           randkey: true
-          keytab: '/etc/security/keytabs/user1.service.keytab'
-        {$status} = await @krb5.addprinc user
+          keytab: "#{tmpdir}/user1.service.keytab"
         $status.should.be.true()
         {$status} = await @execute
-          command: "echo #{user.password} | kinit #{user.principal}"
+          command: "kinit -kt #{tmpdir}/user1.service.keytab user1/krb5@#{test.krb5.realm}"
         $status.should.be.true()

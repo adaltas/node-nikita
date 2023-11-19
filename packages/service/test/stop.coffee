@@ -1,23 +1,21 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, service} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.service_systemctl
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'service.stop', ->
-  
-  @timeout 20000
+  return unless test.tags.service_systemctl
 
   they 'should stop', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      @service.install service.name
-      @service.start service.srv_name
-      {$status} = await @service.stop service.srv_name
+      await @service.install test.service.name
+      await @service.start test.service.srv_name
+      {$status} = await @service.stop test.service.srv_name
       $status.should.be.true()
-      {$status} = await @service.stop service.srv_name
+      {$status} = await @service.stop test.service.srv_name
       $status.should.be.false()
 
   they 'no error when invalid service name', ({ssh}) ->

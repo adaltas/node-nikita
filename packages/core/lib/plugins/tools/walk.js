@@ -1,11 +1,10 @@
 
 // Dependencies
-const utils = require('../../utils');
+import utils from '@nikitajs/core/utils';
 
 const walk = async function(action, walker) {
-  var precious, results;
-  precious = (await walker(action));
-  results = [];
+  const precious = await walker(action);
+  const results = [];
   if (precious !== void 0) {
     results.push(precious);
   }
@@ -48,8 +47,8 @@ const validate = function(action, args) {
   return [action, walker];
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools/walk',
+export default {
+  name: '@nikitajs/core/plugins/tools/walk',
   hooks: {
     'nikita:normalize': function(action) {
       if (action.tools == null) {

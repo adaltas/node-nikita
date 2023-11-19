@@ -33,7 +33,7 @@
         "description": "Force cache overwrite if it exists"
       },
       "gid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/gid"
       },
       "http_headers": {
         "type": "array",
@@ -55,7 +55,7 @@
         "description": "Validate uploaded file with md5 checksum (only for binary upload for\nnow), may be the string checksum or will be deduced from source if\n\"true\"."
       },
       "mode": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chmod#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/core/actions/fs/chmod#/definitions/config/properties/mode"
       },
       "proxy": {
         "type": "string",
@@ -93,7 +93,7 @@
         "description": "File path where to write content to. Pass the content."
       },
       "uid": {
-        "$ref": "module://@nikitajs/core/lib/actions/fs/chown#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"
       }
     },
     "required": [

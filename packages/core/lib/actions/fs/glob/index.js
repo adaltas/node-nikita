@@ -1,7 +1,9 @@
 // Dependencies
-const { Minimatch } = require("minimatch");
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import mm from "minimatch";
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
+
+const { Minimatch } = mm;
 
 // Utility
 const getprefix = function(pattern) {
@@ -32,7 +34,7 @@ const getprefix = function(pattern) {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { path } }) {
     if (config.minimatch == null) {
       config.minimatch = {};

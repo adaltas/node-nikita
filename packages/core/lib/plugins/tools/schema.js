@@ -5,15 +5,14 @@ schema. Thus, it mst be defined after every module which modify the config
 object.
 */
 
-const stream = require('stream');
-const util = require('util');
-const dedent = require('dedent');
-const {merge, mutate} = require('mixme');
-const Ajv = require('ajv').default;
-const ajv_keywords = require('ajv-keywords');
-const ajv_formats = require("ajv-formats");
-const utils = require('../../utils');
-const instanceofDef = require('ajv-keywords/dist/definitions/instanceof');
+import stream from 'node:stream';
+import dedent from 'dedent';
+import {merge, mutate} from 'mixme';
+import Ajv from 'ajv';
+import ajv_keywords from 'ajv-keywords';
+import ajv_formats from "ajv-formats";
+import utils from '@nikitajs/core/utils';
+import instanceofDef from 'ajv-keywords/dist/definitions/instanceof.js';
 
 instanceofDef.CONSTRUCTORS['Error'] = Error;
 instanceofDef.CONSTRUCTORS['stream.Writable'] = stream.Writable;
@@ -30,8 +29,8 @@ const parse = function(uri) {
   };
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools/schema',
+export default {
+  name: '@nikitajs/core/plugins/tools/schema',
   hooks: {
     'nikita:normalize': {
       handler: async function(action) {
@@ -65,14 +64,15 @@ module.exports = {
               switch (protocol) {
                 case 'module:':
                   try {
-                    const act = await require.main.require(pathname);
+                    const act = (await import(pathname)).default;
                     return accept({
                       definitions: act.metadata.definitions
                     });
                   } catch (error) {
                     return reject(utils.error('NIKITA_SCHEMA_INVALID_MODULE', [
                       'the module location is not resolvable,',
-                      `module name is ${JSON.stringify(pathname)}.`
+                      `module name is ${JSON.stringify(pathname)},`,
+                      `error message is ${JSON.stringify(error.message)}.`
                     ]));
                   }
                   break;
@@ -229,7 +229,7 @@ module.exports = {
                   action.metadata.namespace.length
                   ? `action \`${action.metadata.namespace.join('.')}\``
                   : "root action",
-                  action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call'
+                  action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/actions/call'
                   ? ` in module ${action.metadata.module}`
                   : undefined,
                   ', ',
@@ -249,7 +249,7 @@ module.exports = {
               action.metadata.namespace.length
               ? `action \`${action.metadata.namespace.join('.')}\``
               : "root action",
-              action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/lib/actions/call'
+              action.metadata.namespace.join('.') === 'call' && action.metadata.module !== '@nikitajs/core/actions/call'
               ? ` in module ${action.metadata.module}`
               : undefined,
               ':',

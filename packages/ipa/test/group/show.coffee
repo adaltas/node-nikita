@@ -1,17 +1,17 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.group.show', ->
+  return unless test.tags.ipa
 
   they 'get single group', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
-      {result} = await @ipa.group.show connection: ipa,
+      {result} = await @ipa.group.show connection: test.ipa,
         cn: 'admins'
       result.gidnumber[0].should.match /\d+/
       result.gidnumber[0] = '0000000000'
@@ -26,7 +26,7 @@ describe 'ipa.group.show', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.show connection: ipa,
+      @ipa.group.show connection: test.ipa,
         cn: 'missing'
       .should.be.rejectedWith
         code: 4001

@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Auth related config
     const binddn = config.binddn ? `-D ${config.binddn}` : '';
@@ -15,14 +15,12 @@ module.exports = {
       // Add related config
       config.dn = [config.dn];
     }
-    const dn = config.dn.map(function(dn) {
-      return `'${dn}'`;
-    }).join(' ');
-    return (await this.execute({
+    const dn = config.dn.map((dn) => `'${dn}'` ).join(' ');
+    await this.execute({
       // Check that the entry exists
       $if_execute: `ldapsearch ${binddn} ${passwd} ${uri} -b ${dn} -s base`,
       command: `ldapdelete ${binddn} ${passwd} ${uri} ${dn}`
-    }));
+    });
   },
   metadata: {
     global: 'ldap',

@@ -21,7 +21,7 @@
       "compress": {
         "oneOf": [
           {
-            "$ref": "module://@nikitajs/tools/lib/compress#/definitions/config/properties/format"
+            "$ref": "module://@nikitajs/tools/compress#/definitions/config/properties/format"
           },
           {
             "type": "boolean"

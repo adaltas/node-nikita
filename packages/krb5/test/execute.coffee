@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, krb5} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.krb5
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'krb5.execute', ->
+  return unless test.tags.krb5
 
   describe 'schema', ->
 
@@ -26,7 +26,7 @@ describe 'krb5.execute', ->
     they 'global properties', ({ssh}) ->
       nikita
         $ssh: ssh
-        krb5: admin: krb5
+        krb5: admin: test.krb5
       , ->
         {stdout} = await @krb5.execute
           command: 'listprincs'
@@ -37,7 +37,7 @@ describe 'krb5.execute', ->
         $ssh: ssh
       , ->
         {stdout} = await @krb5.execute
-          admin: krb5
+          admin: test.krb5
           command: 'listprincs'
         stdout.should.containEql 'kadmin/admin'
 
@@ -46,12 +46,12 @@ describe 'krb5.execute', ->
         $ssh: ssh
       , ->
         {$status} = await @krb5.execute
-          admin: krb5
+          admin: test.krb5
           command: 'listprincs'
-          grep: krb5.principal
+          grep: test.krb5.principal
         $status.should.be.true()
         {$status} = await @krb5.execute
-          admin: krb5
+          admin: test.krb5
           command: 'listprincs'
           grep: "missing string"
         $status.should.be.false()
@@ -61,12 +61,12 @@ describe 'krb5.execute', ->
         $ssh: ssh
       , ->
         {$status, stdout} = await @krb5.execute
-          admin: krb5
+          admin: test.krb5
           command: 'listprincs'
           grep: /^.*@.*$/
         $status.should.be.true()
         {$status, stdout} = await @krb5.execute
-          admin: krb5
+          admin: test.krb5
           command: 'listprincs'
           grep: /^.*missing.*$/
         $status.should.be.false()

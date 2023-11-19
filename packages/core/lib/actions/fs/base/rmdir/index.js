@@ -1,9 +1,8 @@
 
 // Dependencies
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
-
-const {escapeshellarg} = utils.string;
+import utils from '@nikitajs/core/utils';
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_RMDIR_TARGET_ENOENT: ({config, error}) =>
@@ -16,14 +15,14 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {log}
   }) {
     try {
       await this.execute({
-        command: [`[ ! -d ${escapeshellarg(config.target)} ] && exit 2`, !config.recursive ? `rmdir ${escapeshellarg(config.target)}` : `rm -R ${escapeshellarg(config.target)}`].join('\n')
+        command: [`[ ! -d ${esa(config.target)} ] && exit 2`, !config.recursive ? `rmdir ${esa(config.target)}` : `rm -R ${esa(config.target)}`].join('\n')
       });
       log({
         message: "Directory successfully removed",

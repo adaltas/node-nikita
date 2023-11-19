@@ -1,10 +1,9 @@
 
-krb5 = require '../../lib/utils/krb5'
-{tags, config} = require '../test'
-
-return unless tags.krb5
+import krb5 from '@nikitajs/krb5/utils/krb5'
+import test from '../test.coffee'
 
 describe 'utils.krb5', ->
+  return unless test.tags.krb5
 
   describe 'kinit', ->
 

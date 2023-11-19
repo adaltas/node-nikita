@@ -1,11 +1,10 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
-registry = require '../../../lib/registry'
-register = require '../../../lib/register'
+import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
+import test from '../../test.coffee'
 
 describe 'plugins.metadata.depth', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'start at 0', ->
     nikita ({metadata}) ->
@@ -29,7 +28,8 @@ describe 'plugins.metadata.depth', ->
       key: "root value, depth #{metadata.depth}"
     {key} = await nikita()
     key.should.eql 'root value, depth 0'
-    registry.unregister [], register['']
+    # registry.unregister [], register['']
+    registry.unregister []
 
   it 'start at depth 0 with action argument', ->
     {key} = await nikita ({metadata}) ->

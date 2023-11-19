@@ -1,35 +1,34 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, db} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.db
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'db.schema.remove postgres', ->
-
-  return unless db.postgresql
+  return unless test.tags.db
+  return unless test.db.postgresql
 
   they 'does not exists', ({ssh}) ->
     nikita
       $ssh: ssh
-      db: db.postgresql
+      db: test.db.postgresql
     , ->
-      @db.database.remove 'schema_remove_0'
-      @db.database 'schema_remove_0'
+      await @db.database.remove 'schema_remove_0'
+      await @db.database 'schema_remove_0'
       {$status} = await @db.schema.remove
         schema: 'schema_remove_0'
         database: 'schema_remove_0'
       $status.should.be.false()
-      @db.database.remove 'schema_remove_0'
+      await @db.database.remove 'schema_remove_0'
 
   they 'output exists', ({ssh}) ->
     nikita
       $ssh: ssh
-      db: db.postgresql
+      db: test.db.postgresql
     , ->
-      @db.database.remove 'schema_remove_1'
-      @db.database 'schema_remove_1'
-      @db.schema
+      await @db.database.remove 'schema_remove_1'
+      await @db.database 'schema_remove_1'
+      await @db.schema
         schema: 'schema_remove_1'
         database: 'schema_remove_1'
       {$status} = await @db.schema.remove
@@ -40,4 +39,4 @@ describe 'db.schema.remove postgres', ->
         schema: 'schema_remove_1'
         database: 'schema_remove_1'
       $status.should.be.false()
-      @db.database.remove 'schema_remove_1'
+      await @db.database.remove 'schema_remove_1'

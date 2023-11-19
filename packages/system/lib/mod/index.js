@@ -1,12 +1,12 @@
 
 // Dependencies
-const path = require('path');
-const quote = require('regexp-quote');
-const dedent = require('dedent');
-const definitions = require('./schema.json');
+import path from 'node:path'
+import quote from "regexp-quote";
+import dedent from "dedent";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({metadata, config}) {
     for (const module in config.modules) {
       const active = config.modules[module];

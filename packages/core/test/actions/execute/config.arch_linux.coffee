@@ -1,15 +1,16 @@
 
-nikita = require '../../../lib'
-utils = require '../../../lib/utils'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.execute.config.arch_linux', ->
-  return unless tags.system_execute_arc_chroot
+  return unless test.tags.system_execute_arc_chroot
   
   describe 'schema', ->
     
-    it 'arch_chroot require arch_chroot_rootdir', ->
+    it 'arch_chroot requires arch_chroot_rootdir', ->
       nikita.execute
         arch_chroot: true
         command: ''

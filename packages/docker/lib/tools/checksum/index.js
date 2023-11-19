@@ -1,32 +1,23 @@
 
 // Dependencies
-const definitions = require("./schema.json");
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {log}
   }) {
-    log({
-      message: `Getting image checksum :${config.image}`,
-      level: 'DEBUG'
-    });
+    log('DEBUG', `Getting image checksum :${config.image}`);
     // Run `docker images` with the following config:
     // - `--no-trunc`: display full checksum
     // - `--quiet`: discard headers
     const {$status, stdout} = await this.docker.tools.execute({
-      boot2docker: config.boot2docker,
       command: `images --no-trunc --quiet ${config.image}:${config.tag}`,
-      compose: config.compose,
-      machine: config.machine
     });
     const checksum = stdout === '' ? undefined : stdout.toString().trim();
     if ($status) {
-      log({
-        message: `Image checksum for ${config.image}: ${checksum}`,
-        level: 'INFO'
-      });
+      log('INFO', `Image checksum for ${config.image}: ${checksum}`);
     }
     return {
       $status: $status,

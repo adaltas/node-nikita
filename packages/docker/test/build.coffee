@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.build', ->
+  return unless test.tags.docker
 
   @timeout 60000
 
@@ -14,7 +14,7 @@ describe 'docker.build', ->
     they 'fail with missing image parameter', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       .docker.build
         false_source: 'Dockerfile'
       .should.be.rejectedWith
@@ -28,10 +28,10 @@ describe 'docker.build', ->
     they 'fail with exclusive parameters', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       .docker.build
         image: 'nikita/should_not_exists_1'
-        file: "#{__dirname}/Dockerfile"
+        file: "/a_dir/Dockerfile"
         content: "FROM scratch \ CMD ['echo \"hello world\"']"
       .should.be.rejectedWith
         code: 'NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED'
@@ -43,62 +43,65 @@ describe 'docker.build', ->
     they 'from text', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
       , ->
-        @docker.rmi 'nikita/should_exists_1'
-        {$status, image, stdout} = await @docker.build
+        await @docker.rmi 'nikita/should_exists_1'
+        {$status, image_id, stdout, stderr} = await @docker.build
           image: 'nikita/should_exists_1'
           content: """
           FROM scratch
           CMD echo hello 1
           """
         $status.should.be.true()
-        image.should.match /^\w{12}$/
-        stdout.should.containEql 'Step 2/2 : CMD echo hello'
-        @docker.rmi 'nikita/should_exists_1'
+        image_id.should.match /^\w{12}$/
+        stdout.should.be.a.String()
+        stderr.should.be.a.String()
+        await @docker.rmi 'nikita/should_exists_1'
 
     they 'from cwd',  ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @docker.rmi 'nikita/should_exists_2'
-        @file
+        await @docker.rmi 'nikita/should_exists_2'
+        await @file
           target: "#{tmpdir}/Dockerfile"
           content: """
           FROM scratch
           CMD echo hello 2
           """
-        {$status} = await @docker.build
+        {$status, image_id} = await @docker.build
           image: 'nikita/should_exists_2'
           cwd: tmpdir
         $status.should.be.true()
-        @docker.rmi 'nikita/should_exists_2'
+        image_id.should.match /^\w{12}$/
+        await @docker.rmi 'nikita/should_exists_2'
 
     they 'from Dockerfile (exist)', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @docker.rmi 'nikita/should_exists_3'
-        @file
+        await @docker.rmi 'nikita/should_exists_3'
+        await @file
           content: """
           FROM scratch
           CMD ['echo "hello build from Dockerfile #{Date.now()}"']
           """
           target: "#{tmpdir}/nikita_Dockerfile"
-        {$status} = await @docker.build
+        {$status, image_id} = await @docker.build
           image: 'nikita/should_exists_3'
           file: "#{tmpdir}/nikita_Dockerfile"
         $status.should.be.true()
-        @docker.rmi 'nikita/should_exists_3'
+        image_id.should.match /^\w{12}$/
+        await @docker.rmi 'nikita/should_exists_3'
 
     they 'from Dockerfile (not exist)', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @docker.build
@@ -110,17 +113,17 @@ describe 'docker.build', ->
     they 'status not modified', ({ssh}) ->
       nikita
         $ssh: ssh
-        docker: docker
+        docker: test.docker
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @docker.rmi 'nikita/should_exists_5'
-        @file
+        await @docker.rmi 'nikita/should_exists_5'
+        await @file
           target: "#{tmpdir}/nikita_Dockerfile"
           content: """
           FROM scratch
           CMD echo hello 5
           """
-        {$logs: logs_status_true, $status, stdout} = await @docker.build
+        {$logs: logs_status_true, $status} = await @docker.build
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
         $status.should.be.true()
@@ -128,7 +131,7 @@ describe 'docker.build', ->
           image: 'nikita/should_exists_5'
           file: "#{tmpdir}/nikita_Dockerfile"
         $status.should.be.false()
-        @docker.rmi 'nikita/should_exists_5'
-        @call ->
+        await @docker.rmi 'nikita/should_exists_5'
+        await @call ->
           logs_status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
           logs_status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1

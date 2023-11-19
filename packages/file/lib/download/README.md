@@ -16,8 +16,8 @@ A checksum may provided with the option "sha256", "sha1" or "md5" to validate th
 file signature.
 
 Caching is active if "cache_dir" or "cache_file" are defined to anything but false.
-If cache_dir is not a string, default value is './'
-If cache_file is not a string, default is source basename.
+If cache_dir is not a string, default value is `./`. If cache_file is not a
+string, default is source basename.
 
 Nikita resolve the path from "cache_dir" to "cache_file", so if cache_file is an
 absolute path, "cache_dir" will be ignored

@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.mod', ->
+  return unless test.tags.posix
 
   they 'activate a module', ({ssh}) ->
     nikita
@@ -22,7 +22,7 @@ describe 'system.mod', ->
         modules: 'module_a'
         target: "#{tmpdir}/mods/modules.conf"
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/mods/modules.conf"
         content: "module_a\n"
 
@@ -45,7 +45,7 @@ describe 'system.mod', ->
           'module_b': true
         target: "#{tmpdir}/mods/modules.conf"
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/mods/modules.conf"
         content: "module_a\nmodule_b\n"
 
@@ -69,6 +69,6 @@ describe 'system.mod', ->
           'module_c': true
         target: "#{tmpdir}/mods/modules.conf"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/mods/modules.conf"
         content: "module_a\nmodule_c\n"

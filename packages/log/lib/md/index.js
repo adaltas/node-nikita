@@ -1,10 +1,10 @@
 
 // Dependencies
-const {merge} = require('mixme');
-const definitions = require('./schema.json');
+import {merge} from 'mixme';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const state = {};
     const serializer = {
@@ -93,7 +93,7 @@ module.exports = {
       'text': function(log) {
         const out = [];
         out.push(`\n${log.message}`);
-        if (log.module && log.module !== '@nikitajs/core/lib/actions/call') {
+        if (log.module && log.module !== '@nikitajs/core/actions/call') {
           out.push(` (${log.depth}.${log.level}, written by ${log.module})`);
         }
         out.push("\n");

@@ -1,41 +1,41 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.inspect', ->
+  return unless test.tags.docker
 
   they 'one running container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_inspect'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         container: 'nikita_test_inspect'
       {info} = await @docker.inspect
         container: 'nikita_test_inspect'
       info.Name.should.eql '/nikita_test_inspect'
-      @docker.rm
+      await @docker.rm
         container: 'nikita_test_inspect'
         force: true
 
   they 'two running containers', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm [
+      await @docker.rm [
         container: 'nikita_test_inspect_1'
       ,
         container: 'nikita_test_inspect_2'
       ], force: true
-      @docker.tools.service [
+      await @docker.tools.service [
         container: 'nikita_test_inspect_1'
       ,
         container: 'nikita_test_inspect_2'
@@ -50,7 +50,7 @@ describe 'docker.inspect', ->
         '/nikita_test_inspect_1'
         '/nikita_test_inspect_2'
       ]
-      @docker.rm [
+      await @docker.rm [
         container: 'nikita_test_inspect_1'
       ,
         container: 'nikita_test_inspect_2'

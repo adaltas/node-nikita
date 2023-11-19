@@ -1,13 +1,16 @@
 
 /*
-# Plugin '@nikitajs/core/lib/plugins/metadata/uuid'
+# Plugin '@nikitajs/core/plugins/metadata/uuid'
 
 Identify each action with a unique identifier.
 */
-const {v4: uuid} = require('uuid');
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/uuid',
+// Dependencies
+import {v4 as uuid} from 'uuid';
+
+// Plugin
+export default {
+  name: '@nikitajs/core/plugins/metadata/uuid',
   hooks: {
     'nikita:action': {
       handler: function(action) {

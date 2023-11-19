@@ -1,5 +1,6 @@
 {
   "name": "@nikitajs/java",
+  "version": "1.0.0-alpha.3",
   "description": "Provides Nikita actions to work with Java keystores and truststores.",
   "keywords": [
     "nikita",
@@ -11,7 +12,6 @@
     "java",
     "keystore"
   ],
-  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -54,20 +54,24 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    "./register": "./lib/register.js",
+    "./*": "./lib/*/index.js"
+  },
   "files": [
     "/lib"
   ],
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register",
-      "@nikitajs/java/lib/register"
-    ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "@nikitajs/java/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 20000
   },
   "publishConfig": {
     "access": "public"
@@ -80,7 +84,9 @@
     "directory": "packages/java"
   },
   "scripts": {
-    "test": "npm run test:local",
+    "test": "npm run test:local && npm run test:env",
+    "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
-  }
+  },
+  "type": "module"
 }

@@ -1,9 +1,10 @@
 
 // Dependencies
-const exec = require('ssh2-exec');
-const execProm = require('ssh2-exec/promise');
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import exec from 'ssh2-exec';
+import execPromise from 'ssh2-exec/promises';
+import utils from '@nikitajs/core/utils';
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Errors
 const errors = {
@@ -17,7 +18,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     metadata,
@@ -25,9 +26,7 @@ module.exports = {
     ssh
   }) {
     // Validate parameters
-    if (config.mode == null) {
-      config.mode = 0o500;
-    }
+    config.mode ??= 0o500;
     if (typeof config.command === 'function') {
       config.command = (await this.call(config, config.command));
     }
@@ -41,7 +40,6 @@ module.exports = {
       config.command = `set -e\n${config.command}`;
     }
     config.command_original = `${config.command}`;
-    // sudo = await find ({config: {sudo}}) -> sudo
     const dry = (await find(function({
         config: {dry}
       }) {
@@ -64,24 +62,22 @@ module.exports = {
           const results = [];
           for (const k in config.env) {
             const v = config.env[k];
-            results.push(`export ${k}=${utils.string.escapeshellarg(v)}\n`);
+            results.push(`export ${k}=${esa(v)}\n`);
           }
           return results;
         })()
       ).join('\n');
-      const env_export_hash = utils.string.hash(env_export_content);
     }
     // Guess current username
-    const current_username = utils.os.whoami(ssh);
+    const current_username = utils.os.whoami({ssh});
     // Sudo
     if (config.sudo) {
       if (current_username === 'root') {
         config.sudo = false;
       } else {
-        if (!['bash', 'arch_chroot'].some(function(k) {
-          return config[k];
-        })) {
-          config.bash = 'bash';
+        // Sudo commands are executed as a bash script unless arch_chroout is enabled
+        if (!["bash", "arch_chroot"].some((k) => config[k])) {
+          config.bash = "bash";
         }
       }
     }
@@ -105,9 +101,9 @@ module.exports = {
         level: 'INFO'
       });
       await this.fs.base.writeFile({
-        $sudo: config.sudo,
+        $sudo: config.sudo, // Is it really necessary ?
         content: env_export_content,
-        mode: 0o500,
+        mode: config.mode,
         target: env_export_target,
         uid: config.uid
       });
@@ -130,7 +126,7 @@ module.exports = {
         config.command = `sudo ${config.command}`;
       }
       await this.fs.base.writeFile({
-        $sudo: config.sudo,
+        $sudo: config.sudo, // Is it really necessary ?
         target: `${target}`,
         content: `${command}`,
         mode: config.mode
@@ -139,10 +135,7 @@ module.exports = {
     } else if (config.bash) {
       const command = config.command;
       const target = path.join(metadata.tmpdir, `execute-bash-${utils.string.hash(config.command)}`);
-      log({
-        message: `Writing bash script to ${JSON.stringify(target)}`,
-        level: 'INFO'
-      });
+      log('INFO', `Writing bash script to ${JSON.stringify(target)}`);
       let cmd = `${config.bash} ${target}`;
       if (config.uid) {
         cmd = `su - ${config.uid} -c '${cmd}'`;
@@ -165,7 +158,7 @@ module.exports = {
       // # Note, rm cannot be remove with arch_chroot enabled
       // config.command += " && code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
       await this.fs.base.writeFile({
-        $sudo: config.sudo,
+        $sudo: config.sudo, // Is it really necessary ?
         content: command,
         mode: config.mode,
         target: target,
@@ -212,7 +205,7 @@ module.exports = {
           end: false
         });
       }
-      let stdout_stream_open = stderr_stream_open = false;
+      let stdout_stream_open = false;
       if (child.stdout && (config.stdout_return || config.stdout_log)) {
         child.stdout.on('data', function(data) {
           if (config.stdout_log) {
@@ -233,6 +226,7 @@ module.exports = {
           }
         });
       }
+      let stderr_stream_open = false;
       if (child.stderr && (config.stderr_return || config.stderr_log)) {
         child.stderr.on('data', function(data) {
           if (config.stderr_log) {
@@ -253,11 +247,11 @@ module.exports = {
           }
         });
       }
+      let exitCalled = false;
       return child.on("exit", function(code) {
-        log({
-          message: `Command exit with status: ${code}`,
-          level: 'DEBUG'
-        });
+        if (exitCalled) return;
+        exitCalled = true;
+        log('DEBUG', `Command exit with status: ${code}`);
         result.code = code;
         // Give it some time because the "exit" event is sometimes called
         // before the "stdout" "data" event when running `npm test`
@@ -336,8 +330,8 @@ module.exports = {
   },
   hooks: {
     on_action: {
-      after: ['@nikitajs/core/lib/plugins/execute', '@nikitajs/core/lib/plugins/ssh', '@nikitajs/core/lib/plugins/tools/path'],
-      before: ['@nikitajs/core/lib/plugins/metadata/schema', '@nikitajs/core/lib/plugins/metadata/tmpdir'],
+      after: ['@nikitajs/core/plugins/execute', '@nikitajs/core/plugins/ssh', '@nikitajs/core/plugins/tools/path'],
+      before: ['@nikitajs/core/plugins/metadata/schema', '@nikitajs/core/plugins/metadata/tmpdir'],
       handler: function({
         config,
         metadata,
@@ -356,7 +350,7 @@ module.exports = {
             config.arch_chroot_tmpdir = path.join('/opt', tmpdir);
             tmpdir = path.join(config.arch_chroot_rootdir, config.arch_chroot_tmpdir);
             const sudo = function(command) {
-              if (utils.os.whoami(ssh) === 'root') {
+              if (utils.os.whoami({ssh}) === 'root') {
                 return command;
               } else {
                 return `sudo ${command}`;
@@ -364,7 +358,7 @@ module.exports = {
             };
             const command = ['set -e', sudo(`[ -w ${config.arch_chroot_rootdir} ] || exit 2;`), sudo(`mkdir -p ${tmpdir};`), sudo(`chmod 700 ${tmpdir};`)].join('\n');
             try {
-              await execProm(ssh, command);
+              await execPromise(ssh, command);
             } catch (error) {
               if (error.code === 2) {
                 throw errors.NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST({
@@ -384,7 +378,7 @@ module.exports = {
       }
     },
     on_result: {
-      before: '@nikitajs/core/lib/plugins/ssh',
+      before: '@nikitajs/core/plugins/ssh',
       handler: async function({
           action: {config, metadata, ssh}
         }) {
@@ -398,14 +392,14 @@ module.exports = {
           return;
         }
         const sudo = function(command) {
-          if (utils.os.whoami(ssh) === 'root') {
+          if (utils.os.whoami({ssh}) === 'root') {
             return command;
           } else {
             return `sudo ${command}`;
           }
         };
         const command = [sudo(`rm -rf ${metadata.tmpdir}`)].join('\n');
-        return (await execProm(ssh, command));
+        return (await execPromise(ssh, command));
       }
     }
   },

@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.tools.execute', ->
+  return unless test.tags.docker
   
   describe 'schema', ->
 
@@ -39,7 +39,7 @@ describe 'docker.tools.execute', ->
     it 'with a command', ->
       (
         await nikita
-          docker: docker
+          docker: test.docker
         .docker.tools.execute
           command: 'version'
       )
@@ -48,7 +48,7 @@ describe 'docker.tools.execute', ->
     it 'with a global docker option', ->
       (
         await nikita
-          docker: docker
+          docker: test.docker
         .docker.tools.execute
           command: ''
           opts: version: true

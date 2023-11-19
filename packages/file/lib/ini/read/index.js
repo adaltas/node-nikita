@@ -1,10 +1,10 @@
 // Dependencies
-const {merge} = require('mixme');
-const utils = require('../../utils');
-const definitions = require('./schema.json');
+import {merge} from 'mixme';
+import utils from "@nikitajs/file/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const parse = config.parse || utils.ini.parse;
     const {data} = (await this.fs.base.readFile({

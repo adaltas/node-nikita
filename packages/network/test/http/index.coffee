@@ -1,72 +1,72 @@
 
-http = require 'http'
-{merge} = require 'mixme'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
-
-portincr = 22345
-server = ->
-  _ = null
-  port = portincr++
-  srv =
-    port: port
-    listen: ->
-      new Promise (resolve, reject) ->
-        _ = http.createServer (req, res) ->
-          switch req.url
-            when '/'
-              res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
-              res.end '{"key": "value"}'
-            when '/ping'
-              body = ''
-              req.on 'data', (chunk) ->
-                body += chunk.toString()
-              req.on 'end', () ->
-                res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
-                res.end body
-            when '/request_404'
-              res.writeHead 404, 'Not found'
-              res.end()
-            when '/request_301'
-              res.writeHead 301, 'Moved Permanently',
-                'Server': 'Apache/2.4.6 (CentOS) mod_auth_gssapi/1.5.1 mod_nss/1.0.14 NSS/3.28.4 mod_wsgi/3.4 Python/2.7.5'
-                'X-Frame-Options': 'DENY'
-                'Content-Security-Policy': 'frame-ancestors \'none\''
-                'Location': 'http://ipa.nikita/ipa/session/json'
-                'Cache-Control': 'no-cache'
-                'Set-Cookie': 'ipa_session=;Max-Age=0;path=/ipa;httponly;secure;'
-                'Content-Length': 241
-                'Content-Type': 'text/html; charset=iso-8859-1'
-              res.end """
-              <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-              <html><head>
-              <title>301 Moved Permanently</title>
-              </head><body>
-              <h1>Moved Permanently</h1>
-              <p>The document has moved <a href="http://ipa.nikita/ipa/session/json">here</a>.</p>
-              </body></html>
-              """
-            when '/follow_redirect_1'
-              res.writeHead 301, 'Moved Permanently',
-                'Location': "http://localhost:#{port}/follow_redirect_2"
-              res.end()
-            when '/follow_redirect_2'
-              res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
-              res.end '{"key": "value"}'
-            when '/content_type_with_charset'
-              res.writeHead 200, 'OK', {'Content-Type': 'application/json; charset=utf-8'}
-              res.end '{"key": "value"}'
-        _.listen port
-        .on 'listening', -> resolve srv
-        .on 'error', (err) -> reject err
-    close: ->
-      new Promise (resolve) ->
-        _.close resolve
+import http from 'node:http'
+import {merge} from 'mixme'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'network.http', ->
+  return unless test.tags.posix
+
+  portincr = 22345
+  server = ->
+    _ = null
+    port = portincr++
+    srv =
+      port: port
+      listen: ->
+        new Promise (resolve, reject) ->
+          _ = http.createServer (req, res) ->
+            switch req.url
+              when '/'
+                res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
+                res.end '{"key": "value"}'
+              when '/ping'
+                body = ''
+                req.on 'data', (chunk) ->
+                  body += chunk.toString()
+                req.on 'end', () ->
+                  res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
+                  res.end body
+              when '/request_404'
+                res.writeHead 404, 'Not found'
+                res.end()
+              when '/request_301'
+                res.writeHead 301, 'Moved Permanently',
+                  'Server': 'Apache/2.4.6 (CentOS) mod_auth_gssapi/1.5.1 mod_nss/1.0.14 NSS/3.28.4 mod_wsgi/3.4 Python/2.7.5'
+                  'X-Frame-Options': 'DENY'
+                  'Content-Security-Policy': 'frame-ancestors \'none\''
+                  'Location': 'http://ipa.nikita/ipa/session/json'
+                  'Cache-Control': 'no-cache'
+                  'Set-Cookie': 'ipa_session=;Max-Age=0;path=/ipa;httponly;secure;'
+                  'Content-Length': 241
+                  'Content-Type': 'text/html; charset=iso-8859-1'
+                res.end """
+                <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+                <html><head>
+                <title>301 Moved Permanently</title>
+                </head><body>
+                <h1>Moved Permanently</h1>
+                <p>The document has moved <a href="http://ipa.nikita/ipa/session/json">here</a>.</p>
+                </body></html>
+                """
+              when '/follow_redirect_1'
+                res.writeHead 301, 'Moved Permanently',
+                  'Location': "http://localhost:#{port}/follow_redirect_2"
+                res.end()
+              when '/follow_redirect_2'
+                res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
+                res.end '{"key": "value"}'
+              when '/content_type_with_charset'
+                res.writeHead 200, 'OK', {'Content-Type': 'application/json; charset=utf-8'}
+                res.end '{"key": "value"}'
+          _.listen port
+          .on 'listening', -> resolve srv
+          .on 'error', (err) -> reject err
+      close: ->
+        new Promise (resolve) ->
+          _.close resolve
   
   describe 'schema', ->
   
@@ -78,7 +78,7 @@ describe 'network.http', ->
       await nikita.network.http({url: '#', timeout: 'invalid'}, (->))
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `network.http`: module://@nikitajs/network/lib/tcp/wait#/definitions/config/properties/timeout/type config/timeout must be integer, type is "integer".'
+        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `network.http`: module://@nikitajs/network/tcp/wait#/definitions/config/properties/timeout/type config/timeout must be integer, type is "integer".'
 
     it 'casting', () ->
       nikita.network.http url: '#', timeout: '1', ({config}) ->

@@ -4,9 +4,6 @@
   "description": "",
   "main": "lib/index.js",
   "private": true,
-  "scripts": {
-    "build": "coffee -b -o lib src"
-  },
   "author": "David Worms",
   "license": "MIT",
   "dependencies": {
@@ -15,5 +12,10 @@
   },
   "devDependencies": {
     "coffeescript": "^2.7.0"
-  }
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/actions/*.js"
+  },
+  "type": "module"
 }

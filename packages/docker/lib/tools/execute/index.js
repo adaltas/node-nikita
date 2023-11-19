@@ -1,12 +1,12 @@
 
 // Dependencies
-const dedent = require("dedent");
-const utils = require("../../utils");
-const definitions = require("./schema.json");
-const esa = utils.string.escapeshellarg;
+import dedent from "dedent";
+import utils from "@nikitajs/docker/utils";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { find } }) {
     // Build Docker
     config.opts = Object.keys(config.opts)

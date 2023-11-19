@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     system_user: true
     system_group: true

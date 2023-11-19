@@ -1,11 +1,11 @@
 
 // Dependencies
-const path = require('path');
-const utils = require('@nikitajs/core/lib/utils');
-const definitions = require('./schema.json');
+import path from 'node:path'
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {log}

@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-{copy, diff, equals, filter, match, trim} = require '../../lib/utils/object'
+import {copy, diff, filter, match, trim} from '@nikitajs/core/utils/object'
+import test from '../test.coffee'
 
 describe 'utils.object', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'copy', ->
   

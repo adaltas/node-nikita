@@ -1,47 +1,40 @@
 
 // Dependencies
-const registry = require('@nikitajs/core/lib/registry');
-require('@nikitajs/file/lib/register');
-require('@nikitajs/service/lib/register');
+import registry from "@nikitajs/core/registry";
+import '@nikitajs/file/register';
+import '@nikitajs/service/register';
 
 // Action registration
-module.exports = {
+const actions = {
   tools: {
-    backup: '@nikitajs/tools/lib/backup',
-    compress: '@nikitajs/tools/lib/compress',
+    backup: '@nikitajs/tools/backup',
+    compress: '@nikitajs/tools/compress',
     cron: {
-      add: '@nikitajs/tools/lib/cron/add',
-      remove: '@nikitajs/tools/lib/cron/remove'
+      add: '@nikitajs/tools/cron/add',
+      remove: '@nikitajs/tools/cron/remove'
     },
-    extract: '@nikitajs/tools/lib/extract',
-    dconf: '@nikitajs/tools/lib/dconf',
-    iptables: '@nikitajs/tools/lib/iptables',
-    git: '@nikitajs/tools/lib/git',
+    extract: '@nikitajs/tools/extract',
+    dconf: '@nikitajs/tools/dconf',
+    iptables: '@nikitajs/tools/iptables',
+    git: '@nikitajs/tools/git',
     npm: {
-      '': '@nikitajs/tools/lib/npm',
-      list: '@nikitajs/tools/lib/npm/list',
-      outdated: '@nikitajs/tools/lib/npm/outdated',
-      uninstall: '@nikitajs/tools/lib/npm/uninstall',
-      upgrade: '@nikitajs/tools/lib/npm/upgrade'
+      '': '@nikitajs/tools/npm',
+      list: '@nikitajs/tools/npm/list',
+      outdated: '@nikitajs/tools/npm/outdated',
+      uninstall: '@nikitajs/tools/npm/uninstall',
+      upgrade: '@nikitajs/tools/npm/upgrade'
     },
-    repo: '@nikitajs/tools/lib/repo',
+    repo: '@nikitajs/tools/repo',
     rubygems: {
-      'fetch': '@nikitajs/tools/lib/rubygems/fetch',
-      'install': '@nikitajs/tools/lib/rubygems/install',
-      'remove': '@nikitajs/tools/lib/rubygems/remove'
+      'fetch': '@nikitajs/tools/rubygems/fetch',
+      'install': '@nikitajs/tools/rubygems/install',
+      'remove': '@nikitajs/tools/rubygems/remove'
     },
     ssh: {
-      keygen: '@nikitajs/tools/lib/ssh/keygen'
+      keygen: '@nikitajs/tools/ssh/keygen'
     },
-    sysctl: '@nikitajs/tools/lib/sysctl'
+    sysctl: '@nikitajs/tools/sysctl'
   }
 };
 
-(async function() {
-  try {
-    return (await registry.register(module.exports));
-  } catch (error) {
-    console.error(error.stack);
-    return process.exit(1);
-  }
-})();
+await registry.register(actions);

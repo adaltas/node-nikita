@@ -1,11 +1,8 @@
 // Dependencies
-const pad = require('pad');
-const fs = require('fs');
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
-
-// TODO: remove indexOf usage
-const indexOf = [].indexOf;
+import pad from 'pad';
+import fs from 'fs';
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_ASSERT_FILE_MISSING: function({config}) {
@@ -107,11 +104,11 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Cached version of `nikita.fs.base.lstat`
     const cache = {}
-    lstat = async (location) => {
+    const lstat = async (location) => {
       if (cache[location] != null) return cache[location];
       return cache[location] = await this.fs.base.lstat(config.target)
     }

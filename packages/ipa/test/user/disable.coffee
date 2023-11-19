@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, ipa} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.ipa
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'ipa.user.disable', ->
+  return unless test.tags.ipa
   
   describe 'schema', ->
 
     they 'use `username` as alias for `uid`', ({ssh}) ->
       nikita
         $ssh: ssh
-      .ipa.user.disable connection: ipa,
+      .ipa.user.disable connection: test.ipa,
         username: 'test_user_disable'
       , ({config: {uid}}) ->
         uid.should.eql 'test_user_disable'
@@ -23,7 +23,7 @@ describe 'ipa.user.disable', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.disable connection: ipa,
+        @ipa.user.disable connection: test.ipa,
           uid: 'test_user_disable_missing'
         .should.be.rejectedWith
           code: 4001
@@ -33,10 +33,10 @@ describe 'ipa.user.disable', ->
       nikita
         $ssh: ssh
       , ->
-        await @ipa.user.del connection: ipa,
+        await @ipa.user.del connection: test.ipa,
           $relax: true
           uid: 'test_user_disable_active'
-        await @ipa.user connection: ipa,
+        await @ipa.user connection: test.ipa,
           uid: 'test_user_disable_active'
           attributes:
             givenname: 'User'
@@ -44,7 +44,7 @@ describe 'ipa.user.disable', ->
             mail: [
               'test_user_disable@nikita.js.org'
             ]
-        {$status} = await @ipa.user.disable connection: ipa,
+        {$status} = await @ipa.user.disable connection: test.ipa,
           uid: 'test_user_disable_active'
         $status.should.be.true()
 
@@ -52,10 +52,10 @@ describe 'ipa.user.disable', ->
     nikita
       $ssh: ssh
     , ->
-      await @ipa.user.del connection: ipa,
+      await @ipa.user.del connection: test.ipa,
         $relax: true
         uid: 'test_user_disable_inactive'
-      await @ipa.user connection: ipa,
+      await @ipa.user connection: test.ipa,
         uid: 'test_user_disable_inactive'
         attributes:
           givenname: 'User'
@@ -63,8 +63,8 @@ describe 'ipa.user.disable', ->
           mail: [
             'test_user_disable@nikita.js.org'
           ]
-      await @ipa.user.disable connection: ipa,
+      await @ipa.user.disable connection: test.ipa,
         uid: 'test_user_disable_inactive'
-      {$status} = await @ipa.user.disable connection: ipa,
+      {$status} = await @ipa.user.disable connection: test.ipa,
         uid: 'test_user_disable_inactive'
       $status.should.be.false()

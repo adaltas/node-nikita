@@ -1,7 +1,6 @@
 
-const session = require('../../session');
-const utils = require('../../utils');
-const exec = require('ssh2-exec');
+import session from '@nikitajs/core/session';
+import utils from '@nikitajs/core/utils';
 
 const handlers = {
   if_os: async function(action) {
@@ -10,7 +9,18 @@ const handlers = {
       $bastard: true,
       $parent: action
     }, async function() {
-      const {$status, stdout} = await this.execute(utils.os.command);
+      const { $status, stdout } = await this.execute(utils.os.command).catch(
+        (error) => {
+          if (error.exit_code === 2) {
+            throw utils.error("NIKITA_PLUGIN_OS_UNSUPPORTED_DISTRIB", [
+              "your current distribution is not yet listed,",
+              "please report to us,",
+              `it name is ${JSON.stringify(error.stdout)}`,
+            ]);
+          }
+          throw error;
+        }
+      );
       if (!$status) {
         return final_run = false;
       }
@@ -83,9 +93,18 @@ const handlers = {
       $bastard: true,
       $parent: action
     }, async function() {
-      const {$status, stdout} = await this.execute({
-        command: utils.os.command
-      });
+      const { $status, stdout } = await this.execute(utils.os.command).catch(
+        (error) => {
+          if (error.exit_code === 2) {
+            throw utils.error("NIKITA_PLUGIN_OS_UNSUPPORTED_DISTRIB", [
+              "your current distribution is not yet listed,",
+              "please report to us,",
+              `it name is ${JSON.stringify(error.stdout)}`,
+            ]);
+          }
+          throw error;
+        }
+      );
       if (!$status) {
         return final_run = false;
       }
@@ -148,12 +167,12 @@ const handlers = {
   }
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/conditions/os',
-  require: ['@nikitajs/core/lib/plugins/conditions'],
+export default {
+  name: '@nikitajs/core/plugins/conditions/os',
+  require: ['@nikitajs/core/plugins/conditions'],
   hooks: {
     'nikita:normalize': {
-      after: '@nikitajs/core/lib/plugins/conditions',
+      after: '@nikitajs/core/plugins/conditions',
       handler: function(action, handler) {
         return async function() {
           var condition, config, i, j, len, len1, ref;
@@ -203,8 +222,8 @@ module.exports = {
       }
     },
     'nikita:action': {
-      after: '@nikitajs/core/lib/plugins/conditions',
-      before: '@nikitajs/core/lib/plugins/metadata/disabled',
+      after: '@nikitajs/core/plugins/conditions',
+      before: '@nikitajs/core/plugins/metadata/disabled',
       handler: async function(action) {
         var final_run, k, local_run, ref, v;
         final_run = true;

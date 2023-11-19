@@ -4,6 +4,7 @@
     "properties": {
       "dereference": {
         "type": "boolean",
+        "default": true,
         "description": "Follow links, similar to `lstat`, default is \"true\", just like in the native Node.js `fs.stat` function, use `nikita.fs.lstat` to retrive link information."
       },
       "target": {
@@ -29,7 +30,7 @@
         "type": "object",
         "properties": {
           "mode": {
-            "$ref": "module://@nikitajs/core/lib/actions/fs/base/chmod#/definitions/config/properties/mode"
+            "$ref": "module://@nikitajs/core/actions/fs/base/chmod#/definitions/config/properties/mode"
           },
           "uid": {
             "type": "integer",

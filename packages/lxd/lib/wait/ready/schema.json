@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "container": {
-        "$ref": "module://@nikitajs/lxd/lib/init#/definitions/config/properties/container"
+        "$ref": "module://@nikitajs/lxd/init#/definitions/config/properties/container"
       },
       "nat": {
         "type": "boolean",

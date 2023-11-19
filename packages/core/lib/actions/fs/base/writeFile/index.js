@@ -1,7 +1,7 @@
 
 // Dependencies
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
   NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) =>
@@ -19,7 +19,7 @@ const errors = {
 };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {path},

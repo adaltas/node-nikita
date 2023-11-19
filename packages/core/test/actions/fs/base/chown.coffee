@@ -1,13 +1,14 @@
 
-nikita = require '../../../../lib'
-utils = require '../../../../lib/utils'
-{tags, config} = require '../../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from '../../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.base.chown', ->
   
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
     
     it 'id integers', ->
       nikita.fs.base.chown
@@ -37,7 +38,7 @@ describe 'actions.fs.base.chown', ->
         config.gid.should.eql 5678
   
   describe 'usage', ->
-    return unless tags.chown
+    return unless test.tags.chown
     
     they 'pass id integers', ({ssh}) ->
       nikita

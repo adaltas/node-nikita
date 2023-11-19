@@ -1,10 +1,10 @@
 
 // Dependencies
-const dedent = require("dedent");
-const definitions = require("./schema.json");
+import dedent from "dedent";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler:  async function({config}) {
     if (config.argument != null) {
       config.properties = config.argument;

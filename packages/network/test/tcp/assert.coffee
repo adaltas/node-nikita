@@ -1,25 +1,25 @@
 
-http = require 'http'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
-
-portincr = 22445
-server = ->
-  new Promise (resolve) ->
-    srv = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end 'okay'
-    srv.port = portincr++
-    srv.close = ( (fn) -> ->
-      new Promise (resolve) ->
-        fn.call srv, resolve
-    )(srv.close)
-    srv.listen srv.port, -> resolve srv
+import http from 'node:http'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'network.tcp.assert', ->
+  return unless test.tags.posix
+
+  portincr = 22445
+  server = ->
+    new Promise (resolve) ->
+      srv = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      srv.port = portincr++
+      srv.close = ( (fn) -> ->
+        new Promise (resolve) ->
+          fn.call srv, resolve
+      )(srv.close)
+      srv.listen srv.port, -> resolve srv
 
   they 'port and host', ({ssh}) ->
     try

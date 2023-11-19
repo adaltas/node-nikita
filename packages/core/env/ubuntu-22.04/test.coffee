@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     conditions_if_os: true
   conditions_if_os:

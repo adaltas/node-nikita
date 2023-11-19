@@ -1,15 +1,15 @@
 
-const {is_object, is_object_literal} = require('mixme');
-const utils = require('../../utils');
+import {is_object, is_object_literal} from 'mixme';
+import utils from '@nikitajs/core/utils';
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/output/status',
-  require: ['@nikitajs/core/lib/plugins/history'],
+export default {
+  name: '@nikitajs/core/plugins/output/status',
+  require: ['@nikitajs/core/plugins/history'],
   recommand: [
     // Status is set to `false` when action is disabled
-    '@nikitajs/core/lib/plugins/metadata/disabled',
+    '@nikitajs/core/plugins/metadata/disabled',
     // Honors raw_output if present
-    '@nikitajs/core/lib/plugins/metadata/raw'
+    '@nikitajs/core/plugins/metadata/raw'
   ],
   hooks: {
     // 'nikita:registry:normalize': (action) ->
@@ -36,7 +36,7 @@ module.exports = {
       };
     },
     'nikita:result': {
-      before: '@nikitajs/core/lib/plugins/history',
+      before: '@nikitajs/core/plugins/history',
       handler: function({action, error, output}) {
         // Honors the disabled plugin, status is `false`
         // when the action is disabled

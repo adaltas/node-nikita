@@ -1,17 +1,18 @@
 
-nikita = require '../../../lib'
-{tags, config, conditions_if_os} = require '../../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'plugin.conditions unless_os', ->
-  return unless tags.conditions_if_os
+  return unless test.tags.conditions_if_os
 
   they 'match distribution string', ({ssh}) ->
     nikita
       ssh: ssh
     , ->
       {$status} = await @call
-        $unless_os: distribution: conditions_if_os.distribution
+        $unless_os: distribution: test.conditions_if_os.distribution
         $handler: -> true
       $status.should.be.false()
       {$status} = await @call
@@ -29,7 +30,7 @@ describe 'plugin.conditions unless_os', ->
     
   they 'match distribution string and version string', ({ssh}) ->
     # Arch Linux only has linux_version
-    if conditions_if_os.version
+    if test.conditions_if_os.version
     then condition = version: '1'
     else condition = linux_version: '1'
     {$status} = await nikita
@@ -48,7 +49,7 @@ describe 'plugin.conditions unless_os', ->
     
   they 'match distribution string, version string, Linux version string and arch string', ({ssh}) ->
     {$status} = await nikita
-      $unless_os: conditions_if_os
+      $unless_os: test.conditions_if_os
       $handler: -> true
       $ssh: ssh
     $status.should.be.false()

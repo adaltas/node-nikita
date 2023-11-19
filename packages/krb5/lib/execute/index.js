@@ -1,10 +1,10 @@
 
 // Dependencies
-const utils = require('@nikitajs/core/lib/utils');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     const realm = config.admin.realm ? `-r ${config.admin.realm}` : '';
     const {stdout} = await this.execute({

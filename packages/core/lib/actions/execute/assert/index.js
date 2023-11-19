@@ -1,11 +1,11 @@
 
 
 // Dependencies
-const utils = require('../../../utils');
-const definitions = require('./schema.json')
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     if (Buffer.isBuffer(config.content)) {
       config.content = config.content.toString();
@@ -46,7 +46,7 @@ module.exports = {
     }
     // Content is a regexp
     if ((config.content != null) && utils.regexp.is(config.content)) {
-      ({stdout} = (await this.execute(config)));
+      let {stdout} = await this.execute(config);
       if (config.trim) {
         stdout = stdout.trim();
       }

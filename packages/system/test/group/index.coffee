@@ -1,19 +1,19 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.system_group
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.group', ->
+  return unless test.tags.system_group
   
   they 'accept only user name', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      @system.user.remove 'toto'
-      @system.group.remove 'toto'
+      await @system.user.remove 'toto'
+      await @system.group.remove 'toto'
       {$status} = await @system.group 'toto'
       $status.should.be.true()
       {$status} = await @system.group 'toto'
@@ -24,8 +24,8 @@ describe 'system.group', ->
       $ssh: ssh
       $sudo: sudo
     , ->
-      @system.user.remove 'toto'
-      @system.group.remove 'toto'
+      await @system.user.remove 'toto'
+      await @system.group.remove 'toto'
       {$status} = await @system.group 'toto', gid: '1234'
       $status.should.be.true()
       {$status} = await @system.group 'toto', gid: '1234'
@@ -37,8 +37,8 @@ describe 'system.group', ->
     nikita
       $ssh: ssh
     , ->
-      @system.group.remove 'toto'
-      @system.group 'toto', gid: ''
+      await @system.group.remove 'toto'
+      await @system.group 'toto', gid: ''
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
   

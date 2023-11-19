@@ -1,23 +1,23 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.system_user
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'system.uid_gid', ->
+  return unless test.tags.system_user
 
   they 'convert names to id', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      @system.user.remove 'toto'
-      @system.group.remove ['toto', 'lulu']
-      @system.group.remove 'lulu'
-      @system.group 'toto', gid: 1234
-      @system.group 'lulu', gid: 1235
-      @system.user 'toto', uid: 1234, gid: 1235
+      await @system.user.remove 'toto'
+      await @system.group.remove ['toto', 'lulu']
+      await @system.group.remove 'lulu'
+      await @system.group 'toto', gid: 1234
+      await @system.group 'lulu', gid: 1235
+      await @system.user 'toto', uid: 1234, gid: 1235
       {uid, gid, default_gid} = await @system.uid_gid
         uid: 'toto'
         gid: 'toto'
@@ -30,14 +30,14 @@ describe 'system.uid_gid', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @file
+      await @file
         target: "#{tmpdir}/etc/group"
         content: """
         root:x:0:root
         bin:x:1:root,bin,daemon
         users:x:994:monsieur
         """
-      @file
+      await @file
         target: "#{tmpdir}/etc/passwd"
         content: """
         root:x:0:0:root:/root:/bin/bash

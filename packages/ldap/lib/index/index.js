@@ -1,31 +1,22 @@
 // Dependencies
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import utils from "@nikitajs/ldap/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     const indexes = {};
     const add = {};
     const modify = {};
     if (!config.dn) {
-      log({
-        message: "Get DN of the database to modify",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Get DN of the database to modify");
       ({ dn: config.dn } = await this.ldap.tools.database(config, {
         suffix: config.suffix,
       }));
-      log({
-        message: `Discovered database DN is ${config.dn}`,
-        level: "INFO",
-      });
+      log("INFO", `Discovered database DN is ${config.dn}`);
     }
     // List all indexes of the directory
-    log({
-      message: "List all indexes of the directory",
-      level: "DEBUG",
-    });
+    log("DEBUG", "List all indexes of the directory");
     const { stdout } = await this.ldap.search(config, {
       attributes: ["olcDbIndex"],
       base: `${config.dn}`,

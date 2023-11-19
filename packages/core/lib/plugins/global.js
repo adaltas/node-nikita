@@ -1,4 +1,3 @@
-
 /*
 The `global` plugin look it the parent tree for a "global" configuration. If
 found, it will merge its value with the current configuration.
@@ -11,21 +10,19 @@ daemon if it is not run locally.
 */
 
 // Plugin
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/global',
-  require: [
-    '@nikitajs/core/lib/plugins/tools/find'
-  ],
+export default {
+  name: "@nikitajs/core/plugins/global",
+  require: ["@nikitajs/core/plugins/tools/find"],
   hooks: {
-    'nikita:action': {
-      handler: async function(action) {
+    "nikita:action": {
+      handler: async function (action) {
         const global = action.metadata.global;
         if (!global) {
           return action;
         }
-        action.config[global] = (await action.tools.find(function({config}) {
+        action.config[global] = await action.tools.find(function ({ config }) {
           return config[global];
-        }));
+        });
         for (const k in action.config[global]) {
           const v = action.config[global][k];
           if (action.config[k] == null) {
@@ -34,7 +31,7 @@ module.exports = {
         }
         delete action.config[global];
         return action;
-      }
-    }
-  }
+      },
+    },
+  },
 };

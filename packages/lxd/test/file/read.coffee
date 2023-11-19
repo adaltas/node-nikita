@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.file.read', ->
+  return unless test.tags.lxd
 
   they 'file with content', ({ssh}) ->
     nikita
@@ -15,7 +15,7 @@ describe 'lxc.file.read', ->
         @lxc.delete 'nikita-file-read-1', force: true
       await @clean()
       await @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-file-read-1'
         start: true
       await @lxc.exec
@@ -36,14 +36,13 @@ describe 'lxc.file.read', ->
         @lxc.delete 'nikita-file-read-2', force: true
       await @clean()
       await @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-file-read-2'
         start: true
       await @lxc.exec
         command: "touch /root/a_file"
         container: 'nikita-file-read-2'
       {data} = await @lxc.file.read
-        $debug: true
         container: 'nikita-file-read-2'
         target: '/root/a_file'
       data.should.eql ''
@@ -57,7 +56,7 @@ describe 'lxc.file.read', ->
         @lxc.delete 'nikita-file-read-3', force: true
       await @clean()
       await @lxc.init
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
         container: 'nikita-file-read-3'
         start: true
       await @lxc.exec

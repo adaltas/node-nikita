@@ -1,21 +1,21 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require '../test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.tools.status', ->
+  return unless test.tags.docker
 
   they 'on stopped  container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_status'
         force: true
-      @docker.run
+      await @docker.run
         command: "/bin/echo 'test'"
         image: 'alpine'
         rm: false
@@ -23,25 +23,25 @@ describe 'docker.tools.status', ->
       {$status} = await @docker.tools.status
         container: 'nikita_status'
       $status.should.be.false()
-      @docker.rm
+      await @docker.rm
         container: 'nikita_status'
         force: true
 
   they 'on running container', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.rm
+      await @docker.rm
         container: 'nikita_status'
         force: true
-      @docker.tools.service
+      await @docker.tools.service
         image: 'httpd'
         port: [ '500:80' ]
         container: 'nikita_status'
       {$status} = await @docker.tools.status
         container: 'nikita_status'
       $status.should.be.true()
-      @docker.rm
+      await @docker.rm
         container: 'nikita_status'
         force: true

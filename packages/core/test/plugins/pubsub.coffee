@@ -1,12 +1,13 @@
 
-memory = require '../../lib/plugins/pubsub/engines/memory'
-nikita = require '../../lib'
-{tags, config} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import memory from '@nikitajs/core/plugins/pubsub/engines/memory'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 
 describe 'plugins.pubsub', ->
-  return unless tags.api
+  return unless test.tags.api
   
   they 'set then get', ({ssh}) ->
     engine = memory()

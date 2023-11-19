@@ -1,5 +1,5 @@
 FROM centos:7.9.2009
-MAINTAINER David Worms
+LABEL org.opencontainers.image.authors="David Worms <david@adaltas.com>"
 
 RUN \
      # Install Node dependencies

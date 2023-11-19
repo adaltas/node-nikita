@@ -3,10 +3,10 @@
     "type": "object",
     "properties": {
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "target": {
         "oneOf": [
@@ -20,7 +20,7 @@
         "description": "File path where to write file or a function that returns a valid file\npath."
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       }
     },
     "required": [

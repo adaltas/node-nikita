@@ -1,10 +1,10 @@
 // Dependencies
-const fs = require('fs');
-const path = require('path');
-const definitions = require('./schema.json');
+import fs from 'node:fs'
+import path from 'node:path'
+import definitions from "./schema.json" assert { type: "json" };
 
-// ## Exports
-module.exports = {
+// Action
+export default {
   handler: async function({config}) {
     // Normalization
     let logdir = path.dirname(config.filename);
@@ -36,24 +36,21 @@ module.exports = {
     }
     await this.log.stream(config);
     // Handle link to latest directory
-    return (await this.fs.base.symlink({
+    await this.fs.base.symlink({
       $if: latestdir,
       source: logdir,
       target: latestdir
-    }));
+    });
   },
   hooks: {
     on_action: {
-      before: ['@nikitajs/core/lib/plugins/metadata/schema'],
-      after: ['@nikitajs/core/lib/plugins/ssh'],
+      before: ['@nikitajs/core/plugins/metadata/schema'],
+      after: ['@nikitajs/core/plugins/ssh'],
       handler: function({config, ssh}) {
-        var ref;
         // With ssh, filename contain the host or ip address
-        if (config.filename == null) {
-          config.filename = `${ssh?.config?.host || 'local'}.log`;
-        }
+        config.filename ??= `${ssh?.config?.host || 'local'}.log`;
         // Log is always local
-        return config.ssh = false;
+        config.ssh = false;
       }
     }
   },

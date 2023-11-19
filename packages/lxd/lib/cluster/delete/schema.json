@@ -3,14 +3,14 @@
     "type": "object",
     "properties": {
       "containers": {
-        "$ref": "module://@nikitajs/lxd/lib/cluster#/definitions/config/properties/containers"
+        "$ref": "module://@nikitajs/lxd/cluster#/definitions/config/properties/containers"
       },
       "networks": {
         "type": "object",
         "default": {},
         "patternProperties": {
           ".*": {
-            "$ref": "module://@nikitajs/lxd/lib/network#/definitions/config/properties/properties"
+            "$ref": "module://@nikitajs/lxd/network#/definitions/config/properties/properties"
           }
         }
       },

@@ -1,15 +1,13 @@
 
 // Dependencies
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
-
-const {escapeshellarg} = utils.string;
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     await this.execute({
-      command: `ln -sf ${escapeshellarg(config.source)} ${escapeshellarg(config.target)}`
+      command: `ln -sf ${esa(config.source)} ${esa(config.target)}`
     });
   },
   metadata: {

@@ -3,4 +3,4 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-npx coffee ./env/ipa/index.coffee run
+node ./ipa/index.js run

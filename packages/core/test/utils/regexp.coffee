@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-regexp = require '../../lib/utils/regexp'
+import regexp from '@nikitajs/core/utils/regexp'
+import test from '../test.coffee'
 
 describe 'utils.regexp', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'is', ->
     regexp.is /.*/

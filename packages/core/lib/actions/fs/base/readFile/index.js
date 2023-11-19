@@ -1,10 +1,10 @@
 
 // Dependencies
-const utils = require('../../../../utils');
-const definitions = require('./schema.json');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     // Normalize options
     const buffers = [];

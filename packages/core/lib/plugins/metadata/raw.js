@@ -1,52 +1,52 @@
-
 /*
-# Plugin `@nikitajs/core/lib/plugins/metadata/raw`
+# Plugin `@nikitajs/core/plugins/metadata/raw`
 
 Affect the normalization of input and output properties.
 */
 
 // Dependencies
-const dedent = require('dedent');
-const {mutate} = require('mixme');
+import dedent from "dedent";
+import { mutate } from "mixme";
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/raw',
+// Plugin
+export default {
+  name: "@nikitajs/core/plugins/metadata/raw",
   hooks: {
-    'nikita:schema': function({schema}) {
+    "nikita:schema": function ({ schema }) {
       mutate(schema.definitions.metadata.properties, {
         raw: {
-          type: 'boolean',
+          type: "boolean",
           description: dedent`
             Indicates the level number of the action in the Nikita session
             tree.
           `,
           default: false,
-          readOnly: true
+          readOnly: true,
         },
         raw_input: {
-          type: 'boolean',
+          type: "boolean",
           description: dedent`
             Indicates the index of an action relative to its sibling actions in
             the Nikita session tree.
           `,
-          readOnly: true
+          readOnly: true,
         },
         raw_output: {
-          type: 'boolean',
+          type: "boolean",
           description: dedent`
             Indicates the position of the action relative to its parent and
             sibling action. It is unique to each action.
           `,
-          readOnly: true
-        }
+          readOnly: true,
+        },
       });
     },
-    'nikita:registry:normalize': {
-      handler: function(action) {
+    "nikita:registry:normalize": {
+      handler: function (action) {
         if (action.metadata == null) {
           action.metadata = {};
         }
-        const wasBoolean = typeof action.metadata.raw === 'boolean';
+        const wasBoolean = typeof action.metadata.raw === "boolean";
         if (action.metadata.raw == null) {
           action.metadata.raw = false;
         }
@@ -58,11 +58,11 @@ module.exports = {
             action.metadata.raw_output = action.metadata.raw;
           }
         }
-      }
+      },
     },
-    'nikita:action': {
-      handler: function(action) {
-        const wasBoolean = typeof action.metadata.raw === 'boolean';
+    "nikita:action": {
+      handler: function (action) {
+        const wasBoolean = typeof action.metadata.raw === "boolean";
         if (action.metadata.raw == null) {
           action.metadata.raw = false;
         }
@@ -74,7 +74,7 @@ module.exports = {
             action.metadata.raw_output = action.metadata.raw;
           }
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };

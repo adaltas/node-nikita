@@ -1,13 +1,12 @@
 // Dependencies
-// const path = require('path');
-const utils = require("../utils");
-const definitions = require("./schema.json");
+import utils from "@nikitajs/docker/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { path } }) {
-    const [s, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
-    let [t, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
+    let [, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
+    let [, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
     if (source_container && target_container) {
       throw Error("Incompatible source and target config");
     }

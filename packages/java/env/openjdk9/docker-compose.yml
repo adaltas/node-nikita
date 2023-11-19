@@ -1,0 +1,26 @@
+
+services:
+  target:
+    build:
+      context: .
+      dockerfile: ./target/Dockerfile
+    image: nikita_java_openjdk9_target
+    container_name: nikita_java_openjdk9_target
+    volumes:
+      # Note, remove mounting point once "./test/resources" is removed
+      # and tmpdir is used with generated certificates.
+      - ../../../../:/nikita
+    # platform: linux/amd64 # Required on Apple M1
+  nodejs:
+    build:
+      context: .
+      dockerfile: ./nodejs/Dockerfile
+    image: nikita_java_openjdk9_nodejs
+    container_name: nikita_java_openjdk9_nodejs
+    # platform: linux/amd64 # Required on Apple M1
+    depends_on:
+      - target
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/java/env/openjdk9/test.coffee

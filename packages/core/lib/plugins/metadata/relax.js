@@ -1,32 +1,39 @@
+import utils from "@nikitajs/core/utils";
 
-const utils = require('../../utils');
-
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/relax',
+export default {
+  name: "@nikitajs/core/plugins/metadata/relax",
   hooks: {
-    'nikita:action': function(action, handler) {
+    "nikita:action": function (action, handler) {
       if (action.metadata.relax == null) {
         action.metadata.relax = false;
       }
-      if (typeof action.metadata.relax === 'string' || action.metadata.relax instanceof RegExp) {
+      if (
+        typeof action.metadata.relax === "string" ||
+        action.metadata.relax instanceof RegExp
+      ) {
         action.metadata.relax = [action.metadata.relax];
       }
-      if (!(typeof action.metadata.relax === 'boolean' || action.metadata.relax instanceof Array)) {
-        throw utils.error('METADATA_RELAX_INVALID_VALUE', [
+      if (
+        !(
+          typeof action.metadata.relax === "boolean" ||
+          action.metadata.relax instanceof Array
+        )
+      ) {
+        throw utils.error("METADATA_RELAX_INVALID_VALUE", [
           "configuration `relax` expects a boolean, string, array or regexp",
-          `value, got ${JSON.stringify(action.metadata.relax)}.`
+          `value, got ${JSON.stringify(action.metadata.relax)}.`,
         ]);
       }
       return handler;
     },
-    'nikita:result': function(args) {
+    "nikita:result": function (args) {
       if (!args.action.metadata.relax) {
         return;
       }
       if (!args.error) {
         return;
       }
-      if (args.error.code === 'METADATA_RELAX_INVALID_VALUE') {
+      if (args.error.code === "METADATA_RELAX_INVALID_VALUE") {
         return;
       }
       if (
@@ -40,6 +47,6 @@ module.exports = {
         args.output.error = args.error;
         args.error = undefined;
       }
-    }
-  }
+    },
+  },
 };

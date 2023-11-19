@@ -1,14 +1,14 @@
 
-path = require 'path'
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.tools_repo
+import path from 'node:path'
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'tools.repo', ->
+  return unless test.tags.tools_repo
 
-  @timeout 200000
+  @timeout 400000
 
   they 'Write with source option', ({ssh}) ->
     nikita
@@ -99,140 +99,152 @@ describe 'tools.repo', ->
         target: "#{tmpdir}/target/test.repo"
         not: true
   
-  they 'Download GPG Keys option', ({ssh, sudo}) ->
+  they 'Download GPG Keys from local source', ({ssh, sudo}) ->
     nikita
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      source = "#{tmpdir}/linuxtech.repo"
       await @file
         $templated: true
-        target: source
+        target: "#{tmpdir}/chrome.repo"
         content: """
-        [linuxtech-release]
-        name=LinuxTECH.NET el6 main repo
-        baseurl=http://linuxsoft.cern.ch/linuxtech/el6/release/
-        mirrorlist=http://pkgrepo.linuxtech.net/el6/release/mirrorlist.txt
-        mirrorlist_expire=7d
-        enabled=1
+        [google-chrome]
+        name=google-chrome
+        baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
+        skip_if_unavailable=True
         gpgcheck=1
-        gpgkey=http://pkgrepo.linuxtech.net/el6/release/RPM-GPG-KEY-LinuxTECH.NET
+        gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+        enabled=1
         """
-      await nikita
-        $ssh: ssh
-        $tmpdir: true
+      # Note, option `verify` is enabled by default
+      # Validate status changed
+      { $status } = await @tools.repo
         $sudo: sudo
-      , ({metadata: {tmpdir}}) ->
-        await @tools.repo
-          local: true
-          source: "#{source}"
-          gpg_dir: "#{tmpdir}"
-          update: false
-        await @fs.assert "#{tmpdir}/RPM-GPG-KEY-LinuxTECH.NET"
+        local: true
+        source: "#{tmpdir}/chrome.repo"
+        gpg_dir: "#{tmpdir}"
+        update: false
+      $status.should.be.true()
+      # Validate status unchanged
+      { $status } = await @tools.repo
+        $sudo: sudo
+        local: true
+        source: "#{tmpdir}/chrome.repo"
+        gpg_dir: "#{tmpdir}"
+        update: false
+      $status.should.be.false()
+      # Ensure the GPG key is downloaded
+      await @fs.assert "#{tmpdir}/linux_signing_key.pub"
   
   they 'Download repo from remote location', ({ssh, sudo}) ->
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      await @fs.remove '/etc/yum.repos.d/linuxtech.repo'
+      await @fs.remove '/etc/yum.repos.d/gh-cli.repo'
       {$status} = await @tools.repo
-        source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
+        source: "https://cli.github.com/packages/rpm/gh-cli.repo"
       $status.should.be.true()
       {$status} = await @tools.repo
-        source: "http://pkgrepo.linuxtech.net/el6/release/linuxtech.repo"
+        source: "https://cli.github.com/packages/rpm/gh-cli.repo"
       $status.should.be.false()
-      await @fs.assert '/etc/yum.repos.d/linuxtech.repo'
+      await @fs.assert '/etc/yum.repos.d/gh-cli.repo'
 
   they 'config `update` is `false` (default)', ({ssh, sudo}) ->
+    # See https://linux.die.net/man/5/yum.conf for a list of supported variables
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      await @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      await @service.remove 'mongodb-org-server'
+      await @fs.remove '/etc/yum.repos.d/mariadb.repo'
+      await @fs.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB'
+      await @service.remove 'MariaDB-client'
       {$status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         content:
-          'mongodb-org-6.0':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/6.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.0/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-6.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       await @service.install
-        name: 'mongodb-org-server'
+        name: 'MariaDB-client'
       await @execute
-        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
+        command: "mariadb --version | grep '11.0.4-MariaDB'"
       {$status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         content:
-          'mongodb-org-7.0':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       $status.should.be.true()
       {$status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         content:
-          'mongodb-org-7.0':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
+        command: "mariadb --version | grep '11.0.4-MariaDB'"
 
   they 'config `update` is `true`', ({ssh, sudo}) ->
-    return if ssh
     nikita
       $ssh: ssh
       $sudo: sudo
     , ->
-      await @fs.remove '/etc/yum.repos.d/mongodb.repo'
-      await @fs.remove '/etc/pki/rpm-gpg/server-6.0.asc'
-      await @fs.remove '/etc/pki/rpm-gpg/server-7.0.asc'
-      await @service.remove 'mongodb-org-server'
+      await @fs.remove '/etc/yum.repos.d/mariadb.repo'
+      await @fs.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-MariaDB'
+      await @service.remove 'MariaDB-client'
       await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         content:
-          'mongodb-org-6':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/6.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.0/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-6.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       await @service.install
-        name: 'mongodb-org-server'
+        name: 'MariaDB-client'
       await @execute
-        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v6.0.9'"
+        command: "mariadb --version | grep '11.0.4-MariaDB'"
       {$status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         update: true
         content:
-          'mongodb-org-7':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       $status.should.be.true()
       {$status} = await @tools.repo
-        target: '/etc/yum.repos.d/mongodb.repo'
+        target: '/etc/yum.repos.d/mariadb.repo'
         update: true
         content:
-          'mongodb-org-7':
-            'name':'MongoDB Repository'
-            'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/7.0/x86_64/'
-            'gpgcheck':'1'
+          'mariadb':
+            'name': 'MariaDB'
+            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
-            'gpgkey':'https://pgp.mongodb.com/server-7.0.asc'
+            'module_hotfixes': '1'
+            'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
+            'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mongod --version | grep 'db version' | awk '{print $3}' | grep 'v7.0.1'"
+        command: "mariadb --version | grep '11.3.1-MariaDB'"
   
   they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh, sudo}) ->
     nikita

@@ -1,11 +1,10 @@
 
-{ini} = require '../../../lib/utils'
-{tags} = require '../../test'
+import {ini} from '@nikitajs/file/utils'
+import test from '../../test.coffee'
 should.config.checkProtoEql = false
 
-return unless tags.api
-
 describe 'utils.ini.parse', ->
+  return unless test.tags.api
 
   it 'parse depth 1', ->
     data = ini.parse """

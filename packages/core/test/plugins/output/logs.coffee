@@ -1,9 +1,9 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.output.logs', ->
-  return unless tags.api
+  return unless test.tags.api
   
   it 'return logs', ->
     nikita ->
@@ -21,7 +21,7 @@ describe 'plugins.output.logs', ->
         true
       $logs.some (log) ->
         log.file.should.eql 'logs.coffee'
-        log.filename.should.eql __filename
+        log.filename.should.match /output\/logs\.coffee$/
         
   it 'return logs in error', ->
     nikita ->

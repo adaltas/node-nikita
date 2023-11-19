@@ -46,7 +46,7 @@
     "type": "object",
     "allOf": [
       {
-        "$ref": "module://@nikitajs/db/lib/query#/definitions/db"
+        "$ref": "module://@nikitajs/db/query#/definitions/db"
       }
     ],
     "properties": {

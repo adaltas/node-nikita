@@ -1,5 +1,5 @@
 
-module.exports =
+export default
   tags:
     tools_iptables: true
   config: [
@@ -7,6 +7,6 @@ module.exports =
   ,
     label: 'remote'
     ssh:
-      host: '127.0.0.1', username: process.env.USER,
+      host: '127.0.0.1', username: process.env.USER
       private_key_path: '~/.ssh/id_ed25519'
   ]

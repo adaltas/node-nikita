@@ -1,10 +1,10 @@
 // Dependencies
-const dedent = require('dedent');
-const utils = require('../utils');
-const definitions = require('./schema.json');
+import dedent from "dedent";
+import utils from "@nikitajs/lxd/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config}) {
     if (!!config.prevision) {
       await this.call(config, config.prevision);

@@ -34,32 +34,32 @@
         "description": "User defined function used to transform properties."
       },
       "backup": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/backup"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/backup"
       },
       "backup_mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/backup_mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/backup_mode"
       },
       "eof": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/eof"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/eof"
       },
       "encoding": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/encoding",
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/encoding",
         "default": "utf8"
       },
       "uid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/uid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/uid"
       },
       "gid": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/gid"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
       "mode": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/mode"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/mode"
       },
       "local": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/local"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/local"
       },
       "unlink": {
-        "$ref": "module://@nikitajs/file/lib/index#/definitions/config/properties/unlink"
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/unlink"
       }
     }
   }

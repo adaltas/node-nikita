@@ -1,10 +1,9 @@
 
-{ini} = require '../../../lib/utils'
-{tags} = require '../../test'
-
-return unless tags.api
+import {ini} from '@nikitajs/file/utils'
+import test from '../../test.coffee'
 
 describe 'utils.ini.stringify', ->
+  return unless test.tags.api
 
   it 'honors option separator', ->
     ini.stringify

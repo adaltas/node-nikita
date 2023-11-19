@@ -1,12 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-assert = require 'assert'
-{config, images, tags} = require '../../test'
-they = require('mocha-they')(config)
-
-return unless tags.lxd
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.config.device', ->
+  return unless test.tags.lxd
 
   describe 'schema', ->
     
@@ -17,7 +16,7 @@ describe 'lxc.config.device', ->
         force: true
       .lxc.init
         container: 'nikita-config-device-1'
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
       .lxc.config.device
         container: 'nikita-config-device-1'
         device: 'test'
@@ -34,7 +33,7 @@ describe 'lxc.config.device', ->
         force: true
       .lxc.init
         container: 'nikita-config-device-2'
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
       .lxc.config.device
         container: 'nikita-config-device-2'
         device: 'test'
@@ -51,7 +50,7 @@ describe 'lxc.config.device', ->
         force: true
       .lxc.init
         container: 'nikita-config-device-3'
-        image: "images:#{images.alpine}"
+        image: "images:#{test.images.alpine}"
       .lxc.config.device
         container: 'nikita-config-device-3'
         device: 'test'
@@ -72,7 +71,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-4'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-4'
         {$status} = await @lxc.config.device
           container: 'nikita-config-device-4'
@@ -89,7 +88,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-4'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-4'
         {$status} = await @lxc.config.device
           container: 'nikita-config-device-4'
@@ -111,7 +110,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-5'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-5'
         @lxc.config.device
           container: 'nikita-config-device-5'
@@ -137,7 +136,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-5'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-5'
         @lxc.config.device
           container: 'nikita-config-device-5'
@@ -165,7 +164,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-7'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-7'
         @lxc.config.device
           container: 'nikita-config-device-7'
@@ -190,7 +189,7 @@ describe 'lxc.config.device', ->
           container: 'nikita-config-device-8'
           force: true
         @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-8'
         @lxc.config.device
           container: 'nikita-config-device-8'

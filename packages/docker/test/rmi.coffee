@@ -1,18 +1,18 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config, docker} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.docker
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'docker.rmi', ->
+  return unless test.tags.docker
 
   they 'remove image', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.build
+      await @docker.build
         image: 'nikita/rmi_test'
         content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       {$status} = await @docker.rmi
@@ -22,12 +22,12 @@ describe 'docker.rmi', ->
   they 'status unmodifed', ({ssh}) ->
     nikita
       $ssh: ssh
-      docker: docker
+      docker: test.docker
     , ->
-      @docker.build
+      await @docker.build
         image: 'nikita/rmi_test:latest'
         content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      @docker.rmi
+      await @docker.rmi
         image: 'nikita/rmi_test'
       {$status} = await @docker.rmi
         image: 'nikita/rmi_test'

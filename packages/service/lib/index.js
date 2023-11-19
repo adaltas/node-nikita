@@ -1,9 +1,9 @@
 // Dependencies
-const {merge} = require('mixme');
-const definitions = require("./schema.json");
+import {merge} from 'mixme';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({config, parent, state}) {
     const pkgname = config.yum_name || config.name;
     const chkname = config.chk_name || config.srv_name || config.name;
@@ -27,21 +27,21 @@ module.exports = {
       });
     }
     if (config.state) {
-      const {$status} = await this.service.status({
+      const {started} = await this.service.status({
         $shy: true,
         name: srvname
       });
-      if (!$status && config.state.includes('started')) {
+      if (!started && config.state.includes('started')) {
         await this.service.start({
           name: srvname
         });
       }
-      if ($status && config.state.includes('stopped') >= 0) {
+      if (started && config.state.includes('stopped')) {
         await this.service.stop({
           name: srvname
         });
       }
-      if ($status && config.state.includes('restarted') >= 0) {
+      if (started && config.state.includes('restarted')) {
         await this.service.restart({
           name: srvname
         });

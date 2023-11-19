@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // ## Exports
-module.exports = {
+export default {
   handler: async function({config}) {
     const {properties} = (await this.lxc.config.device.show({
       container: config.container,

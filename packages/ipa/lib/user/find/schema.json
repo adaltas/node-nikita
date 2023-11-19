@@ -4,7 +4,7 @@
     "properties": {
       "connection": {
         "type": "object",
-        "$ref": "module://@nikitajs/network/lib/http#/definitions/config",
+        "$ref": "module://@nikitajs/network/http#/definitions/config",
         "required": [
           "principal",
           "password"

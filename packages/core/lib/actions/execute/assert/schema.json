@@ -28,7 +28,7 @@
         "description": "The error message to throw if assert failed."
       },
       "not": {
-        "$ref": "module://@nikitajs/core/lib/actions/assert#/definitions/config/properties/not"
+        "$ref": "module://@nikitajs/core/actions/assert#/definitions/config/properties/not"
       },
       "trim": {
         "type": "boolean",

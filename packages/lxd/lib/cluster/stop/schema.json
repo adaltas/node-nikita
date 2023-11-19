@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "containers": {
-        "$ref": "module://@nikitajs/lxd/lib/cluster#/definitions/config/properties/containers"
+        "$ref": "module://@nikitajs/lxd/cluster#/definitions/config/properties/containers"
       },
       "wait": {
         "type": "boolean",

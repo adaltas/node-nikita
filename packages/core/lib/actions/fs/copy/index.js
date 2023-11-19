@@ -1,9 +1,9 @@
 // Dependencies
-const definitions = require('./schema.json');
-const utils = require('../../../utils');
+import utils from '@nikitajs/core/utils';
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { $status, log, path } }) {
     // Retrieve stats information about the source unless provided through the "source_stats" option.
     const source_stats = await ( async () => {

@@ -1,7 +1,8 @@
 // Dependencies
-const utils = require('@nikitajs/core/lib/utils');
+import utils from "@nikitajs/core/utils";
+import curl from "@nikitajs/network/utils/curl";
 
-module.exports = {
+export default {
   ...utils,
-  curl: require('./curl')
+  curl: curl,
 };

@@ -1,12 +1,20 @@
 
-const dedent = require('dedent');
-const {mutate} = require('mixme');
-const utils = require('../../utils');
+/*
+# Plugin `@nikitajs/core/plugins/metadata/position`
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/position',
+Insert the metadata properties `depth`, `index` and `position` to each action.
+*/
+
+// Dependencies
+import dedent from 'dedent';
+import {mutate} from 'mixme';
+import utils from '@nikitajs/core/utils';
+
+// Plugin
+export default {
+  name: '@nikitajs/core/plugins/metadata/position',
   require: [
-    '@nikitajs/core/lib/plugins/history'
+    '@nikitajs/core/plugins/history'
   ],
   hooks: {
     'nikita:schema': function({schema}) {
@@ -44,7 +52,7 @@ module.exports = {
       });
     },
     'nikita:normalize': {
-      after: '@nikitajs/core/lib/plugins/history',
+      after: '@nikitajs/core/plugins/history',
       handler: function(action) {
         action.metadata.depth = action.parent ? action.parent.metadata.depth + 1 : 0;
         // plugins are not activated in the root session with {depth: 0}

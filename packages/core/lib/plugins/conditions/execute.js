@@ -1,9 +1,7 @@
 
-const session = require('../../session');
+import session from '@nikitajs/core/session';
 
-const 
-
-handlers = {
+const handlers = {
   if_execute: async function(action) {
     let final_run = true;
     for (const condition of action.conditions.if_execute) {
@@ -69,13 +67,13 @@ handlers = {
   }
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/conditions/execute',
-  require: ['@nikitajs/core/lib/plugins/conditions'],
+export default {
+  name: '@nikitajs/core/plugins/conditions/execute',
+  require: ['@nikitajs/core/plugins/conditions'],
   hooks: {
     'nikita:action': {
-      after: '@nikitajs/core/lib/plugins/conditions',
-      before: '@nikitajs/core/lib/plugins/metadata/disabled',
+      after: '@nikitajs/core/plugins/conditions',
+      before: '@nikitajs/core/plugins/metadata/disabled',
       handler: async function(action) {
         let final_run = true;
         for (const condition in action.conditions) {

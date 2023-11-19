@@ -1,11 +1,11 @@
 
-nikita = require '@nikitajs/core/lib'
-{tags, config} = require './test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'log.md', ->
+  return unless test.tags.posix
   
   they 'write entering message', ({ssh}) ->
     nikita
@@ -250,7 +250,7 @@ describe 'log.md', ->
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
-          data: "\nEntering @nikitajs/core/lib/actions/call (1.3)\n"
+          data: "\nEntering @nikitajs/core/actions/call (1.3)\n"
     
     they 'filtered out for bastards action', ({ssh}) ->
       nikita
@@ -266,4 +266,4 @@ describe 'log.md', ->
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
-          data: "\nEntering @nikitajs/core/lib/actions/call (1.2)\n"
+          data: "\nEntering @nikitajs/core/actions/call (1.2)\n"

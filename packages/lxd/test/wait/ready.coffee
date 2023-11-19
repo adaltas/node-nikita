@@ -1,14 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../../test'
-they = require('mocha-they')(config)
-
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.wait.ready', ->
 
   describe 'For containers', ->
-
-    return unless tags.lxd
+    return unless test.tags.lxd
 
     they 'wait for the container to be ready', ({ssh})  ->
       nikita
@@ -20,7 +19,7 @@ describe 'lxc.wait.ready', ->
             force: true
         await registry.register 'test', ->
           await @lxc.init
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
             container: 'nikita-wait-1'
             start: true
           {$status} = await @lxc.wait.ready 'nikita-wait-1'
@@ -32,8 +31,7 @@ describe 'lxc.wait.ready', ->
           await @clean()
   
   describe 'For virtual machines', ->
-
-    return unless tags.lxd_vm
+    return unless test.tags.lxd_vm
 
     they 'wait for the virtual machine to be ready', ({ssh})  ->
       @timeout -1
@@ -89,8 +87,6 @@ describe 'lxc.wait.ready', ->
           await @test()
         finally
           await @clean()      
-
-    return unless tags.lxd_vm
     
     they 'try to execute a command before booting', ({ssh})  ->
       @timeout -1

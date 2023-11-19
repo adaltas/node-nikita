@@ -1,5 +1,6 @@
 {
   "name": "@nikitajs/service",
+  "version": "1.0.0-alpha.3",
   "description": "Provides Nikita actions for various service management operations.",
   "keywords": [
     "nikita",
@@ -13,7 +14,6 @@
     "yum",
     "pacman"
   ],
-  "version": "1.0.0-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -58,20 +58,25 @@
   "engines": {
     "node": ">= 10.0.0"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./register": "./lib/register.js",
+    "./*": "./lib/*/index.js"
+  },
   "files": [
     "/lib"
   ],
   "mocha": {
-    "throw-deprecation": true,
-    "require": [
-      "should",
-      "coffeescript/register",
-      "@nikitajs/service/lib/register"
-    ],
     "inline-diffs": true,
-    "timeout": 20000,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
     "reporter": "spec",
-    "recursive": true
+    "require": [
+      "@nikitajs/service/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 50000
   },
   "publishConfig": {
     "access": "public"
@@ -87,5 +92,6 @@
     "test": "npm run test:local && npm run test:env",
     "test:env": "env/run.sh",
     "test:local": "mocha 'test/**/*.coffee'"
-  }
+  },
+  "type": "module"
 }

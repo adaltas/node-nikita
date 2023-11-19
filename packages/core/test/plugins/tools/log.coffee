@@ -1,10 +1,10 @@
 
-{tags} = require '../../test'
-nikita = require '../../../lib'
-stream = require 'stream'
+import stream from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
 
 describe 'plugins.tools.log', ->
-  return unless tags.api
+  return unless test.tags.api
 
   describe 'events', ->
     
@@ -14,7 +14,7 @@ describe 'plugins.tools.log', ->
           events.on 'text', (msg) ->
             resolve msg
           log message: 'getme'
-        .should.finally.containEql
+        .should.finally.match
           message: 'getme'
           level: 'INFO'
           index: 0
@@ -23,8 +23,8 @@ describe 'plugins.tools.log', ->
           type: 'text'
           depth: 0
           file: 'log.coffee'
-          filename: __filename
-          line: 23
+          filename: /.*log\.coffee/
+          line: 20
           
     it 'argument is immutable', ->
       arg = key: 'value'

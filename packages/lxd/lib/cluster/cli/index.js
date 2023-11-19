@@ -1,39 +1,41 @@
 // Dependencies
-const shell = require('shell');
+import shell from "shell";
+import start from "./start.js";
+import stop from "./stop.js";
 
 shell({
-  name: 'lxdvmhost',
+  name: "lxdvmhost",
   description: "LXD VM host based on Virtual Box",
   commands: {
-    'start': {
-      description: 'Start the cluster',
+    start: {
+      description: "Start the cluster",
       options: {
         debug: {
-          type: 'boolean',
-          shortcut: 'b',
-          description: 'Print debug output'
+          type: "boolean",
+          shortcut: "b",
+          description: "Print debug output",
         },
         log: {
-          type: 'string',
-          description: 'Path to the directory storing logs.'
-        }
+          type: "string",
+          description: "Path to the directory storing logs.",
+        },
       },
-      handler: require('./start')
+      handler: start,
     },
-    'stop': {
-      description: 'Stop the cluster',
+    stop: {
+      description: "Stop the cluster",
       options: {
         debug: {
-          type: 'boolean',
-          shortcut: 'b',
-          description: 'Print debug output'
+          type: "boolean",
+          shortcut: "b",
+          description: "Print debug output",
         },
         log: {
-          type: 'string',
-          description: 'Path to the directory storing logs.'
-        }
+          type: "string",
+          description: "Path to the directory storing logs.",
+        },
       },
-      handler: require('./stop')
-    }
-  }
+      handler: stop,
+    },
+  },
 }).route();

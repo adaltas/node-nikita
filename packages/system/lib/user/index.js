@@ -1,12 +1,12 @@
 
 // Dependencies
-const path = require('path');
-const dedent = require('dedent');
-const utils = require("../utils");
-const definitions = require('./schema.json');
+import path from 'node:path'
+import dedent from "dedent";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function({
     config,
     tools: {log}
@@ -52,7 +52,7 @@ module.exports = {
             config.home && "-m",
             config.home && `-d ${config.home}`,
             config.shell && `-s ${config.shell}`,
-            config.comment && `-c ${utils.string.escapeshellarg(config.comment)}`,
+            config.comment && `-c ${esa(config.comment)}`,
             config.uid && `-u ${config.uid}`,
             config.gid && `-g ${config.gid}`,
             config.expiredate && `-e ${config.expiredate}`,
@@ -95,7 +95,16 @@ module.exports = {
       try {
         await this.execute({
           $if: changed.length,
-          command: ['usermod', config.home ? `-d ${config.home}` : void 0, config.shell ? `-s ${config.shell}` : void 0, config.comment != null ? `-c ${utils.string.escapeshellarg(config.comment)}` : void 0, config.gid ? `-g ${config.gid}` : void 0, config.groups ? `-G ${config.groups.join(',')}` : void 0, config.uid ? `-u ${config.uid}` : void 0, `${config.name}`].join(' ')
+          command: [
+            "usermod",
+            config.home && `-d ${config.home}`,
+            config.shell && `-s ${config.shell}`,
+            config.comment && `-c ${esa(config.comment)}`,
+            config.gid && `-g ${config.gid}`,
+            config.groups && `-G ${config.groups.join(",")}`,
+            config.uid && `-u ${config.uid}`,
+            `${config.name}`,
+          ].filter(Boolean).join(" "),
         });
       } catch (error) {
         if (error.exit_code === 8) {

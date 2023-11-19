@@ -1,0 +1,33 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "filters": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "string",
+            "description": "Filter images created before the image with given id or reference."
+          },
+          "dangling": {
+            "type": "boolean",
+            "description": "Dangling images are intermediate images which have not been assigned a repository and a tag. By default, docker list all images whether they dangling or not. Set the dangling filter to `true` to only list dangling images or to `false` to filter out dangling images."
+          },
+          "label": {
+            "type": "string",
+            "description": "Filter images by label. Matches are against the label name as well as its value when separated by the equal sign. For example the expression `nikita.version=1.0` match agains the `nikita.version` label and its `1.0` value."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Filter images by reference. A reference includes the repository and tag name. Globing expression are accepted, for example `alp*:*`."
+          },
+          "since": {
+            "type": "string",
+            "description": "Filter images created after the image with given id or reference."
+          }
+        },
+        "description": ""
+      }
+    }
+  }
+}

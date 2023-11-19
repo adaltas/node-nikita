@@ -5,9 +5,9 @@ cd `pwd`/`dirname ${BASH_SOURCE}`
 
 # Require cgroup v1
 if command -v multipass; then
-  ./cgroup-multipass/run.sh
+  ./cgroups-multipass/run.sh
 else
-  npx coffee ./env/cgroups/index.coffee run
+  node ./cgroups/index.js run
 fi
 ./info_archlinux/run.sh
 ./info_centos6/run.sh

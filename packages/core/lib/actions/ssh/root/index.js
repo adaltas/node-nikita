@@ -1,15 +1,14 @@
 // Dependencies
-const fs = require('fs/promises');
-const dedent = require('dedent');
-const connect = require('ssh2-connect');
-const exec = require('ssh2-exec');
-const utils = require('../../../utils');
-const definitions = require('./schema.json');
+import fs from "node:fs/promises";
+import dedent from "dedent";
+import connect from "ssh2-connect";
+import exec from "ssh2-exec";
+import utils from "@nikitajs/core/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
-  handler: async function({metadata, config, tools: {log}}) {
-    var err, ref;
+export default {
+  handler: async function ({ metadata, config, tools: { log } }) {
     if (config.host == null) {
       config.host = config.ip;
     }
@@ -24,9 +23,14 @@ module.exports = {
       config.selinux = false;
     }
     if (config.selinux === true) {
-      config.selinux = 'permissive';
+      config.selinux = "permissive";
     }
-    if (config.selinux && ((ref = config.selinux) !== 'enforcing' && ref !== 'permissive' && ref !== 'disabled')) {
+    if (
+      config.selinux &&
+      config.selinux !== "enforcing" &&
+      config.selinux !== "permissive" &&
+      config.selinux !== "disabled"
+    ) {
       // Validation
       throw Error(`Invalid option \"selinux\": ${config.selinux}`);
     }
@@ -35,48 +39,38 @@ module.exports = {
     if (config.public_key_path && !config.public_key) {
       const location = await utils.tilde.normalize(config.public_key_path);
       try {
-        ({
-          data: config.public_key
-        } = (await fs.readFile(location, 'ascii')));
+        ({ data: config.public_key } = await fs.readFile(location, "ascii"));
       } catch (error) {
-        err = error;
-        if (err.code === 'ENOENT') {
+        if (error.code === "ENOENT") {
           throw Error(`Private key doesnt exists: ${JSON.stringify(location)}`);
         }
-        throw err;
+        throw error;
       }
     }
     // Read private key if option is a path
     if (config.private_key_path && !config.private_key) {
       log({
         message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-        level: 'DEBUG'
+        level: "DEBUG",
       });
       const location = await utils.tilde.normalize(config.private_key_path);
       try {
-        ({
-          data: config.private_key
-        } = (await fs.readFile(location, 'ascii')));
+        ({ data: config.private_key } = await fs.readFile(location, "ascii"));
       } catch (error) {
-        err = error;
-        if (err.code === 'ENOENT') {
+        if (error.code === "ENOENT") {
           throw Error(`Private key doesnt exists: ${JSON.stringify(location)}`);
         }
-        throw err;
+        throw error;
       }
     }
-    await this.call(async function() {
-      log({
-        message: "Connecting",
-        level: 'DEBUG'
-      });
-      const conn = !metadata.dry ? (await connect(config)) : null;
-      log({
-        message: "Connected",
-        level: 'INFO'
-      });
+    await this.call(async function () {
+      log("DEBUG", "Opening connection");
+      const conn = !metadata.dry ? await connect(config) : null;
+      log("INFO", "Connection establish");
       let command = [];
-      command.push(`sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`);
+      command.push(
+        `sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`
+      );
       if (config.public_key) {
         command.push(dedent`
           mkdir -p /root/.ssh; chmod 700 /root/.ssh;
@@ -85,7 +79,7 @@ module.exports = {
       }
       command.push(dedent`
         sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
-        selinux="${config.selinux || ''}";
+        selinux="${config.selinux || ""}";
         if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
         then
           sed -i.back "s/^SELINUX=enforcing/SELINUX=$selinux/" /etc/selinux/config;
@@ -93,15 +87,15 @@ module.exports = {
           exit 2;
         fi;
       `);
-      command = command.join('\n');
-      if (config.username !== 'root') {
-        command = command.replace(/\n/g, ' ');
-        if (typeof config.command === 'function') {
+      command = command.join("\n");
+      if (config.username !== "root") {
+        command = command.replace(/\n/g, " ");
+        if (typeof config.command === "function") {
           command = config.command(command);
-        } else if (typeof config.command === 'string') {
+        } else if (typeof config.command === "string") {
           command = `${config.command} ${command}`;
         } else {
-          config.command = 'sudo ';
+          config.command = "sudo ";
           if (config.user) {
             config.command += `-u ${config.user} `;
           }
@@ -114,50 +108,53 @@ module.exports = {
       }
       log({
         message: "Enable Root Access",
-        level: 'DEBUG'
+        level: "DEBUG",
       });
       log({
         message: command,
-        type: 'stdin'
+        type: "stdin",
       });
       if (!metadata.dry) {
-        const child = exec({
-          ssh: conn,
-          command: command
-        }, (error) => {
-          if (error?.code === 2) {
-            log({
-              message: "Root Access Enabled",
-              level: "WARN",
-            });
-            rebooting = true;
-          } else {
-            throw error;
+        const child = exec(
+          {
+            ssh: conn,
+            command: command,
+          },
+          (error) => {
+            if (error?.code === 2) {
+              log("WARN", "Root Access Enabled");
+              rebooting = true;
+            } else {
+              throw error;
+            }
           }
-        });
+        );
         child.stdout.on("data", (data) =>
           log({ message: data, type: "stdout" })
         );
-        child.stdout.on("end", (data) =>
+        child.stdout.on("end", () =>
           log({ message: null, type: "stdout" })
         );
         child.stderr.on("data", (data) =>
           log({ message: data, type: "stderr" })
         );
-        child.stderr.on("end", (data) =>
+        child.stderr.on("end", () =>
           log({ message: null, type: "stderr" })
         );
       }
     });
-    await this.call({
-      $if: rebooting,
-      $retry: true,
-      $sleep: 3000
-    }, async function() {
-      (await connect(config)).end();
-    });
+    await this.call(
+      {
+        $if: rebooting,
+        $retry: true,
+        $sleep: 3000,
+      },
+      async function () {
+        (await connect(config)).end();
+      }
+    );
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

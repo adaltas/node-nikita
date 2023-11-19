@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, metadata: { tmpdir }, tools: { log } }) {
     // TODO: use nikita.ldap.search instead
     // Auth related config
@@ -37,33 +37,21 @@ module.exports = {
     await this.fs.mkdir({
       target: ldifTmpDir,
     });
-    log({
-      message: "Directory ldif created",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Directory ldif created");
     await this.fs.copy({
       source: config.schema,
       target: schema,
     });
-    log({
-      message: "Schema copied",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Schema copied");
     await this.file({
       content: `include ${schema}`,
       target: conf,
     });
-    log({
-      message: "Configuration generated",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Configuration generated");
     await this.execute({
       command: `slaptest -f ${conf} -F ${ldifTmpDir}`,
     });
-    log({
-      message: "Configuration validated",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Configuration validated");
     const { $status } = await this.fs.move({
       source: `${ldifTmpDir}/cn=config/cn=schema/cn={0}${config.name}.ldif`,
       target: `${ldifTmpDir}/cn=config/cn=schema/cn=${config.name}.ldif`,
@@ -72,10 +60,7 @@ module.exports = {
     if (!$status) {
       throw Error("No generated schema");
     }
-    log({
-      message: "Configuration renamed",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Configuration renamed");
     await this.file({
       target: `${ldifTmpDir}/cn=config/cn=schema/cn=${config.name}.ldif`,
       write: [
@@ -117,17 +102,11 @@ module.exports = {
         },
       ],
     });
-    log({
-      message: "File ldif ready",
-      level: "DEBUG",
-    });
+    log("DEBUG", "File ldif ready");
     await this.execute({
       command: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldifTmpDir}/cn=config/cn=schema/cn=${config.name}.ldif`,
     });
-    return log({
-      message: `Schema added: ${config.name}`,
-      level: "INFO",
-    });
+    log("INFO" `Schema added: ${config.name}`);
   },
   metadata: {
     tmpdir: true,

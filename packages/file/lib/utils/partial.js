@@ -7,10 +7,10 @@ Replace partial elements in a text.
 */
 
 // Dependencies
-const utils = require('@nikitajs/core/lib/utils');
+import utils from "@nikitajs/core/utils";
 
 // Utils
-module.exports = function(config, log) {
+export default function(config, log) {
   if(!config.write?.length > 0) return;
   log({
     message: "Replacing sections of the file",
@@ -51,6 +51,7 @@ module.exports = function(config, log) {
           });
           let posoffset = 0;
           const orgContent = config.content;
+          let res;
           while ((res = opts.place_before.exec(orgContent)) !== null) {
             log({
               message: "Before regexp found a match",
@@ -87,6 +88,7 @@ module.exports = function(config, log) {
           });
           let posoffset = 0;
           const orgContent = config.content;
+          let res;
           while ((res = opts.append.exec(orgContent)) !== null) {
             log({
               message: "Append regexp found a match",

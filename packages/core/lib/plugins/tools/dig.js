@@ -1,6 +1,6 @@
 
 /*
-Plugin `@nikitajs/core/lib/plugins/tools/dig`
+Plugin `@nikitajs/core/plugins/tools/dig`
 
 The plugin export a `dig` function which is used to traverse all the executed
 action prior to the current action.
@@ -12,8 +12,8 @@ action.
 
 */
 
-const each = require('each');
-const utils = require('../../utils');
+import each from 'each';
+import utils from '@nikitajs/core/utils';
 
 const dig_down = async function(action, digger) {
   const results = [];
@@ -84,8 +84,8 @@ const validate = function(action, args) {
   return [action, finder];
 };
 
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/tools/dig',
+export default {
+  name: '@nikitajs/core/plugins/tools/dig',
   hooks: {
     'nikita:action': function(action) {
       // Register function

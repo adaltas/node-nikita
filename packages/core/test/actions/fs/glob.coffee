@@ -1,12 +1,13 @@
 
-path = require 'path'
-{Minimatch} = require 'minimatch'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import path from 'node:path'
+import minimatch from 'minimatch'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.glob', ->
-  return unless tags.posix
+  return unless test.tags.posix
   
   they 'argument is converted to target', ({ssh}) ->
     nikita
@@ -52,7 +53,7 @@ describe 'actions.fs.glob', ->
         "#{tmpdir}/test/a_file"
       ]
       # Default behavior
-      (new Minimatch('/a_dir/**').match '/a_dir/').should.be.true()
+      (new minimatch.Minimatch('/a_dir/**').match '/a_dir/').should.be.true()
 
   they 'should match an extension patern', ({ssh}) ->
     nikita

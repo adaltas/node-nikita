@@ -1,10 +1,10 @@
 // Dependencies
-const dedent = require("dedent");
-const utils = require("../utils");
-const definitions = require("./schema.json");
+import dedent from "dedent";
+import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config }) {
     // Auth related config
     if (config.uri === true) {
@@ -18,7 +18,7 @@ module.exports = {
     for (const entry of config.entry) {
       // Check if record already exists
       // exit code 32 is for "no such object"
-      const { $status, stdout } = await this.ldap.search(config, {
+      const { $status } = await this.ldap.search(config, {
         base: entry.dn,
         code: [0, 32],
         scope: "base",
@@ -29,7 +29,7 @@ module.exports = {
       ldif += "\n";
       ldif += `dn: ${entry.dn}\n`;
       ldif += "changetype: add\n";
-      [_, k, v] = /^(.*?)=(.+?),.*$/.exec(entry.dn);
+      const [_, k, v] = /^(.*?)=(.+?),.*$/.exec(entry.dn);
       ldif += `${k}: ${v}\n`;
       if (entry[k]) {
         if (entry[k] !== v) {
@@ -59,15 +59,15 @@ module.exports = {
           "ldapmodify",
           config.continuous ? "-c" : void 0,
           config.mesh
-            ? `-Y ${utils.string.escapeshellarg(config.mesh)}`
+            ? `-Y ${esa(config.mesh)}`
             : void 0,
           config.binddn
-            ? `-D ${utils.string.escapeshellarg(config.binddn)}`
+            ? `-D ${esa(config.binddn)}`
             : void 0,
           config.passwd
-            ? `-w ${utils.string.escapeshellarg(config.passwd)}`
+            ? `-w ${esa(config.passwd)}`
             : void 0,
-          config.uri ? `-H ${utils.string.escapeshellarg(config.uri)}` : void 0,
+          config.uri ? `-H ${esa(config.uri)}` : void 0,
         ].join(" "),
         dedent`
           <<-EOF

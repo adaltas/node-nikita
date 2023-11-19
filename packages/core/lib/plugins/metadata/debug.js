@@ -1,6 +1,6 @@
 
 /*
-# Plugin `@nikitajs/core/lib/plugins/metadata/debug`
+# Plugin `@nikitajs/core/plugins/metadata/debug`
 
 Print log information to the console.
 
@@ -10,15 +10,14 @@ TODO: detect/force isTTY
 */
 
 // Dependencies
-const dedent = require('dedent');
-const utils = require('../../utils');
-const stream = require('stream');
-const {mutate} = require('mixme');
+import dedent from 'dedent';
+import stream from 'stream';
+import {mutate} from 'mixme';
 
 // Plugin
-module.exports = {
-  name: '@nikitajs/core/lib/plugins/metadata/debug',
-  require: '@nikitajs/core/lib/plugins/tools/log',
+export default {
+  name: '@nikitajs/core/plugins/metadata/debug',
+  require: '@nikitajs/core/plugins/tools/log',
   hooks: {
     'nikita:schema': function({schema}) {
       mutate(schema.definitions.metadata.properties, {
@@ -44,7 +43,7 @@ module.exports = {
       });
     },
     'nikita:action': {
-      after: ['@nikitajs/core/lib/plugins/metadata/schema'],
+      after: ['@nikitajs/core/plugins/metadata/schema'],
       handler: function(action) {
         if (!action.metadata.debug) {
           return;
@@ -53,12 +52,12 @@ module.exports = {
         debug = action.metadata.debug = {
           ws:
             debug === 'stdout'
-            ? action.metadata.debug.ws = process.stdout
+            ? process.stdout
             : debug === 'stderr'
-            ? action.metadata.debug.ws = process.stderr
+            ? process.stderr
             : debug instanceof stream.Writable
-            ? action.metadata.debug.ws = debug
-            : action.metadata.debug.ws = process.stderr,
+            ? debug
+            : process.stderr,
           listener: function(log) {
             if(['stdout_stream', 'stderr_stream'].includes(log.type) && log.message == null){
               return

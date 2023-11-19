@@ -1,8 +1,8 @@
 // Dependencies
-const definitions = require('./schema.json');
+import definitions from "./schema.json" assert { type: "json" };
 
 // Exports
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     let status = false;
     // Validate parameters
@@ -29,7 +29,7 @@ module.exports = {
   },
   hooks: {
     on_action: {
-      after: "@nikitajs/core/lib/plugins/metadata/argument_to_config",
+      after: "@nikitajs/core/plugins/metadata/argument_to_config",
       handler: function ({ config }) {
         if (typeof config.target === "string") {
           return (config.target = [config.target]);

@@ -1,12 +1,13 @@
 
-nikita = require '@nikitajs/core/lib'
-{config, images, tags} = require '../test'
-they = require('mocha-they')(config)
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'lxc.file.push', ->
   
   describe 'schema', ->
-    return unless tags.api
+    return unless test.tags.api
 
     it 'mode symbolic', ->
       nikita.lxc.file.push
@@ -27,7 +28,7 @@ describe 'lxc.file.push', ->
         config.mode.should.eql 0o0700
   
   describe 'usage', ->
-    return unless tags.lxd
+    return unless test.tags.lxd
     
     they 'require openssl', ({ssh}) ->
       nikita
@@ -38,7 +39,7 @@ describe 'lxc.file.push', ->
           await @lxc.delete 'nikita-file-push-1', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-push-1'
           start: true
         await @file.touch
@@ -72,7 +73,7 @@ describe 'lxc.file.push', ->
               'ipv6.address': 'none'
           # creating a container
           await @lxc.init
-            image: "images:#{images.alpine}"
+            image: "images:#{test.images.alpine}"
             container: 'nikita-file-push-2'
             nic:
               eth0:
@@ -118,7 +119,7 @@ describe 'lxc.file.push', ->
           await @lxc.delete 'nikita-file-push-3', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-push-3'
           start: true
         await @lxc.exec
@@ -140,7 +141,7 @@ describe 'lxc.file.push', ->
         await @clean()
   
   describe 'content', ->
-    return unless tags.lxd
+    return unless test.tags.lxd
 
     they 'a new file', ({ssh}) ->
       nikita
@@ -150,7 +151,7 @@ describe 'lxc.file.push', ->
           await @lxc.delete 'nikita-file-push-4', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-push-4'
           start: true
         await @lxc.exec
@@ -176,7 +177,7 @@ describe 'lxc.file.push', ->
           await @lxc.delete 'nikita-file-push-5', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-push-5'
           start: true
         await @lxc.exec
@@ -195,7 +196,7 @@ describe 'lxc.file.push', ->
         await @clean()
   
   describe 'mode', ->
-    return unless tags.lxd
+    return unless test.tags.lxd
     
     they 'absolute mode', ({ssh}) ->
       nikita
@@ -205,7 +206,7 @@ describe 'lxc.file.push', ->
           await @lxc.delete 'nikita-file-push-6', force: true
         await @clean()
         await @lxc.init
-          image: "images:#{images.alpine}"
+          image: "images:#{test.images.alpine}"
           container: 'nikita-file-push-6'
           start: true
         await @lxc.exec

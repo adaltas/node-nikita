@@ -1,11 +1,12 @@
 
-stream = require 'stream'
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
+import stream from 'node:stream'
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.execute.config.env', ->
-  return unless tags.posix
+  return unless test.tags.posix
 
   they 'invalid schema', ({ssh}) ->
     nikita $ssh: ssh, ->

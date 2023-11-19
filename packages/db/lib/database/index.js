@@ -1,10 +1,10 @@
 // Dependencies
-const dedent = require("dedent");
-const definitions = require("./schema.json");
-const utils = require("../utils");
+import dedent from "dedent";
+import definitions from "./schema.json" assert { type: "json" };
+import utils from "@nikitajs/db/utils";
 
 // Action
-module.exports = {
+export default {
   handler: async function ({ config, tools: { log } }) {
     if (config.user == null) {
       config.user = [];

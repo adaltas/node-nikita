@@ -1,9 +1,9 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
+import nikita from '@nikitajs/core'
+import test from '../test.coffee'
 
 describe 'plugins.args', ->
-  return unless tags.api
+  return unless test.tags.api
 
   it 'argument is a function', ->
     nikita.call ({args}) ->

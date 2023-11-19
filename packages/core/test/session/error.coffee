@@ -1,12 +1,12 @@
 
-{tags} = require '../test'
-nikita = require '../../lib'
-session = require '../../lib/session'
+import '@nikitajs/core/register'
+import session from '@nikitajs/core/session'
+import test from '../test.coffee'
 
 # Test the construction of the session namespace stored in state
 
 describe 'session.error', ->
-  return unless tags.api
+  return unless test.tags.api
   
   describe 'cascade', ->
   

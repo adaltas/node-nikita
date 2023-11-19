@@ -1,11 +1,11 @@
 
-nikita = require '../../../lib'
-{tags, config} = require '../../test'
-they = require('mocha-they')(config)
-
-return unless tags.posix
+import nikita from '@nikitajs/core'
+import test from '../../test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
 
 describe 'actions.fs.link', ->
+  return unless test.tags.posix
 
   describe 'validation', ->
 
@@ -39,12 +39,15 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          content: 'hello'
+          target: "#{tmpdir}/source_file"
         {$status} = await @fs.link # Link does not exist
-          source: __filename
+          source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/link_test"
         $status.should.be.true()
         {$status} = await @fs.link # Link already exists
-          source: __filename
+          source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/link_test"
         $status.should.be.false()
         @fs.assert
@@ -56,22 +59,25 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          content: 'hello'
+          target: "#{tmpdir}/source_file"
         {$status} = await @fs.link
-          source: __filename
-          target: "#{tmpdir}/test"
           exec: true
+          source: "#{tmpdir}/source_file"
+          target: "#{tmpdir}/test"
         $status.should.be.true()
         {$status} = await @fs.link
-          source: __filename
-          target: "#{tmpdir}/test"
           exec: true
+          source: "#{tmpdir}/source_file"
+          target: "#{tmpdir}/test"
         $status.should.be.false()
         @fs.assert
-          target: "#{tmpdir}/test"
           content: """
           #!/bin/bash
-          exec #{__filename} $@
+          exec #{tmpdir}/source_file $@
           """
+          target: "#{tmpdir}/test"
           trim: true
     
     they 'should link dir', ({ssh}) ->
@@ -80,13 +86,14 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir "#{tmpdir}/source_dir"
         {$status} = await @fs.link # Link does not exist
-          source: __dirname
+          source: "#{tmpdir}/source_dir"
           target: "#{tmpdir}/link_test"
         $status.should.be.true()
         {$status} = await @fs.link # Link already exists
           $ssh: ssh
-          source: __dirname
+          source: "#{tmpdir}/source_dir"
           target: "#{tmpdir}/link_test"
         $status.should.be.false()
         @fs.assert
@@ -99,8 +106,9 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
+        await @fs.mkdir "#{tmpdir}/source_dir"
         {$status} = await @fs.link
-          source: __dirname
+          source: "#{tmpdir}/source_dir"
           target: "#{tmpdir}/test/dir/link_test"
         $status.should.be.true()
         await @fs.assert
@@ -108,12 +116,12 @@ describe 'actions.fs.link', ->
           type: 'symlink'
         {$status} = await @fs.link
           $ssh: ssh
-          source: "#{__dirname}/merge.coffee"
+          source: "#{tmpdir}/source_dir/merge.coffee"
           target: "#{tmpdir}/test/dir2/merge.coffee"
         $status.should.be.true()
         {$status} = await @fs.link
           $ssh: ssh
-          source: "#{__dirname}/mkdir.coffee"
+          source: "#{tmpdir}/source_dir/mkdir.coffee"
           target: "#{tmpdir}/test/dir2/mkdir.coffee"
         $status.should.be.true()
 
