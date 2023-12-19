@@ -1,5 +1,5 @@
+import path from "node:path";
 import tilde from "tilde-expansion";
-import path from "path";
 
 /*
 Not, those function are not aware of an SSH connection

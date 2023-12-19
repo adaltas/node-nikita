@@ -10,8 +10,8 @@ TODO: detect/force isTTY
 */
 
 // Dependencies
+import stream from 'node:stream';
 import dedent from 'dedent';
-import stream from 'stream';
 import {mutate} from 'mixme';
 
 // Plugin
@@ -71,11 +71,7 @@ export default {
               ? log.message.toString().trim()
               : JSON.stringify(log.message);
             const position = log.position.map((i) => i + 1).join('.');
-            let namespace;
-            if (log.namespace) {
-              namespace = log.namespace.join('.');
-            }
-            const name = namespace || log.module;
+            const name = log.namespace?.join('.') || log.module;
             msg = ['[', position + '.' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
             msg = (function() {
               switch (log.type) {
@@ -95,7 +91,7 @@ export default {
         action.tools.events.addListener('text', debug.listener);
         action.tools.events.addListener('stdin', debug.listener);
         action.tools.events.addListener('stdout_stream', debug.listener);
-        return action.tools.events.addListener('stderr_stream', debug.listener);
+        action.tools.events.addListener('stderr_stream', debug.listener);
       }
     },
     'nikita:result': {
@@ -107,7 +103,7 @@ export default {
         action.tools.events.removeListener('text', debug.listener);
         action.tools.events.removeListener('stdin', debug.listener);
         action.tools.events.removeListener('stdout_stream', debug.listener);
-        return action.tools.events.removeListener('stderr_stream', debug.listener);
+        action.tools.events.removeListener('stderr_stream', debug.listener);
       }
     }
   }

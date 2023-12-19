@@ -3,8 +3,8 @@ Plugin `@nikitajs/core/plugins/tools/path`
 */
 
 // Dependencies
-import os from "os";
-import path from "path";
+import os from "node:os";
+import path from "node:path";
 
 // Plugin
 export default {

@@ -19,6 +19,7 @@ import conditionsOs from "@nikitajs/core/plugins/conditions/os";
 import global from "@nikitajs/core/plugins/global";
 import history from "@nikitajs/core/plugins/history";
 import magicDollar from "@nikitajs/core/plugins/magic_dollar";
+import metadataAudit from "@nikitajs/core/plugins/metadata/audit";
 import metadataDebug from "@nikitajs/core/plugins/metadata/debug";
 import disabled from "@nikitajs/core/plugins/metadata/disabled";
 import metadataExecute from "@nikitajs/core/plugins/metadata/execute";
@@ -58,6 +59,7 @@ const create = (..._args) =>
       global,
       history,
       magicDollar,
+      metadataAudit,
       metadataDebug,
       disabled,
       metadataExecute,

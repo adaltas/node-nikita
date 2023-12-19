@@ -20,6 +20,7 @@ export default {
     "nikita:action": function (action) {
       action.tools.events.emit("nikita:action:start", {
         action: action,
+        event: "nikita:action:start",
       });
     },
     "nikita:result": {
@@ -31,6 +32,7 @@ export default {
             action.tools.events.emit("nikita:action:end", {
               action: action,
               error: undefined,
+              event: "nikita:action:end",
               output: output,
             });
             return output;
@@ -38,6 +40,7 @@ export default {
             action.tools.events.emit("nikita:action:end", {
               action: action,
               error: error,
+              event: "nikita:action:end",
               output: undefined,
             });
             throw error;
@@ -45,11 +48,19 @@ export default {
         };
       },
     },
-    "nikita:resolved": function ({ action }) {
-      action.tools.events.emit("nikita:resolved", ...arguments);
+    "nikita:resolved": function ({ action, output }) {
+      action.tools.events.emit("nikita:resolved", {
+        action: action,
+        output: output,
+        event: "nikita:resolved",
+      });
     },
-    "nikita:rejected": function ({ action }) {
-      action.tools.events.emit("nikita:rejected", ...arguments);
+    "nikita:rejected": function ({ action, error }) {
+      action.tools.events.emit("nikita:rejected", {
+        action: action,
+        error: error,
+        event: "nikita:rejected"
+      });
     },
   },
 };
