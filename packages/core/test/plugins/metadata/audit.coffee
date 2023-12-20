@@ -1,7 +1,35 @@
 
 import stream from 'node:stream'
-import nikita from '@nikitajs/core'
+# import nikita from '@nikitajs/core'
+import session from '@nikitajs/core/session'
+import args from '@nikitajs/core/plugins/args'
+import metadataAudit from '@nikitajs/core/plugins/metadata/audit'
+import metadataSchema from '@nikitajs/core/plugins/metadata/schema'
+import metadataRaw from '@nikitajs/core/plugins/metadata/raw'
+import metadataTime from '@nikitajs/core/plugins/metadata/time'
+import toolsEvents from '@nikitajs/core/plugins/tools/events'
+import toolsFind from '@nikitajs/core/plugins/tools/find'
+import toolsLog from '@nikitajs/core/plugins/tools/log'
+import toolsSchema from '@nikitajs/core/plugins/tools/schema'
 import test from '../../test.coffee'
+
+nikita = () ->
+  session
+    $plugins: [
+      args
+      metadataAudit
+      metadataRaw
+      metadataSchema
+      metadataTime
+      toolsEvents
+      toolsFind
+      toolsLog
+      toolsSchema
+    ]
+  ,  ({registry}) ->
+    registry.register
+      'call': '@nikitajs/core/actions/call'
+      'registry': 'register': '@nikitajs/core/actions/registry/register'
 
 describe 'metadata "audit"', ->
   return unless test.tags.api
@@ -9,7 +37,7 @@ describe 'metadata "audit"', ->
   describe 'validation', ->
   
     it 'invalid string', ->
-      nikita
+      nikita().call
         $audit: 'invalid'
         $handler: -> throw Error 'ohno'
       .should.be.rejectedWith
@@ -19,7 +47,7 @@ describe 'metadata "audit"', ->
     it.skip 'valid string', ->
       # Testing stdout and stderr print messages to the console
       # unless we temporarily switch process.stdout to a custom implementation
-      await nikita
+      await nikita().call
         $audit: 'stdout'
         $handler: -> 'ok'
       .should.be.fulfilledWith 'ok'
@@ -29,14 +57,15 @@ describe 'metadata "audit"', ->
       .should.be.fulfilledWith 'ok'
   
     it 'valid stream.Writer', ->
-      await nikita
+      await nikita()
+      .call
         $audit: new stream.Writable( write: (->) )
         $handler: -> 'ok'
       .should.be.fulfilledWith 'ok'
   
     it 'cast to `false`', ->
       # Note, activating schema coercion converted boolean false to a string
-      {audit} = await nikita
+      {audit} = await nikita().call
         $audit: false
         $handler: ({metadata}) -> audit: metadata.audit
       audit.should.be.false()
@@ -47,7 +76,7 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita
+      await nikita()
       .registry.register 'call_0', (->)
       .registry.register 'call_0_0', (->)
       .registry.register 'call_0_0_0', (->)
@@ -79,7 +108,7 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita
+      await nikita()
       .registry.register 'call_0', (->)
       .registry.register 'call_0_0', (->)
       .registry.register 'call_0_0_0', (->)
@@ -103,7 +132,7 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita
+      await nikita()
       .registry.register 'call_0', (->)
       .registry.register 'call_0_0', (->)
       .registry.register 'call_0_0_0', (->)
@@ -124,7 +153,7 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita
+      await nikita()
       .registry.register 'call_0', (->)
       .registry.register 'call_1', (->)
       .registry.register 'call_1_0', (->)
@@ -150,7 +179,7 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita
+      await nikita()
       .registry.register 'call_0', (->)
       .registry.register 'call_1', (->)
       .registry.register 'call_1_0', (->)
