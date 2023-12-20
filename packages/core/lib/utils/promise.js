@@ -1,11 +1,10 @@
 import util from "util";
+import each from "each";
 
-const array_filter = async function (arr, handler) {
+const array_filter = async function (items, concurrency, handler) {
   const fail = Symbol();
   return (
-    await Promise.all(
-      arr.map(async (item) => ((await handler(item)) ? item : fail))
-    )
+    await each(items, concurrency, async (item) => ((await handler(item)) ? item : fail))
   ).filter((i) => i !== fail);
 };
 

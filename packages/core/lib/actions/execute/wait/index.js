@@ -18,11 +18,8 @@ export default {
     let commands = config.command;
     while (attempts !== config.retry) {
       attempts++;
-      log({
-        message: `Start attempt #${attempts}`,
-        level: "DEBUG",
-      });
-      commands = await utils.promise.array_filter(commands, async (command) => {
+      log("DEBUG", `Start attempt #${attempts}`);
+      commands = await utils.promise.array_filter(commands, config.concurrency, async (command) => {
         const { $status: success } = await this.execute({
           command: command,
           code: config.code,
@@ -33,14 +30,11 @@ export default {
         });
         return !success;
       });
-      log({
-        message: `Attempt #${attempts}, expect ${
+      log("INFO", `Attempt #${attempts}, expect ${
           config.quorum
         } success to reach the quorum, got ${
           config.command.length - commands.length
-        }`,
-        level: "INFO",
-      });
+        }`);
       if (commands.length <= config.command.length - config.quorum) {
         return {
           attempts: attempts,

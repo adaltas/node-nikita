@@ -16,6 +16,11 @@
         },
         "description": "The commands to be executed."
       },
+      "concurrency": {
+        "type": "number",
+        "default": -1,
+        "description": "The number of command to be executed in parralel. Default is to execute all command in parralel, set the value to `1` to run the commands sequentially."
+      },
       "interval": {
         "type": "integer",
         "default": 2000,
