@@ -21,7 +21,7 @@ const {$status} = await nikita.system.user({
   gid: 10,
   comment: 'A System User'
 })
-console.log(`User created: ${$status}`)
+console.info(`User created: ${$status}`)
 ```
 
 The result of the above action can be viewed with the command

@@ -13,5 +13,5 @@ const {$status} = await nikita.tools.gsettings({
     }
   }
 })
-console.log(`Property was modified: ${$status}`)
+console.info(`Property was modified: ${$status}`)
 ```

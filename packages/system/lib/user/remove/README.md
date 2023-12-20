@@ -14,5 +14,5 @@ Create or modify a Unix user.
 const {$status} = await nikita.system.user.remove({
   name: 'a_user'
 })
-console.log(`User removed: ${$status}`)
+console.info(`User removed: ${$status}`)
 ```

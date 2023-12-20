@@ -120,5 +120,5 @@ const {$status} = await nikita.system.limits({
   system: true,
   nofile: true
 });
-console.log(`Limits modified: ${$status}`);
+console.info(`Limits modified: ${$status}`);
 ```

@@ -136,33 +136,24 @@ describe 'plugins.metadata.tmpdir', ->
     they 'recreated with new ssh connection', ({ssh}) ->
       return unless ssh
       {ssh} = await nikita.ssh.open ssh
-      # console.log '>>> 1 start'
       tmpdir3 = await nikita.call
         $tmpdir: true
       , ({metadata: {tmpdir: tmpdir1}}) ->
-        # console.log '>>> 2 start'
         tmpdir3 = await @call
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir: tmpdir2}}) ->
-          # console.log '>>> 3 start'
           tmpdir3 = await @call
             $ssh: false
             $tmpdir: true
           , ({metadata: {tmpdir: tmpdir3}}) ->
-            # console.log 'tmpdir1', tmpdir1
-            # console.log 'tmpdir2', tmpdir2
-            # console.log 'tmpdir3', tmpdir3
             tmpdir1.should.not.eql tmpdir2
             tmpdir1.should.eql tmpdir3
             tmpdir3
-          # console.log '<<< 3 end'
           await @fs.assert tmpdir3
           tmpdir3
-        # console.log '<<< 2 end'
         await @fs.assert tmpdir3
         tmpdir3
-      # console.log '<<< 1 end'
       await nikita.fs.assert target: tmpdir3, not: true
       await nikita.ssh.close ssh: ssh
   

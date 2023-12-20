@@ -192,6 +192,6 @@ nikita.log
     //   target: '/nikita/packages/core/test.coffee'
   })
   .then(
-    () => console.log("OK"),
-    (err) => console.log("KO", err)
+    () => console.info("OK"),
+    (err) => console.error("KO", err)
   );

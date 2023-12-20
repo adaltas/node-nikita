@@ -20,7 +20,7 @@ describe 'plugins.metadata.definitions', ->
           'parent':
             required: ['child']
     , ->
-      console.log 'called but why, the doc say the contrary'
+      console.warn 'called but why, the doc say the contrary'
 
   it 'config is valid', ->
     nikita ->

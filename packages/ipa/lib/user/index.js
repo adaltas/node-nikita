@@ -22,7 +22,6 @@ export default {
         id: 0
       }
     });
-    // console.log('data', data)
     let result, $status = true;
     if (data.error !== null) {
       if (data.error.code !== 4202) { // no modifications to be performed

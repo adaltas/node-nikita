@@ -14,7 +14,6 @@ describe 'file.download url', ->
     server = http.createServer (req, res) ->
       # res.writeHead 200, {'Content-Type': 'text/plain'}
       # res.end 'okay'
-      # console.log('req:', req.url, req.headers)
       switch req.url
         when '/http_headers'
           # res.setHeader 'Content-Type', 'application/json'
