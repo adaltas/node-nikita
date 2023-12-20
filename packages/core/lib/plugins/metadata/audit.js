@@ -74,7 +74,11 @@ const print = (ws, record) => {
 // Plugin
 export default {
   name: "@nikitajs/core/plugins/metadata/audit",
-  require: "@nikitajs/core/plugins/tools/log",
+  require: [
+    "@nikitajs/core/plugins/metadata/schema",
+    "@nikitajs/core/plugins/metadata/time",
+    "@nikitajs/core/plugins/tools/log",
+  ],
   hooks: {
     "nikita:schema": function ({ schema }) {
       mutate(schema.definitions.metadata.properties, {
@@ -97,9 +101,9 @@ export default {
         },
       });
     },
-    'nikita:normalize': {
-      after: '@nikitajs/core/plugins/history',
-      handler: function(action) {
+    "nikita:normalize": {
+      // after: '@nikitajs/core/plugins/history',
+      handler: function (action) {
         if (action.metadata.audit) {
           action.state.audit = {
             position: [-1],
@@ -108,44 +112,50 @@ export default {
         } else if (action.parent?.state?.audit) {
           // Position relative to root action
           // Before the root action complete, direct child is [0][0], second direct child is [0][1]
-          action.parent.state.audit.position[action.parent.state.audit.position.length - 1]++;
+          action.parent.state.audit.position[
+            action.parent.state.audit.position.length - 1
+          ]++;
           const position = action.parent.state.audit.position.concat([-1]);
           action.state.audit = {
             position: position,
             // Index of the record inside its parent
-            index: -1
+            index: -1,
           };
         }
-      }
+      },
     },
     "nikita:action": {
-      after: ["@nikitajs/core/plugins/metadata/schema"],
-      handler: function (action) {
-        if (!action.metadata.audit) {
+      after: [
+        "@nikitajs/core/plugins/metadata/schema",
+        "@nikitajs/core/plugins/tools/log",
+      ],
+      handler: function ({ metadata, tools: { events } }) {
+        if (!metadata.audit) {
           return;
         }
         // Print child actions
-        let audit = action.metadata.audit;
-        const ws = audit === "stdout"
-        ? process.stdout
-        : audit === "stderr"
-        ? process.stderr
-        : audit instanceof stream.Writable
-        ? audit
-        : process.stderr;
-        audit = action.metadata.audit = {
+        let audit = metadata.audit;
+        const ws =
+          audit === "stdout"
+            ? process.stdout
+            : audit === "stderr"
+            ? process.stderr
+            : audit instanceof stream.Writable
+            ? audit
+            : process.stderr;
+        audit = metadata.audit = {
           colors: {
-            error: (out) => ws.isTTY ? chalk.magenta(out) : out,
-            info: (out) => ws.isTTY ? chalk.green(out) : out,
-            stdin: (out) => ws.isTTY ? chalk.cyan(out) : out,
-            stdout: (out) => ws.isTTY ? chalk.blue(out) : out,
-            stderr: (out) => ws.isTTY ? chalk.magenta(out) : out,
-            log: (out) => ws.isTTY ? chalk.grey(out) : out,
+            error: (out) => (ws.isTTY ? chalk.magenta(out) : out),
+            info: (out) => (ws.isTTY ? chalk.green(out) : out),
+            stdin: (out) => (ws.isTTY ? chalk.cyan(out) : out),
+            stdout: (out) => (ws.isTTY ? chalk.blue(out) : out),
+            stderr: (out) => (ws.isTTY ? chalk.magenta(out) : out),
+            log: (out) => (ws.isTTY ? chalk.grey(out) : out),
           },
           ws: ws,
-          listeners : {
+          listeners: {
             action: function ({ action, error }) {
-              const message = action.metadata.namespace?.join('.') || action.module;
+              const message = action.metadata.namespace?.join(".") || action.module;
               const color = error ? audit.colors.error : audit.colors.info;
               action.parent.state.audit.index++;
               print(
@@ -164,41 +174,43 @@ export default {
                 action
               );
             },
-            log: function(log, action) {
+            log: function (log, action) {
               let message =
-                typeof log.message === 'string'
-                ? log.message.trim()
-                : typeof log.message === 'number'
-                ? log.message
-                : log.message?.toString != null
-                ? log.message.toString().trim()
-                : JSON.stringify(log.message);
-              const color = (function() {
+                typeof log.message === "string"
+                  ? log.message.trim()
+                  : typeof log.message === "number"
+                  ? log.message
+                  : log.message?.toString != null
+                  ? log.message.toString().trim()
+                  : JSON.stringify(log.message);
+              const color = (function () {
                 switch (log.type) {
-                  case 'stdin':
+                  case "stdin":
                     return audit.colors.stdin;
-                  case 'stdout_stream':
+                  case "stdout_stream":
                     return audit.colors.stdout;
-                  case 'stderr_stream':
+                  case "stderr_stream":
                     return audit.colors.stderr;
                   default:
                     return audit.colors.log;
                 }
               })();
-              const level = (function() {
+              const level = (function () {
                 switch (log.type) {
-                  case 'stdin':
-                    return 'STDIN';
-                  case 'stdout_stream':
-                    return 'STDOUT';
-                  case 'stderr_stream':
-                    return 'STDERR';
+                  case "stdin":
+                    return "STDIN";
+                  case "stdout_stream":
+                    return "STDOUT";
+                  case "stderr_stream":
+                    return "STDERR";
                   default:
                     return log.level;
                 }
               })();
               action.state.audit.index++;
-              action.state.audit.position[action.state.audit.position.length - 1]++;
+              action.state.audit.position[
+                action.state.audit.position.length - 1
+              ]++;
               print(audit.ws, {
                 color: color,
                 index: action.state.audit.index,
@@ -208,20 +220,20 @@ export default {
                 side: undefined,
               });
             },
-          }
+          },
         };
-        action.tools.events.addListener("nikita:action:end", audit.listeners.action);
-        action.tools.events.addListener('text', audit.listeners.log);
-        action.tools.events.addListener('stdin', audit.listeners.log);
-        action.tools.events.addListener('stdout_stream', audit.listeners.log);
-        action.tools.events.addListener('stderr_stream', audit.listeners.log);
+        events.addListener("nikita:action:end", audit.listeners.action);
+        events.addListener("text", audit.listeners.log);
+        events.addListener("stdin", audit.listeners.log);
+        events.addListener("stdout_stream", audit.listeners.log);
+        events.addListener("stderr_stream", audit.listeners.log);
       },
     },
     "nikita:result": {
       after: "@nikitajs/core/plugins/metadata/time",
       handler: function ({ action, error }) {
         const audit = action.metadata.audit;
-        if (!audit || error?.code === 'NIKITA_SCHEMA_VALIDATION_CONFIG') {
+        if (!audit || error?.code === "NIKITA_SCHEMA_VALIDATION_CONFIG") {
           return;
         }
         print(
@@ -229,7 +241,7 @@ export default {
           {
             color: error ? audit.colors.error : audit.colors.info,
             prefix: "ACTION",
-            message: action.metadata.namespace?.join(".") || action.module || 'nikita',
+            message: action.metadata.namespace?.join(".") || action.module || "nikita",
             index: action.metadata.index,
             position: [],
             side: string.print_time(

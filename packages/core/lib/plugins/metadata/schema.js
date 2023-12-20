@@ -32,7 +32,7 @@ export default {
     'nikita:action': {
       after: [
         '@nikitajs/core/plugins/global',
-        '@nikitajs/core/plugins/metadata/disabled'
+        '@nikitajs/core/plugins/metadata/disabled',
       ],
       handler: async function(action) {
         if (action.metadata.schema === false) {

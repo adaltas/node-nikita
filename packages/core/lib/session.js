@@ -104,13 +104,13 @@ const session = function(args, options = {}) {
     plugins: action.plugins,
     parent: action.parent ? action.parent.registry : registry,
     on_register: async function(name, act) {
-      return (await action.plugins.call({
+      await action.plugins.call({
         name: 'nikita:register',
         args: {
           name: name,
           action: act
         }
-      }));
+      });
     }
   });
   // Local scheduler to execute children and be notified on finish
