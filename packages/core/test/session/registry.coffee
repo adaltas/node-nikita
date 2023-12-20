@@ -1,6 +1,5 @@
 
 import nikita from '@nikitajs/core'
-import registry from'@nikitajs/core/registry'
 import test from '../test.coffee'
 
 describe 'action.registry', ->

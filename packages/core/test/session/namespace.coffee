@@ -25,7 +25,7 @@ describe 'session.namespace', ->
       result.should.eql 'an.action value, depth 1'
 
   it 'chain calls', ->
-    n = nikita ({registry}) ->
+    nikita ({registry}) ->
       registry.register
         'action':
           '': handler: ({metadata}) ->
