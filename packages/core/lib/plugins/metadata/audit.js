@@ -102,19 +102,15 @@ export default {
       handler: function(action) {
         if (action.metadata.audit) {
           action.state.audit = {
-            depth: 0,
             position: [-1],
             index: -1,
           };
         } else if (action.parent?.state?.audit) {
-          action.parent.state.audit.position[action.parent.state.audit.position.length - 1]++;
           // Position relative to root action
           // Before the root action complete, direct child is [0][0], second direct child is [0][1]
+          action.parent.state.audit.position[action.parent.state.audit.position.length - 1]++;
           const position = action.parent.state.audit.position.concat([-1]);
           action.state.audit = {
-            // Depth relative to root action
-            // Direct children have depth 1
-            depth: action.parent.state.audit.depth + 1,
             position: position,
             // Index of the record inside its parent
             index: -1
@@ -130,7 +126,6 @@ export default {
         }
         // Print child actions
         let audit = action.metadata.audit;
-        const rootDepth = action.metadata.depth
         const ws = audit === "stdout"
         ? process.stdout
         : audit === "stderr"
@@ -206,7 +201,6 @@ export default {
               action.state.audit.position[action.state.audit.position.length - 1]++;
               print(audit.ws, {
                 color: color,
-                depth: action.metadata.depth - rootDepth + 1,
                 index: action.state.audit.index,
                 prefix: level,
                 message: string.lines(message),
@@ -236,7 +230,6 @@ export default {
             color: error ? audit.colors.error : audit.colors.info,
             prefix: "ACTION",
             message: action.metadata.namespace?.join(".") || action.module || 'nikita',
-            depth: 0,
             index: action.metadata.index,
             position: [],
             side: string.print_time(

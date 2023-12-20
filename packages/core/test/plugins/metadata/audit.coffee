@@ -65,14 +65,14 @@ describe 'metadata "audit"', ->
             await this.call_1_1 (->)
           await this.call_2 (->)
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
-        '[AUDIT]       ┌─ call_0_0_0 Xms\n',
-        '[AUDIT]    ┌─ call_0_0 Xms\n',
-        '[AUDIT] ┌─ call_0 Xms\n',
-        '[AUDIT] │  ┌─ call_1_0 Xms\n',
-        '[AUDIT] │  ├─ call_1_1 Xms\n',
-        '[AUDIT] ├─ call_1 Xms\n',
-        '[AUDIT] ├─ call_2 Xms\n',
-        '[AUDIT] call Xms\n'
+        '[ACTION]       ┌─ call_0_0_0 Xms\n',
+        '[ACTION]    ┌─ call_0_0 Xms\n',
+        '[ACTION] ┌─ call_0 Xms\n',
+        '[ACTION] │  ┌─ call_1_0 Xms\n',
+        '[ACTION] │  ├─ call_1_1 Xms\n',
+        '[ACTION] ├─ call_1 Xms\n',
+        '[ACTION] ├─ call_2 Xms\n',
+        '[ACTION] call Xms\n'
       ]
   
     it 'log message in root before any action resolve', ->
@@ -91,12 +91,12 @@ describe 'metadata "audit"', ->
             await this.call_0_0_0 ->
               await this.call_0_0_0_0 (->)
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
-        '[INFO]  ┌─ log message 1\n',
-        '[AUDIT] │        ┌─ call_0_0_0_0 Xms\n',
-        '[AUDIT] │     ┌─ call_0_0_0 Xms\n',
-        '[AUDIT] │  ┌─ call_0_0 Xms\n',
-        '[AUDIT] ├─ call_0 Xms\n',
-        '[AUDIT] call Xms\n'
+        '[INFO]   ┌─ log message 1\n',
+        '[ACTION] │        ┌─ call_0_0_0_0 Xms\n',
+        '[ACTION] │     ┌─ call_0_0_0 Xms\n',
+        '[ACTION] │  ┌─ call_0_0 Xms\n',
+        '[ACTION] ├─ call_0 Xms\n',
+        '[ACTION] call Xms\n'
       ]
   
     it 'log message in leaf before any action resolve', ->
@@ -113,11 +113,11 @@ describe 'metadata "audit"', ->
             await this.call_0_0_0 ({tools: {log}}) ->
               log 'log message 1'
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
-        '[INFO]           ┌─ log message 1\n'
-        '[AUDIT]       ┌─ call_0_0_0 Xms\n'
-        '[AUDIT]    ┌─ call_0_0 Xms\n'
-        '[AUDIT] ┌─ call_0 Xms\n'
-        '[AUDIT] call Xms\n'
+        '[INFO]            ┌─ log message 1\n'
+        '[ACTION]       ┌─ call_0_0_0 Xms\n'
+        '[ACTION]    ┌─ call_0_0 Xms\n'
+        '[ACTION] ┌─ call_0 Xms\n'
+        '[ACTION] call Xms\n'
       ]
   
     it 'log between child actions', ->
@@ -137,13 +137,13 @@ describe 'metadata "audit"', ->
           await this.call_1_1 (->)
           log 'WARN', 'log call_1:end'
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
-        '[AUDIT] ┌─ call_0 Xms\n'
-        '[WARN]  │  ┌─ log call_1:start\n'
-        '[AUDIT] │  ├─ call_1_0 Xms\n'
-        '[AUDIT] │  ├─ call_1_1 Xms\n'
-        '[WARN]  │  ├─ log call_1:end\n'
-        '[AUDIT] ├─ call_1 Xms\n'
-        '[AUDIT] call Xms\n'
+        '[ACTION] ┌─ call_0 Xms\n'
+        '[WARN]   │  ┌─ log call_1:start\n'
+        '[ACTION] │  ├─ call_1_0 Xms\n'
+        '[ACTION] │  ├─ call_1_1 Xms\n'
+        '[WARN]   │  ├─ log call_1:end\n'
+        '[ACTION] ├─ call_1 Xms\n'
+        '[ACTION] call Xms\n'
       ]
   
     it 'log before root action resolve', ->
@@ -159,8 +159,8 @@ describe 'metadata "audit"', ->
         await this.call_0 (->)
         log 'WARN', 'log call:end'
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
-        '[AUDIT] ┌─ call_0 Xms\n'
-        '[WARN]  ├─ log call:end\n'
-        '[AUDIT] call Xms\n'
+        '[ACTION] ┌─ call_0 Xms\n'
+        '[WARN]   ├─ log call:end\n'
+        '[ACTION] call Xms\n'
       ]
       
