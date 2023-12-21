@@ -7,12 +7,12 @@ export default
     ldap_index: true
     ldap_user: true
   ldap:
-    uri: 'ldap://openldap:389'
+    uri: 'ldap://openldap:1389'
     binddn: 'cn=admin,dc=example,dc=org'
-    passwd: 'admin'
+    passwd: 'admin_secret'
     config:
-      binddn: 'cn=admin,cn=config'
-      passwd: 'config'
+      binddn: 'cn=config,cn=config'
+      passwd: 'config_secret'
     suffix_dn: 'dc=example,dc=org'
   config: [
     label: 'local'

@@ -10,10 +10,34 @@ services:
       - openldap
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/ldap/env/openldap/test.coffee
+    networks:
+      - nikita
   openldap:
-    image: osixia/openldap:latest
-    expose:
-      - "389"
-      - "636"
+    image: bitnami/openldap:latest
+    environment:
+      # General settings
+      LDAP_ADMIN_USERNAME: "admin"
+      LDAP_ADMIN_PASSWORD: "admin_secret"
+      LDAP_ROOT: "dc=example,dc=org"
+      LDAP_ADMIN_DN: "cn=admin,dc=example,dc=org"
+      # Configurfation user
+      LDAP_CONFIG_ADMIN_ENABLED: 1
+      LDAP_CONFIG_ADMIN_USERNAME: "config"
+      LDAP_CONFIG_ADMIN_PASSWORD: "config_secret"
+      # Create additionnal users
+      # LDAP_USERS: "customuser"
+      # LDAP_PASSWORDS: "custompassword"
+    # ports:
+      # - "389"
+      # - "636"
+      # - '389:1389'
+      # - '636:1636'
     logging:
-      driver: none 
+      driver: none
+    networks:
+      - nikita
+
+networks:
+  nikita:
+    name: nikita
+    driver: bridge
