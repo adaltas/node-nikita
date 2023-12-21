@@ -203,7 +203,7 @@ describe 'java.keystore.add', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @execute
+        await @execute
           command: """
           mkdir #{tmpdir}/ca
           cd #{tmpdir}/ca
