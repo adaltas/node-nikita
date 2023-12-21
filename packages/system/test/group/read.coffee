@@ -20,9 +20,10 @@ describe 'system.group.read', ->
           root:x:0:root
           bin:x:1:root,bin,daemon
           """
-        {$status} = await @system.group.read
+        await @system.group.read
           target: "#{tmpdir}/etc/group"
-        $status.should.be.false()
+        .then ({$status}) ->
+          $status.should.be.false()
 
     they 'activate locales', ({ssh}) ->
       nikita
@@ -35,11 +36,12 @@ describe 'system.group.read', ->
           root:x:0:root
           bin:x:1:root,bin,daemon
           """
-        {groups} = await @system.group.read
+        await @system.group.read
           target: "#{tmpdir}/etc/group"
-        groups.should.eql
-          root: group: 'root', password: 'x', gid: 0, users: [ 'root' ]
-          bin: group: 'bin', password: 'x', gid: 1, users: [ 'root', 'bin', 'daemon' ]
+        .then ({groups}) ->
+          groups.should.eql
+            root: group: 'root', password: 'x', gid: 0, users: [ 'root' ]
+            bin: group: 'bin', password: 'x', gid: 1, users: [ 'root', 'bin', 'daemon' ]
 
   describe 'without option `target`', ->
     return unless test.tags.system_user
@@ -53,14 +55,15 @@ describe 'system.group.read', ->
         await @system.group
           name: 'toto'
           gid: 1010
-        {group} = await @system.group.read
+        await @system.group.read
           gid: 'toto'
-        group.should.match
-          group: 'toto'
-          password: 'x'
-          gid: 1010
-          users: []
-        @system.group.remove 'toto'
+        .then ({group}) ->
+          group.should.match
+            group: 'toto'
+            password: 'x'
+            gid: 1010
+            users: []
+        await @system.group.remove 'toto'
   
   describe 'option "gid"', ->
     return unless test.tags.posix
@@ -77,10 +80,15 @@ describe 'system.group.read', ->
           bin:x:1:root,bin,daemon
           docker:x:994:monsieur
           """
-        {group} = await @system.group.read
+        await @system.group.read
           target: "#{tmpdir}/etc/group"
           gid: 'docker'
-        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'monsieur' ]
+        .then ({group}) ->
+          group.should.eql
+            group: 'docker'
+            password: 'x'
+            gid: 994
+            users: [ 'monsieur' ]
     
     they 'map a gid to group record', ({ssh}) ->
       nikita
@@ -94,8 +102,13 @@ describe 'system.group.read', ->
           bin:x:1:root,bin,daemon
           docker:x:994:monsieur
           """
-        {group} = await @system.group.read
+        await @system.group.read
           target: "#{tmpdir}/etc/group"
           gid: '994'
-        group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'monsieur' ]
+        .then ({group}) ->
+          group.should.eql
+            group: 'docker'
+            password: 'x'
+            gid: 994
+            users: [ 'monsieur' ]
   

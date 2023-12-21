@@ -35,11 +35,12 @@ describe 'system.user.read', ->
           root:x:0:0:root:/root:/bin/bash
           bin:x:1:1:bin:/bin:/usr/bin/nologin
           """
-        {users} = await @system.user.read
+        await @system.user.read
           target: "#{tmpdir}/etc/passwd"
-        users.should.eql
-          root: user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash'
-          bin: user: 'bin', uid: 1, gid: 1, comment: 'bin', home: '/bin', shell: '/usr/bin/nologin'
+        .then ({users}) ->
+          users.should.eql
+            root: user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash'
+            bin: user: 'bin', uid: 1, gid: 1, comment: 'bin', home: '/bin', shell: '/usr/bin/nologin'
 
   describe 'without option `target`', ->
     return unless test.tags.system_user
@@ -63,8 +64,8 @@ describe 'system.user.read', ->
           comment: ''
           home: '/home/toto'
           shell: '/bin/sh'
-        @system.user.remove 'toto'
-        @system.group.remove 'toto'
+        await @system.user.remove 'toto'
+        await @system.group.remove 'toto'
 
   describe 'option "uid"', ->
     return unless test.tags.posix
@@ -81,10 +82,17 @@ describe 'system.user.read', ->
           bin:x:1:root,bin,daemon
           nobody:x:99:99:nobody:/:/usr/bin/nologin
           """
-        {user} = await @system.user.read
+        await @system.user.read
           target: "#{tmpdir}/etc/passwd"
           uid: 'nobody'
-        user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
+        .then ({user}) ->
+          user.should.eql
+            user: 'nobody'
+            uid: 99
+            gid: 99
+            comment: 'nobody'
+            home: '/'
+            shell: '/usr/bin/nologin'
 
     they 'map a uid to user record', ({ssh}) ->
       nikita
@@ -98,10 +106,17 @@ describe 'system.user.read', ->
           bin:x:1:1:bin:/bin:/usr/bin/nologin
           nobody:x:99:99:nobody:/:/usr/bin/nologin
           """
-        {user} = await @system.user.read
+        await @system.user.read
           target: "#{tmpdir}/etc/passwd"
           uid: '99'
-        user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
+        .then ({user}) ->
+          user.should.eql
+            user: 'nobody'
+            uid: 99
+            gid: 99
+            comment: 'nobody'
+            home: '/'
+            shell: '/usr/bin/nologin'
 
     they 'throw error if uid is a username dont match any user', ({ssh}) ->
       nikita

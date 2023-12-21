@@ -58,10 +58,11 @@ describe 'system.uid_gid', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      {$status, uid, gid} = await @system.uid_gid
+      await @system.uid_gid
         group_target: "#{tmpdir}/etc/group"
         passwd_target: "#{tmpdir}/etc/passwd"
-      $status.should.be.false()
-      (uid is undefined).should.be.true()
-      (gid is undefined).should.be.true()
+      .then ({$status, uid, gid}) ->
+        $status.should.be.false()
+        should(uid).be.undefined()
+        should(gid).be.undefined()
   
