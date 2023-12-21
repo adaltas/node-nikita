@@ -32,7 +32,7 @@ describe 'ldap.modify', ->
           value: 'newsecret'
         ]
       ]
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn
       {$status} = await @ldap.add
         entry: entry
@@ -42,7 +42,7 @@ describe 'ldap.modify', ->
       {$status} = await @ldap.modify
         operations: operations
       $status.should.be.false()
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn
     
   they 'entry with array', ({ssh}) ->
@@ -72,7 +72,7 @@ describe 'ldap.modify', ->
           value: '4003'
         ]
       ]
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn
       {$status} = await @ldap.add
         entry: entry
@@ -82,5 +82,5 @@ describe 'ldap.modify', ->
       {$status} = await @ldap.modify
         operations: operations
       $status.should.be.false()
-      @ldap.delete
+      await @ldap.delete
         dn: entry.dn

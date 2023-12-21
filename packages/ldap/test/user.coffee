@@ -15,7 +15,7 @@ describe 'ldap.user', ->
         uri: test.ldap.uri
       $ssh: ssh
     , ->
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
       {$status} = await @ldap.user
         user:
@@ -32,7 +32,7 @@ describe 'ldap.user', ->
           gidNumber: '9610'
           homeDirectory: '/home/nikita'
       $status.should.be.true()
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
 
   they 'detect no change', ({ssh}) ->
@@ -51,12 +51,12 @@ describe 'ldap.user', ->
         uri: test.ldap.uri
       $ssh: ssh
     , ->
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
-      @ldap.user
+      await @ldap.user
         user: user
       {$status} = await @ldap.user
         user: user
       $status.should.be.false()
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"

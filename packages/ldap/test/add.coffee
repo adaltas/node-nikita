@@ -29,12 +29,12 @@ describe 'ldap.add', ->
         uri: test.ldap.uri
       $ssh: ssh
     , ->
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
       {$status} = await @ldap.add
         entry: user
       $status.should.be.true()
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
 
   they 'add existing entry', ({ssh}) ->
@@ -45,7 +45,7 @@ describe 'ldap.add', ->
         uri: test.ldap.uri
       $ssh: ssh
     , ->
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"
       {$status} = await @ldap.add
         entry: user
@@ -54,5 +54,5 @@ describe 'ldap.add', ->
         entry: user
         # exclude: ['userPassword']
       $status.should.be.false()
-      @ldap.delete
+      await @ldap.delete
         dn: "cn=nikita,#{test.ldap.suffix_dn}"

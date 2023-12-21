@@ -76,21 +76,21 @@ describe 'ldap.acl', ->
         passwd: test.ldap.config.passwd
       $ssh: ssh
     , ->
-      @ldap.acl
+      await @ldap.acl
         suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=test1,dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
           ]
-      @ldap.acl
+      await @ldap.acl
         suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=test2,dc=test,dc=com"'
           by: [
             'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
           ]
-      @ldap.acl
+      await @ldap.acl
         suffix: test.ldap.suffix_dn
         acls:
           to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
