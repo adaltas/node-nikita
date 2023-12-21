@@ -39,7 +39,7 @@ describe 'file.types.krb5_conf', ->
               'krb4_convert': false
           'dbmodules': {}
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/krb5.conf"
         content: """
         [logging]
@@ -81,7 +81,7 @@ describe 'file.types.krb5_conf', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.krb5_conf
+      await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
         content:
           'libdefaults':
@@ -109,7 +109,7 @@ describe 'file.types.krb5_conf', ->
             'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
         merge: true
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/krb5.conf"
         content: """
         [libdefaults]
@@ -133,7 +133,7 @@ describe 'file.types.krb5_conf', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/krb5.conf"
         content: """
         [realms]
@@ -152,7 +152,7 @@ describe 'file.types.krb5_conf', ->
 
         [dbmodules]
         """
-      @file.types.krb5_conf
+      await @file.types.krb5_conf
         target: "#{tmpdir}/krb5.conf"
         content:
           'realms':
@@ -160,7 +160,7 @@ describe 'file.types.krb5_conf', ->
               'kdc': 'krb5.domain2.com:4603'
             }
         merge: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/krb5.conf"
         content: """
         [realms]

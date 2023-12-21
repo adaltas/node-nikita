@@ -20,7 +20,7 @@ describe 'file.ini', ->
         content: user: preference: color: 'rouge'
         target: "#{tmpdir}/user.ini"
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\ncolor = rouge\n'
 
@@ -29,7 +29,7 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\ncolor = rouge\n'
       {$status} = await @file.ini
@@ -37,7 +37,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/user.ini"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\ncolor = violet\n'
 
@@ -51,7 +51,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/user.ini"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\ncolor = violet\n'
 
@@ -60,7 +60,7 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\ncolor = rouge\n'
       {$status} = await @file.ini
@@ -68,7 +68,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/user.ini"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\n'
 
@@ -77,7 +77,7 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\ncolor = rouge\n'
       {$status} = await @file.ini
@@ -91,7 +91,7 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\n'
       {$status} = await @file.ini
@@ -104,7 +104,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/test.ini"
         merge: false
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = node\n'
 
@@ -113,7 +113,7 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\n'
       {$status} = await @file.ini
@@ -122,7 +122,7 @@ describe 'file.ini', ->
         content: user: preference: remember: 'me'
         merge: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = node\nremember = me\n'
 
@@ -137,7 +137,7 @@ describe 'file.ini', ->
         content: user: preference: remember: 'me'
         merge: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nremember = me\n'
 
@@ -146,10 +146,10 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\n'
-      @file
+      await @file
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = c++\n'
       {$status} = await @file.ini
@@ -162,7 +162,7 @@ describe 'file.ini', ->
         target: "#{tmpdir}/test.ini"
         merge: true
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = node\n'
 
@@ -171,10 +171,10 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\n'
-      @file
+      await @file
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = java\n'
       {$status} = await @file.ini
@@ -183,7 +183,7 @@ describe 'file.ini', ->
         content: user: preference: language: 'c++'
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[user.preference]\nlanguage = c++\n'
       {$status} = await @file.ini
@@ -226,10 +226,10 @@ describe 'file.ini', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.ini
+      await @file.ini
         target: "#{tmpdir}/test.ini"
         merge: true
         content: color: ui: 'true'
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/test.ini"
         content: '[color]\nui = true\n'

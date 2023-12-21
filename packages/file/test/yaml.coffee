@@ -16,7 +16,7 @@ describe 'file.yaml', ->
         content: user: preference: color: 'rouge'
         target: "#{tmpdir}/user.yml"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    color: rouge\n'
 
@@ -25,7 +25,7 @@ describe 'file.yaml', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: english\n'
       {$status} = await @file.yaml
@@ -33,7 +33,7 @@ describe 'file.yaml', ->
         target: "#{tmpdir}/user.yml"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: french\n'
 
@@ -47,7 +47,7 @@ describe 'file.yaml', ->
         target: "#{tmpdir}/user.yml"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    color: violet\n'
 
@@ -56,7 +56,7 @@ describe 'file.yaml', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    country: france\n    language: lovelynode\n    color: rouge\n'
       {$status} = await @file.yaml
@@ -75,7 +75,7 @@ describe 'file.yaml', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: node\n    name:    toto\n'
       {$status} = await @file.yaml
@@ -85,7 +85,7 @@ describe 'file.yaml', ->
           name: null
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: node\n'
 
@@ -94,7 +94,7 @@ describe 'file.yaml', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: node\n  name: toto\ngroup: hadoop_user\n'
       {$status} = await @file.yaml
@@ -103,6 +103,6 @@ describe 'file.yaml', ->
         target: "#{tmpdir}/user.yml"
         merge: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.yml"
         content: 'user:\n  preference:\n    language: node\n  name: toto\n'

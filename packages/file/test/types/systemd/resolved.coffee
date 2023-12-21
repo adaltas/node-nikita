@@ -12,12 +12,12 @@ describe 'file.types.systemd.resolved', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.resolved
+      await @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
         content:
           FallbackDNS: "1.1.1.1"
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/resolved.conf"
         content: """
         [Resolve]
@@ -30,12 +30,12 @@ describe 'file.types.systemd.resolved', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.resolved
+      await @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
         content:
           FallbackDNS: ["1.1.1.1", "9.9.9.10", "8.8.8.8", "2606:4700:4700::1111"]
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/resolved.conf"
         content: """
         [Resolve]
@@ -48,25 +48,25 @@ describe 'file.types.systemd.resolved', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.resolved
+      await @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
         content:
           DNS: "ns0.fdn.fr"
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/resolved.conf"
         content: """
         [Resolve]
         DNS=ns0.fdn.fr
         """
         trim: true
-      @file.types.systemd.resolved
+      await @file.types.systemd.resolved
         target: "#{tmpdir}/resolved.conf"
         content:
           ReadEtcHosts: "true"
         merge: true
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/resolved.conf"
         content: """
         [Resolve]

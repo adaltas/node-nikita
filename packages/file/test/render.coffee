@@ -72,15 +72,15 @@ describe 'file.render', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello {{ who }}'
-        @file.render
+        await @file.render
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context: who: 'you'
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello you'
 
@@ -89,16 +89,16 @@ describe 'file.render', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello "{{ who }}" \'{{ anInt }}\''
-        @file.render
+        await @file.render
           source: "#{tmpdir}/source.hbs"
           target: "#{tmpdir}/target.txt"
           context:
             who: 'you'
             anInt: 42
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello "you" \'42\''

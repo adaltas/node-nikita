@@ -13,10 +13,10 @@ describe 'file config diff', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: 'Testing diff\noriginal text'
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: 'Testing diff\nnew text'
         diff: (text, diff) ->
@@ -36,13 +36,13 @@ describe 'file config diff', ->
       $tmpdir: true
     , ({metadata: {tmpdir}, tools: {events}}) ->
       events.on 'diff', (log) -> logs.push log.message
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: 'Testing diff\noriginal text'
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: 'Testing diff\nnew text'
-      @call ->
+      await @call ->
         logs.should.eql [
           '1 + Testing diff\n2 + original text\n'
           '2 - original text\n2 + new text\n'
@@ -60,10 +60,10 @@ describe 'file config diff', ->
       events.on 'diff', (log) ->
         # logs.push log.message
         diffs.push log.message
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: Buffer.from 'ABC'
-      @call ->
+      await @call ->
         diffs.should.eql [ '1 + ABC\n' ]
 
   they 'empty source on empty file', ({ssh}) ->

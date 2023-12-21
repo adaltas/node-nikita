@@ -12,13 +12,13 @@ describe 'file.types.systemd.timesyncd', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.timesyncd
+      await @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
         content:
           NTP: 'ntp.domain.com'
           FallbackNTP: 'fallback.domain.com'
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/timesyncd.conf"
         content: """
         [Time]
@@ -32,13 +32,13 @@ describe 'file.types.systemd.timesyncd', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.timesyncd
+      await @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
         content:
           NTP: ['ntp.domain.com', 'ntp.domain2.com', 'ntp.domain3.com']
           FallbackNTP: ['fallback.domain.com', 'fallback.domain2.com', 'fallback.domain3.com']
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/timesyncd.conf"
         content: """
         [Time]
@@ -52,25 +52,25 @@ describe 'file.types.systemd.timesyncd', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.types.systemd.timesyncd
+      await @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
         content:
           RootDistanceMaxSec: 5
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/timesyncd.conf"
         content: """
         [Time]
         RootDistanceMaxSec=5
         """
         trim: true
-      @file.types.systemd.timesyncd
+      await @file.types.systemd.timesyncd
         target: "#{tmpdir}/timesyncd.conf"
         content:
           PollIntervalMinSec: 32
         merge: true
         reload: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/timesyncd.conf"
         content: """
         [Time]

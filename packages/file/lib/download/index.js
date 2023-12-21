@@ -210,10 +210,10 @@ export default {
         }));
       match = hash_source === hash_target;
       match
-        ? log("INFO", `Hash matches as "${hash_source}'`)
+        ? log("INFO", `Hash matches as "${hash_source}".`)
         : log(
             "WARN",
-            `Hash dont match, source is "${hash_source}" and target is "${hash_target}"`
+            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
           );
       if (!match) {
         await this.fs.mkdir({

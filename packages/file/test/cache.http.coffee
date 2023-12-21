@@ -39,9 +39,9 @@ describe 'file.cache http', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.cache "http://localhost:#{srv.port}/my_file",
+        await @file.cache "http://localhost:#{srv.port}/my_file",
           cache_dir: "#{tmpdir}/my_cache_dir"
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/my_cache_dir/my_file"
     finally
       srv.close()
@@ -53,15 +53,15 @@ describe 'file.cache http', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.cache
+        await @file.cache
           source: "http://localhost:#{srv.port}/my_file"
           cache_dir: "#{tmpdir}/my_cache_dir"
         .should.be.finally.containEql $status: true
-        @file.cache
+        await @file.cache
           source: "http://localhost:#{srv.port}/my_file"
           cache_dir: "#{tmpdir}/my_cache_dir"
         .should.be.finally.containEql $status: false
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/my_cache_dir/my_file"
     finally
       srv.close()
@@ -73,11 +73,11 @@ describe 'file.cache http', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.cache
+        await @file.cache
           source: "http://localhost:#{srv.port}/missing"
           cache_dir: "#{tmpdir}/cache_dir_1"
         .should.be.finally.containEql $status: true
-        @file.cache
+        await @file.cache
           source: "http://localhost:#{srv.port}/missing"
           cache_dir: "#{tmpdir}/cache_dir_2"
           fail: true
@@ -94,13 +94,13 @@ describe 'file.cache http', ->
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir}}) ->
-          @log.fs
+          await @log.fs
             basedir: tmpdir
             serializer: text: (log) -> "#{log.message}\n"
-          @file
+          await @file
             target: "#{tmpdir}/my_cache_file"
             content: 'okay'
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/my_cache_file"
             md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -119,10 +119,10 @@ describe 'file.cache http', ->
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir}}) ->
-          @file
+          await @file
             target: "#{tmpdir}/my_cache_file"
             content: 'not okay'
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/my_cache_file"
             md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -137,7 +137,7 @@ describe 'file.cache http', ->
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir}}) ->
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/missing"
             cache_dir: "#{tmpdir}/cache"
             md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -152,17 +152,17 @@ describe 'file.cache http', ->
           $ssh: ssh
           $tmpdir: true
         , ({metadata: {tmpdir}}) ->
-          @log.fs
+          await @log.fs
             basedir: tmpdir
             serializer: text: (log) -> "[#{log.level}] #{log.message}\n"
-          @file
+          await @file
             target: "#{tmpdir}/source"
             content: "okay"
-          @file
+          await @file
             target: "#{tmpdir}/target"
             content: "okay"
           # In http mode, md5 value will not be calculated from source
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: true
@@ -171,7 +171,7 @@ describe 'file.cache http', ->
             target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
             encoding: 'utf8'
           (data.includes "[WARN] Bypass source hash computation for non-file protocols").should.be.true()
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -180,7 +180,7 @@ describe 'file.cache http', ->
             target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
             encoding: 'utf8'
           (data.includes "[DEBUG] Hashes match, skipping").should.be.true()
-          @file.cache
+          await @file.cache
             source: "http://localhost:#{srv.port}/my_file"
             cache_file: "#{tmpdir}/target"
             md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'

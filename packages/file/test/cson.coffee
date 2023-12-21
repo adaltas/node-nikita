@@ -12,14 +12,14 @@ describe 'file.cson', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/target.cson"
         content: 'doent have to be valid cson'
-      @file.cson
+      await @file.cson
         target: "#{tmpdir}/target.cson"
         content: user: 'torval'
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \'torval\''
 
@@ -28,15 +28,15 @@ describe 'file.cson', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/target.cson"
         content: '"user": "linus"\n"merge": true'
-      @file.cson
+      await @file.cson
         target: "#{tmpdir}/target.cson"
         content: 'user': 'torval'
         merge: true
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \'torval\'\nmerge: true'
 
@@ -45,11 +45,11 @@ describe 'file.cson', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.cson
+      await @file.cson
         target: "#{tmpdir}/target.cson"
         content: 'user': 'torval'
         merge: true
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \'torval\''

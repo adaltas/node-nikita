@@ -38,10 +38,10 @@ describe 'file.cache file', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/my_file"
         content: 'okay'
-      @file
+      await @file
         target: "#{tmpdir}/my_cache_file"
         content: 'not okay'
       {$status} = await @file.cache
@@ -55,10 +55,10 @@ describe 'file.cache file', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/my_file"
         content: 'okay'
-      @file.cache
+      await @file.cache
         source: "#{tmpdir}/my_file"
         cache_dir: "#{tmpdir}/cache"
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -78,7 +78,7 @@ describe 'file.cache file', ->
         source: "#{tmpdir}/a_file"
         cache_dir: "#{tmpdir}/my_cache_dir"
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/my_cache_dir/a_file"
 
   describe 'md5', ->
@@ -88,17 +88,17 @@ describe 'file.cache file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @log.fs
+        await @log.fs
           basedir: tmpdir
           serializer: text: (log) -> "[#{log.level}] #{log.message}\n"
-        @file
+        await @file
           target: "#{tmpdir}/source"
           content: "okay"
-        @file
+        await @file
           target: "#{tmpdir}/target"
           content: "okay"
         # In file mode, md5 value will be calculated from source
-        @file.cache
+        await @file.cache
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: true
@@ -107,7 +107,7 @@ describe 'file.cache file', ->
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes '[DEBUG] Hashes match, skipping').should.be.true()
-        @file.cache
+        await @file.cache
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -116,7 +116,7 @@ describe 'file.cache file', ->
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes '[DEBUG] Hashes match, skipping').should.be.true()
-        @file.cache
+        await @file.cache
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'

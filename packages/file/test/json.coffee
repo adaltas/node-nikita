@@ -12,14 +12,14 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/target.json"
         content: 'doesnt have to be valid json'
-      @file.json
+      await @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
 
@@ -28,15 +28,15 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/target.json"
         content: '{"target":"tarval","user":"overwrite"}'
-      @file.json
+      await @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"tarval","user":"usrval"}'
 
@@ -45,15 +45,15 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/source.json"
         content: '{"source":"srcval","user":"overwrite"}'
-      @file.json
+      await @file.json
         source: "#{tmpdir}/source.json"
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","user":"usrval"}'
 
@@ -62,19 +62,19 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/source.json"
         content: '{"source":"srcval","target":"overwrite","user":"overwrite"}'
-      @file
+      await @file
         target: "#{tmpdir}/target.json"
         content: '{"target":"tarval","user":"overwrite"}'
-      @file.json
+      await @file.json
         source: "#{tmpdir}/source.json"
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","target":"tarval","user":"usrval"}'
   
@@ -83,12 +83,12 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.json
+      await @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
   
@@ -97,10 +97,10 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/target.json"
         content: '{"target":"transform","user":"overwrite"}'
-      @file.json
+      await @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'transform'
         merge: true
@@ -110,7 +110,7 @@ describe 'file.json', ->
           json.transform = "tfmval"
           json
       .should.be.finally.containEql $status: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
   
@@ -119,11 +119,11 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.json
+      await @file.json
         target: "#{tmpdir}/pretty.json"
         content: 'user': 'preferences': 'language': 'french'
         pretty: true
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/pretty.json"
         content: '{\n  \"user\": {\n    \"preferences\": {\n      \"language\": \"french\"\n    }\n  }\n}'
   
@@ -132,17 +132,17 @@ describe 'file.json', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.json
+      await @file.json
         target: "#{tmpdir}/pretty_0.json"
         content: 'user': 'preferences': 'language': 'french'
         pretty: 0
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/pretty_0.json"
         content: '{"user":{"preferences":{"language":"french"}}}'
-      @file.json
+      await @file.json
         target: "#{tmpdir}/pretty_1.json"
         content: 'user': 'preferences': 'language': 'french'
         pretty: 1
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/pretty_1.json"
         content: '{\n \"user\": {\n  \"preferences\": {\n   \"language\": \"french\"\n  }\n }\n}'

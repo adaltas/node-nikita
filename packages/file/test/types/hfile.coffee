@@ -20,7 +20,7 @@ describe 'file.types.hfile', ->
         target: "#{tmpdir}/empty.xml"
         content: {}
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/empty.xml"
         content: """
         <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -40,7 +40,7 @@ describe 'file.types.hfile', ->
         target: "#{tmpdir}/empty.xml"
         properties: a_key: 'a value'
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/empty.xml"
         content: """
         <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -57,7 +57,7 @@ describe 'file.types.hfile', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/empty.xml"
         content: """
         <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -89,7 +89,7 @@ describe 'file.types.hfile', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/empty.xml"
         content: """
         <?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -100,7 +100,7 @@ describe 'file.types.hfile', ->
           </property>
         </configuration>
         """.trim()
-      @file.types.hfile
+      await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
         merge: true
         properties: key_2: 'value 2'
@@ -109,7 +109,7 @@ describe 'file.types.hfile', ->
           for k, v of props
             newprops[k.toUpperCase()] = v
           newprops
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/empty.xml"
         content: """
         <?xml version=\"1.0\" encoding=\"UTF-8\"?>

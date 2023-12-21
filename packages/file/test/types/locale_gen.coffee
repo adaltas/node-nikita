@@ -12,7 +12,7 @@ describe 'file.types.locale_gen', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/etc/locale.gen"
         content: """
         #  en_US.UTF-8 UTF-8
@@ -27,7 +27,7 @@ describe 'file.types.locale_gen', ->
         locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
         generate: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: """
         #  en_US.UTF-8 UTF-8
@@ -43,7 +43,7 @@ describe 'file.types.locale_gen', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/etc/locale.gen"
         content: """
         #  en_US.UTF-8 UTF-8
@@ -58,7 +58,7 @@ describe 'file.types.locale_gen', ->
         locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
         generate: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: """
         #  en_US.UTF-8 UTF-8
@@ -74,7 +74,7 @@ describe 'file.types.locale_gen', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/etc/locale.gen"
         content: "#en_US.UTF-8 UTF-8"
       {$status} = await @file.types.locale_gen
@@ -82,6 +82,6 @@ describe 'file.types.locale_gen', ->
         locales: ['en_US.UTF-8']
         generate: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/etc/locale.gen"
         content: "en_US.UTF-8 UTF-8"

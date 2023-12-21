@@ -28,13 +28,13 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: true
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           content: ''
 
@@ -43,11 +43,11 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch "#{tmpdir}/a_file"
+        await @file.touch "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: true
-        @file.touch "#{tmpdir}/a_file"
+        await @file.touch "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           content: ''
 
@@ -56,10 +56,10 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: true
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
 
@@ -68,11 +68,11 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
           mode: 0o0700
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           mode: 0o0700
 
@@ -81,14 +81,14 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
           mode: 0o666
         .should.be.finally.containEql $status: true
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/a_file"
           mode: 0o0666
 
@@ -97,11 +97,11 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch
+        await @file.touch
           target: "#{tmpdir}/subdir/a_file"
           mode:'0640'
         .should.be.finally.containEql $status: true
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/subdir"
           mode: 0o0751
 
@@ -110,11 +110,11 @@ describe 'file.touch', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file.touch "#{tmpdir}/a_file"
+        await @file.touch "#{tmpdir}/a_file"
         {stats: stat_org} = await @fs.base.stat target: "#{tmpdir}/a_file"
         # Bypass fs cache, a value of 500 is not always enough
         await new Promise (resolve) -> setTimeout resolve, 1000
-        @file.touch "#{tmpdir}/a_file"
+        await @file.touch "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
         {stats: stat_new} = await @fs.base.stat target: "#{tmpdir}/a_file"
         stat_org.mtime.should.not.eql stat_new.mtime

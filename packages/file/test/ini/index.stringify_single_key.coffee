@@ -24,7 +24,7 @@ describe 'file.ini option stringify_single_key', ->
         merge: false
         stringify: utils.ini.stringify_single_key
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user]\nname = toto\n--hasACar\n'
 
@@ -33,7 +33,7 @@ describe 'file.ini option stringify_single_key', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = node\ncolor\n'
       {$status} = await @file.ini
@@ -42,6 +42,6 @@ describe 'file.ini option stringify_single_key', ->
         target: "#{tmpdir}/user.ini"
         merge: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/user.ini"
         content: '[user.preference]\nlanguage = c++\ncolor\n'
