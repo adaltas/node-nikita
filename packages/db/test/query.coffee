@@ -28,8 +28,8 @@ for engine, _ of test.db then do (engine) ->
         $ssh: ssh
         db: test.db[engine]
       , ->
-        @db.database.remove 'test_query_1'
-        @db.database 'test_query_1'
+        await @db.database.remove 'test_query_1'
+        await @db.database 'test_query_1'
         {$status, stdout} = await @db.query
           database: 'test_query_1'
           command: """
@@ -45,8 +45,8 @@ for engine, _ of test.db then do (engine) ->
         $ssh: ssh
         db: test.db[engine]
       , ->
-        @db.database.remove 'test_query_1'
-        @db.database 'test_query_1'
+        await @db.database.remove 'test_query_1'
+        await @db.database 'test_query_1'
         {stdout} = await @db.query
           database: 'test_query_1'
           command: """
@@ -62,9 +62,9 @@ for engine, _ of test.db then do (engine) ->
         $ssh: ssh
         db: test.db[engine]
       , ->
-        @db.database.remove 'test_query_1'
-        @db.database 'test_query_1'
-        @db.query
+        await @db.database.remove 'test_query_1'
+        await @db.database 'test_query_1'
+        await @db.query
           database: 'test_query_1'
           command: '''
           CREATE TABLE a_table (a_col CHAR(5));
@@ -88,9 +88,9 @@ for engine, _ of test.db then do (engine) ->
         $ssh: ssh
         db: test.db[engine]
       , ->
-        @db.database.remove 'test_query_1'
-        @db.database 'test_query_1'
-        @db.query
+        await @db.database.remove 'test_query_1'
+        await @db.database 'test_query_1'
+        await @db.query
           database: 'test_query_1'
           command: '''
           CREATE TABLE a_table (a_col CHAR(5));
