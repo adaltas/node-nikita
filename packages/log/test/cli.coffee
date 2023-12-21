@@ -34,9 +34,9 @@ describe 'log.cli', ->
         stream: new MyWritable data
         time: false
       .call $header: 'h1', ->
-        @call $header: 'h2a', ->
-        @call $header: 'h2b', ->
-          @call $header: 'h3', -> true
+        await @call $header: 'h2a', ->
+        await @call $header: 'h2b', ->
+          await @call $header: 'h3', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -56,10 +56,10 @@ describe 'log.cli', ->
         stream: new MyWritable data
         time: false
       .call $header: 'h1', ->
-        @call $header: 'h2a', ->
-        @call  ->
-          @call  ->
-            @call $header: 'h2b', -> true
+        await @call $header: 'h2a', ->
+        await @call  ->
+          await @call  ->
+            await @call $header: 'h2b', -> true
       # .wait 200
       .call ->
         data.should.eql [
@@ -116,7 +116,7 @@ describe 'log.cli', ->
         try await @call header: 'b', relax: false, -> throw Error 'ok'
         catch err
         # @call header: 'b', relax: true, -> throw Error 'ok'
-        @call ->
+        await @call ->
           data.should.eql [
             "#{host}   c   ✘\n"
             "#{host}   d   ✘\n"
@@ -175,9 +175,9 @@ describe 'log.cli', ->
         stream: new MyWritable data
         time: false
       .call $header: 'h1', ->
-        @call $header: 'h2a', -> false
-        @call $header: 'h2b', ->
-          @call $header: 'h3', -> false
+        await @call $header: 'h2a', -> false
+        await @call $header: 'h2b', ->
+          await @call $header: 'h3', -> false
       .call ->
         data.should.eql [
           "#{host}   h1 : h2a   -\n"
@@ -196,9 +196,9 @@ describe 'log.cli', ->
         stream: new MyWritable data
         time: false
       .call $header: 'h1', ->
-        @call $header: 'h2a', ->
-        @call $header: 'h2b', ->
-          @call $header: 'h3', ->
+        await @call $header: 'h2a', ->
+        await @call $header: 'h2b', ->
+          await @call $header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}   h1 # h2a   -\n"
@@ -257,9 +257,9 @@ describe 'log.cli', ->
         stream: new MyWritable data
         time: false
       .call $header: 'h1', ->
-        @call $header: 'h2a', ->
-        @call $header: 'h2b', ->
-          @call $header: 'h3', ->
+        await @call $header: 'h2a', ->
+        await @call $header: 'h2b', ->
+          await @call $header: 'h3', ->
       .call ->
         data.should.eql [
           "#{host}#{' '.repeat(14 - host.length)} h1 : h2a           -\n"
@@ -273,16 +273,16 @@ describe 'log.cli', ->
       nikita
         $ssh: ssh
       , ->
-        @log.cli
+        await @log.cli
           stream: new MyWritable data
           colors: false
-        @call $header: 'h1', ->
-          @wait 100
-        @call $header: 'h2', ->
-          @call $header: 'h3', ->
-            @wait 100
-          @wait 100
-        @call ->
+        await @call $header: 'h1', ->
+          await @wait 100
+        await @call $header: 'h2', ->
+          await @call $header: 'h3', ->
+            await @wait 100
+          await @wait 100
+        await @call ->
           data[0].should.match /h1   -  1\d{2}ms\n/
           data[1].should.match /h2 : h3   -  1\d{2}ms\n/
           data[2].should.match /h2   -  2\d{2}ms\n/
@@ -295,11 +295,11 @@ describe 'log.cli', ->
       await nikita
         $ssh: ssh
       , ->
-        @log.cli
+        await @log.cli
           colors: false
           stream: new MyWritable data
           time: false
-        @call $header: 'h1', -> true
+        await @call $header: 'h1', -> true
       data.should.eql [
         "#{host}   h1   ✔\n"
         "#{host}      ♥\n"
@@ -312,11 +312,11 @@ describe 'log.cli', ->
         await nikita
           $ssh: ssh
         , ->
-          @log.cli
+          await @log.cli
             colors: false
             stream: new MyWritable data
             time: false
-          @call $header: 'h1', -> throw Error 'OK'
+          await @call $header: 'h1', -> throw Error 'OK'
       catch err
       data.should.eql [
         "#{host}   h1   ✘\n"

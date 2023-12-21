@@ -43,12 +43,12 @@ describe 'log.fs', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @log.fs
+      await @log.fs
         basedir: tmpdir
         serializer: text: (log) -> "#{log.message}\n"
-      @call ({tools: {events, log}}) ->
+      await @call ({tools: {events, log}}) ->
         log message: 'ok'
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         content: 'ok\n'
 
@@ -74,7 +74,7 @@ describe 'log.fs', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.fs
+        await @log.fs
           basedir: tmpdir
           serializer: text: (log) -> "#{log.message}\n"
           archive: true
@@ -82,7 +82,7 @@ describe 'log.fs', ->
           log message: 'ok'
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/#{dir}/#{ssh?.host or 'local'}.log"
           content: 'ok\n'
 
@@ -99,6 +99,6 @@ describe 'log.fs', ->
           log message: 'ok'
         {stats} = await @fs.base.lstat "#{tmpdir}/latest"
         utils.stats.isSymbolicLink(stats.mode).should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/latest/#{ssh?.host or 'local'}.log"
           content: 'ok\n'

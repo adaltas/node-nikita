@@ -22,10 +22,10 @@ describe 'log.md', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @log.md basedir: tmpdir
-      @call ({tools: {log}})->
+      await @log.md basedir: tmpdir
+      await @call ({tools: {log}})->
         log message: 'ok'
-      @fs.assert
+      await @fs.assert
         trim: true
         filter: [
           /^Entering.*$/mg
@@ -38,10 +38,10 @@ describe 'log.md', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @log.md basedir: tmpdir
-      @call ({tools: {log}}) ->
+      await @log.md basedir: tmpdir
+      await @call ({tools: {log}}) ->
         log message: 'ok', module: 'nikita/test/log/md'
-      @fs.assert
+      await @fs.assert
         trim: true
         filter: [
           /^Entering.*$/mg
@@ -56,18 +56,18 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md
+        await @log.md
           basedir: tmpdir
           enter: false
           serializer:
             'nikita:action:start': ({action: {metadata}}) ->
               return unless metadata.header
               "#{metadata.position.join('.')} #{metadata.header}\n"
-        @call $header: 'h1', ->
-          @call $header: 'h2', (->)
-        @call $header: 'h1', ->
-          @call $header: 'h2', (->)
-        @fs.assert
+        await @call $header: 'h1', ->
+          await @call $header: 'h2', (->)
+        await @call $header: 'h1', ->
+          await @call $header: 'h2', (->)
+        await @fs.assert
           trim: true
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           content: """
@@ -84,9 +84,9 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @call $header: 'header', () -> true
-        @fs.assert
+        await @log.md basedir: tmpdir
+        await @call $header: 'header', () -> true
+        await @fs.assert
           trim: true
           filter: [
             /^Entering.*fs\/assert.*$/mg
@@ -99,15 +99,15 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @call $header: 'h1', ({tools: {log}}) ->
+        await @log.md basedir: tmpdir
+        await @call $header: 'h1', ({tools: {log}}) ->
           log message: 'ok 1'
           await @call ->
             new Promise (resolve) ->
               setTimeout resolve 200
-          @call $header: 'h2', ({tools: {log}}) ->
+          await @call $header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
-        @fs.assert
+        await @fs.assert
           trim: true
           filter: [
             /^Entering.*$/mg
@@ -129,11 +129,11 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @call $header: 'h1', ->
-          @call $header: 'h2', ({tools: {log}}) ->
+        await @log.md basedir: tmpdir
+        await @call $header: 'h1', ->
+          await @call $header: 'h2', ({tools: {log}}) ->
             log message: 'ok 2'
-        @fs.assert
+        await @fs.assert
           trim: true
           filter: [
             /^Entering.*$/mg
@@ -155,10 +155,10 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @execute """
-        echo 'this is a one line output'
-        """
+        await @log.md basedir: tmpdir
+        await @execute """
+          echo 'this is a one line output'
+          """
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
@@ -173,10 +173,10 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @execute """
-        echo 'this is a first line'
-        """
+        await @log.md basedir: tmpdir
+        await @execute """
+          echo 'this is a first line'
+          """
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
@@ -189,8 +189,8 @@ describe 'log.md', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}})->
-        @log.md basedir: tmpdir
-        @execute """
+        await @log.md basedir: tmpdir
+        await @execute """
         echo 'this is a first line'
         echo 'this is a second line'
         """
@@ -214,7 +214,7 @@ describe 'log.md', ->
         await @log.md basedir: tmpdir, enter: false
         await @call ({tools: {log}}) ->
           log message: '1 + new line', type: 'diff'
-        @fs.base.readFile
+        await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -231,7 +231,7 @@ describe 'log.md', ->
         await @log.md basedir: tmpdir, enter: false
         await @call (->)
         await @call (->)
-        @fs.base.readFile
+        await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -246,7 +246,7 @@ describe 'log.md', ->
         await @call $log: false, (->)
         await @call (->)
         await @call $log: false, (->)
-        @fs.base.readFile
+        await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -262,7 +262,7 @@ describe 'log.md', ->
           $unless_exists: "#{tmpdir}/toto"
           $if: -> @call -> false
         , (->)
-        @fs.base.readFile
+        await @fs.base.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
