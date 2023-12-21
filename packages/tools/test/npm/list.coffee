@@ -12,10 +12,10 @@ describe 'tools.npm.list', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.npm.uninstall
+      await @tools.npm.uninstall
         name: 'csv-parse'
         cwd: tmpdir
-      @tools.npm
+      await @tools.npm
         name: 'csv-parse'
         cwd: tmpdir
       {packages} = await @tools.npm.list
@@ -26,10 +26,10 @@ describe 'tools.npm.list', ->
     nikita
       $ssh: ssh
     , ->
-      @tools.npm.uninstall
+      await @tools.npm.uninstall
         name: 'csv-parse'
         global: true
-      @tools.npm
+      await @tools.npm
         name: 'csv-parse'
         global: true
       {packages} = await @tools.npm.list

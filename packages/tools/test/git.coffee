@@ -13,7 +13,7 @@ describe 'tools.git', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.extract
+      await @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
         target: "#{tmpdir}"
       {$status} = await @tools.git
@@ -30,10 +30,10 @@ describe 'tools.git', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.extract
+      await @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
         target: "#{tmpdir}"
-      @tools.git
+      await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
       {$status} = await @tools.git
@@ -52,12 +52,12 @@ describe 'tools.git', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.extract
+      await @tools.extract
         source: "#{__dirname}/resources/repo.git.zip"
         target: "#{tmpdir}"
-      @fs.mkdir
+      await @fs.mkdir
         target: "#{tmpdir}/my_repo"
-      @tools.git
+      await @tools.git
         source: "#{tmpdir}/repo.git"
         target: "#{tmpdir}/my_repo"
       .should.be.rejectedWith

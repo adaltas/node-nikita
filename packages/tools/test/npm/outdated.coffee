@@ -12,10 +12,10 @@ describe 'tools.npm.outdated', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.npm.uninstall
+      await @tools.npm.uninstall
         name: 'csv-parse@'
         cwd: tmpdir
-      @tools.npm
+      await @tools.npm
         name: 'csv-parse@3.0.0'
         cwd: tmpdir
       {packages} = await @tools.npm.outdated
@@ -28,10 +28,10 @@ describe 'tools.npm.outdated', ->
     nikita
       $ssh: ssh
     , ->
-      @tools.npm.uninstall
+      await @tools.npm.uninstall
         name: 'csv-parse'
         global: true
-      @tools.npm
+      await @tools.npm
         name: 'csv-parse@3.0.0'
         global: true
       {packages} = await @tools.npm.outdated

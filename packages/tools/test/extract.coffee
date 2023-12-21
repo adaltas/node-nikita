@@ -113,7 +113,7 @@ describe 'tools.extract', ->
         target: tmpdir
         strip: 1
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_file"
 
   they 'should strip component level 2', ({ssh}) ->
@@ -127,7 +127,7 @@ describe 'tools.extract', ->
         target: tmpdir
         strip: 2
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_file"
         not: true
   

@@ -20,7 +20,7 @@ describe 'tools.rubygems.fetch', ->
       $status.should.be.true()
       filename.should.eql 'execjs-2.7.0.gem'
       filepath.should.eql "#{tmpdir}/execjs-2.7.0.gem"
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/execjs-2.7.0.gem"
 
   they 'without a version', ({ssh}) ->
@@ -35,5 +35,5 @@ describe 'tools.rubygems.fetch', ->
       $status.should.be.true()
       filename.should.eql 'execjs-2.9.1.gem'
       filepath.should.eql "#{tmpdir}/execjs-2.9.1.gem"
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/execjs-2.9.1.gem"

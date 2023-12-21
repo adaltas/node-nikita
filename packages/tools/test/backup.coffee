@@ -22,16 +22,16 @@ describe 'tools.backup', ->
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/backup"
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
-        @wait 1000
+        await @wait 1000
         {$status, filename} = await @tools.backup
           name: 'my_backup'
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/backup"
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
 
@@ -53,7 +53,7 @@ describe 'tools.backup', ->
         name.should.eql 'my_backup'
         filename.should.match /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z\.tgz/
         target.should.eql "#{base_dir}/my_backup/#{filename}"
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/backup/my_backup/#{filename}"
           filetype: 'file'
 
@@ -69,6 +69,6 @@ describe 'tools.backup', ->
           command: "echo hello"
           target: "#{tmpdir}/backup"
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/backup/my_backup/#{filename}"
           content: "hello\n"

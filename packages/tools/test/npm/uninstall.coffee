@@ -65,12 +65,12 @@ describe 'tools.npm.uninstall', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir "#{tmpdir}/1_dir"
-        @fs.mkdir "#{tmpdir}/2_dir"
-        @tools.npm
+        await @fs.mkdir "#{tmpdir}/1_dir"
+        await @fs.mkdir "#{tmpdir}/2_dir"
+        await @tools.npm
           name: 'csv-parse'
           cwd: "#{tmpdir}/1_dir"
-        @tools.npm
+        await @tools.npm
           name: 'csv-parse'
           cwd: "#{tmpdir}/2_dir"
         {$status} = await @tools.npm.uninstall

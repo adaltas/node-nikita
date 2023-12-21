@@ -30,8 +30,8 @@ describe 'tools.cron.remove', ->
       nikita
         $ssh: ssh
       , ->
-        @service 'cronie'
-        @tools.cron.add
+        await @service 'cronie'
+        await @tools.cron.add
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         {$status} = await @tools.cron.remove

@@ -71,8 +71,8 @@ describe 'tools.npm', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.mkdir "#{tmpdir}/1_dir"
-        @fs.mkdir "#{tmpdir}/2_dir"
+        await @fs.mkdir "#{tmpdir}/1_dir"
+        await @fs.mkdir "#{tmpdir}/2_dir"
         {$status} = await @tools.npm
           cwd: "#{tmpdir}/1_dir"
           name: 'csv-parse'
@@ -120,7 +120,7 @@ describe 'tools.npm', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @tools.npm
+        await @tools.npm
           cwd: tmpdir
           name: 'csv-parse@3.0.0'
         {$status} = await @tools.npm

@@ -75,7 +75,7 @@ describe 'tools.cron.add', ->
       nikita
         $ssh: ssh
       , ->
-        @service 'cronie'
+        await @service 'cronie'
         {$status} = await @tools.cron.add
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
@@ -84,7 +84,7 @@ describe 'tools.cron.add', ->
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
         $status.should.be.false()
-        @tools.cron.remove
+        await @tools.cron.remove
           command: "/bin/true #{rand}/toto - *.mp3"
           when: '0 * * * *'
 
@@ -94,7 +94,7 @@ describe 'tools.cron.add', ->
         nikita
           $ssh: ssh
         , ->
-          @service 'cronie'
+          await @service 'cronie'
           {$status} = await @tools.cron.add
             command: "/bin/true #{rand}"
             when: '0 * * * *'
@@ -115,7 +115,7 @@ describe 'tools.cron.add', ->
             when: '0 * * * *'
             match: /.*bin.*/
           $status.should.be.false()
-          @tools.cron.remove
+          await @tools.cron.remove
             command: "/bin/false #{rand}"
             when: '0 * * * *'
 
@@ -123,7 +123,7 @@ describe 'tools.cron.add', ->
         nikita
           $ssh: ssh
         , ->
-          @service 'cronie'
+          await @service 'cronie'
           {$status} = await @tools.cron.add
             command: "/bin/true #{rand}"
             when: '0 * * * *'
@@ -144,7 +144,7 @@ describe 'tools.cron.add', ->
             when: '0 * * * *'
             match: '.*bin.*'
           $status.should.be.false()
-          @tools.cron.remove
+          await @tools.cron.remove
             command: "/bin/false #{rand}"
             when: '0 * * * *'
 
@@ -154,8 +154,8 @@ describe 'tools.cron.add', ->
         nikita
           $ssh: ssh
         , ->
-          @service 'cronie'
-          @tools.cron.add
+          await @service 'cronie'
+          await @tools.cron.add
             command: 'azertyytreza'
             when: '1 2 3 4 5'
             exec: true

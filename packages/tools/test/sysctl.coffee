@@ -25,7 +25,7 @@ describe 'tools.sysctl', ->
           'vm.swappiness': 10
           'vm.overcommit_memory': 1
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 10
@@ -37,7 +37,7 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 10
@@ -49,7 +49,7 @@ describe 'tools.sysctl', ->
           'vm.swappiness': 1
         load: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 1
@@ -60,7 +60,7 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 1
@@ -79,7 +79,7 @@ describe 'tools.sysctl', ->
         merge: true
         load: false
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 10
@@ -91,19 +91,19 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 1
         
         """
-      @tools.sysctl
+      await @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
         merge: true
         load: false
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/sysctl.conf"
         content: """
         vm.swappiness = 10
@@ -115,22 +115,22 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.sysctl
+      await @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
         load: false
         backup: true
-      @execute.assert
+      await @execute.assert
         bash: true
         command: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
-      @tools.sysctl
+      await @tools.sysctl
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 20
         load: false
         backup: true
-      @execute.assert
+      await @execute.assert
         bash: true
         command: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '2' ]]"
 
@@ -141,7 +141,7 @@ describe 'tools.sysctl', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file
+        await @file
           target: "#{tmpdir}/sysctl.conf"
           content: """
           # System Kernel Variables
@@ -156,7 +156,7 @@ describe 'tools.sysctl', ->
           merge: true
           load: false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/sysctl.conf"
           content: """
           vm.swappiness = 10
@@ -168,7 +168,7 @@ describe 'tools.sysctl', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file
+        await @file
           target: "#{tmpdir}/sysctl.conf"
           content: """
           # System Kernel Variables
@@ -184,7 +184,7 @@ describe 'tools.sysctl', ->
           comment: true
           load: false
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/sysctl.conf"
           content: """
           # System Kernel Variables
@@ -198,20 +198,20 @@ describe 'tools.sysctl', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @file
+        await @file
           target: "#{tmpdir}/sysctl.conf"
           content: """
           # Key = Value
           vm.swappiness = 1
           """
-        @tools.sysctl
+        await @tools.sysctl
           target: "#{tmpdir}/sysctl.conf"
           properties:
             'vm.swappiness': 10
           merge: true
           comment: true
           load: false
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/sysctl.conf"
           content: """
           # Key = Value

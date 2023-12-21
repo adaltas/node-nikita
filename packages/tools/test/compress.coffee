@@ -12,14 +12,14 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
       {$status} = await @tools.compress
         source: "#{tmpdir}/a_dir/a_file"
         target: "#{tmpdir}/a_dir.tgz"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir.tgz"
 
   they 'should see extension .zip', ({ssh}) ->
@@ -27,14 +27,14 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
       {$status} = await @tools.compress
         source: "#{tmpdir}/a_dir/a_file"
         target: "#{tmpdir}/a_dir.zip"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir.zip"
 
   they 'should see extension .tar.bz2', ({ssh}) ->
@@ -42,14 +42,14 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
       {$status} = await @tools.compress
         source: "#{tmpdir}/a_dir/a_file"
         target: "#{tmpdir}/a_dir.tar.bz2"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir.tar.bz2"
 
   they 'should see extension .tar.xz', ({ssh}) ->
@@ -57,14 +57,14 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
       {$status} = await @tools.compress
         source: "#{tmpdir}/a_dir/a_file"
         target: "#{tmpdir}/a_dir.tar.xz"
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir.tar.xz"
   
   they 'remove source file with clean option', ({ssh}) ->
@@ -72,7 +72,7 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'hello'
       {$status} = await @tools.compress
@@ -80,7 +80,7 @@ describe 'tools.compress', ->
         target: "#{tmpdir}/a_dir.tar.xz"
         clean: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir/a_file"
         not: true
   
@@ -89,7 +89,7 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/a_dir/a_file"
         content: 'hello'
       {$status} = await @tools.compress
@@ -97,7 +97,7 @@ describe 'tools.compress', ->
         target: "#{tmpdir}/a_dir.tar.xz"
         clean: true
       $status.should.be.true()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/a_dir"
         not: true
 
@@ -106,7 +106,7 @@ describe 'tools.compress', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @tools.compress
+      await @tools.compress
         source: "a_file.invalid"
         target: "a_file.invalid"
       .should.be.rejectedWith

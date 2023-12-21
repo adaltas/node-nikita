@@ -16,7 +16,7 @@ describe 'tools.repo', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       # Write a local file, tools.repo will download to the remote destination
-      @file
+      await @file
         $ssh: false
         target: "#{tmpdir}/CentOS.repo"
         content: """
@@ -27,7 +27,7 @@ describe 'tools.repo', ->
         gpgcheck=1
         gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
         """
-      @fs.mkdir "#{tmpdir}/repo"
+      await @fs.mkdir "#{tmpdir}/repo"
       {$status} = await @tools.repo
         source: "#{tmpdir}/CentOS.repo"
         target: "#{tmpdir}/repo/centos.repo"
@@ -36,14 +36,14 @@ describe 'tools.repo', ->
         source: "#{tmpdir}/CentOS.repo"
         target: "#{tmpdir}/repo/centos.repo"
       {$status} = await $status.should.be.false()
-      @fs.assert "#{tmpdir}/repo/centos.repo"
+      await @fs.assert "#{tmpdir}/repo/centos.repo"
   
   they 'Write with content option', ({ssh}) ->
     nikita
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.mkdir "#{tmpdir}/repo"
+      await @fs.mkdir "#{tmpdir}/repo"
       {$status} = await @tools.repo
         target: "#{tmpdir}/repo/centos.repo"
         content:
@@ -60,7 +60,7 @@ describe 'tools.repo', ->
             'baseurl':'http://mirror.centos.org/centos/$releasever/os/$basearch/'
             'gpgcheck':'0'
       $status.should.be.false()
-      @fs.assert
+      await @fs.assert
         target: "#{tmpdir}/repo/centos.repo"
         content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
   
