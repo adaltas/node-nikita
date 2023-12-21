@@ -12,16 +12,17 @@ describe 'session.error', ->
   
     it 'error in last action but return valid result', ->
       session ->
-        @call (->)
-        @call ->
-          throw Error 'KO'
+        await @call (->)
+        try
+          await @call ->
+            throw Error 'KO'
         'OK'
       .should.be.resolvedWith 'OK'
       
     it 'thrown error sync in last action', ->
       session ->
-        @call (->)
-        @call ->
+        await @call (->)
+        await @call ->
           throw Error 'OK'
       .should.be.rejectedWith 'OK'
       
@@ -31,14 +32,14 @@ describe 'session.error', ->
         # since we cant stop the execution flow if an action failed.
         await @call ->
           throw Error 'OK'
-        @call ->
+        await @call ->
           throw Error 'KO'
       .should.be.rejectedWith 'OK'
         
     it 'thrown error async in last action', ->
       session ->
-        @call (->)
-        @call ->
+        await @call (->)
+        await @call ->
           new Promise (resolve, reject) ->
             setImmediate -> reject Error 'OK'
       .should.be.rejectedWith 'OK'
@@ -48,6 +49,6 @@ describe 'session.error', ->
         await @call ->
           new Promise (resolve, reject) ->
             setImmediate -> reject Error 'OK'
-        @call ->
+        await @call ->
           throw Error 'KO'
       .should.be.rejectedWith 'OK'

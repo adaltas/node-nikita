@@ -104,8 +104,8 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita.call $debug: ws, ({tools: {log}}) ->
         log 'Parent message'
-        @call (->)
-        @call ({tools: {log}}) ->
+        await @call (->)
+        await @call ({tools: {log}}) ->
           log 'Child message'
       data.join().should.eql [
         '\u001b[32m[1.1.INFO call] Parent message\u001b[39m\n'
@@ -128,8 +128,8 @@ describe 'metadata "debug"', ->
       ws.write = (chunk) -> data.push chunk
       await nikita
       .call ->
-        @call (->)
-        @call $debug: ws, ({tools: {log}}) ->
+        await @call (->)
+        await @call $debug: ws, ({tools: {log}}) ->
           log 'Child message'
       .call ({tools: {log}}) ->
         log 'Sibling message'

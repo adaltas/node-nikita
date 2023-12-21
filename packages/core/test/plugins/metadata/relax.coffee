@@ -32,8 +32,9 @@ describe 'plugins.metadata.relax', ->
     # error.message.should.eql 'catchme'
     # Error not thrown in last child
     result = await nikita $relax: true, ->
-      @call -> throw Error 'ohno'
-      @call -> 'catchme'
+      try
+        await @call -> throw Error 'ohno'
+      await @call -> 'catchme'
     result.should.eql 'catchme'
 
   it.skip 'sync with error throw in child', ->

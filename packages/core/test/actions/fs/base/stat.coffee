@@ -76,10 +76,10 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.writeFile
+      await @fs.base.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      @fs.base.symlink
+      await @fs.base.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_file"
       {stats} = await @fs.base.lstat
@@ -93,9 +93,9 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.mkdir
+      await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.symlink
+      await @fs.base.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_dir"
       {stats} = await @fs.base.lstat

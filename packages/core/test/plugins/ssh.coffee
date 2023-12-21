@@ -48,11 +48,11 @@ describe '`plugins.ssh`', ->
     
     they 'ssh.open', ({ssh}) ->
       nikita ->
-        @ssh.open ssh
+        await @ssh.open ssh
         try
           {stdout: whoami} = await @execute
             command: 'whoami'
             trim: true
           whoami.should.eql ssh.username
         finally
-          @ssh.close()
+          await @ssh.close()

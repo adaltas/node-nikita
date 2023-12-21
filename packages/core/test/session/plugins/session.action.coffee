@@ -20,10 +20,10 @@ describe 'session.plugins.session.action', ->
                   resolve (action) ->
                     action.config.new_key = 'new value'
                     handler.call action.context, action
-        context.registry.register ['an', 'action'],
+        await context.registry.register ['an', 'action'],
           config: key: 'value'
           handler: ({config}) -> config
-        context.an.action().should.be.finally.containEql
+        await context.an.action().should.be.finally.containEql
           key: 'value'
           new_key: 'new value'
           $status: false
@@ -50,9 +50,9 @@ describe 'session.plugins.session.action', ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
-        context.registry.register ['an', 'action'],
+        await context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        context
+        await context
         .an.action()
         .should.be.rejectedWith 'Catch me'
           
@@ -64,9 +64,9 @@ describe 'session.plugins.session.action', ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
-        context.registry.register ['an', 'action'],
+        await context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        context
+        await context
         .an.action()
       .should.be.rejectedWith 'Catch me'
           
@@ -79,9 +79,9 @@ describe 'session.plugins.session.action', ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
                 else resolve handler
-        context.registry.register ['an', 'action'],
+        await context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        context
+        await context
         .an.action()
         .should.be.rejectedWith 'Catch me'
         
@@ -94,8 +94,8 @@ describe 'session.plugins.session.action', ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
                 else resolve handler
-        context.registry.register ['an', 'action'],
+        await context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        context
+        await context
         .an.action()
       .should.be.rejectedWith 'Catch me'

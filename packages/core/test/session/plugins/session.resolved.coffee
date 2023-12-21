@@ -15,13 +15,13 @@ describe 'session.plugins.session.resolved', ->
         'hooks':
           'nikita:resolved': ({action, output}) ->
             stack.push 'end'
-      @call ->
+      await @call ->
         new Promise (resolve) ->
           setTimeout ->
             stack.push '1'
             resolve()
           , 50
-      @call ->
+      await @call ->
         new Promise (resolve) ->
           setTimeout ->
             stack.push '2'

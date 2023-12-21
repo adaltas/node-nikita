@@ -15,10 +15,10 @@ describe 'session.plugins.session.register', ->
           'nikita:register': ({action}, handler)->
             action.config?.key = 'new value'
             handler
-      @registry.register ['an', 'action'],
+      await @registry.register ['an', 'action'],
         config: key: 'value'
         handler: (->)
-      @an.action ({config}) ->
+      await @an.action ({config}) ->
         config.key.should.eql 'new value'
 
   it 'alter action - async', ->
@@ -30,10 +30,10 @@ describe 'session.plugins.session.register', ->
               setImmediate ->
                 action.config?.key = 'new value'
                 resolve handler
-      context.registry.register ['an', 'action'],
+      await context.registry.register ['an', 'action'],
         config: key: 'value'
         handler: (->)
-      context.an.action ({config}) ->
+      await context.an.action ({config}) ->
         config.key.should.eql 'new value'
           
   it 'handler is undefined', ->

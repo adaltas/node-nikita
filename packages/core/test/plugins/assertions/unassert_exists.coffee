@@ -39,10 +39,10 @@ describe 'plugin.assertions unassert_exists', ->
           "#{tmpdir}/file_2"
         ]
       , ->
-        @fs.base.writeFile
+        await @fs.base.writeFile
           content: ''
           target: "#{tmpdir}/file_1"
-        @fs.base.writeFile
+        await @fs.base.writeFile
           content: ''
           target: "#{tmpdir}/file_2"
       .should.be.rejected()

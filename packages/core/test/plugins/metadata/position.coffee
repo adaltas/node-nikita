@@ -19,9 +19,9 @@ describe 'plugins.metadata.position', ->
     .call -> true
     .call ({metadata}) ->
       metadata.position.should.eql [0, 1]
-      @call ({metadata}) ->
+      await @call ({metadata}) ->
         metadata.position.should.eql [0, 1, 0]
-      @call ({metadata}) ->
+      await @call ({metadata}) ->
         metadata.position.should.eql [0, 1, 1]
 
   it 'honors `metadata.bastard`', ->
@@ -29,7 +29,7 @@ describe 'plugins.metadata.position', ->
     .call -> true
     .call ({metadata}) ->
       metadata.position.should.eql [0, 1]
-      @call $bastard: true, ({metadata}) ->
+      await @call $bastard: true, ({metadata}) ->
         metadata.position.should.eql [0, 1, 0]
-      @call ({metadata}) ->
+      await @call ({metadata}) ->
         metadata.position.should.eql [0, 1, 0]

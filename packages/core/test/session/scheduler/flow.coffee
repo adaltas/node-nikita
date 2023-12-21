@@ -45,13 +45,13 @@ describe 'session.scheduler.flow', ->
   it 'with in action containing children and 2 out child actions sequentially', ->
     stack = []
     n = nikita () ->
-      @call () ->
+      await @call () ->
         new Promise (resolve, reject) ->
           setTimeout ->
             stack.push 1
             resolve()
           , 100
-      @call () ->
+      await @call () ->
         new Promise (resolve, reject) ->
           setTimeout ->
             stack.push 2

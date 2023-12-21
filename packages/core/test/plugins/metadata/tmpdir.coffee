@@ -187,7 +187,7 @@ describe 'plugins.metadata.tmpdir', ->
         $templated: true
       , ->
         try
-          @call $tmpdir: true, $dirty: true, (->)
+          await @call $tmpdir: true, $dirty: true, (->)
           {exists} = await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
           exists.should.be.true()
         finally
@@ -198,6 +198,6 @@ describe 'plugins.metadata.tmpdir', ->
         $ssh: ssh
         $templated: true
       , ->
-        @call $tmpdir: true, $dirty: false, (->)
-        @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
+        await @call $tmpdir: true, $dirty: false, (->)
+        await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
         .should.finally.match exists: false

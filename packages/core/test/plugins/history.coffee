@@ -9,15 +9,15 @@ describe 'plugins.history', ->
 
     it 'get previous action', ->
       nikita.call ->
-        @call -> 'mayday'
-        @call ({parent}) ->
+        await @call -> 'mayday'
+        await @call ({parent}) ->
           parent.children[0].output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous action children', ->
       nikita.call ->
-        @call -> @call -> 'mayday'
-        @call ({parent}) ->
+        await @call -> @call -> 'mayday'
+        await @call ({parent}) ->
           parent.children[0].children[0].output
       .should.be.resolvedWith 'mayday'
               
@@ -29,15 +29,15 @@ describe 'plugins.history', ->
 
     it 'get previous action', ->
       nikita.call ->
-        @call -> 'mayday'
-        @call ({siblings}) ->
+        await @call -> 'mayday'
+        await @call ({siblings}) ->
           siblings.slice(-1)[0].output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous slibling children', ->
       nikita.call ->
-        @call -> @call -> 'mayday'
-        @call ({siblings}) ->
+        await @call -> @call -> 'mayday'
+        await @call ({siblings}) ->
           siblings.slice(-1)[0].children[0].output
       .should.be.resolvedWith 'mayday'
               
@@ -45,25 +45,25 @@ describe 'plugins.history', ->
     
     it 'an alias of last element in siblings', ->
       nikita.call ->
-        @call -> 'send'
-        @call -> 'mayday'
-        @call $raw_output: true, ({sibling, siblings}) ->
+        await @call -> 'send'
+        await @call -> 'mayday'
+        await @call $raw_output: true, ({sibling, siblings}) ->
           should(sibling is siblings[siblings.length - 1]).be.true()
           sibling.should.eql siblings[siblings.length - 1]
 
     it 'get previous action', ->
       nikita.call ->
-        @call -> 'send'
-        @call -> 'mayday'
-        @call ({sibling}) ->
+        await @call -> 'send'
+        await @call -> 'mayday'
+        await @call ({sibling}) ->
           sibling.output
       .should.be.resolvedWith 'mayday'
 
     it 'get previous slibling children', ->
       nikita.call ->
-        @call -> 'send'
-        @call -> @call -> 'mayday'
-        @call ({sibling}) ->
+        await @call -> 'send'
+        await @call -> @call -> 'mayday'
+        await @call ({sibling}) ->
           sibling.children[0].output
       .should.be.resolvedWith 'mayday'
               
@@ -71,6 +71,6 @@ describe 'plugins.history', ->
 
     it 'child not attached to parent', ->
       nikita.call ->
-        @call $bastard: true, (->)
-        @call ({parent}) ->
+        await @call $bastard: true, (->)
+        await @call ({parent}) ->
           parent.children.length.should.eql 0

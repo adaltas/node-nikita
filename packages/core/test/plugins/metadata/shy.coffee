@@ -7,8 +7,8 @@ describe 'plugins.metadata.shy', ->
 
   it 'dont alter status', ->
     {$status} = await nikita ->
-      @call $shy: true, -> true
-      @call -> false
+      await @call $shy: true, -> true
+      await @call -> false
       undefined
     $status.should.eql false
 

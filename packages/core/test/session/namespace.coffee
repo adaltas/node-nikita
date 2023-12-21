@@ -11,13 +11,11 @@ describe 'session.namespace', ->
   it 'call registered action', ->
     nikita ({registry}) ->
       registry.register
-        'action':
-          '': handler: ({metadata}) ->
-            @an.action()
-            "action value, depth #{metadata.depth}"
+        'action': handler: ({metadata}) ->
+          await @an.action()
+          "action value, depth #{metadata.depth}"
         'an':
-          'action':
-            '': handler: ({metadata}) ->
+          'action': handler: ({metadata}) ->
               "an.action value, depth #{metadata.depth}"
       result = await @action()
       result.should.eql 'action value, depth 1'
@@ -27,14 +25,12 @@ describe 'session.namespace', ->
   it 'chain calls', ->
     nikita ({registry}) ->
       registry.register
-        'action':
-          '': handler: ({metadata}) ->
-            @an.action()
-            "action value, depth #{metadata.depth}"
+        'action': handler: ({metadata}) ->
+          await @an.action()
+          "action value, depth #{metadata.depth}"
         'an':
-          'action':
-            '': handler: ({metadata}) ->
-              "an.action value, depth #{metadata.depth}"
+          'action': handler: ({metadata}) ->
+            "an.action value, depth #{metadata.depth}"
       result = await @action().action()
       result.should.eql 'action value, depth 1'
       result = await @an.action().an.action()

@@ -21,7 +21,7 @@ describe 'actions.execute.wait', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @call ->
+      await @call ->
         setTimeout ->
           nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
         , 100
@@ -41,7 +41,7 @@ describe 'actions.execute.wait', ->
           "test -d #{tmpdir}"
         ]
       $status.should.be.false()
-      @call ->
+      await @call ->
         setTimeout ->
           nikita($ssh: ssh?.config)
           .fs.mkdir "#{tmpdir}/file_1"
@@ -62,7 +62,7 @@ describe 'actions.execute.wait', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @call ->
+        await @call ->
           setTimeout ->
             nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/a_file"
           , 200
@@ -121,7 +121,7 @@ describe 'actions.execute.wait', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @call ->
+        await @call ->
           setTimeout ->
             nikita($ssh: ssh?.config).fs.mkdir "#{tmpdir}/file"
           , 200
@@ -158,7 +158,7 @@ describe 'actions.execute.wait', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir, uuid}}) ->
-        @call -> setImmediate ->
+        await @call -> setImmediate ->
           nikita
             $ssh: ssh?.config
           .wait 200
@@ -211,7 +211,7 @@ describe 'actions.execute.wait', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @call -> setImmediate ->
+        await @call -> setImmediate ->
           nikita
             $ssh: ssh?.config
           .wait 200
@@ -228,8 +228,9 @@ describe 'actions.execute.wait', ->
           ]
           interval: 50
           quorum: true
+          concurrency: 1
         $status.should.be.true()
-        @fs.assert
+        await @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n'
   

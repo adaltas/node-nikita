@@ -14,13 +14,13 @@ describe 'plugins.metadata.depth', ->
     nikita
     .call ({metadata}) ->
       metadata.depth.should.eql 1
-      @call ({metadata}) ->
+      await @call ({metadata}) ->
         metadata.depth.should.eql 2
-        @call ({metadata}) ->
+        await @call ({metadata}) ->
           metadata.depth.should.eql 3
-      @call ({metadata}) ->
+      await @call ({metadata}) ->
         metadata.depth.should.eql 2
-        @call ({metadata}) ->
+        await @call ({metadata}) ->
           metadata.depth.should.eql 3
 
   it 'start at depth 0 with registered action', ->

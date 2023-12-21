@@ -50,9 +50,9 @@ describe 'session.creation', ->
               resolve()
             , 100
       , ->
-        @call ({metadata}) ->
+        await @call ({metadata}) ->
           stack.push metadata.position.join ':'
-        @call ({metadata}) ->
+        await @call ({metadata}) ->
           stack.push metadata.position.join ':'
       stack.should.eql ['plugin', '0:0', '0:1']
           

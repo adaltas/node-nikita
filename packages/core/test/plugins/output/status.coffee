@@ -35,35 +35,35 @@ describe 'plugins.output.status', ->
 
     it '`true` when child return `true`', ->
       {$status} = await nikita.call ->
-        @call -> false
-        @call -> true
+        await @call -> false
+        await @call -> true
       $status.should.be.true()
 
     it '`false` when child return `false`', ->
       {$status} = await nikita.call ->
-        @call -> true
-        @call -> false
+        await @call -> true
+        await @call -> false
       $status.should.be.false()
         
   describe 'inherit', ->
 
     it '`true` when children are [`false`, `true`]', ->
       {$status} = await nikita.call count: 0, ->
-        @call -> false
-        @call -> true
+        await @call -> false
+        await @call -> true
         {}
       $status.should.be.true()
 
     it '`true` when children are [`true`, `false`]', ->
       {$status} = await nikita.call count: 0, ->
-        @call -> false
-        @call -> true
+        await @call -> false
+        await @call -> true
         {}
       $status.should.be.true()
 
     it '`false` when children are [`false`, `false`]', ->
       {$status} = await nikita.call count: 0, ->
-        @call -> false
-        @call -> false
+        await @call -> false
+        await @call -> false
         {}
       $status.should.be.false()

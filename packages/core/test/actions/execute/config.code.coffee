@@ -141,11 +141,11 @@ describe 'actions.execute.config.code', ->
     
     they 'should honor code skipped', ({ssh}) ->
       nikita $ssh: ssh, ->
-        @execute
+        await @execute
           command: "exit 42"
           code: [, 42]
         .should.be.finally.containEql $status: false
-        @execute
+        await @execute
           command: "exit 42"
           code: [, [42, 43]]
         .should.be.finally.containEql $status: false

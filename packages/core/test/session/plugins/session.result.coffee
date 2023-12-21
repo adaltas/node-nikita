@@ -10,7 +10,7 @@ import test from '../../test.coffee'
 describe 'session.plugins.session.result', ->
   return unless test.tags.api
 
-  it 'is called before action and children resolved', ->
+  it 'called from root session', ->
     called = false
     await session $plugins: [
       ->
@@ -22,7 +22,7 @@ describe 'session.plugins.session.result', ->
     ], (->)
     called.should.be.true()
 
-  it 'is called before action and children resolved', ->
+  it 'called before action and children resolved', ->
     stack = []
     await session $plugins: [
       history
@@ -30,23 +30,25 @@ describe 'session.plugins.session.result', ->
       ->
         hooks: 'nikita:result': ({action}, handler) ->
           await new Promise (resolved) ->
-            stack.push 'session:result:'+action.metadata.depth
+            stack.push 'session:result:'+action.metadata.position.join(',')
             setImmediate resolved
           handler
     ], ->
       stack.push 'parent:handler:start'
-      @call -> new Promise (resolve) -> setImmediate ->
-        stack.push 'child:1'
-        resolve()
-      @call -> stack.push 'child:2'
+      await @call ->
+        new Promise (resolve) -> setImmediate ->
+          stack.push 'child:1'
+          resolve()
+      await @call ->
+        stack.push 'child:2'
       stack.push 'parent:handler:end'
       null
     stack.should.eql [
       'parent:handler:start'
-      'parent:handler:end'
       'child:1'
-      'session:result:1'
+      'session:result:0,0'
       'child:2'
-      'session:result:1'
+      'session:result:0,1'
+      'parent:handler:end'
       'session:result:0'
     ]
