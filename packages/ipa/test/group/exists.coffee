@@ -11,7 +11,7 @@ describe 'ipa.group.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: test.ipa,
+      await @ipa.group.del connection: test.ipa,
         cn: 'group_exists'
       {$status, exists} = await @ipa.group.exists connection: test.ipa,
         cn: 'group_exists'
@@ -22,7 +22,7 @@ describe 'ipa.group.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group connection: test.ipa,
+      await @ipa.group connection: test.ipa,
         cn: 'group_exists'
       {$status, exists} = await @ipa.group.exists connection: test.ipa,
         cn: 'admins'

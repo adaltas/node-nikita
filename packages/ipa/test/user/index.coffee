@@ -69,7 +69,7 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del
+        await @ipa.user.del
           uid: 'user_add'
           connection: test.ipa
         {$status, result} = await @ipa.user
@@ -86,9 +86,9 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del connection: test.ipa,
+        await @ipa.user.del connection: test.ipa,
           uid: 'user_add'
-        @ipa.user
+        await @ipa.user
           uid: 'user_add'
           attributes:
             givenname: 'Firstname 1'
@@ -109,7 +109,7 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del
+        await @ipa.user.del
           uid: 'user_add'
           connection: test.ipa
         {$status} = await @ipa.user
@@ -133,10 +133,10 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del
+        await @ipa.user.del
           connection: test.ipa
           uid: 'user_add'
-        @ipa.user
+        await @ipa.user
           attributes:
             givenname: 'Firstname 1'
             sn: 'Lastname'
@@ -155,10 +155,10 @@ describe 'ipa.user', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del
+        await @ipa.user.del
           connection: test.ipa
           uid: 'user_add'
-        @ipa.user
+        await @ipa.user
           attributes:
             givenname: 'Firstname 1'
             sn: 'Lastname'

@@ -11,14 +11,14 @@ describe 'ipa.service', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service.del
+      await @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
       {$status} = await @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
       $status.should.be.true()
-      @ipa.service.del
+      await @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
 
@@ -26,16 +26,16 @@ describe 'ipa.service', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service.del
+      await @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
-      @ipa.service
+      await @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
       {$status} = await @ipa.service
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa
       $status.should.be.false()
-      @ipa.service.del
+      await @ipa.service.del
         principal: 'service_add/ipa.nikita.local',
         connection: test.ipa

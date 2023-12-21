@@ -12,7 +12,7 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: test.ipa,
+      await @ipa.group.del connection: test.ipa,
         cn: 'group_add'
       {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
@@ -25,7 +25,7 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: test.ipa,
+      await @ipa.group.del connection: test.ipa,
         cn: 'group_add'
       {$status} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
@@ -40,7 +40,7 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: test.ipa,
+      await @ipa.group.del connection: test.ipa,
         cn: 'group_add'
       {$status, result} = await @ipa.group connection: test.ipa,
         cn: 'group_add'
@@ -66,9 +66,9 @@ describe 'ipa.group', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group.del connection: test.ipa,
+      await @ipa.group.del connection: test.ipa,
         cn: 'group_add'
-      @ipa.group connection: test.ipa,
+      await @ipa.group connection: test.ipa,
         cn: 'group_add'
       {$status, result} = await @ipa.group connection: test.ipa,
         cn: 'group_add'

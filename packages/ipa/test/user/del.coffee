@@ -21,7 +21,7 @@ describe 'ipa.user.del', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user.del connection: test.ipa,
+        await @ipa.user.del connection: test.ipa,
           uid: 'test_user_del'
         {$status} = await @ipa.user.del connection: test.ipa,
           uid: 'test_user_del'
@@ -31,7 +31,7 @@ describe 'ipa.user.del', ->
       nikita
         $ssh: ssh
       , ->
-        @ipa.user connection: test.ipa,
+        await @ipa.user connection: test.ipa,
           uid: 'test_user_del'
           attributes:
             givenname: 'User'

@@ -11,7 +11,7 @@ describe 'ipa.group.del', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.group connection: test.ipa,
+      await @ipa.group connection: test.ipa,
         cn: 'group_del'
       {$status} = await @ipa.group.del connection: test.ipa,
         cn: 'group_del'

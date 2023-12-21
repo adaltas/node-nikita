@@ -11,7 +11,7 @@ describe 'ipa.service.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service.del connection: test.ipa,
+      await @ipa.service.del connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
       {$status, exists} = await @ipa.service.exists connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
@@ -22,11 +22,11 @@ describe 'ipa.service.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @ipa.service connection: test.ipa,
+      await @ipa.service connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
       {$status, exists} = await @ipa.service.exists connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
       $status.should.be.true()
       exists.should.be.true()
-      @ipa.service.del connection: test.ipa,
+      await @ipa.service.del connection: test.ipa,
         principal: 'service_exists/ipa.nikita.local'
