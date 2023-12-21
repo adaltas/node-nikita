@@ -6,18 +6,25 @@ import definitions from "./schema.json" assert { type: "json" };
 export default {
   handler: async function({config}) {
     const opt = [
-      config.user ? `--user ${config.user}` : void 0,
-      config.cwd ? `--cwd ${esa(config.cwd)}` : void 0,
+      // LXD `--user` only support user ID (integer)
+      config.user && `--user ${config.user}`,
+      config.cwd && `--cwd ${esa(config.cwd)}`,
       ...Object.keys(config.env).map(
         (k) => `--env ${esa(k)}=${esa(config.env[k])}`
       ),
-    ].join(" ");
-    // Note, `trap` and `env` apply to `lxc exec` and not to `execute`
-    config.trap = void 0;
-    config.env = void 0;
-    return await this.execute(config, {
-      command: [`cat <<'NIKITALXDEXEC' | lxc exec ${opt} ${config.container} -- ${config.shell}`, config.trap ? 'set -e' : void 0, config.command, 'NIKITALXDEXEC'].join('\n')
-    });
+    ].filter(Boolean).join(" ");
+    return await this.execute(
+      // `trap` and `env` apply to `lxc exec` and not to `execute`
+      { ...config, env: undefined, trap: undefined },
+      {
+        command: [
+          `cat <<'NIKITALXDEXEC' | lxc exec ${opt} ${esa(config.container)} -- ${esa(config.shell)}`,
+          config.trap && "set -e",
+          config.command,
+          "NIKITALXDEXEC",
+        ].filter(Boolean).join("\n"),
+      }
+    );
   },
   metadata: {
     definitions: definitions

@@ -89,13 +89,13 @@ describe 'lxc.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-exec-4', force: true
+          await @lxc.delete 'nikita-exec-4', force: true
         await @clean()
         await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-exec-4'
           start: true
-        @lxc.exec
+        await @lxc.exec
           container: 'nikita-exec-4'
           trap: true
           command: """
@@ -166,7 +166,7 @@ describe 'lxc.exec', ->
           image: "images:#{test.images.alpine}"
           container: 'nikita-exec-7'
           start: true
-        @lxc.exec
+        await @lxc.exec
           container: 'nikita-exec-7'
           command: 'adduser --uid 1234 --disabled-password nikita'
         {stdout} = await @lxc.exec
