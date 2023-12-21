@@ -39,10 +39,10 @@ describe 'lxc.network.detach', ->
       $ssh: ssh
     , ({registry}) ->
       await registry.register 'clean', ->
-        @lxc.delete
+        await @lxc.delete
           container: 'u0'
           force: true
-        @lxc.network.delete
+        await @lxc.network.delete
           network: "nkt-detach-2"
       try
         await @clean()
@@ -56,4 +56,4 @@ describe 'lxc.network.detach', ->
           container: "u0"
         $status.should.be.false()
       finally
-        @clean()
+        await @clean()

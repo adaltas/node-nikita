@@ -67,10 +67,10 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-4'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-4'
         {$status} = await @lxc.config.device
@@ -84,10 +84,10 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-4'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-4'
         {$status} = await @lxc.config.device
@@ -106,13 +106,13 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-5'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-5'
-        @lxc.config.device
+        await @lxc.config.device
           container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
@@ -132,13 +132,13 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-5'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-5'
-        @lxc.config.device
+        await @lxc.config.device
           container: 'nikita-config-device-5'
           device: 'test'
           type: 'unix-char'
@@ -160,13 +160,13 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-7'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-7'
-        @lxc.config.device
+        await @lxc.config.device
           container: 'nikita-config-device-7'
           device: 'vpn'
           type: 'proxy'
@@ -185,20 +185,20 @@ describe 'lxc.config.device', ->
       nikita
         $ssh: ssh
       , ->
-        @lxc.delete
+        await @lxc.delete
           container: 'nikita-config-device-8'
           force: true
-        @lxc.init
+        await @lxc.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-config-device-8'
-        @lxc.config.device
+        await @lxc.config.device
           container: 'nikita-config-device-8'
           device: 'vpn'
           type: 'proxy'
           properties:
             listen: 'udp:127.0.0.1:1195'
             connect: 'udp:127.0.0.1:1194'
-        @lxc.config.device
+        await @lxc.config.device
           container: 'nikita-config-device-8'
           device: 'vpn'
           type: 'proxy'

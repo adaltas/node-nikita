@@ -27,7 +27,7 @@ describe 'lxc.cluster.stop', ->
     , ({registry}) ->
       await registry.register ['clean'], ->
         await @lxc.cluster.delete {...cluster, force: true}
-      @clean()
+      await @clean()
       await @lxc.cluster cluster
       await @wait time: 200
       {$status} = await @lxc.cluster.stop {...cluster, wait: true}
@@ -38,4 +38,4 @@ describe 'lxc.cluster.stop', ->
       {config} = await @lxc.state
         container: 'nikita-cluster-stop-2'
       config.status.should.eql 'Stopped'
-      @clean()
+      await @clean()

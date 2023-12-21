@@ -34,7 +34,7 @@ describe 'lxc.state', ->
       registry.register 'clean', ->
         @lxc.delete 'nikita-state-3', force: true
       await @clean()
-      @lxc.state
+      await @lxc.state
         container: 'nikita-state-3'
       .should.be.rejectedWith
         exit_code: 1

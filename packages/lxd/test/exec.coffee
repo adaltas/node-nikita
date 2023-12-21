@@ -160,7 +160,7 @@ describe 'lxc.exec', ->
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
-          @lxc.delete 'nikita-exec-7', force: true
+          await @lxc.delete 'nikita-exec-7', force: true
         await @clean()
         await @lxc.init
           image: "images:#{test.images.alpine}"

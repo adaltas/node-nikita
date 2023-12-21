@@ -14,11 +14,11 @@ describe 'lxc.file.exists', ->
       registry.register 'clean', ->
         @lxc.delete 'nikita-file-exists-1', force: true
       await @clean()
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-file-exists-1'
         start: true
-      @execute
+      await @execute
         command: "lxc exec nikita-file-exists-1 -- touch /root/a_file"
       {exists} = await @lxc.file.exists
         container: 'nikita-file-exists-1'
@@ -33,7 +33,7 @@ describe 'lxc.file.exists', ->
       registry.register 'clean', ->
         @lxc.delete 'nikita-file-exists-2', force: true
       await @clean()
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-file-exists-2'
         start: true

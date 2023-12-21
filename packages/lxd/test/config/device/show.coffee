@@ -11,13 +11,13 @@ describe 'lxc.config.device.show', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-config-show-1'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-config-show-1'
-      @lxc.config.device
+      await @lxc.config.device
         container: 'nikita-config-show-1'
         device: 'test'
         type: 'unix-char'

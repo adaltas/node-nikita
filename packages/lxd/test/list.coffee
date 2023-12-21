@@ -12,8 +12,8 @@ describe 'lxc.list', ->
       $ssh: ssh
     , ({registry}) ->
       registry.register 'clean', ->
-        @lxc.delete 'nikita-list-c1', force: true
-        @lxc.delete 'nikita-list-vm1', force: true
+        await @lxc.delete 'nikita-list-c1', force: true
+        await @lxc.delete 'nikita-list-vm1', force: true
       await @clean()
       await @lxc.init
         image: "images:#{test.images.alpine}"

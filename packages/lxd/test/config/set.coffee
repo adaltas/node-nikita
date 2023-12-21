@@ -11,10 +11,10 @@ describe 'lxc.config.set', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-config-set-1'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-config-set-1'
       {$status} = await @lxc.config.set
@@ -38,10 +38,10 @@ describe 'lxc.config.set', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-config-set-2'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-config-set-2'
       {$status} = await @lxc.config.set

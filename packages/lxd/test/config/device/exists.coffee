@@ -11,10 +11,10 @@ describe 'lxc.config.device.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-config-device-exists-1'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-config-device-exists-1'
       {exists} = await @lxc.config.device.exists
@@ -26,13 +26,13 @@ describe 'lxc.config.device.exists', ->
     nikita
       $ssh: ssh
     , ->
-      @lxc.delete
+      await @lxc.delete
         container: 'nikita-config-device-exists-2'
         force: true
-      @lxc.init
+      await @lxc.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-config-device-exists-2'
-      @lxc.config.device
+      await @lxc.config.device
         container: 'nikita-config-device-exists-2'
         device: 'test'
         type: 'unix-char'
