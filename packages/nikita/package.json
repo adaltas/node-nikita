@@ -1,6 +1,6 @@
 {
   "name": "nikita",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "nikita",
@@ -36,20 +36,20 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.3",
-    "@nikitajs/db": "^1.0.0-alpha.3",
-    "@nikitajs/docker": "^1.0.0-alpha.3",
-    "@nikitajs/file": "^1.0.0-alpha.3",
-    "@nikitajs/ipa": "^1.0.0-alpha.3",
-    "@nikitajs/java": "^1.0.0-alpha.3",
-    "@nikitajs/krb5": "^1.0.0-alpha.3",
-    "@nikitajs/ldap": "^1.0.0-alpha.3",
-    "@nikitajs/log": "^2.0.0-alpha.0",
-    "@nikitajs/lxd": "^1.0.0-alpha.3",
-    "@nikitajs/network": "^1.0.0-alpha.3",
-    "@nikitajs/service": "^1.0.0-alpha.3",
-    "@nikitajs/system": "^1.0.0-alpha.3",
-    "@nikitajs/tools": "^1.0.0-alpha.3"
+    "@nikitajs/core": "^1.0.0-alpha.4",
+    "@nikitajs/db": "^1.0.0-alpha.4",
+    "@nikitajs/docker": "^1.0.0-alpha.4",
+    "@nikitajs/file": "^1.0.0-alpha.4",
+    "@nikitajs/ipa": "^1.0.0-alpha.4",
+    "@nikitajs/java": "^1.0.0-alpha.4",
+    "@nikitajs/krb5": "^1.0.0-alpha.4",
+    "@nikitajs/ldap": "^1.0.0-alpha.4",
+    "@nikitajs/log": "^2.0.0-alpha.1",
+    "@nikitajs/lxd": "^1.0.0-alpha.4",
+    "@nikitajs/network": "^1.0.0-alpha.4",
+    "@nikitajs/service": "^1.0.0-alpha.4",
+    "@nikitajs/system": "^1.0.0-alpha.4",
+    "@nikitajs/tools": "^1.0.0-alpha.4"
   },
   "devDependencies": {
     "mocha": "^10.2.0",

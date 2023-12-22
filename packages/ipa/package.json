@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/ipa",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Provides Nikita actions for various FreeIPA operations.",
   "keywords": [
     "nikita",
@@ -42,7 +42,7 @@
     "object-diff": "^0.0.4"
   },
   "devDependencies": {
-    "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
+    "@nikitajs/lxd-runner": "^1.0.0-alpha.1",
     "coffeescript": "^2.7.0",
     "mixme": "^1.1.0",
     "mocha": "^10.2.0",

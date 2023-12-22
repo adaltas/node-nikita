@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/lxd",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Provides Nikita actions for various LXD operations.",
   "keywords": [
     "nikita",
@@ -47,7 +47,7 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/log": "^2.0.0-alpha.0",
+    "@nikitajs/log": "^2.0.0-alpha.1",
     "dedent": "^1.5.1",
     "js-yaml": "^4.1.0",
     "object-diff": "^0.0.4",

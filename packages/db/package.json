@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/db",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Provides Nikita actions for various database operations. Currently supports PostgreSQL, MySQL and MariaDB.",
   "keywords": [
     "nikita",

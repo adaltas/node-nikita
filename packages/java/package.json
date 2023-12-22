@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/java",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Provides Nikita actions to work with Java keystores and truststores.",
   "keywords": [
     "nikita",

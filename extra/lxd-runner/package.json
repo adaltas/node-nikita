@@ -1,13 +1,13 @@
 {
   "name": "@nikitajs/lxd-runner",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "lib/index.js",
   "private": true,
   "author": "David Worms",
   "license": "MIT",
   "dependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.3",
+    "@nikitajs/core": "^1.0.0-alpha.4",
     "shell": "^0.9.4"
   },
   "devDependencies": {
