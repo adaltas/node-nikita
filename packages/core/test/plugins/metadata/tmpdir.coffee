@@ -191,7 +191,7 @@ describe 'plugins.metadata.tmpdir', ->
           {exists} = await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
           exists.should.be.true()
         finally
-          @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
+          await @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
 
     they 'is false', ({ssh}) ->
       nikita

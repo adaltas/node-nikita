@@ -2,10 +2,10 @@
 import nikita from '@nikitajs/core'
 import test from '../../test.coffee'
 
-describe 'session.scheduler', ->
+describe 'session.scheduler.api', ->
   return unless test.tags.api
 
-  describe 'arguments', ->
+  describe 'scheduler:args', ->
 
     it 'function', ->
       nikita ->

@@ -15,6 +15,11 @@ const session = function(args, options = {}) {
     // Extract action namespace and reset its value
     [namespace, nm] = [[], namespace];
     // Schedule the action and get the result as a promise
+    if(action.scheduler.state().closed) {
+      return Promise.reject(utils.error('NIKITA_SCHEDULER_CLOSED', [
+        'cannot schedule new items when closed.'
+      ]))
+    }
     const prom = action.scheduler.call(async function() {
       // Validate the namespace
       const child = (await action.registry.get(nm));
@@ -43,11 +48,12 @@ const session = function(args, options = {}) {
       }));
     });
     return new Proxy(prom, {
-      get: on_get
+      // Fluent call of children inside a parent
+      get: (target, name) => on_get(target, name, 1),
     });
   };
   // Building the namespace before calling an action
-  const on_get = function(target, name) {
+  const on_get = function(target, name, concurrency) {
     // Return static properties
     if ((target[name] != null) && !action.registry.registered(name)) {
       if (typeof target[name] === 'function') {
@@ -63,9 +69,10 @@ const session = function(args, options = {}) {
           return action.plugins;
       }
     }
+    action.scheduler.concurrency(concurrency);
     namespace.push(name);
     return new Proxy(on_call, {
-      get: on_get
+      get: (target, name) => on_get(target, name, concurrency),
     });
   };
   // Initialize the plugins manager
@@ -73,9 +80,9 @@ const session = function(args, options = {}) {
   options.namespace = options.namespace || args[0]?.$namespace || undefined
   const plugins = plugandplay({
     plugins: options.plugins || args[0]?.$plugins,
-    chain: new Proxy(on_call, {
-      get: on_get
-    }),
+    // chain: new Proxy(on_call, {
+    //   get: (target, name) => on_get(target, name, -1),
+    // }),
     parent: options.parent ? options.parent.plugins : undefined
   });
   // Normalize arguments
@@ -116,17 +123,19 @@ const session = function(args, options = {}) {
   // Local scheduler to execute children and be notified on finish
   const schedulers = {
     in: each({
-      relax: true
+      concurrency: -1,
+      relax: true,
     }),
     out: each({
+      concurrency: 1,
+      fluent: false,
       pause: true,
-      fluent: false
-    })
+    }),
   };
   action.scheduler = schedulers.out;
   // Expose the action context
   action.context = new Proxy(on_call, {
-    get: on_get
+    get: (target, name) => on_get(target, name, -1),
   });
   // Execute the action
   const result = new Promise(async function(resolve, reject) {
@@ -228,7 +237,7 @@ const session = function(args, options = {}) {
   // - resolve when all registered actions are fulfilled
   // - resolved with the result of handler
   return new Proxy(result, {
-    get: on_get
+    get: (target, name) => on_get(target, name, 1),
   });
 };
 

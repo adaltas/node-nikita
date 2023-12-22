@@ -47,9 +47,9 @@ describe 'registry.registered', ->
       n = nikita.registry.register ['my_action'], handler: (->)
       result = await n.registry.registered('my_action')
       result.should.be.true()
-      (->
-        n.registry.registered(['my_action'])
-      ).should.throw 'EACH_CLOSED: cannot schedule new items when closed.'
+      n
+      .registry.registered(['my_action'])
+      .should.be.rejectedWith 'NIKITA_SCHEDULER_CLOSED: cannot schedule new items when closed.'
 
     it 'return true with multi level', ->
       n = nikita.registry.register ['my', 'module'], handler: (->)

@@ -1,13 +1,31 @@
 
+import each from 'each'
 import nikita from '@nikitajs/core'
 import test from '../../test.coffee'
 
 describe 'session.scheduler.error', ->
   return unless test.tags.api
 
-  describe 'in last child', ->
+  describe 'scheduler:in', ->
 
-    it 'return rejected promise', ->
+    it 'scheduling new action once closed', ->
+      prom = null
+      await nikita ->
+        prom = each Array.from({length: 3}), true, (_, i) =>
+          @call ->
+            new Promise (resolve) ->
+              history.push "#{i}:start"
+              setTimeout ->
+                history.push "#{i}:end"
+                resolve()
+              , 100
+        true
+      prom.should.be.rejectedWith [
+        'NIKITA_SCHEDULER_CLOSED:'
+        'cannot schedule new items when closed.'
+      ].join(' ')
+
+    it 'cascaded rejected promise', ->
       nikita ->
         @call ->
           @call ->
@@ -15,7 +33,7 @@ describe 'session.scheduler.error', ->
               reject Error 'catchme'
         .should.be.rejectedWith 'catchme'
 
-    it 'await throw error', ->
+    it 'cascaded thrown error', ->
       nikita ->
         @call ->
           @call ->
@@ -23,8 +41,19 @@ describe 'session.scheduler.error', ->
               new Promise (resolve, reject) ->
                 reject Error 'catchme'
         .should.be.rejectedWith 'catchme'
+
+    it 'cascaded after a previously catched error', ->
+      # Note, there was a bug where the last action was executed but the error
+      # was swallowed
+      nikita ->
+        try
+          await @call -> throw Error 'ok'
+        catch err
+        @call ->
+          throw Error 'Catch me'
+      .should.be.rejectedWith 'Catch me'
         
-    it 'await with try/catch', ->
+    it 'canceled with try/catch', ->
       nikita ->
         @call ->
           try
@@ -34,28 +63,33 @@ describe 'session.scheduler.error', ->
           catch err
             err.message.should.eql 'catchme'
   
-    it 'throw error and return valid output', ->
+    it 'relax with throw error', ->
       nikita ->
         @call ->
           @call ->
             @call ->
               throw Error 'catchme'
+            @call ->
+              throw Error 'catchme'
             true
         .should.finally.match $status: true
 
-    it 'reject promise and return valid output', ->
+    it 'relax with rejected promise', ->
       nikita ->
         @call ->
           @call ->
             @call ->
               new Promise (resolve, reject) ->
                 reject Error 'catchme'
+            @call ->
+              new Promise (resolve, reject) ->
+                reject Error 'catchme'
             true
         .should.finally.match $status: true
   
-  describe 'in array of actions', ->
+  describe 'scheduler:args:sequential', ->
 
-    it 'array with an error sent synchronously', ->
+    it 'stop on thrown error', ->
       stack = []
       nikita.call [
         ->
@@ -71,7 +105,7 @@ describe 'session.scheduler.error', ->
       .should.be.rejectedWith 'catchme'
       .then -> stack.should.eql [1,2]
 
-    it 'array with an error sent asynchronously', ->
+    it 'stop on rejected error', ->
       stack = []
       nikita.call [
         ->
@@ -90,25 +124,12 @@ describe 'session.scheduler.error', ->
       .should.be.rejectedWith 'catchme'
       .then -> stack.should.eql [1,2]
   
-  describe 'error handling', ->
+  describe 'scheduler:out', ->
 
-    it 'throw error and keep going', ->
-      stack = []
-      nikita ->
-        # The following used to hang the scheduler
-        @call (->)
-        await new Promise (resolve, reject) ->
-          setTimeout resolve, 10
-        @call (->)
-
-    it 'parent get the uncatched and last error', ->
-      # Note, there was a bug where the last action was executed but the error
-      # was swallowed
-      nikita ->
-        try
-          await @call -> throw Error 'ok'
-        catch err
-        @call ->
-          throw Error 'Catch me'
-      .should.be.rejectedWith 'Catch me'
+    it 'stop on thrown error', ->
+      nikita
+      .call -> true
+      .call -> throw Error 'catchme'
+      .call -> true
+      .should.be.rejectedWith 'catchme'
         
