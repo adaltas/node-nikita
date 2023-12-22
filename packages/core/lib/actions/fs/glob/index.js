@@ -1,9 +1,7 @@
 // Dependencies
-import mm from "minimatch";
+import { Minimatch } from "minimatch";
 import utils from '@nikitajs/core/utils';
 import definitions from "./schema.json" assert { type: "json" };
-
-const { Minimatch } = mm;
 
 // Utility
 const getprefix = function(pattern) {

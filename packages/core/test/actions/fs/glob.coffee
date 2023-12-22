@@ -1,6 +1,6 @@
 
 import path from 'node:path'
-import minimatch from 'minimatch'
+import { Minimatch } from 'minimatch'
 import nikita from '@nikitajs/core'
 import test from '../../test.coffee'
 import mochaThey from 'mocha-they'
@@ -53,7 +53,7 @@ describe 'actions.fs.glob', ->
         "#{tmpdir}/test/a_file"
       ]
       # Default behavior
-      (new minimatch.Minimatch('/a_dir/**').match '/a_dir/').should.be.true()
+      (new Minimatch('/a_dir/**').match '/a_dir/').should.be.true()
 
   they 'should match an extension patern', ({ssh}) ->
     nikita

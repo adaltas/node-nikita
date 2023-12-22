@@ -52,7 +52,7 @@
     "@nikitajs/tools": "^1.0.0-alpha.3"
   },
   "devDependencies": {
-    "mocha": "^10.0.0",
+    "mocha": "^10.2.0",
     "should": "^13.2.3"
   },
   "engines": {
