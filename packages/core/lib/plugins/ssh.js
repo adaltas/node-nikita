@@ -73,7 +73,7 @@ export default {
     },
     "nikita:result": async function ({ action }) {
       if (action.metadata.ssh_dispose) {
-        return await session([{}], {
+        await session([{}], {
           plugins: [events, history, find, log, raw, status], // Need to inject `tools.log`
         }).ssh.close({
           ssh: action.ssh,

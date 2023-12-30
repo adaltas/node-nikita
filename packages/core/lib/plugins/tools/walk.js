@@ -51,19 +51,18 @@ export default {
   name: '@nikitajs/core/plugins/tools/walk',
   hooks: {
     'nikita:normalize': function(action) {
-      if (action.tools == null) {
-        action.tools = {};
-      }
+      action.tools ??= {};
+      // Register tool
       action.tools.walk = async function() {
         const [act, walker] = validate(action, arguments);
-        return (await walk(act, walker));
+        return await walk(act, walker);
       };
       // Register action
-      return action.registry.register(['tools', 'walk'], {
+      action.registry.register(['tools', 'walk'], {
         metadata: {raw: true},
         handler: async function(action) {
           const [act, walker] = validate(action, action.args);
-          return (await walk(act.parent, walker));
+          return await walk(act.parent, walker);
         }
       });
     }

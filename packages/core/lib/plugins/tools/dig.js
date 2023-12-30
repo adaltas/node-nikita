@@ -89,12 +89,10 @@ export default {
   hooks: {
     'nikita:action': function(action) {
       // Register function
-      if (action.tools == null) {
-        action.tools = {};
-      }
+      action.tools ??= {};
       action.tools.dig = async function() {
         let [act, finder] = validate(action, arguments);
-        return (await dig_up(act, finder));
+        return await dig_up(act, finder);
       };
     }
   }

@@ -13,9 +13,7 @@ export default {
     "nikita:action": {
       after: "@nikitajs/core/plugins/ssh",
       handler: function (action) {
-        if (action.tools == null) {
-          action.tools = {};
-        }
+        action.tools ??= {};
         // Path is alwaws posix over ssh
         // otherwise it is platform dependent
         action.tools.path = !action.ssh
@@ -28,7 +26,7 @@ export default {
           os.platform === "win32" ? path.win32 : path.posix;
         // Reinject posix and win32 path for conveniency
         action.tools.path.posix = path.posix;
-        return (action.tools.path.win32 = path.win32);
+        action.tools.path.win32 = path.win32;
       },
     },
   },

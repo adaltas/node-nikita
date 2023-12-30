@@ -56,28 +56,20 @@ const validate = function(action, args) {
 export default {
   name: '@nikitajs/core/plugins/tools/find',
   hooks: {
-    'nikita:normalize': function(action, handler) {
-      return async function() {
-        // Handler execution
-        action = await handler.apply(null, arguments);
-        // Register function
-        if (action.tools == null) {
-          action.tools = {};
-        }
-        action.tools.find = async function() {
-          const [act, finder] = validate(action, arguments);
-          return await find(act, finder);
-        };
-        // Register action
-        action.registry.register(['tools', 'find'], {
-          metadata: {raw: true},
-          handler: async function(action) {
-            const [act, finder] = validate(action, action.args);
-            return await find(act.parent, finder);
-          }
-        });
-        return action;
+    'nikita:normalize': function(action) {
+      action.tools ??= {};
+      action.tools.find = async function() {
+        const [act, finder] = validate(action, arguments);
+        return await find(act, finder);
       };
-    }
+      // Register action
+      action.registry.register(['tools', 'find'], {
+        metadata: {raw: true},
+        handler: async function(action) {
+          const [act, finder] = validate(action, action.args);
+          return await find(act.parent, finder);
+        }
+      });
+    },
   }
 };

@@ -30,7 +30,6 @@ export default {
           }
         }
         delete action.config[global];
-        return action;
       },
     },
   },

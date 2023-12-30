@@ -32,7 +32,6 @@ export default {
           }
           results.push(delete action[k]);
         }
-        return results;
       },
     },
   },

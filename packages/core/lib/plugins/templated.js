@@ -20,7 +20,7 @@ export default {
         if (templated !== true) {
           return;
         }
-        return selfTemplated(action, {
+        selfTemplated(action, {
           array: true,
           compile: false,
           mutate: true,
