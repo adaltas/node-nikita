@@ -53,7 +53,7 @@ const handlers = {
           $raw_output: true
         }, action.config);
       }
-      run = (function() {
+      const run = (function() {
         switch (typeof condition) {
           case 'undefined':
             return true;
