@@ -4,8 +4,7 @@ import utils from '@nikitajs/core/utils';
 
 const handlers = {
   if_os: async function(action) {
-    let final_run = true;
-    await session({
+    return await session({
       $bastard: true,
       $parent: action
     }, async function() {
@@ -22,7 +21,7 @@ const handlers = {
         }
       );
       if (!$status) {
-        return final_run = false;
+        return false;
       }
       let [arch, distribution, version, linux_version] = stdout.split('|');
       let match;
@@ -82,14 +81,12 @@ const handlers = {
         return a && n && v && lv;
       });
       if (!match) {
-        return final_run = false;
+        return false;
       }
-    });
-    return final_run;
+    }).then( ({$status}) => $status);
   },
   unless_os: async function(action) {
-    let final_run = true;
-    await session({
+    return await session({
       $bastard: true,
       $parent: action
     }, async function() {
@@ -106,7 +103,7 @@ const handlers = {
         }
       );
       if (!$status) {
-        return final_run = false;
+        return false;
       }
       let match;
       let [arch, distribution, version, linux_version] = stdout.split('|');
@@ -160,10 +157,9 @@ const handlers = {
         return a && n && v && lv;
       });
       if (match) {
-        return final_run = false;
+        return false;
       }
-    });
-    return final_run;
+    }).then( ({$status}) => $status);
   }
 };
 
@@ -175,20 +171,16 @@ export default {
       after: '@nikitajs/core/plugins/conditions',
       handler: function(action, handler) {
         return async function() {
-          var condition, config, i, j, len, len1, ref;
-          action = (await handler.call(null, action));
+          action = await handler.call(null, action);
           if (!action.conditions) {
             return;
           }
-          ref = [action.conditions.if_os, action.conditions.unless_os];
           // Normalize conditions
-          for (i = 0, len = ref.length; i < len; i++) {
-            config = ref[i];
+          for (const config of [action.conditions.if_os, action.conditions.unless_os]) {
             if (!config) {
               continue;
             }
-            for (j = 0, len1 = config.length; j < len1; j++) {
-              condition = config[j];
+            for (const condition of config) {
               if (condition.arch == null) {
                 condition.arch = [];
               }
@@ -225,23 +217,14 @@ export default {
       after: '@nikitajs/core/plugins/conditions',
       before: '@nikitajs/core/plugins/metadata/disabled',
       handler: async function(action) {
-        var final_run, k, local_run, ref, v;
-        final_run = true;
-        ref = action.conditions;
-        for (k in ref) {
-          v = ref[k];
-          if (handlers[k] == null) {
+        for (const condition in action.conditions) {
+          if (handlers[condition] == null) {
             continue;
           }
-          local_run = (await handlers[k].call(null, action));
-          if (local_run === false) {
-            final_run = false;
+          if (await handlers[condition].call(null, action) === false) {
+            action.metadata.disabled = true;
           }
         }
-        if (!final_run) {
-          action.metadata.disabled = true;
-        }
-        return action;
       }
     }
   }

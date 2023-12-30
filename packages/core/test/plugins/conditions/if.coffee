@@ -150,17 +150,17 @@ describe 'plugin.conditions if', ->
     it 'skip if function casts to false', ->
       {$status} = await nikita.call
         $if: -> false
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
       {$status} = await nikita.call
         $if: -> ''
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
 
     it 'skip if promise resolves with false', ->
       {$status, value} = await nikita.call
         $if: ->
           new Promise (accept, reject) -> accept false
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
     

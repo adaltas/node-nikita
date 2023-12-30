@@ -3,7 +3,6 @@ import session from '@nikitajs/core/session';
 
 const handlers = {
   if_execute: async function(action) {
-    let final_run = true;
     for (const condition of action.conditions.if_execute) {
       try {
         const {$status} = await session({
@@ -12,7 +11,7 @@ const handlers = {
           $parent: action
         }, condition);
         if (!$status) {
-          final_run = false;
+          return false;
         }
       } catch (error) {
         const {code} = await session({
@@ -29,13 +28,12 @@ const handlers = {
           // use it instead of error to disabled the action
           throw error;
         }
-        final_run = false;
+        return false;
       }
     }
-    return final_run;
+    return true;
   },
   unless_execute: async function(action) {
-    let final_run = true;
     for (const condition of action.conditions.unless_execute) {
       try {
         const {$status} = await session({
@@ -44,7 +42,7 @@ const handlers = {
           $parent: action
         }, condition);
         if ($status) {
-          final_run = false;
+          return false;
         }
       } catch (error) {
         const {code} = await session({
@@ -63,7 +61,7 @@ const handlers = {
         }
       }
     }
-    return final_run;
+    return true;
   }
 };
 
@@ -75,18 +73,13 @@ export default {
       after: '@nikitajs/core/plugins/conditions',
       before: '@nikitajs/core/plugins/metadata/disabled',
       handler: async function(action) {
-        let final_run = true;
         for (const condition in action.conditions) {
           if (handlers[condition] == null) {
             continue;
           }
-          const local_run = await handlers[condition].call(null, action);
-          if (local_run === false) {
-            final_run = false;
+          if (await handlers[condition].call(null, action) === false) {
+            action.metadata.disabled = true;
           }
-        }
-        if (!final_run) {
-          action.metadata.disabled = true;
         }
       }
     }

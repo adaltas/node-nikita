@@ -8,14 +8,14 @@ describe 'plugin.conditions unless', ->
   describe 'array', ->
 
     it 'skip if all true', ->
-      nikita .call
+      nikita.call
         $unless: [true, true, true]
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'skip if at least one is true', ->
       nikita.call
         $unless: [false, true, false]
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'run if all false', ->
       nikita.call
@@ -28,12 +28,12 @@ describe 'plugin.conditions unless', ->
     it 'skip if `true`', ->
       nikita.call
         $unless: true
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'skip if `1`', ->
       nikita.call
         $unless: 1
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'run if `0`', ->
       nikita.call
@@ -60,7 +60,7 @@ describe 'plugin.conditions unless', ->
     it 'skip if string not empty', ->
       nikita.call
         $unless: 'abc'
-      , -> throw Error 'You are not welcome here'
+      , -> throw Error 'Oh no!'
 
     it 'run if string empty', ->
       {$status, value} = await nikita.call
@@ -72,7 +72,7 @@ describe 'plugin.conditions unless', ->
     it 'skip if buffer length > 1', ->
       nikita.call
         $unless: Buffer.from 'abc'
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'run if buffer length is 0', ->
       nikita.call
@@ -85,7 +85,7 @@ describe 'plugin.conditions unless', ->
     it 'skip if `{k:v}`', ->
       nikita.call
         $unless: {k:"v"}
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
 
     it 'run if `{}`', ->
       nikita.call
@@ -98,18 +98,18 @@ describe 'plugin.conditions unless', ->
     it 'skip if function casts to true', ->
       {$status} = await nikita.call
         $unless: -> true
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
       {$status} = await nikita.call
         $unless: -> 'abc'
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
 
     it 'skip if promise resolves with true', ->
       {$status} = await nikita.call
         $unless: ->
           new Promise (accept, reject) -> accept true
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       $status.should.be.false()
 
     it 'run if function casts to false', ->
@@ -133,5 +133,5 @@ describe 'plugin.conditions unless', ->
         $unless: ->
           new Promise (accept, reject) ->
             reject Error 'Cool'
-        $handler: -> throw Error 'You are not welcome here'
+        $handler: -> throw Error 'Oh no!'
       .should.rejectedWith 'Cool'

@@ -3,7 +3,6 @@ import session from '@nikitajs/core/session';
 
 const handlers = {
   if: async function(action) {
-    let final_run = true;
     for (let condition of action.conditions.if) {
       if (typeof condition === 'function') {
         condition = await session({
@@ -37,13 +36,12 @@ const handlers = {
         }
       })();
       if (run === false) {
-        final_run = false;
+        return false
       }
     }
-    return final_run;
+    return true;
   },
   unless: async function(action) {
-    let final_run = true;
     for (let condition of action.conditions.unless) {
       if (typeof condition === 'function') {
         condition = await session({
@@ -77,10 +75,10 @@ const handlers = {
         }
       })();
       if (run === false) {
-        final_run = false;
+        return false;
       }
     }
-    return final_run;
+    return true;
   }
 };
 
@@ -119,18 +117,14 @@ export default {
       before: '@nikitajs/core/plugins/metadata/disabled',
       after: '@nikitajs/core/plugins/templated',
       handler: async function(action) {
-        let final_run = true;
         for (const condition in action.conditions) {
           if (handlers[condition] == null) {
             continue;
           }
-          const local_run = (await handlers[condition].call(null, action));
-          if (local_run === false) {
-            final_run = false;
+          if (await handlers[condition].call(null, action) === false) {
+            action.metadata.disabled = true;
+            break;
           }
-        }
-        if (!final_run) {
-          return action.metadata.disabled = true;
         }
       }
     }

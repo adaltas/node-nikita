@@ -3,7 +3,6 @@ import session from '@nikitajs/core/session';
 
 const handlers = {
   if_exists: async function(action, value) {
-    let final_run = true;
     for (const condition of action.conditions.if_exists) {
       try {
         await session({
@@ -16,16 +15,15 @@ const handlers = {
         });
       } catch (error) {
         if (error.code === 'NIKITA_FS_STAT_TARGET_ENOENT') {
-          final_run = false;
+          return false;
         } else {
           throw error;
         }
       }
     }
-    return final_run;
+    return true;
   },
   unless_exists: async function(action) {
-    let final_run = true;
     for (const condition of action.conditions.unless_exists) {
       try {
         await session({
@@ -36,14 +34,14 @@ const handlers = {
             target: condition
           });
         });
-        final_run = false;
+        return false;
       } catch (error) {
         if (error.code !== 'NIKITA_FS_STAT_TARGET_ENOENT') {
           throw error;
         }
       }
     }
-    return final_run;
+    return true;
   }
 };
 
@@ -55,18 +53,13 @@ export default {
       after: '@nikitajs/core/plugins/conditions',
       before: '@nikitajs/core/plugins/metadata/disabled',
       handler: async function(action) {
-        let final_run = true;
         for (const condition in action.conditions) {
           if (handlers[condition] == null) {
             continue;
           }
-          const local_run = (await handlers[condition].call(null, action));
-          if (local_run === false) {
-            final_run = false;
+          if (await handlers[condition].call(null, action) === false) {
+            action.metadata.disabled = true;
           }
-        }
-        if (!final_run) {
-          return action.metadata.disabled = true;
         }
       }
     }
