@@ -30,28 +30,19 @@ export default {
         };
         while (attempts !== config.retry) {
           attempts++;
-          log({
-            message: `Start attempt #${attempts}`,
-            level: "DEBUG",
-          });
+          log("DEBUG", `Start attempt #${attempts}`);
           try {
             const result = await context.call({
               ...config,
               $handler: handler,
             });
-            log({
-              message: `Attempt #${attempts} succeed`,
-              level: "INFO",
-            });
+            log("INFO", `Attempt #${attempts} succeed`);
             return {
               ...result,
               $status: attempts > 1,
             };
           } catch (err) {
-            log({
-              message: `Attempt #${attempts} failed with message: ${err.message}`,
-              level: "WARN",
-            });
+            log("WARN" `Attempt #${attempts} failed with message: ${err.message}`);
             await wait(config.interval);
           }
         }
