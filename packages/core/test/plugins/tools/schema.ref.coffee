@@ -59,126 +59,126 @@ describe 'plugins.tools.schema.$ref', ->
       'got "invalid:".'
     ].join ' '
 
-describe '$ref relative with `#/definitions`', ->
+  describe '$ref relative with `#/definitions`', ->
 
-  it 'valid', ->
-    nikita
-    .call
-      $definitions:
-        config:
-          type: 'object'
-          properties:
-            'a_source': $ref: '#/definitions/config/properties/a_target'
-            'a_target': 
-              type: 'object'
-              properties:
-                'an_integer': type: 'integer'
-                'a_default': type: 'string', default: 'hello'
-      a_source: an_integer: '123'
-    , (action) ->
-      action.config.should.eql
-        a_source: an_integer: 123, a_default: 'hello'
-
-describe '$ref with `module:` protocol', ->
-
-  it 'invalid ref location', ->
-    nikita.call
-      an_object: an_integer: 'abc'
-      $definitions: config:
-        type: 'object'
-        properties:
-          'an_object': $ref: 'module://invalid/action'
-    , (->)
-    .should.be.rejectedWith
-      code: 'NIKITA_SCHEMA_INVALID_MODULE'
-      message: /NIKITA_SCHEMA_INVALID_MODULE: the module location is not resolvable, module name is "invalid\/action", error message is ".*"\./
-
-  it 'valid ref location', ->
-    nikita
-      $tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
-        target: "#{tmpdir}/a_module.js"
-        content: '''
-        module.exports = {
-          metadata: {
-            definitions: {
-              config: {
-                type: 'object',
-                properties: {
-                  an_integer: { type: "integer" },
-                  a_default: { type: "string", default: "hello" }
-                }
-              }
-            }
-          },
-          handler: () => 'ok'
-        }
-        '''
-      # Valid schema
-      {config} = await @call
+    it 'valid', ->
+      nikita
+      .call
         $definitions:
           config:
             type: 'object'
             properties:
-              'a_source': $ref: "module://#{tmpdir}/a_module.js#/definitions/config"
+              'a_source': $ref: '#/definitions/config/properties/a_target'
+              'a_target': 
+                type: 'object'
+                properties:
+                  'an_integer': type: 'integer'
+                  'a_default': type: 'string', default: 'hello'
         a_source: an_integer: '123'
-      , ({config}) -> config: config
-      config.should.eql
-        a_source: an_integer: 123, a_default: 'hello'
+      , (action) ->
+        action.config.should.eql
+          a_source: an_integer: 123, a_default: 'hello'
 
-describe '$ref with `registry:` protocol', ->
+  describe '$ref with `module:` protocol', ->
 
-  it 'invalid ref location', ->
-    nikita.call
-      an_object: an_integer: 'abc'
-      $definitions: config:
-        type: 'object'
-        properties:
-          'an_object': $ref: 'registry://invalid/action'
-    , (->)
-    .should.be.rejectedWith
-      code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
-      message: [
-        'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
-        'the action is not registered inside the Nikita registry,'
-        'action namespace is "invalid.action".'
-      ].join ' '
-
-  it 'valid ref location', ->
-    nikita
-    .registry.register ['test', 'schema'],
-      metadata: definitions:
-        config:
+    it 'invalid ref location', ->
+      nikita.call
+        an_object: an_integer: 'abc'
+        $definitions: config:
           type: 'object'
           properties:
-            'an_integer': type: 'integer'
-            'a_default': type: 'string', default: 'hello'
-      handler: (->)
-    # Valid schema
-    .call
-      $definitions:
-        config:
+            'an_object': $ref: 'module://invalid/action'
+      , (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_INVALID_MODULE'
+        message: /NIKITA_SCHEMA_INVALID_MODULE: the module location is not resolvable, module name is "invalid\/action", error message is ".*"\./
+
+    it 'valid ref location', ->
+      nikita
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @fs.base.writeFile
+          target: "#{tmpdir}/a_module.js"
+          content: '''
+          module.exports = {
+            metadata: {
+              definitions: {
+                config: {
+                  type: 'object',
+                  properties: {
+                    an_integer: { type: "integer" },
+                    a_default: { type: "string", default: "hello" }
+                  }
+                }
+              }
+            },
+            handler: () => 'ok'
+          }
+          '''
+        # Valid schema
+        {config} = await @call
+          $definitions:
+            config:
+              type: 'object'
+              properties:
+                'a_source': $ref: "module://#{tmpdir}/a_module.js#/definitions/config"
+          a_source: an_integer: '123'
+        , ({config}) -> config: config
+        config.should.eql
+          a_source: an_integer: 123, a_default: 'hello'
+
+  describe '$ref with `registry:` protocol', ->
+
+    it 'invalid ref location', ->
+      nikita.call
+        an_object: an_integer: 'abc'
+        $definitions: config:
           type: 'object'
           properties:
-            'a_source': $ref: 'registry://test/schema#/definitions/config'
-      a_source: an_integer: '123'
-    , (action) ->
-      action.config.should.eql
-        a_source: an_integer: 123, a_default: 'hello'
+            'an_object': $ref: 'registry://invalid/action'
+      , (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
+        message: [
+          'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
+          'the action is not registered inside the Nikita registry,'
+          'action namespace is "invalid.action".'
+        ].join ' '
 
-  it 'invalid ref location', ->
-    nikita.call
-      $definitions: config:
-        type: 'object'
-        properties:
-          'an_object': $ref: 'registry://invalid/action'
-      an_object: an_integer: 'abc'
-    , (->)
-    .should.be.rejectedWith
-      code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
-      message: [
-        'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
-        'the action is not registered inside the Nikita registry,'
-        'action namespace is "invalid.action".'
-      ].join ' '
+    it 'valid ref location', ->
+      nikita
+      .registry.register ['test', 'schema'],
+        metadata: definitions:
+          config:
+            type: 'object'
+            properties:
+              'an_integer': type: 'integer'
+              'a_default': type: 'string', default: 'hello'
+        handler: (->)
+      # Valid schema
+      .call
+        $definitions:
+          config:
+            type: 'object'
+            properties:
+              'a_source': $ref: 'registry://test/schema#/definitions/config'
+        a_source: an_integer: '123'
+      , (action) ->
+        action.config.should.eql
+          a_source: an_integer: 123, a_default: 'hello'
+
+    it 'invalid ref location', ->
+      nikita.call
+        $definitions: config:
+          type: 'object'
+          properties:
+            'an_object': $ref: 'registry://invalid/action'
+        an_object: an_integer: 'abc'
+      , (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_UNREGISTERED_ACTION'
+        message: [
+          'NIKITA_SCHEMA_UNREGISTERED_ACTION:'
+          'the action is not registered inside the Nikita registry,'
+          'action namespace is "invalid.action".'
+        ].join ' '
