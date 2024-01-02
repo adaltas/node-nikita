@@ -21,6 +21,7 @@
           },
           "mail": {
             "type": "array",
+            "coercion": true,
             "minItems": 1,
             "uniqueItems": true,
             "items": {

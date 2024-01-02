@@ -7,7 +7,7 @@
         "description": "Attempt to remove the file hierarchy rooted in the directory.\\nAttempting to remove a non-empty directory without the `recursive`\\nconfig will throw an Error."
       },
       "target": {
-        "type": "string",
+        "$ref": "module://@nikitajs/core/actions/fs/glob#/definitions/config/properties/target",
         "description": "File, directory or glob (pattern matching based on wildcard\\ncharacters)."
       }
     },

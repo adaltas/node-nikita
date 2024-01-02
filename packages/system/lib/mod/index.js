@@ -7,14 +7,11 @@ import definitions from "./schema.json" assert { type: "json" };
 
 // Action
 export default {
-  handler: async function({metadata, config}) {
+  handler: async function({config}) {
     for (const module in config.modules) {
       const active = config.modules[module];
-      let target = config.target;
-      if (target == null) {
-        target = `${module}.conf`;
-      }
-      target = path.resolve('/etc/modules-load.d', target);
+      config.target ??= `${module}.conf`;
+      config.target = path.resolve('/etc/modules-load.d', config.target);
       await this.execute({
         $if: config.load && active,
         command: dedent`
@@ -33,7 +30,7 @@ export default {
       });
       await this.file({
         $if: config.persist,
-        target: target,
+        target: config.target,
         match: RegExp(`^${quote(module)}(\\n|$)`, "mg"),
         replace: active ? `${module}\n` : '',
         append: true,

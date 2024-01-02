@@ -42,7 +42,7 @@ export default {
               $status: attempts > 1,
             };
           } catch (err) {
-            log("WARN" `Attempt #${attempts} failed with message: ${err.message}`);
+            log("WARN", `Attempt #${attempts} failed with message: ${err.message}`);
             await wait(config.interval);
           }
         }

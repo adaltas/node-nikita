@@ -3,7 +3,8 @@
     "type": "object",
     "properties": {
       "code": {
-        "type": "array",
+        "type": ["array", "integer"],
+        "coercion": true,
         "items": {
           "type": "integer"
         },
@@ -12,7 +13,8 @@
       "content": {
         "oneOf": [
           {
-            "type": "string"
+            "type": ["string", "number"],
+            "coercion": true
           },
           {
             "instanceof": "Buffer"

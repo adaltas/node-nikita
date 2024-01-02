@@ -72,7 +72,7 @@ describe 'plugins.tools.schema.$ref', ->
               'a_target': 
                 type: 'object'
                 properties:
-                  'an_integer': type: 'integer'
+                  'an_integer': type: ['integer', 'string'], coercion: true
                   'a_default': type: 'string', default: 'hello'
         a_source: an_integer: '123'
       , (action) ->
@@ -106,7 +106,7 @@ describe 'plugins.tools.schema.$ref', ->
                 config: {
                   type: 'object',
                   properties: {
-                    an_integer: { type: "integer" },
+                    an_integer: { type: ["integer", "string"], coercion: true },
                     a_default: { type: "string", default: "hello" }
                   }
                 }
@@ -152,7 +152,7 @@ describe 'plugins.tools.schema.$ref', ->
           config:
             type: 'object'
             properties:
-              'an_integer': type: 'integer'
+              'an_integer': type: ['integer', 'string'], coercion: true
               'a_default': type: 'string', default: 'hello'
         handler: (->)
       # Valid schema

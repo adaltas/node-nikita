@@ -4,6 +4,7 @@
     "properties": {
       "output": {
         "type": "array",
+        "coercion": true,
         "default": [
           "source",
           "fstype",

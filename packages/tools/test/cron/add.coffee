@@ -39,7 +39,7 @@ describe 'tools.cron.add', ->
       nikita
       .tools.cron.add
         command: '/remove/me'
-        when: true
+        when: 'invalid'
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: /#\/definitions\/config\/properties\/when\/pattern config\/when must match pattern/

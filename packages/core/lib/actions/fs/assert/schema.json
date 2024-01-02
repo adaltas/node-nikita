@@ -23,6 +23,7 @@
       },
       "filetype": {
         "type": "array",
+        "coercion": true,
         "default": [],
         "items": {
           "type": [
@@ -34,6 +35,7 @@
       },
       "filter": {
         "type": "array",
+        "coercion": true,
         "default": [],
         "items": {
           "instanceof": "RegExp"
@@ -41,10 +43,8 @@
         "description": "Text to filter in actual content before matching."
       },
       "gid": {
-        "type": [
-          "integer",
-          "string"
-        ],
+        "type": ["integer", "string"],
+        "coercion": true,
         "description": "Group ID to assert."
       },
       "md5": {
@@ -53,6 +53,7 @@
       },
       "mode": {
         "type": "array",
+        "coercion": true,
         "items": {
           "$ref": "module://@nikitajs/core/actions/fs/base/chmod#/definitions/config/properties/mode"
         },
@@ -79,10 +80,8 @@
         "description": "Trim the actual and expected content before matching."
       },
       "uid": {
-        "type": [
-          "integer",
-          "string"
-        ],
+        "type": ["integer", "string"],
+        "coercion": true,
         "description": "User ID to assert."
       }
     },

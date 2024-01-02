@@ -1,32 +1,25 @@
 // Dependencies
 import utils from '@nikitajs/core/utils';
 import definitions from "./schema.json" assert { type: "json" };
+const esa = utils.string.escapeshellarg;
 
-// Exports
+// Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    // Start real work
     const { files } = await this.fs.glob(config.target);
     for (const file of files) {
-      log({
-        message: `Removing file ${file}`,
-        level: "INFO",
-      });
+      log("INFO", `Removing file ${esa(file)}.`);
       try {
         const { status } = await this.execute({
           command: [
             "rm",
             "-d", // Attempt to remove directories as well as other types of files.
-            config.recursive ? "-r" : void 0,
-            file,
-            // "rm -rf '#{file}'"
-          ].join(" "),
+            config.recursive && "-r",
+            esa(file),
+          ].filter(Boolean).join(" "),
         });
         if (status) {
-          log({
-            message: `File ${file} removed`,
-            level: "WARN",
-          });
+          log("WARN", `File ${esa(file)} removed.`);
         }
       } catch (error) {
         if (utils.string.lines(error.stderr.trim()).length === 1) {

@@ -3,10 +3,7 @@
     "type": "object",
     "properties": {
       "cwd": {
-        "type": [
-          "boolean",
-          "string"
-        ],
+        "type": ["boolean", "string"],
         "description": "Current working directory for relative paths. A boolean value only\napply without an SSH connection and default to `process.cwd()`."
       },
       "exclude": {
@@ -14,9 +11,8 @@
         "description": "Exclude directories matching a regular expression. For example, the\nexpression `/${/` on './var/cache/${user}' exclude the directories\ncontaining a variables and only apply to `./var/cache/`."
       },
       "force": {
-        "type": [
-          "boolean"
-        ],
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Overwrite permissions on the target directory. By default,\npermissions on only set on directory creation. It does not impact\nthe parent directory permissions."
       },
       "gid": {
@@ -28,7 +24,8 @@
       "parent": {
         "oneOf": [
           {
-            "type": "boolean"
+            "type": ["boolean", "number", "string"],
+            "coercion": true
           },
           {
             "type": "object",

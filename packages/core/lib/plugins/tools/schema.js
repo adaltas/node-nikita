@@ -12,8 +12,9 @@ import ajv_keywords from "ajv-keywords";
 import ajv_formats from "ajv-formats";
 import utils from "@nikitajs/core/utils";
 import instanceofDef from "ajv-keywords/dist/definitions/instanceof.js";
-import cast_code from '@nikitajs/core/plugins/tools/schema.keyword.cast_code'
-import filemode from '@nikitajs/core/plugins/tools/schema.keyword.filemode'
+import cast_code from '@nikitajs/core/plugins/tools/schema.keyword.cast_code';
+import coercion from '@nikitajs/core/plugins/tools/schema.keyword.coercion';
+import filemode from '@nikitajs/core/plugins/tools/schema.keyword.filemode';
 
 instanceofDef.CONSTRUCTORS["Error"] = Error;
 instanceofDef.CONSTRUCTORS["stream.Writable"] = stream.Writable;
@@ -54,7 +55,7 @@ export default {
           allowUnionTypes: true, // eg type: ['boolean', 'integer']
           strict: true,
           strictRequired: false, // see https://github.com/ajv-validator/ajv/issues/1571
-          coerceTypes: 'array',
+          // coerceTypes: 'array',
           loadSchema: (uri) =>
             new Promise(async function (accept, reject) {
               let pathname, protocol;
@@ -112,6 +113,7 @@ export default {
         ajv_formats(ajv);
         // Note, this is currently tested in action.execute.config.code
         ajv.addKeyword(cast_code);
+        ajv.addKeyword(coercion);
         ajv.addKeyword(filemode);
         action.tools.schema = {
           ajv: ajv,

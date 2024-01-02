@@ -4,6 +4,7 @@
     "properties": {
       "add_host": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -15,6 +16,7 @@
       },
       "cap_add": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -22,6 +24,7 @@
       },
       "cap_drop": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -53,6 +56,7 @@
       },
       "device": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -60,6 +64,7 @@
       },
       "dns": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -67,6 +72,7 @@
       },
       "dns_search": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -81,6 +87,7 @@
       },
       "env": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -88,6 +95,7 @@
       },
       "env_file": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -95,6 +103,7 @@
       },
       "expose": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -114,6 +123,7 @@
       },
       "label": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -125,6 +135,7 @@
       },
       "link": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -140,6 +151,7 @@
       },
       "port": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -160,6 +172,7 @@
       },
       "ulimit": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": [
             "integer",
@@ -170,6 +183,7 @@
       },
       "volume": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -177,6 +191,7 @@
       },
       "volumes_from": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

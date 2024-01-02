@@ -6,12 +6,6 @@ import definitions from "./schema.json" assert { type: "json" };
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    if (!Array.isArray(config.user)) {
-      // User related config
-      // Note, very weird, if we don't merge, the user array is traversable but
-      // the keys map to undefined values.
-      config.user = [merge(config.user)];
-    }
     let modified = false;
     for (const user of config.user) {
       // Add the user
@@ -29,9 +23,9 @@ export default {
         passwd: config.passwd,
       });
       if (added) {
-        log("WARN", "User added");
+        log("WARN", "User added.");
       } else if (updated) {
-        log("WARN", "User updated");
+        log("WARN", "User updated.");
       }
       if (updated || added) {
         modified = true;

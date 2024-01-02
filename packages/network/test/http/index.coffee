@@ -70,15 +70,17 @@ describe 'network.http', ->
   
   describe 'schema', ->
   
-    it 'required properties', () ->
+    it 'required properties url', () ->
       await nikita.network.http({}, (->))
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: "NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `network.http`: #/required config must have required property 'url'."
+    
+    it 'timeout must be an integer', () ->
       await nikita.network.http({url: '#', timeout: 'invalid'}, (->))
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `network.http`: module://@nikitajs/network/tcp/wait#/definitions/config/properties/timeout/type config/timeout must be integer, type is "integer".'
+        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration of action `network.http`: module://@nikitajs/network/tcp/wait#/definitions/config/properties/timeout/coercion config/timeout fail to convert string to integer, value is "invalid".'
 
     it 'casting', () ->
       nikita.network.http url: '#', timeout: '1', ({config}) ->

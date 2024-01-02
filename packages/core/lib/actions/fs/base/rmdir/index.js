@@ -24,10 +24,7 @@ export default {
       await this.execute({
         command: [`[ ! -d ${esa(config.target)} ] && exit 2`, !config.recursive ? `rmdir ${esa(config.target)}` : `rm -R ${esa(config.target)}`].join('\n')
       });
-      log({
-        message: "Directory successfully removed",
-        level: 'INFO'
-      });
+      log("INFO", "Directory successfully removed");
     } catch (error) {
       if (error.exit_code === 2) {
         error = errors.NIKITA_FS_RMDIR_TARGET_ENOENT({

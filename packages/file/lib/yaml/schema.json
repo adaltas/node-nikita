@@ -67,6 +67,7 @@
       },
       "replace": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

@@ -4,6 +4,7 @@
     "properties": {
       "dn": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

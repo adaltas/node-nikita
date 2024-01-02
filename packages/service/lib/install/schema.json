@@ -20,11 +20,13 @@
       },
       "pacman_flags": {
         "type": "array",
+        "coercion": true,
         "default": [],
         "description": "Additionnal flags passed to the `pacman -S` command."
       },
       "yay_flags": {
         "type": "array",
+        "coercion": true,
         "default": [],
         "description": "Additionnal flags passed to the `yay -S` command."
       }

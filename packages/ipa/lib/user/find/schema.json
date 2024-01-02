@@ -156,60 +156,70 @@
           },
           "in_group": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "not_in_group": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "in_netgroup": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "not_in_netgroup": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "in_role": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "not_in_role": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "in_hbacrule": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "not_in_hbacrule": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "in_sudorule": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }
           },
           "not_in_sudorule": {
             "type": "array",
+            "coercion": true,
             "items": {
               "type": "string"
             }

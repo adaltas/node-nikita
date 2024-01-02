@@ -9,6 +9,7 @@
       },
       "status_code": {
         "type": "array",
+        "coercion": true,
         "default": [
           "1xx",
           "2xx",

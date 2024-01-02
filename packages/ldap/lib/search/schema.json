@@ -4,6 +4,7 @@
     "properties": {
       "attributes": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

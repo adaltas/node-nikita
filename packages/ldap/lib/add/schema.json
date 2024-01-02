@@ -4,6 +4,7 @@
     "properties": {
       "entry": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "object",
           "properties": {

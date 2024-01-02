@@ -1,7 +1,7 @@
 // Dependencies
 import definitions from "./schema.json" assert { type: "json" };
 
-// Exports
+// Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     let status = false;
@@ -26,16 +26,6 @@ export default {
       }
     }
     return status;
-  },
-  hooks: {
-    on_action: {
-      after: "@nikitajs/core/plugins/metadata/argument_to_config",
-      handler: function ({ config }) {
-        if (typeof config.target === "string") {
-          return (config.target = [config.target]);
-        }
-      },
-    },
   },
   metadata: {
     argument_to_config: "target",

@@ -11,7 +11,8 @@
         "description": "Symbolic link to be created."
       },
       "exec": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Create an executable file with an `exec` command."
       },
       "mode": {

@@ -4,7 +4,8 @@
     "oneOf": [{
       "properties": {
         "time": {
-          "type": "integer",
+          "type": ["integer", "string"],
+          "coercion": true,
           "description": "Time in millisecond to wait for."
         }
       },

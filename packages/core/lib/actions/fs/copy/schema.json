@@ -11,7 +11,8 @@
       "parent": {
         "oneOf": [
           {
-            "type": "boolean"
+            "type": ["boolean", "number", "string"],
+            "coercion": true
           },
           {
             "type": "object",
@@ -31,7 +32,8 @@
         "description": "Create parent directory with provided attributes if an object or\ndefault system config if \"true\", supported attributes include 'mode',\n'uid', 'gid', 'size', 'atime', and 'mtime'."
       },
       "preserve": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Preserve file ownerships and permissions."
       },

@@ -8,6 +8,7 @@
       },
       "keys": {
         "type": "array",
+        "coercion": true,
         "description": "Array containing the public keys."
       },
       "merge": {

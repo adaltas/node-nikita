@@ -7,6 +7,14 @@ they = mochaThey(test.config)
 describe 'actions.fs.move', ->
   return unless test.tags.posix
 
+  it 'coercion', ->
+    nikita.fs.move
+      force: 1
+      source: "fake_source"
+      target: "fake_target"
+    , ({config}) -> config.force.should.be.true()
+
+
   they 'error missing target', ({ssh}) ->
     nikita
       $ssh: ssh

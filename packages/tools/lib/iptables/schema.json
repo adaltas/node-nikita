@@ -4,6 +4,7 @@
     "properties": {
       "rules": {
         "type": "array",
+        "coercion": true,
         "items": {
           "$ref": "#/definitions/rule"
         },

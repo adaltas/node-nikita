@@ -19,6 +19,7 @@
       },
       "cookies": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -35,6 +36,7 @@
       },
       "http_headers": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

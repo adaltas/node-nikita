@@ -3,21 +3,11 @@ import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
 import definitions from "./schema.json" assert { type: "json" };
 
-// Errors
-const errors = {
-  NIKITA_TCP_WAIT_TIMEOUT: function({config}) {
-    return utils.error('NIKITA_TCP_WAIT_TIMEOUT', [`timeout reached after ${config.timeout}ms.`]);
-  }
-};
-
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     if (!config.server?.length) {
-      log({
-        message: "No connection to wait for",
-        level: "WARN",
-      });
+      log("WARN", "No connection to wait for.");
       return;
     }
     // Validate servers
@@ -42,9 +32,11 @@ export default {
           function compute_md5 {
             echo $1 | openssl md5 | sed 's/^.* \([a-z0-9]*\)$/\1/g'
           }
-          addresses=( ${config.server.map( ({host, port}) => "'" + host + "':'" + port + "'").join(" ")})
+          addresses=( ${config.server
+            .map(({ host, port }) => "'" + host + "':'" + port + "'")
+            .join(" ")})
           timeout=${config.timeout || ""}
-          md5=\`compute_md5 $${''}{addresses[@]}\`
+          md5=\`compute_md5 $${""}{addresses[@]}\`
           randdir="${config.randdir || ""}"
           if [ -z $randir ]; then
             # shm and shmfs is also known as tmpfs
@@ -71,9 +63,9 @@ export default {
             fi
           }
           function remove_randdir {
-            for address in "$${''}{addresses[@]}" ; do
-              host="$${''}{address%%:*}"
-              port="$${''}{address##*:}"
+            for address in "$${""}{addresses[@]}" ; do
+              host="$${""}{address%%:*}"
+              port="$${""}{address##*:}"
               rm -f $randdir/\`compute_md5 $host:$port\`
             done
           }
@@ -117,9 +109,9 @@ export default {
           }
           start_time=\`get_time\`
           # Block until all connections are open
-          for address in "$${''}{addresses[@]}" ; do
-            host="$${''}{address%%:*}"
-            port="$${''}{address##*:}"
+          for address in "$${""}{addresses[@]}" ; do
+            host="$${""}{address%%:*}"
+            port="$${""}{address##*:}"
             randfile4conn=$randdir/\`compute_md5 $host:$port\`
             wait_connection $host $port $randfile4conn &
           done
@@ -135,7 +127,9 @@ export default {
       });
     } catch (error) {
       if (error.exit_code === 2) {
-        throw errors.NIKITA_TCP_WAIT_TIMEOUT({ config });
+        throw utils.error("NIKITA_TCP_WAIT_TIMEOUT", [
+          `timeout reached after ${config.timeout}ms.`,
+        ]);
       }
       throw error;
     }
@@ -170,10 +164,14 @@ export default {
             config.port = [config.port];
           }
         }
-        return (config.host || []).map(host => (config.port || []).map( port => ({
-          host: host,
-          port: port,
-        }))).flat(Infinity);
+        return (config.host || [])
+          .map((host) =>
+            (config.port || []).map((port) => ({
+              host: host,
+              port: port,
+            }))
+          )
+          .flat(Infinity);
       };
       const servers = extract_servers(config);
       if (config.server) {

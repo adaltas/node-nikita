@@ -8,7 +8,7 @@ export default {
   handler: async function ({ config, tools: { log } }) {
     // Content: pass all arguments to function calls
     const context = arguments[0];
-    if(config.source){
+    if (config.source) {
       log("DEBUG", `Source is ${JSON.stringify(config.source)}.`);
     }
     log("DEBUG", `Write to destination ${JSON.stringify(config.target)}.`);
@@ -68,10 +68,10 @@ export default {
       // Option "local" force to bypass the ssh
       // connection, use by the upload function
       const source = config.source || config.target;
-      log({
-        message: `Force local source is \"${config.local ? "true" : "false"}\"`,
-        level: "DEBUG",
-      });
+      log(
+        "DEBUG",
+        `Force local source is \`${config.local ? "true" : "false"}\`.`
+      );
       const { exists } = await this.fs.base.exists({
         $ssh: config.local ? false : undefined,
         $sudo: config.local ? false : undefined,
@@ -85,10 +85,7 @@ export default {
         }
         config.content = "";
       }
-      log({
-        message: "Reading source",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Reading source.");
       ({ data: config.content } = await this.fs.base.readFile({
         $ssh: config.local ? false : undefined,
         $sudo: config.local ? false : undefined,
@@ -119,29 +116,18 @@ export default {
         if (typeof config.target !== "string") {
           return null;
         }
-        log({
-          message: "Stat target",
-          level: "DEBUG",
-        });
+        log("DEBUG", "Stat target.");
         try {
           let { stats } = await this.fs.base.lstat({
             target: config.target,
           });
           if (utils.stats.isDirectory(stats.mode)) {
-            throw Error(
-              "Incoherent situation, target is a directory and there is no source to guess the filename"
-            );
-            // config.target = "#{config.target}/#{path.basename config.source}"
-            // log message: "Destination is a directory and is now \"config.target\"", level: 'INFO'
-            // # Destination is the parent directory, let's see if the file exist inside
-            // {stats} = await @fs.base.stat target: config.target, $relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-            // throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
-            // log message: "New target exists", level: 'INFO'
+            throw utils.error("NIKITA_FILE_INCOHERENT_STATE", [
+              "Incoherent situation,",
+              "target is a directory and there is no source to guess the filename",
+            ]);
           } else if (utils.stats.isSymbolicLink(stats.mode)) {
-            log({
-              message: "Destination is a symlink",
-              level: "INFO",
-            });
+            log("INFO", "Destination is a symlink.");
             if (config.unlink) {
               await this.fs.base.unlink({
                 target: config.target,
@@ -149,10 +135,7 @@ export default {
               stats = null;
             }
           } else if (utils.stats.isFile(stats.mode)) {
-            log({
-              message: "Destination is a file",
-              level: "INFO",
-            });
+            log("INFO", "Destination is a file.");
           } else {
             throw Error(`Invalid File Type Destination: ${config.target}`);
           }
@@ -183,10 +166,7 @@ export default {
       });
     }
     if (config.remove_empty_lines) {
-      log({
-        message: "Remove empty lines",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Remove empty lines.");
       config.content = config.content.replace(
         /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g,
         "$1"
@@ -196,10 +176,7 @@ export default {
       utils.partial(config, log);
     }
     if (config.eof) {
-      log({
-        message: "Checking option eof",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Checking option eof.");
       if (config.eof === true) {
         for (let i = 0; i < config.content.length; i++) {
           const char = config.content[i];
@@ -215,18 +192,13 @@ export default {
         if (config.eof === true) {
           config.eof = "\n";
         }
-        log({
-          message: `Option eof is true, guessing as ${JSON.stringify(
-            config.eof
-          )}`,
-          level: "INFO",
-        });
+        log(
+          "INFO",
+          `Option eof is true, guessing as ${JSON.stringify(config.eof)}.`
+        );
       }
       if (!utils.string.endsWith(config.content, config.eof)) {
-        log({
-          message: "Add eof",
-          level: "INFO",
-        });
+        log("INFO", "Add eof.");
         config.content += config.eof;
       }
     }
@@ -248,17 +220,12 @@ export default {
       if (typeof config.diff === "function") {
         config.diff(text, raw);
       }
-      log({
+      log("INFO", text, {
         type: "diff",
-        message: text,
-        level: "INFO",
       });
     }
     if (config.backup && contentChanged) {
-      log({
-        message: "Create backup",
-        level: "INFO",
-      });
+      log("INFO", "Create backup.");
       if (config.backup_mode == null) {
         config.backup_mode = 0o0400;
       }
@@ -273,10 +240,7 @@ export default {
     }
     // Call the target with the content when a function
     if (typeof config.target === "function") {
-      log({
-        message: "Write target with user function",
-        level: "INFO",
-      });
+      log("INFO", "Write target with user function.");
       await config.target({
         content: config.content,
       });

@@ -1,3 +1,5 @@
+import utils from "@nikitajs/core/utils";
+
 export default {
   keyword: "cast_code",
   type: ["integer", "string", "array", "object"],

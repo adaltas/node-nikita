@@ -4,6 +4,7 @@
     "properties": {
       "cookies": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

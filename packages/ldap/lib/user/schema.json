@@ -7,15 +7,12 @@
         "description": "Distinguish name storing the \"olcAccess\" property, using the database\naddress (eg: \"olcDatabase={2}bdb,cn=config\")."
       },
       "user": {
-        "oneOf": [
-          {
-            "type": "object"
-          },
-          {
-            "type": "array"
-          }
-        ],
-        "description": "User object."
+        "type": "array",
+        "coercion": true,
+        "description": "User object.",
+        "items": {
+          "type": "object"
+        }
       },
       "binddn": {
         "type": "string",

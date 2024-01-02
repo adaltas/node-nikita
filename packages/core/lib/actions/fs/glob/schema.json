@@ -3,7 +3,8 @@
     "type": "object",
     "properties": {
       "dot": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Minimatch option to handle files starting with a \".\"."
       },
       "target": {
@@ -11,7 +12,8 @@
         "description": "Globbing expression of the directory tree to match."
       },
       "trailing": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Leave a slash at the end of directories."
       },

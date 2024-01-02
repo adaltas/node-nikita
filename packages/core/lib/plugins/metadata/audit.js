@@ -155,7 +155,7 @@ export default {
           ws: ws,
           listeners: {
             action: function ({ action, error }) {
-              const message = action.metadata.namespace?.join(".") || action.module;
+              const message = action.metadata.namespace?.join(".") || action.metadata.module || "nikita";
               const color = error ? audit.colors.error : audit.colors.info;
               action.parent.state.audit.index++;
               print(
@@ -241,7 +241,7 @@ export default {
           {
             color: error ? audit.colors.error : audit.colors.info,
             prefix: "ACTION",
-            message: action.metadata.namespace?.join(".") || action.module || "nikita",
+            message: action.metadata.namespace?.join(".") || action.metadata.module || "nikita",
             index: action.metadata.index,
             position: [],
             side: string.print_time(

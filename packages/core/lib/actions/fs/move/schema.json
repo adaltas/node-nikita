@@ -3,7 +3,8 @@
     "type": "object",
     "properties": {
       "force": {
-        "type": "boolean",
+        "type": ["boolean", "integer", "string"],
+        "coercion": true,
         "default": false,
         "description": "Force the replacement of the file without checksum verification, speed\\nup the action and disable the `moved` indicator in the callback."
       },
@@ -24,9 +25,6 @@
         "description": "Destination md5 checkum if known, otherwise computed if target exists."
       }
     },
-    "required": [
-      "source",
-      "target"
-    ]
+    "required": ["source", "target"]
   }
 }

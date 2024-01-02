@@ -4,6 +4,7 @@
     "properties": {
       "name": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -12,6 +13,7 @@
       },
       "caname": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

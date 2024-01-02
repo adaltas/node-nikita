@@ -3,7 +3,8 @@
     "type": "object",
     "properties": {
       "load": {
-        "type": "boolean",
+        "type": ["boolean", "integer", "string"],
+        "coercion": true,
         "default": true,
         "description": "Load the module with `modprobe`."
       },
@@ -25,7 +26,8 @@
         "description": "Names of the modules."
       },
       "persist": {
-        "type": "boolean",
+        "type": ["boolean", "integer", "string"],
+        "coercion": true,
         "default": true,
         "description": "Load the module on startup by placing a file, see `target`."
       },

@@ -11,6 +11,7 @@
       },
       "label": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
@@ -22,6 +23,7 @@
       },
       "opt": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

@@ -13,6 +13,7 @@
       },
       "user": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

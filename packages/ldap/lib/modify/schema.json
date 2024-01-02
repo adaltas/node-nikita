@@ -5,6 +5,7 @@
       "$ref": "module://@nikitajs/ldap/search#/definitions/config",
       "operations": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "object",
           "properties": {
@@ -19,6 +20,7 @@
             },
             "attributes": {
               "type": "array",
+              "coercion": true,
               "items": {
                 "type": "object",
                 "properties": {
@@ -53,6 +55,7 @@
       },
       "exclude": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },

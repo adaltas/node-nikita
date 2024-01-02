@@ -3,39 +3,29 @@
     "type": "object",
     "properties": {
       "arch_chroot": {
-        "type": [
-          "boolean",
-          "string"
-        ],
+        "type": ["boolean", "string"],
         "description": "Run this command inside a root directory with the arc-chroot command or any provided string, require the \"arch_chroot_rootdir\" option if activated."
       },
       "bash": {
-        "type": [
-          "boolean",
-          "string"
-        ],
+        "type": ["boolean", "string"],
         "description": "Serialize the command into a file and execute it with bash."
       },
       "code": {
         "cast_code": true,
-        "type": [
-          "integer",
-          "string",
-          "array",
-          "object"
-        ],
+        "type": ["object", "array", "integer", "string"],
+        "coercion": true,
         "properties": {
           "true": {
-            "type": "array",
+            "type": ["array", "integer"],
+            "coercion": true,
             "items": {
               "type": "integer"
             },
-            "default": [
-              0
-            ]
+            "default": [0]
           },
           "false": {
-            "type": "array",
+            "type": ["array", "integer"],
+            "coercion": true,
             "items": {
               "type": "integer"
             },
@@ -61,12 +51,14 @@
         "description": "Current working directory from where to execute the command."
       },
       "dirty": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Leave temporary files on the filesystem."
       },
       "dry": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Run the action without executing any real command."
       },
       "env": {
@@ -79,7 +71,8 @@
         }
       },
       "env_export": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Write a temporary file which exports the the environment variables defined in the `env` property. The value is always `true` when environment variables must be used with SSH."
       },
       "format": {
@@ -103,7 +96,8 @@
         "description": "Unix group id."
       },
       "stdio": {
-        "type": "array",
+        "type": ["array", "integer", "string"],
+        "coercion": true,
         "items": {
           "$ref": "#/definitions/stdio"
         },
@@ -114,7 +108,8 @@
         "description": "Readable EventEmitter in which the standard input is piped from."
       },
       "stdin_log": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": true,
         "description": "Log the executed command of type stdin, default is `true`."
       },
@@ -123,17 +118,20 @@
         "description": "Writable EventEmitter in which the standard output of executed commands will be piped."
       },
       "stdout_return": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": true,
         "description": "Return the stderr content in the output, default is `true`.  It is preferable to set this property to `false` and to use the `stdout` property when expecting a large stdout output."
       },
       "stdout_log": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": true,
         "description": "Pass stdout output to the logs of type \"stdout_stream\", default is `true`."
       },
       "stdout_trim": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Trim the stdout output."
       },
@@ -142,22 +140,26 @@
         "description": "Writable EventEmitter in which the standard error output of executed command will be piped."
       },
       "stderr_return": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": true,
         "description": "Return the stderr content in the output, default is `true`. It is preferable to set this property to `false` and to use the `stderr` property when expecting a large stderr output."
       },
       "stderr_log": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": true,
         "description": "Pass stdout output to the logs of type \"stdout_stream\", default is `true`."
       },
       "stderr_trim": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Trim the stderr output."
       },
       "sudo": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "description": "Run a command as sudo, desactivated if user is \"root\"."
       },
       "target": {
@@ -165,17 +167,20 @@
         "description": "Temporary path storing the script, only apply with the `bash` and `arch_chroot` properties, always disposed once executed. Unless provided, the default location is `{metadata.tmpdir}/{string.hash config.command}`. See the `tmpdir` plugin for additionnal information."
       },
       "trap": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Exit immediately if a commands inside a script exits with a non-zero exit status, add the `set -e` option to your script."
       },
       "trim": {
-        "type": "boolean",
+        "type": ["boolean", "number", "string"],
+        "coercion": true,
         "default": false,
         "description": "Trim both the stdout and stderr outputs."
       },
       "uid": {
-        "type": "integer",
+        "type": ["integer", "string"],
+        "coercion": true,
         "description": "Unix user id."
       }
     },

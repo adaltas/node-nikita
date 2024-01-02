@@ -4,15 +4,17 @@
     "properties": {
       "target": {
         "type": "array",
+        "coercion": true,
         "items": {
           "type": "string"
         },
         "description": "Paths to the files and directories."
       },
       "interval": {
-        "type": "integer",
+        "type": ["integer", "string"],
+        "coercion": true,
         "default": 2000,
-        "description": "Time interval between which we should wait before re-executing the\ncheck, default to 2s."
+        "description": "Time interval between which we should wait before re-executing the check, default to 2s."
       }
     },
     "required": [

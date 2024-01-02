@@ -44,7 +44,7 @@ describe 'plugins.tools.schema', ->
     
     it '`addMetadata` with coercion', ->
       nikita key: 'value', $meta: 1, (action) ->
-        action.tools.schema.addMetadata 'meta', type: 'boolean'
+        action.tools.schema.addMetadata 'meta', type: ['boolean', 'number'], coercion: true
         action.metadata.definitions =
           config:
             type: 'object'

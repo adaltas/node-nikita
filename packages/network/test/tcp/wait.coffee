@@ -43,7 +43,7 @@ describe 'network.tcp.wait', ->
         host: undefined
         port: 80
       $logs.map ({message}) -> message
-      .should.containEql 'No connection to wait for'
+      .should.containEql 'No connection to wait for.'
 
     it 'option server.host undefined', ->
       {$logs} = await nikita.network.tcp.wait
@@ -51,7 +51,7 @@ describe 'network.tcp.wait', ->
           { host: undefined, port: 80 }
         ]
       $logs.map ({message}) -> message
-      .should.containEql 'No connection to wait for'
+      .should.containEql 'No connection to wait for.'
 
     it 'option server.port undefined', ->
       {$logs} = await nikita.network.tcp.wait
@@ -59,7 +59,7 @@ describe 'network.tcp.wait', ->
           { host: 'localhost', port: undefined }
         ]
       $logs.map ({message}) -> message
-      .should.containEql 'No connection to wait for'
+      .should.containEql 'No connection to wait for.'
 
   describe 'run', ->
 

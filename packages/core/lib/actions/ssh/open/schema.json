@@ -24,7 +24,8 @@
         "description": "Password of the user used to authenticate and create the SSH\nconnection."
       },
       "port": {
-        "type": "integer",
+        "type": ["integer", "string"],
+        "coercion": true,
         "default": 22,
         "description": "Port of the remote server."
       },

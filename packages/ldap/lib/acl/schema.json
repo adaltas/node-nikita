@@ -4,12 +4,14 @@
     "properties": {
       "acls": {
         "type": "array",
+        "coercion": true,
         "description": "In case of multiple acls, regroup \"place_before\", \"to\" and \"by\" as an\narray.",
         "items": {
           "type": "object",
           "properties": {
             "by": {
               "type": "array",
+              "coercion": true,
               "items": {
                 "type": "string"
               },

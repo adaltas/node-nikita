@@ -13,6 +13,13 @@ describe 'actions.fs.wait', ->
       nikita.fs.wait '/path/to/file', ({config}) ->
         config.target.should.eql ['/path/to/file']
   
+    it 'coercion', ->
+      nikita.fs.wait
+        interval: '1000'
+        target: 'fake'
+      , ({config}) ->
+        config.interval.should.eql 1000
+  
   describe 'usage', ->
 
     they 'status false if already exists', ({ssh}) ->

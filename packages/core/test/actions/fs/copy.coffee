@@ -237,7 +237,7 @@ describe 'actions.fs.copy', ->
 
   describe 'directory', ->
 
-    they 'should copy without slash at the end', ({ssh}) ->
+    they 'copy without slash at the end', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -262,7 +262,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert "#{tmpdir}/target_2/source/a_dir/a_file"
         await @fs.assert "#{tmpdir}/target_2/source/a_file"
 
-    they 'should copy the files when dir end with slash', ({ssh}) ->
+    they 'copy the files when dir end with slash', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -287,7 +287,7 @@ describe 'actions.fs.copy', ->
         await @fs.assert "#{tmpdir}/target_2/a_dir/a_file"
         await @fs.assert "#{tmpdir}/target_2/a_file"
 
-    they 'should copy hidden files', ({ssh}) ->
+    they 'copy hidden files', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -375,7 +375,7 @@ describe 'actions.fs.copy', ->
           target: "#{tmpdir}/a_target/a_dir/a_file"
           mode: 0o0655
 
-    they.skip 'should copy with globing and hidden files', ({ssh}) ->
+    they.skip 'copy with globing and hidden files', ({ssh}) ->
       # Todo: not yet implemented
       nikita
         $ssh: ssh

@@ -12,9 +12,11 @@ describe 'actions.execute.assert', ->
     it 'coercion', ->
       nikita.execute.assert
         command: 'exit 1'
+        content: 42
         code: 1
         ({config}) ->
           config.code.should.eql [1]
+          config.content.should.eql "42"
   
   describe 'exit code', ->
 

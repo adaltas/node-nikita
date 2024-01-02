@@ -12,10 +12,18 @@ describe 'actions.fs.assert', ->
     
     it 'coersion', ->
       nikita.fs.assert
-        mode: '744',
+        filetype: 'file'
+        filter: /filter /
+        gid: '1000'
+        mode: '744'
+        uid: '1000'
         target: '/tmp/fake'
       , ({config}) ->
+        config.filetype.should.eql [ 'file' ]
+        config.filter.should.eql [ /filter / ]
+        config.gid.should.eql 1000
         config.mode.should.eql [ 0o0744 ]
+        config.uid.should.eql 1000
   
   describe 'exists', ->
 

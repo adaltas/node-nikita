@@ -3,14 +3,11 @@
     "type": "object",
     "properties": {
       "container": {
-        "type": [
-          "array",
-          "string"
-        ],
+        "type": ["array", "string"],
         "items": {
           "type": "string"
         },
-        "description": "Name/ID of the container (array of containers not yet implemented)."
+        "description": "Name/ID of the container(s)."
       },
       "docker": {
         "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"

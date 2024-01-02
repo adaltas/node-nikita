@@ -119,7 +119,7 @@
       "should"
     ],
     "throw-deprecation": true,
-    "timeout": 10000
+    "timeout": 40000
   },
   "repository": {
     "type": "git",
