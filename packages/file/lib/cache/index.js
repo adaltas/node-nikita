@@ -27,7 +27,7 @@ export default {
     }
     config.target = path.resolve(config.cache_dir, config.target);
     if (/^file:\/\//.test(config.source)) {
-      config.source = config.source.substr(7);
+      config.source = config.source.slice(7);
     }
     // todo, also support config.algo and config.hash
     // replace alog and _hash with

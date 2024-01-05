@@ -16,7 +16,7 @@ export default {
           if (k[0] !== "$") {
             continue;
           }
-          const prop = k.substr(1);
+          const prop = k.slice(1);
           switch (prop) {
             case "handler":
               action.handler = v;

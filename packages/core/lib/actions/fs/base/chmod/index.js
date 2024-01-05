@@ -6,7 +6,7 @@ import definitions from "./schema.json" assert { type: "json" };
 export default {
   handler: async function({config}) {
     const mode = typeof config.mode === 'number'
-      ? config.mode.toString(8).substr(-4)
+      ? config.mode.toString(8).slice(-4)
       : config.mode;
     await this.execute(`chmod ${mode} ${config.target}`);
   },

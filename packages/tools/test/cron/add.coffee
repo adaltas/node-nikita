@@ -69,7 +69,7 @@ describe 'tools.cron.add', ->
 
   describe 'action', ->
 
-    rand = Math.random().toString(36).substring(7)
+    rand = Math.random().toString(36).slice(7)
 
     they 'add a job', ({ssh}) ->
       nikita

@@ -63,7 +63,7 @@ const errors = {
     const expect = config.mode.map(function(mode) {
       return pad(4, utils.mode.stringify(mode), '0');
     });
-    return utils.error("NIKITA_FS_ASSERT_MODE_UNMATCH", ['content permission don\'t match the provided mode,', `expect ${expect},`, `got ${utils.mode.stringify(mode).substr(-4)}.`], {
+    return utils.error("NIKITA_FS_ASSERT_MODE_UNMATCH", ['content permission don\'t match the provided mode,', `expect ${expect},`, `got ${utils.mode.stringify(mode).slice(-4)}.`], {
       target: config.target,
       message: config.error
     });

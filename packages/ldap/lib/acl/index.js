@@ -36,7 +36,7 @@ export default {
         } else if (current != null) {
           if (/^ /.test(line)) {
             // Append to existing rule
-            current += line.substr(1); // Close the rule
+            current += line.slice(1); // Close the rule
           } else {
             olcAccesses.push(current);
             current = null;

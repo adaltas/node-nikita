@@ -78,7 +78,8 @@ export default function (args) {
               if (k === "$$") {
                 mutate(new_action.metadata, v);
               } else {
-                const prop = k.substr(1);
+                // Extract the property name from key starting with `$`
+                const prop = k.slice(1);
                 if (properties.includes(prop)) {
                   new_action[prop] = v;
                 } else {

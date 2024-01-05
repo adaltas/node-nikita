@@ -95,7 +95,7 @@ export default {
           output.headers = {};
           const [http_version, status_code, ...status_message] =
             line.split(" ");
-          output.http_version = http_version.substr(5);
+          output.http_version = http_version.slice(5);
           output.status_code = parseInt(status_code, 10);
           output.status_message = status_message.join(" ");
           continue;

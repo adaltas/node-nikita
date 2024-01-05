@@ -24,7 +24,7 @@ describe 'tools.cron.remove', ->
 
   describe 'action', ->
 
-    rand = Math.random().toString(36).substring(7)
+    rand = Math.random().toString(36).slice(7)
 
     they 'remove a job', ({ssh}) ->
       nikita

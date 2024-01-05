@@ -18,7 +18,7 @@ export default {
   handler: async function({config}) {
     if (typeof config.mode === 'number') {
       // Convert mode into a string
-      config.mode = config.mode.toString(8).substr(-4);
+      config.mode = config.mode.toString(8).slice(-4);
     }
     try {
       return (await this.execute([`[ -d '${config.target}' ] && exit 17`, ['install', config.mode ? `-m '${config.mode}'` : void 0, config.uid ? `-o '${config.uid}'` : void 0, config.gid ? `-g '${config.gid}'` : void 0, `-d '${config.target}'`].join(' ')].join('\n')));

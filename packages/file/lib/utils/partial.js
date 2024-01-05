@@ -54,7 +54,7 @@ export default function(config, log) {
           }
         } else {
           log("DEBUG", "Forgot how we could get there, test shall say it all");
-          const linebreak = config.content.length === 0 || config.content.substr(config.content.length - 1) === '\n' ? '' : '\n';
+          const linebreak = config.content.length === 0 || config.content.slice(config.content.length - 1) === '\n' ? '' : '\n';
           config.content = opts.replace + linebreak + config.content;
         }
       } else if (opts.append && typeof opts.replace === 'string') {
@@ -77,7 +77,7 @@ export default function(config, log) {
             }
           }
         } else {
-          const linebreak = config.content.length === 0 || config.content.substr(config.content.length - 1) === '\n' ? '' : '\n';
+          const linebreak = config.content.length === 0 || config.content.slice(config.content.length - 1) === '\n' ? '' : '\n';
           config.content = config.content + linebreak + opts.replace;
         }
       } else {
@@ -100,19 +100,19 @@ export default function(config, log) {
             log("WARN", "Missing 'from' and 'to' without append, skip writing");
           }
         } else {
-          config.content = config.content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + config.content.substr(to.index);
+          config.content = config.content.slice(0, from.index + from[1].length + 1) + opts.replace + '\n' + config.content.slice(to.index);
         }
       } else if (opts.from && !opts.to) {
         const from = RegExp(`(^${utils.regexp.quote(opts.from)}$)`, "m").exec(config.content);
         if (from != null) {
-          config.content = config.content.substr(0, from.index + from[1].length) + '\n' + opts.replace; // TODO: honors append
+          config.content = config.content.slice(0, from.index + from[1].length) + '\n' + opts.replace; // TODO: honors append
         } else {
           log("WARN", "Missing 'from', skip writing");
         }
       } else if (!opts.from && opts.to) {
         const to = RegExp(`(^${utils.regexp.quote(opts.to)}$)`, "m").exec(config.content);
         if (to != null) {
-          config.content = opts.replace + '\n' + config.content.substr(to.index); // TODO: honors append
+          config.content = opts.replace + '\n' + config.content.slice(to.index); // TODO: honors append
         } else {
           log("WARN", "Missing 'to', skip writing");
         }

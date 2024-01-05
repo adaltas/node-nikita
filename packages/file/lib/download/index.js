@@ -309,7 +309,7 @@ export default {
       );
       config.cache_dir = await find(({ config: { cache_dir } }) => cache_dir);
       if (/^file:\/\//.test(config.source)) {
-        return (config.source = config.source.substr(7));
+        return (config.source = config.source.slice(7));
       }
     },
   },
