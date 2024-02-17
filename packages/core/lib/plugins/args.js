@@ -19,7 +19,6 @@ export default {
           // If raw_input is activated, just pass arguments as is
           // Always one action since arguments are erased
           if (child?.metadata?.raw_input) {
-            action.args = args;
             action.metadata.raw_input = true;
           }
           action.args = args;

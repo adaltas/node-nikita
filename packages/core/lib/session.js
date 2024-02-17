@@ -96,16 +96,13 @@ const session = function(args, options = {}) {
       return contextualize([
         ...args,
         {
-          $namespace: namespace
+          $namespace: namespace || []
         }
       ]);
     }
   });
   action.parent = options.parent;
   action.plugins = plugins;
-  if (action.metadata.namespace == null) {
-    action.metadata.namespace = [];
-  }
   // Initialize the registry to manage action registration
   action.registry = registry.create({
     plugins: action.plugins,
@@ -141,12 +138,12 @@ const session = function(args, options = {}) {
   const result = new Promise(async function(resolve, reject) {
     try {
       // Hook intented to modify the current action being created
-      action = (await action.plugins.call({
-        name: 'nikita:normalize',
+      action = await action.plugins.call({
+        name: "nikita:normalize",
         args: action,
         hooks: action.hooks?.on_normalize || action.on_normalize,
-        handler: normalize
-      }));
+        handler: normalize,
+      });
     } catch (error) {
       schedulers.out.end(error);
       return reject(error);
