@@ -109,6 +109,5 @@ export default function (args) {
     }
   }
   // Create empty action when no arguments are provided and not for an empty array
-  // new_actions = default_action() if not args.length
   return new_action;
 }
