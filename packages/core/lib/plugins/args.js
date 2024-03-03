@@ -26,15 +26,5 @@ export default {
         };
       },
     },
-    "nikita:normalize": function (action, handler) {
-      return async function () {
-        // Prevent arguments to move into config by normalize
-        const args = action.args;
-        delete action.args;
-        action = await handler.apply(null, arguments);
-        action.args = args;
-        return action;
-      };
-    },
   },
 };
