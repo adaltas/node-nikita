@@ -10,40 +10,34 @@ const properties = [
   "parent",
   "plugins",
   "registry",
-  "run",
   "scheduler",
   "ssh",
   "state",
 ];
 
-export default function (args) {
-  // Reconstituate the action
-  const default_action = () => ({
-    config: {},
-    metadata: {},
-    hooks: {},
-    state: {},
-  });
-  const new_action = default_action();
+export default function ({action={}, args}) {
+  // Default values
+  action.config ??= {};
+  action.metadata ??= {};
   for (const arg of args) {
     switch (typeof arg) {
       case "function":
-        if (new_action.handler) {
+        if (action.handler) {
           throw utils.error("NIKITA_SESSION_INVALID_ARGUMENTS", [
             `handler is already registered, got ${utils.error.got(arg)}`,
           ]);
         }
-        mutate(new_action, {
+        mutate(action, {
           handler: arg,
         });
         break;
       case "string":
-        if (new_action.handler) {
+        if (action.handler) {
           throw utils.error("NIKITA_SESSION_INVALID_ARGUMENTS", [
             `handler is already registered, got ${JSON.stringigy(arg)}`,
           ]);
         }
-        mutate(new_action, {
+        mutate(action, {
           metadata: {
             argument: arg,
           },
@@ -56,7 +50,7 @@ export default function (args) {
           ]);
         }
         if (arg === null) {
-          mutate(new_action, {
+          mutate(action, {
             metadata: {
               argument: null,
             },
@@ -65,35 +59,35 @@ export default function (args) {
           for (const k in arg) {
             const v = arg[k];
             if (k === "$") {
-              // mutate new_action, v
+              // mutate action, v
               for (const kk in v) {
                 const vv = v[kk];
                 if (["config", "metadata"].includes(kk)) {
-                  new_action[kk] = { ...new_action[kk], ...vv };
+                  action[kk] = { ...action[kk], ...vv };
                 } else {
-                  new_action[kk] = vv;
+                  action[kk] = vv;
                 }
               }
             } else if (k[0] === "$") {
               if (k === "$$") {
-                mutate(new_action.metadata, v);
+                mutate(action.metadata, v);
               } else {
                 // Extract the property name from key starting with `$`
                 const prop = k.slice(1);
                 if (properties.includes(prop)) {
-                  new_action[prop] = v;
+                  action[prop] = v;
                 } else {
-                  new_action.metadata[prop] = v;
+                  action.metadata[prop] = v;
                 }
               }
             } else {
               if (v !== undefined) {
-                new_action.config[k] = v;
+                action.config[k] = v;
               }
             }
           }
         } else {
-          mutate(new_action, {
+          mutate(action, {
             metadata: {
               argument: arg,
             },
@@ -101,7 +95,7 @@ export default function (args) {
         }
         break;
       default:
-        mutate(new_action, {
+        mutate(action, {
           metadata: {
             argument: arg,
           },
@@ -109,5 +103,5 @@ export default function (args) {
     }
   }
   // Create empty action when no arguments are provided and not for an empty array
-  return new_action;
+  return action;
 }

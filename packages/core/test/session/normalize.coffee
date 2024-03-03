@@ -10,18 +10,16 @@ describe 'session.normalize', ->
     expect =
       handler: (->)
       config: a: ''
-      hooks: {}
       metadata: {}
-      state: {}
     # String is place before objects
-    normalize contextualize [
+    normalize contextualize args: [
       (->)
       {a: ''}
     ]
     # Filter only metadata.argument and config
     .should.eql expect
     # String is place after objects
-    normalize contextualize [
+    normalize contextualize args: [
       {a: ''}
       (->)
     ]
@@ -32,17 +30,15 @@ describe 'session.normalize', ->
     expect =
       metadata: argument: 'a'
       config: b: ''
-      hooks: {}
-      state: {}
     # String is place before objects
-    normalize contextualize [
+    normalize contextualize args: [
       'a'
       {b: ''}
     ]
     # Filter only metadata.argument and config
     .should.eql expect
     # String is place after objects
-    normalize contextualize [
+    normalize contextualize args: [
       {b: ''}
       'a'
     ]

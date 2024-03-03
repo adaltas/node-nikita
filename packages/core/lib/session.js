@@ -8,8 +8,18 @@ import normalize from '@nikitajs/core/session/normalize';
 import utils from '@nikitajs/core/utils';
 
 const session = function(args, options = {}) {
+  options.parent = options.parent || args[0]?.$parent || undefined
+  options.namespace = options.namespace || args[0]?.$namespace || undefined
   // Catch calls to new actions
   let namespace = [];
+  let action = {
+    config: {},
+    metadata: {},
+    hooks: {},
+    state: {},
+    action: options.action,
+    parent: options.parent,
+  };
   const on_call = function(...args) {
     let nm;
     // Extract action namespace and reset its value
@@ -30,7 +40,7 @@ const session = function(args, options = {}) {
       if (!args_is_array || child.metadata?.raw_input) {
         return session(args, {
           namespace: nm,
-          child: child,
+          action: child,
           parent: action
         });
       }
@@ -41,7 +51,7 @@ const session = function(args, options = {}) {
         return function() {
           return session(args, {
             namespace: nm,
-            child: child,
+            action: child,
             parent: action
           });
         };
@@ -76,8 +86,6 @@ const session = function(args, options = {}) {
     });
   };
   // Initialize the plugins manager
-  options.parent = options.parent || args[0]?.$parent || undefined
-  options.namespace = options.namespace || args[0]?.$namespace || undefined
   const plugins = plugandplay({
     plugins: options.plugins || args[0]?.$plugins,
     // chain: new Proxy(on_call, {
@@ -86,22 +94,26 @@ const session = function(args, options = {}) {
     parent: options.parent ? options.parent.plugins : undefined
   });
   // Normalize arguments
-  let action = plugins.call_sync({
+  action = plugins.call_sync({
     name: 'nikita:arguments',
     args: {
       args: args,
-      ...options
+      action: options.action,
+      namespace: options.namespace,
     },
     handler: function({args, namespace}) {
-      return contextualize([
-        ...args,
-        {
-          $namespace: namespace || []
-        }
-      ]);
+      return contextualize({
+        args: [
+          ...args,
+          {
+            $namespace: namespace || []
+          }
+        ],
+        action: action
+      });
     }
   });
-  action.parent = options.parent;
+  // action.parent = options.parent;
   action.plugins = plugins;
   // Initialize the registry to manage action registration
   action.registry = registry.create({
@@ -143,6 +155,7 @@ const session = function(args, options = {}) {
         args: action,
         hooks: action.hooks?.on_normalize || action.on_normalize,
         handler: normalize,
+        // handler: (action) => action
       });
     } catch (error) {
       schedulers.out.end(error);
