@@ -9,9 +9,8 @@ describe 'session.creation', ->
   describe 'args is array of actions', ->
 
     it 'first throw error', ->
-      (->
-        session []
-      ).should.throw
+      session []
+      .should.be.rejectedWith
         code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
         message: [
           'NIKITA_SESSION_INVALID_ARGUMENTS:'
@@ -19,18 +18,17 @@ describe 'session.creation', ->
         ].join ' '
   
     it 'which succeed', ->
-      (->
-        session [
-          -> new Promise (resolve) ->
-            setTimeout ->
-              resolve 1
-            , 100
-          -> new Promise (resolve) ->
-            setTimeout ->
-              resolve 2
-            , 10
-        ]
-      ).should.throw
+      session [
+        -> new Promise (resolve) ->
+          setTimeout ->
+            resolve 1
+          , 100
+        -> new Promise (resolve) ->
+          setTimeout ->
+            resolve 2
+          , 10
+      ]
+      .should.be.rejectedWith
         code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
         message: [
           'NIKITA_SESSION_INVALID_ARGUMENTS:'

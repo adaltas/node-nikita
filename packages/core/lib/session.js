@@ -4,22 +4,55 @@ import each from 'each';
 import {plugandplay} from 'plug-and-play';
 import registry from '@nikitajs/core/registry';
 import contextualize from '@nikitajs/core/session/contextualize';
-import normalize from '@nikitajs/core/session/normalize';
 import utils from '@nikitajs/core/utils';
 
 const session = function(args, options = {}) {
+  // Initialize a new session
   options.parent = options.parent || args[0]?.$parent || undefined
   options.namespace = options.namespace || args[0]?.$namespace || undefined
-  // Catch calls to new actions
+  options.plugins = options.plugins || args[0]?.$plugins || undefined
+  // Local schedulers to execute children and be notified on finish
+  const schedulers = {
+    in: each({
+      concurrency: -1,
+      relax: true,
+    }),
+    out: each({
+      concurrency: 1,
+      fluent: false,
+      pause: true,
+    }),
+  };
+  // Build up child namespace before calling
   let namespace = [];
   let action = {
     config: {},
     metadata: {},
     hooks: {},
-    state: {},
-    action: options.action,
     parent: options.parent,
+    scheduler: schedulers.out,
+    state: {},
+    // ...options.action,
   };
+  // Initialize the plugins manager
+  action.plugins = plugandplay({
+    plugins: options.plugins,
+    parent: options.parent ? options.parent.plugins : undefined
+  });
+  // Initialize the registry to manage action registration
+  action.registry = registry.create({
+    plugins: action.plugins,
+    parent: action.parent ? action.parent.registry : registry,
+    on_register: async function(name, act) {
+      await action.plugins.call({
+        name: 'nikita:register',
+        args: {
+          name: name,
+          action: act
+        }
+      });
+    }
+  });
   const on_call = function(...args) {
     let nm;
     // Extract action namespace and reset its value
@@ -85,63 +118,6 @@ const session = function(args, options = {}) {
       get: (target, name) => on_get(target, name, concurrency),
     });
   };
-  // Initialize the plugins manager
-  const plugins = plugandplay({
-    plugins: options.plugins || args[0]?.$plugins,
-    // chain: new Proxy(on_call, {
-    //   get: (target, name) => on_get(target, name, -1),
-    // }),
-    parent: options.parent ? options.parent.plugins : undefined
-  });
-  // Normalize arguments
-  action = plugins.call_sync({
-    name: 'nikita:arguments',
-    args: {
-      args: args,
-      action: options.action,
-      namespace: options.namespace,
-    },
-    handler: function({args, namespace}) {
-      return contextualize({
-        args: [
-          ...args,
-          {
-            $namespace: namespace || []
-          }
-        ],
-        action: action
-      });
-    }
-  });
-  // action.parent = options.parent;
-  action.plugins = plugins;
-  // Initialize the registry to manage action registration
-  action.registry = registry.create({
-    plugins: action.plugins,
-    parent: action.parent ? action.parent.registry : registry,
-    on_register: async function(name, act) {
-      await action.plugins.call({
-        name: 'nikita:register',
-        args: {
-          name: name,
-          action: act
-        }
-      });
-    }
-  });
-  // Local scheduler to execute children and be notified on finish
-  const schedulers = {
-    in: each({
-      concurrency: -1,
-      relax: true,
-    }),
-    out: each({
-      concurrency: 1,
-      fluent: false,
-      pause: true,
-    }),
-  };
-  action.scheduler = schedulers.out;
   // Expose the action context
   action.context = new Proxy(on_call, {
     get: (target, name) => on_get(target, name, -1),
@@ -149,13 +125,32 @@ const session = function(args, options = {}) {
   // Execute the action
   const result = new Promise(async function(resolve, reject) {
     try {
+      // Normalize arguments
+      action = await action.plugins.call({
+        name: 'nikita:arguments',
+        args: {
+          args: args,
+          action: options.action,
+          namespace: options.namespace,
+        },
+        handler: function({args, namespace}) {
+          return contextualize({
+            args: [
+              ...args,
+              {
+                $namespace: namespace || []
+              }
+            ],
+            action: action
+          });
+        }
+      });
       // Hook intented to modify the current action being created
       action = await action.plugins.call({
         name: "nikita:normalize",
         args: action,
         hooks: action.hooks?.on_normalize || action.on_normalize,
-        handler: normalize,
-        // handler: (action) => action
+        handler: (action) => action
       });
     } catch (error) {
       schedulers.out.end(error);

@@ -8,7 +8,6 @@ Management facility to register and unregister actions.
 
 // Dependencies
 import {is_object, merge, mutate} from 'mixme';
-import normalize from '@nikitajs/core/session/normalize';
 
 // Register all functions
 const create = function({chain, on_register, parent, plugins} = {}) {
@@ -191,12 +190,10 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       return (await plugins.call({
         name: 'nikita:registry:normalize',
         args: action,
-        handler: async function(action) {
-          return await normalize(action);
-        }
+        handler: (action) => action
       }));
     } else {
-      return await normalize(action);
+      return action;
     }
   };
   /*

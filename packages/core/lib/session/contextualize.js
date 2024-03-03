@@ -8,7 +8,7 @@ const properties = [
   "metadata",
   "config",
   "parent",
-  "plugins",
+  // "plugins",
   "registry",
   "scheduler",
   "ssh",
