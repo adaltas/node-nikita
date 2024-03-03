@@ -12,7 +12,7 @@ describe 'plugins.args', ->
 
   it 'argument is an object', ->
     nikita
-    .registry.register  ['an', 'action'], ({args}) -> args
+    .registry.register ['an', 'action'], ({args}) -> args
     .an.action a_key: 'a value'
     .then (args) ->
       args.should.eql [ a_key: 'a value' ]
@@ -37,7 +37,7 @@ describe 'plugins.args', ->
 
   it 'argument is an [object], [string]', ->
     nikita
-    .registry.register  ['an', 'action'],
+    .registry.register ['an', 'action'],
       handler: ({args}) -> args
     .an.action [{a_key: 1}, {a_key: 2}], ['a_string', 'b_string']
     .then (actions) ->
