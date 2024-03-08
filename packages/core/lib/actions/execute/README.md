@@ -65,7 +65,7 @@ the `tmpdir` plugins which is only activated when necessary. The conditions
 involves the usage of `sudo`, `chroot`, `arch_chroot` or `env_export`.
 
 For performance reason, consider declare the `metadata.tmpdir` property in your
-parent action to avoid the creation and removal of a tempory directory everytime
+parent action to avoid the creation and removal of a temporary directory everytime
 the `execute` action is called.
 
 ## Events
