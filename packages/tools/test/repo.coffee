@@ -171,7 +171,7 @@ describe 'tools.repo', ->
       await @service.install
         name: 'MariaDB-client'
       await @execute
-        command: "mariadb --version | grep '11.0.4-MariaDB'"
+        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mariadb.repo'
         content:
@@ -195,7 +195,7 @@ describe 'tools.repo', ->
             'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mariadb --version | grep '11.0.4-MariaDB'"
+        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
 
   they 'config `update` is `true`', ({ssh, sudo}) ->
     nikita
@@ -218,7 +218,7 @@ describe 'tools.repo', ->
       await @service.install
         name: 'MariaDB-client'
       await @execute
-        command: "mariadb --version | grep '11.0.4-MariaDB'"
+        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mariadb.repo'
         update: true
@@ -244,7 +244,7 @@ describe 'tools.repo', ->
             'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mariadb --version | grep '11.3.1-MariaDB'"
+        command: "mariadb --version | egrep '11.3.[0-9]+-MariaDB'"
   
   they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh, sudo}) ->
     nikita
