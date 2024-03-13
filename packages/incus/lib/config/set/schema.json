@@ -1,0 +1,27 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      },
+      "properties": {
+        "type": "object",
+        "patternProperties": {
+          "": {
+            "type": [
+              "string",
+              "boolean",
+              "number"
+            ]
+          }
+        },
+        "description": "One or multiple keys to set."
+      }
+    },
+    "required": [
+      "container",
+      "properties"
+    ]
+  }
+}

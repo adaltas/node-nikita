@@ -1,0 +1,201 @@
+
+import nikita from '@nikitajs/core'
+import utils from '@nikitajs/core/utils'
+import test from './test.coffee'
+import mochaThey from 'mocha-they'
+they = mochaThey(test.config)
+
+describe 'incus.exec', ->
+  return unless test.tags.incus
+  
+  describe 'schema', ->
+    
+    it 'extends nikita.execute using `code`', () ->
+      nikita.incus.exec
+        container: 'fake'
+        command: 'whoami'
+        code: (->)
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: new RegExp utils.regexp.escape 'action `incus.exec`: #/properties/code/type config/code must be'
+
+  they 'a command with pipe inside', ({ssh}) ->
+    nikita
+      $ssh: ssh
+    , ({registry}) ->
+      registry.register 'clean', ->
+        @incus.delete 'nikita-exec-1', force: true
+      await @clean()
+      await @incus.init
+        image: "images:#{test.images.alpine}"
+        container: 'nikita-exec-1'
+        start: true
+      {$status, stdout} = await @incus.exec
+        container: 'nikita-exec-1'
+        command: """
+        cat /etc/os-release | egrep ^ID=
+        """
+      stdout.trim().should.eql 'ID=alpine'
+      $status.should.be.true()
+      await @clean()
+
+  describe 'option `shell`', ->
+    
+    they 'default to shell', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @incus.delete 'nikita-exec-2', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-2'
+          start: true
+        {stdout} = await @incus.exec
+          container: 'nikita-exec-2'
+          command: 'echo $0'
+          trim: true
+        stdout.should.eql 'sh'
+        await @clean()
+          
+    they 'set to bash', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @incus.delete 'nikita-exec-3', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-3'
+          start: true
+        await @incus.exec
+          $$: retry: 3, sleep: 200 # Wait for network to be ready
+          container: 'nikita-exec-3'
+          command: 'apk add bash'
+        {stdout} = await @incus.exec
+          container: 'nikita-exec-3'
+          command: 'echo $0'
+          shell: 'bash'
+          trim: true
+        stdout.should.eql 'bash'
+        await @clean()
+
+  describe 'option `trap`', ->
+
+    they 'is enabled', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          await @incus.delete 'nikita-exec-4', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-4'
+          start: true
+        await @incus.exec
+          container: 'nikita-exec-4'
+          trap: true
+          command: """
+          false
+          true
+          """
+        .should.be.rejectedWith
+          exit_code: 1
+        await @clean()
+
+    they 'is disabled', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @incus.delete 'nikita-exec-5', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-5'
+          start: true
+        {$status, code} = await @incus.exec
+          container: 'nikita-exec-5'
+          trap: false
+          command: """
+          false
+          true
+          """
+        $status.should.be.true()
+        code.should.eql 0
+        await @clean()
+
+  describe 'option `env`', ->
+
+    they 'pass multiple variables', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @incus.delete 'nikita-exec-6', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-6'
+          start: true
+        {stdout} = await @incus.exec
+          container: 'nikita-exec-6'
+          env:
+            'ENV_VAR_1': 'value 1'
+            'ENV_VAR_2': 'value 1'
+          command: 'env'
+        stdout
+        .split('\n')
+        .filter (line) -> /^ENV_VAR_/.test line
+        .should.eql [ 'ENV_VAR_1=value 1', 'ENV_VAR_2=value 1' ]
+        await @clean()
+
+  describe 'option `user`', ->
+
+    they 'non root user', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          await @incus.delete 'nikita-exec-7', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-7'
+          start: true
+        await @incus.exec
+          container: 'nikita-exec-7'
+          command: 'adduser --uid 1234 --disabled-password nikita'
+        {stdout} = await @incus.exec
+          container: 'nikita-exec-7'
+          user: 1234
+          command: 'whoami'
+          trim: true
+        stdout.should.eql 'nikita'
+        await @clean()
+
+  describe 'option `cwd`', ->
+
+    they 'change directory', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ({registry}) ->
+        registry.register 'clean', ->
+          @incus.delete 'nikita-exec-8', force: true
+        await @clean()
+        await @incus.init
+          image: "images:#{test.images.alpine}"
+          container: 'nikita-exec-8'
+          start: true
+        {stdout} = await @incus.exec
+          container: 'nikita-exec-8'
+          cwd: '/bin'
+          command: 'pwd'
+          trim: true
+        stdout.should.eql '/bin'
+        await @clean()
+        
+        

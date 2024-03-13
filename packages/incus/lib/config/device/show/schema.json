@@ -1,0 +1,18 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      },
+      "device": {
+        "type": "string",
+        "description": "Name of the device in LXD configuration, for example \"eth0\"."
+      }
+    },
+    "required": [
+      "container",
+      "device"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      },
+      "target": {
+        "type": "string",
+        "description": "File location in the form of \"<path>\"."
+      }
+    },
+    "required": [
+      "container"
+    ]
+  }
+}

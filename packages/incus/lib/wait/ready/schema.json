@@ -1,0 +1,23 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      },
+      "nat": {
+        "type": "boolean",
+        "default": false,
+        "description": "If true, will wait for internet to be connected"
+      },
+      "nat_check": {
+        "type": "string",
+        "default": "ping -c 3 8.8.8.8 || exit 42",
+        "description": "Command use to check network activation. Expect exit code `0` when\nready, exit code `42` if not yet ready and any other code on error."
+      }
+    },
+    "required": [
+      "container"
+    ]
+  }
+}
