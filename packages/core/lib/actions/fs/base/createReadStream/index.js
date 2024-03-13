@@ -133,7 +133,7 @@ export default {
       handler: async function({
         config,
         metadata,
-        tools: {find, walk}
+        tools: {find}
       }) {
         if (config.sudo == null) {
           config.sudo = await find(function({metadata: {sudo}}) {
