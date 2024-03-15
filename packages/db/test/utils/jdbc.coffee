@@ -1,7 +1,9 @@
 
 import { jdbc } from '@nikitajs/db/utils/db'
+import test from '../test.coffee'
 
 describe 'db.utils.jdbc', ->
+  return unless test.tags.api
 
   it 'get default port', ->
     jdbc('jdbc:mysql://localhost/my_db').should.eql

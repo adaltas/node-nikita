@@ -1,7 +1,9 @@
 
 import { command } from '@nikitajs/db/utils/db'
+import test from '../test.coffee'
 
 describe 'db.utils.command', ->
+  return unless test.tags.api
 
   it 'invalid engine', ->
     () -> command

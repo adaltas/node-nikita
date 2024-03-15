@@ -1,6 +1,7 @@
 
 export default
   tags:
+    api: false
     db: true
   db:
     mysql:

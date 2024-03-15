@@ -1,7 +1,9 @@
 
 import { escape } from '@nikitajs/db/utils/db'
+import test from '../test.coffee'
 
 describe 'db.utils.escape', ->
+  return unless test.tags.api
   
   it 'backslashes', ->
     escape('\\').should.eql '\\\\'

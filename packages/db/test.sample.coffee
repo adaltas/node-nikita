@@ -1,6 +1,7 @@
 
 export default
   tags:
+    api: true
     db: false # disable_db
   docker: # eg `docker-machine create --driver virtualbox nikita`
     machine: 'nikita'
