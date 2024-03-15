@@ -138,23 +138,15 @@ const jdbc = function (jdbc) {
 
 // Filter connection properties
 const connection_config = function (opts) {
-  const config = {};
-  for (const k in opts) {
-    const v = opts[k];
-    if (
-      k !== "admin_username" &&
-      k !== "admin_password" &&
-      k !== "database" &&
-      k !== "engine" &&
-      k !== "host" &&
-      k !== "port" &&
-      k !== "silent"
-    ) {
-      continue;
-    }
-    config[k] = v;
-  }
-  return config;
+  return utils.object.filter(opts, [], [
+    "admin_username",
+    "admin_password",
+    "database",
+    "engine",
+    "host",
+    "port",
+    "silent",
+  ]);
 };
 
 export { escape, command, jdbc, connection_config };
