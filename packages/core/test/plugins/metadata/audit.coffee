@@ -192,4 +192,36 @@ describe 'metadata "audit"', ->
         '[WARN]   ├─ log call:end\n'
         '[ACTION] call Xms\n'
       ]
+  
+  describe 'fix', ->
+
+    it 'handle schema error', ->
+      # Used to throw `TypeError: Cannot read properties of undefined (reading 'state')`
+      # when the schema is rejected
+      ws = new stream.Writable()
+      ws.write = (->)
+      await session
+        $plugins: [
+          args
+          metadataAudit
+          metadataRaw
+          metadataSchema
+          metadataTime
+          toolsEvents
+          toolsFind
+          toolsLog
+          toolsSchema
+        ]
+        $audit: ws
+      , ({registry}) ->
+        await registry.register
+          'call': '@nikitajs/core/actions/call'
+        @call
+          $definitions:
+            config:
+              type: 'object'
+              required: ['some_property']
+        , (->)
+        .should.be.rejectedWith /NIKITA_SCHEMA_VALIDATION_CONFIG/
+
       

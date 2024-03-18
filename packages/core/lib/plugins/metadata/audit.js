@@ -155,6 +155,8 @@ export default {
           ws: ws,
           listeners: {
             action: function ({ action, error }) {
+              // Prevent parent to be undefined when an error incurred in a previous hook
+              if (!action.parent) return;
               const message = action.metadata.namespace?.join(".") || action.metadata.module || "nikita";
               const color = error ? audit.colors.error : audit.colors.info;
               action.parent.state.audit.index++;
