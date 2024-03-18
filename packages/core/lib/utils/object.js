@@ -151,7 +151,7 @@ const filter = function (source, black, white) {
   const obj = {};
   // If white list, only use the selected list
   // Otherwise clone it all
-  for (const key of white != null ? white : Object.keys(source)) {
+  for (const key of white ?? Object.keys(source)) {
     if (source.hasOwnProperty(key) && !black.includes(key)) {
       // unless part of black list
       obj[key] = source[key];
