@@ -41,21 +41,21 @@ To import the module:
 import nikita from "@nikitajs/core";
 ```
 
-Then, call the `register` scripts to register additionnal actions, for example the `lxd` actions:
+Then, call the `register` scripts to register additionnal actions, for example the `incus` actions:
 
 ```js
-import "@nikitajs/lxd/lib/register";
+import "@nikitajs/incus/lib/register";
 ```
 
-Following this example, you can now use any action present in the `core` and the `lxd` packages:
+Following this example, you can now use any action present in the `core` and the `incus` packages:
 
 ```js
 // Use the `execute` action from the `core` package
 const {
   stdout: whoami
 } = await nikita.execute('whoami', { trim: true });
-// Use the `lxc.init` action from the `lxd` package
-nikita.lxc.init({
+// Use the `incus.init` action from the `incus` package
+nikita.incus.init({
   image: 'images:alpine/3.13',
   container: `nikita-${whoami}`
 });

@@ -15,7 +15,7 @@ sort: 6
 * [krb5](https://github.com/adaltas/node-nikita/blob/master/packages/krb5/CHANGELOG.md)
 * [ldap](https://github.com/adaltas/node-nikita/blob/master/packages/ldap/CHANGELOG.md)
 * [log](https://github.com/adaltas/node-nikita/blob/master/packages/log/CHANGELOG.md)
-* [lxd](https://github.com/adaltas/node-nikita/blob/master/packages/lxd/CHANGELOG.md)
+* [incus](https://github.com/adaltas/node-nikita/blob/master/packages/incus/CHANGELOG.md)
 * [network](https://github.com/adaltas/node-nikita/blob/master/packages/network/CHANGELOG.md)
 * [nikita](https://github.com/adaltas/node-nikita/blob/master/packages/nikita/CHANGELOG.md)
 * [service](https://github.com/adaltas/node-nikita/blob/master/packages/service/CHANGELOG.md)

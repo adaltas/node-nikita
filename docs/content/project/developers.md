@@ -54,7 +54,7 @@ npx lerna --scope @nikitajs/file exec mocha test/ini.coffee
 For the environment tests to execute successfully, you must:
 
 * Install and configure a [Docker client](https://www.docker.com/).
-* Install and configure an [LXD client](https://linuxcontainers.org/lxd/introduction/).
+* Install and configure an [Incus client](https://linuxcontainers.org/incus/introduction/).
 
 Environment tests are executed with the command `yarn test:env`. To execute a single environment, go to the targeted `env` folder such as `./packages/{package}/env/{env}` and execute its `run.sh` script.
 
@@ -104,7 +104,7 @@ describe('Simple Test', () => {
 
 Some tests depend on particular settings to run successfully. Some actions are specific to a particular Linux distribution or issue internally alternatives commands which must be validated. Other actions depend on a service that is not always available on the host machine such as a database connection.
 
-The environment tests require the presence of [Docker](https://www.docker.com/) and [LXD](https://linuxcontainers.org/lxd/introduction/) clients.
+The environment tests require the presence of [Docker](https://www.docker.com/) and [Incus](https://linuxcontainers.org/incus/introduction/) clients.
 
 Based on your environment support, targeted tests can be activated from the configuration. Tests are labeled with tags. The environment defines the test coverage by activating tags in their `test.coffee` configuration file. For example, to activate the MariaDB tests located in the ["db" package](https://github.com/adaltas/node-nikita/blob/master/packages/db/env/mariadb/test.coffee), set the `tags.db` property to `true` and configure the `db.mariadb` properties accordingly.
 
@@ -146,15 +146,15 @@ docker compose run --rm nodejs test/actions/execute/*.coffee
 docker compose run --rm nodejs
 ```
 
-## LXD
+## Incus
 
-Some tests are executed using [LXD](https://linuxcontainers.org/lxd/introduction/). The tests require a local LXD client. To install it on a Linux host, you can follow the [installation instructions](https://linuxcontainers.org/lxd/getting-started-cli/). On non-Linux hosts, you can set up the client to communicate with a remote LXD server hosted on a virtual machine. However, you will have to mount the project directory into the "/nikita" folder of the virtual machine. The provided [Vagrantfile](https://github.com/adaltas/node-nikita/blob/master/packages/lxd/assets/Vagrantfile) definition inside the "packages/lxd/assets" folder will set you up.
+Some tests are executed using [Incus](https://linuxcontainers.org/incus/introduction/). The tests require a local Incus client. To install it on a Linux host, you can follow the [installation instructions](https://linuxcontainers.org/incus/getting-started-cli/). On non-Linux hosts, you can set up the client to communicate with a remote Incus server hosted on a virtual machine. However, you will have to mount the project directory into the "/nikita" folder of the virtual machine. The provided [Vagrantfile](https://github.com/adaltas/node-nikita/blob/master/packages/incus/assets/Vagrantfile) definition inside the "packages/incus/assets" folder will set you up.
 
 For Windows and macOS users, the procedure is abstracted inside the `./bin/cluster start` command:
 
 ```bash
 # For Windows and macOS users
-cd packages/lxd
+cd packages/incus
 ./bin/cluster start
 yarn test
 ```
@@ -165,8 +165,8 @@ The manual commands to make it work are below:
 
 ```bash
 # Initialize the VM
-cd packages/lxd/assets && vagrant up && cd ../../
-# Set up LXD client
+cd packages/incus/assets && vagrant up && cd ../../
+# Set up Incus client
 lxc remote add nikita 127.0.0.1:8443
 lxc remote switch nikita
 # Navigate to the target environment
@@ -192,13 +192,13 @@ If you are running into an issue with permission on the "tmp" folder as below:
 [error] IOError: [Errno 13] Permission denied: '/tmp/tmp_Tm1l_'
 ```
 
-Host must have `fs.protected_regular` set to `0`r, eg `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a`. In our Physical -> VM -> LXD setup, the parameters shall be set in the VM, no restart is required to install the FreeIPA server, just uninstall it first with `ipa-server-install --uninstall` before re-executing the install command.
+Host must have `fs.protected_regular` set to `0`r, eg `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a`. In our Physical -> VM -> Incus setup, the parameters shall be set in the VM, no restart is required to install the FreeIPA server, just uninstall it first with `ipa-server-install --uninstall` before re-executing the install command.
 
 Here's a complete example to run tests for the ["ipa" package](https://github.com/adaltas/node-nikita/tree/master/packages/ipa):
 
 ```bash
 # For Windows and macOS users
-./packages/lxd/bin/cluster start
+./packages/incus/bin/cluster start
 export NIKITA_HOME=/nikita
 cd packages/ipa
 # Start the server

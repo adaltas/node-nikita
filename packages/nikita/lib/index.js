@@ -7,7 +7,7 @@ import "@nikitajs/java/register";
 import "@nikitajs/krb5/register";
 import "@nikitajs/ldap/register";
 import "@nikitajs/log/register";
-import "@nikitajs/lxd/register";
+import "@nikitajs/incus/register";
 import "@nikitajs/network/register";
 import "@nikitajs/service/register";
 import "@nikitajs/system/register";
