@@ -10,7 +10,7 @@ function build {
     --cpus 2 \
     --memory 10G \
     --disk 20G \
-    release:18.04
+    release:20.04
   NIKITA_HOME=`node -e "process.stdout.write(path.join(process.cwd(), '../../../..'))"`
   # Fix DNS
   multipass exec nikita-system-cgroup -- bash <<EOF
