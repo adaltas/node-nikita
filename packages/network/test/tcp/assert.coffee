@@ -34,16 +34,12 @@ describe 'network.tcp.assert', ->
 
   they 'multiple servers', ({ssh}) ->
     try
-      servers = [
-        await server()
-      ,
-        await server()
-      ]
+      servers = [await server(), await server()]
       {$status} = await nikita.network.tcp.assert
-        servers: [
-          host: 'localhost', port: '12346'
+        server: [
+          host: 'localhost', port: servers[0].port
         ,
-          host: 'localhost', port: '12347'
+          host: 'localhost', port: servers[1].port
         ]
         $ssh: ssh
       $status.should.be.true()
