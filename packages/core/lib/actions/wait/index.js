@@ -4,9 +4,7 @@ import definitions from "./schema.json" assert { type: "json" };
 // Action
 export default {
   handler: function ({ config }) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, config.time);
-    });
+    return new Promise((resolve) => setTimeout(resolve, config.time));
   },
   hooks: {
     on_action: function (action) {
@@ -20,14 +18,7 @@ export default {
       action.metadata.argument_to_config = undefined
       action.handler = async function ({ context, tools: { log } }) {
         let attempts = 0;
-        const wait = function (timeout) {
-          if (!timeout) {
-            return;
-          }
-          return new Promise(function (resolve) {
-            return setTimeout(resolve, timeout);
-          });
-        };
+        const wait = (timeout) => timeout && new Promise( (resolve) => setTimeout(resolve, timeout) );
         while (attempts !== config.retry) {
           attempts++;
           log("DEBUG", `Start attempt #${attempts}`);
@@ -57,6 +48,5 @@ export default {
   metadata: {
     argument_to_config: "time",
     definitions: definitions,
-    // raw_input: true
   },
 };

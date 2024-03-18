@@ -7,14 +7,7 @@ import definitions from "./schema.json" assert { type: "json" };
 export default {
   handler: async function ({ config, tools: { log } }) {
     let attempts = 0;
-    const wait = function (timeout) {
-      if (!timeout) {
-        return;
-      }
-      return new Promise(function (resolve) {
-        return setTimeout(resolve, timeout);
-      });
-    };
+    const wait = (timeout) => timeout && new Promise( (resolve) => setTimeout(resolve, timeout) );
     let commands = config.command;
     while (attempts !== config.retry) {
       attempts++;
