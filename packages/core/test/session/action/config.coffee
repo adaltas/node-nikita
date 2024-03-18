@@ -8,6 +8,21 @@ describe 'session.handler.config', ->
   it 'ensure it is not polluted', ->
     nikita.call ({config}) ->
       config.should.eql {}
+    
+  it 'ensure it is cloned', ->
+    config =
+      key_1: 'value 1'
+      object_1:
+        key_1_1: 'value 1.1'
+    await nikita.call config, ({config}) ->
+      config.key_1 = 'value 1 modified'
+      config.object_1.key_1_1 = 'value 1.1 modified'
+      config.object_1.key_1_2 = 'value 1.2 created'
+      config.key_2 = 'value 2 created'
+    config.should.eql
+      key_1: 'value 1'
+      object_1:
+        key_1_1: 'value 1.1'
       
   it 'context config dont conflict', ->
     nikita.call

@@ -33,25 +33,37 @@ describe 'plugins.tools.schema', ->
         changed.should.be.false()
     
     it '`addMetadata` with incorrect value', ->
-      nikita key: 'value', $meta: 'invalid', (action) ->
+      nikita $meta: 'invalid', (action) ->
         action.tools.schema.addMetadata 'meta', type: 'boolean'
-        action.metadata.definitions =
-          config:
-            type: 'object'
-            properties: {}
         error = await action.tools.schema.validate action
         error.code.should.eql 'NIKITA_SCHEMA_VALIDATION_CONFIG'
     
     it '`addMetadata` with coercion', ->
-      nikita key: 'value', $meta: 1, (action) ->
+      nikita $meta: 1, (action) ->
         action.tools.schema.addMetadata 'meta', type: ['boolean', 'number'], coercion: true
-        action.metadata.definitions =
-          config:
-            type: 'object'
-            properties: {}
         error = await action.tools.schema.validate action
         should(error).be.undefined()
         action.metadata.meta.should.be.true()
+    
+    it 'ensure config is cloned', ->
+      config =
+        key_1: 'value 1'
+      metadata =
+        $definitions:
+          config:
+            type: 'object'
+            properties:
+              key_1:
+                type: 'string'
+              key_2:
+                type: 'string'
+                default: 'value 2'
+      await nikita.call config, metadata, ({config}) ->
+        config.should.eql
+          key_1: 'value 1'
+          key_2: 'value 2'
+      config.should.eql
+        key_1: 'value 1'
   
   describe '`validate` error with INVALID_DEFINITION', ->
 
@@ -61,14 +73,13 @@ describe 'plugins.tools.schema', ->
         action.metadata.definitions =
           config:
             type: 'object'
-            properties:
-              $ref: 'module://@nikitajs/some/module'
+            properties: true 
         error = await action.tools.schema.validate action
         error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
         error.message.should.eql [
           'NIKITA_SCHEMA_INVALID_DEFINITION:'
           'schema failed to compile in root action, schema is invalid:'
-          'data/definitions/config/properties/$ref must be object,boolean.'
+          'data/definitions/config/properties must be object.'
         ].join ' '
 
     it 'call action', ->
@@ -77,14 +88,13 @@ describe 'plugins.tools.schema', ->
         action.metadata.definitions =
           config:
             type: 'object'
-            properties:
-              $ref: 'module://@nikitajs/some/module'
+            properties: true 
         error = await action.tools.schema.validate action
         error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
         error.message.should.eql [
           'NIKITA_SCHEMA_INVALID_DEFINITION:'
           'schema failed to compile in action `call`, schema is invalid:'
-          'data/definitions/config/properties/$ref must be object,boolean.'
+          'data/definitions/config/properties must be object.'
         ].join ' '
 
     it 'call with action module', ->
@@ -99,15 +109,14 @@ describe 'plugins.tools.schema', ->
           action.metadata.definitions =
             config:
               type: 'object'
-              properties:
-                $ref: 'module://@nikitajs/some/module'
+              properties: true 
           error = await action.tools.schema.validate action
           error.code.should.eql 'NIKITA_SCHEMA_INVALID_DEFINITION'
           error.message = error.message.replace "#{tmpdir}/my_module.js", 'package/module'
           error.message.should.eql [
             'NIKITA_SCHEMA_INVALID_DEFINITION:'
             'schema failed to compile in action `call` in module package/module, schema is invalid:'
-            'data/definitions/config/properties/$ref must be object,boolean.'
+            'data/definitions/config/properties must be object.'
           ].join ' '
 
     
@@ -170,3 +179,20 @@ describe 'plugins.tools.schema', ->
             '#/definitions/config/properties/key/type config/key must be integer,'
             'type is "integer".'
           ].join ' '
+    
+    it 'enforce unevaluatedProperty on config', ->
+      nikita.call
+        $definitions:
+          config:
+            type: 'object'
+            properties:
+              valid_key: type: 'string'
+        valid_key: 'ok'
+        invalid_key: 'ko'
+      , (->)
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action `call`:'
+        '#/properties/config/unevaluatedProperties config must NOT have unevaluated properties,'
+        'unevaluatedProperty is "invalid_key".'
+      ].join ' '

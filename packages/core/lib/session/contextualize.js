@@ -1,4 +1,4 @@
-import { mutate, is_object_literal } from "mixme";
+import { clone, mutate, is_object_literal } from "mixme";
 import utils from "@nikitajs/core/utils";
 
 const properties = [
@@ -19,24 +19,27 @@ export default function ({action={}, args}) {
   // Default values
   action.config ??= {};
   action.metadata ??= {};
+  let handlerFound = false;
   for (const arg of args) {
     switch (typeof arg) {
       case "function":
-        if (action.handler) {
+        if (handlerFound) {
           throw utils.error("NIKITA_SESSION_INVALID_ARGUMENTS", [
             `handler is already registered, got ${utils.error.got(arg)}`,
           ]);
         }
+        handlerFound = true
         mutate(action, {
           handler: arg,
         });
         break;
       case "string":
-        if (action.handler) {
+        if (handlerFound) {
           throw utils.error("NIKITA_SESSION_INVALID_ARGUMENTS", [
             `handler is already registered, got ${JSON.stringigy(arg)}`,
           ]);
         }
+        // handlerFound = true
         mutate(action, {
           metadata: {
             argument: arg,
@@ -102,6 +105,7 @@ export default function ({action={}, args}) {
         });
     }
   }
+  action.config = clone(action.config)
   // Create empty action when no arguments are provided and not for an empty array
   return action;
 }
