@@ -1,5 +1,5 @@
 export default async function({config}) {
-  const {config: state} = await this.lxc.state({
+  const {config: state} = await this.incus.state({
     $header: 'Container state',
     container: `${config.container}`
   });

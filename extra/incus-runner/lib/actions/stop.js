@@ -1,5 +1,5 @@
 export default async function({config}) {
-  await this.lxc.stop({
+  await this.incus.stop({
     $header: 'Container stop',
     container: `${config.container}`
   });

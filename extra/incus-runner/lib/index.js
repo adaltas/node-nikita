@@ -2,12 +2,12 @@ import path from "node:path";
 import { shell } from "shell";
 import nikita from "@nikitajs/core";
 import "@nikitajs/log/register";
-import "@nikitajs/lxd/register";
+import "@nikitajs/incus/register";
 
 export default function (config) {
   return shell({
     name: "nikita-test-runner",
-    description: `Execute test inside the LXD environment.`,
+    description: `Execute test inside the Incus environment.`,
     options: {
       container: {
         default: `${config.container}`,
@@ -52,7 +52,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "delete.md"),
             })
-            .call("@nikitajs/lxd-runner/delete", {
+            .call("@nikitajs/incus-runner/delete", {
               ...config,
               ...params,
             });
@@ -73,7 +73,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "enter.md"),
             })
-            .call("@nikitajs/lxd-runner/enter", {
+            .call("@nikitajs/incus-runner/enter", {
               ...config,
               ...params,
             });
@@ -95,7 +95,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "exec.md"),
             })
-            .call("@nikitajs/lxd-runner/exec", {
+            .call("@nikitajs/incus-runner/exec", {
               ...config,
               ...params,
             });
@@ -116,7 +116,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "exec.md"),
             })
-            .call("@nikitajs/lxd-runner/state", {
+            .call("@nikitajs/incus-runner/state", {
               ...config,
               ...params,
             });
@@ -137,7 +137,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "run.md"),
             })
-            .call("@nikitajs/lxd-runner/run", {
+            .call("@nikitajs/incus-runner/run", {
               ...config,
               ...params,
             });
@@ -158,7 +158,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "start.md"),
             })
-            .call("@nikitajs/lxd-runner/start", {
+            .call("@nikitajs/incus-runner/start", {
               ...config,
               ...params,
             });
@@ -179,7 +179,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "stop.md"),
             })
-            .call("@nikitajs/lxd-runner/stop", {
+            .call("@nikitajs/incus-runner/stop", {
               ...config,
               ...params,
             });
@@ -200,7 +200,7 @@ export default function (config) {
             .log.md({
               filename: path.resolve(params.logdir, "test.md"),
             })
-            .call("@nikitajs/lxd-runner/test", {
+            .call("@nikitajs/incus-runner/test", {
               ...config,
               ...params,
             });

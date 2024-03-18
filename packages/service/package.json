@@ -46,7 +46,7 @@
     "dedent": "^1.5.1"
   },
   "devDependencies": {
-    "@nikitajs/lxd-runner": "^1.0.0-alpha.1",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.1",
     "coffeescript": "^2.7.0",
     "mocha": "^10.2.0",
     "mocha-they": "^0.1.3",

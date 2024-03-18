@@ -1,7 +1,7 @@
 
 import path from 'node:path';
 import dedent from 'dedent';
-import runner from '@nikitajs/lxd-runner';
+import runner from '@nikitajs/incus-runner';
 const __dirname = new URL( '.', import.meta.url).pathname
 
 runner({
@@ -15,8 +15,8 @@ runner({
         image: 'images:almalinux/8',
         properties: {
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/ssh/test.coffee',
-          'environment.HOME': '/home/source', // Fix, LXD doesnt set HOME with --user
-          'raw.idmap': process.env['NIKITA_LXD_IN_VAGRANT'] ? 'both 1000 1234' : `both ${process.getuid()} 1234`
+          'environment.HOME': '/home/source', // Fix, Incus doesnt set HOME with --user
+          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 1234' : `both ${process.getuid()} 1234`
         },
         disk: {
           nikitadir: {
@@ -30,7 +30,7 @@ runner({
       }
     },
     provision_container: async function({config}) {
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Dependencies',
         container: config.container,
         command: dedent`
@@ -38,7 +38,7 @@ runner({
           yum install -y tar
         `
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'User `source`',
         container: config.container,
         command: dedent`
@@ -53,7 +53,7 @@ runner({
         `,
         trap: true
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Node.js',
         container: config.container,
         command: dedent`
@@ -62,12 +62,12 @@ runner({
           . ~/.bashrc
           nvm install 16
         `,
-        user: '1234',
+        user: 1234,
         shell: 'bash',
         trap: true,
         code: [0, 42]
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'User `target`',
         container: config.container,
         command: dedent`

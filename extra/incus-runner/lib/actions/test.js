@@ -1,5 +1,5 @@
 export default async function({config}) {
-  // @lxc.exec
+  // @incus.exec
   //   container: "#{config.container}"
   //   cwd: "#{config.cwd}"
   //   command: 'npm run test:local'
@@ -8,7 +8,7 @@ export default async function({config}) {
     stdout: process.stdout,
     env: process.env,
     command: [
-      'lxc exec',
+      'incus exec',
       `--cwd ${config.cwd}`,
       // Note, core ssh env log in as "source" user
       config.test_user ? `--user ${config.test_user}` : void 0,

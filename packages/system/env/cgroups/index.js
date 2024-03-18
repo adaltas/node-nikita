@@ -1,6 +1,6 @@
 import path from "node:path";
 import dedent from "dedent";
-import runner from "@nikitajs/lxd-runner";
+import runner from "@nikitajs/incus-runner";
 const __dirname = new URL(".", import.meta.url).pathname;
 
 runner({
@@ -15,7 +15,7 @@ runner({
         properties: {
           "environment.NIKITA_TEST_MODULE":
             "/nikita/packages/system/env/cgroups/test.coffee",
-          "raw.idmap": process.env["NIKITA_LXD_IN_VAGRANT"]
+          "raw.idmap": process.env["NIKITA_INCUS_IN_VAGRANT"]
             ? "both 1000 0"
             : `both ${process.getuid()} 0`,
         },
@@ -33,7 +33,7 @@ runner({
       },
     },
     provision_container: async function ({ config }) {
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: "Node.js",
         container: config.container,
         command: dedent`
@@ -47,7 +47,7 @@ runner({
         trap: true,
         code: [0, 42],
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: "SSH keys",
         container: config.container,
         command: dedent`
@@ -59,13 +59,13 @@ runner({
         `,
         trap: true,
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: "Package",
         container: config.container,
         // command: 'yum install -y libcgroup-tools'
         command: "apt update -y && apt install -y cgroup-tools",
       });
-      return await this.lxc.exec({
+      return await this.incus.exec({
         $header: "cgroup configuration",
         container: config.container,
         // Ubuntu specific, centos/7 didn't require it

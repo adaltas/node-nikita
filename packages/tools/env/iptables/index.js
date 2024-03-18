@@ -1,7 +1,7 @@
 
 import path from 'node:path';
 import dedent from 'dedent';
-import runner from '@nikitajs/lxd-runner';
+import runner from '@nikitajs/incus-runner';
 const dirname = new URL( '.', import.meta.url).pathname
 
 runner({
@@ -14,7 +14,7 @@ runner({
         image: 'images:almalinux/8',
         properties: {
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/iptables/test.coffee',
-          'raw.idmap': process.env['NIKITA_LXD_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
+          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
         },
         disk: {
           nikitadir: {
@@ -28,7 +28,7 @@ runner({
       }
     },
     provision_container: async function({config}) {
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Node.js',
         container: config.container,
         command: dedent`
@@ -41,7 +41,7 @@ runner({
         trap: true,
         code: [0, 42]
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'SSH keys',
         container: config.container,
         command: dedent`

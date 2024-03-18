@@ -41,7 +41,7 @@
     "@nikitajs/file": "^1.0.0-alpha.3"
   },
   "devDependencies": {
-    "@nikitajs/lxd-runner": "^1.0.0-alpha.0",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.0",
     "coffeescript": "^2.7.0",
     "mocha": "^10.0.0",
     "mocha-they": "^0.1.3",

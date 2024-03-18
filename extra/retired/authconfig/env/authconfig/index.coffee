@@ -1,6 +1,6 @@
 
 path = require 'path'
-runner = require '@nikitajs/lxd-runner'
+runner = require '@nikitajs/incus-runner'
 
 runner
   cwd: '/nikita/packages/system'
@@ -12,7 +12,7 @@ runner
         image: 'images:centos/7'
         properties:
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/system/env/authconfig/test.coffee'
-          'raw.idmap': if process.env['NIKITA_LXD_IN_VAGRANT']
+          'raw.idmap': if process.env['NIKITA_INCUS_IN_VAGRANT']
           then 'both 1000 0'
           else "both #{process.getuid()} 0"
         disk:

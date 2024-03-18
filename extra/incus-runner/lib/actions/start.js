@@ -1,5 +1,5 @@
 export default async function({config}) {
-  await this.lxc.cluster({
+  await this.incus.cluster({
     $header: 'Container start'
   }, config.cluster);
 };

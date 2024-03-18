@@ -1,7 +1,7 @@
 
 import path from 'node:path';
 import dedent from 'dedent';
-import runner from '@nikitajs/lxd-runner';
+import runner from '@nikitajs/incus-runner';
 const __dirname = new URL( '.', import.meta.url).pathname;
 
 // Note:
@@ -38,7 +38,7 @@ runner({
   cluster: {
     // FreeIPA do a reverse lookup on initialisation
     // Using the default bridge yields to the error "The host name
-    // freeipa.nikita does not match the value freeipa.lxd obtained by
+    // freeipa.nikita does not match the value freeipa.incus obtained by
     // reverse lookup on IP address fd42:f662:97ea:ba7f:216:3eff:fe1d:96f2%215"
     networks: {
       nktipapub: {
@@ -53,7 +53,7 @@ runner({
         image: 'images:almalinux/8',
         properties: {
           'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee',
-          'raw.idmap': process.env['NIKITA_LXD_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
+          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
         },
         disk: {
           nikitadir: {
@@ -89,7 +89,7 @@ runner({
       }
     },
     provision_container: async function({config}) {
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Node.js',
         code: [0, 42],
         command: dedent`
@@ -102,7 +102,7 @@ runner({
         container: config.container,
         trap: true
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'SSH keys',
         code: [0, 42],
         command: dedent`
@@ -116,7 +116,7 @@ runner({
         container: config.container,
         trap: true
       });
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Install FreeIPA',
         code: [0, 42],
         // Other possibilities to check ipa status:
@@ -159,7 +159,7 @@ runner({
       });
       // ipa-server-install --uninstall
       // ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
-      await this.lxc.exec({
+      await this.incus.exec({
         $header: 'Immutable DNS',
         code: [0, 42],
         command: dedent`

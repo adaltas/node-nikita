@@ -16,7 +16,7 @@
     "lint": "lerna run lint",
     "test": "lerna run test",
     "test:local": "lerna run test:local",
-    "goodies:lxd:macos": "./packages/lxd/assets/multipass.sh",
+    "goodies:incus:macos": "./packages/incus/assets/multipass.sh",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "check-packages": "yarn clean && yarn compile && yarn test && yarn lint",
     "postinstall": "husky install"
