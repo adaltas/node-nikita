@@ -18,6 +18,7 @@ const actions = {
     kill: '@nikitajs/docker/kill',
     load: '@nikitajs/docker/load',
     pause: '@nikitajs/docker/pause',
+    ps: '@nikitajs/docker/ps',
     pull: '@nikitajs/docker/pull',
     restart: '@nikitajs/docker/restart',
     rm: '@nikitajs/docker/rm',
