@@ -1,0 +1,22 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "match": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "instanceof": "RegExp"
+          }
+        ],
+        "description": "The cron entry to match, a string will be converted to a regexp and an\nundefined or null value will match the exact command."
+      },
+      "user": {
+        "type": "string",
+        "description": "The user of the crontab. The SSH user by default."
+      }
+    }
+  }
+}

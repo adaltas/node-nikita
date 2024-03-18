@@ -1,0 +1,11 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "user": {
+        "type": "string",
+        "description": "The user of the crontab. The SSH user by default."
+      }
+    }
+  }
+}

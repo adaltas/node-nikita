@@ -11,7 +11,9 @@ const actions = {
     compress: '@nikitajs/tools/compress',
     cron: {
       add: '@nikitajs/tools/cron/add',
-      remove: '@nikitajs/tools/cron/remove'
+      list: '@nikitajs/tools/cron/list',
+      remove: '@nikitajs/tools/cron/remove',
+      reset: '@nikitajs/tools/cron/reset'
     },
     extract: '@nikitajs/tools/extract',
     dconf: '@nikitajs/tools/dconf',
