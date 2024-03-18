@@ -32,7 +32,7 @@ const session = function(args, options = {}) {
     parent: options.parent,
     scheduler: schedulers.out,
     state: {},
-    // ...options.action,
+    ...options.action,
   };
   // Initialize the plugins manager
   action.plugins = plugandplay({
@@ -130,7 +130,7 @@ const session = function(args, options = {}) {
         name: 'nikita:arguments',
         args: {
           args: args,
-          action: options.action,
+          action: action,
           namespace: options.namespace,
         },
         handler: function({args, namespace}) {
