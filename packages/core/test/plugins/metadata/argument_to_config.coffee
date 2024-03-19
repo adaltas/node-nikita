@@ -2,7 +2,7 @@
 import nikita from '@nikitajs/core'
 import test from '../../test.coffee'
 
-describe 'plugins.argument', ->
+describe 'plugins.metadata.argument_to_config', ->
   return unless test.tags.api
   
   it 'validate schema', ->
