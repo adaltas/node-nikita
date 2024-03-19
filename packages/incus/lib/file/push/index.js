@@ -63,7 +63,7 @@ export default {
           throw Error("Invalid Requirement: openssl not installed on host");
         }
         if (error.exit_code === 4) {
-          throw utils.error("NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL", [
+          throw utils.error("NIKITA_INCUS_FILE_PUSH_MISSING_OPENSSL", [
             "the openssl package must be installed in the container",
             "and accessible from the `$PATH`.",
           ]);

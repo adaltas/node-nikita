@@ -5,7 +5,7 @@ import stop from "./stop.js";
 
 shell({
   name: "incusvmhost",
-  description: "LXD VM host based on Virtual Box",
+  description: "Incus VM host based on Virtual Box",
   commands: {
     start: {
       description: "Start the cluster",

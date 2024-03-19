@@ -12,7 +12,7 @@ export default {
         type: config.type,
       });
     if (!volumeExists) {
-      throw new Error(`NIKITA_LXD_VOLUME_ATTACH: volume ${JSON.stringify(config.name)} does not exist.`);
+      throw new Error(`NIKITA_INCUS_VOLUME_ATTACH: volume ${JSON.stringify(config.name)} does not exist.`);
     }
     // note, getting the container to make sure it exists
     const { $status: containerExists, data: container } = await this.incus.info(
@@ -20,7 +20,7 @@ export default {
       { $relax: true }
     );
     if (!containerExists) {
-      throw new Error(`NIKITA_LXD_VOLUME_ATTACH: container ${JSON.stringify(config.container)} does not exist.`);
+      throw new Error(`NIKITA_INCUS_VOLUME_ATTACH: container ${JSON.stringify(config.container)} does not exist.`);
     }
     switch (container.type) {
       case 'virtual-machine':

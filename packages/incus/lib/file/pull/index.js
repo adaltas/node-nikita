@@ -52,7 +52,7 @@ export default {
           );
         }
         if (error.exit_code === 4) {
-          throw utils.error("NIKITA_LXD_FILE_PULL_MISSING_OPENSSL", [
+          throw utils.error("NIKITA_INCUS_FILE_PULL_MISSING_OPENSSL", [
             "the openssl package must be installed in the container",
             "and accessible from the `$PATH`.",
           ]);

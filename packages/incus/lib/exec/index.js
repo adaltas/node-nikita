@@ -6,7 +6,7 @@ import definitions from "./schema.json" assert { type: "json" };
 export default {
   handler: async function({config}) {
     const opt = [
-      // LXD `--user` only support user ID (integer)
+      // Incus `--user` only support user ID (integer)
       config.user && `--user ${config.user}`,
       config.cwd && `--cwd ${esa(config.cwd)}`,
       ...Object.keys(config.env).map(
@@ -18,10 +18,10 @@ export default {
       { ...config, env: undefined, trap: undefined },
       {
         command: [
-          `cat <<'NIKITALXDEXEC' | incus exec ${opt} ${esa(config.container)} -- ${esa(config.shell)}`,
+          `cat <<'NIKITAINCUSEXEC' | incus exec ${opt} ${esa(config.container)} -- ${esa(config.shell)}`,
           config.trap && "set -e",
           config.command,
-          "NIKITALXDEXEC",
+          "NIKITAINCUSEXEC",
         ].filter(Boolean).join("\n"),
       }
     );

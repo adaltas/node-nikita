@@ -49,7 +49,7 @@ describe 'incus.file.push', ->
           source: "#{tmpdir}/a_file"
           target: '/root/a_file'
         .should.be.rejectedWith
-          code: 'NIKITA_LXD_FILE_PUSH_MISSING_OPENSSL'
+          code: 'NIKITA_INCUS_FILE_PUSH_MISSING_OPENSSL'
         await @clean()
 
     they 'a new file', ({ssh}) ->
