@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/tools",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Provides Nikita actions for various CLI tools.",
   "keywords": [
     "nikita",
@@ -42,15 +42,15 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.4",
-    "@nikitajs/service": "^1.0.0-alpha.4",
+    "@nikitajs/file": "^1.0.0-alpha.5",
+    "@nikitajs/service": "^1.0.0-alpha.5",
     "dayjs": "^1.11.10",
     "dedent": "^1.5.1",
     "jsesc": "^3.0.2",
     "mixme": "^1.1.0"
   },
   "devDependencies": {
-    "@nikitajs/incus-runner": "^1.0.0-alpha.1",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.2",
     "coffeescript": "^2.7.0",
     "mocha": "^10.3.0",
     "mocha-they": "^0.1.3",
