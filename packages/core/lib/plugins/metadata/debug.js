@@ -70,9 +70,10 @@ export default {
               : log.message?.toString != null
               ? log.message.toString().trim()
               : JSON.stringify(log.message);
+            const type = log.type.split('_')[0];
             const position = log.position.map((i) => i + 1).join('.');
             const name = log.namespace?.join('.') || log.module;
-            msg = ['[', position + '.' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
+            msg = ['[', type, ' ', position + ' ' + log.level, name ? ' ' + name : void 0, '] ', msg].join('');
             msg = (function() {
               switch (log.type) {
                 case 'stdin':
