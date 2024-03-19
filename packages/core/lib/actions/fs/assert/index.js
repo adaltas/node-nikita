@@ -36,25 +36,58 @@ const errors = {
     });
   },
   NIKITA_FS_ASSERT_CONTENT_UNMATCH: function({config, expect}) {
-    return utils.error('NIKITA_FS_ASSERT_CONTENT_UNMATCH', ['content does not match the provided regexp,', `expect ${JSON.stringify(expect.toString())}`, `to match ${config.content.toString()},`, `location is ${JSON.stringify(config.target)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_CONTENT_UNMATCH', [
+      'content does not match the provided regexp,',
+      `expect ${JSON.stringify(expect.toString())}`,
+      `to match ${config.content.toString()},`,
+      `location is ${JSON.stringify(config.target)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_CONTENT_MATCH: function({config, expect}) {
-    return utils.error('NIKITA_FS_ASSERT_CONTENT_MATCH', ['content is matching the provided regexp,', `got ${JSON.stringify(expect.toString())}`, `to match ${config.content.toString()},`, `location is ${JSON.stringify(config.target)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_CONTENT_MATCH', [
+      'content is matching the provided regexp,',
+      `got ${JSON.stringify(expect.toString())}`,
+      `to match ${config.content.toString()},`,
+      `location is ${JSON.stringify(config.target)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
+  NIKITA_FS_ASSERT_FILETYPE_INVALID_VALUE: function({config}) {
+    return utils.error('NIKITA_FS_ASSERT_FILETYPE_INVALID_VALUE', [
+      'provided filetype is not supported,',
+      `got ${JSON.stringify(config.filetype)}.`
+    ], {
+      target: config.target,
+    });
+  },
+  NIKITA_FS_ASSERT_FILETYPE_INVALID_TYPE: function({config}) {
+    return utils.error('NIKITA_FS_ASSERT_FILETYPE_INVALID_TYPE', [
+      'filetype must be a string or a number,',
+      `got ${JSON.stringify(config.filetype)}.`
+    ], {
+      target: config.target,
+    });
+  },
   NIKITA_FS_ASSERT_HASH_UNMATCH: function({config, algo, hash}) {
-    return utils.error('NIKITA_FS_ASSERT_HASH_UNMATCH', [`an invalid ${algo} signature was computed,`, `expect ${JSON.stringify(hash.expected)},`, `got ${JSON.stringify(hash.actual)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_HASH_UNMATCH', [
+      `an invalid ${algo} signature was computed,`,
+      `expect ${JSON.stringify(hash.expected)},`,
+      `got ${JSON.stringify(hash.actual)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_HASH_MATCH: function({config, algo, hash}) {
-    return utils.error('NIKITA_FS_ASSERT_HASH_MATCH', [`the ${algo} signatures are matching,`, `not expecting to equal ${JSON.stringify(hash)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_HASH_MATCH', [
+      `the ${algo} signatures are matching,`,
+      `not expecting to equal ${JSON.stringify(hash)}.`
+    ], {
       target: config.target,
       message: config.error
     });
@@ -63,7 +96,11 @@ const errors = {
     const expect = config.mode.map(function(mode) {
       return pad(4, utils.mode.stringify(mode), '0');
     });
-    return utils.error("NIKITA_FS_ASSERT_MODE_UNMATCH", ['content permission don\'t match the provided mode,', `expect ${expect},`, `got ${utils.mode.stringify(mode).slice(-4)}.`], {
+    return utils.error("NIKITA_FS_ASSERT_MODE_UNMATCH", [
+      'content permission don\'t match the provided mode,',
+      `expect ${expect},`,
+      `got ${utils.mode.stringify(mode).slice(-4)}.`
+    ], {
       target: config.target,
       message: config.error
     });
@@ -72,31 +109,47 @@ const errors = {
     const expect = config.mode.map(function(mode) {
       return pad(4, utils.mode.stringify(mode), '0');
     });
-    return utils.error("NIKITA_FS_ASSERT_MODE_MATCH", ['the content permission match the provided mode,', `not expecting to equal ${expect}.`], {
+    return utils.error("NIKITA_FS_ASSERT_MODE_MATCH", [
+      'the content permission match the provided mode,',
+      `not expecting to equal ${expect}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_UID_UNMATCH: function({config, actual}) {
-    return utils.error('NIKITA_FS_ASSERT_UID_UNMATCH', ['the uid of the target does not match the expected value,', `expected ${JSON.stringify(config.uid)},`, `got ${JSON.stringify(actual)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_UID_UNMATCH', [
+      'the uid of the target does not match the expected value,',
+      `expected ${JSON.stringify(config.uid)},`, `got ${JSON.stringify(actual)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_UID_MATCH: function({config}) {
-    return utils.error('NIKITA_FS_ASSERT_UID_MATCH', ['the uid of the target  match the provided value,', `not expecting to equal ${JSON.stringify(config.uid)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_UID_MATCH', [
+      'the uid of the target  match the provided value,',
+      `not expecting to equal ${JSON.stringify(config.uid)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_GID_UNMATCH: function({config, actual}) {
-    return utils.error('NIKITA_FS_ASSERT_GID_UNMATCH', ['the gid of the target does not match the expected value,', `expected ${JSON.stringify(config.uid)},`, `got ${JSON.stringify(actual)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_GID_UNMATCH', [
+      'the gid of the target does not match the expected value,',
+      `expected ${JSON.stringify(config.uid)},`,
+      `got ${JSON.stringify(actual)}.`
+    ], {
       target: config.target,
       message: config.error
     });
   },
   NIKITA_FS_ASSERT_GID_MATCH: function({config}) {
-    return utils.error('NIKITA_FS_ASSERT_GID_MATCH', ['the gid of the target  match the provided value,', `not expecting to equal ${JSON.stringify(config.uid)}.`], {
+    return utils.error('NIKITA_FS_ASSERT_GID_MATCH', [
+      'the gid of the target  match the provided value,',
+      `not expecting to equal ${JSON.stringify(config.uid)}.`
+    ], {
       target: config.target,
       message: config.error
     });
@@ -149,10 +202,12 @@ export default {
               results.push(fs.constants.S_IFSOCK);
               break;
             default:
-              results.push(filetype);
+              throw errors.NIKITA_FS_ASSERT_FILETYPE_INVALID_VALUE({config});
           }
-        } else {
+        } else if (typeof filetype === 'number') {
           results.push(filetype);
+        } else {
+          throw errors.NIKITA_FS_ASSERT_FILETYPE_INVALID_TYPE({config});
         }
       }
       return results;

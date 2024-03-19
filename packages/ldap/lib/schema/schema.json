@@ -1,8 +1,8 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
     "properties": {
-      "$ref": "module://@nikitajs/ldap/search#/definitions/config",
       "name": {
         "type": "string",
         "description": "Common name of the schema."

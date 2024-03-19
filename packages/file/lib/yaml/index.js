@@ -32,10 +32,11 @@ export default {
       level: "DEBUG",
     });
     config.content = yaml.dump(config.content, {
+      indent: config.indent,
       noRefs: true,
       lineWidth: config.line_width,
     });
-    await this.file(config);
+    await this.file(utils.object.filter(config, ['clean', 'indent', 'line_width', 'merge']));
   },
   metadata: {
     definitions: definitions,

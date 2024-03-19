@@ -10,16 +10,19 @@ export default {
     // Get DN
     if (!config.dn) {
       log("DEBUG", "Get DN of the database to modify");
-      const { dn } = await this.ldap.tools.database(config, {
-        suffix: config.suffix,
-      });
-      config.dn = dn;
-      log("INFO", `Database DN is ${dn}`);
+      config.dn = await this.ldap.tools
+        .database({
+          ...utils.ldap.config_connection(config),
+          suffix: config.suffix,
+        })
+        .then(({ dn }) => dn);
+      log("INFO", `Database DN is ${config.dn}`);
     }
     for (const acl of config.acls) {
       // Get ACLs
       log("DEBUG", "List all ACL of the directory");
-      const { stdout } = await this.ldap.search(config, {
+      const { stdout } = await this.ldap.search({
+        ...utils.ldap.config_connection(config),
         attributes: ["olcAccess"],
         base: `${config.dn}`,
         filter: "(olcAccess=*)",
@@ -144,7 +147,8 @@ export default {
           value: olcAccess,
         });
       }
-      await this.ldap.modify(config, {
+      await this.ldap.modify({
+        ...utils.ldap.config_connection(config),
         operations: operations,
       });
       $status = true;

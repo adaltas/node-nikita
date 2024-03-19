@@ -7,34 +7,52 @@ they = mochaThey(test.config)
 describe 'docker.run', ->
   return unless test.tags.docker
 
-  they 'simple command', ({ssh}) ->
+  they 'option `rm` is `false` by default', ({ssh}) ->
     nikita
       $ssh: ssh
       docker: test.docker
     , ->
-      {$status, stdout} = await @docker.run
-        command: "/bin/echo 'test'"
-        image: 'alpine'
-      $status.should.be.true()
-      stdout.should.match /^test.*/
+      try
+        await @docker.rm 'nikita_test_run_rm_false', force: true
+        await @docker.run
+          command: "/bin/echo 'test'"
+          image: 'alpine'
+          container: 'nikita_test_run_rm_false'
+        {names} = await @docker.ps all: true
+        names.should.containEql 'nikita_test_run_rm_false'
+      finally
+        await @docker.rm 'nikita_test_run_rm_false', force: true
   
-  they '--rm (flag option)', ({ssh}) ->
+  they 'option `rm` is `false`', ({ssh}) ->
     nikita
       $ssh: ssh
       docker: test.docker
     , ->
-      await @docker.rm
-        force: true
-        container: 'nikita_test_rm'
-      {stdout} = await @docker.run
-        command: "/bin/echo 'test'"
-        image: 'alpine'
-        container: 'nikita_test_rm'
-        rm: false
-      stdout.should.match /^test.*/
-      await @docker.rm
-        force: true
-        container: 'nikita_test_rm'
+      try
+        await @docker.rm 'nikita_test_run_rm_true', force: true
+        {$status, stdout} = await @docker.run
+          command: "/bin/echo 'test'"
+          image: 'alpine'
+          rm: true
+        {names} = await @docker.ps all: true
+        names.should.not.containEql 'nikita_test_run_rm_true'
+      finally
+        await @docker.rm 'nikita_test_run_rm_true', force: true
+
+  they 'output `stdout`', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      docker: test.docker
+    , ->
+      try
+        {stdout} = await @docker.run
+          command: "/bin/echo 'test'"
+          image: 'alpine'
+          container: 'nikita_test_rm'
+          rm: true
+        stdout.should.match /^test.*/
+      finally
+        await @docker.rm 'nikita_test_rm', force: true
 
   they 'unique option from array option', ({ssh}) ->
     @timeout 0

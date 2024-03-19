@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
     "properties": {
       "acls": {
         "type": "array",

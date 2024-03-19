@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
     "properties": {
       "code": {
         "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
@@ -8,7 +9,11 @@
       },
       "container": {
         "type": "string",
-        "description": "Name/ID of the container"
+        "description": "Name/ID of the container."
+      },
+      "command": {
+        "type": "string",
+        "description": "Command to execute."
       },
       "docker": {
         "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"

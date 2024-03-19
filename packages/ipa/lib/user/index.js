@@ -35,8 +35,9 @@ export default {
     }
     // Get info even when no modification was performed
     if (!result) {
-      ({result} = await this.ipa.user.show(config, {
-        cn: config.cn
+      ({result} = await this.ipa.user.show({
+        connection: config.connection,
+        uid: config.uid,
       }));
     }
     return {

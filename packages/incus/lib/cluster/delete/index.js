@@ -4,10 +4,11 @@ import definitions from "./schema.json" assert { type: "json" };
 // Action
 export default {
   handler: async function({config}) {
+    // Pre hook
     if (!!config.pre_delete) {
       await this.call(config, config.pre_delete);
     }
-    // Delete containers
+    // Containers removal
     for (const name in config.containers) {
       await this.incus.delete({
         $header: `Container ${name} : delete`,
@@ -15,6 +16,7 @@ export default {
         force: config.force
       });
     }
+    // Networks removal
     for (const name in config.networks) {
       await this.incus.network.delete({
         $header: `Network ${name} : delete`,

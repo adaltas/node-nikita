@@ -22,9 +22,9 @@ for engine, _ of test.db
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
+            '#/required config must have required property \'host\';'
             '#/required config must have required property \'password\';'
-            '#/required config must have required property \'username\';'
-            'module://@nikitajs/db/query#/definitions/db/required config must have required property \'host\'.'
+            '#/required config must have required property \'username\'.'
           ].join ' '
     
     they 'requires admin_username, password, username', ({ssh}) ->
@@ -40,9 +40,9 @@ for engine, _ of test.db
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'multiple errors were found in the configuration of action `db.user`:'
+            '#/required config must have required property \'admin_username\';'
             '#/required config must have required property \'password\';'
-            '#/required config must have required property \'username\';'
-            'module://@nikitajs/db/query#/definitions/db/required config must have required property \'admin_username\'.'
+            '#/required config must have required property \'username\'.'
           ].join ' '
 
     they 'add new user', ({ssh}) ->

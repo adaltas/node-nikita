@@ -20,7 +20,8 @@ describe 'actions.execute.config.arch_linux', ->
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
           'one error was found in the configuration of action `execute`:'
-          '#/dependencies/arch_chroot/required config must have required property \'arch_chroot_rootdir\'.'
+          '#/dependentRequired config must have property arch_chroot_rootdir when property arch_chroot is present,'
+          'property is "arch_chroot", depsCount is 1, deps is "arch_chroot_rootdir".'
         ].join ' '
           
     it 'arch_chroot_rootdir must exist', ->

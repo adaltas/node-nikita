@@ -125,7 +125,7 @@ describe 'docker.compose', ->
               ports: ['12303:80']
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       await @docker.compose
-        service: 'compose'
+        services: 'up_with_service_name'
         target: "#{tmpdir}/docker_compose_up_file/docker-compose.yml"
       {$status} = await @execute
         command: 'ping dind -c 1'

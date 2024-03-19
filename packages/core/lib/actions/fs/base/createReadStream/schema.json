@@ -25,6 +25,9 @@
         "typeof": "function",
         "description": "User provided function receiving the newly created readable stream. The user is responsible for pumping new content from it."
       },
+      "sudo": {
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/sudo"
+      },
       "target": {
         "oneOf": [
           {

@@ -35,7 +35,8 @@ export default {
     });
   },
   metadata: {
+    argument_to_config: 'container',
     global: 'docker',
-    definitions: definitions
+    definitions: definitions,
   }
 };

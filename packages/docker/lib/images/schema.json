@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
     "properties": {
       "filters": {
         "type": "object",
@@ -26,7 +27,7 @@
             "description": "Filter images created after the image with given id or reference."
           }
         },
-        "description": ""
+        "description": "Filter output based on conditions provided."
       }
     }
   }

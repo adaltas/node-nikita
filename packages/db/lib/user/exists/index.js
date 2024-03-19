@@ -1,31 +1,32 @@
 // Dependencies
-import definitions from "./schema.json" assert { type: "json" };
 import { db } from "@nikitajs/db/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
 export default {
-  handler: async function({config}) {
-    const {stdout} = await this.db.query(db.connection_config(config), {
+  handler: async function ({ config }) {
+    const { stdout } = await this.db.query({
+      ...db.connection_config(config),
       database: undefined,
-      command: (function() {
+      command: (function () {
         switch (config.engine) {
-          case 'mariadb':
-          case 'mysql':
+          case "mariadb":
+          case "mysql":
             return `SELECT User FROM mysql.user WHERE User = '${config.username}'`;
-          case 'postgresql':
+          case "postgresql":
             return `SELECT '${config.username}' FROM pg_roles WHERE rolname='${config.username}'`;
         }
       })(),
-      trim: true
+      trim: true,
     });
     return {
-      exists: stdout === config.username
+      exists: stdout === config.username,
     };
   },
   metadata: {
-    argument_to_config: 'username',
-    global: 'db',
+    argument_to_config: "username",
+    global: "db",
     shy: true,
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

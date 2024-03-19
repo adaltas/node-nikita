@@ -1,11 +1,12 @@
 // Dependencies
-import definitions from "./schema.json" assert { type: "json" };
 import utils from "@nikitajs/db/utils";
+import definitions from "./schema.json" assert { type: "json" };
 
 // Action
 export default {
   handler: async function ({ config }) {
     const { $status, stdout } = await this.execute({
+      code: config.code,
       command: utils.db.command(config),
       trim: config.trim,
     });

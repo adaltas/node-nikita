@@ -7,7 +7,7 @@ object.
 import stream from "node:stream";
 import dedent from "dedent";
 import { merge, mutate } from "mixme";
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2019.js";
 import ajv_keywords from "ajv-keywords";
 import ajv_formats from "ajv-formats";
 import utils from "@nikitajs/core/utils";
@@ -137,35 +137,29 @@ export default {
             ajv.addSchema(schema, "nikita");
             return true;
           },
-          validate: async (action, schema) => {
+          validate: async (action, definitions) => {
             let validate;
             try {
-              if (schema == null) {
-                schema = action.metadata.definitions;
+              if (definitions == null) {
+                definitions = action.metadata.definitions;
               }
-              schema = {
-                definitions: schema,
+              const schema = {
+                definitions: definitions,
+                // definitions: {config: {}, ...definitions},
                 type: "object",
-                allOf: [
-                  {
-                    properties: (() => {
-                      const obj = {};
-                      for (const k in schema) {
-                        obj[k] = {
-                          $ref: `#/definitions/${k}`,
-                        };
+                properties: {
+                  config: definitions?.config
+                    ? {
+                        type: "object",
+                        // additionalProperties: false,
+                        unevaluatedProperties: false,
+                        $ref: "#/definitions/config",
                       }
-                      return obj;
-                    })(),
+                    : {},
+                  metadata: {
+                    $ref: "nikita#/definitions/metadata",
                   },
-                  {
-                    properties: {
-                      metadata: {
-                        $ref: "nikita#/definitions/metadata",
-                      },
-                    },
-                  },
-                ],
+                },
               };
               validate = await ajv.compileAsync(schema);
             } catch (error) {

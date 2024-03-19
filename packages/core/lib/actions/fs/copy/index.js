@@ -129,7 +129,7 @@ export default {
               return await this.fs.copy({
                 target: target,
                 source: source,
-                source_stat: stats,
+                source_stats: stats,
                 uid: uid,
                 gid: gid,
                 mode: mode,

@@ -17,10 +17,10 @@ for engine, _ of test.db then do (engine) ->
       .should.be.rejectedWith [
         "NIKITA_SCHEMA_VALIDATION_CONFIG:"
         "multiple errors were found in the configuration of action `db.query`:"
-        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'admin_password';"
-        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'admin_username';"
-        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'engine';"
-        "module://@nikitajs/db/query#/definitions/db/required config must have required property 'host'."
+        "#/required config must have required property 'admin_password';"
+        "#/required config must have required property 'admin_username';"
+        "#/required config must have required property 'engine';"
+        "#/required config must have required property 'host'."
       ].join ' '
 
     they 'config command', ({ssh}) ->

@@ -6,7 +6,7 @@
         "type": "string",
         "description": "Used to decide what files to delete when cleaning."
       },
-      "argument": {
+      "argu": {
         "type": "string",
         "description": "The destination path of the symlink if type is `L`."
       },

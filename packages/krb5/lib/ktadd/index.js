@@ -29,10 +29,7 @@ export default {
       code: [0, 1]
     });
     if (entriesExist) {
-      log({
-        message: "Keytab exists, check kvno validity",
-        level: 'DEBUG'
-      });
+      log('DEBUG', "Keytab exists, check kvno validity");
       const lines = utils.string.lines(entriesStdout);
       for (const line of lines) {
         const match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec(line)
@@ -70,14 +67,8 @@ export default {
           mdate: parseInt(values[2], 10) * 1000,
           kvno: parseInt(values[8], 10)
         };
-        log({
-          message: `Keytab kvno '${keytab[config.principal].kvno}', principal kvno '${princ.kvno}'`,
-          level: 'INFO'
-        });
-        log({
-          message: `Keytab mdate '${new Date(keytab[config.principal].mdate)}', principal mdate '${new Date(princ.mdate)}'`,
-          level: 'INFO'
-        });
+        log('INFO', `Keytab kvno '${keytab[config.principal].kvno}', principal kvno '${princ.kvno}'`);
+        log('INFO', `Keytab mdate '${new Date(keytab[config.principal].mdate)}', principal mdate '${new Date(princ.mdate)}'`);
       }
     }
     // Remove principal from keytab

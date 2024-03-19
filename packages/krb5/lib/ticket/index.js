@@ -24,7 +24,7 @@ export default {
     });
   },
   metadata: {
-    global: 'krb5',
+    // global: 'krb5',
     definitions: definitions
   }
 };

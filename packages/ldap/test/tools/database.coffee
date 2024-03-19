@@ -35,7 +35,7 @@ describe 'ldap.database', ->
   
   describe 'usage', ->
   
-    they 'create a new index', ({ssh}) ->
+    they 'output database information', ({ssh}) ->
       nikita
         $ssh: ssh
       , ->

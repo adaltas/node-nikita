@@ -113,7 +113,7 @@ describe 'actions.fs.link', ->
         $status.should.be.true()
         await @fs.assert
           target: "#{tmpdir}/test/dir/link_test"
-          type: 'symlink'
+          filetype: 'symlink'
         {$status} = await @fs.link
           $ssh: ssh
           source: "#{tmpdir}/source_dir/merge.coffee"

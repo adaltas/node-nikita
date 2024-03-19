@@ -1,3 +1,4 @@
+import utils from "@nikitajs/core/utils"
 
 export default {
   acl: {
@@ -67,6 +68,9 @@ export default {
         return olcAccesses[0];
       }
     }
+  },
+  config_connection(config){
+    return utils.object.filter(config, [], ['binddn', 'mesh', 'passwd', 'uri'])
   },
   index: {
     /*

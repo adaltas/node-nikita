@@ -34,7 +34,8 @@ describe 'actions.wait', ->
         'NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors were found in the configuration of action `wait`:'
         '#/definitions/config/oneOf config must match exactly one schema in oneOf, passingSchemas is null;'
         '#/definitions/config/oneOf/0/properties/time/type config/time must be integer,string, type is ["integer","string"];'
-        '#/definitions/config/oneOf/1/additionalProperties config must NOT have additional properties, additionalProperty is "time".'
+        '#/definitions/config/oneOf/1/additionalProperties config must NOT have additional properties, additionalProperty is "time";'
+        '#/properties/config/unevaluatedProperties config must NOT have unevaluated properties, unevaluatedProperty is "time".'
       ].join ' '
 
   describe 'time', ->

@@ -11,20 +11,23 @@ describe 'docker.wait', ->
     nikita
       $ssh: ssh
       docker: test.docker
-    , ->
-      await @docker.rm
-        container: 'nikita_test_wait'
-        force: true
-      await @docker.tools.service
-        image: 'httpd'
-        container: 'nikita_test_wait'
-      setTimeout =>
-        @docker.stop
+    , ({registry}) ->
+      registry.register 'clean', () ->
+        await @docker.rm 'nikita_test_wait', force: true
+      await @clean()
+      try
+        await @docker.tools.service
+          image: 'httpd'
           container: 'nikita_test_wait'
-      , 50
-      {$status} = await nikita
-        $ssh: ssh
-        docker: test.docker
-      .docker.wait
-        container: 'nikita_test_wait'
-      $status.should.be.true()
+        setTimeout =>
+          @docker.stop
+            container: 'nikita_test_wait'
+        , 50
+        {$status} = await nikita
+          $ssh: ssh
+          docker: test.docker
+        .docker.wait
+          container: 'nikita_test_wait'
+        $status.should.be.true()
+      finally
+        await @clean()

@@ -9,7 +9,7 @@
       },
       "exec": {
         "type": "boolean",
-        "description": "If true, then command will be executed just after if added to crontab."
+        "description": "If activated and if the crontab was modified, then command will be executed just after the crontab modification."
       },
       "match": {
         "oneOf": [

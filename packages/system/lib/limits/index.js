@@ -50,8 +50,8 @@ export default {
     // Calculate nproc from kernel limit
     if (config.nproc != null) {
       const { stdout: kern_limit } = await this.execute({
+        $shy: true,
         command: "cat /proc/sys/kernel/pid_max",
-        shy: true,
         trim: true,
       });
       if (config.nproc === true) {

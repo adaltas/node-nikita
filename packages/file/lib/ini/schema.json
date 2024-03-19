@@ -39,6 +39,10 @@
       "gid": {
         "$ref": "module://@nikitajs/file#/definitions/config/properties/gid"
       },
+      "indent": {
+        "type": "string",
+        "description": "Characters used for indentation used by the stringifier functions."
+      },
       "local": {
         "type": "boolean",
         "description": "Read the source file locally if it exists."
@@ -52,6 +56,10 @@
       },
       "parse": {
         "$ref": "module://@nikitajs/file/ini/read#/definitions/config/properties/parse"
+      },
+      "separator": {
+        "type": "string",
+        "description": "Characters separating keys and values used by the stringifier functions."
       },
       "stringify": {
         "typeof": "function",

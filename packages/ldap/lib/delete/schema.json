@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
     "properties": {
       "dn": {
         "type": "array",
@@ -13,18 +14,6 @@
       "name": {
         "type": "string",
         "description": "Distinguish name storing the \"olcAccess\" property, using the database\naddress (eg: \"olcDatabase={2}bdb,cn=config\")."
-      },
-      "binddn": {
-        "type": "string",
-        "description": "Distinguished Name to bind to the LDAP directory."
-      },
-      "passwd": {
-        "type": "string",
-        "description": "Password for simple authentication."
-      },
-      "uri": {
-        "type": "string",
-        "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
       }
     },
     "required": [

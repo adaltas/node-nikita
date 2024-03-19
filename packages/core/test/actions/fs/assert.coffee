@@ -88,6 +88,26 @@ describe 'actions.fs.assert', ->
           message: 'Got it'
   
   describe 'config `filetype`', ->
+
+    they 'must match a registered string value', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , () ->
+        @fs.assert "/invalid/a_dir", filetype: 'INVALID'
+        .should.be.rejectedWith [
+          'NIKITA_FS_ASSERT_FILETYPE_INVALID_VALUE:'
+          'provided filetype is not supported, got ["INVALID"].'
+        ].join(' ')
+
+    they 'defined as string or number', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , () ->
+        await @fs.assert "/invalid/a_dir", $schema: false, filetype: [true]
+        .should.be.rejectedWith [
+          'NIKITA_FS_ASSERT_FILETYPE_INVALID_TYPE:'
+          'filetype must be a string or a number, got [true].'
+        ].join(' ')
   
     they 'assert a file', ({ssh}) ->
       nikita
@@ -479,7 +499,6 @@ describe 'actions.fs.assert', ->
       , ({metadata: {tmpdir}}) ->
         await @fs.base.mkdir
           target: "#{tmpdir}/a_file"
-          content: "are u here"
           mode: 0o0755
         @fs.assert
           target: "#{tmpdir}/a_file"
@@ -500,7 +519,6 @@ describe 'actions.fs.assert', ->
       , ({metadata: {tmpdir}}) ->
         await @fs.base.mkdir
           target: "#{tmpdir}/a_file"
-          content: "are u here"
           mode: 0o0755
         @fs.assert
           target: "#{tmpdir}/a_file"
@@ -530,7 +548,7 @@ describe 'actions.fs.assert', ->
       , ({metadata: {tmpdir}}) ->
         {stdout} = await @execute 'id -u && id -g'
         [uid, gid] = stdout.split '\n'
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: '', uid: uid, gid: gid
+        await @fs.base.writeFile "#{tmpdir}/a_file", content: ''
         await @fs.base.chown "#{tmpdir}/a_file", gid: gid
         @fs.assert
           target: "#{tmpdir}/a_file",

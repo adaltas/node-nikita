@@ -57,13 +57,12 @@ describe 'file.render', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @file.render
-          content: 'Got {{ config.test }}'
+          content: 'Got {{ config.target }}'
           target: "#{tmpdir}/output"
-          context: config: test: 'from context'
-          test: 'from action'
+          context: config: target: 'overwritte target'
         await @fs.assert
           target: "#{tmpdir}/output"
-          content: 'Got from context'
+          content: 'Got overwritte target'
   
   describe 'handlebars', ->
 

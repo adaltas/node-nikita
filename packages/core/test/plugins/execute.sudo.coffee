@@ -17,8 +17,6 @@ describe 'plugins.execute.sudo', ->
         $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
-        uid: 0
-        gid: 0
       await @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
@@ -50,8 +48,6 @@ describe 'plugins.execute.sudo', ->
         $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
-        uid: 0
-        gid: 0
       await @fs.base.chown
         $sudo: true
         target: "#{tmpdir}/a_file"

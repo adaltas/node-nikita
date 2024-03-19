@@ -8,6 +8,9 @@
       "context": {
         "$ref": "module://@nikitajs/file#/definitions/config/properties/context"
       },
+      "encoding": {
+        "$ref": "module://@nikitajs/file#/definitions/config/properties/encoding"
+      },
       "engine": {
         "$ref": "module://@nikitajs/file#/definitions/config/properties/engine"
       },

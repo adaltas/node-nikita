@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
     "properties": {
       "attributes": {
         "type": "array",
@@ -17,7 +18,10 @@
       },
       "base": {
         "type": "string",
-        "description": "One or multiple DN to remove."
+        "description": "One or multiple DN to search."
+      },
+      "code": {
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code"
       },
       "filter": {
         "type": "string",
@@ -32,7 +36,15 @@
           "children"
         ],
         "description": "Distinguish name storing the \"olcAccess\" property, using the database\naddress (eg: \"olcDatabase={2}bdb,cn=config\")."
-      },
+      }
+    },
+    "required": [
+      "base"
+    ]
+  },
+  "connection": {
+    "type": "object",
+    "properties": {
       "binddn": {
         "type": "string",
         "description": "Distinguished Name to bind to the LDAP directory."
@@ -49,9 +61,6 @@
         "type": "string",
         "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
       }
-    },
-    "required": [
-      "base"
-    ]
+    }
   }
 }

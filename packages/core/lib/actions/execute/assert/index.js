@@ -13,24 +13,26 @@ export default {
     if (config.content && config.trim) {
       config.content = config.content.trim();
     }
+    const configForExecute = utils.object.filter(config, ['code', 'content', 'not', 'trim']);
     // Command exit code
-    if (config.code != null) {
-      const {code} = await this.execute(config, {
-        $relax: true
-      });
-      if (!config.not) {
-        if (!config.code.includes(code)) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting ${config.code}.` : `while expecting one of ${JSON.stringify(config.code)}.`]);
-        }
-      } else {
-        if (config.code.includes(code)) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, config.code.length === 1 ? `while expecting anything but ${config.code}.` : `while expecting anything but one of ${JSON.stringify(config.code)}.`]);
-        }
+    const res = await this.execute({
+      ...configForExecute,
+      $relax: true
+    });
+    const code = res.error ? res.error.exit_code : res.code
+    const expectedCodes = utils.array.flatten(config.code.true, config.code.false);
+    if (!config.not) {
+      if (!expectedCodes.includes(code)) {
+        throw utils.error('NIKITA_EXECUTE_ASSERT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, expectedCodes.length === 1 ? `while expecting ${expectedCodes}.` : `while expecting one of ${JSON.stringify(expectedCodes)}.`]);
+      }
+    } else {
+      if (expectedCodes.includes(code)) {
+        throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_EXIT_CODE', ['an unexpected exit code was encountered,', `got ${JSON.stringify(code)}`, expectedCodes.length === 1 ? `while expecting anything but ${expectedCodes}.` : `while expecting anything but one of ${JSON.stringify(expectedCodes)}.`]);
       }
     }
     // Content is a string or a buffer
     if ((config.content != null) && typeof config.content === 'string') {
-      let {stdout} = await this.execute(config);
+      let {stdout} = await this.execute(configForExecute);
       if (config.trim) {
         stdout = stdout.trim();
       }
@@ -46,7 +48,7 @@ export default {
     }
     // Content is a regexp
     if ((config.content != null) && utils.regexp.is(config.content)) {
-      let {stdout} = await this.execute(config);
+      let {stdout} = await this.execute(configForExecute);
       if (config.trim) {
         stdout = stdout.trim();
       }
@@ -64,7 +66,7 @@ export default {
   hooks: {
     on_action: function({config, metadata}) {
       if (!config.content) {
-        return config.code != null ? config.code : config.code = [0];
+        return config.code != null ? config.code : config.code = {true: [0]};
       }
     }
   },

@@ -8,11 +8,9 @@ describe 'service.outdated', ->
   return unless test.tags.service_outdated
   
   they 'list all packages', ({ssh, sudo}) ->
-    {packages, outdated} = await nikita
+    {packages, outdated} = await nikita.service.outdated
       $ssh: ssh
       $sudo: sudo
-    .service.outdated
-      cache: true
     should(outdated).be.undefined()
     packages.should.matchEach (it) -> it.should.be.a.String()
   
@@ -33,18 +31,3 @@ describe 'service.outdated', ->
       name: 'XXXX'
     should(packages).be.undefined()
     outdated.should.be.false()
-  
-  they 'cache package list', ({ssh, sudo}) ->
-    nikita
-      $ssh: ssh
-      $sudo: sudo
-    , ->
-      await @call ({parent: {state}}) ->
-        should(state['nikita:service:packages:outdated']).be.undefined()
-      {$status} = await @service.outdated
-        name: test.service.name
-        cache: true
-      $status.should.be.false()
-      await @call ({parent: {state}}) ->
-        state['nikita:service:packages:outdated'].should.be.an.Array()
-  

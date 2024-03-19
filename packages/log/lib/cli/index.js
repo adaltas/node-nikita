@@ -138,8 +138,11 @@ export default {
         return line + "\n";
       },
     };
-    config.serializer = merge(serializer, config.serializer);
-    return this.log.stream(config);
+    return this.log.stream({
+      end: config.end,
+      serializer: merge(serializer, config.serializer),
+      stream: config.stream,
+    });
   },
   metadata: {
     argument_to_config: "enabled",

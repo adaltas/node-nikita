@@ -14,21 +14,24 @@ export default {
       config.uri = 'ldapi:///';
     }
     // Add related config
-    return await this.execute(config, [
-      'ldapsearch',
-      '-o ldif-wrap=no',
-      '-LLL', // Remove comments
-      config.continuous ? '-c' : undefined,
-      config.mesh ? `-Y ${esa(config.mesh)}` : undefined,
-      config.binddn ? `-D ${esa(config.binddn)}` : undefined,
-      config.passwd ? `-w ${esa(config.passwd)}` : undefined,
-      config.uri ? `-H ${esa(config.uri)}` : undefined,
-      `-b ${esa(config.base)}`,
-      config.scope ? `-s ${esa(config.scope)}` : undefined,
-      config.filter ? `${esa(config.filter)}` : undefined,
-      ...(config.attributes.map(esa)),
-      '2>/dev/null'
-    ].filter(Boolean).join(' '));
+    return await this.execute({
+      code: config.code,
+      command: [
+        'ldapsearch',
+        '-o ldif-wrap=no',
+        '-LLL', // Remove comments
+        config.continuous ? '-c' : undefined,
+        config.mesh ? `-Y ${esa(config.mesh)}` : undefined,
+        config.binddn ? `-D ${esa(config.binddn)}` : undefined,
+        config.passwd ? `-w ${esa(config.passwd)}` : undefined,
+        config.uri ? `-H ${esa(config.uri)}` : undefined,
+        `-b ${esa(config.base)}`,
+        config.scope ? `-s ${esa(config.scope)}` : undefined,
+        config.filter ? `${esa(config.filter)}` : undefined,
+        ...(config.attributes.map(esa)),
+        '2>/dev/null'
+      ].filter(Boolean).join(' ')
+    });
   },
   metadata: {
     global: 'ldap',

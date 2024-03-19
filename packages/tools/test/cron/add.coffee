@@ -90,7 +90,7 @@ describe 'tools.cron.add', ->
 
     describe 'match', ->
 
-      they 'regexp', ({ssh}) ->
+      they 'value is a regexp', ({ssh}) ->
         nikita
           $ssh: ssh
         , ->
@@ -100,15 +100,14 @@ describe 'tools.cron.add', ->
             when: '0 * * * *'
             match: '.*bin.*'
           $status.should.be.true()
-          {$status} = await @tools.cron.add
+          {$status, diff} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: /.*bin.*/
-            diff: (diff) ->
-              diff.should.eql [
-                { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
-                { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
-              ]
+          diff.should.eql [
+            { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/true #{rand}" }
+            { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/false #{rand}" }
+          ]
           $status.should.be.true()
           {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
@@ -119,7 +118,7 @@ describe 'tools.cron.add', ->
             command: "/bin/false #{rand}"
             when: '0 * * * *'
 
-      they 'string', ({ssh}) ->
+      they 'value is a string', ({ssh}) ->
         nikita
           $ssh: ssh
         , ->
@@ -129,15 +128,14 @@ describe 'tools.cron.add', ->
             when: '0 * * * *'
             match: '.*bin.*'
           $status.should.be.true()
-          {$status} = await @tools.cron.add
+          {$status, diff} = await @tools.cron.add
             command: "/bin/false #{rand}"
             when: '0 * * * *'
             match: '.*bin.*'
-            diff: (diff) ->
-              diff.should.eql [
-                { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
-                { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
-              ]
+          diff.should.eql [
+            { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/true #{rand}" }
+            { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/false #{rand}" }
+          ]
           $status.should.be.true()
           {$status} = await @tools.cron.add
             command: "/bin/false #{rand}"
@@ -155,6 +153,7 @@ describe 'tools.cron.add', ->
           $ssh: ssh
         , ->
           await @service 'cronie'
+          await @tools.cron.reset()
           await @tools.cron.add
             command: 'azertyytreza'
             when: '1 2 3 4 5'

@@ -9,9 +9,9 @@ export default {
     if (config.rootdir) {
       config.target = `${path.join(config.rootdir, config.target)}`;
     }
-    return (await this.file.ini({
+    return await this.file.ini({
       stringify: utils.ini.stringify_single_key
-    }, config));
+    }, utils.object.filter(config, ['rootdir']));
   },
   metadata: {
     definitions: definitions

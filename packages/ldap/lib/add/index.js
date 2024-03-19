@@ -1,6 +1,7 @@
 // Dependencies
 import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import utils from "@nikitajs/ldap/utils"
 import definitions from "./schema.json" assert { type: "json" };
 
 // Action
@@ -18,7 +19,8 @@ export default {
     for (const entry of config.entry) {
       // Check if record already exists
       // exit code 32 is for "no such object"
-      const { $status } = await this.ldap.search(config, {
+      const { $status } = await this.ldap.search({
+        ...utils.ldap.config_connection(config),
         base: entry.dn,
         code: [0, 32],
         scope: "base",

@@ -323,7 +323,6 @@ describe 'actions.fs.copy', ->
           mode: 0o0606
         await @fs.mkdir
           target: "#{tmpdir}/a_source/a_dir"
-          content: ''
           mode: 0o0777
         await @fs.base.writeFile
           target: "#{tmpdir}/a_source/a_dir/a_file"

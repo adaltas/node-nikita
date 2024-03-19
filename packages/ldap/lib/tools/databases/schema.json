@@ -1,18 +1,15 @@
 {
   "config": {
     "type": "object",
-    "allOf": [
-      {
-        "properties": {
-          "base": {
-            "const": "cn=config",
-            "default": "cn=config"
-          }
-        }
-      },
-      {
-        "$ref": "module://@nikitajs/ldap/search"
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
+    "properties": {
+      "base": {
+        "const": "cn=config",
+        "default": "cn=config"
       }
+    },
+    "required": [
+      "base"
     ]
   }
 }

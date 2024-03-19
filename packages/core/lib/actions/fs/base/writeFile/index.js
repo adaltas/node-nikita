@@ -4,7 +4,7 @@ import utils from '@nikitajs/core/utils';
 import definitions from "./schema.json" assert { type: "json" };
 
 const errors = {
-  NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) =>
+  NIKITA_FS_TARGET_INVALID: ({config, err}) =>
     utils.error('NIKITA_FS_TARGET_INVALID', [
       'the target location is absolute',
       'but this is not suported in SSH mode,',
@@ -28,7 +28,7 @@ export default {
     // Normalization
     config.target = config.cwd ? path.resolve(config.cwd, config.target) : path.normalize(config.target);
     if (ssh && !path.isAbsolute(config.target)) {
-      throw NIKITA_FS_STAT_TARGET_ENOENT({
+      throw errors.NIKITA_FS_TARGET_INVALID({
         config: config,
         err: err
       });

@@ -10,6 +10,10 @@
         "type": "string",
         "description": "The password of the database administrator."
       },
+      "code": {
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
+        "description": "Expected code returned by the SQL execute command."
+      },
       "database": {
         "type": [
           "null",

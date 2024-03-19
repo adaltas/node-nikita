@@ -8,6 +8,9 @@ export default {
     const binddn = config.binddn ? `-D ${config.binddn}` : '';
     const passwd = config.passwd ? `-w ${config.passwd}` : '';
     if (config.uri === true) {
+      if (config.mesh == null) {
+        config.mesh = 'EXTERNAL';
+      }
       config.uri = 'ldapi:///';
     }
     const uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided

@@ -34,8 +34,9 @@ export default {
       }, async function() {
         // Set configuration
         await this.incus.init({
-          $header: 'Init'
-        }, containerConfig);
+          $header: 'Init',
+          ...utils.object.filter(containerConfig, ['disk', 'nic', 'properties', 'proxy', 'user', 'ssh'])
+        });
         // Set config
         if (containerConfig != null ? containerConfig.properties : void 0) {
           await this.incus.config.set({

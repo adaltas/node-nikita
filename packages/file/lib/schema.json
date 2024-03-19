@@ -148,6 +148,10 @@
         ],
         "description": "Name of the marker until where the content will be replaced."
       },
+      "transform": {
+        "typeof": "function",
+        "description": "A user-defined function used to transform the `content` property before it is written."
+      },
       "uid": {
         "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"
       },

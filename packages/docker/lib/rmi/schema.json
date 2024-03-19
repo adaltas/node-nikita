@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
     "properties": {
       "cwd": {
         "type": "string",
@@ -8,6 +9,10 @@
       },
       "docker": {
         "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker"
+      },
+      "force": {
+        "type": "boolean",
+        "description": "Force removal of the image."
       },
       "image": {
         "type": "string",

@@ -14,11 +14,9 @@ describe 'file.types.hfile', ->
     , ({metadata: {tmpdir}}) ->
       {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
-        content: {}
       $status.should.be.true()
       {$status} = await @file.types.hfile
         target: "#{tmpdir}/empty.xml"
-        content: {}
       $status.should.be.false()
       await @fs.assert
         target: "#{tmpdir}/empty.xml"

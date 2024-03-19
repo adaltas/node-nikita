@@ -10,14 +10,16 @@ export default {
     const modify = {};
     if (!config.dn) {
       log("DEBUG", "Get DN of the database to modify");
-      ({ dn: config.dn } = await this.ldap.tools.database(config, {
+      ({ dn: config.dn } = await this.ldap.tools.database({
+        ...utils.ldap.config_connection(config),
         suffix: config.suffix,
       }));
       log("INFO", `Discovered database DN is ${config.dn}`);
     }
     // List all indexes of the directory
     log("DEBUG", "List all indexes of the directory");
-    const { stdout } = await this.ldap.search(config, {
+    const { stdout } = await this.ldap.search({
+      ...utils.ldap.config_connection(config),
       attributes: ["olcDbIndex"],
       base: `${config.dn}`,
       filter: "(olcDbIndex=*)",
@@ -66,7 +68,8 @@ export default {
           value: `${k} ${v[0]}`,
         });
       }
-      await this.ldap.modify(config, {
+      await this.ldap.modify({
+        ...utils.ldap.config_connection(config),
         operations: operations,
       });
     }

@@ -2,14 +2,22 @@
   "config": {
     "type": "object",
     "properties": {
-      "rootdir": {
-        "type": "string",
-        "description": "Path to the mount point corresponding to the root directory, optional."
+      "content": {
+        "type": "object",
+        "default": {},
+        "description": "Information to serialize into the resolved configuration file."
+      },
+      "merge": {
+        "$ref": "module://@nikitajs/file/ini#/definitions/config/properties/merge"
       },
       "reload": {
         "type": "boolean",
         "default": null,
-        "description": "Defaults to true. If set to true the following command will be\nexecuted `systemctl daemon-reload && systemctl restart\nsystemd-resolved` after having wrote the configuration file."
+        "description": "Defaults to true. If set to true the following command will be executed `systemctl daemon-reload && systemctl restart systemd-resolved` after having wrote the configuration file."
+      },
+      "rootdir": {
+        "type": "string",
+        "description": "Path to the mount point corresponding to the root directory, optional."
       },
       "target": {
         "type": "string",

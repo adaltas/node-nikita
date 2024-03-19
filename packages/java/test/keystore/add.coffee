@@ -24,7 +24,8 @@ describe 'java.keystore.add', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'one error was found in the configuration of action `java.keystore.add`:'
-        '#/dependencies/cacert/required config must have required property \'caname\'.'
+        '#/dependentRequired config must have property caname when property cacert is present,'
+        'property is "cacert", depsCount is 1, deps is "caname".'
       ].join ' '
         
     it 'cert implies key, keypass and name', ->
@@ -43,9 +44,12 @@ describe 'java.keystore.add', ->
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
         'multiple errors were found in the configuration of action `java.keystore.add`:'
-        '#/dependencies/cert/required config must have required property \'key\';'
-        '#/dependencies/cert/required config must have required property \'keypass\';'
-        '#/dependencies/cert/required config must have required property \'name\'.'
+        '#/dependentRequired config must have properties key, keypass, name when property cert is present,'
+        'property is "cert", depsCount is 3, deps is "key, keypass, name";'
+        '#/dependentRequired config must have properties key, keypass, name when property cert is present,'
+        'property is "cert", depsCount is 3, deps is "key, keypass, name";'
+        '#/dependentRequired config must have properties key, keypass, name when property cert is present,'
+        'property is "cert", depsCount is 3, deps is "key, keypass, name".'
       ].join ' '
   
   describe 'config', ->

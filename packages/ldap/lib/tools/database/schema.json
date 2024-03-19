@@ -1,25 +1,20 @@
 {
   "config": {
     "type": "object",
-    "allOf": [
-      {
-        "properties": {
-          "base": {
-            "const": "cn=config",
-            "default": "cn=config"
-          },
-          "suffix": {
-            "type": "string",
-            "description": "The suffix associated with the database."
-          }
-        },
-        "required": [
-          "suffix"
-        ]
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
+    "properties": {
+      "base": {
+        "const": "cn=config",
+        "default": "cn=config"
       },
-      {
-        "$ref": "module://@nikitajs/ldap/search"
+      "suffix": {
+        "type": "string",
+        "description": "The suffix associated with the database."
       }
+    },
+    "required": [
+      "suffix",
+      "base"
     ]
   }
 }

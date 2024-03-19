@@ -16,7 +16,7 @@ describe 'docker.build', ->
         $ssh: ssh
         docker: test.docker
       .docker.build
-        false_source: 'Dockerfile'
+        file: "/a_dir/Dockerfile"
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [

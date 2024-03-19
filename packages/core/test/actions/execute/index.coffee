@@ -30,19 +30,21 @@ describe 'actions.execute', ->
     they 'as an action handler returning a string', ({ssh}) ->
       nikita $ssh: ssh, ->
         @execute
-          a_key: 'test context'
+          env:
+            a_key: 'test context'
           command: ({config}) ->
-            "text='#{config.a_key}'; echo $text"
+            "text='#{config.env.a_key}'; echo $text"
         .should.be.finally.containEql
           stdout: 'test context\n'
 
     they 'as an action handler returning a promise', ({ssh}) ->
       nikita $ssh: ssh, ->
         @execute
-          a_key: 'test context'
+          env:
+            a_key: 'test context'
           command: ({config}) ->
             new Promise (resolve, reject) ->
-              resolve "text='#{config.a_key}'; echo $text"
+              resolve "text='#{config.env.a_key}'; echo $text"
         .should.be.finally.containEql
           stdout: 'test context\n'
 

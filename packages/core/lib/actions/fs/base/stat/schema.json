@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "additionalProperties": false,
     "properties": {
       "dereference": {
         "type": "boolean",
@@ -25,6 +26,7 @@
   },
   "output": {
     "type": "object",
+    "additionalProperties": true,
     "properties": {
       "stats": {
         "type": "object",

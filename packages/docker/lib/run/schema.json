@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
     "properties": {
       "add_host": {
         "type": "array",
@@ -41,6 +42,10 @@
       "container": {
         "type": "string",
         "description": "Alias of name."
+      },
+      "command": {
+        "type": "string",
+        "description": "The command to execute."
       },
       "cpuset_cpus": {
         "type": "string",
@@ -167,7 +172,6 @@
       },
       "rm": {
         "type": "boolean",
-        "default": true,
         "description": "Delete the container when it ends. True by default."
       },
       "ulimit": {

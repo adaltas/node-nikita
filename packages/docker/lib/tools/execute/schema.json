@@ -1,47 +1,41 @@
 {
   "config": {
     "type": "object",
-    "allOf": [
-      {
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
+    "properties": {
+      "bash": {
+        "type": [
+          "boolean",
+          "string"
+        ],
+        "description": "Serialize the command into a file and execute it with bash."
+      },
+      "command": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "typeof": "function"
+          }
+        ],
+        "description": "String, Object or array; Command to execute. A value provided as a\nfunction is interpreted as an action and will be called by forwarding\nthe config object. The result is the expected to be the command\nto execute."
+      },
+      "cwd": {
+        "type": "string",
+        "description": "Current working directory from where to execute the command."
+      },
+      "code": {
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
+        "default": {}
+      },
+      "docker": {
         "$ref": "#/definitions/docker"
       },
-      {
-        "properties": {
-          "bash": {
-            "type": [
-              "boolean",
-              "string"
-            ],
-            "description": "Serialize the command into a file and execute it with bash."
-          },
-          "command": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "typeof": "function"
-              }
-            ],
-            "description": "String, Object or array; Command to execute. A value provided as a\nfunction is interpreted as an action and will be called by forwarding\nthe config object. The result is the expected to be the command\nto execute."
-          },
-          "cwd": {
-            "type": "string",
-            "description": "Current working directory from where to execute the command."
-          },
-          "code": {
-            "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code",
-            "default": {}
-          },
-          "docker": {
-            "$ref": "#/definitions/docker"
-          },
-          "format": {
-            "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/format"
-          }
-        }
+      "format": {
+        "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/format"
       }
-    ],
+    },
     "required": [
       "command"
     ]

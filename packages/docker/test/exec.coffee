@@ -48,7 +48,7 @@ describe 'docker.exec', ->
       catch err
         err.message.should.match /Container [a-z0-9]+ is not running/
       finally
-        @docker.rm
+        await @docker.rm
           container: 'nikita_test_exec'
           force: true
 

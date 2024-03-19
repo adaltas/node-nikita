@@ -6,10 +6,7 @@ import utils from "@nikitajs/docker/utils";
 export default {
   handler: async function ({ config, tools: { log } }) {
     if (!(config.name != null || config.rm)) {
-      log({
-        message: "Should specify a container name if rm is false",
-        level: "WARN",
-      });
+      log("WARN", "Should specify a container name if rm is false");
     }
     // Construct exec command
     let command = "run";
@@ -112,20 +109,14 @@ export default {
       code: [0, 1],
     });
     if ($status) {
-      log({
-        message: "Container already running. Skipping",
-        level: "INFO",
-      });
+      log("Container already running. Skipping");
     }
     const result = await this.docker.tools.execute({
       $if: config.name == null || $status === false,
       command: command,
     });
     if (result.$status) {
-      log({
-        message: "Container now running",
-        level: "WARN",
-      });
+      log("WARN", "Container now running");
     }
     return result;
   },

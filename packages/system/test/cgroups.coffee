@@ -43,10 +43,11 @@ describe 'system.cgroups', ->
       nikita
         $ssh: ssh
         $tmpdir: true
+        # $audit: true
       , ({metadata: {tmpdir}})->
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_mount_only.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           mounts: mounts
           merge:false
         $status.should.be.true()
@@ -69,7 +70,7 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_cgroup_only.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           groups: groups
           merge: false
         $status.should.be.true()
@@ -102,7 +103,7 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_default_only.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           default: def
           merge: false
         $status.should.be.true()
@@ -135,7 +136,7 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           default: def
           groups: groups
           mounts: mounts
@@ -194,14 +195,14 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           default: def
           groups: groups
           mounts: mounts
           merge: false
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_complete.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           default: def
           groups: groups
           mounts: mounts
@@ -247,7 +248,7 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           groups: groups
           merge: true
         $status.should.be.true()
@@ -266,12 +267,12 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           groups: groups
           merge: true
         {$status} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           groups: groups
           merge: true
         $status.should.be.false()
@@ -285,7 +286,7 @@ describe 'system.cgroups', ->
       , ({metadata: {tmpdir}})->
         {cgroups} = await @system.cgroups
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
-          mode: 0o0754
+          # mode: 0o0754
           groups: toto:
             perm:
               admin: uid: 'toto', gid: 'toto'

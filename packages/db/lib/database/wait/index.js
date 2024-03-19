@@ -1,4 +1,5 @@
 // Dependencies
+import { db } from "@nikitajs/db/utils";
 import definitions from "./schema.json" assert { type: "json" };
 
 // Action
@@ -13,7 +14,8 @@ export default {
       retry: config.retry,
       interval: config.interval,
     }, async function() {
-      const { stdout } = await this.db.query(config, {
+      const { stdout } = await this.db.query({
+        ...db.connection_config(config),
         command: cmd_list_tables,
         database: null,
         grep: config.database,

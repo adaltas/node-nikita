@@ -1,15 +1,8 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/core/actions/execute#/definitions/config",
     "properties": {
-      "code": {
-        "type": ["array", "integer"],
-        "coercion": true,
-        "items": {
-          "type": "integer"
-        },
-        "description": "Expected exit code, activated by default unless content is provided."
-      },
       "content": {
         "oneOf": [
           {

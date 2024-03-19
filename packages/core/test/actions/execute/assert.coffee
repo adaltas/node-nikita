@@ -15,7 +15,7 @@ describe 'actions.execute.assert', ->
         content: 42
         code: 1
         ({config}) ->
-          config.code.should.eql [1]
+          config.code.should.eql {true: [1], false: []}
           config.content.should.eql "42"
   
   describe 'exit code', ->
@@ -32,7 +32,7 @@ describe 'actions.execute.assert', ->
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_EXIT_CODE:'
           'an unexpected exit code was encountered,'
-          'got undefined while expecting 0.'
+          'got 1 while expecting 0.'
         ].join ' '
 
     they 'assert custom code', ({ssh}) ->
@@ -46,7 +46,7 @@ describe 'actions.execute.assert', ->
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_EXIT_CODE:'
           'an unexpected exit code was encountered,'
-          'got undefined while expecting 1.'
+          'got 0 while expecting 1.'
         ].join ' '
 
     they 'assert custom code with negation', ({ssh}) ->

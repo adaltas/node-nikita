@@ -1,11 +1,7 @@
 {
   "config": {
     "type": "object",
-    "allOf": [
-      {
-        "$ref": "module://@nikitajs/db/query#/definitions/db"
-      }
-    ],
+    "$ref": "module://@nikitajs/db/query#/definitions/db",
     "properties": {
       "database": {
         "type": "string",
@@ -14,6 +10,7 @@
       "user": {
         "type": "array",
         "coercion": true,
+        "default": [],
         "items": {
           "type": "string"
         },

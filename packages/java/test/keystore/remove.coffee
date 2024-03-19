@@ -104,13 +104,11 @@ describe 'java.keystore.remove', ->
           keystore: "#{tmpdir}/cacerts"
           storepass: 'changeit'
           name: 'node_1'
-          keypass: 'mypassword'
         $status.should.be.true()
         {$status} = await @java.keystore.remove
           keystore: "#{tmpdir}/cacerts"
           storepass: 'changeit'
           name: 'node_1'
-          keypass: 'mypassword'
         $status.should.be.false()
         await @java.keystore.exists
           keystore: "#{tmpdir}/cacerts"

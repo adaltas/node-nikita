@@ -44,7 +44,7 @@ export default {
           try {
             const { stats } = await this.fs.base.stat({
               $ssh: false,
-              sudo: false,
+              $sudo: false,
               target: config.target,
             });
             if (utils.stats.isFile(stats.mode)) {

@@ -24,7 +24,7 @@ export default {
       config.ignore = [config.ignore];
     }
     // Detect Os and version
-    const {os} = (await this.system.info.os());
+    const {os} = await this.system.info.os();
     // configure parameters based on previous OS dection
     const store = {};
     // Enable cgroup for all distribution, it was restricted to rhel systems
@@ -41,9 +41,9 @@ export default {
       const cpus = cgconfig.mounts.filter(function(mount) {
         return mount.type === 'cpu';
       });
-      const cpuaccts = cgconfig.mounts.filter(function(mount) {
-        return mount.type === 'cpuacct';
-      });
+      // const cpuaccts = cgconfig.mounts.filter(function(mount) {
+      //   return mount.type === 'cpuacct';
+      // });
       // We choose a path which is mounted by default
       // if not @store['nikita:cgroups:cpu_path']?
       if (cpus.length > 0) {
@@ -89,7 +89,8 @@ export default {
         config.target = '/etc/cgconfig.conf';
       }
     }
-    this.file(config, {
+    await this.file({
+      target: config.target,
       content: utils.cgconfig.stringify(config.cgconfig)
     });
     return {

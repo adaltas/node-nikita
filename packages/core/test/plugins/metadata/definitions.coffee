@@ -118,7 +118,6 @@ describe 'plugins.metadata.definitions', ->
           type: 'object'
           properties:
             'an_integer': type: 'integer', 'minimum': 1
-        a_string: 1
         an_integer: 0
       , (->)
       .should.be.rejectedWith [

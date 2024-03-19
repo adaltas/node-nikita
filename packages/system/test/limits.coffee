@@ -120,7 +120,6 @@ describe 'system.limits', ->
           user: 'me'
           nofile: 2048
           nproc: 2048
-          shy: true
         {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'
@@ -138,7 +137,6 @@ describe 'system.limits', ->
           user: 'me'
           nofile: 2048
           nproc: 2048
-          shy: true
         {$status} = await @system.limits
           target: "#{tmpdir}/limits.conf"
           user: 'me'

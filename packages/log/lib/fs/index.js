@@ -23,7 +23,7 @@ export default {
     }
     try {
       await this.fs.base.mkdir(logdir, {
-        ssh: false
+        $ssh: false
       });
     } catch (error) {
       if (error.code !== 'NIKITA_FS_MKDIR_TARGET_EEXIST') {
@@ -31,13 +31,17 @@ export default {
       }
     }
     // Events
-    if (config.stream == null) {
-      config.stream = fs.createWriteStream(path.resolve(logdir, path.basename(config.filename)));
-    }
-    await this.log.stream(config);
+    // if (config.stream == null) {
+    //   config.stream = fs.createWriteStream(path.resolve(logdir, path.basename(config.filename)));
+    // }
+    await this.log.stream({
+      serializer: config.serializer,
+      stream: config.stream ?? fs.createWriteStream(path.resolve(logdir, path.basename(config.filename))),
+    });
     // Handle link to latest directory
     await this.fs.base.symlink({
       $if: latestdir,
+      $ssh: false,
       source: logdir,
       target: latestdir
     });
@@ -50,7 +54,7 @@ export default {
         // With ssh, filename contain the host or ip address
         config.filename ??= `${ssh?.config?.host || 'local'}.log`;
         // Log is always local
-        config.ssh = false;
+        // config.ssh = false;
       }
     }
   },

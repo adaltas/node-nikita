@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/ldap/search#/definitions/connection",
     "properties": {
       "indexes": {
         "type": "object",
@@ -13,18 +14,6 @@
       "suffix": {
         "type": "string",
         "description": "The suffix associated with the database (eg: \"dc=example,dc=org\"),\nused as an alternative to the `dn` configuration."
-      },
-      "binddn": {
-        "type": "string",
-        "description": "Distinguished Name to bind to the LDAP directory."
-      },
-      "passwd": {
-        "type": "string",
-        "description": "Password for simple authentication."
-      },
-      "uri": {
-        "type": "string",
-        "description": "LDAP Uniform Resource Identifier(s), \"ldapi:///\" if true, default to\nfalse in which case it will use your openldap client environment\nconfiguration."
       }
     }
   }

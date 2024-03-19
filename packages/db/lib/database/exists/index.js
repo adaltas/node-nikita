@@ -1,4 +1,5 @@
 // Dependencies
+import { db } from "@nikitajs/db/utils";
 import definitions from "./schema.json" assert { type: "json" };
 
 // Action
@@ -9,7 +10,8 @@ export default {
       : config.engine === 'mariadb' || config.engine === 'mysql'
       ? `SHOW DATABASES;`
       : undefined;
-    const {$status} = await this.db.query(config, {
+    const {$status} = await this.db.query({
+      ...db.connection_config(config),
       command: cmd_list_tables,
       database: null,
       grep: config.database

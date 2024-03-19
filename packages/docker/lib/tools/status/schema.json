@@ -1,6 +1,7 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/docker/tools/execute#/definitions/docker",
     "properties": {
       "container": {
         "type": "array",

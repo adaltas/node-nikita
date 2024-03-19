@@ -21,6 +21,10 @@
         "default": "utf8",
         "description": "Content encoding, see the Node.js supported Buffer encoding."
       },
+      "error": {
+        "type": "string",
+        "description": "Error message to use with failed assertions."
+      },
       "filetype": {
         "type": "array",
         "coercion": true,

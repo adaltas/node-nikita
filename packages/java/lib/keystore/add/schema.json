@@ -35,45 +35,31 @@
       "storepass": {
         "type": "string",
         "description": "Password to manage the keystore."
+      },
+      "caname": {
+        "type": "string",
+        "description": "Name of the certificate authority (CA)."
+      },
+      "key": {
+        "type": "string",
+        "description": "Location of the private key."
+      },
+      "keypass": {
+        "type": "string",
+        "description": "Password used to protect the certificate and its key access\ninside the keystore."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name (aka alias) to reference the certificate inside the keystore."
       }
     },
     "required": [
       "keystore",
       "storepass"
     ],
-    "dependencies": {
-      "cacert": {
-        "properties": {
-          "caname": {
-            "type": "string",
-            "description": "Name of the certificate authority (CA)."
-          }
-        },
-        "required": [
-          "caname"
-        ]
-      },
-      "cert": {
-        "properties": {
-          "key": {
-            "type": "string",
-            "description": "Location of the private key."
-          },
-          "keypass": {
-            "type": "string",
-            "description": "Password used to protect the certificate and its key access\ninside the keystore."
-          },
-          "name": {
-            "type": "string",
-            "description": "Name (aka alias) to reference the certificate inside the keystore."
-          }
-        },
-        "required": [
-          "key",
-          "keypass",
-          "name"
-        ]
-      }
+    "dependentRequired": {
+      "cacert": ["caname"],
+      "cert": ["key", "keypass", "name"]
     }
   }
 }

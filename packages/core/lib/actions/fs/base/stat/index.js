@@ -3,8 +3,7 @@
 import dedent from 'dedent';
 import utils from '@nikitajs/core/utils';
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
-import definitionsIn from './schema.in.json' assert { type: "json" };
-import definitionsOut from './schema.out.json' assert { type: "json" };
+import definitions from './schema.json' assert { type: "json" };
 
 const errors = {
   NIKITA_FS_STAT_TARGET_ENOENT: ({config, error}) =>
@@ -57,7 +56,6 @@ export default {
     argument_to_config: 'target',
     log: false,
     raw_output: true,
-    definitions: definitionsIn
+    definitions: definitions
   },
-  definitions_output: definitionsOut
 };

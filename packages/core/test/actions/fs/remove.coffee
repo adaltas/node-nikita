@@ -106,7 +106,7 @@ describe 'actions.fs.remove', ->
       await @fs.assert "#{tmpdir}/a_dir.tar.gz", not: true
       await @fs.assert "#{tmpdir}/a_dir.tgz", not: true
       await @fs.assert "#{tmpdir}/a_dir.zip"
-      await @fs.assert "#{tmpdir}/a_dir", type: 'directory'
+      await @fs.assert "#{tmpdir}/a_dir", filetype: 'directory'
 
   they 'a dir', ({ssh}) ->
     nikita

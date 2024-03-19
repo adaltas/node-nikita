@@ -1,24 +1,19 @@
 {
   "config": {
     "type": "object",
-    "allOf": [
-      {
-        "properties": {
-          "detach": {
-            "default": true
-          },
-          "rm": {
-            "default": false
-          }
-        }
+    "$ref": "module://@nikitajs/docker/run#/definitions/config",
+    "properties": {
+      "detach": {
+        "const": true,
+        "default": true
       },
-      {
-        "$ref": "module://@nikitajs/docker/run"
+      "rm": {
+        "const": false,
+        "default": false
       }
-    ],
+    },
     "required": [
-      "container",
-      "image"
+      "container"
     ]
   }
 }

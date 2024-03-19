@@ -6,25 +6,10 @@ import definitions from "./schema.json" assert { type: "json" };
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    const crontab = (() => {
-      if (config.user != null) {
-        log({
-          message: `Using user ${config.user}`,
-          level: "DEBUG",
-        });
-        return `crontab -u ${config.user}`;
-      } else {
-        log({
-          message: "Using default user",
-          level: "DEBUG",
-        });
-        return "crontab";
-      }
-    })();
-    const { stdout } = await this.execute({
-      command: `${crontab} -l`,
-      code: [0, 1],
-    });
+    const command = config.user ? `crontab -u ${config.user}` : "crontab";
+    // console.log(await this.tools.cron.list().then(({ entries }) => entries))
+    const entries = await this.tools.cron.list()
+      .then(({ entries }) => entries.map(({ raw }) => raw));
     const new_job = `${config.when} ${config.command}`;
     // remove useless last element
     const regex = (function () {
@@ -40,34 +25,27 @@ export default {
     })();
     let added = true;
     let modified = false;
-    let jobs = utils.string
-      .lines(stdout.trim())
+    let diff;
+    let jobs = entries
       .map((job) => {
         if (regex.test(job)) {
           added = false;
           if (job === new_job) {
             return null; // Found job, stop here
           }
-          log({
-            message: "Entry has changed",
-            level: "WARN",
-          });
-          utils.diff(job, new_job, config);
+          log("WARN", "Entry has changed");
+          // console.log('>', job, new_job, config)
+          // console.log('<', utils.diff(job, new_job, config));
+          ({ raw: diff } = utils.diff(job, new_job, config));
           job = new_job;
           modified = true;
-        }
-        if (!job) {
-          return null;
         }
         return job;
       })
       .filter((line) => line !== null);
     if (added) {
       jobs.push(new_job);
-      log({
-        message: "Job not found in crontab, adding",
-        level: "WARN",
-      });
+      log("WARN", "Job not found in crontab, adding");
     }
     if (!(added || modified)) {
       jobs = null;
@@ -77,6 +55,13 @@ export default {
         $status: false,
       };
     }
+    await this.execute({
+      command: [
+        `${command} - <<EOF`,
+        ...jobs,
+        'EOF',
+      ].join('\n')
+    });
     if (config.exec) {
       await this.execute({
         command:
@@ -85,12 +70,10 @@ export default {
             : config.command,
       });
     }
-    await this.execute({
-      command: dedent`
-        ${crontab} - <<EOF
-        ${jobs ? jobs.join("\n", "\nEOF") : "EOF"}
-      `,
-    });
+    return {
+      $status: true,
+      diff: diff,
+    }
   },
   metadata: {
     definitions: definitions,

@@ -1,10 +1,8 @@
 {
   "config": {
     "type": "object",
+    "$ref": "module://@nikitajs/incus/cluster#/definitions/config",
     "properties": {
-      "containers": {
-        "$ref": "module://@nikitajs/incus/cluster#/definitions/config/properties/containers"
-      },
       "wait": {
         "type": "boolean",
         "default": false,

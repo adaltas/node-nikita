@@ -3,25 +3,7 @@
     "type": "object",
     "properties": {
       "admin": {
-        "type": "object",
-        "properties": {
-          "realm": {
-            "type": "string",
-            "description": "The realm the principal belongs to."
-          },
-          "principal": {
-            "type": "string",
-            "description": "KAdmin principal name unless `kadmin.local` is used."
-          },
-          "server": {
-            "type": "string",
-            "description": "Address of the kadmin server; optional, use \"kadmin.local\" if\nmissing."
-          },
-          "password": {
-            "type": "string",
-            "description": "Password associated to the KAdmin principal."
-          }
-        }
+        "$ref": "module://@nikitajs/krb5/execute#/definitions/admin"
       },
       "command": {
         "type": "string",
@@ -43,5 +25,26 @@
       "admin",
       "command"
     ]
+  },
+  "admin": {
+    "type": "object",
+    "properties": {
+      "realm": {
+        "type": "string",
+        "description": "The realm the principal belongs to."
+      },
+      "principal": {
+        "type": "string",
+        "description": "KAdmin principal name unless `kadmin.local` is used."
+      },
+      "server": {
+        "type": "string",
+        "description": "Address of the kadmin server; optional, use \"kadmin.local\" if\nmissing."
+      },
+      "password": {
+        "type": "string",
+        "description": "Password associated to the KAdmin principal."
+      }
+    }
   }
 }

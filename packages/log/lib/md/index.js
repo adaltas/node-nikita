@@ -100,8 +100,12 @@ export default {
         return out.join('');
       }
     };
-    config.serializer = merge(serializer, config.serializer);
-    await this.log.fs(config);
+    await this.log.fs({
+      archive: config.archive,
+      basedir: config.basedir,
+      filename: config.filename,
+      serializer: merge(serializer, config.serializer)
+    });
   },
   metadata: {
     definitions: definitions

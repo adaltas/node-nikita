@@ -17,11 +17,12 @@ Run Docker Containers
 ## Example
 
 ```js
-const {$status} = await nikita.docker.run({
-  name: 'myContainer'
-  image: 'test-image'
-  env: ["FOO=bar",]
-  entrypoint: '/bin/true'
-})
-console.info(`Container was run: ${$status}`)
+const { $status } = await nikita.docker.run({
+  name: "myContainer",
+  image: "test-image",
+  env: ["FOO=bar"],
+  entrypoint: "/bin/true",
+  rm: true,
+});
+console.info(`Container was run: ${$status}`);
 ```

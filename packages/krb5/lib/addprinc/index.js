@@ -26,7 +26,9 @@ export default {
       await this.krb5.execute({
         $retry: 3,
         admin: config.admin,
-        command: config.password ? `addprinc -pw ${config.password} ${config.principal}` : `addprinc -randkey ${config.principal}`
+        command: config.password
+          ? `addprinc -pw ${config.password} ${config.principal}`
+          : `addprinc -randkey ${config.principal}`,
       });
     }
     if (config.password && config.password_sync) {
@@ -43,7 +45,9 @@ export default {
     if (!config.keytab) {
       return;
     }
-    await this.krb5.ktadd(config);
+    await this.krb5.ktadd({
+      ...utils.object.filter(config, [], ["admin", "gid", "keytab", "mode", "principal", "realm", "uid"]),
+    });
   },
   metadata: {
     global: 'krb5',

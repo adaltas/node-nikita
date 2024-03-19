@@ -149,7 +149,7 @@ const session = function(args, options = {}) {
       action = await action.plugins.call({
         name: "nikita:normalize",
         args: action,
-        hooks: action.hooks?.on_normalize || action.on_normalize,
+        hooks: action.hooks?.on_normalize, //  || action.hooks?.["nikita:normalize"]
         handler: (action) => action
       });
     } catch (error) {
@@ -175,7 +175,7 @@ const session = function(args, options = {}) {
     const output = action.plugins.call({
       name: 'nikita:action',
       args: action,
-      hooks: action.hooks.on_action,
+      hooks: action.hooks.on_action, //  || action.hooks.["nikita:action"]
       handler: function(action) {
         // Execution of an action handler
         return action.handler.call(action.context, action);
@@ -207,7 +207,7 @@ const session = function(args, options = {}) {
           error: error,
           output: output
         },
-        hooks: action.hooks.on_result,
+        hooks: action.hooks.on_result, //  || action.hooks.["nikita:result"]
         handler: function({action, error, output}) {
           if (error) {
             throw error;

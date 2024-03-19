@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "admin": {
-        "$ref": "module://@nikitajs/krb5/execute#/definitions/config/properties/admin"
+        "$ref": "module://@nikitajs/krb5/execute#/definitions/admin"
       },
       "enctypes": {
         "type": "array",

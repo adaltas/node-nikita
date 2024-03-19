@@ -32,9 +32,6 @@ export default {
   hooks: {
     on_action: function ({ config }) {
       // Validate parameters
-      if (config.encoding == null) {
-        config.encoding = "utf8";
-      }
       if (!(config.source || config.content)) {
         throw Error("Required option: source or content");
       }

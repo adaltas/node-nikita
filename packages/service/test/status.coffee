@@ -26,6 +26,5 @@ describe 'service.status', ->
       await @service.stop
         name: test.service.srv_name
       {started} = await @service.status
-        name: test.service.name
-        srv_name: test.service.srv_name
+        name: test.service.srv_name
       started.should.be.false()

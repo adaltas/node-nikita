@@ -46,6 +46,12 @@ describe 'actions.fs.base.createReadStream', ->
   describe 'errors', ->
 
     they 'schema', ({ssh}) ->
+      # Note, we encountered a weird behavior
+      # after introducing the schema definition `config.properties.sudo.$ref`
+      # the error message is altered:
+      # before, `#/definitions/config/required config must have required property 'target'`
+      # after, `#/required config must have required property 'target'`
+      # Note, switching from a ref to a hard-coded definition revert the error message
       nikita
         $ssh: ssh
       , ->
@@ -55,7 +61,8 @@ describe 'actions.fs.base.createReadStream', ->
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
             'one error was found in the configuration of action `fs.base.createReadStream`:'
-            '#/definitions/config/required'
+            # '#/definitions/config/required'
+            '#/required'
             'config must have required property \'target\'.'
           ].join ' '
     

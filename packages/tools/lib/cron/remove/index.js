@@ -9,25 +9,11 @@ export default {
     config,
     tools: {log}
   }) {
-    const crontab = ( () => {
-      if (config.user != null) {
-        log({
-          message: `Using user ${config.user}`,
-          level: 'INFO'
-        });
-        return `crontab -u ${config.user}`;
-      } else {
-        log({
-          message: "Using default user",
-          level: 'INFO'
-        });
-        return "crontab";
-      }
-    })();
+    const command = config.user ? `crontab -u ${config.user}` : "crontab";
     let status = false;
     const {stdout, stderr} = (await this.execute({
       $shy: true,
-      command: `${crontab} -l`
+      command: `${command} -l`
     }));
     if (/^no crontab for/.test(stderr)) {
       throw Error('User crontab not found');
@@ -57,7 +43,7 @@ export default {
     }
     await this.execute({
       command: dedent`
-      ${crontab} - <<EOF
+      ${command} - <<EOF
       ${jobs ? jobs.join('\n', '\nEOF') : 'EOF'}
       `
     });

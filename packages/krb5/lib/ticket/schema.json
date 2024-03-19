@@ -23,14 +23,10 @@
     },
     "oneOf": [
       {
-        "required": [
-          "keytab"
-        ]
+        "required": ["keytab"]
       },
       {
-        "required": [
-          "password"
-        ]
+        "required": ["password"]
       }
     ]
   }

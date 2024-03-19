@@ -29,8 +29,12 @@ export default {
         return `${log.type},${log.level},${JSON.stringify(log.message)}\n`;
       }
     };
-    config.serializer = merge(serializer, config.serializer);
-    return this.log.fs(config);
+    return this.log.fs({
+      archive: config.archive,
+      basedir: config.basedir,
+      filename: config.filename,
+      serializer: merge(serializer, config.serializer),
+    });
   },
   metadata: {
     definitions: definitions

@@ -12,14 +12,12 @@ export default {
     if (config.rootdir) {
       config.target = `${path.join(config.rootdir, config.target)}`;
     }
-    await this.file.ini(
-      {
-        parse: utils.ini.parse_multi_brackets,
-        stringify: utils.ini.stringify_multi_brackets,
-        indent: "",
-      },
-      config
-    );
+    await this.file.ini({
+      parse: utils.ini.parse_multi_brackets,
+      stringify: utils.ini.stringify_multi_brackets,
+      indent: "",
+      ...utils.object.filter(config, ['interface', 'rootdir']),
+    });
   },
   metadata: {
     definitions: definitions

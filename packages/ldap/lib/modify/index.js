@@ -1,6 +1,7 @@
 // Dependencies
 import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import utils from '@nikitajs/ldap/utils'
 import definitions from "./schema.json" assert { type: "json" };
 
 // Action
@@ -19,7 +20,8 @@ export default {
     const originals = [];
     for (const operation of config.operations) {
       if (!config.shortcut) {
-        const {stdout} = await this.ldap.search(config, {
+        const {stdout} = await this.ldap.search({
+          ...utils.ldap.config_connection(config),
           base: operation.dn
         });
         originals.push(stdout);
@@ -63,7 +65,8 @@ export default {
     for (const i in config.operations) {
       const operation = config.operations[i];
       if (!config.shortcut) {
-        const {stdout} = await this.ldap.search(config, {
+        const {stdout} = await this.ldap.search({
+          ...utils.ldap.config_connection(config),
           base: operation.dn
         });
         if (stdout !== originals[i]) {
