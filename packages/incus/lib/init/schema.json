@@ -23,6 +23,11 @@
         "type": "string",
         "description": "Profile to set this container up."
       },
+      "config": {
+        "type": "object",
+        "default": {},
+        "description": "Config key/value to apply to the new instance."
+      },
       "ephemeral": {
         "type": "boolean",
         "default": false,

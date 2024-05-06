@@ -47,7 +47,7 @@ describe 'incus.wait.ready', ->
             image: "images:centos/7"
             container: 'nikita-wait-2'
             vm: true
-            properties:
+            config:
               'security.secureboot': false
             start: true
           {$status} = await @incus.wait.ready 'nikita-wait-2'
@@ -72,7 +72,7 @@ describe 'incus.wait.ready', ->
             image: "images:centos/7"
             container: 'nikita-wait-3'
             vm: true
-            properties:
+            config:
               'security.secureboot': false
             start: true
           await @incus.wait.ready 'nikita-wait-3'
@@ -102,10 +102,10 @@ describe 'incus.wait.ready', ->
             image: "images:centos/7"
             container: 'nikita-wait-4'
             vm: true
-            properties:
+            config:
               'security.secureboot': false
             start: true
-          {$status} = await @incus.exec 
+          await @incus.exec 
             container: 'nikita-wait-4'
             command: '''
             echo "hello"
