@@ -4,10 +4,8 @@ services:
     build: .
     container_name: nikita_db_mysql_nodejs
     depends_on:
-      - mysql
-      # Not fully working for now, waiting is implemented inside entrypoint.sh
-      # mysql:
-      #   condition: service_healthy
+      mysql:
+        condition: service_healthy
     environment:
       NIKITA_TEST_MODULE: /nikita/packages/db/env/mysql/test.coffee
     image: nikita_db_mysql_nodejs
@@ -17,17 +15,14 @@ services:
       - ../../../../:/nikita
   mysql:
     container_name: nikita_db_mysql_db
-    # To avoid an error in the latest versions: ERROR 2059 (HY000): Authentication plugin 'caching_sha2_password' cannot be loaded
-    command: --default-authentication-plugin=caching_sha2_password
     environment:
       MYSQL_ROOT_PASSWORD: rootme
     expose:
       - "3306"
-    # healthcheck:
-    #   test: "bash -c 'echo > /dev/tcp/mysql/3306'"
-    #   interval: 1s
-    #   timeout: 1s
-    #   retries: 20
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql"]
+      timeout: 20s
+      retries: 10
     image: mysql:latest
     # logging:
     #   driver: none
