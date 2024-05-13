@@ -5,7 +5,6 @@
 # command that fails is part of the command list immediately following a while
 # or until keyword"
 # set -e
-
 # Source Node.js
 . ~/.bashrc
 # Start ssh daemon
