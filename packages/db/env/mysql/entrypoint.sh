@@ -10,12 +10,6 @@
 . ~/.bashrc
 # Start ssh daemon
 sudo /usr/sbin/sshd
-# Wait until MySQL is ready
-i=0; until echo > /dev/tcp/mysql/3306; do
-   [[ i -eq 10 ]] && >&2 echo 'Docker not yet started after 10s' && exit 1
-   ((i++))
-   sleep 1
-done
 # Test execution
 if test -t 0; then
   # We have TTY, so probably an interactive container...
