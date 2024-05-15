@@ -1,0 +1,94 @@
+{
+  "name": "@nikitajs/k8s",
+  "version": "1.0.0",
+  "description": "Provides Nikita actions to work with kubernetes cluster.",
+  "keywords": [
+    "nikita",
+    "build",
+    "cli",
+    "deploy",
+    "ssh",
+    "install",
+    "k8s",
+    "kubernetes",
+    "cluster",
+    "container"
+  ],
+  "author": "Panna ABDUL HAKIN <panna@adaltas.com>",
+  "bugs": {
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Panna ABDUL HAKIM",
+      "email": "panna@adaltas.com"
+    }
+  ],
+  "dependencies": {
+    "dedent": "^1.5.1"
+  },
+  "peerDependencies": {
+    "@nikitajs/core": "^1.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.7.0",
+    "mocha": "^10.3.0",
+    "mocha-they": "^0.1.3",
+    "should": "^13.2.3"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "exports": {
+    "./register": "./lib/register.js",
+    "./*": "./lib/*/index.js"
+  },
+  "files": [
+    "/lib"
+  ],
+  "mocha": {
+    "inline-diffs": true,
+    "loader": "../core/test/loaders/all.js",
+    "recursive": true,
+    "reporter": "spec",
+    "require": [
+      "@nikitajs/k8s/register",
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 40000
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/k8s"
+  },
+  "scripts": {
+    "test": "npm run test:local && npm run test:env",
+    "test:env": "env/run.sh",
+    "test:local": "mocha 'test/**/*.coffee'"
+  },
+  "type": "module"
+}
