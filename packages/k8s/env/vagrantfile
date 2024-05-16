@@ -1,0 +1,57 @@
+# Vagrantfile for setting up a master and two nodes using libvirt
+
+Vagrant.configure("2") do |config|
+  
+    # Define the VM provider
+    config.vm.provider "libvirt" do |libvirt|
+      libvirt.memory = 2048  # Set memory for each VM
+      libvirt.cpus = 2       # Set the number of CPUs for each VM
+    end
+  
+    # Master configuration
+    config.vm.define "master" do |master|
+      master.vm.box = "generic/ubuntu2004"
+      master.vm.hostname = "master"
+      master.vm.network "private_network", type: "dhcp"
+      master.vm.provider "libvirt" do |vb|
+        vb.memory = 4096
+        vb.cpus = 2
+      end
+      master.vm.provision "shell", inline: <<-SHELL
+        echo "Setting up master"
+        # Add additional setup steps for the master here
+      SHELL
+    end
+  
+    # Node 1 configuration
+    config.vm.define "node1" do |node1|
+      node1.vm.box = "generic/ubuntu2004"
+      node1.vm.hostname = "node1"
+      node1.vm.network "private_network", type: "dhcp"
+      node1.vm.provider "libvirt" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+      node1.vm.provision "shell", inline: <<-SHELL
+        echo "Setting up node1"
+        # Add additional setup steps for node1 here
+      SHELL
+    end
+  
+    # Node 2 configuration
+    config.vm.define "node2" do |node2|
+      node2.vm.box = "generic/ubuntu2004"
+      node2.vm.hostname = "node2"
+      node2.vm.network "private_network", type: "dhcp"
+      node2.vm.provider "libvirt" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+      node2.vm.provision "shell", inline: <<-SHELL
+        echo "Setting up node2"
+        # Add additional setup steps for node2 here
+      SHELL
+    end
+  
+  end
+  

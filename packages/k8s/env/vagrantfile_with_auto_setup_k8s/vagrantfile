@@ -1,0 +1,106 @@
+# Vagrantfile for setting up a Kubernetes cluster with 1 master and 2 nodes using libvirt
+
+Vagrant.configure("2") do |config|
+    config.vm.provider "libvirt" do |libvirt|
+      libvirt.memory = 2048  # Set default memory for each VM
+      libvirt.cpus = 2       # Set default number of CPUs for each VM
+    end
+  
+    # Common provisioning script for all nodes
+    KUBERNETES_INSTALL_SCRIPT = <<-SCRIPT
+      #!/bin/bash
+      set -e
+  
+      # Update and install Docker
+      apt-get update
+      apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+  
+      # Add Docker’s official GPG key and set up the stable repository
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  
+      # Install Docker
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io
+  
+      # Allow user 'vagrant' to run Docker commands
+      usermod -aG docker vagrant
+  
+      # Install Kubernetes
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+      cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+      deb http://apt.kubernetes.io/ kubernetes-xenial main
+      EOF
+  
+      apt-get update
+      apt-get install -y kubelet kubeadm kubectl
+      apt-mark hold kubelet kubeadm kubectl
+  
+      # Disable swap (required by kubelet)
+      swapoff -a
+      sed -i '/ swap / s/^/#/' /etc/fstab
+  
+      # Enable and start Docker
+      systemctl enable docker
+      systemctl start docker
+    SCRIPT
+  
+    # Master configuration
+    config.vm.define "master" do |master|
+      master.vm.box = "generic/ubuntu2004"
+      master.vm.hostname = "master"
+      master.vm.network "private_network", type: "dhcp"
+      master.vm.provider "libvirt" do |vb|
+        vb.memory = 4096
+        vb.cpus = 2
+      end
+      master.vm.provision "shell", inline: KUBERNETES_INSTALL_SCRIPT
+      master.vm.provision "shell", inline: <<-SCRIPT
+        # Initialize Kubernetes master node
+        kubeadm init --pod-network-cidr=10.244.0.0/16
+  
+        # Set up kubectl for the vagrant user
+        mkdir -p /home/vagrant/.kube
+        cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+        chown vagrant:vagrant /home/vagrant/.kube/config
+  
+        # Apply Flannel CNI (Container Network Interface)
+        su - vagrant -c "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+      SCRIPT
+    end
+  
+    # Node 1 configuration
+    config.vm.define "node1" do |node1|
+      node1.vm.box = "generic/ubuntu2004"
+      node1.vm.hostname = "node1"
+      node1.vm.network "private_network", type: "dhcp"
+      node1.vm.provider "libvirt" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+      node1.vm.provision "shell", inline: KUBERNETES_INSTALL_SCRIPT
+      node1.vm.provision "shell", inline: <<-SCRIPT
+        # Join the Kubernetes cluster
+        KUBE_JOIN_COMMAND=$(ssh -o StrictHostKeyChecking=no vagrant@master "kubeadm token create --print-join-command")
+        ${KUBE_JOIN_COMMAND}
+      SCRIPT
+    end
+  
+    # Node 2 configuration
+    config.vm.define "node2" do |node2|
+      node2.vm.box = "generic/ubuntu2004"
+      node2.vm.hostname = "node2"
+      node2.vm.network "private_network", type: "dhcp"
+      node2.vm.provider "libvirt" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+      node2.vm.provision "shell", inline: KUBERNETES_INSTALL_SCRIPT
+      node2.vm.provision "shell", inline: <<-SCRIPT
+        # Join the Kubernetes cluster
+        KUBE_JOIN_COMMAND=$(ssh -o StrictHostKeyChecking=no vagrant@master "kubeadm token create --print-join-command")
+        ${KUBE_JOIN_COMMAND}
+      SCRIPT
+    end
+  end
+  
