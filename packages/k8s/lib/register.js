@@ -5,6 +5,9 @@ import registry from "@nikitajs/core/registry";
 // Action registration
 const actions = {
   k8s: {
+    "": {
+      handler: function () {},
+    },
     helm: {
       '': '@nikitajs/k8s/helm',
       env: '@nikitajs/k8s/helm/env',
