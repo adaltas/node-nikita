@@ -3,7 +3,7 @@
 
 Configure kernel parameters at runtime.
 
-Target file will be overwritten by default, use the `merge` option to preserve existing variables.
+The target file is overwritten by default. The `merge` option preserves existing variables.
 
 Comments will be preserved if the `comments` and `merge` config are enabled.
 
