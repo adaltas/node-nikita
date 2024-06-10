@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/krb5",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "description": "Provides Nikita actions for various Kerberos 5 operations.",
   "keywords": [
     "nikita",
