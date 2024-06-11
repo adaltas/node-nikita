@@ -2,7 +2,7 @@
 import connect from "ssh2-connect";
 import fs from "node:fs/promises";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

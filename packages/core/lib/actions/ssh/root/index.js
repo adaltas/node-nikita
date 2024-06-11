@@ -4,7 +4,7 @@ import dedent from "dedent";
 import connect from "ssh2-connect";
 import exec from "ssh2-exec";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

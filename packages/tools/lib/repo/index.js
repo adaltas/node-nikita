@@ -3,7 +3,7 @@ import each from "each";
 import dedent from "dedent";
 import url from "node:url";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

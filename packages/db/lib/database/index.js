@@ -1,7 +1,7 @@
 // Dependencies
 import dedent from "dedent";
 import { db } from "@nikitajs/db/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

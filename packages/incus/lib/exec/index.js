@@ -1,7 +1,7 @@
 // Dependencies
 import utils from "@nikitajs/core/utils";
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 import execute from "@nikitajs/core/actions/execute";
 
 const properties = Object.keys(execute.metadata.definitions.config.properties).filter(

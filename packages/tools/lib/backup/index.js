@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import dayjsUtc from "dayjs/plugin/utc.js";
 import dayjsTimezone from "dayjs/plugin/timezone.js";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 dayjs.extend(dayjsUtc);
 dayjs.extend(dayjsTimezone);
 

@@ -1,7 +1,7 @@
 // ## Dependencies
 import {merge} from 'mixme';
 import cson from 'cson';
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

@@ -3,7 +3,7 @@
 import path from 'node:path'
 import {merge} from 'mixme';
 import utils from "@nikitajs/system/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

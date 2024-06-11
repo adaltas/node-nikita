@@ -1,7 +1,7 @@
 // Dependencies
 import fs from 'node:fs'
 import path from 'node:path'
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

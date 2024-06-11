@@ -3,7 +3,7 @@ import colors from 'colors/safe.js';
 import {merge} from 'mixme';
 import pad from 'pad';
 import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Utils
 const format_line = function ({ host, header, status, time }, config) {

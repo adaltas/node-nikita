@@ -129,7 +129,7 @@
         "type": ["boolean", "number", "string"],
         "coercion": true,
         "default": true,
-        "description": "Return the stderr content in the output, default is `true`.  It is preferable to set this property to `false` and to use the `stdout` property when expecting a large stdout output."
+        "description": "Return the stderr content in the output, default is `true`. It is preferable to set this property to `false` and to use the `stdout` property when expecting a large stdout output."
       },
       "stdout_log": {
         "type": ["boolean", "number", "string"],

@@ -1,7 +1,7 @@
 // Dependencies
 import path from 'node:path'
 import dedent from "dedent";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

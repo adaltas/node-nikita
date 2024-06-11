@@ -1,5 +1,5 @@
 // Dependencies
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Actions
 export default {

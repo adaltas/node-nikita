@@ -1,7 +1,7 @@
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/incus/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Errors
 const errors = {

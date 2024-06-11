@@ -1,7 +1,7 @@
 // Dependencies
 import {is_object_literal, merge} from 'mixme';
 import utils from "@nikitajs/ldap/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

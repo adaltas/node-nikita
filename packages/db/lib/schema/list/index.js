@@ -1,7 +1,7 @@
 // Dependencies
 import utils from "@nikitajs/core/utils";
 import { db } from "@nikitajs/db/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // ## Exports
 export default {

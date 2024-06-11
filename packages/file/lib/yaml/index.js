@@ -2,7 +2,7 @@
 import utils from "@nikitajs/file/utils";
 import yaml from "js-yaml";
 import { merge } from "mixme";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

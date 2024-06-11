@@ -2,7 +2,7 @@
 import pad from 'pad';
 import fs from 'fs';
 import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 const errors = {
   NIKITA_FS_ASSERT_FILE_MISSING: function({config}) {

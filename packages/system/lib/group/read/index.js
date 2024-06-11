@@ -1,6 +1,6 @@
 
 // Dependencies
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 import utils from "@nikitajs/system/utils";
 
 // Parse the groups output

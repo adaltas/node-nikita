@@ -2,7 +2,7 @@
 import dedent from "dedent";
 import utils from "@nikitajs/network/utils";
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

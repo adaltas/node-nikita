@@ -1,6 +1,6 @@
 // Dependencies
 import utils from "@nikitajs/system/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Parse the passwd output
 const str2passwd = function (data) {

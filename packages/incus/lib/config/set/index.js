@@ -2,7 +2,7 @@
 import { merge } from "mixme";
 import yaml from "js-yaml";
 import diff from "object-diff";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

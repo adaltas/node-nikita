@@ -1,6 +1,6 @@
 // Dependencies
 import utils from "@nikitajs/network/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Errors
 const errors = {

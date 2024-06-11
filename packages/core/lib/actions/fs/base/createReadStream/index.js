@@ -3,7 +3,7 @@
 import fs from 'ssh2-fs';
 import exec from 'ssh2-exec/promises';
 import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 const errors = {
   NIKITA_FS_CRS_NO_EVENT_HANDLER: () =>

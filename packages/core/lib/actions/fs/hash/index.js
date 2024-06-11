@@ -2,7 +2,7 @@
 import crypto from "crypto";
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 const errors = {
   NIKITA_FS_HASH_FILETYPE_UNSUPPORTED: function ({ config, stats }) {

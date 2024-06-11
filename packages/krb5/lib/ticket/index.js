@@ -2,7 +2,7 @@
 // Dependencies
 import dedent from "dedent";
 import utils from '@nikitajs/krb5/utils';
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {

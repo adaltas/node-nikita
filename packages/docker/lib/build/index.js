@@ -2,7 +2,7 @@
 import path from "node:path";
 import utils from "@nikitajs/docker/utils";
 import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
-import definitions from "./schema.json" assert { type: "json" };
+import definitions from "./schema.json" with { type: "json" };
 
 const errors = {
   NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED: function () {
