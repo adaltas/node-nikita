@@ -286,6 +286,35 @@ describe 'log.cli', ->
           data[0].should.match /h1   -  1\d{2}ms\n/
           data[1].should.match /h2 : h3   -  1\d{2}ms\n/
           data[2].should.match /h2   -  2\d{2}ms\n/
+    
+    they 'config.time with relax error', ({ssh}) ->
+      data = []
+      nikita
+        $ssh: ssh
+      , ->
+        await @log.cli
+          stream: new MyWritable data
+          colors: false
+        await @call $header: 'h1', ->
+          await @wait 100
+        await @call $header: 'h2', ->
+          await @call $header: 'h3', $relax: true, ->
+            throw Error 'Its ok, keep relaxing'
+          await @call $header: 'h4', $relax: true, 'invalid module'
+          await @wait 100
+        await @call ->
+          # Check time
+          data[0].should.match /h1   -  1\d{2}ms\n/
+          data[1].should.match /h2 : h3   ✘  \dms\n/
+          data[2].should.match /h2 : h4   ✘\n/
+          data[3].should.match /h2   -  \d{3}ms\n/
+          # Check hostname
+          # relax error with invalid module is only run locally
+          host = ssh?.host or 'local'
+          data[0].split(' ')[0].should.eql host
+          data[1].split(' ')[0].should.eql host
+          data[2].split(' ')[0].should.eql 'local'
+          data[3].split(' ')[0].should.eql host
 
   describe 'session events', ->
           

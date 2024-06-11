@@ -22,9 +22,9 @@ const format_line = function ({ host, header, status, time }, config) {
     header,
     config.separator.header,
     status,
-    config.time ? config.separator.time : "",
+    time && config.time ? config.separator.time : "",
     time,
-  ].join("");
+  ].filter(Boolean).join("");
 };
 
 // Action
@@ -123,10 +123,12 @@ export default {
         }
         const headers = get_headers(action); 
         let line = format_line({
+          // error in relax mode don't yet have ssh inherited
           host: config.host ?? action.ssh?.config?.host ?? "local",
           header: headers.join(config.divider),
           status: status,
-          time: config.time
+          // error in relax mode don't set time_start
+          time: config.time && action.metadata.time_start
             ? utils.string.print_time(
                 action.metadata.time_end - action.metadata.time_start
               )
