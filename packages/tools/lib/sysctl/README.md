@@ -34,3 +34,7 @@ const {$status} = await nikita.tools.sysctl({
 })
 console.info(`Systcl was reloaded: ${$status}`)
 ```
+
+## Note
+
+Alternatively, we could write directly to "/proc" with `sysctl -w <property>="<value>"`
