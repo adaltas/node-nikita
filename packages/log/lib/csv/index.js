@@ -13,7 +13,7 @@ export default {
         const walk = function(parent) {
           const precious = parent.metadata.header;
           const results = [];
-          if (precious !== void 0) {
+          if (precious !== undefined) {
             results.push(precious);
           }
           if (parent.parent) {

@@ -22,11 +22,9 @@ export default {
       logdir = path.resolve(config.basedir, config.archive);
     }
     try {
-      await this.fs.base.mkdir(logdir, {
-        $ssh: false
-      });
+      await fs.promises.mkdir(logdir, {recursive: true});
     } catch (error) {
-      if (error.code !== 'NIKITA_FS_MKDIR_TARGET_EEXIST') {
+      if (error.code !== 'EEXIST') {
         throw error;
       }
     }
