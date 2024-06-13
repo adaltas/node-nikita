@@ -3,9 +3,7 @@ import registry from "@nikitajs/core/registry";
 
 // Action registration
 const actions = {
-  "": {
-    handler: function () {},
-  },
+  "": {},
   assert: "@nikitajs/core/actions/assert",
   call: "@nikitajs/core/actions/call",
   execute: {

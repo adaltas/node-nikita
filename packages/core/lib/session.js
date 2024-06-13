@@ -178,7 +178,7 @@ const session = function(args, options = {}) {
       hooks: action.hooks.on_action, //  || action.hooks.["nikita:action"]
       handler: function(action) {
         // Execution of an action handler
-        return action.handler.call(action.context, action);
+        return action.handler?.call(action.context, action);
       }
     });
     // Ensure child actions are executed even after parent execution

@@ -21,6 +21,25 @@ describe 'actions.call', ->
         registry.unregister 'my_function'
   
   describe 'external module', ->
+
+    they 'doesnt support plain declaration', ({ssh}) ->
+      # The problem has found a solution to support `metadata.module`
+      # Setting `metadata.module` conflict with the already defined value
+      # setup by `registry#load`.
+      # When argument is not defined (eg not a string, mapped to the handler),
+      # mapping the metadata.module create a infinite loop
+      # where `nikita.call` is importing itself
+      nikita
+        $ssh: ssh
+        $tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        result = await nikita.call
+          $:
+            metadata:
+              module: "#{tmpdir}/my_module.js"
+            config:
+              my_key: 'my value'
+        result.should.not.containEql my_key: 'my value'
   
     they 'defined as a function', ({ssh}) ->
       nikita
