@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/system",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Provides Nikita actions for various system management operations.",
   "keywords": [
     "nikita",
@@ -41,12 +41,12 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.6",
+    "@nikitajs/file": "^1.0.0-alpha.7",
     "dedent": "^1.5.3",
     "diff": "^5.2.0"
   },
   "devDependencies": {
-    "@nikitajs/incus-runner": "^1.0.0-alpha.3",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.4",
     "coffeescript": "^2.7.0",
     "mocha": "^10.4.0",
     "mocha-they": "^0.1.3",

@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/log",
-  "version": "2.0.0-alpha.3",
+  "version": "2.0.0-alpha.4",
   "description": "Provides Nikita actions for logging.",
   "keywords": [
     "nikita",

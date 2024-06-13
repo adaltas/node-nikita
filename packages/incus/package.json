@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/incus",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Provides Nikita actions for various Incus operations.",
   "keywords": [
     "nikita",
@@ -48,7 +48,7 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/log": "^2.0.0-alpha.3",
+    "@nikitajs/log": "^2.0.0-alpha.4",
     "dedent": "^1.5.3",
     "js-yaml": "^4.1.0",
     "object-diff": "^0.0.4",

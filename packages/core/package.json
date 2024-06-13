@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/core",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Provides the Nikita engine and the core Nikita actions and plugins.",
   "keywords": [
     "nikita",
@@ -86,7 +86,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
-    "@nikitajs/incus-runner": "^1.0.0-alpha.3",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.4",
     "coffeescript": "^2.7.0",
     "eslint": "^9.4.0",
     "mocha": "^10.4.0",
