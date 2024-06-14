@@ -7,12 +7,6 @@ import definitions from "./schema.json" with { type: "json" };
 // Action
 export default {
   handler: async function({config}) {
-    if (Buffer.isBuffer(config.content)) {
-      config.content = config.content.toString();
-    }
-    if (config.content && config.trim) {
-      config.content = config.content.trim();
-    }
     const configForExecute = utils.object.filter(config, ['code', 'content', 'not', 'trim']);
     // Command exit code
     const res = await this.execute({
@@ -31,40 +25,48 @@ export default {
       }
     }
     // Content is a string or a buffer
-    if ((config.content != null) && typeof config.content === 'string') {
-      let {stdout} = await this.execute(configForExecute);
-      if (config.trim) {
-        stdout = stdout.trim();
+    for(let content of (config.content || [])) {
+      if (typeof content === 'string' && config.trim) {
+        content = content.trim();
       }
-      if (!config.not) {
-        if (stdout !== config.content) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT', ['the command output is not matching the content,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
+      if (Buffer.isBuffer(content)) {
+        content = content.toString();
+      }
+      if(typeof content === 'string'){
+        let {stdout} = await this.execute(configForExecute);
+        if (config.trim) {
+          stdout = stdout.trim();
         }
-      } else {
-        if (stdout === config.content) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT', ['the command output is unfortunately matching the content,', `got ${JSON.stringify(stdout)}.`]);
+        if (!config.not) {
+          if (stdout !== content) {
+            throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT', ['the command output is not matching the content,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(content)}.`]);
+          }
+        } else {
+          if (stdout === content) {
+            throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT', ['the command output is unfortunately matching the content,', `got ${JSON.stringify(stdout)}.`]);
+          }
         }
       }
-    }
-    // Content is a regexp
-    if ((config.content != null) && utils.regexp.is(config.content)) {
-      let {stdout} = await this.execute(configForExecute);
-      if (config.trim) {
-        stdout = stdout.trim();
-      }
-      if (!config.not) {
-        if (!config.content.test(stdout)) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(config.content)}.`]);
+      // Content is a regexp
+      if (utils.regexp.is(content)) {
+        let {stdout} = await this.execute(configForExecute);
+        if (config.trim) {
+          stdout = stdout.trim();
         }
-      } else {
-        if (config.content.test(stdout)) {
-          throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${JSON.stringify(config.content)}.`]);
+        if (!config.not) {
+          if (!content.test(stdout)) {
+            throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(content)}.`]);
+          }
+        } else {
+          if (content.test(stdout)) {
+            throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${JSON.stringify(content)}.`]);
+          }
         }
       }
     }
   },
   hooks: {
-    on_action: function({config, metadata}) {
+    on_action: function({config}) {
       if (!config.content) {
         return config.code != null ? config.code : config.code = {true: [0]};
       }

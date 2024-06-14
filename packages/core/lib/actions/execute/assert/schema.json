@@ -4,18 +4,22 @@
     "$ref": "module://@nikitajs/core/actions/execute#/definitions/config",
     "properties": {
       "content": {
-        "oneOf": [
-          {
-            "type": ["string", "number"],
-            "coercion": true
-          },
-          {
-            "instanceof": "Buffer"
-          },
-          {
-            "instanceof": "RegExp"
-          }
-        ],
+        "type": ["array"],
+        "items": {
+          "oneOf": [
+            {
+              "type": ["string", "number"],
+              "coercion": true
+            },
+            {
+              "instanceof": "Buffer"
+            },
+            {
+              "instanceof": "RegExp"
+            }
+          ]
+        },
+        "coercion": true,
         "description": "Content to match, optional."
       },
       "error": {

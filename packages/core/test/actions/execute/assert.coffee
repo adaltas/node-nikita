@@ -9,6 +9,13 @@ describe 'actions.execute.assert', ->
   
   describe 'schema', ->
     
+    it 'default', ->
+      nikita.execute.assert
+        command: 'exit 1'
+        ({config}) ->
+          should(config.content).be.undefined()
+          config.code.should.eql {true: [0], false: []}
+    
     it 'coercion', ->
       nikita.execute.assert
         command: 'exit 1'
@@ -16,7 +23,7 @@ describe 'actions.execute.assert', ->
         code: 1
         ({config}) ->
           config.code.should.eql {true: [1], false: []}
-          config.content.should.eql "42"
+          config.content.should.eql ["42"]
   
   describe 'exit code', ->
 
