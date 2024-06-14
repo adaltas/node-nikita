@@ -11,7 +11,9 @@ describe 'actions.assert', ->
     it 'fulfilled with `true`', ->
       nikita.assert ->
         true
-      .should.be.fulfilled()
+      .should.finally.eql
+        $status: false
+        $logs: []
 
     it 'rejected with `false`', ->
       nikita.assert ->
