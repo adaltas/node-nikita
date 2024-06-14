@@ -197,6 +197,58 @@ describe 'plugins.tools.schema.coercion', ->
         config.from_string_filled.should.eql ['ok']
         config.from_object.should.eql [ {key: 'value'} ]
 
+    it 'to types', ->
+      # Should be merge with previous test
+      # Still a work in process to handle all usages
+      nikita
+        $definitions:
+          config:
+            type: 'object'
+            properties:
+              'to_integer_from_string':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["integer"]
+              'to_boolean_false_from_string':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["boolean"]
+              'to_boolean_true_from_string':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["boolean"]
+              'to_boolean_true_from_integer':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["boolean"]
+              'to_string_from_integer':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["string"]
+              'to_string_from_boolean':
+                type: 'array'
+                coercion: true
+                items:
+                  type: ["string"]
+        to_integer_from_string: '744'
+        to_boolean_false_from_string: ''
+        to_boolean_true_from_string: '744'
+        to_boolean_true_from_integer: 1
+        to_string_from_integer: 744
+        to_string_from_boolean: true
+      , ({config}) ->
+        config.to_integer_from_string.should.eql [744]
+        config.to_boolean_false_from_string.should.eql [false]
+        config.to_boolean_true_from_string.should.eql [true]
+        config.to_boolean_true_from_integer.should.eql [true]
+        config.to_string_from_integer.should.eql [ '744' ]
+        config.to_string_from_boolean.should.eql [ '1' ]
+
     it 'array shouldnt be altered', ->
       nikita
         $definitions:
@@ -210,7 +262,7 @@ describe 'plugins.tools.schema.coercion', ->
       , ({config}) ->
         config.from_array.should.eql ['ok']
 
-    it 'forward coerced value to items', ->
+    it 'forward coerced value to items and apply keyword', ->
       nikita
         $definitions:
           config:

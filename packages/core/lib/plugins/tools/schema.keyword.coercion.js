@@ -6,6 +6,7 @@ export default {
   keyword: "coercion",
   modifying: true,
   code: (cxt) => {
+    // @see codegen reference: https://github.com/ajv-validator/ajv/blob/master/lib/compile/codegen/index.ts
     const assignParentData = function (
       { gen, parentData, parentDataProperty },
       expr
@@ -21,8 +22,49 @@ export default {
       : [parentSchema.type];
     switch (types[0]) {
       case "array":
+        // Still a work in process to handle all usages
         gen.if(codegen._`!Array.isArray(${data})`, () => {
-          gen.assign(coerced, codegen._`[${data}]`);
+          // gen.assign(coerced, codegen._`[${data}]`);
+          const arTypes = Array.isArray(parentSchema.items?.type)
+            ? parentSchema.items?.type[0]
+            : parentSchema.items?.type
+          if(arTypes === 'string'){
+            // Not, boolean coercion should not be enabled by default but with
+            // `{..., coercion: ["boolean_to_string"] }`
+            // Or:
+            // `{..., coercion: {boolean_to_string: true} }`
+            gen.if(codegen._`typeof ${data} === "boolean"`, () => {
+              gen.assign(coerced, codegen._`${data} ? ["1"] : [""]`);
+            });
+            gen.if(codegen._`typeof ${data} === "number"`, () => {
+              gen.assign(coerced, codegen._`["" +${data}]`);
+            });
+            gen.if(codegen._`typeof ${data} === "string"`, () => {
+              gen.assign(coerced, codegen._`[${data}]`);
+            });
+            // Not working but this seems like the correct/recommanded approach
+            // gen.block()
+            // gen.if(codegen._`typeof ${data} === "string"`)
+            // gen.assign(coerced, codegen._`[${data}]`);
+            // gen.if(codegen._`typeof ${data} === "boolean"`)
+            // gen.assign(coerced, codegen._`${data} ? ["1"] : [""]`);
+            // gen.if(codegen._`typeof ${data} === "number"`);
+            // gen.assign(coerced, codegen._`["" +${data}]`);
+            // gen.else()
+            // gen.assign(coerced, codegen._`[${data}]`)
+            // gen.endBlock()
+          }else if(arTypes === 'boolean'){
+            gen.if(
+              codegen._`typeof ${data} === "string" || typeof ${data} === "number"`,
+              () => {
+                gen.assign(coerced, codegen._`[${data} != ""]`);
+              }
+            );
+          }else if(arTypes === 'integer'){
+            gen.assign(coerced, codegen._`[+${data}]`)
+          }else{
+            gen.assign(coerced, codegen._`[${data}]`)
+          }
         });
         break;
       case "boolean":
