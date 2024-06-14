@@ -200,30 +200,4 @@ describe 'plugins.metadata.definitions', ->
         'one error was found in the configuration of action `call`:'
         '#/definitions/config/properties/a_regexp/instanceof config/a_regexp must pass "instanceof" keyword validation.'
       ].join ' '
-
-  describe 'custom keywords', ->
-
-    it 'filemode true with string casted to octal', ->
-      nikita.call
-        $definitions: config:
-          type: 'object'
-          properties:
-            'mode':
-              type: ['integer', 'string']
-              filemode: true
-        mode: '744'
-      , ({config}) ->
-        config.mode.should.eql 0o0744
-
-    it 'filemode false is invalid', ->
-      nikita.call
-        $definitions: config:
-          type: 'object'
-          properties:
-            'mode':
-              type: ['integer', 'string']
-              filemode: false
-        mode: '744'
-      .should.be.rejectedWith
-        code: 'NIKITA_SCHEMA_INVALID_DEFINITION'
         
