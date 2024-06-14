@@ -197,9 +197,7 @@ describe 'plugins.tools.schema.coercion', ->
         config.from_string_filled.should.eql ['ok']
         config.from_object.should.eql [ {key: 'value'} ]
 
-    it 'to types', ->
-      # Should be merge with previous test
-      # Still a work in process to handle all usages
+    it 'with types', ->
       nikita
         $definitions:
           config:
@@ -209,32 +207,38 @@ describe 'plugins.tools.schema.coercion', ->
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["integer"]
+                  type: ["integer", "string"]
+                  coercion: true
               'to_boolean_false_from_string':
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["boolean"]
+                  type: ["boolean", "string"]
+                  coercion: true
               'to_boolean_true_from_string':
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["boolean"]
+                  type: ["boolean", "string"]
+                  coercion: true
               'to_boolean_true_from_integer':
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["boolean"]
+                  type: ["boolean", "integer"]
+                  coercion: true
               'to_string_from_integer':
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["string"]
+                  type: ["string", "integer"]
+                  coercion: true
               'to_string_from_boolean':
                 type: 'array'
                 coercion: true
                 items:
-                  type: ["string"]
+                  type: ["string", "boolean"]
+                  coercion: true
         to_integer_from_string: '744'
         to_boolean_false_from_string: ''
         to_boolean_true_from_string: '744'
