@@ -1,9 +1,8 @@
 
-import tilde from '@nikitajs/core/utils/tilde'
+import tilde from '@nikitajs/utils/tilde'
 import test from '../test.coffee'
 
 describe 'utils.tilde', ->
-  return unless test.tags.api
 
   describe 'normalize', ->
 

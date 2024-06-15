@@ -1,9 +1,7 @@
 
-import {copy, diff, filter, match, trim} from '@nikitajs/core/utils/object'
-import test from '../test.coffee'
+import {copy, diff, filter, match, trim} from '@nikitajs/utils/object'
 
 describe 'utils.object', ->
-  return unless test.tags.api
   
   describe 'copy', ->
   

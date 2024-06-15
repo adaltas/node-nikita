@@ -1,4 +1,4 @@
-import util from "util";
+import util from "node:util";
 import each from "each";
 
 const array_filter = async function (items, concurrency, handler) {

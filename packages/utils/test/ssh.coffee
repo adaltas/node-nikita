@@ -2,13 +2,12 @@
 import {merge} from 'mixme'
 import mochaThey from 'mocha-they'
 import nikita from '@nikitajs/core'
-import utils from '@nikitajs/core/utils'
+import utils from '@nikitajs/utils'
 import test from '../test.coffee'
 # All test are executed with an ssh connection passed as an argument
 they = mochaThey(test.config.filter ({ssh}) -> !!ssh)
 
 describe 'utils.ssh', ->
-  return unless test.tags.api
 
   describe 'compare', ->
 

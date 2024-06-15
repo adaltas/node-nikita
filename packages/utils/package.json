@@ -1,0 +1,116 @@
+{
+  "name": "@nikitajs/utils",
+  "version": "1.0.0-alpha.7",
+  "description": "Provides the Nikita engine and the core Nikita actions and plugins.",
+  "keywords": [
+    "nikita",
+    "utils",
+    "pure",
+    "function",
+    "array",
+    "buffer",
+    "string"
+  ],
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "email": "open@adaltas.com",
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    },
+    "no_backticks": {
+      "level": "ignore"
+    },
+    "no_nested_string_interpolation": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Pierre Sauvage",
+      "email": "pierre@adaltas.com"
+    },
+    {
+      "name": "Lucas Bakalian",
+      "email": "lucas@adaltas.com"
+    },
+    {
+      "name": "Alexander Hoffmann",
+      "email": "alexander@adaltas.com"
+    },
+    {
+      "name": "Sergei Kudinov",
+      "email": "sergei@adaltas.com"
+    }
+  ],
+  "dependencies": {
+    "dedent": "^1.5.3",
+    "each": "^2.7.0",
+    "mixme": "^1.1.0",
+    "regexp-quote": "^0.0.0",
+    "semver": "^7.6.2",
+    "ssh2-connect": "^3.4.2",
+    "tilde-expansion": "^0.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "coffeescript": "^2.7.0",
+    "eslint": "^9.4.0",
+    "mocha": "^10.4.0",
+    "mocha-they": "^0.1.3",
+    "should": "^13.2.3"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "files": [
+    "/lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "mocha": {
+    "inline-diffs": true,
+    "loader": "./test/loaders/all.js",
+    "recursive": true,
+    "reporter": "spec",
+    "require": [
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 40000
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/utils"
+  },
+  "scripts": {
+    "lint": "eslint 'lib/**/*.coffee'",
+    "lint-fix": "eslint --fix 'lib/**/*.coffee'",
+    "test": "npm run test:local",
+    "test:local": "mocha --node-flags '--unhandled-rejections=strict' 'test/**/*.coffee'"
+  },
+  "type": "module"
+}

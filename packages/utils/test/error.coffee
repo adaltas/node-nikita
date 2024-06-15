@@ -1,9 +1,7 @@
 
-import error from '@nikitajs/core/utils/error'
-import test from '../test.coffee'
+import error from '@nikitajs/utils/error'
 
 describe 'utils.error', ->
-  return unless test.tags.api
   
   describe 'function', ->
   

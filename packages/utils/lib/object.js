@@ -1,6 +1,6 @@
-import array from "@nikitajs/core/utils/array";
-import regexp from "@nikitajs/core/utils/regexp";
-import { snake_case as snake_case_str } from "@nikitajs/core/utils/string";
+import array from "./array.js";
+import regexp from "./regexp.js";
+import { snake_case as snake_case_str } from "./string.js";
 import { is_object_literal } from "mixme";
 
 const clean = function (content, undefinedOnly) {

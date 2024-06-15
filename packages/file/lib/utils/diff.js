@@ -7,7 +7,7 @@ Report the difference between 2 strings.
 // ## Dependencies
 import pad from "pad";
 import { diffLines } from "diff";
-import string from '@nikitajs/core/utils/string';
+import string from "@nikitajs/utils/string";
 
 // Utils
 export default function(oldStr, newStr) {

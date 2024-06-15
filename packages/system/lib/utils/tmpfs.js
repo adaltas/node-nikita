@@ -1,6 +1,6 @@
 
 // parse the content of tmpfs daemon configuration file
-import string from "@nikitajs/core/utils/string";
+import string from "@nikitajs/utils/string";
 
 const properties = ['type', 'mount', 'perm', 'uid', 'gid', 'age', 'argu']
 

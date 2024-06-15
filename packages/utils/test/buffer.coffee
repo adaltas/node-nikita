@@ -1,9 +1,7 @@
 
-import {trim} from '@nikitajs/core/utils/buffer'
-import test from '../test.coffee'
+import {trim} from '@nikitajs/utils/buffer'
 
 describe 'utils.buffer', ->
-  return unless test.tags.api
   
   describe 'trim', ->
   

@@ -6,7 +6,7 @@ Retrieve file information.
 ## File information
 
 The `mode` parameter indicates the file type. For conveniency, the
-`@nikitajs/core/utils/stats` module provide functions to check each
+`@nikitajs/utils/stats` module provide functions to check each
 possible file types.
 
 ## Example

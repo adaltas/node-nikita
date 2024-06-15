@@ -1,7 +1,7 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { snake_case_str } from "mixme";
 import yaml from "js-yaml";
-import error from "@nikitajs/core/utils/error";
+import error from "./error.js";
 
 /**
  * Escape an argument with single quotes.

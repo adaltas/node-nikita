@@ -1,9 +1,7 @@
 
-import mode from '@nikitajs/core/utils/mode'
-import test from '../test.coffee'
+import mode from '@nikitajs/utils/mode'
 
 describe 'utils.mode', ->
-  return unless test.tags.api
 
   describe 'stringify', ->
     

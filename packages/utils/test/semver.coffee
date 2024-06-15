@@ -1,9 +1,7 @@
 
-import semver from '@nikitajs/core/utils/semver'
-import test from '../test.coffee'
+import semver from '@nikitajs/utils/semver'
 
 describe 'utils.semver', ->
-  return unless test.tags.api
 
   it 'sanitize', ->
     semver.sanitize('5').should.eql '5.x.x'

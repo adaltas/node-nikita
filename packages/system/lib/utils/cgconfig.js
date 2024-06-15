@@ -1,4 +1,4 @@
-import string from '@nikitajs/core/utils/string';
+import string from '@nikitajs/utils/string';
 
 export default {
   parse: function(str) {

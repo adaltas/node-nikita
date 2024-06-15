@@ -1,9 +1,7 @@
 
-import string from '@nikitajs/core/utils/string'
-import test from '../test.coffee'
+import string from '@nikitajs/utils/string'
 
 describe 'utils.string', ->
-  return unless test.tags.api
 
   it 'escapeshellarg', ->
     string.escapeshellarg("try to 'parse this").should.eql "'try to '\"'\"'parse this'"

@@ -3,7 +3,7 @@ import dedent from "dedent";
 import yaml from 'js-yaml';
 import diff from 'object-diff';
 import {merge} from 'mixme';
-import { escapeshellarg as esa } from "@nikitajs/core/utils/string";
+import { escapeshellarg as esa } from "@nikitajs/utils/string";
 import definitions from "./schema.json" with { type: "json" };
 
 // ## Exports

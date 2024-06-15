@@ -1,5 +1,5 @@
-import array from "@nikitajs/core/utils/array";
-import string from "@nikitajs/core/utils/string";
+import array from "@nikitajs/utils/array";
+import string from "@nikitajs/utils/string";
 import jsesc from "jsesc";
 import { merge } from "mixme";
 

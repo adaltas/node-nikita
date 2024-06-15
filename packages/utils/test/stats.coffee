@@ -1,9 +1,7 @@
 
-import stats from '@nikitajs/core/utils/stats'
-import test from '../test.coffee'
+import stats from '@nikitajs/utils/stats'
 
 describe 'utils.stats', ->
-  return unless test.tags.api
 
   describe 'type', ->
 

@@ -1,9 +1,7 @@
 
-import {intersect, flatten, merge, multiply, shuffle, unique} from '@nikitajs/core/utils/array'
-import test from '../test.coffee'
+import {intersect, flatten, merge, multiply, shuffle, unique} from '@nikitajs/utils/array'
 
 describe 'utils.array', ->
-  return unless test.tags.api
 
   # it 'compare', ->
   #   array.compare(['a'], ['a']).should.be.true()

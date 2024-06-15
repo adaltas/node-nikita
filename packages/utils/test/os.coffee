@@ -1,7 +1,7 @@
 
 import {merge} from 'mixme'
-import {whoami} from '@nikitajs/core/utils/os'
-import test from '../test.coffee'
+import {whoami} from '@nikitajs/utils/os'
+import test from './test.coffee'
 
 cleanup = (property, value) ->
   if value?

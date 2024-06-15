@@ -1,7 +1,7 @@
 import { merge } from "mixme";
 import connect from "ssh2-connect";
-import { whoami } from "@nikitajs/core/utils/os";
-import { hash as hash_str } from "@nikitajs/core/utils/string";
+import { whoami } from "./os.js";
+import { hash as hash_str } from "./string.js";
 
 const compare = function (ssh1, ssh2) {
   // Between 2 configurations

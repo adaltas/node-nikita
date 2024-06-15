@@ -1,5 +1,5 @@
 
-import promise from '@nikitajs/core/utils/promise'
+import promise from '@nikitajs/utils/promise'
 import test from '../test.coffee'
 
 describe 'utils.promise', ->

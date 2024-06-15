@@ -1,6 +1,6 @@
 
 import nikita from '@nikitajs/core'
-import err from '@nikitajs/core/utils/error'
+import utils from '@nikitajs/utils'
 import test from '../../test.coffee'
 
 describe 'plugins.metadata.relax', ->
@@ -118,14 +118,14 @@ describe 'plugins.metadata.relax', ->
     {error} = await nikita.call $relax: 'NIKITA_ERR', ->
       new Promise (resolve, reject) ->
         setImmediate ->
-          reject err 'NIKITA_ERR', ['an error']
+          reject utils.error 'NIKITA_ERR', ['an error']
     error.message.should.eql 'NIKITA_ERR: an error'
 
   it 'handler rejects promise with string as param', ->
     nikita.call $relax: 'NIKITA_ERR', ->
       new Promise (resolve, reject) ->
         setImmediate ->
-          reject err 'NIKITA_OTHER_ERR', ['other error']
+          reject utils.error 'NIKITA_OTHER_ERR', ['other error']
     .should.be.rejectedWith
       message: 'NIKITA_OTHER_ERR: other error'
       code: 'NIKITA_OTHER_ERR'
@@ -134,7 +134,7 @@ describe 'plugins.metadata.relax', ->
     nikita.call $relax: ['NIKITA_ERR', 'NIKITA_ERR_OTHER'], ->
       new Promise (resolve, reject) ->
         setImmediate ->
-          reject err 'NIKITA_OTHER_ERR', ['other error']
+          reject utils.error 'NIKITA_OTHER_ERR', ['other error']
     .should.be.rejectedWith
       message: 'NIKITA_OTHER_ERR: other error'
       code: 'NIKITA_OTHER_ERR'
@@ -143,14 +143,14 @@ describe 'plugins.metadata.relax', ->
     {error} = await nikita.call $relax: /^NIKITA_/, ->
       new Promise (resolve, reject) ->
         setImmediate ->
-          reject err 'NIKITA_ERR', ['an error']
+          reject utils.error 'NIKITA_ERR', ['an error']
     error.message.should.eql 'NIKITA_ERR: an error'
 
   it 'handler rejects promise with regexp as param', ->
     nikita.call $relax: /^NIKITA_ERR/, ->
       new Promise (resolve, reject) ->
         setImmediate ->
-          reject err 'NIKITA_OTHER_ERR', ['other error']
+          reject utils.error 'NIKITA_OTHER_ERR', ['other error']
     .should.be.rejectedWith
       code: 'NIKITA_OTHER_ERR'
       message: 'NIKITA_OTHER_ERR: other error'

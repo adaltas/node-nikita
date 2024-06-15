@@ -1,9 +1,7 @@
 
-import regexp from '@nikitajs/core/utils/regexp'
-import test from '../test.coffee'
+import regexp from '@nikitajs/utils/regexp'
 
 describe 'utils.regexp', ->
-  return unless test.tags.api
   
   it 'is', ->
     regexp.is /.*/
