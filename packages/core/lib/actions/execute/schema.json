@@ -90,6 +90,7 @@
             "enum": [
               "json",
               "jsonlines",
+              "lines",
               "yaml"
             ]
           },

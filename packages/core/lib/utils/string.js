@@ -54,6 +54,8 @@ const format = async function (data, format, args = {}) {
             return lines(data)
               .filter((line) => line.trim() !== "")
               .map(JSON.parse);
+          case "lines":
+            return lines(data);
           case "yaml":
             return yaml.load(data);
         }

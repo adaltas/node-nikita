@@ -83,4 +83,16 @@ describe 'actions.execute.config.format', ->
         stdout.should.eql ''
         stderr.should.eql ''
         data.should.eql []
+
+    they 'lines', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      , ->
+        {stdout, stderr, data} = await @execute
+          command: 'echo line a; echo line b;'
+          format: 'lines'
+          trim: true
+        stdout.should.eql 'line a\nline b'
+        stderr.should.eql ''
+        data.should.eql ['line a', 'line b']
         
