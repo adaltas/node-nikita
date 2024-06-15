@@ -80,7 +80,6 @@
     "ssh2-fs": "^1.1.2",
     "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",
-    "toposort": "^2.0.2",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
