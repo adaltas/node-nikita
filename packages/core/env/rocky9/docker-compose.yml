@@ -2,10 +2,10 @@
 services:
   nodejs:
     build: .
-    container_name: nikita_core_centos7_nodejs
+    container_name: nikita_core_rocky9_nodejs
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/core/env/centos7/test.coffee
-    image: nikita_core_centos7
+      NIKITA_TEST_MODULE: /nikita/packages/core/env/rocky9/test.coffee
+    image: nikita_core_rocky9
     networks:
       - nikita
     volumes:

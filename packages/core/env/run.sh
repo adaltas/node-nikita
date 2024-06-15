@@ -4,7 +4,7 @@ set -e
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
 ./arch_chroot/run.sh
-./centos7/run.sh
+./rocky9/run.sh
 node ./chown/index.js run
 node ./ssh/index.js run
 ./sudo/run.sh

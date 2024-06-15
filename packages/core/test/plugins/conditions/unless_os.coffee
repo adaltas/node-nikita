@@ -9,7 +9,7 @@ describe 'plugin.conditions unless_os', ->
 
   they 'match distribution string', ({ssh}) ->
     nikita
-      ssh: ssh
+      $ssh: ssh
     , ->
       {$status} = await @call
         $unless_os: distribution: test.conditions_if_os.distribution
@@ -18,7 +18,6 @@ describe 'plugin.conditions unless_os', ->
       {$status} = await @call
         $unless_os: distribution: 'invalid'
         $handler: -> true
-        $ssh: ssh
       $status.should.be.true()
 
   they 'match distribution array', ({ssh}) ->

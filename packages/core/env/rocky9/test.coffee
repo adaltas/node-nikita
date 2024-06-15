@@ -8,11 +8,11 @@ export default
     # `node -e 'console.info(os.arch())'` print `arm64`
     # `uname -m` print `aarch64`
     arch: ['x86_64', 'arm64', 'aarch64']
-    distribution: 'centos'
+    distribution: 'rocky'
     # change the minor version according to the latest used in the Dockerfile,
     # run `cat /etc/redhat-release` to check the Centos version
-    version: '7.9.2009'
-    #linux_version: '5.15.49'
+    version: '9.3'
+    linux_version: '6.4.16-linuxkit'
   config: [
     label: 'local'
   ,
