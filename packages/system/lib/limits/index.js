@@ -1,5 +1,5 @@
 // Dependencies
-import regexp from "@nikitajs/core/utils/regexp";
+import regexp from "@nikitajs/utils/regexp";
 import definitions from "./schema.json" with { type: "json" };
 
 // Action
