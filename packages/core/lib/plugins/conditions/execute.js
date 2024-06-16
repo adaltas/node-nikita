@@ -1,5 +1,6 @@
 
 import session from '@nikitajs/core/session';
+import { is_object_literal } from 'mixme';
 
 const handlers = {
   if_execute: async function(action) {
@@ -8,8 +9,9 @@ const handlers = {
         const {$status} = await session({
           $bastard: true,
           $namespace: ['execute'],
-          $parent: action
-        }, condition);
+          $parent: action,
+          ...(is_object_literal(condition) ? condition : {}),
+        }, is_object_literal(condition) ? null : condition);
         if (!$status) {
           return false;
         }
@@ -17,8 +19,9 @@ const handlers = {
         const {code} = await session({
           $bastard: true,
           $namespace: ['execute'],
-          $parent: action
-        }, condition, function({config}) {
+          $parent: action,
+          ...(is_object_literal(condition) ? condition : {}),
+        }, is_object_literal(condition) ? null : condition, function({config}) {
           return {
             code: config.code
           };
@@ -39,8 +42,9 @@ const handlers = {
         const {$status} = await session({
           $bastard: true,
           $namespace: ['execute'],
-          $parent: action
-        }, condition);
+          $parent: action,
+          ...(is_object_literal(condition) ? condition : {}),
+        }, is_object_literal(condition) ? null : condition);
         if ($status) {
           return false;
         }
@@ -48,8 +52,9 @@ const handlers = {
         const {code} = await session({
           $bastard: true,
           $namespace: ['execute'],
-          $parent: action
-        }, condition, function({config}) {
+          $parent: action,
+          ...(is_object_literal(condition) ? condition : {}),
+        }, is_object_literal(condition) ? null : condition, function({config}) {
           return {
             code: config.code
           };

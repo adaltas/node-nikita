@@ -52,15 +52,13 @@ export default {
     })()
     // Create target parent directory if target does not exists and if the "parent"
     // config is set to "true" (default) or as an object.
-    await this.fs.mkdir(
-      {
-        $if: !!config.parent,
-        $unless: target_stats,
-        $shy: true,
-        target: path.dirname(config.target),
-      },
-      config.parent
-    );
+    await this.fs.mkdir({
+      $if: !!config.parent,
+      $unless: target_stats,
+      $shy: true,
+      target: path.dirname(config.target),
+      ...config.parent
+    });
     // Stop here if source is a directory. We traverse all its children
     // Recursively, calling either `fs.mkdir` or `fs.copy`.
     // Like with the Unix `cp` command, ending slash matters if the target directory

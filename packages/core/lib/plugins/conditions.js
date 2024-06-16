@@ -9,8 +9,9 @@ const handlers = {
           $bastard: true,
           $handler: condition,
           $parent: action,
-          $raw_output: true
-        }, action.config);
+          $raw_output: true,
+          ...action.config
+        });
       }
       const run = (function() {
         switch (typeof condition) {
@@ -48,8 +49,9 @@ const handlers = {
           $bastard: true,
           $handler: condition,
           $parent: action,
-          $raw_output: true
-        }, action.config);
+          $raw_output: true,
+          ...action.config
+        });
       }
       const run = (function() {
         switch (typeof condition) {
