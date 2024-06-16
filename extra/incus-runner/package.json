@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@nikitajs/core": "^1.0.0-alpha.7",
-    "shell": "^0.9.4"
+    "shell": "^0.9.6"
   },
   "devDependencies": {
     "coffeescript": "^2.7.0"
