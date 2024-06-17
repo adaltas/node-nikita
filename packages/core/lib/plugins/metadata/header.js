@@ -15,8 +15,13 @@ export default {
     'nikita:schema': function({schema}) {
       mutate(schema.definitions.metadata.properties, {
         header: {
-          type: 'string',
-          description: `Associate a title with the current action.`
+          // type: ['array', 'string'],
+          type: 'array',
+          items: {
+            type: ['string']
+          },
+          coercion: true,
+          description: `Associate a title with the current action, eg used by log actions.`
         }
       });
     }
