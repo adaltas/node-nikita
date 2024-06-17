@@ -62,16 +62,16 @@ export default {
     }
     // Events
     const serializer = {
-      "nikita:action:start": function ({ action }) {
-        if (!config.enabled) {
-          return;
-        }
-        const headers = get_headers(action);
-        if (config.depth_max && config.depth_max < headers.length) {
-          return;
-        }
-        return null;
-      },
+      // "nikita:action:start": function ({ action }) {
+      //   if (!config.enabled) {
+      //     return;
+      //   }
+      //   const headers = get_headers(action);
+      //   if (config.depth_max && config.depth_max < headers.length) {
+      //     return;
+      //   }
+      //   return null;
+      // },
       "nikita:resolved": function ({ action }) {
         const color = config.colors ? config.colors.status_true : false;
         let line = format_line({
@@ -156,7 +156,7 @@ const get_headers = function(action) {
   const walk = function(parent) {
     const precious = parent.metadata.header;
     const results = [];
-    if (precious !== void 0) {
+    if (precious !== undefined) {
       results.push(precious);
     }
     if (parent.parent) {
@@ -165,5 +165,5 @@ const get_headers = function(action) {
     return results;
   };
   const headers = walk(action);
-  return headers.reverse();
+  return headers.reverse().flat(Infinity);
 };

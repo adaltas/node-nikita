@@ -37,13 +37,33 @@ describe 'log.cli', ->
         await @call $header: 'h2a', ->
         await @call $header: 'h2b', ->
           await @call $header: 'h3', -> true
-      # .wait 200
       .call ->
         data.should.eql [
           "#{host}   h1 : h2a   -\n"
           "#{host}   h1 : h2b : h3   ✔\n"
           "#{host}   h1 : h2b   ✔\n"
           "#{host}   h1   ✔\n"
+        ]
+        
+    they 'values as array', ({ssh}) ->
+      data = []
+      host = ssh?.host or 'local'
+      nikita
+        $ssh: ssh
+      .log.cli
+        colors: false
+        stream: new MyWritable data
+        time: false
+      .call $header: ['h1', 'h2'], ->
+        await @call $header: 'h2a', ->
+        await @call $header: 'h2b', ->
+          await @call $header: ['h3', 'h4'], -> true
+      .call ->
+        data.should.eql [
+          "#{host}   h1 : h2 : h2a   -\n"
+          "#{host}   h1 : h2 : h2b : h3 : h4   ✔\n"
+          "#{host}   h1 : h2 : h2b   ✔\n"
+          "#{host}   h1 : h2   ✔\n"
         ]
     
     they 'pass over actions without header', ({ssh}) ->
