@@ -55,11 +55,11 @@ export default {
         }
         if (!config.not) {
           if (!content.test(stdout)) {
-            throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${JSON.stringify(content)}.`]);
+            throw utils.error('NIKITA_EXECUTE_ASSERT_CONTENT_REGEX', ['the command output is not matching the content regexp,', `got ${JSON.stringify(stdout)}`, `while expecting to match ${content.toString()}.`]);
           }
         } else {
           if (content.test(stdout)) {
-            throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${JSON.stringify(content)}.`]);
+            throw utils.error('NIKITA_EXECUTE_ASSERT_NOT_CONTENT_REGEX', ['the command output is unfortunately matching the content regexp,', `got ${JSON.stringify(stdout)}`, `matching ${content.toString()}.`]);
           }
         }
       }

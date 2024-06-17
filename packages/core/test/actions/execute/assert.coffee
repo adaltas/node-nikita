@@ -99,7 +99,7 @@ describe 'actions.execute.assert', ->
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_ASSERT_CONTENT_REGEX:'
           'the command output is not matching the content regexp,'
-          'got "toto\\nest\\r\\nau\\rbistrot\\n" while expecting to match {}.'
+          'got "toto\\nest\\r\\nau\\rbistrot\\n" while expecting to match /^ohno$/m.'
         ].join ' '
 
     they 'option trim on command', ({ssh}) ->
