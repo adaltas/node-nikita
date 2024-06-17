@@ -1,5 +1,5 @@
 
-import {copy, diff, filter, match, trim} from '@nikitajs/utils/object'
+import {copy, diff, filter, insert, match, trim} from '@nikitajs/utils/object'
 
 describe 'utils.object', ->
   
@@ -46,6 +46,27 @@ describe 'utils.object', ->
     it 'black and white list', ->
       filter a: 1, b: 2, c: 3, ['b'], ['a', 'b']
       .should.eql a: 1
+  
+  describe 'insert', ->
+
+    it 'add scalar', ->
+      data = a: 1
+      insert data, ['b', 'c'], 2
+      data.should.eql a: 1, b: c: 2
+
+    it 'merge keys', ->
+      data = a: 1, b: c1: 2
+      insert data, ['b', 'c2'], 3
+      data.should.eql a: 1, b: { c1: 2, c2: 3}
+
+    it 'merge values', ->
+      data = a: 1, b: c1: 2
+      insert data, ['b'], c2: 3
+      data.should.eql a: 1, b: { c1: 2, c2: 3}
+
+    it 'return source', ->
+      data = insert {}, ['a', 'b'], c1: 1, c2: 2
+      data.should.eql a: b: { c1: 1, c2: 2}
       
   describe 'match', ->
     
