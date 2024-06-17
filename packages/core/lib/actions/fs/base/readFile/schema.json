@@ -26,6 +26,10 @@
           }
         ],
         "description": "Source location of the file to read."
+      },
+      "trim": {
+        "type": "boolean",
+        "description": "Trim the content."
       }
     },
     "required": [

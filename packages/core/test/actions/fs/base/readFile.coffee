@@ -34,6 +34,21 @@ describe 'actions.fs.base.readFile', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         encoding: 'ascii'
       .should.be.finally.containEql data: 'hello'
+
+  they 'config `trim`', ({ssh}) ->
+    nikita
+      $ssh: ssh
+      $templated: true
+      $tmpdir: true
+    , ->
+      await @fs.base.writeFile
+        target: "{{parent.metadata.tmpdir}}/a_file"
+        content: '  hello\n  '
+      @fs.base.readFile
+        target: "{{parent.metadata.tmpdir}}/a_file"
+        encoding: 'ascii'
+        trim: true
+      .should.be.finally.containEql data: 'hello'
   
   describe 'config `format`', ->
 

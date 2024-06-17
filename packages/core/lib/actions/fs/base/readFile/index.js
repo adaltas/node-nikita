@@ -22,6 +22,9 @@ export default {
     if (config.encoding) {
       data = data.toString(config.encoding);
     }
+    if (config.trim && typeof data === 'string') {
+      data = data.trim();
+    }
     if (config.format) {
       data = await utils.string.format(data, config.format)
     }
