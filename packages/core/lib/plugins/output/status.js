@@ -12,14 +12,9 @@ export default {
     '@nikitajs/core/plugins/metadata/raw'
   ],
   hooks: {
-    // 'nikita:registry:normalize': (action) ->
-    //   action.metadata ?= {}
-    //   action.metadata.shy ?= false
     'nikita:normalize': function(action) {
-      if (action.tools == null) {
-        action.tools = {};
-      }
-      return action.tools.status = function(index) {
+      action.tools ??= {}
+      action.tools.status = function(index) {
         if (arguments.length === 0) {
           return action.children.some((sibling) =>
             !sibling.metadata.shy && sibling.output?.$status === true
