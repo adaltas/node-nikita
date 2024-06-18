@@ -56,7 +56,7 @@ describe 'actions.call', ->
         result = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
         result.should.containEql my_key: 'my value'
     
-    they 'defined as an object', ({ssh}) ->
+    they 'defined as CommonJS object', ({ssh}) ->
       nikita
         $ssh: ssh
         $tmpdir: true
@@ -77,7 +77,7 @@ describe 'actions.call', ->
         config.should.containEql
           my_key: 'my value'
         metadata.should.containEql
-          header: 'hello'
+          header: ['hello']
           module: "#{tmpdir}/my_module.js"
     
     they 'defined as an object with no handler', ({ssh}) ->
