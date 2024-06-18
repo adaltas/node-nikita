@@ -37,7 +37,7 @@ const session = function(args, options = {}) {
   // Initialize the plugins manager
   action.plugins = plugandplay({
     plugins: options.plugins,
-    parent: options.parent ? options.parent.plugins : undefined
+    parent: options.parent?.plugins,
   });
   // Initialize the registry to manage action registration
   action.registry = registry.create({
