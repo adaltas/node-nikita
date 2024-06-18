@@ -7,6 +7,7 @@ Management facility to register and unregister actions.
 */
 
 // Dependencies
+import path from "node:path";
 import {is_object, merge, mutate} from 'mixme';
 
 // Register all functions
@@ -53,6 +54,9 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   obj.load = async function(module) {
     if (typeof module !== 'string') {
       throw Error(`Invalid Argument: module must be a string, got ${module.toString()}`);
+    }
+    if (module.startsWith('.')) {
+      module = path.resolve(process.cwd(), module);
     }
     const action = (await import(module)).default;
     if (typeof action === 'function') {
