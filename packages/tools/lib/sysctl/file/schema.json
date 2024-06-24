@@ -10,8 +10,7 @@
         "description": "Create a backup, append a provided string to the filename extension or\na timestamp if value is not a string, only apply if the target file\nexists and is modified."
       },
       "comment": {
-        "type": "boolean",
-        "description": "Preserve comments."
+        "$ref": "module://@nikitajs/tools/sysctl/file/read#/definitions/config/properties/comment"
       },
       "load": {
         "type": "boolean",

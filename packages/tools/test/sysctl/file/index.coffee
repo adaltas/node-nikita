@@ -1,6 +1,6 @@
 
 import nikita from '@nikitajs/core'
-import test from './test.coffee'
+import test from '../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
@@ -12,14 +12,14 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {$status} = await @tools.sysctl
+      {$status} = await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
           'vm.overcommit_memory': 1
         load: false
       $status.should.be.true()
-      {$status} = await @tools.sysctl
+      {$status} = await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
@@ -43,7 +43,7 @@ describe 'tools.sysctl', ->
         vm.swappiness = 10
         vm.overcommit_memory = 1
         """
-      {$status} = await @tools.sysctl
+      {$status} = await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 1
@@ -65,14 +65,14 @@ describe 'tools.sysctl', ->
         content: """
         vm.swappiness = 1
         """
-      {$status} = await @tools.sysctl
+      {$status} = await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
         merge: true
         load: false
       $status.should.be.true()
-      {$status} = await @tools.sysctl
+      {$status} = await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.overcommit_memory': 1
@@ -97,7 +97,7 @@ describe 'tools.sysctl', ->
         vm.swappiness = 1
         
         """
-      await @tools.sysctl
+      await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
@@ -115,7 +115,7 @@ describe 'tools.sysctl', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @tools.sysctl
+      await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 10
@@ -124,7 +124,7 @@ describe 'tools.sysctl', ->
       await @execute.assert
         bash: true
         command: "[[ `ls #{tmpdir}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
-      await @tools.sysctl
+      await @tools.sysctl.file
         target: "#{tmpdir}/sysctl.conf"
         properties:
           'vm.swappiness': 20
@@ -148,7 +148,7 @@ describe 'tools.sysctl', ->
           vm.swappiness = 1
           # User Variables
           """
-        {$status} = await @tools.sysctl
+        {$status} = await @tools.sysctl.file
           target: "#{tmpdir}/sysctl.conf"
           properties:
             'vm.swappiness': 10
@@ -175,7 +175,7 @@ describe 'tools.sysctl', ->
           vm.swappiness = 1
           # User Variables
           """
-        {$status} = await @tools.sysctl
+        {$status} = await @tools.sysctl.file
           target: "#{tmpdir}/sysctl.conf"
           properties:
             'vm.swappiness': 10
@@ -204,7 +204,7 @@ describe 'tools.sysctl', ->
           # Key = Value
           vm.swappiness = 1
           """
-        await @tools.sysctl
+        await @tools.sysctl.file
           target: "#{tmpdir}/sysctl.conf"
           properties:
             'vm.swappiness': 10

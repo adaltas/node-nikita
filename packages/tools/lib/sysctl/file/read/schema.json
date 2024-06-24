@@ -1,0 +1,16 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "comment": {
+        "type": "boolean",
+        "description": "Preserve comments."
+      },
+      "target": {
+        "type": "string",
+        "default": "/etc/sysctl.conf",
+        "description": "Destination to write properties and load in sysctl settings, default\nto \"/etc/sysctl.conf\" if none given."
+      }
+    }
+  }
+}

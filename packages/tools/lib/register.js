@@ -35,7 +35,12 @@ const actions = {
     ssh: {
       keygen: '@nikitajs/tools/ssh/keygen'
     },
-    sysctl: '@nikitajs/tools/sysctl'
+    sysctl: {
+      'file': {
+        '': '@nikitajs/tools/sysctl/file',
+        'read': '@nikitajs/tools/sysctl/file/read'
+      }
+    }
   }
 };
 
