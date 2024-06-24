@@ -1,26 +1,24 @@
 
 import nikita from '@nikitajs/core'
-import utils from '@nikitajs/core/utils'
-import test from '../../../test.coffee'
+import test from '../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-
-describe 'actions.fs.rename', ->
+describe 'actions.fs.readlink', ->
   return unless test.tags.posix
 
-  they 'create', ({ssh}) ->
-    nikita
+  they 'get value', ({ssh}) ->
+    await nikita
       $ssh: ssh
       $templated: true
       $tmpdir: true
-    , ->
+    , ({metadata: {tmpdir}}) ->
       await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
-        content: 'hello'
-      await @fs.rename
+        content: ''
+      await @fs.symlink
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      {stats} = await @fs.stat
+      {target} = await @fs.readlink
         target: "{{parent.metadata.tmpdir}}/a_target"
-      utils.stats.isFile(stats.mode).should.be.true()
+      target.should.eql "#{tmpdir}/a_source"

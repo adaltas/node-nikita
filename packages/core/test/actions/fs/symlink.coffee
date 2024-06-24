@@ -1,24 +1,26 @@
 
 import nikita from '@nikitajs/core'
-import test from '../../../test.coffee'
+import utils from '@nikitajs/core/utils'
+import test from '../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.readlink', ->
+describe 'actions.fs.symlink', ->
   return unless test.tags.posix
 
-  they 'get value', ({ssh}) ->
-    await nikita
+  they 'create', ({ssh}) ->
+    nikita
       $ssh: ssh
       $templated: true
       $tmpdir: true
-    , ({metadata: {tmpdir}}) ->
+    , ->
       await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
-        content: ''
+        content: 'hello'
       await @fs.symlink
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      {target} = await @fs.readlink
+      {stats} = await @fs.stat
         target: "{{parent.metadata.tmpdir}}/a_target"
-      target.should.eql "#{tmpdir}/a_source"
+        dereference: false
+      utils.stats.isSymbolicLink(stats.mode).should.be.true()
