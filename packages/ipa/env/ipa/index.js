@@ -97,7 +97,7 @@ runner({
           bash -l -c "command -v node" && exit 42
           curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
           . ~/.bashrc
-          nvm install 16
+          nvm install 22
         `,
         container: config.container,
         trap: true

@@ -40,7 +40,7 @@ runner({
           if command -v node ; then exit 42; fi
           curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
           . ~/.bashrc
-          nvm install 20
+          nvm install 22
           # NVM is sourced from ~/.bashrc which is not loaded in non interactive mode
           echo '. /root/.nvm/nvm.sh' >> /root/.profile
         `,

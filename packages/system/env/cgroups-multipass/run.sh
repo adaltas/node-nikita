@@ -29,7 +29,7 @@ curl -sS -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | b
 # NVM is sourced from ~/.bashrc which is not loaded in non interactive mode
 echo '. $HOME/.nvm/nvm.sh' >> $HOME/.profile
 . $HOME/.profile
-nvm install 16
+nvm install 22
 EOF
   # Configure SSH
   multipass exec nikita-system-cgroup bash <<'EOF'
