@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false # avoid cancel all in-progress jobs if any fails
       matrix:
-        node-version: [18.x] 
+        node-version: [22.x] 
         package: ${{ fromJson(needs.list-packages.outputs.packages)}}
     steps:
     - uses: actions/checkout@v3
@@ -80,7 +80,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: 18.x
+        node-version: 22.x
     - run: yarn --frozen-lockfile
     - run: cd docs/website && yarn install && yarn build
     - run: echo 'nikita.js.org' > docs/website/public/CNAME
