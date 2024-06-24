@@ -9,7 +9,7 @@ const handlers = {
           $bastard: true,
           $parent: action
         }, async function() {
-          return await this.fs.base.stat({
+          return await this.fs.stat({
             target: condition
           });
         });
@@ -30,7 +30,7 @@ const handlers = {
           $bastard: true,
           $parent: action
         }, async function() {
-          return await this.fs.base.stat({
+          return await this.fs.stat({
             target: condition
           });
         });

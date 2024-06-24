@@ -30,7 +30,7 @@ export default {
       });
       stats = config.stats;
     } else {
-      ({ stats } = await this.fs.base.stat(config.target));
+      ({ stats } = await this.fs.stat(config.target));
     }
     // Detect changes
     const changes = {

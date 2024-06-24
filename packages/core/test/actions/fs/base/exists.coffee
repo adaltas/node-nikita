@@ -4,7 +4,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.exists', ->
+describe 'actions.fs.exists', ->
   return unless test.tags.posix
   
   they 'does not exists', ({ssh}) ->
@@ -12,7 +12,7 @@ describe 'actions.fs.base.exists', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @fs.base.exists
+      @fs.exists
         target: "#{tmpdir}/not_here"
       .should.be.finally.containEql
         exists: false
@@ -23,10 +23,10 @@ describe 'actions.fs.base.exists', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_file"
         content: "some content"
-      @fs.base.exists
+      @fs.exists
         target: "#{tmpdir}/a_file"
       .should.be.finally.containEql
         exists: true
@@ -38,8 +38,8 @@ describe 'actions.fs.base.exists', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: ''
-      @fs.base.exists "{{parent.metadata.tmpdir}}/a_file"
+      @fs.exists "{{parent.metadata.tmpdir}}/a_file"
       .should.be.finally.containEql exists: true

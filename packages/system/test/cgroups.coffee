@@ -252,7 +252,7 @@ describe 'system.cgroups', ->
           groups: groups
           merge: true
         $status.should.be.true()
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/a_file_merge_mount_groups.cgconfig.conf"
           encoding: 'utf8'
         data = utils.cgconfig.parse data

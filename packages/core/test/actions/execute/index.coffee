@@ -66,7 +66,7 @@ describe 'actions.execute', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: '''
           Test search_1.
           Test search_2.

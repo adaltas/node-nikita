@@ -21,7 +21,7 @@ export default {
         source_path = path.join(source_path, path.basename(target_path));
       }
       try {
-        const { stats } = await this.fs.base.stat({
+        const { stats } = await this.fs.stat({
           target: source_path,
         });
         if (utils.stats.isDirectory(stats.mode)) {
@@ -45,7 +45,7 @@ export default {
         target_path = `${target_path}/${path.basename(target_path)}`;
       }
       try {
-        const { stats } = await this.fs.base.stat({
+        const { stats } = await this.fs.stat({
           target: target_path,
         });
         if (utils.stats.isDirectory(stats.mode)) {

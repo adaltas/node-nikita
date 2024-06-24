@@ -9,7 +9,7 @@ export default {
   handler: async function ({ config, tools: { log } }) {
     try {
       if (config.merge) {
-        const { data } = await this.fs.base.readFile({
+        const { data } = await this.fs.readFile({
           target: config.target,
           encoding: "utf8",
         });

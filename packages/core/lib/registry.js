@@ -1,9 +1,7 @@
 /*
-
 # Registry
 
 Management facility to register and unregister actions.
-
 */
 
 // Dependencies

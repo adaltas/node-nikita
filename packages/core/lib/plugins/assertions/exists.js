@@ -20,7 +20,7 @@ const handlers = {
         $parent: action,
         $raw_output: true
       }, async function({parent}) {
-        const {exists} = await this.fs.base.exists({
+        const {exists} = await this.fs.exists({
           target: assertion
         });
         return exists;
@@ -39,7 +39,7 @@ const handlers = {
         $parent: action,
         $raw_output: true
       }, async function() {
-        const {exists} = await this.fs.base.exists({
+        const {exists} = await this.fs.exists({
           target: assertion
         });
         return exists;

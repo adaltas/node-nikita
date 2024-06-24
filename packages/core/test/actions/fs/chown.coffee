@@ -43,7 +43,7 @@ describe 'actions.fs.chown', ->
         userdel 'toto'; groupdel 'toto'
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
-        {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+        {stats} = await @fs.stat "#{tmpdir}/a_file"
         {$logs} = await @fs.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678, stats: stats
         $logs
         .map (log) -> log.message

@@ -9,7 +9,7 @@ export default {
     if (config.stats) {
       stats = config.stats;
     } else {
-      ({ stats } = await this.fs.base.stat(config.target));
+      ({ stats } = await this.fs.stat(config.target));
     }
     // Detect changes
     if (utils.mode.compare(stats.mode, config.mode)) {

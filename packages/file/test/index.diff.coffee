@@ -106,7 +106,7 @@ describe 'file config diff', ->
         target: "#{tmpdir}/file"
         content: 'some content'
         diff: (text, raw) -> diff = text
-      {data} = await @fs.base.readFile
+      {data} = await @fs.readFile
         $log: false
         target: "#{tmpdir}/nikita.log"
         encoding: 'ascii'

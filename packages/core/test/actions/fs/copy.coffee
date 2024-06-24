@@ -24,7 +24,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/a_file", content: 'hello'
         await @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_dir/a_file"
@@ -37,7 +37,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/a_file", content: 'hello'
         @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_dir/a_new_file"
@@ -51,7 +51,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/a_file", content: 'hello'
         await @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_dir/a_new_file"
@@ -71,7 +71,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/a_file", content: 'hello'
         {$status} = await @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
@@ -89,7 +89,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/a_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/a_file", content: 'hello'
         await @fs.mkdir
           target: "#{tmpdir}/existing_dir"
         {$status} = await @fs.copy # Copy non existing file
@@ -104,8 +104,8 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile "#{tmpdir}/source_file", content: 'hello'
-        await @fs.base.writeFile "#{tmpdir}/target_file", content: 'to overwrite'
+        await @fs.writeFile "#{tmpdir}/source_file", content: 'hello'
+        await @fs.writeFile "#{tmpdir}/target_file", content: 'to overwrite'
         {$status} = await @fs.copy
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
@@ -123,11 +123,11 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/source_file"
           content: 'hello you'
           mode: 0o0644
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/target_file"
           content: 'Hello you'
           mode: 0o0644
@@ -152,7 +152,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/.a_empty_file"
           content: 'hello'
         await @fs.copy
@@ -167,7 +167,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source_file"
           content: ''
           mode: 0o0606
@@ -184,7 +184,7 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source_file"
           content: ''
           mode: 0o0640
@@ -203,10 +203,10 @@ describe 'actions.fs.copy', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/org_file"
           content: 'hello'
-        await @fs.base.symlink
+        await @fs.symlink
           source: "#{tmpdir}/org_file"
           target: "#{tmpdir}/ln_file"
         await @fs.copy
@@ -222,10 +222,10 @@ describe 'actions.fs.copy', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @fs.base.mkdir "#{tmpdir}/source"
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: 'hello'
           target: "#{tmpdir}/source/org_file"
-        await @fs.base.symlink
+        await @fs.symlink
           source: "#{tmpdir}/source/org_file"
           target: "#{tmpdir}/source/ln_file"
         await @fs.copy
@@ -243,8 +243,8 @@ describe 'actions.fs.copy', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir "#{tmpdir}/source/a_dir"
-        await @fs.base.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
-        await @fs.base.writeFile "#{tmpdir}/source/a_file", content: ''
+        await @fs.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
+        await @fs.writeFile "#{tmpdir}/source/a_file", content: ''
         # if the target doesn't exists, then copy as target
         {$status} = await @fs.copy
           source: "#{tmpdir}/source"
@@ -268,8 +268,8 @@ describe 'actions.fs.copy', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir "#{tmpdir}/source/a_dir"
-        await @fs.base.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
-        await @fs.base.writeFile "#{tmpdir}/source/a_file", content: ''
+        await @fs.writeFile "#{tmpdir}/source/a_dir/a_file", content: ''
+        await @fs.writeFile "#{tmpdir}/source/a_file", content: ''
         # if the target doesn't exists, then copy as target
         {$status} = await @fs.copy
           source: "#{tmpdir}/source/"
@@ -294,10 +294,10 @@ describe 'actions.fs.copy', ->
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir
           target: "#{tmpdir}/a_dir"
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_dir/a_file"
           content: ''
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_dir/.a_hidden_file"
           content: ''
         await @fs.copy
@@ -317,14 +317,14 @@ describe 'actions.fs.copy', ->
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir
           target: "#{tmpdir}/a_source"
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source/a_file"
           content: ''
           mode: 0o0606
         await @fs.mkdir
           target: "#{tmpdir}/a_source/a_dir"
           mode: 0o0777
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source/a_dir/a_file"
           content: ''
           mode: 0o0644
@@ -349,14 +349,14 @@ describe 'actions.fs.copy', ->
       , ({metadata: {tmpdir}}) ->
         await @fs.mkdir
           target: "#{tmpdir}/a_source"
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source/a_file"
           content: ''
           mode: 0o0611
         await @fs.mkdir
           target: "#{tmpdir}/a_source/a_dir"
           mode: 0o0700
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_source/a_dir/a_file"
           content: ''
           mode: 0o0655

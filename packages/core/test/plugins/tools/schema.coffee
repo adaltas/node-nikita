@@ -101,7 +101,7 @@ describe 'plugins.tools.schema', ->
       nikita
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: 'module.exports = {}'
           target: "#{tmpdir}/my_module.js"
         @call "#{tmpdir}/my_module.js", (action) ->
@@ -159,7 +159,7 @@ describe 'plugins.tools.schema', ->
       nikita
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: 'module.exports = {}'
           target: "#{tmpdir}/my_module.js"
         @call "#{tmpdir}/my_module.js", key: 'value', (action) ->

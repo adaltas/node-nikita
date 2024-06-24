@@ -14,7 +14,7 @@ describe 'file', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/check_replace"
           content: 'a\nb\nc'
         await @file

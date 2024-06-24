@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.rmdir', ->
+describe 'actions.fs.rmdir', ->
   return unless test.tags.posix
 
   they 'dir is removed', ({ssh}) ->
@@ -16,9 +16,9 @@ describe 'actions.fs.base.rmdir', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      await @fs.base.rmdir
+      await @fs.rmdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      @fs.base.exists
+      @fs.exists
         target: "{{parent.metadata.tmpdir}}/a_dir"
       .should.be.finally.containEql exists: false
 
@@ -30,10 +30,10 @@ describe 'actions.fs.base.rmdir', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
         content: ''
-      @fs.base.rmdir
+      @fs.rmdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
       .should.be.rejectedWith
         code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
@@ -46,10 +46,10 @@ describe 'actions.fs.base.rmdir', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_dir/a_file"
         content: ''
-      await @fs.base.rmdir
+      await @fs.rmdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
         recursive: true
       await @fs.assert
@@ -62,7 +62,7 @@ describe 'actions.fs.base.rmdir', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.rmdir
+      @fs.rmdir
         target: "{{parent.metadata.tmpdir}}/missing"
       .should.be.rejectedWith
         code: 'NIKITA_FS_RMDIR_TARGET_ENOENT'

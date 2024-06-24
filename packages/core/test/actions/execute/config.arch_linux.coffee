@@ -52,7 +52,7 @@ describe 'actions.execute.config.arch_linux', ->
       , ->
         await @execute
           command: "mount --bind /var/tmp/root.x86_64 /mnt"
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: '/mnt/root/hello'
           content: "you"
         try

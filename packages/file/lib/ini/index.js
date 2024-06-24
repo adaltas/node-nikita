@@ -12,7 +12,7 @@ export default {
     const stringify = config.stringify || utils.ini.stringify;
     try {
       // Original properties
-      const { data } = await this.fs.base.readFile({
+      const { data } = await this.fs.readFile({
         target: config.target,
         encoding: config.encoding,
       });
@@ -25,7 +25,7 @@ export default {
     try {
       // Default properties
       if (config.source) {
-        const { data } = await this.fs.base.readFile({
+        const { data } = await this.fs.readFile({
           $if: config.source,
           $ssh: config.local ? false : void 0,
           $sudo: config.local ? false : void 0,

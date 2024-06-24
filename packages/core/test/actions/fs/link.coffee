@@ -39,7 +39,7 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: 'hello'
           target: "#{tmpdir}/source_file"
         {$status} = await @fs.link # Link does not exist
@@ -59,7 +59,7 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: 'hello'
           target: "#{tmpdir}/source_file"
         {$status} = await @fs.link
@@ -130,10 +130,10 @@ describe 'actions.fs.link', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/invalid_file"
           content: 'error'
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/valid_file"
           content: 'ok'
         {$status} = await @fs.link

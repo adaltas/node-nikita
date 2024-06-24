@@ -72,7 +72,7 @@ export default {
         "DEBUG",
         `Force local source is \`${config.local ? "true" : "false"}\`.`
       );
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         $ssh: config.local ? false : undefined,
         $sudo: config.local ? false : undefined,
         target: source,
@@ -86,7 +86,7 @@ export default {
         config.content = "";
       }
       log("DEBUG", "Reading source.");
-      ({ data: config.content } = await this.fs.base.readFile({
+      ({ data: config.content } = await this.fs.readFile({
         $ssh: config.local ? false : undefined,
         $sudo: config.local ? false : undefined,
         target: source,
@@ -94,7 +94,7 @@ export default {
       }));
     } else if (config.content == null) {
       try {
-        ({ data: config.content } = await this.fs.base.readFile({
+        ({ data: config.content } = await this.fs.readFile({
           $ssh: config.local ? false : undefined,
           $sudo: config.local ? false : undefined,
           target: config.target,
@@ -118,7 +118,7 @@ export default {
         }
         log("DEBUG", "Stat target.");
         try {
-          let { stats } = await this.fs.base.lstat({
+          let { stats } = await this.fs.lstat({
             target: config.target,
           });
           if (utils.stats.isDirectory(stats.mode)) {
@@ -129,7 +129,7 @@ export default {
           } else if (utils.stats.isSymbolicLink(stats.mode)) {
             log("INFO", "Destination is a symlink.");
             if (config.unlink) {
-              await this.fs.base.unlink({
+              await this.fs.unlink({
                 target: config.target,
               });
               stats = null;
@@ -204,7 +204,7 @@ export default {
     }
     // Read the target, compute its hash and diff its content
     if (targetStats) {
-      ({ data: targetContent } = await this.fs.base.readFile({
+      ({ data: targetContent } = await this.fs.readFile({
         target: config.target,
         encoding: config.encoding,
       }));
@@ -258,7 +258,7 @@ export default {
               config.flags = "a";
             }
           }
-          await this.fs.base.writeFile({
+          await this.fs.writeFile({
             target: config.target,
             flags: config.flags,
             content: config.content,

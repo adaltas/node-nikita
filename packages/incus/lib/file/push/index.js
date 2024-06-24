@@ -13,7 +13,7 @@ export default {
         tmpdir,
         `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`
       );
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         target: tmpfile,
         content: config.content,
       });

@@ -6,7 +6,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.createWriteStream.sudo', ->
+describe 'actions.fs.createWriteStream.sudo', ->
   return unless test.tags.sudo
 
   they 'write a file', ({ssh}) ->
@@ -15,7 +15,7 @@ describe 'actions.fs.base.createWriteStream.sudo', ->
       $sudo: true
       $tmpdir: true
     , ({metadata: {tmpdir}, ssh}) ->
-      await @fs.base.createWriteStream
+      await @fs.createWriteStream
         target: "#{tmpdir}/a_file"
         stream: (ws) ->
           ws.write 'hello'
@@ -29,12 +29,12 @@ describe 'actions.fs.base.createWriteStream.sudo', ->
       $sudo: true
       $tmpdir: true
     , ({metadata: {tmpdir}, ssh}) ->
-      await @fs.base.createWriteStream
+      await @fs.createWriteStream
         target: "#{tmpdir}/a_file"
         stream: (ws) ->
           ws.write 'hello'
           ws.end()
-      await @fs.base.createWriteStream
+      await @fs.createWriteStream
         flags: 'a'
         target: "#{tmpdir}/a_file"
         stream: (ws) ->

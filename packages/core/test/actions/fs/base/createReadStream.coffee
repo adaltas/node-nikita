@@ -4,7 +4,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.createReadStream', ->
+describe 'actions.fs.createReadStream', ->
   return unless test.tags.posix
 
   they 'option on_readable', ({ssh}) ->
@@ -14,10 +14,10 @@ describe 'actions.fs.base.createReadStream', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      await @fs.base.createReadStream
+      await @fs.createReadStream
         target: "{{parent.metadata.tmpdir}}/a_file"
         on_readable: (rs) ->
           while buffer = rs.read()
@@ -31,10 +31,10 @@ describe 'actions.fs.base.createReadStream', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      @fs.base.createReadStream
+      @fs.createReadStream
         target: "{{parent.metadata.tmpdir}}/a_file"
         stream: (rs) ->
           rs.on 'readable', ->
@@ -55,12 +55,12 @@ describe 'actions.fs.base.createReadStream', ->
       nikita
         $ssh: ssh
       , ->
-        @fs.base.createReadStream
+        @fs.createReadStream
           stream: (->)
         .should.be.rejectedWith
           message: [
             'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-            'one error was found in the configuration of action `fs.base.createReadStream`:'
+            'one error was found in the configuration of action `fs.createReadStream`:'
             # '#/definitions/config/required'
             '#/required'
             'config must have required property \'target\'.'
@@ -71,7 +71,7 @@ describe 'actions.fs.base.createReadStream', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.createReadStream
+        @fs.createReadStream
           target: "#{tmpdir}/a_file"
           stream: (rs) ->
             rs.on 'readable', ->
@@ -89,7 +89,7 @@ describe 'actions.fs.base.createReadStream', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.createReadStream
+        @fs.createReadStream
           target: "#{tmpdir}"
           on_readable: (rs) ->
             while buffer = rs.read()

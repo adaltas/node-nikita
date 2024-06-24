@@ -45,7 +45,7 @@ const {data} = await nikita
   replace: 'New string\n',
   target: `${scratch}/a_file`
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
@@ -63,7 +63,7 @@ const {data} = await nikita
   replace: '$1=david (was $2)',
   target: `${scratch}/a_file`
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
@@ -81,7 +81,7 @@ const {data} = await nikita
   replace: ['New string, $1'],
   target: `${scratch}/a_file`
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
@@ -99,7 +99,7 @@ const {data} = await nikita
   replace: 'property=50',
   target: `${scratch}/a_file`
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
@@ -118,7 +118,7 @@ const {data} = await nikita
   target: `${scratch}/a_file`,
   append: 'property'
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })
@@ -139,7 +139,7 @@ const {data} = await nikita
   ],
   target: `${scratch}/a_file`
 })
-.fs.base.readFile({
+.fs.readFile({
   target: `${scratch}/a_file`,
   encoding: 'ascii'
 })

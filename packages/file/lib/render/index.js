@@ -8,7 +8,7 @@ export default {
   handler: async function ({ config, tools: { log } }) {
     // Read source
     if (config.source) {
-      const { data } = await this.fs.base.readFile({
+      const { data } = await this.fs.readFile({
         $ssh: config.local ? false : undefined,
         $sudo: config.local ? false : undefined,
         target: config.source,

@@ -42,7 +42,7 @@ describe 'actions.execute.config.sudo', ->
         command: 'whoami'
         trim: true
       tmpdir
-    {files} = await nikita.fs.base.readdir
+    {files} = await nikita.fs.readdir
       $ssh: ssh
       $sudo: true
       target: tmpdir

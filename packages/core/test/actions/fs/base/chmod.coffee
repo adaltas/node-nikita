@@ -40,12 +40,12 @@ describe 'actions.fs.base.chmod', ->
         $templated: true
         $tmpdir: true
       , ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "{{parent.metadata.tmpdir}}/a_target"
           content: 'hello'
         await @fs.base.chmod
           mode: 0o600
           target: "{{parent.metadata.tmpdir}}/a_target"
-        {stats} = await @fs.base.stat
+        {stats} = await @fs.stat
           target: "{{parent.metadata.tmpdir}}/a_target"
         (stats.mode & 0o777).toString(8).should.eql '600'

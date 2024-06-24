@@ -46,7 +46,7 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/org_file"
         content: ''
       {$status} = await @fs.move
@@ -68,7 +68,7 @@ describe 'actions.fs.move', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.mkdir "#{tmpdir}/a_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: ''
       {$status} = await @fs.move
@@ -89,13 +89,13 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/src1.txt"
         content: 'hello'
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/src2.txt"
         content: 'hello'
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/dest.txt"
         content: 'overwritten'
       {$status} = await @fs.move
@@ -118,10 +118,10 @@ describe 'actions.fs.move', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/src.txt"
         content: 'hello'
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/dest.txt"
         content: 'hello'
       {$status} = await @fs.move

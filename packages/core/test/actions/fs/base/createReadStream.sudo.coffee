@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.createReadStream.sudo', ->
+describe 'actions.fs.createReadStream.sudo', ->
   return unless test.tags.sudo
 
   they 'read file', ({ssh}) ->
@@ -18,7 +18,7 @@ describe 'actions.fs.base.createReadStream.sudo', ->
       echo -n 'hello' | sudo tee #{tmpdir}/a_file
       """
       buffers = []
-      await @fs.base.createReadStream
+      await @fs.createReadStream
         stream: (rs) ->
           rs.on 'readable', ->
             while buffer = rs.read()
@@ -32,7 +32,7 @@ describe 'actions.fs.base.createReadStream.sudo', ->
       $tmpdir: true
       $sudo: true
     , ({metadata: {tmpdir}}) ->
-      @fs.base.createReadStream
+      @fs.createReadStream
         target: "#{tmpdir}/a_file"
         stream: (rs) ->
           rs.on 'readable', ->

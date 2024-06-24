@@ -4,10 +4,10 @@ import definitions from "./schema.json" with { type: "json" };
 // Action
 export default {
   handler: async function ({ config, tools: { log, path } }) {
-    const { exists } = await this.fs.base.exists(config.target);
+    const { exists } = await this.fs.exists(config.target);
     if (!exists) {
       log("WARN", `Rename ${config.source} to ${config.target}`);
-      await this.fs.base.rename({
+      await this.fs.rename({
         source: config.source,
         target: config.target,
       });
@@ -19,7 +19,7 @@ export default {
         target: config.target,
       });
       log("WARN", `Rename ${config.source} to ${config.target}`);
-      await this.fs.base.rename({
+      await this.fs.rename({
         source: config.source,
         target: config.target,
       });
@@ -49,7 +49,7 @@ export default {
       target: config.target,
     });
     log("WARN", `Rename ${config.source} to ${config.target}`);
-    await this.fs.base.rename({
+    await this.fs.rename({
       source: config.source,
       target: config.target,
     });

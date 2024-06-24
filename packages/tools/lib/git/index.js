@@ -13,13 +13,13 @@ export default {
     let repo_uptodate = false;
     const {
       exists: repo_exists
-    } = (await this.fs.base.exists({
+    } = (await this.fs.exists({
       target: config.target
     }));
     if (repo_exists) {
       const {
         exists: is_git
-      } = (await this.fs.base.exists({
+      } = (await this.fs.exists({
         target: `${config.target}/.git`
       }));
       if (!is_git) {

@@ -28,7 +28,7 @@ describe 'file.cache file', ->
         cache_file: "#{tmpdir}/my_cache_file"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       $status.should.be.false()
-      {data} = await @fs.base.readFile
+      {data} = await @fs.readFile
         target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
         encoding: 'utf8'
       (data.includes 'Hashes match, skipping').should.be.true()
@@ -103,7 +103,7 @@ describe 'file.cache file', ->
           cache_file: "#{tmpdir}/target"
           md5: true
         .should.be.finally.containEql $status: false
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes '[DEBUG] Hashes match, skipping').should.be.true()
@@ -112,7 +112,7 @@ describe 'file.cache file', ->
           cache_file: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql $status: false
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes '[DEBUG] Hashes match, skipping').should.be.true()

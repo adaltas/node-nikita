@@ -12,7 +12,7 @@ describe 'plugin.assertions assert_exists', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @fs.base.writeFile
+      @fs.writeFile
         $assert_exists: "#{tmpdir}/a_file"
         content: ''
         target: "#{tmpdir}/a_file"
@@ -29,10 +29,10 @@ describe 'plugin.assertions assert_exists', ->
           "#{tmpdir}/file_2"
         ]
       , ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: ''
           target: "#{tmpdir}/file_1"
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: ''
           target: "#{tmpdir}/file_2"
       .should.be.resolved()

@@ -37,7 +37,7 @@ export default {
       stream: config.stream ?? fs.createWriteStream(path.resolve(logdir, path.basename(config.filename))),
     });
     // Handle link to latest directory
-    await this.fs.base.symlink({
+    await this.fs.symlink({
       $if: latestdir,
       $ssh: false,
       source: logdir,

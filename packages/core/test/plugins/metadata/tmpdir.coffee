@@ -188,10 +188,10 @@ describe 'plugins.metadata.tmpdir', ->
       , ->
         try
           await @call $tmpdir: true, $dirty: true, (->)
-          {exists} = await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
+          {exists} = await @fs.exists '{{siblings.0.metadata.tmpdir}}'
           exists.should.be.true()
         finally
-          await @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
+          await @fs.rmdir '{{siblings.0.metadata.tmpdir}}'
 
     they 'is false', ({ssh}) ->
       nikita
@@ -199,5 +199,5 @@ describe 'plugins.metadata.tmpdir', ->
         $templated: true
       , ->
         await @call $tmpdir: true, $dirty: false, (->)
-        await @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
+        await @fs.exists '{{siblings.0.metadata.tmpdir}}'
         .should.finally.match exists: false

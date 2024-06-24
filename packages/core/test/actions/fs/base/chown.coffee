@@ -51,7 +51,7 @@ describe 'actions.fs.base.chown', ->
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
         await @fs.base.chown "#{tmpdir}/a_file", uid: 1234, gid: 5678
-        {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+        {stats} = await @fs.stat "#{tmpdir}/a_file"
         stats.should.match
           uid: 1234
           gid: 5678
@@ -67,7 +67,7 @@ describe 'actions.fs.base.chown', ->
         groupadd 'toto' -g 5678; useradd 'toto' -u 1234 -g 5678
         """
         await @fs.base.chown "#{tmpdir}/a_file", uid: 'toto', gid: 'toto'
-        {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+        {stats} = await @fs.stat "#{tmpdir}/a_file"
         stats.should.match
           uid: 1234
           gid: 5678

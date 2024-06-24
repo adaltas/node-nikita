@@ -97,7 +97,7 @@ describe 'plugins.tools.schema.$ref', ->
       nikita
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_module.js"
           content: '''
           module.exports = {

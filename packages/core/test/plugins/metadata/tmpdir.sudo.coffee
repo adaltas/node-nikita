@@ -16,7 +16,7 @@ describe 'plugins.metadata.tmpdir', ->
       $sudo: true
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      {stats} = await @fs.base.stat tmpdir
+      {stats} = await @fs.stat tmpdir
       stats.should.match
         mode: 0o40744
         uid: 0

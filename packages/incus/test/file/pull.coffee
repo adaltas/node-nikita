@@ -89,7 +89,7 @@ describe 'incus.file.pull', ->
             source: "/root/file.sh"
             target: "#{tmpdir}/"
           # check if file exists in temp directory
-          {exists} = await @fs.base.exists
+          {exists} = await @fs.exists
             target: "#{tmpdir}/file.sh"
           exists.should.be.eql true
         try 

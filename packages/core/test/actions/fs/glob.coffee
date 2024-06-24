@@ -25,9 +25,9 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_file", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/*"
       files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_dir"
@@ -40,10 +40,10 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_file", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
       await @fs.base.mkdir "#{tmpdir}/test/a_dir/a_sub_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/a_sub_dir/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/a_sub_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**"
       files.sort().should.eql [
         "#{tmpdir}/test"
@@ -61,9 +61,9 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/*.coffee"
       files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_file.coffee"
@@ -75,9 +75,9 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**/*.coffee"
       files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_dir/a_file.coffee"
@@ -98,9 +98,9 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/.git", content: ''
+      await @fs.writeFile "#{tmpdir}/test/.git", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/.gitignore", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/.gitignore", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**", dot: true
       files.sort().should.eql [
         "#{tmpdir}/test"
@@ -115,9 +115,9 @@ describe 'actions.fs.glob', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir "#{tmpdir}/test"
-      await @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_file", content: ''
       await @fs.base.mkdir "#{tmpdir}/test/a_dir"
-      await @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
+      await @fs.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**", trailing: true
       files.sort().should.eql [
         "#{tmpdir}/test/"

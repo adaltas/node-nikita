@@ -97,7 +97,7 @@ describe 'log.fs', ->
           archive: true
         await @call ({tools: {log}})->
           log message: 'ok'
-        {stats} = await @fs.base.lstat "#{tmpdir}/latest"
+        {stats} = await @fs.lstat "#{tmpdir}/latest"
         utils.stats.isSymbolicLink(stats.mode).should.be.true()
         await @fs.assert
           target: "#{tmpdir}/latest/#{ssh?.host or 'local'}.log"

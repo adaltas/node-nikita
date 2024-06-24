@@ -16,7 +16,7 @@ describe 'actions.fs.base.mkdir', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_directory"
-      @fs.base.stat
+      @fs.stat
         target: "{{parent.metadata.tmpdir}}/a_directory"
       .then ({stats}) ->
         utils.stats.isDirectory(stats.mode).should.be.true()

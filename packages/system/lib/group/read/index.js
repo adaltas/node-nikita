@@ -35,7 +35,7 @@ export default {
       });
       groups = str2groups(stdout);
     } else {
-      const { data } = await this.fs.base.readFile({
+      const { data } = await this.fs.readFile({
         target: config.target,
         encoding: "ascii",
       });

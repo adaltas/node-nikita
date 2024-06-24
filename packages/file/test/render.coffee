@@ -71,7 +71,7 @@ describe 'file.render', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello {{ who }}'
         await @file.render
@@ -88,7 +88,7 @@ describe 'file.render', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/source.hbs"
           content: 'Hello "{{ who }}" \'{{ anInt }}\''
         await @file.render

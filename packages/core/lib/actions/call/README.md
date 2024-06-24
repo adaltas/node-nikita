@@ -40,7 +40,7 @@ assert(key === 'value')
 
 ```js
 const value = await nikita(function(){
-  await this.fs.base.writeFile({
+  await this.fs.writeFile({
     content: 'export default ({config}) => "my secret"',
     target: '/tmp/my_module'
   })

@@ -9,7 +9,7 @@ export default {
         message: `Check if target exists \"${config.target}\"`,
         level: "DEBUG",
       });
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         target: config.target,
       });
       if (!exists) {

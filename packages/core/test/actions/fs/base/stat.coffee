@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.stat', ->
+describe 'actions.fs.stat', ->
   return unless test.tags.posix
 
   they 'NIKITA_FS_STAT_TARGET_ENOENT target does not exists', ({ssh}) ->
@@ -14,7 +14,7 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.stat
+      @fs.stat
         target: "{{parent.metadata.tmpdir}}/not_here"
       .should.be.rejectedWith
         code: 'NIKITA_FS_STAT_TARGET_ENOENT'
@@ -26,10 +26,10 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      {stats} = await @fs.base.stat
+      {stats} = await @fs.stat
         target: "{{parent.metadata.tmpdir}}/a_file"
       utils.stats.isFile(stats.mode).should.be.true()
       stats.mode.should.be.a.Number()
@@ -45,10 +45,10 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a file"
         content: 'hello'
-      {stats} = await @fs.base.stat
+      {stats} = await @fs.stat
         target: "{{parent.metadata.tmpdir}}/a file"
       utils.stats.isFile(stats.mode).should.be.true()
       stats.mode.should.be.a.Number()
@@ -66,7 +66,7 @@ describe 'actions.fs.base.stat', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      {stats} = await @fs.base.stat
+      {stats} = await @fs.stat
         target: "{{parent.metadata.tmpdir}}/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
@@ -76,13 +76,13 @@ describe 'actions.fs.base.stat', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      await @fs.base.symlink
+      await @fs.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_file"
-      {stats} = await @fs.base.lstat
+      {stats} = await @fs.lstat
         target: "{{parent.metadata.tmpdir}}/a_link"
       utils.stats.isFile(stats.mode).should.be.false()
       utils.stats.isSymbolicLink(stats.mode).should.be.true()
@@ -95,10 +95,10 @@ describe 'actions.fs.base.stat', ->
     , ->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      await @fs.base.symlink
+      await @fs.symlink
         target: "{{parent.metadata.tmpdir}}/a_link"
         source: "{{parent.metadata.tmpdir}}/a_dir"
-      {stats} = await @fs.base.lstat
+      {stats} = await @fs.lstat
         target: "{{parent.metadata.tmpdir}}/a_link"
       utils.stats.isDirectory(stats.mode).should.be.false()
       utils.stats.isSymbolicLink(stats.mode).should.be.true()

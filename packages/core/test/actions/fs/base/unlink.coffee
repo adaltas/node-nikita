@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.unlink', ->
+describe 'actions.fs.unlink', ->
   return unless test.tags.posix
 
   they 'a file', ({ssh}) ->
@@ -14,12 +14,12 @@ describe 'actions.fs.base.unlink', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         content: 'hello'
-      await @fs.base.unlink
+      await @fs.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
-      @fs.base.exists
+      @fs.exists
         target: "{{parent.metadata.tmpdir}}/a_target"
       .should.be.finally.containEql exists: false
 
@@ -31,10 +31,10 @@ describe 'actions.fs.base.unlink', ->
     , ({metadata: {tmpdir}})->
       await @fs.base.mkdir
         target: "{{parent.metadata.tmpdir}}/a_dir"
-      await @fs.base.symlink
+      await @fs.symlink
         source: "{{parent.metadata.tmpdir}}/a_dir"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      await @fs.base.unlink
+      await @fs.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
       await @fs.assert
         target: "{{parent.metadata.tmpdir}}/a_dir"
@@ -49,7 +49,7 @@ describe 'actions.fs.base.unlink', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.unlink
+      @fs.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
       .should.be.rejectedWith
         code: 'NIKITA_FS_UNLINK_ENOENT'
@@ -63,7 +63,7 @@ describe 'actions.fs.base.unlink', ->
     , ->
       await @fs.mkdir
         target: "{{parent.metadata.tmpdir}}/a_target"
-      @fs.base.unlink
+      @fs.unlink
         target: "{{parent.metadata.tmpdir}}/a_target"
       .should.be.rejectedWith
         code: 'NIKITA_FS_UNLINK_EPERM'

@@ -7,13 +7,13 @@ export default {
     let status = false;
     // Validate parameters
     for (const target of config.target) {
-      const { exists } = await this.fs.base.exists(target);
+      const { exists } = await this.fs.exists(target);
       if (exists) {
         continue;
       }
       await this.wait(config.interval);
       while (true) {
-        const { exists } = await this.fs.base.exists(target);
+        const { exists } = await this.fs.exists(target);
         if (exists) {
           break;
         }

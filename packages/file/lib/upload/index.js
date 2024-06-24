@@ -19,7 +19,7 @@ export default {
       },
       async function () {
         try {
-          const { stats } = await this.fs.base.stat({
+          const { stats } = await this.fs.stat({
             $ssh: false,
             $sudo: false,
             target: config.target,
@@ -42,7 +42,7 @@ export default {
             path.basename(config.source)
           );
           try {
-            const { stats } = await this.fs.base.stat({
+            const { stats } = await this.fs.stat({
               $ssh: false,
               $sudo: false,
               target: config.target,
@@ -105,7 +105,7 @@ export default {
       $sudo: false,
       target: path.dirname(stage_target),
     });
-    await this.fs.base.createReadStream({
+    await this.fs.createReadStream({
       target: config.source,
       stream: (rs) => rs.pipe(fs.createWriteStream(stage_target)),
     });

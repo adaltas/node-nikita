@@ -12,7 +12,7 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
       @fs.remove
@@ -24,7 +24,7 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
       {$status} = await @fs.remove "#{tmpdir}/a_file"
@@ -35,10 +35,10 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/file_1"
         content: ''
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/file_2"
         content: ''
       (await @fs.remove [
@@ -53,7 +53,7 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
       {$status} = await @fs.remove
@@ -68,10 +68,10 @@ describe 'actions.fs.remove', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
-      await @fs.base.symlink
+      await @fs.symlink
         source: "#{tmpdir}/a_file"
         target: "#{tmpdir}/a_link"
       {$status} = await await @fs.remove
@@ -88,16 +88,16 @@ describe 'actions.fs.remove', ->
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir
         target: "#{tmpdir}/a_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: ''
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir.tar.gz"
         content: ''
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir.tz"
         content: ''
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir.zip"
         content: ''
       {$status} = await @fs.remove
@@ -129,7 +129,7 @@ describe 'actions.fs.remove', ->
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/remove_dir/a_file"
         content: ''
       @fs.remove
@@ -145,7 +145,7 @@ describe 'actions.fs.remove', ->
     , ({metadata: {tmpdir}}) ->
       await @fs.base.mkdir
         target: "#{tmpdir}/remove_dir"
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/remove_dir/a_file"
         content: ''
       @fs.remove

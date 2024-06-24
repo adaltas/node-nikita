@@ -111,12 +111,12 @@ describe 'file.touch', ->
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
         await @file.touch "#{tmpdir}/a_file"
-        {stats: stat_org} = await @fs.base.stat target: "#{tmpdir}/a_file"
+        {stats: stat_org} = await @fs.stat target: "#{tmpdir}/a_file"
         # Bypass fs cache, a value of 500 is not always enough
         await new Promise (resolve) -> setTimeout resolve, 1000
         await @file.touch "#{tmpdir}/a_file"
         .should.be.finally.containEql $status: false
-        {stats: stat_new} = await @fs.base.stat target: "#{tmpdir}/a_file"
+        {stats: stat_new} = await @fs.stat target: "#{tmpdir}/a_file"
         stat_org.mtime.should.not.eql stat_new.mtime
 
     they 'missing target', ({ssh}) ->

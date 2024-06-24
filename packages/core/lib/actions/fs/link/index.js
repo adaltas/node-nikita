@@ -21,13 +21,13 @@ export default {
           $raw_output: true,
         },
         async function () {
-          const { exists } = await this.fs.base.exists({
+          const { exists } = await this.fs.exists({
             target: config.target,
           });
           if (!exists) {
             return false;
           }
-          const { data } = await this.fs.base.readFile({
+          const { data } = await this.fs.readFile({
             target: config.target,
             encoding: "utf8",
           });
@@ -42,7 +42,7 @@ export default {
         #!/bin/bash
         exec ${config.source} $@
       `;
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         target: config.target,
         content: content,
       });
@@ -57,13 +57,13 @@ export default {
         },
         async function () {
           try {
-            const { target } = await this.fs.base.readlink({
+            const { target } = await this.fs.readlink({
               target: config.target,
             });
             if (target === config.source) {
               return true;
             }
-            await this.fs.base.unlink({
+            await this.fs.unlink({
               target: config.target,
             });
             return false;
@@ -75,7 +75,7 @@ export default {
       if (exists) {
         return;
       }
-      await this.fs.base.symlink({
+      await this.fs.symlink({
         source: config.source,
         target: config.target,
       });

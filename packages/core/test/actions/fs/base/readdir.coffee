@@ -6,7 +6,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.readdir', ->
+describe 'actions.fs.readdir', ->
   return unless test.tags.posix
   
   it 'get native behavior', ->
@@ -43,9 +43,9 @@ describe 'actions.fs.base.readdir', ->
     , ->
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
-      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
-      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
-      @fs.base.readdir "{{parent.metadata.tmpdir}}/parent"
+      await @fs.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
+      await @fs.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
+      @fs.readdir "{{parent.metadata.tmpdir}}/parent"
       .then ({files}) ->
         files.sort().should.eql ['a_dir', 'file_1', 'file_2']
 
@@ -55,7 +55,7 @@ describe 'actions.fs.base.readdir', ->
       $templated: true
       $tmpdir: true
     , ->
-      @fs.base.readdir "{{parent.metadata.tmpdir}}/missing"
+      @fs.readdir "{{parent.metadata.tmpdir}}/missing"
       .should.be.rejectedWith
         code: 'NIKITA_FS_READDIR_TARGET_ENOENT'
         message: /NIKITA_FS_READDIR_TARGET_ENOENT: fail to read a directory, target is not a directory, got ".*\/missing"/
@@ -68,9 +68,9 @@ describe 'actions.fs.base.readdir', ->
     , ->
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent"
       await @fs.base.mkdir "{{parent.metadata.tmpdir}}/parent/a_dir"
-      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
-      await @fs.base.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
-      @fs.base.readdir "{{parent.metadata.tmpdir}}/parent", withFileTypes: true
+      await @fs.writeFile "{{parent.metadata.tmpdir}}/parent/file_1", content: 'hello'
+      await @fs.writeFile "{{parent.metadata.tmpdir}}/parent/file_2", content: 'hello'
+      @fs.readdir "{{parent.metadata.tmpdir}}/parent", withFileTypes: true
       .then ({files}) ->
         files = files.sort()
         files.map (file) -> JSON.parse JSON.stringify file # Convert Dirent to object literal

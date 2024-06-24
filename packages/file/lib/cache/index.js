@@ -72,7 +72,7 @@ export default {
         message: `Check if target (${config.target}) exists`,
         level: "DEBUG",
       });
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         target: config.target,
       });
       if (exists) {
@@ -106,7 +106,7 @@ export default {
             message: "Hashes don't match, delete then re-download",
             level: "WARN",
           });
-          await this.fs.base.unlink({
+          await this.fs.unlink({
             target: config.target,
           });
           return true;

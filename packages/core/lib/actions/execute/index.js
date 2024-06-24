@@ -95,7 +95,7 @@ export default {
         message: `Writing env export to ${JSON.stringify(env_export_target)}`,
         level: "INFO",
       });
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         $sudo: config.sudo, // Is it really necessary ?
         content: env_export_content,
         mode: config.mode,
@@ -123,7 +123,7 @@ export default {
       if (config.sudo) {
         config.command = `sudo ${config.command}`;
       }
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         $sudo: config.sudo, // Is it really necessary ?
         target: `${target}`,
         content: `${command}`,
@@ -158,7 +158,7 @@ export default {
       // config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
       // # Note, rm cannot be remove with arch_chroot enabled
       // config.command += " && code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         $sudo: config.sudo, // Is it really necessary ?
         content: command,
         mode: config.mode,

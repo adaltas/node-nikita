@@ -1,0 +1,45 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "encoding": {
+        "$ref": "module://@nikitajs/core/actions/fs/createReadStream#/definitions/config/properties/encoding"
+      },
+      "format": {
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "json",
+              "jsonlines",
+              "lines",
+              "yaml"
+            ]
+          },
+          {
+            "typeof": "function"
+          }
+        ],
+        "description": "Parse the file content."
+      },
+      "target": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "instanceof": "Buffer"
+          }
+        ],
+        "description": "Source location of the file to read."
+      },
+      "trim": {
+        "type": "boolean",
+        "description": "Trim the content."
+      }
+    },
+    "required": [
+      "target"
+    ]
+  }
+}

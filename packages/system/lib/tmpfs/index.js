@@ -35,7 +35,7 @@ export default {
     if (config.merge) {
       log("DEBUG", "opening target file for merge");
       try {
-        const { data } = await this.fs.base.readFile({
+        const { data } = await this.fs.readFile({
           target: config.target,
           encoding: "utf8",
         });

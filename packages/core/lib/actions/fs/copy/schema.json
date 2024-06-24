@@ -44,7 +44,7 @@
       "source_stats": {
         "type": "object",
         "description": "Short-circuit to prevent source stat retrieval if already at our\ndisposal.",
-        "$ref": "module://@nikitajs/core/actions/fs/base/stat#/definitions/output/properties/stats"
+        "$ref": "module://@nikitajs/core/actions/fs/stat#/definitions/output/properties/stats"
       },
       "target": {
         "type": "string",
@@ -53,7 +53,7 @@
       "target_stats": {
         "type": "object",
         "description": "Short-circuit to prevent target stat retrieval if already at our\ndisposal.",
-        "$ref": "module://@nikitajs/core/actions/fs/base/stat#/definitions/output/properties/stats"
+        "$ref": "module://@nikitajs/core/actions/fs/stat#/definitions/output/properties/stats"
       },
       "uid": {
         "$ref": "module://@nikitajs/core/actions/fs/chown#/definitions/config/properties/uid"

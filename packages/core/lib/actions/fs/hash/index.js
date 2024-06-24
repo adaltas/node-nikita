@@ -44,7 +44,7 @@ export default {
   handler: async function ({ config }) {
     const { stats } = config.stats
       ? config.stats
-      : await this.fs.base.stat(config.target);
+      : await this.fs.stat(config.target);
     if (
       !utils.stats.isFile(stats.mode) &&
       !utils.stats.isDirectory(stats.mode)

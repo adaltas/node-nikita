@@ -121,7 +121,7 @@ export default {
       // The current implementation seems inefficient. By modifying stageDestination,
       // we download the file, check the hash, and again treat it the HTTP URL
       // as a local file and check hash again.
-      const { stats } = await this.fs.base.stat({
+      const { stats } = await this.fs.stat({
         target: config.target,
       });
       if (utils.stats.isDirectory(stats != null ? stats.mode : void 0)) {
@@ -169,7 +169,7 @@ export default {
           `Invalid downloaded checksum, found '${hash_source}' instead of '${source_hash}'`
         );
       }
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         target: config.target,
       });
       const { hash: hash_target } =
@@ -199,7 +199,7 @@ export default {
         target: config.source,
         algo: algo,
       });
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         target: config.target,
       });
       const { hash: hash_target } =
@@ -235,7 +235,7 @@ export default {
         target: config.source,
         algo: algo,
       });
-      const { exists } = await this.fs.base.exists({
+      const { exists } = await this.fs.exists({
         target: config.target,
       });
       const { hash: hash_target } =
@@ -257,7 +257,7 @@ export default {
           target: path.dirname(stageDestination),
         });
         try {
-          await this.fs.base.createWriteStream({
+          await this.fs.createWriteStream({
             target: stageDestination,
             stream: function (ws) {
               return fs.createReadStream(config.source).pipe(ws);

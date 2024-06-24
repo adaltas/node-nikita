@@ -22,7 +22,7 @@ describe 'plugin.assertions unassert_exists', ->
       $ssh: ssh
       $tmpdir: true
     , ({metadata: {tmpdir}})->
-      @fs.base.writeFile
+      @fs.writeFile
         $unassert_exists: "#{tmpdir}/a_file"
         content: ''
         target: "#{tmpdir}/a_file"
@@ -39,10 +39,10 @@ describe 'plugin.assertions unassert_exists', ->
           "#{tmpdir}/file_2"
         ]
       , ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: ''
           target: "#{tmpdir}/file_1"
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: ''
           target: "#{tmpdir}/file_2"
       .should.be.rejected()
@@ -59,7 +59,7 @@ describe 'plugin.assertions unassert_exists', ->
           "#{tmpdir}/file_3"
         ]
       , ->
-        @fs.base.writeFile
+        @fs.writeFile
           content: ''
           target: "#{tmpdir}/file_2"
       .should.be.rejected()

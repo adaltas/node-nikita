@@ -48,7 +48,7 @@ export default {
       }
     }
     // Stat the source file
-    const {stats} = (await this.fs.base.stat({
+    const {stats} = (await this.fs.stat({
       target: config.source
     }));
     if (!utils.stats.isFile(stats.mode)) {

@@ -76,7 +76,7 @@ export default {
         wait: true,
         format: "string",
       });
-      await this.fs.base.writeFile({
+      await this.fs.writeFile({
         target: config.target,
         content: data,
       });

@@ -15,7 +15,7 @@ describe 'actions.fs.mkdir', ->
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
       await @fs.mkdir "#{tmpdir}/a_dir"
-      {stats} = await @fs.base.stat "#{tmpdir}/a_dir"
+      {stats} = await @fs.stat "#{tmpdir}/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
   they 'status', ({ssh}) ->
@@ -35,7 +35,7 @@ describe 'actions.fs.mkdir', ->
     , ({metadata: {tmpdir}}) ->
       {$status} = await @fs.mkdir "#{tmpdir}/a_parent_dir/a_dir"
       $status.should.be.true()
-      {stats} = await @fs.base.stat "#{tmpdir}/a_parent_dir/a_dir"
+      {stats} = await @fs.stat "#{tmpdir}/a_parent_dir/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
   describe 'config.exclude', ->
@@ -227,7 +227,7 @@ describe 'actions.fs.mkdir', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "#{tmpdir}/a_file"
           content: ''
         @fs.mkdir

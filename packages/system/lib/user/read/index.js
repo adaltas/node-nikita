@@ -31,7 +31,7 @@ export default {
     // Fetch the users information
     let passwd;
     if (config.target) {
-      ({ data: passwd } = await this.fs.base.readFile({
+      ({ data: passwd } = await this.fs.readFile({
         target: config.target,
         encoding: "ascii",
         format: ({ data }) => str2passwd(data),

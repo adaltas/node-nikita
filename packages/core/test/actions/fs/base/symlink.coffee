@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.symlink', ->
+describe 'actions.fs.symlink', ->
   return unless test.tags.posix
 
   they 'create', ({ssh}) ->
@@ -14,13 +14,13 @@ describe 'actions.fs.base.symlink', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'hello'
-      await @fs.base.symlink
+      await @fs.symlink
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      {stats} = await @fs.base.stat
+      {stats} = await @fs.stat
         target: "{{parent.metadata.tmpdir}}/a_target"
         dereference: false
       utils.stats.isSymbolicLink(stats.mode).should.be.true()

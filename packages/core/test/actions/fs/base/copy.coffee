@@ -13,7 +13,7 @@ describe 'actions.fs.base.copy', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'some content'
       await @fs.base.mkdir
@@ -21,7 +21,7 @@ describe 'actions.fs.base.copy', ->
       await @fs.base.copy
         source: "{{parent.metadata.tmpdir}}/a_file"
         target: "{{parent.metadata.tmpdir}}/a_directory"
-      @fs.base.readFile
+      @fs.readFile
         target: "{{parent.metadata.tmpdir}}/a_directory/a_file"
         encoding: 'utf8'
       .should.be.finally.containEql data: 'some content'
@@ -32,16 +32,16 @@ describe 'actions.fs.base.copy', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some source content'
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         content: 'some target content'
       await @fs.base.copy
         source: "{{parent.metadata.tmpdir}}/a_source"
         target: "{{parent.metadata.tmpdir}}/a_target"
-      @fs.base.readFile
+      @fs.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         encoding: 'utf8'
       .should.be.finally.containEql data: 'some source content'
@@ -52,12 +52,12 @@ describe 'actions.fs.base.copy', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some content'
       await @fs.base.copy "{{parent.metadata.tmpdir}}/a_target",
         source: "{{parent.metadata.tmpdir}}/a_source"
-      @fs.base.readFile
+      @fs.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         encoding: 'utf8'
       .should.be.finally.containEql data: 'some content'
@@ -68,7 +68,7 @@ describe 'actions.fs.base.copy', ->
       $templated: true
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_source"
         content: 'some content'
       @fs.base.copy

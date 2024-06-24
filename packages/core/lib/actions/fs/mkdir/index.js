@@ -48,7 +48,7 @@ export default {
     let stats
     for(const target of parents) {
       try {
-        ({ stats } = await this.fs.base.stat(target));
+        ({ stats } = await this.fs.stat(target));
         if (utils.stats.isDirectory(stats.mode)) {
           break;
         }

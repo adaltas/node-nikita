@@ -7,7 +7,7 @@ import definitions from "./schema.json" with { type: "json" };
 export default {
   handler: async function({config}) {
     const parse = config.parse || utils.ini.parse;
-    const {data} = (await this.fs.base.readFile({
+    const {data} = (await this.fs.readFile({
       target: config.target,
       encoding: config.encoding
     }));

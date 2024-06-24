@@ -12,7 +12,7 @@ export default {
         level: "DEBUG",
       });
       try {
-        const { data } = await this.fs.base.readFile({
+        const { data } = await this.fs.readFile({
           target: config.target,
           encoding: config.encoding,
         });

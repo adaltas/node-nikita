@@ -193,7 +193,7 @@ describe 'file.download file', ->
           target: "#{tmpdir}/check_md5"
           md5: true
         .should.be.finally.containEql $status: false
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql "[WARN] Hash dont match, source is \"df8fede7ff71608e24a5576326e41c75\" and target is \"undefined\"."

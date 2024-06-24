@@ -4,7 +4,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.writeFile.sudo', ->
+describe 'actions.fs.writeFile.sudo', ->
   return unless test.tags.sudo
 
   they 'owner is root', ({ssh}) ->
@@ -14,10 +14,10 @@ describe 'actions.fs.base.writeFile.sudo', ->
       $tmpdir: true
       $sudo: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'some content'
-      {stats} = await @fs.base.stat "{{parent.metadata.tmpdir}}/a_file"
+      {stats} = await @fs.stat "{{parent.metadata.tmpdir}}/a_file"
       stats.uid.should.eql 0
       stats.gid.should.eql 0
 

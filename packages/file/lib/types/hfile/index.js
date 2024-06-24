@@ -15,7 +15,7 @@ export default {
     });
     try {
       // Populate org_props and, if merge, fnl_props
-      const { data } = await this.fs.base.readFile({
+      const { data } = await this.fs.readFile({
         encoding: config.encoding,
         target: config.target,
       });
@@ -39,7 +39,7 @@ export default {
         level: "DEBUG",
       });
       // Populate config.source
-      const { data } = await this.fs.base.readFile({
+      const { data } = await this.fs.readFile({
         $ssh: config.local ? false : undefined,
         encoding: config.encoding,
         target: config.target,

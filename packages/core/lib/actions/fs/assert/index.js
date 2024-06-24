@@ -159,11 +159,11 @@ const errors = {
 // Action
 export default {
   handler: async function({config}) {
-    // Cached version of `nikita.fs.base.lstat`
+    // Cached version of `nikita.fs.lstat`
     const cache = {}
     const lstat = async (location) => {
       if (cache[location] != null) return cache[location];
-      return cache[location] = await this.fs.base.lstat(config.target)
+      return cache[location] = await this.fs.lstat(config.target)
     }
     config.filetype = (function() {
       const results = [];
@@ -227,7 +227,7 @@ export default {
     // if content is not defined and there is no hash nor mode
     // hash and mode verification are done later, whether the file was updated or not
     if ((config.content == null && !(config.md5 || config.sha1 || config.sha256 || config.mode?.length))) {
-      const {exists} = (await this.fs.base.exists(config.target.toString()));
+      const {exists} = (await this.fs.exists(config.target.toString()));
       if (!config.not) {
         if (!exists) {
           throw errors.NIKITA_FS_ASSERT_FILE_MISSING({
@@ -297,7 +297,7 @@ export default {
     }
     // Assert content equal
     if ((config.content != null) && (typeof config.content === 'string' || Buffer.isBuffer(config.content))) {
-      let {data} = (await this.fs.base.readFile(config.target));
+      let {data} = (await this.fs.readFile(config.target));
       for (const filter of config.filter) {
         data = filter[Symbol.replace](data, '');
       }
@@ -326,7 +326,7 @@ export default {
     }
     // Assert content match
     if (config.content != null && config.content instanceof RegExp) {
-      let {data} = (await this.fs.base.readFile(config.target));
+      let {data} = (await this.fs.readFile(config.target));
       for (const filter of config.filter)  {
         data = filter[Symbol.replace](data, '');
       }

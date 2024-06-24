@@ -18,7 +18,7 @@ export default {
           message: `Stats source file ${config.source}`,
           level: "DEBUG",
         });
-        const { stats } = await this.fs.base.stat({
+        const { stats } = await this.fs.stat({
           target: config.source,
         });
         return stats;
@@ -38,7 +38,7 @@ export default {
           level: "DEBUG",
         });
         try {
-          const { stats } = await this.fs.base.stat({
+          const { stats } = await this.fs.stat({
             target: config.target,
           });
           return stats;
@@ -95,7 +95,7 @@ export default {
               config.target,
               path.relative(config.source, source)
             );
-            const { stats } = await this.fs.base.stat({
+            const { stats } = await this.fs.stat({
               target: source,
             });
             let uid = config.uid;

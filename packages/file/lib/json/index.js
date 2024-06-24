@@ -7,7 +7,7 @@ export default {
   handler: async function({config}) {
     if (config.merge) {
       try {
-        const {data} = await this.fs.base.readFile({
+        const {data} = await this.fs.readFile({
           target: config.target,
           encoding: 'utf8'
         });
@@ -19,7 +19,7 @@ export default {
       }
     }
     if (config.source) {
-      const {data} = await this.fs.base.readFile({
+      const {data} = await this.fs.readFile({
         $ssh: config.local ? false : void 0,
         $sudo: config.local ? false : void 0,
         target: config.source,

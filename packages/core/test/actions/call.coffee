@@ -46,7 +46,7 @@ describe 'actions.call', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: '''
           module.exports = ({config}) => {
             return config
@@ -61,7 +61,7 @@ describe 'actions.call', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: '''
           module.exports = {
             metadata: {
@@ -85,7 +85,7 @@ describe 'actions.call', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: '''
           module.exports = {
             metadata: {
@@ -104,7 +104,7 @@ describe 'actions.call', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           content: '''
           module.exports = {
             metadata: {

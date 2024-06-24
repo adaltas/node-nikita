@@ -159,7 +159,7 @@ describe 'log.md', ->
         await @execute """
           echo 'this is a one line output'
           """
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
@@ -177,7 +177,7 @@ describe 'log.md', ->
         await @execute """
           echo 'this is a first line'
           """
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
@@ -194,7 +194,7 @@ describe 'log.md', ->
         echo 'this is a first line'
         echo 'this is a second line'
         """
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         data.should.containEql """
@@ -214,7 +214,7 @@ describe 'log.md', ->
         await @log.md basedir: tmpdir, enter: false
         await @call ({tools: {log}}) ->
           log message: '1 + new line', type: 'diff'
-        await @fs.base.readFile
+        await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -231,7 +231,7 @@ describe 'log.md', ->
         await @log.md basedir: tmpdir, enter: false
         await @call (->)
         await @call (->)
-        await @fs.base.readFile
+        await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -246,7 +246,7 @@ describe 'log.md', ->
         await @call $log: false, (->)
         await @call (->)
         await @call $log: false, (->)
-        await @fs.base.readFile
+        await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith
@@ -262,7 +262,7 @@ describe 'log.md', ->
           $unless_exists: "#{tmpdir}/toto"
           $if: -> @call -> false
         , (->)
-        await @fs.base.readFile
+        await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'ascii'
         .should.be.resolvedWith

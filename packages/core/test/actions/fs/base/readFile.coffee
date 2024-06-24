@@ -5,7 +5,7 @@ import test from '../../../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'actions.fs.base.readFile', ->
+describe 'actions.fs.readFile', ->
   return unless test.tags.posix
 
   they 'argument `target`', ({ssh}) ->
@@ -14,10 +14,10 @@ describe 'actions.fs.base.readFile', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
+      @fs.readFile "{{parent.metadata.tmpdir}}/a_file"
       # .should.be.finally.containEql data: Buffer.from 'hello'
       .should.be.finally.containEql data: Buffer.from 'hello'
 
@@ -27,10 +27,10 @@ describe 'actions.fs.base.readFile', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
-      @fs.base.readFile
+      @fs.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         encoding: 'ascii'
       .should.be.finally.containEql data: 'hello'
@@ -41,10 +41,10 @@ describe 'actions.fs.base.readFile', ->
       $templated: true
       $tmpdir: true
     , ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: '  hello\n  '
-      @fs.base.readFile
+      @fs.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         encoding: 'ascii'
         trim: true
@@ -58,10 +58,10 @@ describe 'actions.fs.base.readFile', ->
         $templated: true
         $tmpdir: true
       , ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "{{parent.metadata.tmpdir}}/a_file"
           content: 'This is my precious.'
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "{{parent.metadata.tmpdir}}/a_file"
           encoding: 'ascii'
           format: ({data}) => /^.*\s(\w+)\.$/.exec(data.trim())[1]
@@ -73,10 +73,10 @@ describe 'actions.fs.base.readFile', ->
         $templated: true
         $tmpdir: true
       , ->
-        await @fs.base.writeFile
+        await @fs.writeFile
           target: "{{parent.metadata.tmpdir}}/a_file"
           content: '{"key": "value"}'
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "{{parent.metadata.tmpdir}}/a_file"
           format: 'json'
         data.should.eql key: 'value'
@@ -88,7 +88,7 @@ describe 'actions.fs.base.readFile', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        @fs.base.readFile "#{tmpdir}/whereareu"
+        @fs.readFile "#{tmpdir}/whereareu"
         .should.be.rejectedWith
           message: "NIKITA_FS_CRS_TARGET_ENOENT: fail to read a file because it does not exist, location is \"#{tmpdir}/whereareu\"."
           errno: -2

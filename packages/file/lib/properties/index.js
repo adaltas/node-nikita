@@ -14,7 +14,7 @@ export default {
       level: "DEBUG",
     });
     // Read Original
-    const { exists } = await this.fs.base.exists({
+    const { exists } = await this.fs.exists({
       target: config.target,
     });
     const { properties } =

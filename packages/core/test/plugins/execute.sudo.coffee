@@ -13,7 +13,7 @@ describe 'plugins.execute.sudo', ->
       $sudo: false
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
@@ -28,7 +28,7 @@ describe 'plugins.execute.sudo', ->
         $sudo: true
       # Note, we are testing EACCESS error because it is impossible to do it
       # without sudo inside fs.readFile
-      await @fs.base.readFile
+      await @fs.readFile
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
       .should.be.rejectedWith
@@ -44,7 +44,7 @@ describe 'plugins.execute.sudo', ->
       $sudo: false
       $tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      await @fs.base.writeFile
+      await @fs.writeFile
         $sudo: true
         target: "#{tmpdir}/a_file"
         content: 'hello'
@@ -57,7 +57,7 @@ describe 'plugins.execute.sudo', ->
         $sudo: true
         target: "#{tmpdir}/a_file"
         mode: 0o600
-      await @fs.base.readFile
+      await @fs.readFile
         $sudo: true
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
@@ -75,19 +75,19 @@ describe 'plugins.execute.sudo', ->
         uid: 0
         gid: 0
         $sudo: true
-      await @fs.base.writeFile
+      await @fs.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
         $sudo: true
-      await @fs.base.readFile
+      await @fs.readFile
         target: "#{tmpdir}/a_dir/a_file"
         encoding: 'ascii'
         $sudo: true
       .should.resolvedWith data: 'some content'
-      await @fs.base.unlink
+      await @fs.unlink
         target: "#{tmpdir}/a_dir/a_file"
         $sudo: true
-      await @fs.base.rmdir
+      await @fs.rmdir
         target: "#{tmpdir}/a_dir"
         $sudo: true
     

@@ -76,7 +76,7 @@ describe 'file.download url', ->
         source: 'http://localhost:12345/http_headers'
         target: "#{tmpdir}/download_test"
         mode: 0o0770
-      {data} = await @fs.base.readFile "#{tmpdir}/download_test"
+      {data} = await @fs.readFile "#{tmpdir}/download_test"
       data = JSON.parse(data)
       data.should.match authorization: 'Bearer MY_SECRET'
 
@@ -156,7 +156,7 @@ describe 'file.download url', ->
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.finally.containEql $status: false
-        {data} = await @fs.base.readFile
+        {data} = await @fs.readFile
           target: "#{tmpdir}/#{ssh?.host or 'local'}.log"
           encoding: 'utf8'
         (data.includes "[INFO] Destination with valid signature, download aborted").should.be.true()
