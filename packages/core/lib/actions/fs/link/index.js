@@ -6,9 +6,7 @@ import definitions from "./schema.json" with { type: "json" };
 export default {
   handler: async function ({ config, tools: { path } }) {
     // Set default
-    if (config.mode == null) {
-      config.mode = 0o0755;
-    }
+    config.mode ??= 0o0755;
     // It is possible to have collision if two symlink
     // have the same parent directory
     await this.fs.base.mkdir({
@@ -38,13 +36,12 @@ export default {
       if (exists) {
         return;
       }
-      const content = dedent`
-        #!/bin/bash
-        exec ${config.source} $@
-      `;
       await this.fs.writeFile({
         target: config.target,
-        content: content,
+        content: dedent`
+          #!/bin/bash
+          exec ${config.source} $@
+        `,
       });
       await this.fs.base.chmod({
         target: config.target,
