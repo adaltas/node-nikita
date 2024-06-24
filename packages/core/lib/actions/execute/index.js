@@ -22,7 +22,7 @@ export default {
   handler: async function ({
     config,
     metadata,
-    tools: { find, log, path },
+    tools: { log, path },
     ssh,
   }) {
     // Validate parameters
@@ -80,7 +80,7 @@ export default {
         {
           [`awk -v val=${config.uid} -F `]: " '$3==val{print $1}' /etc/passwd`",
         },
-        function (err, { stdout }) {}
+        function () {}
       );
       config.uid = stdout.trim();
       if (!(config.bash || config.arch_chroot)) {
@@ -91,10 +91,7 @@ export default {
       const env_export_hash = utils.string.hash(env_export_content);
       const env_export_target = path.join(metadata.tmpdir, env_export_hash);
       config.command = `source ${env_export_target}\n${config.command}`;
-      log({
-        message: `Writing env export to ${JSON.stringify(env_export_target)}`,
-        level: "INFO",
-      });
+      log(`Writing env export to ${JSON.stringify(env_export_target)}`);
       await this.fs.writeFile({
         $sudo: config.sudo, // Is it really necessary ?
         content: env_export_content,
@@ -115,10 +112,7 @@ export default {
       );
       const target = path.join(config.arch_chroot_rootdir, target_in);
       // target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
-      log({
-        message: `Writing arch-chroot script to ${JSON.stringify(target)}`,
-        level: "INFO",
-      });
+      log(`Writing arch-chroot script to ${JSON.stringify(target)}`);
       config.command = `${config.arch_chroot} ${config.arch_chroot_rootdir} bash ${target_in}`;
       if (config.sudo) {
         config.command = `sudo ${config.command}`;
@@ -136,7 +130,7 @@ export default {
         metadata.tmpdir,
         `execute-bash-${utils.string.hash(config.command)}`
       );
-      log("INFO", `Writing bash script to ${JSON.stringify(target)}`);
+      log(`Writing bash script to ${JSON.stringify(target)}`);
       let cmd = `${config.bash} ${target}`;
       if (config.uid) {
         cmd = `su - ${config.uid} -c '${cmd}'`;
@@ -154,10 +148,6 @@ export default {
         cmd += "&& exit $code";
       }
       config.command = cmd;
-      // config.command = "#{config.bash} #{target}"
-      // config.command = "su - #{config.uid} -c '#{config.command}'" if config.uid
-      // # Note, rm cannot be remove with arch_chroot enabled
-      // config.command += " && code=`echo $?`; rm '#{target}'; exit $code" unless config.dirty
       await this.fs.writeFile({
         $sudo: config.sudo, // Is it really necessary ?
         content: command,
@@ -174,7 +164,6 @@ export default {
         log({
           message: config.command_original,
           type: "stdin",
-          level: "INFO",
         });
       }
       const result = {
@@ -368,10 +357,7 @@ export default {
           if (config.code.false.indexOf(code) === -1) {
             result.$status = true;
           } else {
-            log({
-              message: `Skip exit code \`${code}\``,
-              level: "INFO",
-            });
+            log(`Skip exit code \`${code}\``);
           }
           return resolve(result);
         });
