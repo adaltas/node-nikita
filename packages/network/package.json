@@ -11,7 +11,7 @@
     "http",
     "ssh"
   ],
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"

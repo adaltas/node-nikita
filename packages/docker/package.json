@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/docker",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "Provides Nikita actions for various Docker operations.",
   "keywords": [
     "nikita",
@@ -42,14 +42,14 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.7",
+    "@nikitajs/file": "^1.0.0-alpha.8",
     "dedent": "^1.5.3"
   },
   "peerDependencies": {
     "@nikitajs/core": "^1.0.0-alpha.1"
   },
   "devDependencies": {
-    "@nikitajs/network": "^1.0.0-alpha.7",
+    "@nikitajs/network": "^1.0.0-alpha.8",
     "coffeescript": "^2.7.0",
     "mocha": "^10.6.0",
     "mocha-they": "^0.1.3",

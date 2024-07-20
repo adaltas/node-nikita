@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/ipa",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "Provides Nikita actions for various FreeIPA operations.",
   "keywords": [
     "nikita",
@@ -42,7 +42,7 @@
     "object-diff": "^0.0.4"
   },
   "devDependencies": {
-    "@nikitajs/incus-runner": "^1.0.0-alpha.4",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.5",
     "coffeescript": "^2.7.0",
     "mixme": "^1.1.0",
     "mocha": "^10.6.0",

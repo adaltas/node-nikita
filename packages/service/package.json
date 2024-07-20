@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/service",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "Provides Nikita actions for various service management operations.",
   "keywords": [
     "nikita",
@@ -42,11 +42,11 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/file": "^1.0.0-alpha.7",
+    "@nikitajs/file": "^1.0.0-alpha.8",
     "dedent": "^1.5.3"
   },
   "devDependencies": {
-    "@nikitajs/incus-runner": "^1.0.0-alpha.4",
+    "@nikitajs/incus-runner": "^1.0.0-alpha.5",
     "coffeescript": "^2.7.0",
     "mocha": "^10.6.0",
     "mocha-they": "^0.1.3",

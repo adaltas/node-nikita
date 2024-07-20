@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/utils",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "Provides the Nikita engine and the core Nikita actions and plugins.",
   "keywords": [
     "nikita",

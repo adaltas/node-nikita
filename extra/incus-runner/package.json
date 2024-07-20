@@ -1,13 +1,13 @@
 {
   "name": "@nikitajs/incus-runner",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "",
   "main": "lib/index.js",
   "private": true,
   "author": "David Worms",
   "license": "MIT",
   "dependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.7",
+    "@nikitajs/core": "^1.0.0-alpha.8",
     "shell": "^0.9.6"
   },
   "devDependencies": {
