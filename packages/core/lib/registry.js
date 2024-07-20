@@ -56,7 +56,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     if (module.startsWith('.')) {
       module = path.resolve(process.cwd(), module);
     }
-    const action = (await import(module)).default;
+    let action = (await import(module)).default;
     if (typeof action === 'function') {
       action = {
         handler: action
