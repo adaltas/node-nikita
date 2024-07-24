@@ -8,7 +8,7 @@ const handlers = {
     for (const assertion of action.assertions.assert) {
       let run;
       if (typeof assertion === 'function') {
-        run = (await session({
+        run = await session({
           $: {
             handler: assertion,
             metadata: {
@@ -20,7 +20,7 @@ const handlers = {
             error: error,
             output: output
           }
-        }));
+        });
         if (typeof run !== 'boolean') {
           throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
         }
@@ -38,7 +38,7 @@ const handlers = {
     for (const assertion of action.assertions.unassert) {
       let run;
       if (typeof assertion === 'function') {
-        run = (await session({
+        run = await session({
           $: {
             handler: assertion,
             metadata: {
@@ -50,7 +50,7 @@ const handlers = {
             error: error,
             output: output
           }
-        }));
+        });
         if (typeof run !== 'boolean') {
           throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
         }
