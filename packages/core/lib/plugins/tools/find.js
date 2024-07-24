@@ -62,14 +62,6 @@ export default {
         const [act, finder] = validate(action, arguments);
         return await find(act, finder);
       };
-      // Register action
-      action.registry.register(['tools', 'find'], {
-        metadata: {raw: true},
-        handler: async function(action) {
-          const [act, finder] = validate(action, action.args);
-          return await find(act.parent, finder);
-        }
-      });
     },
   }
 };

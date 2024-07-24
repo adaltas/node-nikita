@@ -5,19 +5,19 @@ import test from '../../test.coffee'
 describe 'plugins.tools.find', ->
   return unless test.tags.api
   
-  describe 'action', ->
+  describe 'discovery', ->
 
     it 'start in current action', ->
-      nikita.call a_key: 'a value', ->
-        @tools.find (action) ->
+      nikita.call a_key: 'a value', ({ tools: { find } }) ->
+        find (action) ->
           action.config.a_key
         .should.be.resolvedWith 'a value'
 
     it 'traverse the parent hierarchy', ->
       nikita.call a_key: 'a value', ->
-        @call ->
+        @call ({ tools: { find } }) ->
           count = 0
-          @tools.find (action) ->
+          find (action) ->
             count++
             return unless action.config.a_key
             a_key: action.config.a_key, depth: action.metadata.depth
@@ -26,30 +26,22 @@ describe 'plugins.tools.find', ->
 
     it 'traverse from parent', ->
       nikita.call a_key: 'a value', ->
-        @call -> @call -> @call -> @call (action) ->
+        @call -> @call -> @call -> @call ({ parent, tools: { find } }) ->
           count = 0
-          @tools.find action.parent.parent, (action) ->
+          find parent.parent, (action) ->
             count++
             return unless action.config.a_key
             a_key: action.config.a_key, depth: action.metadata.depth
           .should.be.resolvedWith a_key: 'a value', depth: 1
-          .then -> count.should.eql 2
-    
-  describe 'function', ->
+          .then -> count.should.eql 3
 
-    it 'start in current action', ->
-      nikita.call a_key: 'a value', ({tools}) ->
-        tools.find (action) ->
-          action.config.a_key
-        .should.be.resolvedWith 'a value'
-          
   describe 'usage', ->
     
     it 'return the first value found', ->
       nikita
       .call key: '1', stop: true, ->
         @call key: '1.1', stop: true, ->
-          @call key: '1.1.1', ({tools: {find}}) ->
+          @call key: '1.1.1', ({ tools: { find } }) ->
             find ({config}) ->
               config.key if config.stop
             .should.be.resolvedWith '1.1'
@@ -58,7 +50,7 @@ describe 'plugins.tools.find', ->
       nikita
       .call key: '1', stop: true, ->
         @call key: null, stop: true, ->
-          @call key: '1.1.1', ({tools: {find}}) ->
+          @call key: '1.1.1', ({ tools: { find } }) ->
             find ({config}) ->
               config.key if config.stop
             .should.be.resolvedWith null
