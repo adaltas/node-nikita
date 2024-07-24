@@ -62,9 +62,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         handler: action
       };
     }
-    if (action.metadata == null) {
-      action.metadata = {};
-    }
+    action.metadata ??= {};
     action.metadata.module = module;
     return action;
   };
@@ -92,12 +90,8 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       options = namespace;
       namespace = null;
     }
-    if (options == null) {
-      options = {};
-    }
-    if (options.normalize == null) {
-      options.normalize = true;
-    }
+    options ??= {};
+    options.normalize ??= true;
     // Return multiple actions
     if (!namespace) {
       // Flatten result
@@ -273,9 +267,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       let child_store = store;
       for (let i = 0; i < namespace.length; i++) {
         const property = namespace[i];
-        if (child_store[property] == null) {
-          child_store[property] = {};
-        }
+        child_store[property] ??= {};
         child_store = child_store[property];
       }
       child_store[''] = action;
@@ -345,18 +337,12 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         handler: handler
       };
     }
-    if (action.metadata == null) {
-      action.metadata = {};
-    }
+    action.metadata ??= {};
     action.metadata.deprecate = new_name;
     if (typeof action.module === 'string') {
-      if (action.metadata.deprecate == null) {
-        action.metadata.deprecate = action.module;
-      }
+      action.metadata.deprecate ??= action.module;
     }
-    if (action.metadata.deprecate == null) {
-      action.metadata.deprecate = true;
-    }
+    action.metadata.deprecate ??= true;
     obj.register(old_name, action);
     return obj.chain || obj;
   };
