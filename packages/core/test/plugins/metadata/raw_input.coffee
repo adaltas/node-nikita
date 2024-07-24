@@ -31,7 +31,7 @@ describe 'plugins.metadata.raw_input', ->
     await nikita
       $raw: undefined
     , ({metadata}) ->
-      metadata.raw_input.should.be.false()
+      should(metadata.raw_input).be.undefined()
 
   it 'argument is `true`', ->
     nikita ({registry}) ->

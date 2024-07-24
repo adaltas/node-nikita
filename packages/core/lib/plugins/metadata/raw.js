@@ -20,7 +20,6 @@ export default {
             Indicates the level number of the action in the Nikita session
             tree.
           `,
-          default: false,
           readOnly: true,
         },
         raw_input: {
@@ -44,9 +43,7 @@ export default {
     "nikita:registry:normalize": {
       handler: function (action) {
         action.metadata ??= {};
-        const wasBoolean = typeof action.metadata.raw === "boolean";
-        action.metadata.raw ??= false;
-        if (wasBoolean) {
+        if (typeof action.metadata.raw === "boolean") {
           action.metadata.raw_input ??= action.metadata.raw;
           action.metadata.raw_output ??= action.metadata.raw;
         }
@@ -54,9 +51,7 @@ export default {
     },
     "nikita:action": {
       handler: function (action) {
-        const wasBoolean = typeof action.metadata.raw === "boolean";
-        action.metadata.raw ??= false;
-        if (wasBoolean) {
+        if (typeof action.metadata.raw === "boolean") {
           action.metadata.raw_input ??= action.metadata.raw;
           action.metadata.raw_output ??= action.metadata.raw;
         }

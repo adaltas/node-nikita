@@ -31,4 +31,4 @@ describe 'plugins.metadata.raw', ->
     await nikita
       $raw: undefined
     , ({metadata}) ->
-      metadata.raw.should.be.false()
+      should(metadata.raw).be.undefined()

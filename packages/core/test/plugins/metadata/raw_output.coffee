@@ -31,7 +31,7 @@ describe 'plugins.metadata.raw_output', ->
     await nikita
       $raw: undefined
     , ({metadata}) ->
-      metadata.raw_output.should.be.false()
+      should(metadata.raw_output).be.undefined()
 
   it 'leave `true` as is', ->
     nikita.call $raw_output: true, -> true
