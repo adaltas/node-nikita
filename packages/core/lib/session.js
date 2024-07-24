@@ -11,6 +11,7 @@ const session = function(args, options = {}) {
   options.parent = options.parent || args[0]?.$parent || undefined
   options.namespace = options.namespace || args[0]?.$namespace || undefined
   options.plugins = options.plugins || args[0]?.$plugins || undefined
+  options.registry = options.registry || args[0]?.$registry || undefined
   // Local schedulers to execute children and be notified on finish
   const schedulers = {
     in: each({
@@ -42,7 +43,7 @@ const session = function(args, options = {}) {
   // Initialize the registry to manage action registration
   action.registry = registry.create({
     plugins: action.plugins,
-    parent: action.parent ? action.parent.registry : registry,
+    parent: action.parent?.registry ?? options.registry ?? registry,
     on_register: async function(name, act) {
       await action.plugins.call({
         name: 'nikita:register',
