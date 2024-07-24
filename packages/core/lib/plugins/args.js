@@ -19,9 +19,6 @@ export default {
           const action = handler.apply(null, arguments);
           // If raw_input is activated, just pass arguments as is
           // Always one action since arguments are erased
-          if (rawInput === true) {
-            action.metadata.raw_input = true;
-          }
           action.args = args;
           return action;
         };
