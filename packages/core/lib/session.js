@@ -65,7 +65,7 @@ const session = function(args, options = {}) {
     }
     const prom = action.scheduler.call(async function() {
       // Validate the namespace
-      const child = (await action.registry.get(nm));
+      const child = await action.registry.get(nm);
       if (!child) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }

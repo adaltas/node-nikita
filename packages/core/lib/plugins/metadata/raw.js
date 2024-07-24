@@ -43,36 +43,22 @@ export default {
     },
     "nikita:registry:normalize": {
       handler: function (action) {
-        if (action.metadata == null) {
-          action.metadata = {};
-        }
+        action.metadata ??= {};
         const wasBoolean = typeof action.metadata.raw === "boolean";
-        if (action.metadata.raw == null) {
-          action.metadata.raw = false;
-        }
+        action.metadata.raw ??= false;
         if (wasBoolean) {
-          if (action.metadata.raw_input == null) {
-            action.metadata.raw_input = action.metadata.raw;
-          }
-          if (action.metadata.raw_output == null) {
-            action.metadata.raw_output = action.metadata.raw;
-          }
+          action.metadata.raw_input ??= action.metadata.raw;
+          action.metadata.raw_output ??= action.metadata.raw;
         }
       },
     },
     "nikita:action": {
       handler: function (action) {
         const wasBoolean = typeof action.metadata.raw === "boolean";
-        if (action.metadata.raw == null) {
-          action.metadata.raw = false;
-        }
+        action.metadata.raw ??= false;
         if (wasBoolean) {
-          if (action.metadata.raw_input == null) {
-            action.metadata.raw_input = action.metadata.raw;
-          }
-          if (action.metadata.raw_output == null) {
-            action.metadata.raw_output = action.metadata.raw;
-          }
+          action.metadata.raw_input ??= action.metadata.raw;
+          action.metadata.raw_output ??= action.metadata.raw;
         }
       },
     },
