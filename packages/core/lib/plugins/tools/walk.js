@@ -56,14 +56,6 @@ export default {
         const [act, walker] = validate(action, arguments);
         return await walk(act, walker);
       };
-      // Register action
-      action.registry.register(["tools", "walk"], {
-        metadata: { raw: true },
-        handler: async function (action) {
-          const [act, walker] = validate(action, action.args);
-          return await walk(act.parent, walker);
-        },
-      });
     },
   },
 };
