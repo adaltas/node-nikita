@@ -123,7 +123,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         if (!parent) {
           return actions;
         } else {
-          return [...((await parent.get(options))), ...actions];
+          return [...(await parent.get(options)), ...actions];
         }
       } else {
         // Tree result
@@ -174,10 +174,10 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     }
     // Action is not found, search in the parent registry
     if (!action && parent) {
-      action = (await parent.get(namespace, {
+      action = await parent.get(namespace, {
         ...options,
         normalize: false
-      }));
+      });
     }
     if (action == null) {
       return null;
@@ -189,11 +189,11 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     action = merge(action);
     if (plugins) {
       // Hook attented to modify an action returned by the registry
-      return (await plugins.call({
+      return await plugins.call({
         name: 'nikita:registry:normalize',
         args: action,
         handler: (action) => action
-      }));
+      });
     } else {
       return action;
     }
@@ -284,12 +284,11 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       }
     } else {
       const walk = async function(namespace, store) {
-        const results = [];
         for (const k in store) {
           action = store[k];
           if (k !== '' && action && typeof action === 'object' && !Array.isArray(action) && !(action.handler || action.module)) {
             namespace.push(k);
-            results.push((await walk(namespace, action)));
+            await walk(namespace, action);
           } else {
             if (typeof action === 'string') {
               action = await obj.load(action);
@@ -303,13 +302,10 @@ const create = function({chain, on_register, parent, plugins} = {}) {
               '': action
             };
             if (on_register) {
-              results.push((await on_register(namespace, action)));
-            } else {
-              results.push(void 0);
+              await on_register(namespace, action);
             }
           }
         }
-        return results;
       };
       await walk([], namespace);
       mutate(store, namespace);
