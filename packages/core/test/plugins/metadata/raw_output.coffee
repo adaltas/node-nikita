@@ -18,20 +18,6 @@ describe 'plugins.metadata.raw_output', ->
         'metadata/raw_output must be boolean,'
         'type is "boolean".'
       ].join ' '
-    
-  it 'get default from `raw`', ->
-    await nikita
-      $raw: true
-    , ({metadata}) ->
-      metadata.raw_output.should.be.true()
-    await nikita
-      $raw: false
-    , ({metadata}) ->
-      metadata.raw_output.should.be.false()
-    await nikita
-      $raw: undefined
-    , ({metadata}) ->
-      should(metadata.raw_output).be.undefined()
 
   it 'leave `true` as is', ->
     nikita.call $raw_output: true, -> true

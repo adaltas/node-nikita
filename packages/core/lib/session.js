@@ -27,6 +27,7 @@ const session = function(args, options = {}) {
   // Build up child namespace before calling
   let namespace = [];
   let action = {
+    args: args,
     config: {},
     metadata: {},
     hooks: {},
@@ -71,7 +72,7 @@ const session = function(args, options = {}) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }
       const args_is_array = args.some( (arg) => Array.isArray(arg) );
-      if (!args_is_array || child.metadata?.raw_input) {
+      if (!args_is_array) {
         return session(args, {
           namespace: nm,
           action: child,
@@ -127,24 +128,14 @@ const session = function(args, options = {}) {
   const result = new Promise(async function(resolve, reject) {
     try {
       // Normalize arguments
-      action = await action.plugins.call({
-        name: 'nikita:arguments',
-        args: {
-          args: args,
-          action: action,
-          namespace: options.namespace,
-        },
-        handler: function({args, namespace}) {
-          return contextualize({
-            args: [
-              ...args,
-              {
-                $namespace: namespace || []
-              }
-            ],
-            action: action
-          });
-        }
+      action = contextualize({
+        args: [
+          ...args,
+          {
+            $namespace: options.namespace || []
+          }
+        ],
+        action: action
       });
       // Hook intented to modify the current action being created
       action = await action.plugins.call({

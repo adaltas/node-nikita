@@ -2,7 +2,7 @@
 import stream from 'node:stream'
 # import nikita from '@nikitajs/core'
 import session from '@nikitajs/core/session'
-import args from '@nikitajs/core/plugins/args'
+# import args from '@nikitajs/core/plugins/args'
 import metadataAudit from '@nikitajs/core/plugins/metadata/audit'
 import metadataRegister from '@nikitajs/core/plugins/metadata/register'
 import metadataSchema from '@nikitajs/core/plugins/metadata/schema'
@@ -17,7 +17,7 @@ import test from '../../test.coffee'
 nikita = () ->
   session
     $plugins: [
-      args
+      # args
       metadataAudit
       metadataRaw
       metadataRegister
@@ -213,7 +213,6 @@ describe 'metadata "audit"', ->
       ws.write = (->)
       await session
         $plugins: [
-          args
           metadataAudit
           metadataRaw
           metadataSchema

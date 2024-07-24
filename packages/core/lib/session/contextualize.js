@@ -15,8 +15,7 @@ const properties = [
   "state",
 ];
 
-export default function ({action={}, args}) {
-  const isMagicMode = !args.find(args => is_object_literal(args) && args['$'] === false)
+export default function ({ action = {}, args }) {
   // Default values
   action.config ??= {};
   action.metadata ??= {};
@@ -29,7 +28,7 @@ export default function ({action={}, args}) {
             `handler is already registered, got ${utils.error.got(arg)}`,
           ]);
         }
-        handlerFound = true
+        handlerFound = true;
         mutate(action, {
           handler: arg,
         });
@@ -58,34 +57,39 @@ export default function ({action={}, args}) {
               argument: null,
             },
           });
-        } else if (is_object_literal(arg) && isMagicMode) {
-          for (const k in arg) {
-            const v = arg[k];
-            if (k[0] === "$") {
-              if (k === "$$") {
-                mutate(action.metadata, v);
-              } else {
-                // Extract the property name from key starting with `$`
-                const prop = k.slice(1);
-                if (properties.includes(prop)) {
-                  action[prop] = v;
+        } else if (is_object_literal(arg)) {
+          const isMagicMode = !args.find(
+            (args) => is_object_literal(args) && args["$"] === false
+          );
+          if (isMagicMode) {
+            for (const k in arg) {
+              const v = arg[k];
+              if (k[0] === "$") {
+                if (k === "$$") {
+                  mutate(action.metadata, v);
                 } else {
-                  action.metadata[prop] = v;
+                  // Extract the property name from key starting with `$`
+                  const prop = k.slice(1);
+                  if (properties.includes(prop)) {
+                    action[prop] = v;
+                  } else {
+                    action.metadata[prop] = v;
+                  }
+                }
+              } else {
+                if (v !== undefined) {
+                  action.config[k] = v;
                 }
               }
-            } else {
-              if (v !== undefined) {
-                action.config[k] = v;
-              }
             }
-          }
-        } else if (is_object_literal(arg) && !isMagicMode) {
-          for (const k in arg) {
-            const v = arg[k];
-            if (["config", "metadata"].includes(k)) {
-              mutate(action[k], v)
-            } else {
-              action[k] = v;
+          } else {
+            for (const k in arg) {
+              const v = arg[k];
+              if (["config", "metadata"].includes(k)) {
+                mutate(action[k], v);
+              } else {
+                action[k] = v;
+              }
             }
           }
         } else {
@@ -104,7 +108,6 @@ export default function ({action={}, args}) {
         });
     }
   }
-  action.config = clone(action.config)
-  // Create empty action when no arguments are provided and not for an empty array
+  action.config = clone(action.config);
   return action;
 }

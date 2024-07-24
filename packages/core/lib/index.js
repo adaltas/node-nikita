@@ -8,7 +8,6 @@ Nikita session.
 import "@nikitajs/core/register";
 import { with_options as session } from "@nikitajs/core/session";
 
-import args from "@nikitajs/core/plugins/args";
 import metadataArgumentToConfig from "@nikitajs/core/plugins/metadata/argument_to_config";
 import assertions from "@nikitajs/core/plugins/assertions";
 import assertionsExists from "@nikitajs/core/plugins/assertions/exists";
@@ -46,10 +45,9 @@ import toolsPath from "@nikitajs/core/plugins/tools/path";
 import toolsSchema from "@nikitajs/core/plugins/tools/schema";
 import toolsWalk from "@nikitajs/core/plugins/tools/walk";
 
-const create = (..._args) =>
-  session(_args, {
+const create = (...args) =>
+  session(args, {
     plugins: [
-      args,
       metadataArgumentToConfig,
       assertions,
       assertionsExists,
