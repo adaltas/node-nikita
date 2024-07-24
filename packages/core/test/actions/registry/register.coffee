@@ -9,20 +9,21 @@ describe 'actions.registry.register', ->
 
   it 'action', ->
     result = await nikita
-      .registry.register(['an', 'action'], {
-        handler: () => 'gotme'
-      })
+      .registry.register
+        namespace: ['an', 'action']
+        action:
+          handler: () => 'gotme'
       .an.action()
     result.should.eql 'gotme'
 
   it 'multiple actions', ->
     result = await nikita
-      .registry.register(
-        "an":
-          "action": () => 'an action'
-        "another":
-          "action": () => 'another action'
-      )
+      .registry.register
+        actions:
+          "an":
+            "action": () => 'an action'
+          "another":
+            "action": () => 'another action'
       .an.action()
     result.should.eql 'an action'
         

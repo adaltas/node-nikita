@@ -11,7 +11,7 @@ describe 'session.plugins.session.action', ->
   describe 'runtime', ->
   
     it 'alter action - async', ->
-      nikita ({context, plugins, registry}) ->
+      nikita ({plugins, registry}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
@@ -20,16 +20,17 @@ describe 'session.plugins.session.action', ->
                   resolve (action) ->
                     action.config.new_key = 'new value'
                     handler.call action.context, action
-        await context.registry.register ['an', 'action'],
+        await registry.register ['an', 'action'],
           config: key: 'value'
           handler: ({config}) -> config
-        await context.an.action().should.be.finally.containEql
-          key: 'value'
-          new_key: 'new value'
-          $status: false
+        await @an.action()
+          .should.be.finally.containEql
+            key: 'value'
+            new_key: 'new value'
+            $status: false
         
     it 'plugin return a promise, ensure child is executed', ->
-      session ({context, plugins, registry}) ->
+      session ({plugins}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
@@ -43,35 +44,33 @@ describe 'session.plugins.session.action', ->
   describe 'errors', ->
           
     it 'throw in current context', ->
-      nikita ({context, plugins, registry}) ->
+      nikita ({plugins, registry}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
-        await context.registry.register ['an', 'action'],
+        await registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        await context
-        .an.action()
-        .should.be.rejectedWith 'Catch me'
+        await @an.action()
+          .should.be.rejectedWith 'Catch me'
           
     it 'thrown parent session', ->
-      nikita ({context, plugins, registry}) ->
+      nikita ({plugins, registry}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
               if action.metadata.namespace.join('.') is 'an.action'
               then throw Error 'Catch me'
               else handler
-        await context.registry.register ['an', 'action'],
+        await registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        await context
-        .an.action()
-      .should.be.rejectedWith 'Catch me'
+        await @an.action()
+          .should.be.rejectedWith 'Catch me'
           
     it 'promise in current context', ->
-      nikita ({context, plugins, registry}) ->
+      nikita ({plugins, registry}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
@@ -79,14 +78,13 @@ describe 'session.plugins.session.action', ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
                 else resolve handler
-        await context.registry.register ['an', 'action'],
+        await registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
-        await context
-        .an.action()
-        .should.be.rejectedWith 'Catch me'
+        await @an.action()
+          .should.be.rejectedWith 'Catch me'
         
     it 'promise in parent session', ->
-      nikita ({context, plugins, registry}) ->
+      nikita ({plugins, registry}) ->
         plugins.register
           'hooks':
             'nikita:action': (action, handler) ->
@@ -94,8 +92,6 @@ describe 'session.plugins.session.action', ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
                 else resolve handler
-        await context.registry.register ['an', 'action'],
-          handler: -> throw Error 'You are not invited'
-        await context
-        .an.action()
-      .should.be.rejectedWith 'Catch me'
+        await registry.register ['an', 'action'], handler: -> throw Error 'You are not invited'
+        await @an.action()
+          .should.be.rejectedWith 'Catch me'

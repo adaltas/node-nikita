@@ -5,47 +5,32 @@ import test from '../test.coffee'
 describe 'registry.unregister', ->
   return unless test.tags.api
 
-  describe 'global', ->
-
-    it.skip 'remove property', ->
-      # This is no longer relevant, registry is part of the nikita session
-      nikita.registry.register 'my_function', -> 'my_function'
-      nikita.registry.unregister 'my_function'
-      nikita.registry.registered('my_function').should.be.finally.false()
-
-    it.skip 'work on already removed property', ->
-      # This is no longer relevant, registry is part of the nikita session
-      nikita.registry.register 'my_function', -> 'my_function'
-      nikita.registry.unregister 'my_function'
-      nikita.registry.unregister 'my_function'
-      nikita.registry.registered('my_function').should.be.false()
-
   describe 'local', ->
 
     it 'remove property', ->
       nikita
       .registry.register
+        namespace: 'my_function'
         action:
-          namespace: 'my_function'
           handler: (->)
       .registry.unregister
-        config: namespace: 'my_function'
+        namespace: 'my_function'
       .registry.registered
-        config: namespace: 'my_function'
+        namespace: 'my_function'
       .should.be.finally.false()
 
     it 'work on already removed property', ->
       nikita
-      .registry.register
+      .registry.registered
+        namespace: 'my_function'
         action:
-          namespace: 'my_function'
           handler: (->)
       .registry.unregister
-        config: namespace: 'my_function'
+        namespace: 'my_function'
       .registry.unregister
-        config: namespace: 'my_function'
+        namespace: 'my_function'
       .registry.registered
-        config: namespace: 'my_function'
+        namespace: 'my_function'
       .should.be.finally.false()
 
   describe 'mixed', ->

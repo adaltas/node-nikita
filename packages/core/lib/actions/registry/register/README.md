@@ -9,8 +9,11 @@ An action is registered by providing its namespace and its definition
 
 ```js
 const result = await nikita
-  .registry.register(["an", "action"], {
-    handler: () => "hello"
+  .registry.register({
+    namespace: ["an", "action"],
+    action: {
+      handler: () => "hello"
+    }
   });
   .an.action()
 assert(result, "hello")
@@ -23,12 +26,14 @@ Multiple actions are registered by providing an object where keys define the act
 ```js
 const action = await nikita
   .registry.register({
-    "an": {
-      "action": () => 'an action'
-    },
-    "another": {
-      "action": () => 'another action'
-    },
+    actions: {
+      "an": {
+        "action": () => 'an action'
+      },
+      "another": {
+        "action": () => 'another action'
+      },
+    }
   })
   .an.action();
 assert(result, "an action")

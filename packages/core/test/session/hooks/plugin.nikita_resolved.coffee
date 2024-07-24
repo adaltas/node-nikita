@@ -10,7 +10,7 @@ describe 'session.plugins.session.resolved', ->
 
   it 'test', ->
     stack = []
-    n = nikita ({context, plugins, registry}) ->
+    n = nikita ({plugins}) ->
       plugins.register
         'hooks':
           'nikita:resolved': ({action, output}) ->

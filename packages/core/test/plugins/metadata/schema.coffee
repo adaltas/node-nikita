@@ -7,13 +7,14 @@ describe 'plugins.metadata.schema', ->
 
   it 'disabled when `false`', ->
     nikita
-    .registry.register ['test', 'schema'],
-      metadata: definitions: config:
-        type: 'object'
-        properties:
-          'a_key': type: 'string'
-        required: ['a_key']
-      handler: (->)
+      $register:
+        "test": "schema":
+          metadata: definitions: config:
+            type: 'object'
+            properties:
+              'a_key': type: 'string'
+            required: ['a_key']
+          handler: (->)
     .test.schema
       $schema: false
       $handler: (->)

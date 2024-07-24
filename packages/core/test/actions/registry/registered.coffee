@@ -9,14 +9,17 @@ describe 'actions.registry.registered', ->
 
   it 'is registered', ->
     registered = await nikita
-      .registry.register(['an', 'action'], {
-        handler: () => 'gotme'
-      })
-      .registry.registered(['an', 'action'])
+      .registry.register
+        namespace: ['an', 'action']
+        action:
+          handler: () => 'gotme'
+      .registry.registered
+        namespace: ['an', 'action']
     registered.should.be.true()
 
   it 'is not registered', ->
     registered = await nikita
-      .registry.registered(['an', 'action'])
+      .registry.registered
+        namespace: ['an', 'action']
     registered.should.be.false()
         

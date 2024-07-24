@@ -4,6 +4,7 @@ import stream from 'node:stream'
 import session from '@nikitajs/core/session'
 import args from '@nikitajs/core/plugins/args'
 import metadataAudit from '@nikitajs/core/plugins/metadata/audit'
+import metadataRegister from '@nikitajs/core/plugins/metadata/register'
 import metadataSchema from '@nikitajs/core/plugins/metadata/schema'
 import metadataRaw from '@nikitajs/core/plugins/metadata/raw'
 import metadataTime from '@nikitajs/core/plugins/metadata/time'
@@ -19,6 +20,7 @@ nikita = () ->
       args
       metadataAudit
       metadataRaw
+      metadataRegister
       metadataSchema
       metadataTime
       toolsEvents
@@ -76,15 +78,16 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita()
-      .registry.register 'call_0', (->)
-      .registry.register 'call_0_0', (->)
-      .registry.register 'call_0_0_0', (->)
-      .registry.register 'call_1', (->)
-      .registry.register 'call_1_0', (->)
-      .registry.register 'call_1_1', (->)
-      .registry.register 'call_2', (->)
-      .call ->
+      await nikita().call
+        $register:
+          'call_0': (->)
+          'call_0_0': (->)
+          'call_0_0_0': (->)
+          'call_1': (->)
+          'call_1_0': (->)
+          'call_1_1': (->)
+          'call_2': (->)
+      , ->
         @call $audit: ws, ({tools: {log}}) ->
           await this.call_0 ->
             await this.call_0_0 ->
@@ -108,12 +111,14 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita()
-      .registry.register 'call_0', (->)
-      .registry.register 'call_0_0', (->)
-      .registry.register 'call_0_0_0', (->)
-      .registry.register 'call_0_0_0_0', (->)
-      .call $audit: ws, ({tools: {log}}) ->
+      await nikita().call
+        $register:
+          'call_0': (->)
+          'call_0_0': (->)
+          'call_0_0_0': (->)
+          'call_0_0_0_0': (->)
+        $audit: ws
+      , ({tools: {log}}) ->
         log 'log message 1'
         await this.call_0 ->
           await this.call_0_0 ->
@@ -132,11 +137,13 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita()
-      .registry.register 'call_0', (->)
-      .registry.register 'call_0_0', (->)
-      .registry.register 'call_0_0_0', (->)
-      .call $audit: ws, ->
+      await nikita().call
+        $register:
+          'call_0': (->)
+          'call_0_0': (->)
+          'call_0_0_0': (->)
+        $audit: ws
+      , ->
         await this.call_0 ->
           await this.call_0_0 ->
             await this.call_0_0_0 ({tools: {log}}) ->
@@ -153,12 +160,14 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita()
-      .registry.register 'call_0', (->)
-      .registry.register 'call_1', (->)
-      .registry.register 'call_1_0', (->)
-      .registry.register 'call_1_1', (->)
-      .call $audit: ws, ->
+      await nikita().call
+        $register:
+          'call_0': (->)
+          'call_1': (->)
+          'call_1_0': (->)
+          'call_1_1': (->)
+        $audit: ws
+      , ->
         await this.call_0 (->)
         await this.call_1 ({tools: {log}}) ->
           log 'WARN', 'log call_1:start'
@@ -179,13 +188,15 @@ describe 'metadata "audit"', ->
       data = []
       ws = new stream.Writable()
       ws.write = (chunk) -> data.push chunk
-      await nikita()
-      .registry.register 'call_0', (->)
-      .registry.register 'call_1', (->)
-      .registry.register 'call_1_0', (->)
-      .registry.register 'call_1_1', (->)
-      .call $audit: ws, ({tools: {log}}) ->
-        await this.call_0 (->)
+      await nikita().call
+        $register:
+          'call_0': (->)
+          'call_1': (->)
+          'call_1_0': (->)
+          'call_1_1': (->)
+        $audit: ws
+      , ({tools: {log}}) ->
+        await this.call_0 (-> 1)
         log 'WARN', 'log call:end'
       data.map((line) => line.replace(/\d+ms/, 'Xms')).should.eql [
         '[ACTION] ┌─ call_0 Xms\n'

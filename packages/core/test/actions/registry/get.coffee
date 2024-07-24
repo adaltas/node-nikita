@@ -18,9 +18,11 @@ describe 'actions.registry.get', ->
   
   it 'single action', ->
     action = await nikita
-      .registry.register(['an', 'action'], {
-        handler: () => 'gotme'
-      })
-      .registry.get(['an', 'action'])
+      .registry.register
+        namespace: ['an', 'action']
+        action:
+          handler: () => 'gotme'
+      .registry.get
+        namespace: ['an', 'action']
     action.handler().should.eql 'gotme'
         

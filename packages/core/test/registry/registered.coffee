@@ -31,30 +31,41 @@ describe 'registry.registered', ->
 
     it 'return false with 1 level', ->
       nikita
-      .registry.registered 'does_not_exists'
-      .should.be.finally.false()
+      .registry.registered
+        namespace: 'does_not_exists'
+      .should.finally.be.false()
       nikita
-      .registry.registered ['does_not_exists']
-      .should.be.finally.false()
+      .registry.registered
+        namespace: ['does_not_exists']
+      .should.finally.be.false()
 
     it 'return false with multi level ', ->
       nikita
-      .registry.registered ['does', 'not', 'exists']
-      .should.be.finally.false()
+      .registry.registered
+        namespace: ['does', 'not', 'exists']
+      .should.finally.be.false()
 
     it 'return true with 1 level', ->
       # With the current fluent API, no action can be called asynchronously.
-      n = nikita.registry.register ['my_action'], handler: (->)
-      result = await n.registry.registered('my_action')
-      result.should.be.true()
+      n = nikita.registry.register
+        namespace: ['my_action']
+        action: handler: (->)
+      await n.registry.registered
+        namespace: 'my_action'
+      .should.finally.be.true()
       n
-      .registry.registered(['my_action'])
+      .registry.registered
+        namespace: ['my_action']
       .should.be.rejectedWith 'NIKITA_SCHEDULER_CLOSED: cannot schedule new items when closed.'
 
     it 'return true with multi level', ->
-      n = nikita.registry.register ['my', 'module'], handler: (->)
-      result = await n.registry.registered(['my'])
-      result.should.be.false()
+      await nikita
+      .registry.register
+        namespace: ['my', 'module'],
+        action: handler: (->)
+      .registry.registered
+        namespace: ['my']
+      .should.finally.be.false()
 
   describe 'parent', ->
 

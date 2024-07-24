@@ -99,9 +99,9 @@ describe 'registry.register', ->
       # Room for improvement in the future
       nikita ({registry}) ->
         await registry.register 'an_action', '@nikitajs/core/actions/execute'
-        result = await @registry.registered 'an_action'
-        .should.resolvedWith true
-        {metadata, config} = await @registry.get 'an_action'
+        result = registry.registered 'an_action'
+          .should.eql true
+        {metadata, config} = await registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
 
@@ -112,14 +112,14 @@ describe 'registry.register', ->
           'an_action':
             '': '@nikitajs/core/actions/execute'
             'child': '@nikitajs/core/actions/execute'
-        result = await @registry.registered 'an_action'
-        .should.resolvedWith true
-        result = await @registry.registered ['an_action', 'child']
-        .should.resolvedWith true
-        {metadata, config} = await @registry.get 'an_action'
+        registry.registered 'an_action'
+          .should.eql true
+        registry.registered ['an_action', 'child']
+          .should.eql true
+        {metadata, config} = await registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
-        {metadata, config} = await @registry.get ['an_action', 'child']
+        {metadata, config} = await registry.get ['an_action', 'child']
         metadata.module.should.eql '@nikitajs/core/actions/execute'
         should(config).be.undefined()
 

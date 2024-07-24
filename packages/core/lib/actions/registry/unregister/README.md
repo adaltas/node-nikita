@@ -9,10 +9,17 @@ Provide the action namespace to unregister an action.
 
 ```js
 const registered = await nikita
-  .registry.register(["an", "action"], {
-    handler: () => "hello"
+  .registry.register({
+    namespace: ["an", "action"],
+    action: {
+      handler: () => "hello"
+    }
   });
-  .registry.unregister(["an", "action"])
-  .registry.registered(["an", "action"])
+  .registry.unregister({
+    namespace: ["an", "action"]
+  })
+  .registry.registered({
+    namespace: ["an", "action"]
+  })
 assert(registered, false)
 ```

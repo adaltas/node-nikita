@@ -1,9 +1,9 @@
 // Action
 export default {
-  handler: function ({ parent, args: [namespace] }) {
-    return parent.registry.get(namespace);
+  handler: function ({ config, parent }) {
+    return parent.registry.get(config.namespace);
   },
   metadata: {
-    raw: true,
+    raw_output: true,
   },
 };

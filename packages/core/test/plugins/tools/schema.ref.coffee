@@ -5,7 +5,7 @@ import test from '../../test.coffee'
 describe 'plugins.tools.schema.$ref', ->
   return unless test.tags.api
   
-  it 'invalid ref definition', ->
+  it 'malformed ref URI', ->
     nikita
     .call
       $definitions: config:
@@ -23,12 +23,14 @@ describe 'plugins.tools.schema.$ref', ->
   
   it 'invalid ref definition', ->
     nikita
-    .registry.register ['test', 'schema'],
-      metadata: definitions: config:
-        type: 'object'
-        properties:
-          'an_integer': type: 'integer'
-      handler: (->)
+    .registry.register
+      namespace: ['test', 'schema']
+      action:
+        metadata: definitions: config:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
     .call
       $definitions: config:
         type: 'object'
@@ -147,14 +149,16 @@ describe 'plugins.tools.schema.$ref', ->
 
     it 'valid ref location', ->
       nikita
-      .registry.register ['test', 'schema'],
-        metadata: definitions:
-          config:
-            type: 'object'
-            properties:
-              'an_integer': type: ['integer', 'string'], coercion: true
-              'a_default': type: 'string', default: 'hello'
-        handler: (->)
+      .registry.register
+        namespace: ['test', 'schema']
+        action:
+          metadata: definitions:
+            config:
+              type: 'object'
+              properties:
+                'an_integer': type: ['integer', 'string'], coercion: true
+                'a_default': type: 'string', default: 'hello'
+          handler: (->)
       # Valid schema
       .call
         $definitions:

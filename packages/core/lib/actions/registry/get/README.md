@@ -17,8 +17,13 @@ Calling the action with its registered name return the action.
 
 ```js
 const action = await nikita
-  .registry.register(['an', 'action'], {
-    $handler: () => true
+  .registry.register({
+    namespace: ['an', 'action'],
+    action: {
+      $handler: () => true
+    }
   })
-  .registry.get();
+  .registry.get({
+    namespace: ['an', 'action']
+  });
 ```

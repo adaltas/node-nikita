@@ -9,24 +9,24 @@ describe 'plugins.metadata.argument (native)', ->
 
     it 'string', ->
       nikita
-      .registry.register ['action'], (->)
+        $register: action: (->)
       .action 'abc', 'def', ({metadata: {argument}}) ->
         argument.should.eql 'def'
 
     it 'boolean', ->
       nikita
-      .registry.register ['action'], (->)
+        $register: action: (->)
       .action false, true, ({metadata: {argument}}) ->
         argument.should.eql true
 
     it 'number', ->
       nikita
-      .registry.register ['action'], (->)
+        $register: action: (->)
       .action 123, 456, ({metadata: {argument}}) ->
         argument.should.eql 456
 
     it 'null', ->
       nikita
-      .registry.register ['action'], (->)
+        $register: action: (->)
       .action 'abc', null, ({metadata: {argument}}) ->
         should(argument).eql null

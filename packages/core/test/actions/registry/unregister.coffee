@@ -8,18 +8,19 @@ describe 'actions.registry.unregister', ->
   return unless test.tags.posix
 
   it 'was never registered', ->
-    registered = await nikita
-      .registry.registered(['an', 'action'])
+    registered = await nikita.registry.registered
+      namespace: ['an', 'action']
     registered.should.be.false()
 
   it 'is no longer registered', ->
     registered = await nikita
-      .registry.register(['an', 'action'], {
-        handler: () => 'gotme'
-      })
-      .registry.unregister(['an', 'action'], {
-        handler: () => 'gotme'
-      })
-      .registry.registered(['an', 'action'])
+      .registry.register
+        namespace: ['an', 'action']
+        action:
+          handler: () => 'gotme'
+      .registry.unregister
+        namespace: ['an', 'action']
+      .registry.registered
+        namespace: ['an', 'action']
     registered.should.be.false()
         

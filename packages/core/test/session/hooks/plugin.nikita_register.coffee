@@ -15,14 +15,14 @@ describe 'session.plugins.session.register', ->
           'nikita:register': ({action}, handler)->
             action.config?.key = 'new value'
             handler
-      await @registry.register ['an', 'action'],
+      await registry.register ['an', 'action'],
         config: key: 'value'
         handler: (->)
       await @an.action ({config}) ->
         config.key.should.eql 'new value'
 
   it 'alter action - async', ->
-    nikita ({context, plugins, registry}) ->
+    nikita ({plugins, registry}) ->
       plugins.register
         hooks:
           'nikita:register': ({action}, handler)->
@@ -30,17 +30,17 @@ describe 'session.plugins.session.register', ->
               setImmediate ->
                 action.config?.key = 'new value'
                 resolve handler
-      await context.registry.register ['an', 'action'],
+      await registry.register ['an', 'action'],
         config: key: 'value'
         handler: (->)
-      await context.an.action ({config}) ->
+      await @an.action ({config}) ->
         config.key.should.eql 'new value'
           
   it 'handler is undefined', ->
-    nikita ({context, plugins, registry}) ->
+    nikita ({plugins, registry}) ->
       plugins.register
         'hooks':
           'nikita:register': ({action}, handler)->
             (handler is undefined).should.be.ok()
             handler
-      context.registry.register ['an', 'action'], {}
+      registry.register ['an', 'action'], {}
