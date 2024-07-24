@@ -26,6 +26,7 @@ import metadataExecute from "@nikitajs/core/plugins/metadata/execute";
 import metadataHeader from "@nikitajs/core/plugins/metadata/header";
 import metadataPosition from "@nikitajs/core/plugins/metadata/position";
 import metadataRaw from "@nikitajs/core/plugins/metadata/raw";
+import metadataRegister from "@nikitajs/core/plugins/metadata/register";
 import metadataRelax from "@nikitajs/core/plugins/metadata/relax";
 import metadataRetry from "@nikitajs/core/plugins/metadata/retry";
 import metadataSchema from "@nikitajs/core/plugins/metadata/schema";
@@ -66,6 +67,7 @@ const create = (..._args) =>
       metadataHeader,
       metadataPosition,
       metadataRaw,
+      metadataRegister,
       metadataRelax,
       metadataRetry,
       metadataSchema,
