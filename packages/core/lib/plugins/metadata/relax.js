@@ -4,9 +4,7 @@ export default {
   name: "@nikitajs/core/plugins/metadata/relax",
   hooks: {
     "nikita:action": function (action, handler) {
-      if (action.metadata.relax == null) {
-        action.metadata.relax = false;
-      }
+      action.metadata.relax ??= false;
       if (
         typeof action.metadata.relax === "string" ||
         action.metadata.relax instanceof RegExp
@@ -41,9 +39,7 @@ export default {
         args.action.metadata.relax.includes(args.error.code) ||
         args.action.metadata.relax.some((v) => args.error.code.match(v))
       ) {
-        if (args.output == null) {
-          args.output = {};
-        }
+        args.output ??= {};
         args.output.error = args.error;
         args.error = undefined;
       }
