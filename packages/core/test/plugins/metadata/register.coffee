@@ -23,7 +23,7 @@ describe 'plugins.metadata.register', ->
         call: '@nikitajs/core/actions/call'
         test: (->)
     , ({registry}) -> registry.get flatten: true
-    .then (actions) => actions.map (action) -> action.action
+    .then (actions) => actions.map (action) -> action.namespace
     .should.finally.eql [
       [ 'call' ], [ 'test' ]
     ]
@@ -39,7 +39,7 @@ describe 'plugins.metadata.register', ->
         test: (->)
     , ->
       @call ({registry}) -> registry.get flatten: true
-    .then (actions) => actions.map (action) -> action.action
+    .then (actions) => actions.map (action) -> action.namespace
     .should.finally.eql [
       [ 'call' ], [ 'test' ]
     ]

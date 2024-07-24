@@ -21,18 +21,18 @@ describe 'registry.get', ->
       reg = registry.create()
       reg.register ['my', 'function'], handler: (->)
       actions = await reg.get flatten: true
-      actions.some( (action) -> action.action.join('.') is 'my.function').should.be.true()
+      actions.some( (action) -> action.namespace.join('.') is 'my.function').should.be.true()
 
     it 'with `flatten` and `deprecate` options', ->
       reg = registry.create()
       reg.register ['new', 'function'], handler: (->)
       reg.deprecate ['old', 'function'], ['new', 'function'], handler: (->)
       actions = await reg.get flatten: true, deprecate: false
-      actions.some( (action) -> action.action.join('.') is 'new.function').should.be.true()
-      actions.some( (action) -> action.action.join('.') is 'old.function').should.be.false()
+      actions.some( (action) -> action.namespace.join('.') is 'new.function').should.be.true()
+      actions.some( (action) -> action.namespace.join('.') is 'old.function').should.be.false()
       actions = await reg.get flatten: true, deprecate: true
-      actions.some( (action) -> action.action.join('.') is 'new.function').should.be.true()
-      actions.some( (action) -> action.action.join('.') is 'old.function').should.be.true()
+      actions.some( (action) -> action.namespace.join('.') is 'new.function').should.be.true()
+      actions.some( (action) -> action.namespace.join('.') is 'old.function').should.be.true()
   
     it 'honors parent actions', ->
       reg_0 = registry.create()

@@ -111,7 +111,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
               if (v.metadata?.deprecate && !options.deprecate) {
                 continue;
               }
-              v.action = keys;
+              v.namespace = keys;
               results.push(actions.push(merge(v)));
             } else {
               results.push(walk(v, [...keys, k]));
