@@ -40,26 +40,28 @@ describe 'session.contextualize', ->
     ]
     .should.eql expect
   
-  it '$ merge config in first level', ->
+  it '$ enable long mode with config', ->
     a_config_1 = { a_key_1: '1', a_key_overwritten: { a_key: 'overwrite 1'}}
     a_config_2 = { a_key_2: '2', a_key_overwritten: { a_key: 'overwrite 2'}}
     contextualize args: [
-      $: config: a_config_1
+      $: false
+      config: a_config_1
     ,
-      $: config: a_config_2
+      $: false
+      config: a_config_2
     ]
     .config.should.eql
       a_key_1: '1'
       a_key_overwritten: a_key: 'overwrite 2'
       a_key_2: '2'
     
-  it '$ merge metadata in first level', ->
-    a_metadata_1 = { a_key_1: '1', a_key_overwritten: { a_key: 'overwrite 1'}}
-    a_metadata_2 = { a_key_2: '2', a_key_overwritten: { a_key: 'overwrite 2'}}
+  it '$ enable long mode with metadata', ->
     contextualize args: [
-      $: metadata: a_metadata_1
+      $: false
+      metadata: { a_key_1: '1', a_key_overwritten: { a_key: 'overwrite 1'}}
     ,
-      $: metadata: a_metadata_2
+      $: false
+      metadata: { a_key_2: '2', a_key_overwritten: { a_key: 'overwrite 2'}}
     ]
     .metadata.should.eql
       a_key_1: '1'
@@ -69,33 +71,16 @@ describe 'session.contextualize', ->
   it '$ keys in first level unless config or metadata', ->
     an_arg_1 = { a_key_1: '1', a_key_overwritten: { a_key: 'overwrite 1'}}
     an_arg_2 = { a_key_2: '2', a_key_overwritten: { a_key: 'overwrite 2'}}
-    result = contextualize args: [
-      $: an_arg_1
+    contextualize args: [
+      $: false
+      a_key_1: '1'
+      a_key_overwritten: { a_key: 'overwrite 1'}
     ,
-      $: an_arg_2
+      $: false
+      a_key_2: '2'
+      a_key_overwritten: { a_key: 'overwrite 2'}
     ]
-    {
-      a_key_1: result.a_key_1
-      a_key_overwritten: result.a_key_overwritten
-      a_key_2: result.a_key_2
-    }.should.eql
+    .should.match
       a_key_1: '1'
       a_key_overwritten: a_key: 'overwrite 2'
       a_key_2: '2'
-  
-  it '$$ interpreted as metadata', ->
-    expect =
-      metadata: a: '1', b: '2'
-      config: b: ''
-    # Metadata in first argument
-    contextualize args: [
-      $$: a: '1', b: '2'
-      b: ''
-    ]
-    .should.eql expect
-    # Metadata are overwritten
-    contextualize args: [
-      $$: a: 'x', b: 'x'
-      {b: '', $a: '1', $b: '2'}
-    ]
-    .should.eql expect

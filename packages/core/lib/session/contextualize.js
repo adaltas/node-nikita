@@ -1,4 +1,4 @@
-import { clone, mutate, is_object_literal } from "mixme";
+import { clone, merge, mutate, is_object_literal } from "mixme";
 import utils from "@nikitajs/core/utils";
 
 const properties = [
@@ -16,6 +16,7 @@ const properties = [
 ];
 
 export default function ({action={}, args}) {
+  const isMagicMode = !args.find(args => is_object_literal(args) && args['$'] === false)
   // Default values
   action.config ??= {};
   action.metadata ??= {};
@@ -39,7 +40,6 @@ export default function ({action={}, args}) {
             `handler is already registered, got ${JSON.stringigy(arg)}`,
           ]);
         }
-        // handlerFound = true
         mutate(action, {
           metadata: {
             argument: arg,
@@ -58,20 +58,10 @@ export default function ({action={}, args}) {
               argument: null,
             },
           });
-        } else if (is_object_literal(arg)) {
+        } else if (is_object_literal(arg) && isMagicMode) {
           for (const k in arg) {
             const v = arg[k];
-            if (k === "$") {
-              // mutate action, v
-              for (const kk in v) {
-                const vv = v[kk];
-                if (["config", "metadata"].includes(kk)) {
-                  action[kk] = { ...action[kk], ...vv };
-                } else {
-                  action[kk] = vv;
-                }
-              }
-            } else if (k[0] === "$") {
+            if (k[0] === "$") {
               if (k === "$$") {
                 mutate(action.metadata, v);
               } else {
@@ -87,6 +77,15 @@ export default function ({action={}, args}) {
               if (v !== undefined) {
                 action.config[k] = v;
               }
+            }
+          }
+        } else if (is_object_literal(arg) && !isMagicMode) {
+          for (const k in arg) {
+            const v = arg[k];
+            if (["config", "metadata"].includes(k)) {
+              mutate(action[k], v)
+            } else {
+              action[k] = v;
             }
           }
         } else {

@@ -9,17 +9,16 @@ const handlers = {
       let run;
       if (typeof assertion === 'function') {
         run = await session({
-          $: {
-            handler: assertion,
-            metadata: {
-              bastard: true,
-              raw_output: true
-            },
-            parent: action,
-            config: action.config,
-            error: error,
-            output: output
-          }
+          $: false,
+          handler: assertion,
+          metadata: {
+            bastard: true,
+            raw_output: true
+          },
+          parent: action,
+          config: action.config,
+          error: error,
+          output: output
         });
         if (typeof run !== 'boolean') {
           throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
@@ -39,17 +38,16 @@ const handlers = {
       let run;
       if (typeof assertion === 'function') {
         run = await session({
-          $: {
-            handler: assertion,
-            metadata: {
-              bastard: true,
-              raw_output: true
-            },
-            parent: action,
-            config: action.config,
-            error: error,
-            output: output
-          }
+          $: false,
+          handler: assertion,
+          metadata: {
+            bastard: true,
+            raw_output: true,
+          },
+          parent: action,
+          config: action.config,
+          error: error,
+          output: output,
         });
         if (typeof run !== 'boolean') {
           throw utils.error('NIKITA_ASSERTION_INVALID_OUTPUT', ['invalid assertion output,', 'expect a boolean value,', `got ${JSON.stringify(run)}.`]);
