@@ -40,6 +40,20 @@ describe 'session.contextualize', ->
     ]
     .should.eql expect
   
+  it '$ is specific to each argument', ->
+    contextualize args: [
+      { $: false, $metadata: true },
+      { $parent: true }
+      { $: false, $hooks: true }
+      { $config: true }
+    ]
+    .should.eql
+      config: true,
+      metadata: {},
+      $metadata: true,
+      parent: true,
+      $hooks: true
+  
   it '$ enable long mode with config', ->
     a_config_1 = { a_key_1: '1', a_key_overwritten: { a_key: 'overwrite 1'}}
     a_config_2 = { a_key_2: '2', a_key_overwritten: { a_key: 'overwrite 2'}}
@@ -80,7 +94,9 @@ describe 'session.contextualize', ->
       a_key_2: '2'
       a_key_overwritten: { a_key: 'overwrite 2'}
     ]
-    .should.match
+    .should.eql
       a_key_1: '1'
       a_key_overwritten: a_key: 'overwrite 2'
       a_key_2: '2'
+      config: {}
+      metadata: {}

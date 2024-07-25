@@ -33,13 +33,12 @@ describe 'actions.call', ->
         $ssh: ssh
         $tmpdir: true
       , ({metadata: {tmpdir}}) ->
-        result = await nikita.call
-          $:
-            metadata:
-              module: "#{tmpdir}/my_module.js"
-            config:
-              my_key: 'my value'
-        result.should.not.containEql my_key: 'my value'
+        await nikita.call
+          $: false
+          metadata:
+            module: "#{tmpdir}/my_module.js"
+          config:
+            my_key: 'my value'
   
     they 'defined as a function', ({ssh}) ->
       nikita
@@ -53,8 +52,8 @@ describe 'actions.call', ->
           }
           '''
           target: "#{tmpdir}/my_module.js"
-        result = await @call "#{tmpdir}/my_module.js", my_key: 'my value'
-        result.should.containEql my_key: 'my value'
+        await @call "#{tmpdir}/my_module.js", my_key: 'my value'
+          .should.finally.containEql my_key: 'my value'
     
     they 'defined as CommonJS object', ({ssh}) ->
       nikita

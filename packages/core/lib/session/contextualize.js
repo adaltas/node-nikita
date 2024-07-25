@@ -58,9 +58,7 @@ export default function ({ action = {}, args }) {
             },
           });
         } else if (is_object_literal(arg)) {
-          const isMagicMode = !args.find(
-            (args) => is_object_literal(args) && args["$"] === false
-          );
+          const isMagicMode = arg["$"] !== false;
           if (isMagicMode) {
             for (const k in arg) {
               const v = arg[k];
@@ -84,6 +82,7 @@ export default function ({ action = {}, args }) {
             }
           } else {
             for (const k in arg) {
+              if (k === '$') continue;
               const v = arg[k];
               if (["config", "metadata"].includes(k)) {
                 mutate(action[k], v);
