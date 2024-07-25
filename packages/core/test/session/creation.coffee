@@ -1,5 +1,4 @@
 
-import nikita from '@nikitajs/core'
 import session from '@nikitajs/core/session'
 import test from '../test.coffee'
 
@@ -15,29 +14,34 @@ describe 'session.creation', ->
         'handler is already registered, got function'
       ].join ' '
 
-  it 'argument cannot be an array, got []', ->
+  it 'return from array no items', ->
     session []
-    .should.be.rejectedWith
-      code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
-      message: [
-        'NIKITA_SESSION_INVALID_ARGUMENTS:'
-        'argument cannot be an array, got []'
-      ].join ' '
+    .should.finally.eql []
 
-  it 'argument cannot be an array, got [function,function]', ->
+  it 'return from array with handlers', ->
     session [
-      -> new Promise (resolve) ->
-        setTimeout ->
-          resolve 1
-        , 100
-      -> new Promise (resolve) ->
-        setTimeout ->
-          resolve 2
-        , 10
+      -> 1
+      -> Promise.resolve 2
     ]
-    .should.be.rejectedWith
-      code: 'NIKITA_SESSION_INVALID_ARGUMENTS'
-      message: [
-        'NIKITA_SESSION_INVALID_ARGUMENTS:'
-        'argument cannot be an array, got [function,function]'
-      ].join ' '
+    .should.finally.eql [1, 2]
+
+  it 'chain from array', ->
+    stack = []
+    await session [
+      -> new Promise (resolve) ->
+        setTimeout ->
+          stack.push 1
+          resolve()
+        , 30
+      -> new Promise (resolve) ->
+        setTimeout ->
+          stack.push 2
+          resolve()
+        , 20
+    ]
+    .call -> new Promise (resolve) ->
+        setTimeout ->
+          stack.push 3
+          resolve()
+        , 10
+    stack.should.eql [1, 2, 3]
