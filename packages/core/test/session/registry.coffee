@@ -1,9 +1,16 @@
 
 import nikita from '@nikitajs/core'
+import registry from '@nikitajs/core/registry'
 import test from '../test.coffee'
 
 describe 'action.registry', ->
   return unless test.tags.api
+
+  it 'initialized with empty registry', ->
+    nikita
+      $registry: registry.create()
+    , -> 'ok'
+    .should.finally.eql 'ok'
 
   describe 'access', ->
     

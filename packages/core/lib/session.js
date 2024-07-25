@@ -6,7 +6,7 @@ import registry from '@nikitajs/core/registry';
 import contextualize from '@nikitajs/core/session/contextualize';
 import utils from '@nikitajs/core/utils';
 
-const session = function(args, options = {}) {
+const session = function(args) {
   // Local schedulers to execute children and be notified on finish
   const schedulers = {
     in: each({
@@ -31,7 +31,6 @@ const session = function(args, options = {}) {
         hooks: {},
         scheduler: schedulers.out,
         state: {},
-        ...options.action,
       }
     });
   } catch (e) {
@@ -74,25 +73,16 @@ const session = function(args, options = {}) {
         $namespace: nm,
         $parent: action,
       })
-      // Validate the namespace
-      const child = await action.registry.get(nm);
-      if (!child) {
-        return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
-      }
       const args_is_array = args.some( (arg) => Array.isArray(arg) );
       if (!args_is_array) {
-        return session(args, {
-          action: child,
-        });
+        return session(args);
       }
       // Multiply the arguments
       return each({
         flatten: true
       }, utils.array.multiply(...args).map(function(args) {
         return function() {
-          return session(args, {
-            action: child,
-          });
+          return session(args);
         };
       }));
     });
@@ -146,6 +136,9 @@ const session = function(args, options = {}) {
     if (action.metadata.namespace) {
       try{
         const action_from_registry = await action.registry.get(action.metadata.namespace);
+        if(!action_from_registry && action.metadata.namespace.length !== 0){
+          return reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(action.metadata.namespace)}.`]));
+        }
         // Merge the registry action with the user action properties
         for (const k in action_from_registry) {
           const v = action_from_registry[k];
