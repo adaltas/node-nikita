@@ -8,10 +8,7 @@ import utils from '@nikitajs/core/utils';
 
 const session = function(args, options = {}) {
   // Initialize a new session
-  options.parent = options.parent || args[0]?.$parent || undefined
-  options.namespace = options.namespace || args[0]?.$namespace || undefined
   options.plugins = options.plugins || args[0]?.$plugins || undefined
-  options.registry = options.registry || args[0]?.$registry || undefined
   // Local schedulers to execute children and be notified on finish
   const schedulers = {
     in: each({
@@ -26,23 +23,31 @@ const session = function(args, options = {}) {
   };
   // Build up child namespace before calling
   let namespace = [];
-  let action = {
-    args: args,
-    config: {},
-    metadata: {},
-    hooks: {},
-    parent: options.parent,
-    scheduler: schedulers.out,
-    state: {},
-    ...options.action,
-  };
+  // Normalize arguments
+  let action;
+  try {
+    action = contextualize({
+      args: args,
+      action: {
+        args: args,
+        config: {},
+        metadata: { namespace: [] },
+        hooks: {},
+        scheduler: schedulers.out,
+        state: {},
+        ...options.action,
+      }
+    });
+  } catch (e) {
+    return Promise.reject(e)
+  }
   // Initialize the plugins manager
   action.plugins = plugandplay({
     plugins: options.plugins,
-    parent: options.parent?.plugins,
+    parent: action.parent?.plugins,
   });
   // Initialize the registry to manage action registration
-  action.registry = registry.create({
+  action.registry ??= registry.create({
     plugins: action.plugins,
     parent: action.parent?.registry ?? options.registry ?? registry,
     on_register: async function(name, act) {
@@ -71,12 +76,14 @@ const session = function(args, options = {}) {
       if (!child) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }
+      args.push({
+        $namespace: nm,
+        $parent: action,
+      })
       const args_is_array = args.some( (arg) => Array.isArray(arg) );
       if (!args_is_array) {
         return session(args, {
-          namespace: nm,
           action: child,
-          parent: action
         });
       }
       // Multiply the arguments
@@ -85,9 +92,7 @@ const session = function(args, options = {}) {
       }, utils.array.multiply(...args).map(function(args) {
         return function() {
           return session(args, {
-            namespace: nm,
             action: child,
-            parent: action
           });
         };
       }));
@@ -127,16 +132,6 @@ const session = function(args, options = {}) {
   // Execute the action
   const result = new Promise(async function(resolve, reject) {
     try {
-      // Normalize arguments
-      action = contextualize({
-        args: [
-          ...args,
-          {
-            $namespace: options.namespace || []
-          }
-        ],
-        action: action
-      });
       // Hook intented to modify the current action being created
       action = await action.plugins.call({
         name: "nikita:normalize",

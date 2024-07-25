@@ -8,7 +8,7 @@ import test from '../test.coffee'
 describe 'session.namespace', ->
   return unless test.tags.api
 
-  it 'call registered action', ->
+  it 'call action', ->
     nikita ({registry}) ->
       registry.register
         'action': handler: ({metadata}) ->
@@ -22,7 +22,7 @@ describe 'session.namespace', ->
       result = await @an.action()
       result.should.eql 'an.action value, depth 1'
 
-  it 'chain calls', ->
+  it 'chain action calls', ->
     nikita ({registry}) ->
       registry.register
         'action': handler: ({metadata}) ->
