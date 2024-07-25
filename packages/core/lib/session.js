@@ -6,14 +6,14 @@ import registry from '@nikitajs/core/registry';
 import contextualize from '@nikitajs/core/session/contextualize';
 import utils from '@nikitajs/core/utils';
 
-const session = function(args) {
+const session = function(...args) {
   // Multiply arguments
   if (args.some( (arg) => Array.isArray(arg) )) {
     return each({
       flatten: true
     }, utils.array.multiply(...args).map(function(args) {
       return function() {
-        return session(args);
+        return session(...args);
       };
     }));
   }
@@ -83,7 +83,7 @@ const session = function(args) {
         $namespace: nm,
         $parent: action,
       })
-      return session(args);
+      return session(...args);
     });
     return new Proxy(prom, {
       // Fluent call of children inside a parent
@@ -224,6 +224,4 @@ const session = function(args) {
   });
 };
 
-export default function(...args) {
-  return session(args);
-};
+export default session;
