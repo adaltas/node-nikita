@@ -1,10 +1,9 @@
-
 // Dependencies
 import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     // Normalization
     if (config.uid === false) {
       config.uid = null;
@@ -13,7 +12,7 @@ export default {
       config.gid = null;
     }
     // Validation
-    if (!((config.uid != null) || (config.gid != null))) {
+    if (!(config.uid != null || config.gid != null)) {
       throw Error("Missing one of uid or gid option");
     }
     await this.execute(
@@ -24,20 +23,20 @@ export default {
     );
   },
   hooks: {
-    on_action: function({config}) {
-      if (typeof config.uid === 'string' && /\d+/.test(config.uid)) {
+    on_action: function ({ config }) {
+      if (typeof config.uid === "string" && /\d+/.test(config.uid)) {
         // String to integer coercion
         config.uid = parseInt(config.uid);
       }
-      if (typeof config.gid === 'string' && /\d+/.test(config.gid)) {
+      if (typeof config.gid === "string" && /\d+/.test(config.gid)) {
         config.gid = parseInt(config.gid);
       }
-    }
+    },
   },
   metadata: {
-    argument_to_config: 'target',
+    argument_to_config: "target",
     log: false,
     raw_output: true,
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

@@ -1,24 +1,21 @@
 // Dependencies
-import utils from '@nikitajs/core/utils';
+import utils from "@nikitajs/core/utils";
 import definitions from "./schema.json" with { type: "json" };
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    let stats;
-    if (config.stats) {
-      stats = config.stats;
-    } else {
-      ({ stats } = await this.fs.stat(config.target));
-    }
+    const stats =
+      config.stats ??
+      (await this.fs.stat(config.target).then(({ stats }) => stats));
     // Detect changes
     if (utils.mode.compare(stats.mode, config.mode)) {
-      log({
-        message: `Identical permissions \"${config.mode.toString(8)}\" on \"${
+      log(
+        "INFO",
+        `Identical permissions \"${config.mode.toString(8)}\" on \"${
           config.target
-        }\"`,
-        level: "INFO",
-      });
+        }\"`
+      );
       return false;
     }
     // Apply changes
@@ -26,15 +23,15 @@ export default {
       target: config.target,
       mode: config.mode,
     });
-    log({
-      message: [
+    log(
+      "WARN",
+      [
         `Permissions changed`,
         `from "${stats.mode.toString(8)}"`,
         `to "${config.mode.toString(8)}"`,
         `on "${config.target}"`,
-      ].join(' '),
-      level: "WARN",
-    });
+      ].join(" ")
+    );
     return true;
   },
   metadata: {
