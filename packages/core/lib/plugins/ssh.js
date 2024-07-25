@@ -7,7 +7,7 @@ Pass an SSH connection to an action. The connection is accessible with the
 
 // Denpendencies
 import utils from "@nikitajs/core/utils";
-import {with_options as session} from "@nikitajs/core/session";
+import session from "@nikitajs/core/session";
 // Nikita plugins
 import events from "@nikitajs/core/plugins/tools/events";
 import find from "@nikitajs/core/plugins/tools/find";
@@ -24,10 +24,10 @@ export default {
     "nikita:action": async function (action) {
       // Is there a connection to open
       if (action.ssh && !utils.ssh.is(action.ssh)) {
-        let { ssh } = await session([{}], {
-            plugins: [events, find, log, status, raw, history], // Need to inject `tools.log`
-          })
-          .ssh.open(action.ssh);
+        let { ssh } = await session({
+          // Inject `tools.log` and its depedendencies
+          $plugins: [events, find, log, status, raw, history], // Need to inject `tools.log`
+        }).ssh.open(action.ssh);
         action.metadata.ssh_dispose = true;
         action.ssh = ssh;
         return;
@@ -73,8 +73,9 @@ export default {
     },
     "nikita:result": async function ({ action }) {
       if (action.metadata.ssh_dispose) {
-        await session([{}], {
-          plugins: [events, history, find, log, raw, status], // Need to inject `tools.log`
+        await session({
+          // Inject `tools.log` and its depedendencies
+          $plugins: [events, history, find, log, raw, status],
         }).ssh.close({
           ssh: action.ssh,
         });

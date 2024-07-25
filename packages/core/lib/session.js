@@ -7,8 +7,6 @@ import contextualize from '@nikitajs/core/session/contextualize';
 import utils from '@nikitajs/core/utils';
 
 const session = function(args, options = {}) {
-  // Initialize a new session
-  options.plugins = options.plugins || args[0]?.$plugins || undefined
   // Local schedulers to execute children and be notified on finish
   const schedulers = {
     in: each({
@@ -21,8 +19,6 @@ const session = function(args, options = {}) {
       pause: true,
     }),
   };
-  // Build up child namespace before calling
-  let namespace = [];
   // Normalize arguments
   let action;
   try {
@@ -43,13 +39,13 @@ const session = function(args, options = {}) {
   }
   // Initialize the plugins manager
   action.plugins = plugandplay({
-    plugins: options.plugins,
+    plugins: action.plugins,
     parent: action.parent?.plugins,
   });
   // Initialize the registry to manage action registration
   action.registry ??= registry.create({
     plugins: action.plugins,
-    parent: action.parent?.registry ?? options.registry ?? registry,
+    parent: action.parent?.registry ?? registry,
     on_register: async function(name, act) {
       await action.plugins.call({
         name: 'nikita:register',
@@ -60,6 +56,9 @@ const session = function(args, options = {}) {
       });
     }
   });
+  // Children namespace
+  let namespace = [];
+  // Catch method calls
   const on_call = function(...args) {
     let nm;
     // Extract action namespace and reset its value
@@ -71,15 +70,15 @@ const session = function(args, options = {}) {
       ]))
     }
     const prom = action.scheduler.call(async function() {
+      args.push({
+        $namespace: nm,
+        $parent: action,
+      })
       // Validate the namespace
       const child = await action.registry.get(nm);
       if (!child) {
         return Promise.reject(utils.error('ACTION_UNREGISTERED_NAMESPACE', ['no action is registered under this namespace,', `got ${JSON.stringify(nm)}.`]));
       }
-      args.push({
-        $namespace: nm,
-        $parent: action,
-      })
       const args_is_array = args.some( (arg) => Array.isArray(arg) );
       if (!args_is_array) {
         return session(args, {
@@ -235,8 +234,4 @@ const session = function(args, options = {}) {
 
 export default function(...args) {
   return session(args);
-};
-
-export const with_options = function(args, options) {
-  return session(args, options);
 };

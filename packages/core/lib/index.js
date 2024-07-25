@@ -6,7 +6,7 @@ Nikita session.
 */
 
 import "@nikitajs/core/register";
-import { with_options as session } from "@nikitajs/core/session";
+import session from "@nikitajs/core/session";
 
 import metadataArgumentToConfig from "@nikitajs/core/plugins/metadata/argument_to_config";
 import assertions from "@nikitajs/core/plugins/assertions";
@@ -46,46 +46,49 @@ import toolsSchema from "@nikitajs/core/plugins/tools/schema";
 import toolsWalk from "@nikitajs/core/plugins/tools/walk";
 
 const create = (...args) =>
-  session(args, {
-    plugins: [
-      metadataArgumentToConfig,
-      assertions,
-      assertionsExists,
-      conditions,
-      conditionsExecute,
-      conditionsExists,
-      conditionsOs,
-      global,
-      history,
-      magicDollar,
-      metadataAudit,
-      metadataDebug,
-      disabled,
-      metadataExecute,
-      metadataHeader,
-      metadataPosition,
-      metadataRaw,
-      metadataRegister,
-      metadataRelax,
-      metadataRetry,
-      metadataSchema,
-      metadataTime,
-      metadataTmpdir,
-      metadataUuid,
-      outputLogs,
-      outputStatus,
-      pubsub,
-      ssh,
-      templated,
-      toolsDig,
-      toolsEvents,
-      toolsFind,
-      toolsLog,
-      toolsPath,
-      toolsSchema,
-      toolsWalk,
-    ],
-  });
+  session(
+    {
+      $plugins: [
+        metadataArgumentToConfig,
+        assertions,
+        assertionsExists,
+        conditions,
+        conditionsExecute,
+        conditionsExists,
+        conditionsOs,
+        global,
+        history,
+        magicDollar,
+        metadataAudit,
+        metadataDebug,
+        disabled,
+        metadataExecute,
+        metadataHeader,
+        metadataPosition,
+        metadataRaw,
+        metadataRegister,
+        metadataRelax,
+        metadataRetry,
+        metadataSchema,
+        metadataTime,
+        metadataTmpdir,
+        metadataUuid,
+        outputLogs,
+        outputStatus,
+        pubsub,
+        ssh,
+        templated,
+        toolsDig,
+        toolsEvents,
+        toolsFind,
+        toolsLog,
+        toolsPath,
+        toolsSchema,
+        toolsWalk,
+      ],
+    },
+    ...args,
+  );
 
 export default new Proxy(create, {
   get: (_, name) => create()[name],
