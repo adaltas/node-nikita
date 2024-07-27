@@ -1,6 +1,6 @@
 {
   "name": "nikita",
-  "version": "1.0.0-alpha.8",
+  "version": "1.0.0-alpha.9",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "nikita",
@@ -36,21 +36,21 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.8",
-    "@nikitajs/db": "^1.0.0-alpha.8",
-    "@nikitajs/docker": "^1.0.0-alpha.8",
-    "@nikitajs/file": "^1.0.0-alpha.8",
-    "@nikitajs/incus": "^1.0.0-alpha.8",
-    "@nikitajs/ipa": "^1.0.0-alpha.8",
-    "@nikitajs/java": "^1.0.0-alpha.8",
-    "@nikitajs/krb5": "^1.0.0-alpha.8",
-    "@nikitajs/ldap": "^1.0.0-alpha.8",
-    "@nikitajs/log": "^2.0.0-alpha.5",
-    "@nikitajs/network": "^1.0.0-alpha.8",
-    "@nikitajs/service": "^1.0.0-alpha.8",
-    "@nikitajs/system": "^1.0.0-alpha.8",
-    "@nikitajs/tools": "^1.0.0-alpha.8",
-    "@nikitajs/utils": "^1.0.0-alpha.8"
+    "@nikitajs/core": "^1.0.0-alpha.9",
+    "@nikitajs/db": "^1.0.0-alpha.9",
+    "@nikitajs/docker": "^1.0.0-alpha.9",
+    "@nikitajs/file": "^1.0.0-alpha.9",
+    "@nikitajs/incus": "^1.0.0-alpha.9",
+    "@nikitajs/ipa": "^1.0.0-alpha.9",
+    "@nikitajs/java": "^1.0.0-alpha.9",
+    "@nikitajs/krb5": "^1.0.0-alpha.9",
+    "@nikitajs/ldap": "^1.0.0-alpha.9",
+    "@nikitajs/log": "^2.0.0-alpha.6",
+    "@nikitajs/network": "^1.0.0-alpha.9",
+    "@nikitajs/service": "^1.0.0-alpha.9",
+    "@nikitajs/system": "^1.0.0-alpha.9",
+    "@nikitajs/tools": "^1.0.0-alpha.9",
+    "@nikitajs/utils": "^1.0.0-alpha.9"
   },
   "devDependencies": {
     "mocha": "^10.7.0",

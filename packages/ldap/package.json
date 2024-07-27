@@ -1,6 +1,6 @@
 {
   "name": "@nikitajs/ldap",
-  "version": "1.0.0-alpha.8",
+  "version": "1.0.0-alpha.9",
   "description": "Provides Nikita actions for various OpenLDAP operations.",
   "keywords": [
     "nikita",
