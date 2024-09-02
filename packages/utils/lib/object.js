@@ -161,7 +161,10 @@ const filter = function (source, black, white) {
   // If white list, only use the selected list
   // Otherwise clone it all
   for (const key of white ?? Object.keys(source)) {
-    if (source.hasOwnProperty(key) && !black.includes(key)) {
+    if (
+      Object.prototype.hasOwnProperty.call(source, key) &&
+      !black.includes(key)
+    ) {
       // unless part of black list
       obj[key] = source[key];
     }
