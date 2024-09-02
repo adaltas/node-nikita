@@ -10,13 +10,9 @@ Control system limits for a user.
 There are two cases, depending on the specified value:
 
 1. Integer value   
-  If an int value is specified, then nikita checks that the value is lesser than
-  the kernel limit. Please be aware that it is necessary but not sufficient to
-  guarantee that the user would be able to open session.
+  If an int value is specified, then nikita checks that the value is lesser than the kernel limit. Please be aware that it is necessary but not sufficient to guarantee that the user would be able to open session.
 2. Boolean value
-  If a true value is specified, then nikita set it to 75% of the kernel limit.
-  This value is neither optimal nor able to guarantee that the user would be
-  able to open session, but that is the best nikita can automatically do.
+  If a true value is specified, then nikita set it to 75% of the kernel limit. This value is neither optimal nor able to guarantee that the user would be able to open session, but that is the best nikita can automatically do.
 
 ### Other values
 
@@ -24,20 +20,9 @@ Other values are not assessed by default. They must be integers.
 
 ## Ulimit
 
-Linux allows to limit the resources allocated to users or user groups via
-"/etc/security/limits.conf" and "/etc/security/limits.d/*.conf" files loaded by
-WFP (Plugable Authentication Module) at each logon. The user can then adapt the
-resources available to its needs via "ulimit". Refer to the
-[limits.conf(5)](https://linux.die.net/man/5/limits.conf) Linux man page for
-further information.
+Linux allows to limit the resources allocated to users or user groups via "/etc/security/limits.conf" and "/etc/security/limits.d/*.conf" files loaded by WFP (Plugable Authentication Module) at each logon. The user can then adapt the resources available to its needs via "ulimit". Refer to the [limits.conf(5)](https://linux.die.net/man/5/limits.conf) Linux man page for further information.
 
-It is possible to define, for a number of resources (number of open files, file size,
-number of instantiated process, CPU time, etc.), a "soft" limit which can be
-increased by user, via "ulimit" until a maximum "hard" limit.
-The system does not exceed the value of the soft limit. If the user wants to push
-this limit, it will set a new soft limit with ulimit.
-The soft limit is always lower or equal to the hard limit.
-In general, the limits applied to a user override those applied to a group.
+It is possible to define, for a number of resources (number of open files, file size, number of instantiated process, CPU time, etc.), a "soft" limit which can be increased by user, via "ulimit" until a maximum "hard" limit. The system does not exceed the value of the soft limit. If the user wants to push this limit, it will set a new soft limit with ulimit. The soft limit is always lower or equal to the hard limit. In general, the limits applied to a user override those applied to a group.
 
 ## Ulimit commands
 
@@ -75,8 +60,7 @@ ls /proc/$pid/task | wc
 ps -L p $pid --no-headers | wc -l
 ```
 
-Number of sub-process for a user, the option "-L" show threads, possibly with
-LWP and NLWP columns:
+Number of sub-process for a user, the option "-L" show threads, possibly with LWP and NLWP columns:
 
 ```bash
 user=`whoami`
@@ -85,8 +69,7 @@ ps -L -u $user --no-headers | wc -l
 
 ## Kernel Limits
 
-User limits cannot exceed kernel limits, so you need to configure kernel limits
-before user limits.
+User limits cannot exceed kernel limits, so you need to configure kernel limits before user limits.
 
 ### Processes
 
@@ -112,8 +95,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Example
 
-Setting the number of open file descriptors to .75 of the maximum value for 
-all the users:
+Setting the number of open file descriptors to .75 of the maximum value for  all the users:
 
 ```js
 const {$status} = await nikita.system.limits({
