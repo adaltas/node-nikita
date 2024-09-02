@@ -15,19 +15,6 @@
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
-  "coffeelintConfig": {
-    "indentation": {
-      "level": "error",
-      "value": 2
-    },
-    "line_endings": {
-      "level": "error",
-      "value": "unix"
-    },
-    "max_line_length": {
-      "level": "ignore"
-    }
-  },
   "contributors": [
     {
       "name": "David Worms",
@@ -56,10 +43,10 @@
     "./register": "./lib/register.js",
     "./*": "./lib/*/index.js"
   },
-  "homepage": "https://nikita.js.org/",
   "files": [
     "/lib"
   ],
+  "homepage": "https://nikita.js.org/",
   "license": "MIT",
   "mocha": {
     "inline-diffs": true,

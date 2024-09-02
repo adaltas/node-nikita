@@ -17,22 +17,6 @@
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
-  "coffeelintConfig": {
-    "indentation": {
-      "level": "error",
-      "value": 2
-    },
-    "line_endings": {
-      "level": "error",
-      "value": "unix"
-    },
-    "max_line_length": {
-      "level": "ignore"
-    },
-    "no_nested_string_interpolation": {
-      "level": "ignore"
-    }
-  },
   "contributors": [
     {
       "name": "David Worms",
@@ -54,9 +38,6 @@
     "object-diff": "^0.0.4",
     "shell": "^0.9.6"
   },
-  "peerDependencies": {
-    "@nikitajs/core": "^1.0.0-alpha.1"
-  },
   "devDependencies": {
     "coffeescript": "^2.7.0",
     "mocha": "^10.7.0",
@@ -75,6 +56,8 @@
   "files": [
     "/lib"
   ],
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
   "mocha": {
     "inline-diffs": true,
     "loader": "../core/test/loaders/all.js",
@@ -87,11 +70,12 @@
     "throw-deprecation": true,
     "timeout": 40000
   },
+  "peerDependencies": {
+    "@nikitajs/core": "^1.0.0-alpha.1"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://nikita.js.org/",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/adaltas/node-nikita",
