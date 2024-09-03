@@ -1,5 +1,6 @@
 // Dependencies
 import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/core/utils";
 
 // Action
 export default {
@@ -37,7 +38,7 @@ export default {
             await wait(config.interval);
           }
         }
-        throw utils.error("NIKITA_EXECUTE_WAIT_MAX_RETRY", [
+        throw utils.error("NIKITA_WAIT_MAX_RETRY", [
           "the number of attempts reached the maximum number of retries,",
           `got ${config.retry}.`,
         ]);

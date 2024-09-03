@@ -75,3 +75,14 @@ describe 'actions.wait', ->
         $status: true,
         get: 'me'
       })
+  
+  describe 'option `retry`', ->
+    
+    they 'when `0`, not execution', ({ssh}) ->
+      nikita
+        $ssh: ssh
+      .wait retry: 3, () ->
+        throw Error 'Just let it go'
+      .should.be.rejectedWith
+        code: 'NIKITA_WAIT_MAX_RETRY'
+        message: 'NIKITA_WAIT_MAX_RETRY: the number of attempts reached the maximum number of retries, got 3.'
