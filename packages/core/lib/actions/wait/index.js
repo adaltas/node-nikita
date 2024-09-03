@@ -1,6 +1,11 @@
 // Dependencies
-import definitions from "./schema.json" with { type: "json" };
 import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -10,16 +15,17 @@ export default {
   hooks: {
     on_action: function (action) {
       const { args, handler, config } = action;
-      if(!args.some((arg) => typeof arg === 'function')){
+      if (!args.some((arg) => typeof arg === "function")) {
         // Fallback to default handler
-        return action
+        return action;
       }
       // Use handler wraper
-      action.config = {}
-      action.metadata.argument_to_config = undefined
+      action.config = {};
+      action.metadata.argument_to_config = undefined;
       action.handler = async function ({ context, tools: { log } }) {
         let attempts = 0;
-        const wait = (timeout) => timeout && new Promise( (resolve) => setTimeout(resolve, timeout) );
+        const wait = (timeout) =>
+          timeout && new Promise((resolve) => setTimeout(resolve, timeout));
         while (attempts !== config.retry) {
           attempts++;
           log("DEBUG", `Start attempt #${attempts}`);
@@ -34,7 +40,10 @@ export default {
               $status: attempts > 1,
             };
           } catch (err) {
-            log("WARN", `Attempt #${attempts} failed with message: ${err.message}`);
+            log(
+              "WARN",
+              `Attempt #${attempts} failed with message: ${err.message}`,
+            );
             await wait(config.interval);
           }
         }

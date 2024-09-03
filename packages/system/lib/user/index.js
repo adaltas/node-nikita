@@ -1,36 +1,41 @@
-
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({
-    config,
-    tools: {log}
-  }) {
-    log('DEBUG', 'Entering user');
-    if (typeof config.shell === "function" ? config.shell(typeof config.shell !== 'string') : void 0) {
+  handler: async function ({ config, tools: { log } }) {
+    log("DEBUG", "Entering user");
+    if (
+      typeof config.shell === "function" ?
+        config.shell(typeof config.shell !== "string")
+      : void 0
+    ) {
       throw Error(`Invalid option 'shell': ${JSON.strinfigy(config.shell)}`);
     }
-    const {users} = await this.system.user.read();
+    const { users } = await this.system.user.read();
     const user_info = users[config.name];
     log(
       "DEBUG",
-      user_info
-        ? `Got user information for ${JSON.stringify(config.name)}`
-        : `User ${JSON.stringify(config.name)} not present`
+      user_info ?
+        `Got user information for ${JSON.stringify(config.name)}`
+      : `User ${JSON.stringify(config.name)} not present`,
     );
     // Get group information if
     // * user already exists
     // * we need to compare groups membership
-    const {groups: groups_info} = await this.system.group.read({
-      $if: user_info && config.groups
+    const { groups: groups_info } = await this.system.group.read({
+      $if: user_info && config.groups,
     });
     if (groups_info) {
-      log('DEBUG', `Got group information for ${JSON.stringify(config.name)}`);
+      log("DEBUG", `Got group information for ${JSON.stringify(config.name)}`);
     }
     if (config.home) {
       await this.fs.mkdir({
@@ -38,7 +43,7 @@ export default {
         target: path.dirname(config.home),
         uid: 0,
         gid: 0,
-        mode: 0o0644 // Same as '/home'
+        mode: 0o0644, // Same as '/home'
       });
     }
     if (!user_info) {
@@ -60,7 +65,9 @@ export default {
             config.groups && `-G ${config.groups.join(",")}`,
             config.skel && `-k ${config.skel}`,
             `${config.name}`,
-          ].filter(Boolean).join(" "),
+          ]
+            .filter(Boolean)
+            .join(" "),
         },
         {
           $if: config.home,
@@ -70,8 +77,8 @@ export default {
       log("WARN", "User defined elsewhere than '/etc/passwd', exit code is 9");
     } else {
       const changed = [];
-      for (const k of ['uid', 'home', 'shell', 'comment', 'gid']) {
-        if ((config[k] != null) && user_info[k] !== config[k]) {
+      for (const k of ["uid", "home", "shell", "comment", "gid"]) {
+        if (config[k] != null && user_info[k] !== config[k]) {
           changed.push(k);
         }
       }
@@ -81,17 +88,21 @@ export default {
             throw Error(`Group does not exist: ${group}`);
           }
           if (groups_info[group].users.indexOf(config.name) === -1) {
-            changed.push('groups');
+            changed.push("groups");
           }
         }
       }
-      log(changed.length ? {
-        message: `User ${config.name} modified`,
-        level: 'WARN'
-      } : {
-        message: `User ${config.name} not modified`,
-        level: 'DEBUG'
-      });
+      log(
+        changed.length ?
+          {
+            message: `User ${config.name} modified`,
+            level: "WARN",
+          }
+        : {
+            message: `User ${config.name} not modified`,
+            level: "DEBUG",
+          },
+      );
       try {
         await this.execute({
           $if: changed.length,
@@ -104,7 +115,9 @@ export default {
             config.groups && `-G ${config.groups.join(",")}`,
             config.uid && `-u ${config.uid}`,
             `${config.name}`,
-          ].filter(Boolean).join(" "),
+          ]
+            .filter(Boolean)
+            .join(" "),
         });
       } catch (error) {
         if (error.exit_code === 8) {
@@ -119,40 +132,40 @@ export default {
           $unless: config.no_home_ownership,
           target: config.home,
           uid: config.uid,
-          gid: config.gid
+          gid: config.gid,
         });
       }
     }
     // TODO, detect changes in password
     // echo #{config.password} | passwd --stdin #{config.name}
     if (config.password_sync && config.password) {
-      const {$status} = await this.execute({
+      const { $status } = await this.execute({
         command: dedent`
           hash=$(echo ${config.password} | openssl passwd -1 -stdin)
           usermod --pass="$hash" ${config.name}
-        `
+        `,
       });
       if ($status) {
-        return log('WARN',  "Password modified");
+        return log("WARN", "Password modified");
       }
     }
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       switch (config.shell) {
         case true:
-          config.shell = '/bin/sh';
+          config.shell = "/bin/sh";
           break;
         case false:
-          config.shell = '/sbin/nologin';
+          config.shell = "/sbin/nologin";
       }
-      if (typeof config.groups === 'string') {
-        config.groups = config.groups.split(',');
+      if (typeof config.groups === "string") {
+        config.groups = config.groups.split(",");
       }
-    }
+    },
   },
   metadata: {
-    argument_to_config: 'name',
-    definitions: definitions
-  }
+    argument_to_config: "name",
+    definitions: definitions,
+  },
 };

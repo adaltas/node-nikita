@@ -1,8 +1,12 @@
-
 // Dependencies
-import semver from 'semver';
+import semver from "semver";
 import utils from "@nikitajs/tools/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -23,13 +27,14 @@ export default {
         continue;
       }
       const [name, version] = line
-        .match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)
+        .match(/(.*?)(?:$| \((?:default:\s+)?([\d., ]+)\))/)
         .slice(1, 4);
       currentGems[name] = version.split(", ");
     }
     // Make array of sources and filter
-    let sources = !config.source
-      ? []
+    let sources =
+      !config.source ?
+        []
       : await (async () => {
           const { files } = await this.fs.glob(config.source);
           const current_filenames = [];
@@ -54,7 +59,7 @@ export default {
       }
       // Install if a version is demanded and no installed version satisfy it
       const isVersionMatching = currentGems[name].some((currentVersion) =>
-        semver.satisfies(version, currentVersion)
+        semver.satisfies(version, currentVersion),
       );
       if (version && !isVersionMatching) {
         continue;
@@ -75,7 +80,7 @@ export default {
               config.build_flags && "--build-flags config.build_flags",
             ]
               .filter(Boolean)
-              .join(" ")
+              .join(" "),
           )
           .join("\n"),
         code: [0, 2],

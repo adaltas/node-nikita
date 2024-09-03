@@ -1,30 +1,36 @@
-
 // Dependencies
-import exec from 'ssh2-exec';
-import execPromise from 'ssh2-exec/promises';
-import utils from '@nikitajs/core/utils';
+import exec from "ssh2-exec";
+import execPromise from "ssh2-exec/promises";
+import utils from "@nikitajs/core/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Errors
 const errors = {
-  NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST: function({err, config}) {
-    return utils.error('NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST', ['directory defined by `config.arch_chroot_rootdir` must exist,', `location is ${JSON.stringify(config.arch_chroot_rootdir)}.`], {
-      exit_code: err.code,
-      stdout: err.stdout,
-      stderr: err.stderr
-    });
-  }
+  NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST: function ({ err, config }) {
+    return utils.error(
+      "NIKITA_EXECUTE_ARCH_CHROOT_ROOTDIR_NOT_EXIST",
+      [
+        "directory defined by `config.arch_chroot_rootdir` must exist,",
+        `location is ${JSON.stringify(config.arch_chroot_rootdir)}.`,
+      ],
+      {
+        exit_code: err.code,
+        stdout: err.stdout,
+        stderr: err.stderr,
+      },
+    );
+  },
 };
 
 // Action
 export default {
-  handler: async function ({
-    config,
-    metadata,
-    tools: { log, path },
-    ssh,
-  }) {
+  handler: async function ({ config, metadata, tools: { log, path }, ssh }) {
     // Validate parameters
     config.mode ??= 0o500;
     if (typeof config.command === "function") {
@@ -80,7 +86,7 @@ export default {
         {
           [`awk -v val=${config.uid} -F `]: " '$3==val{print $1}' /etc/passwd`",
         },
-        function () {}
+        function () {},
       );
       config.uid = stdout.trim();
       if (!(config.bash || config.arch_chroot)) {
@@ -108,7 +114,7 @@ export default {
       const command = config.command;
       const target_in = path.join(
         config.arch_chroot_tmpdir,
-        `execute-arch_chroot-${utils.string.hash(config.command)}`
+        `execute-arch_chroot-${utils.string.hash(config.command)}`,
       );
       const target = path.join(config.arch_chroot_rootdir, target_in);
       // target = "#{metadata.tmpdir}/#{utils.string.hash config.command}" if typeof config.target isnt 'string'
@@ -128,7 +134,7 @@ export default {
       const command = config.command;
       const target = path.join(
         metadata.tmpdir,
-        `execute-bash-${utils.string.hash(config.command)}`
+        `execute-bash-${utils.string.hash(config.command)}`,
       );
       log(`Writing bash script to ${JSON.stringify(target)}`);
       let cmd = `${config.bash} ${target}`;
@@ -219,7 +225,7 @@ export default {
                   `got ${JSON.stringify(data.toString())},`,
                   "this is embarassing and we never found how to catch this bug,",
                   "we would really enjoy some help to replicate or fix this one.",
-                ].join(" ")
+                ].join(" "),
               );
             }
           }
@@ -249,7 +255,7 @@ export default {
                   `got ${JSON.stringify(data.toString())},`,
                   "this is embarassing and we never found how to catch this bug,",
                   "we would really enjoy some help to replicate or fix this one.",
-                ].join(" ")
+                ].join(" "),
               );
             }
           }
@@ -324,7 +330,7 @@ export default {
                 "An unexpected exit code was encountered,",
                 metadata.relax ? "using relax mode," : void 0,
                 `command is ${JSON.stringify(
-                  utils.string.max(config.command_original, 50)
+                  utils.string.max(config.command_original, 50),
                 )},`,
                 `got ${JSON.stringify(result.code)}`,
                 `instead of ${JSON.stringify(config.code)}.`,
@@ -342,7 +348,7 @@ export default {
                   "an unexpected exit code was encountered,",
                   metadata.relax ? "using relax mode," : void 0,
                   `command is ${JSON.stringify(
-                    utils.string.max(config.command_original, 50)
+                    utils.string.max(config.command_original, 50),
                   )},`,
                   `got ${JSON.stringify(result.code)}`,
                   `instead of ${JSON.stringify(config.code)}.`,
@@ -350,8 +356,8 @@ export default {
                 {
                   ...result,
                   exit_code: code,
-                }
-              )
+                },
+              ),
             );
           }
           if (config.code.false.indexOf(code) === -1) {
@@ -383,15 +389,15 @@ export default {
           config.env_export != null ? config.env_export : !!ssh;
         // Create the tmpdir if arch_chroot is activated
         if (config.arch_chroot && config.arch_chroot_rootdir) {
-          return metadata.tmpdir != null
-            ? metadata.tmpdir
-            : (metadata.tmpdir = async function ({ os_tmpdir, tmpdir }) {
+          return metadata.tmpdir != null ?
+              metadata.tmpdir
+            : (metadata.tmpdir = async function ({ tmpdir }) {
                 // Note, Arch mount `/tmp` with tmpfs in memory
                 // placing a file in the host fs will not expose it inside of chroot
                 config.arch_chroot_tmpdir = path.join("/opt", tmpdir);
                 tmpdir = path.join(
                   config.arch_chroot_rootdir,
-                  config.arch_chroot_tmpdir
+                  config.arch_chroot_tmpdir,
                 );
                 const sudo = function (command) {
                   if (utils.os.whoami({ ssh }) === "root") {
@@ -408,7 +414,7 @@ export default {
                       sudo(`[ -w ${config.arch_chroot_rootdir} ] || exit 2;`),
                       sudo(`mkdir -p ${tmpdir};`),
                       sudo(`chmod 700 ${tmpdir};`),
-                    ].join("\n")
+                    ].join("\n"),
                   );
                 } catch (error) {
                   if (error.code === 2) {
@@ -428,8 +434,8 @@ export default {
           config.bash ||
           (env_export && Object.keys(config.env).length)
         ) {
-          return metadata.tmpdir != null
-            ? metadata.tmpdir
+          return metadata.tmpdir != null ?
+              metadata.tmpdir
             : (metadata.tmpdir = true);
         }
       },

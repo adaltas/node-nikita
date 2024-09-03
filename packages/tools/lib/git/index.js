@@ -1,40 +1,35 @@
-
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({
-    config,
-    tools: {path}
-  }) {
+  handler: async function ({ config, tools: { path } }) {
     // Start real work
     let repo_uptodate = false;
-    const {
-      exists: repo_exists
-    } = (await this.fs.exists({
-      target: config.target
-    }));
+    const { exists: repo_exists } = await this.fs.exists({
+      target: config.target,
+    });
     if (repo_exists) {
-      const {
-        exists: is_git
-      } = (await this.fs.exists({
-        target: `${config.target}/.git`
-      }));
+      const { exists: is_git } = await this.fs.exists({
+        target: `${config.target}/.git`,
+      });
       if (!is_git) {
         throw Error("Not a git repository");
       }
     } else {
       await this.execute({
         command: `git clone ${config.source} ${config.target}`,
-        cwd: path.dirname(config.target)
+        cwd: path.dirname(config.target),
       });
     }
     if (repo_exists) {
-      ({
-        $status: repo_uptodate
-      } = (await this.execute({
+      ({ $status: repo_uptodate } = await this.execute({
         $shy: true,
         command: dedent`
           current=\`git log --pretty=format:'%H' -n 1\`
@@ -45,17 +40,17 @@ export default {
         `,
         cwd: config.target,
         trap: true,
-        code: [0, 3]
-      })));
+        code: [0, 3],
+      }));
     }
     if (!repo_uptodate) {
       await this.execute({
         command: `git checkout ${config.revision}`,
-        cwd: config.target
+        cwd: config.target,
       });
     }
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

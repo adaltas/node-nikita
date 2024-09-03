@@ -1,14 +1,16 @@
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    log({
-      message: `Stop service ${config.name}`,
-      level: "INFO",
-    });
+    log(`Stop service ${config.name}`);
     try {
       const { $status } = await this.execute({
         command: dedent`
@@ -27,16 +29,10 @@ export default {
         code: [0, 3],
       });
       if ($status) {
-        log({
-          message: "Service is stopped",
-          level: "INFO",
-        });
+        log("Service is stopped");
       }
       if (!$status) {
-        log({
-          message: "Service already stopped",
-          level: "WARN",
-        });
+        log("WARN", "Service already stopped");
       }
     } catch (error) {
       if (error.exit_code === 2) {

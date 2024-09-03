@@ -1,18 +1,26 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import url from "node:url";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+import { escapeshellarg as esa } from "@nikitajs/utils/string";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Errors
 const errors = {
-  NIKITA_FILE_INVALID_TARGET_HASH: function({config, hash, _hash}) {
-    return utils.error('NIKITA_FILE_INVALID_TARGET_HASH', [`target ${JSON.stringify(config.target)} got ${JSON.stringify(hash)} instead of ${JSON.stringify(_hash)}.`]);
-  }
+  NIKITA_FILE_INVALID_TARGET_HASH: function ({ config, hash, _hash }) {
+    return utils.error("NIKITA_FILE_INVALID_TARGET_HASH", [
+      `target ${JSON.stringify(config.target)} got ${JSON.stringify(hash)} instead of ${JSON.stringify(_hash)}.`,
+    ]);
+  },
 };
 
-const protocols_http = ['http:', 'https:'];
-const protocols_ftp = ['ftp:', 'ftps:'];
+const protocols_http = ["http:", "https:"];
+const protocols_ftp = ["ftp:", "ftps:"];
 
 export { protocols_http, protocols_ftp };
 
@@ -49,18 +57,17 @@ export default {
     }
     const u = url.parse(config.source);
     if (u.protocol !== null) {
-      log({
-        message: "Bypass source hash computation for non-file protocols",
-        level: "WARN",
-      });
+      log("WARN", "Bypass source hash computation for non-file protocols");
     } else {
       if (_hash === true) {
         _hash = await this.fs.hash(config.source);
-        _hash = (_hash != null ? _hash.hash : void 0) ? _hash.hash : false;
-        log({
-          message: `Computed hash value is '${_hash}'`,
-          level: "INFO",
-        });
+        _hash =
+          (
+            _hash != null ? _hash.hash : void 0
+          ) ?
+            _hash.hash
+          : false;
+        log("INFO", `Computed hash value is '${_hash}'`);
       }
     }
     // Download the file if
@@ -68,38 +75,23 @@ export default {
     // - option force is provided
     // - hash isnt true and doesnt match
     const { $status } = await this.call(async function () {
-      log({
-        message: `Check if target (${config.target}) exists`,
-        level: "DEBUG",
-      });
+      log("DEBUG", `Check if target (${config.target}) exists`);
       const { exists } = await this.fs.exists({
         target: config.target,
       });
       if (exists) {
-        log({
-          message: "Target file exists",
-          level: "INFO",
-        });
+        log("INFO", "Target file exists");
         // If no checksum, we ignore MD5 check
         if (config.force) {
-          log({
-            message: "Force mode, cache will be overwritten",
-            level: "DEBUG",
-          });
+          log("DEBUG", "Force mode, cache will be overwritten");
           return true;
         } else if (_hash && typeof _hash === "string") {
           // then we compute the checksum of the file
-          log({
-            message: `Comparing ${algo} hash`,
-            level: "DEBUG",
-          });
+          log("DEBUG", `Comparing ${algo} hash`);
           const { hash } = await this.fs.hash(config.target);
           // And compare with the checksum provided by the user
           if (_hash === hash) {
-            log({
-              message: "Hashes match, skipping",
-              level: "DEBUG",
-            });
+            log("DEBUG", "Hashes match, skipping");
             return false;
           }
           log({
@@ -111,17 +103,11 @@ export default {
           });
           return true;
         } else {
-          log({
-            message: "Target file exists, check disabled, skipping",
-            level: "DEBUG",
-          });
+          log("DEBUG", "Target file exists, check disabled, skipping");
           return false;
         }
       } else {
-        log({
-          message: "Target file does not exists",
-          level: "INFO",
-        });
+        log("INFO", "Target file does not exists");
         return true;
       }
     });
@@ -142,12 +128,14 @@ export default {
           config.fail ? "--fail" : void 0,
           u.protocol === "https:" && "--insecure",
           config.location && "--location",
-          ...config.http_headers.map(header => `--header ${esa(header)}`),
-          ...config.cookies.map(cookie => `--cookie ${esa(cookie)}`),
+          ...config.http_headers.map((header) => `--header ${esa(header)}`),
+          ...config.cookies.map((cookie) => `--cookie ${esa(cookie)}`),
           `-s ${config.source}`,
           `-o ${config.target}`,
           config.proxy ? `-x ${config.proxy}` : void 0,
-        ].filter(Boolean).join(" "),
+        ]
+          .filter(Boolean)
+          .join(" "),
       });
     } else {
       await this.fs.mkdir({
@@ -177,7 +165,7 @@ export default {
     return {};
   },
   metadata: {
-    argument_to_config: 'source',
-    definitions: definitions
-  }
+    argument_to_config: "source",
+    definitions: definitions,
+  },
 };

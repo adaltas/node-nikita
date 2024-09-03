@@ -1,4 +1,3 @@
-
 /*
 Plugin `@nikitajs/core/plugins/pubsub`
 
@@ -7,24 +6,22 @@ continuing their execution.
 
 */
 export default {
-  name: '@nikitajs/core/plugins/pubsub',
-  require: '@nikitajs/core/plugins/tools/find',
+  name: "@nikitajs/core/plugins/pubsub",
+  require: "@nikitajs/core/plugins/tools/find",
   hooks: {
-    'nikita:action': async function(action) {
-      const engine = await action.tools.find(
-        ({metadata}) => metadata.pubsub
-      );
+    "nikita:action": async function (action) {
+      const engine = await action.tools.find(({ metadata }) => metadata.pubsub);
       if (!engine) {
         return action;
       }
       action.tools.pubsub = {
-        get: function(key) {
+        get: function (key) {
           return engine.get(key);
         },
-        set: function(key, value) {
+        set: function (key, value) {
           return engine.set(key, value);
-        }
+        },
       };
-    }
-  }
+    },
+  },
 };

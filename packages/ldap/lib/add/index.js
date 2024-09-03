@@ -1,8 +1,13 @@
 // Dependencies
 import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import utils from "@nikitajs/ldap/utils"
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/ldap/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -31,12 +36,12 @@ export default {
       ldif += "\n";
       ldif += `dn: ${entry.dn}\n`;
       ldif += "changetype: add\n";
-      const [_, k, v] = /^(.*?)=(.+?),.*$/.exec(entry.dn);
+      const [, k, v] = /^(.*?)=(.+?),.*$/.exec(entry.dn);
       ldif += `${k}: ${v}\n`;
       if (entry[k]) {
         if (entry[k] !== v) {
           throw Error(
-            `Inconsistent value: ${entry[k]} is not ${v} for attribute ${k}`
+            `Inconsistent value: ${entry[k]} is not ${v} for attribute ${k}`,
           );
         }
         delete entry[k];
@@ -60,15 +65,9 @@ export default {
         [
           "ldapmodify",
           config.continuous ? "-c" : void 0,
-          config.mesh
-            ? `-Y ${esa(config.mesh)}`
-            : void 0,
-          config.binddn
-            ? `-D ${esa(config.binddn)}`
-            : void 0,
-          config.passwd
-            ? `-w ${esa(config.passwd)}`
-            : void 0,
+          config.mesh ? `-Y ${esa(config.mesh)}` : void 0,
+          config.binddn ? `-D ${esa(config.binddn)}` : void 0,
+          config.passwd ? `-w ${esa(config.passwd)}` : void 0,
           config.uri ? `-H ${esa(config.uri)}` : void 0,
         ].join(" "),
         dedent`

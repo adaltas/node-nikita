@@ -1,19 +1,40 @@
 // Dependencies
-import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Errors
 const errors = {
-  NIKITA_MKDIR_TARGET_RELATIVE: function({config}) {
-    return utils.error('NIKITA_MKDIR_TARGET_RELATIVE', ['only absolute path are supported over SSH,', 'target is relative and config `cwd` is not provided,', `got ${JSON.stringify(config.target)}`], {
-      target: config.target
-    });
+  NIKITA_MKDIR_TARGET_RELATIVE: function ({ config }) {
+    return utils.error(
+      "NIKITA_MKDIR_TARGET_RELATIVE",
+      [
+        "only absolute path are supported over SSH,",
+        "target is relative and config `cwd` is not provided,",
+        `got ${JSON.stringify(config.target)}`,
+      ],
+      {
+        target: config.target,
+      },
+    );
   },
-  NIKITA_MKDIR_TARGET_INVALID_TYPE: function({stats, target}) {
-    return utils.error('NIKITA_MKDIR_TARGET_INVALID_TYPE', ['target exists but it is not a directory,', `got ${JSON.stringify(utils.stats.type(stats.mode))} type`, `for ${JSON.stringify(target)}`], {
-      target: target
-    });
-  }
+  NIKITA_MKDIR_TARGET_INVALID_TYPE: function ({ stats, target }) {
+    return utils.error(
+      "NIKITA_MKDIR_TARGET_INVALID_TYPE",
+      [
+        "target exists but it is not a directory,",
+        `got ${JSON.stringify(utils.stats.type(stats.mode))} type`,
+        `for ${JSON.stringify(target)}`,
+      ],
+      {
+        target: target,
+      },
+    );
+  },
 };
 
 // Action
@@ -26,8 +47,9 @@ export default {
     if (config.parent === true) {
       config.parent = {};
     }
-    config.target = config.cwd
-      ? path.resolve(config.cwd, config.target)
+    config.target =
+      config.cwd ?
+        path.resolve(config.cwd, config.target)
       : path.normalize(config.target);
     if (ssh && !path.isAbsolute(config.target)) {
       throw errors.NIKITA_MKDIR_TARGET_RELATIVE({
@@ -37,16 +59,16 @@ export default {
     // Retrieve every directories including parents
     let parents = config.target.split(path.sep);
     parents.shift(); // first element is empty with absolute path
-    if (parents[parents.length - 1] === '') {
+    if (parents[parents.length - 1] === "") {
       parents.pop();
     }
-    parents = Array(parents.length).fill(null).map( (_, i) =>
-      '/' + parents.slice(0, parents.length - i).join('/')
-    )
+    parents = Array(parents.length)
+      .fill(null)
+      .map((_, i) => "/" + parents.slice(0, parents.length - i).join("/"));
     // Discovery of directories to create
     let creates = [];
-    let stats
-    for(const target of parents) {
+    let stats;
+    for (const target of parents) {
       try {
         ({ stats } = await this.fs.stat(target));
         if (utils.stats.isDirectory(stats.mode)) {
@@ -74,7 +96,7 @@ export default {
         }
       }
       const opts = {};
-      const attributes = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime'];
+      const attributes = ["mode", "uid", "gid", "size", "atime", "mtime"];
       for (const attr of attributes) {
         const val =
           i === creates.length - 1 ? config[attr] : config.parent?.[attr];
@@ -112,7 +134,7 @@ export default {
     return {};
   },
   hooks: {
-    on_action: function ({ config, metadata }) {
+    on_action: function ({ config }) {
       if (config.parent == null) {
         config.parent = {};
       }

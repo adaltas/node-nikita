@@ -3,7 +3,12 @@ import fs from "node:fs";
 import url from "node:url";
 import utils from "@nikitajs/file/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -55,14 +60,15 @@ export default {
       config.cookies = [];
     }
     // Normalization
-    config.target = config.cwd
-      ? path.resolve(config.cwd, config.target)
+    config.target =
+      config.cwd ?
+        path.resolve(config.cwd, config.target)
       : path.normalize(config.target);
     if (ssh && !path.isAbsolute(config.target)) {
       throw Error(
         `Non Absolute Path: target is ${JSON.stringify(
-          config.target
-        )}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option`
+          config.target,
+        )}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option`,
       );
     }
     // Shortcircuit accelerator:
@@ -90,7 +96,7 @@ export default {
               shortcircuit: false,
             };
           }
-        }
+        },
       );
       if (shortcircuit) {
         return true;
@@ -134,7 +140,7 @@ export default {
       }
     }
     const stageDestination = `${config.target}.${Date.now()}${Math.round(
-      Math.random() * 1000
+      Math.random() * 1000,
     )}`;
     if (protocols_http.includes(source_url.protocol) === true) {
       log("DEBUG", "HTTP download target url");
@@ -166,7 +172,7 @@ export default {
         // Hash validation
         // Probably not the best to check hash, it only applies to HTTP for now
         throw Error(
-          `Invalid downloaded checksum, found '${hash_source}' instead of '${source_hash}'`
+          `Invalid downloaded checksum, found '${hash_source}' instead of '${source_hash}'`,
         );
       }
       const { exists } = await this.fs.exists({
@@ -179,12 +185,12 @@ export default {
           algo: algo,
         }));
       match = hash_source === hash_target;
-      match
-        ? log("INFO", `Hash matches as "${hash_source}".`)
-        : log(
-            "WARN",
-            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
-          );
+      match ?
+        log("INFO", `Hash matches as "${hash_source}".`)
+      : log(
+          "WARN",
+          `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`,
+        );
       if (match) {
         await this.fs.remove({
           $shy: true,
@@ -192,9 +198,12 @@ export default {
         });
       }
     } else if (protocols_http.includes(source_url.protocol) === false && !ssh) {
-      log("DEBUG", `File download without ssh (cache ${
+      log(
+        "DEBUG",
+        `File download without ssh (cache ${
           config.cache ? "enabled" : "disabled"
-        })`);
+        })`,
+      );
       const { hash: hash_source } = await this.fs.hash({
         target: config.source,
         algo: algo,
@@ -209,12 +218,12 @@ export default {
           algo: algo,
         }));
       match = hash_source === hash_target;
-      match
-        ? log("INFO", `Hash matches as "${hash_source}".`)
-        : log(
-            "WARN",
-            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
-          );
+      match ?
+        log("INFO", `Hash matches as "${hash_source}".`)
+      : log(
+          "WARN",
+          `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`,
+        );
       if (!match) {
         await this.fs.mkdir({
           $shy: true,
@@ -226,9 +235,12 @@ export default {
         });
       }
     } else if (protocols_http.includes(source_url.protocol) === false && ssh) {
-      log("DEBUG", `File download with ssh (cache ${
+      log(
+        "DEBUG",
+        `File download with ssh (cache ${
           config.cache ? "enabled" : "disabled"
-        })`);
+        })`,
+      );
       const { hash: hash_source } = await this.fs.hash({
         $ssh: false,
         $sudo: false,
@@ -245,12 +257,12 @@ export default {
           algo: algo,
         }));
       match = hash_source === hash_target;
-      match
-        ? log("INFO", `Hash matches as "${hash_source}".`)
-        : log(
-            "WARN",
-            `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`
-          );
+      match ?
+        log("INFO", `Hash matches as "${hash_source}".`)
+      : log(
+          "WARN",
+          `Hash dont match, source is "${hash_source}" and target is "${hash_target}".`,
+        );
       if (!match) {
         await this.fs.mkdir({
           $shy: true,
@@ -266,15 +278,15 @@ export default {
           log(
             "INFO",
             `Downloaded local source ${JSON.stringify(
-              config.source
-            )} to remote target ${JSON.stringify(stageDestination)}.`
+              config.source,
+            )} to remote target ${JSON.stringify(stageDestination)}.`,
           );
         } catch (error) {
           log(
             "ERROR",
             `Downloaded local source ${JSON.stringify(
-              config.source
-            )} to remote target ${JSON.stringify(stageDestination)} failed.`
+              config.source,
+            )} to remote target ${JSON.stringify(stageDestination)} failed.`,
           );
           throw error;
         }
@@ -305,7 +317,7 @@ export default {
     on_action: async function ({ config, tools: { find } }) {
       config.cache = await find(({ config: { cache } }) => cache);
       config.cache_file = await find(
-        ({ config: { cache_file } }) => cache_file
+        ({ config: { cache_file } }) => cache_file,
       );
       config.cache_dir = await find(({ config: { cache_dir } }) => cache_dir);
       if (/^file:\/\//.test(config.source)) {

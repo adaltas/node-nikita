@@ -1,22 +1,22 @@
-
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({
-    config,
-    tools: {log}
-  }) {
+  handler: async function ({ config, tools: { log } }) {
     let $status = false;
     // Read current properties
-    const current = await this.tools.sysctl.file.read({
-      $relax: true,
-      target: config.target,
-      comment: config.comment,
-    }).then(({data}) =>
-      data || {}
-    );
+    const current = await this.tools.sysctl.file
+      .read({
+        $relax: true,
+        target: config.target,
+        comment: config.comment,
+      })
+      .then(({ data }) => data || {});
     // Merge user properties
     const final = {};
     if (config.merge) {
@@ -29,13 +29,13 @@ export default {
       if (value == null) {
         continue;
       }
-      if (typeof value === 'number') {
+      if (typeof value === "number") {
         value = `${value}`;
       }
       if (current[key] === value) {
         continue;
       }
-      log(`Update Property: key \"${key}\" from \"${final[key]}\" to \"${value}\"`);
+      log(`Update Property: key "${key}" from "${final[key]}" to "${value}"`);
       final[key] = value;
       $status = true;
     }
@@ -44,7 +44,9 @@ export default {
         target: config.target,
         backup: config.backup,
         content: Object.keys(final)
-          .map((key) => (final[key] != null ? `${key} = ${final[key]}` : `${key}`))
+          .map((key) =>
+            final[key] != null ? `${key} = ${final[key]}` : `${key}`,
+          )
           .join("\n"),
       });
     }
@@ -53,6 +55,6 @@ export default {
     }
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

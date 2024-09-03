@@ -1,6 +1,11 @@
 // Dependencies
-import definitions from "./schema.json" with { type: "json" };
 import utils from "@nikitajs/docker/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -85,7 +90,7 @@ export default {
           } else {
             throw utils.error("NIKITA_DOCKER_RUN_INVALID_VALUE", [
               `${JSON.stringify(
-                opt
+                opt,
               )} array should only contains string or numberl`,
             ]);
           }

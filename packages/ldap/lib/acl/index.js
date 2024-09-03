@@ -1,7 +1,12 @@
 // Dependencies
-import {is_object_literal, merge} from 'mixme';
+import { is_object_literal, merge } from "mixme";
 import utils from "@nikitajs/ldap/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -123,7 +128,8 @@ export default {
           add: true,
         };
       }
-      const old = olcAccess.old ? utils.ldap.acl.stringify(olcAccess.old) : undefined;
+      const old =
+        olcAccess.old ? utils.ldap.acl.stringify(olcAccess.old) : undefined;
       olcAccess = utils.ldap.acl.stringify(olcAccess);
       const operations = {
         dn: config.dn,
@@ -156,9 +162,9 @@ export default {
     return $status;
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       if (is_object_literal(config.acls)) {
-        return config.acls = [config.acls];
+        return (config.acls = [config.acls]);
       }
     },
   },

@@ -1,26 +1,31 @@
 // Dependencies
-import diff from 'object-diff';
+import diff from "object-diff";
 import utils from "@nikitajs/incus/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     // No properties, dont go further
     if (Object.keys(config.properties).length === 0) return false;
     // Normalize config
     for (const key in config.properties) {
-      const value = config.properties[key]
-      if (typeof value === 'string') {
+      const value = config.properties[key];
+      if (typeof value === "string") {
         continue;
       }
       config.properties[key] = value.toString();
     }
     // Obtain current device properties
-    const {properties} = await this.incus.config.device.show({
+    const { properties } = await this.incus.config.device.show({
       container: config.container,
-      device: config.device
+      device: config.device,
     });
     try {
       if (!properties) {
@@ -35,10 +40,7 @@ export default {
             config.device,
             config.type,
             ...Object.keys(config.properties).map(
-              (key) =>
-                esa(key) +
-                "=" +
-                esa(config.properties[key])
+              (key) => esa(key) + "=" + esa(config.properties[key]),
             ),
           ].join(" "),
         });
@@ -70,6 +72,6 @@ export default {
     }
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

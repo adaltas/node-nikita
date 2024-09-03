@@ -1,35 +1,40 @@
-
-import path from 'node:path';
-import dedent from 'dedent';
-import runner from '@nikitajs/incus-runner';
-const __dirname = new URL( '.', import.meta.url).pathname
+import path from "node:path";
+import dedent from "dedent";
+import runner from "@nikitajs/incus-runner";
+const __dirname = new URL(".", import.meta.url).pathname;
 
 runner({
-  cwd: '/nikita/packages/tools',
-  container: 'nikita-tools-rubygems',
-  logdir: path.resolve(__dirname, './logs'),
+  cwd: "/nikita/packages/tools",
+  container: "nikita-tools-rubygems",
+  logdir: path.resolve(__dirname, "./logs"),
   cluster: {
     containers: {
-      'nikita-tools-rubygems': {
-        image: 'images:almalinux/8',
+      "nikita-tools-rubygems": {
+        image: "images:almalinux/8",
         properties: {
-          'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/rubygems/test.coffee',
-          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
+          "environment.NIKITA_TEST_MODULE":
+            "/nikita/packages/tools/env/rubygems/test.coffee",
+          "raw.idmap":
+            process.env["NIKITA_INCUS_IN_VAGRANT"] ?
+              "both 1000 0"
+            : `both ${process.getuid()} 0`,
         },
         disk: {
           nikitadir: {
-            path: '/nikita',
-            source: process.env['NIKITA_HOME'] || path.join(__dirname, '../../../../')
-          }
+            path: "/nikita",
+            source:
+              process.env["NIKITA_HOME"] ||
+              path.join(__dirname, "../../../../"),
+          },
         },
         ssh: {
-          enabled: true
-        }
-      }
+          enabled: true,
+        },
+      },
     },
-    provision_container: async function({config}) {
+    provision_container: async function ({ config }) {
       await this.incus.exec({
-        $header: 'Node.js',
+        $header: "Node.js",
         container: config.container,
         command: dedent`
           yum install -y tar
@@ -39,10 +44,10 @@ runner({
           nvm install 22
         `,
         trap: true,
-        code: [0, 42]
+        code: [0, 42],
       });
       await this.incus.exec({
-        $header: 'SSH keys',
+        $header: "SSH keys",
         container: config.container,
         command: dedent`
           mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -51,15 +56,15 @@ runner({
             cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
           fi
         `,
-        trap: true
+        trap: true,
       });
       await this.incus.exec({
-        $header: 'Ruby',
+        $header: "Ruby",
         container: config.container,
         command: `yum install -y gcc ruby ruby-devel`,
         trap: true,
-        code: [0, 42]
+        code: [0, 42],
       });
-    }
-  }
+    },
+  },
 });

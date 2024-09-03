@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -7,11 +11,15 @@ export default {
     if (config.uid == null && config.gid == null) {
       throw Error("Missing one of uid or gid option");
     }
-    if(typeof config.uid === 'string'){
-      config.uid = await this.execute(`id -u '${config.uid}'`).then(({stdout}) => parseInt(stdout.trim()))
+    if (typeof config.uid === "string") {
+      config.uid = await this.execute(`id -u '${config.uid}'`).then(
+        ({ stdout }) => parseInt(stdout.trim()),
+      );
     }
-    if(typeof config.gid === 'string'){
-      config.gid = await this.execute(`id -g '${config.gid}'`).then(({stdout}) => parseInt(stdout.trim()))
+    if (typeof config.gid === "string") {
+      config.gid = await this.execute(`id -g '${config.gid}'`).then(
+        ({ stdout }) => parseInt(stdout.trim()),
+      );
     }
     // Retrieve target stats
     if (config.stats) {

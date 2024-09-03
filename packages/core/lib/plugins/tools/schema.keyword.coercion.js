@@ -1,6 +1,5 @@
-
-import codegen from 'ajv/dist/compile/codegen/index.js';
-import errors from 'ajv/dist/compile/errors.js';
+import codegen from "ajv/dist/compile/codegen/index.js";
+import errors from "ajv/dist/compile/errors.js";
 
 export default {
   keyword: "coercion",
@@ -9,16 +8,17 @@ export default {
     // @see codegen reference: https://github.com/ajv-validator/ajv/blob/master/lib/compile/codegen/index.ts
     const assignParentData = function (
       { gen, parentData, parentDataProperty },
-      expr
+      expr,
     ) {
       gen.if(codegen._`${parentData} !== undefined`, () =>
-        gen.assign(codegen._`${parentData}[${parentDataProperty}]`, expr)
+        gen.assign(codegen._`${parentData}[${parentDataProperty}]`, expr),
       );
     };
     const { data, gen, parentSchema, it } = cxt;
     const coerced = gen.let("coerced", codegen._`undefined`);
-    const types = Array.isArray(parentSchema.type)
-      ? parentSchema.type
+    const types =
+      Array.isArray(parentSchema.type) ?
+        parentSchema.type
       : [parentSchema.type];
     switch (types[0]) {
       case "array":
@@ -31,7 +31,7 @@ export default {
           codegen._`typeof ${data} === "string" || typeof ${data} === "number"`,
           () => {
             gen.assign(coerced, codegen._`${data} != ""`);
-          }
+          },
         );
         break;
       case "number":
@@ -47,7 +47,7 @@ export default {
             },
             () => {
               gen.assign(coerced, codegen._`+${data}`);
-            }
+            },
           );
         });
         break;
@@ -56,14 +56,14 @@ export default {
         // `{..., coercion: ["boolean_to_string"] }`
         // Or:
         // `{..., coercion: {boolean_to_string: true} }`
-        gen.block()
+        gen.block();
         gen.if(codegen._`typeof ${data} === "boolean"`);
-        gen.assign(coerced, codegen._`${data} ? "1" : ""`)
+        gen.assign(coerced, codegen._`${data} ? "1" : ""`);
         gen.elseIf(codegen._`typeof ${data} === "number"`);
-        gen.assign(coerced, codegen._`"" +${data}`)
-        gen.else()
-        gen.assign(coerced, codegen._`${data}`)
-        gen.endBlock()
+        gen.assign(coerced, codegen._`"" +${data}`);
+        gen.else();
+        gen.assign(coerced, codegen._`${data}`);
+        gen.endBlock();
         break;
     }
     gen.if(codegen._`${coerced} !== undefined`, () => {

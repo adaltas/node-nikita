@@ -14,13 +14,16 @@ export default {
     "@nikitajs/core/plugins/tools/walk",
   ],
   hooks: {
-    "nikita:schema": function ({ schema }) {
-      mutate(schema.definitions.metadata.properties, {
-        sudo: {
-          type: "boolean",
-          description: `Run the action with as the superuser.`,
-        },
-      });
+    "nikita:schema": {
+      before: "@nikitajs/core/plugins/tools/schema",
+      handler: function ({ schema }) {
+        mutate(schema.definitions.metadata.properties, {
+          sudo: {
+            type: "boolean",
+            description: `Run the action with as the superuser.`,
+          },
+        });
+      },
     },
     "nikita:action": {
       handler: async function ({ config, metadata, tools: { find, walk } }) {
@@ -29,12 +32,12 @@ export default {
         }
         if (config.arch_chroot == null) {
           config.arch_chroot = await find(
-            ({ metadata }) => metadata.arch_chroot
+            ({ metadata }) => metadata.arch_chroot,
           );
         }
         if (config.arch_chroot_rootdir == null) {
           config.arch_chroot_rootdir = await find(
-            ({ metadata }) => metadata.arch_chroot_rootdir
+            ({ metadata }) => metadata.arch_chroot_rootdir,
           );
         }
         if (config.bash == null) {
@@ -45,7 +48,7 @@ export default {
         }
         const env = merge(
           config.env,
-          ...(await walk(({ metadata }) => metadata.env))
+          ...(await walk(({ metadata }) => metadata.env)),
         );
         if (Object.keys(env).length) {
           config.env = env;

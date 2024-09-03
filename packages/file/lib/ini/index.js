@@ -1,12 +1,16 @@
 // Dependencies
 import utils from "@nikitajs/file/utils";
-import {merge} from 'mixme';
-import definitions from "./schema.json" with { type: "json" };
+import { merge } from "mixme";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    let content;
     let org_props = {};
     const parse = config.parse || utils.ini.parse;
     const stringify = config.stringify || utils.ini.stringify;
@@ -32,7 +36,7 @@ export default {
           target: config.source,
           encoding: config.encoding,
         });
-        content = utils.object.clean(config.content, true);
+        // content = utils.object.clean(config.content, true);
         config.content = merge(parse(data, config), config.content);
       }
     } catch (error) {
@@ -43,22 +47,13 @@ export default {
     // Merge
     if (config.merge) {
       config.content = merge(org_props, config.content);
-      log({
-        message: "Get content for merge",
-        level: "DEBUG",
-      });
+      log("DEBUG", "Get content for merge");
     }
     if (config.clean) {
-      log({
-        message: "Clean content",
-        level: "INFO",
-      });
+      log("Clean content");
       utils.object.clean(config.content);
     }
-    log({
-      message: "Serialize content",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Serialize content");
     return await this.file({
       target: config.target,
       content: stringify(config.content, config),

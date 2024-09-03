@@ -1,6 +1,11 @@
 // Dependencies
 import regexp from "@nikitajs/utils/regexp";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -11,8 +16,8 @@ export default {
           {
             system: config.system,
             user: config.user,
-          }
-        )}`
+          },
+        )}`,
       );
     }
     if (config.system) {
@@ -38,13 +43,17 @@ export default {
       } else if (typeof config.nofile === "number") {
         if (config.nofile >= kern_limit) {
           throw Error(
-            `Invalid nofile configuration property. Please set int value lesser than kernel limit: ${kern_limit}`
+            `Invalid nofile configuration property. Please set int value lesser than kernel limit: ${kern_limit}`,
           );
         }
       } else if (typeof config.nofile === "object") {
-        Object.values(config.nofile).filter(v => v >= kern_limit).forEach((v) => {
-          throw Error(`Invalid nofile configuration property. Please set int value lesser than kernel limit: ${kern_limit}`);
-        });
+        Object.values(config.nofile)
+          .filter((v) => v >= kern_limit)
+          .forEach(() => {
+            throw Error(
+              `Invalid nofile configuration property. Please set int value lesser than kernel limit: ${kern_limit}`,
+            );
+          });
       }
     }
     // Calculate nproc from kernel limit
@@ -59,14 +68,14 @@ export default {
       } else if (typeof config.nproc === "number") {
         if (config.nproc >= kern_limit) {
           throw Error(
-            `Invalid nproc configuration property. Please set int value lesser than kernel limit: ${kern_limit}`
+            `Invalid nproc configuration property. Please set int value lesser than kernel limit: ${kern_limit}`,
           );
         }
       } else if (typeof config.nproc === "object") {
         for (const v of config.nproc) {
           if (v >= kern_limit) {
             throw Error(
-              `Invalid nproc configuration property. Please set int value lesser than kernel limit: ${kern_limit}`
+              `Invalid nproc configuration property. Please set int value lesser than kernel limit: ${kern_limit}`,
             );
           }
         }
@@ -116,7 +125,7 @@ export default {
         write.push({
           match: RegExp(
             `^${regexp.escape(config.user)} +${regexp.escape(k)} +${opt}.+$`,
-            "m"
+            "m",
           ),
           replace: `${config.user}    ${k}    ${opt}    ${config[opt][k]}`,
           append: true,
@@ -126,14 +135,14 @@ export default {
     if (!write.length) {
       return false;
     }
-    const {$status} = await this.file({
+    const { $status } = await this.file({
       target: config.target,
       write: write,
       eof: true,
       uid: config.uid,
       gid: config.gid,
     });
-    return $status
+    return $status;
   },
   metadata: {
     definitions: definitions,

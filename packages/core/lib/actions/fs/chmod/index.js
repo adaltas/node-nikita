@@ -1,6 +1,11 @@
 // Dependencies
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -12,9 +17,9 @@ export default {
     if (utils.mode.compare(stats.mode, config.mode)) {
       log(
         "INFO",
-        `Identical permissions \"${config.mode.toString(8)}\" on \"${
+        `Identical permissions "${config.mode.toString(8)}" on "${
           config.target
-        }\"`
+        }"`,
       );
       return false;
     }
@@ -30,7 +35,7 @@ export default {
         `from "${stats.mode.toString(8)}"`,
         `to "${config.mode.toString(8)}"`,
         `on "${config.target}"`,
-      ].join(" ")
+      ].join(" "),
     );
     return true;
   },

@@ -1,6 +1,11 @@
 // Dependencies
-import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 const esa = utils.string.escapeshellarg;
 
 // Action
@@ -16,7 +21,9 @@ export default {
             "-d", // Attempt to remove directories as well as other types of files.
             config.recursive && "-r",
             esa(file),
-          ].filter(Boolean).join(" "),
+          ]
+            .filter(Boolean)
+            .join(" "),
         });
         if (status) {
           log("WARN", `File ${esa(file)} removed.`);

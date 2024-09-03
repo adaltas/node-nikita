@@ -22,10 +22,9 @@ const NikitaError = class NikitaError extends Error {
         if (value === undefined) {
           continue;
         }
-        this[key] = Buffer.isBuffer(value)
-          ? value.toString()
-          : value === null
-          ? value
+        this[key] =
+          Buffer.isBuffer(value) ? value.toString()
+          : value === null ? value
           : JSON.parse(JSON.stringify(value));
       }
     }
@@ -51,7 +50,7 @@ const got = function (value, { depth = 0, max_depth = 3 } = {}) {
               got(el, {
                 depth: depth + 1,
                 max_depth: max_depth,
-              })
+              }),
             );
           }
         }

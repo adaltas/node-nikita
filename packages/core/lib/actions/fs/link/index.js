@@ -1,6 +1,11 @@
 // Dependencies
-import dedent from 'dedent';
-import definitions from "./schema.json" with { type: "json" };
+import dedent from "dedent";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -31,7 +36,7 @@ export default {
           });
           const exec_command = /exec (.*) \$@/.exec(data)[1];
           return exec_command && exec_command === config.source;
-        }
+        },
       );
       if (exists) {
         return;
@@ -64,10 +69,10 @@ export default {
               target: config.target,
             });
             return false;
-          } catch (error) {
+          } catch {
             return false;
           }
-        }
+        },
       );
       if (exists) {
         return;

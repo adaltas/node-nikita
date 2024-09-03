@@ -1,11 +1,16 @@
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function ({ metadata, config, parent: { state }, tools: { log } }) {
+  handler: async function ({ config, tools: { log } }) {
     const cacheonly = config.cacheonly ? "-C" : "";
     // Error inside the pipeline are not catched (eg no sudo permission).
     // A possible solution includes breaking the pipeline into multiple calls.
@@ -34,8 +39,8 @@ export default {
             line
               .split(" ")
               .map((pck) => pck.trim())
-              .filter((pck) => pck !== "")
-          )
+              .filter((pck) => pck !== ""),
+          ),
         ),
       stdout_log: false,
     })
@@ -44,32 +49,32 @@ export default {
         if (error.exit_code === 43) {
           throw utils.error(
             "NIKITA_SERVICE_OUTDATED_UNSUPPORTED_PACKAGE_MANAGER",
-            "at the moment, rpm (yum, dnf, ...), pacman and dpkg (apt, apt-get, ...) are supported."
+            "at the moment, rpm (yum, dnf, ...), pacman and dpkg (apt, apt-get, ...) are supported.",
           );
         } else if (error.exit_code === 100) {
           throw utils.error(
             "NIKITA_SERVICE_OUTDATED_SUDO",
-            "permission denied, maybe run this command as sudoer or with the `$debug` configuration."
+            "permission denied, maybe run this command as sudoer or with the `$debug` configuration.",
           );
         }
         throw error;
       });
     log("Outdated packages retrieved");
-    if(config.name) {
+    if (config.name) {
       return {
-        outdated: packages.includes(config.name)
-      }
-    }else{
+        outdated: packages.includes(config.name),
+      };
+    } else {
       return {
         packages: packages,
-      }
+      };
     }
   },
   metadata: {
     argument_to_config: "name",
     definitions: definitions,
     metadata: {
-      shy: true
-    }
+      shy: true,
+    },
   },
 };

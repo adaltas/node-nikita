@@ -141,9 +141,8 @@ const constants = {
     state: ["--state"],
     comment: ["--comment"],
     limit: ["--limit"],
-  }
-}
-
+  },
+};
 
 const command_args = function (command, rule) {
   for (const k in rule) {
@@ -171,20 +170,14 @@ const command_replace = function (rule) {
   if (rule.rulenum == null) {
     rule.rulenum = 1;
   }
-  return command_args(
-    `iptables -R ${rule.chain} ${rule.rulenum}`,
-    rule
-  );
+  return command_args(`iptables -R ${rule.chain} ${rule.rulenum}`, rule);
 };
 
 const command_insert = function (rule) {
   if (rule.rulenum == null) {
     rule.rulenum = 1;
   }
-  return command_args(
-    `iptables -I ${rule.chain} ${rule.rulenum}`,
-    rule
-  );
+  return command_args(`iptables -I ${rule.chain} ${rule.rulenum}`, rule);
 };
 
 const command_append = function (rule) {
@@ -221,12 +214,10 @@ const command = function (oldrules, newrules) {
   for (const newrule of newrules) {
     // break if newrule.rulenum? #or newrule.command is '-A'
     if (newrule.after && !newrule.rulenum) {
-      let rulenum = 0;
       for (const oldrule of oldrules) {
         if (!(oldrule.command === "-A" && oldrule.chain === newrule.chain)) {
           continue;
         }
-        rulenum++;
         if (_equals(newrule.after, oldrule, Object.keys(newrule.after))) {
           // newrule.rulenum = rulenum + 1
           newrule.rulenum = oldrule.rulenum + 1;
@@ -236,12 +227,10 @@ const command = function (oldrules, newrules) {
       delete newrule.after;
     }
     if (newrule.before && !newrule.rulenum) {
-      let rulenum = 0;
       for (const oldrule of oldrules) {
         if (!(oldrule.command === "-A" && oldrule.chain === newrule.chain)) {
           continue;
         }
-        rulenum++;
         if (_equals(newrule.before, oldrule, Object.keys(newrule.before))) {
           // newrule.rulenum = rulenum
           newrule.rulenum = oldrule.rulenum;
@@ -254,7 +243,7 @@ const command = function (oldrules, newrules) {
     // Get add properties present in new rule
     const add_properties = array.intersect(
       constants.add_properties,
-      Object.keys(newrule)
+      Object.keys(newrule),
     );
     for (const oldrule of oldrules) {
       if (oldrule.chain !== newrule.chain) {
@@ -281,9 +270,9 @@ const command = function (oldrules, newrules) {
     // Add properties are different
     if (create) {
       commands.push(
-        newrule.command === "-A"
-          ? command_append(newrule)
-          : command_insert(newrule)
+        newrule.command === "-A" ?
+          command_append(newrule)
+        : command_insert(newrule),
       );
     }
   }

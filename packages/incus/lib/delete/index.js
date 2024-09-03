@@ -1,20 +1,25 @@
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
-    return (await this.execute({
+  handler: async function ({ config }) {
+    return await this.execute({
       command: dedent`
         incus info ${config.container} > /dev/null || exit 42
-        ${['incus', 'delete', config.container, config.force ? "--force" : void 0].join(' ')}
+        ${["incus", "delete", config.container, config.force ? "--force" : void 0].join(" ")}
       `,
-      code: [0, 42]
-    }));
+      code: [0, 42],
+    });
   },
   metadata: {
-    argument_to_config: 'container',
-    definitions: definitions
-  }
+    argument_to_config: "container",
+    definitions: definitions,
+  },
 };

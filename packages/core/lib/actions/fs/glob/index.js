@@ -1,10 +1,15 @@
 // Dependencies
 import { Minimatch } from "minimatch";
-import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Utility
-const getprefix = function(pattern) {
+const getprefix = function (pattern) {
   let prefix = null;
   let n = 0;
   while (typeof pattern[n] === "string") {
@@ -15,7 +20,7 @@ const getprefix = function(pattern) {
   switch (n) {
     // if not, then this is rather simple
     case pattern.length:
-      prefix = pattern.join('/');
+      prefix = pattern.join("/");
       return prefix;
     case 0:
       // pattern *starts* with some non-trivial item.
@@ -26,7 +31,7 @@ const getprefix = function(pattern) {
       // whatever it starts with, whether that's "absolute" like /foo/bar,
       // or "relative" like "../baz"
       prefix = pattern.slice(0, n);
-      prefix = prefix.join('/');
+      prefix = prefix.join("/");
       return prefix;
   }
 };
@@ -46,11 +51,11 @@ export default {
     const minimatch = new Minimatch(config.target, config.minimatch);
     let { stdout } = await this.execute({
       command: [
-        'find',
-        ...minimatch.set.map( getprefix ),
+        "find",
+        ...minimatch.set.map(getprefix),
         // trailing slash
         '-type d -exec sh -c \'printf "%s/\\n" "$0"\' {} \\; -or -print',
-      ].join(' '),
+      ].join(" "),
       $relax: true,
       trim: true,
     });
@@ -64,8 +69,8 @@ export default {
     });
     // Remove the trailing slash introduced by the find command
     if (!config.trailing) {
-      files = files.map( (file) =>
-        file.slice(-1) === "/" ? file.slice(0, -1):file
+      files = files.map((file) =>
+        file.slice(-1) === "/" ? file.slice(0, -1) : file,
       );
     }
     return {

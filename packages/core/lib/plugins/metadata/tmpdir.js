@@ -11,18 +11,20 @@ export default {
     "@nikitajs/core/plugins/tools/path",
   ],
   hooks: {
-    // 'nikita:schema': ({schema}) ->
-    //   mutate schema.definitions.metadata.properties,
-    //     tmpdir:
-    //       oneOf: [
-    //         type: ['boolean', 'string']
-    //       ,
-    //         typeof: 'function'
-    //       ]
-    //       description: '''
-    //       Creates a temporary directory for the duration of the action
-    //       execution.
-    //       '''
+    // 'nikita:schema':
+    //   before: "@nikitajs/core/plugins/tools/schema",
+    //   handler: ({schema}) ->
+    //     mutate schema.definitions.metadata.properties,
+    //       tmpdir:
+    //         oneOf: [
+    //           type: ['boolean', 'string']
+    //         ,
+    //           typeof: 'function'
+    //         ]
+    //         description: '''
+    //         Creates a temporary directory for the duration of the action
+    //         execution.
+    //         '''
     "nikita:action": {
       before: ["@nikitajs/core/plugins/templated"],
       after: [
@@ -37,7 +39,7 @@ export default {
         const { config, metadata, tools } = action;
         if (
           !["boolean", "function", "string", "undefined"].includes(
-            typeof metadata.tmpdir
+            typeof metadata.tmpdir,
           ) &&
           !is_object_literal(metadata.tmpdir)
         ) {
@@ -53,9 +55,9 @@ export default {
         }
         // SSH connection extraction
         const ssh =
-          config.ssh === false
-            ? undefined
-            : await tools.find((action) => action.ssh);
+          config.ssh === false ?
+            undefined
+          : await tools.find((action) => action.ssh);
         // Sudo extraction
         const sudo = await tools.find(({ metadata }) => metadata.sudo);
         // Generate temporary location
@@ -66,7 +68,7 @@ export default {
             ssh_hash: ssh_hash,
             sudo: sudo,
             uuid: metadata.uuid,
-          })
+          }),
         );
         const tmpdir_info = await (async function () {
           switch (typeof metadata.tmpdir) {
@@ -156,16 +158,16 @@ export default {
         }
         // SSH connection extraction
         const ssh =
-          config.ssh === false
-            ? undefined
-            : await tools.find(action, (action) => action.ssh);
+          config.ssh === false ?
+            undefined
+          : await tools.find(action, (action) => action.ssh);
         // Temporary directory decommissioning
         await exec(
           ssh,
           [
             metadata.tmpdir_info.sudo ? "sudo" : undefined,
             `rm -r '${metadata.tmpdir}'`,
-          ].join(" ")
+          ].join(" "),
         );
       },
     },

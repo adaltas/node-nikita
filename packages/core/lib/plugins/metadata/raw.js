@@ -12,17 +12,20 @@ import { mutate } from "mixme";
 export default {
   name: "@nikitajs/core/plugins/metadata/raw",
   hooks: {
-    "nikita:schema": function ({ schema }) {
-      mutate(schema.definitions.metadata.properties, {
-        raw_output: {
-          type: "boolean",
-          description: dedent`
+    "nikita:schema": {
+      before: "@nikitajs/core/plugins/tools/schema",
+      handler: function ({ schema }) {
+        mutate(schema.definitions.metadata.properties, {
+          raw_output: {
+            type: "boolean",
+            description: dedent`
             Indicates the position of the action relative to its parent and
             sibling action. It is unique to each action.
           `,
-          readOnly: true,
-        },
-      });
+            readOnly: true,
+          },
+        });
+      },
     },
   },
 };

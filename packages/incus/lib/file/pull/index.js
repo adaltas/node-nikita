@@ -1,8 +1,13 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import dedent from "dedent";
 import utils from "@nikitajs/incus/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -47,8 +52,8 @@ export default {
         if (error.exit_code === 3) {
           throw Error(
             `Invalid Option: source is not a file, got ${JSON.stringify(
-              config.source
-            )}`
+              config.source,
+            )}`,
           );
         }
         if (error.exit_code === 4) {

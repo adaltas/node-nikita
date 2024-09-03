@@ -15,8 +15,9 @@ runner({
         properties: {
           "environment.NIKITA_TEST_MODULE":
             "/nikita/packages/system/env/cgroups/test.coffee",
-          "raw.idmap": process.env["NIKITA_INCUS_IN_VAGRANT"]
-            ? "both 1000 0"
+          "raw.idmap":
+            process.env["NIKITA_INCUS_IN_VAGRANT"] ?
+              "both 1000 0"
             : `both ${process.getuid()} 0`,
         },
         disk: {

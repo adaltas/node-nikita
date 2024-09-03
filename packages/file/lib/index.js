@@ -1,7 +1,12 @@
 // Dependencies
 import path from "node:path";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -70,7 +75,7 @@ export default {
       const source = config.source || config.target;
       log(
         "DEBUG",
-        `Force local source is \`${config.local ? "true" : "false"}\`.`
+        `Force local source is \`${config.local ? "true" : "false"}\`.`,
       );
       const { exists } = await this.fs.exists({
         $ssh: config.local ? false : undefined,
@@ -80,7 +85,7 @@ export default {
       if (!exists) {
         if (config.source) {
           throw Error(
-            `Source does not exist: ${JSON.stringify(config.source)}`
+            `Source does not exist: ${JSON.stringify(config.source)}`,
           );
         }
         config.content = "";
@@ -156,7 +161,7 @@ export default {
           }
           return null;
         }
-      }
+      },
     );
     if (config.transform) {
       // if the transform function returns null or undefined, the file is not written
@@ -169,7 +174,7 @@ export default {
       log("DEBUG", "Remove empty lines.");
       config.content = config.content.replace(
         /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g,
-        "$1"
+        "$1",
       );
     }
     if (config.write.length) {
@@ -194,7 +199,7 @@ export default {
         }
         log(
           "INFO",
-          `Option eof is true, guessing as ${JSON.stringify(config.eof)}.`
+          `Option eof is true, guessing as ${JSON.stringify(config.eof)}.`,
         );
       }
       if (!utils.string.endsWith(config.content, config.eof)) {
@@ -211,10 +216,10 @@ export default {
       targetContentHash = utils.string.hash(targetContent);
     }
     const contentChanged =
-      config.content != null
-        ? targetStats == null ||
-          targetContentHash !== utils.string.hash(config.content)
-        : false;
+      config.content != null ?
+        targetStats == null ||
+        targetContentHash !== utils.string.hash(config.content)
+      : false;
     if (contentChanged) {
       const { raw, text } = utils.diff(targetContent, config.content, config);
       if (typeof config.diff === "function") {

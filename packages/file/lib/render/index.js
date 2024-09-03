@@ -1,7 +1,12 @@
 // Dependencies
-import path from 'node:path'
-import handlebars from 'handlebars';
-import definitions from "./schema.json" with { type: "json" };
+import path from "node:path";
+import handlebars from "handlebars";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -19,10 +24,7 @@ export default {
         config.content = data;
       }
     }
-    log({
-      message: `Rendering with ${config.engine}`,
-      level: "DEBUG",
-    });
+    log("DEBUG", `Rendering with ${config.engine}`);
     config.transform = function ({ config }) {
       const template = handlebars.compile(config.content.toString());
       return template(config.context);
@@ -43,7 +45,7 @@ export default {
             return (config.engine = "handlebars");
           default:
             throw Error(
-              `Invalid Option: extension '${extension}' is not supported`
+              `Invalid Option: extension '${extension}' is not supported`,
             );
         }
       }

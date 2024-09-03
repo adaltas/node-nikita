@@ -1,9 +1,14 @@
 // Dependencies
-import colors from 'colors/safe.js';
-import {merge} from 'mixme';
-import pad from 'pad';
-import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" with { type: "json" };
+import colors from "colors/safe.js";
+import { merge } from "mixme";
+import pad from "pad";
+import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Utils
 const format_line = function ({ host, header, status, time }, config) {
@@ -24,7 +29,9 @@ const format_line = function ({ host, header, status, time }, config) {
     status,
     time && config.time ? config.separator.time : "",
     time,
-  ].filter(Boolean).join("");
+  ]
+    .filter(Boolean)
+    .join("");
 };
 
 // Action
@@ -74,25 +81,31 @@ export default {
       // },
       "nikita:resolved": function ({ action }) {
         const color = config.colors ? config.colors.status_true : false;
-        let line = format_line({
-          host: config.host ?? action.ssh?.config?.host ?? "local",
-          header: "",
-          status: "♥",
-          time: "",
-        }, config);
+        let line = format_line(
+          {
+            host: config.host ?? action.ssh?.config?.host ?? "local",
+            header: "",
+            status: "♥",
+            time: "",
+          },
+          config,
+        );
         if (color) {
           line = color(line);
         }
         return line + "\n";
       },
-      "nikita:rejected": function ({ action, error }) {
+      "nikita:rejected": function ({ action }) {
         const color = config.colors ? config.colors.status_error : false;
-        let line = format_line({
-          host: config.host ?? action.ssh?.config?.host ?? "local",
-          header: "",
-          status: "✘",
-          time: "",
-        }, config);
+        let line = format_line(
+          {
+            host: config.host ?? action.ssh?.config?.host ?? "local",
+            header: "",
+            status: "✘",
+            time: "",
+          },
+          config,
+        );
         if (color) {
           line = color(line);
         }
@@ -108,32 +121,39 @@ export default {
         // TODO: I don't like this, the `end` event should receive raw output
         // with error not placed inside output by the history plugin
         error = error || (action.metadata.relax && output.error);
-        const status = error
-          ? "✘"
-          : (output != null ? output.$status : void 0) && !action.metadata.shy
-          ? "✔"
+        const status =
+          error ? "✘"
+          : (output != null ? output.$status : void 0) && !action.metadata.shy ?
+            "✔"
           : "-";
-        const color = !config.colors ? false :  error
-            ? config.colors.status_error
-            : (output != null ? output.$status : void 0)
-            ? config.colors.status_true
-            : config.colors.status_false;
+        const color =
+          !config.colors ? false
+          : error ? config.colors.status_error
+          : (
+            output != null ? output.$status : void 0
+          ) ?
+            config.colors.status_true
+          : config.colors.status_false;
         if (action.metadata.disabled) {
           return null;
         }
-        const headers = get_headers(action); 
-        let line = format_line({
-          // error in relax mode don't yet have ssh inherited
-          host: config.host ?? action.ssh?.config?.host ?? "local",
-          header: headers.join(config.divider),
-          status: status,
-          // error in relax mode don't set time_start
-          time: config.time && action.metadata.time_start
-            ? utils.string.print_time(
-                action.metadata.time_end - action.metadata.time_start
-              )
-            : "",
-        }, config);
+        const headers = get_headers(action);
+        let line = format_line(
+          {
+            // error in relax mode don't yet have ssh inherited
+            host: config.host ?? action.ssh?.config?.host ?? "local",
+            header: headers.join(config.divider),
+            status: status,
+            // error in relax mode don't set time_start
+            time:
+              config.time && action.metadata.time_start ?
+                utils.string.print_time(
+                  action.metadata.time_end - action.metadata.time_start,
+                )
+              : "",
+          },
+          config,
+        );
         if (color) {
           line = color(line);
         }
@@ -152,15 +172,15 @@ export default {
   },
 };
 
-const get_headers = function(action) {
-  const walk = function(parent) {
+const get_headers = function (action) {
+  const walk = function (parent) {
     const precious = parent.metadata.header;
     const results = [];
     if (precious !== undefined) {
       results.push(precious);
     }
     if (parent.parent) {
-      results.push(...(walk(parent.parent)));
+      results.push(...walk(parent.parent));
     }
     return results;
   };

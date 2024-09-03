@@ -15,7 +15,7 @@ export default {
       before: ["@nikitajs/core/plugins/metadata/schema"],
       handler: async function (action) {
         const templated = await action.tools.find(
-          (action) => action.metadata.templated
+          (action) => action.metadata.templated,
         );
         if (templated !== true) {
           return;

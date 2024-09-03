@@ -1,4 +1,3 @@
-
 // const compare = (array1, array2) ->
 //   # Compare lengths and save some time
 //   if array1.length isnt array2.length
@@ -80,7 +79,7 @@ const multiply = function (...args) {
                 results2.push([...action, arg_element]);
               }
               return results2;
-            })()
+            })(),
           );
         }
       }

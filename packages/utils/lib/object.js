@@ -1,7 +1,8 @@
+import { is_object_literal, merge } from "mixme";
 import array from "./array.js";
+import error from "./error.js";
 import regexp from "./regexp.js";
 import { snake_case as snake_case_str } from "./string.js";
-import { is_object_literal, merge } from "mixme";
 
 const clean = function (content, undefinedOnly) {
   for (const k in content) {
@@ -77,12 +78,11 @@ const diff = function (obj1, obj2, keys) {
 //   return true
 
 const insert = function (source, keys, value) {
-  const result = source
-  if(!is_object_literal(source)) {
+  const result = source;
+  if (!is_object_literal(source)) {
     throw error("NIKITA_UTILS_INSERT", [
-      'Source must be an object literal,'
-      `got ${JSON.stringify(source)}`,
-    ])
+      "Source must be an object literal,"`got ${JSON.stringify(source)}`,
+    ]);
   }
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -103,7 +103,7 @@ const insert = function (source, keys, value) {
       source = source[key];
     }
   }
-  return result
+  return result;
 };
 
 const match = function (source, target) {

@@ -1,10 +1,15 @@
 // Dependencies
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     const { $status, stdout } = await this.execute({
       command: [
         "incus",
@@ -14,35 +19,36 @@ export default {
         config.request,
         config.data != null && `--data ${esa(config.data)}`,
         config.path,
-      ].filter(Boolean).join(" "),
+      ]
+        .filter(Boolean)
+        .join(" "),
       code: config.code,
     });
     switch (config.format) {
-      case 'json':
+      case "json":
         if ($status) {
           return {
-            data: JSON.parse(stdout)
+            data: JSON.parse(stdout),
           };
         } else {
           return {
-            data: {}
+            data: {},
           };
         }
-        break;
-      case 'string':
+      case "string":
         if ($status) {
           return {
-            data: stdout
+            data: stdout,
           };
         } else {
           return {
-            data: ""
+            data: "",
           };
         }
     }
   },
   metadata: {
     definitions: definitions,
-    shy: true
-  }
+    shy: true,
+  },
 };

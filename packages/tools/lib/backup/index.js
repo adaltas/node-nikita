@@ -2,7 +2,13 @@
 import dayjs from "dayjs";
 import dayjsUtc from "dayjs/plugin/utc.js";
 import dayjsTimezone from "dayjs/plugin/timezone.js";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
+// Day.js
 dayjs.extend(dayjsUtc);
 dayjs.extend(dayjsTimezone);
 

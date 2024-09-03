@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -29,17 +33,17 @@ export default {
       .images({
         filters: { dangling: false },
       })
-      .then(({images}) =>
+      .then(({ images }) =>
         images.map((image) => {
           if (image.ID === config.checksum) {
             log(
               "INFO",
-              `Image already exist checksum :${config.checksum}, repo:tag \"${image.Repository}:${image.Tag}\"`
+              `Image already exist checksum :${config.checksum}, repo:tag "${image.Repository}:${image.Tag}"`,
             );
             checksumExists = true;
           }
           return `${image.Repository}:${image.Tag}#${image.ID}`;
-        })
+        }),
       );
     // Stop here if matching ID is found
     if (checksumExists) {
@@ -56,7 +60,7 @@ export default {
       format: "json",
     });
     let status = !images.includes(
-      `${imageInfo.Repository}:${imageInfo.Tag}#${imageInfo.ID}`
+      `${imageInfo.Repository}:${imageInfo.Tag}#${imageInfo.ID}`,
     );
     return {
       $status: status,

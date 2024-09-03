@@ -1,7 +1,11 @@
 // Dependencies
-import {merge} from 'mixme';
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -51,18 +55,10 @@ export default {
         await this.execute({
           command: [
             "ldappasswd",
-            config.mesh
-              ? `-Y ${esa(config.mesh)}`
-              : void 0,
-            config.binddn
-              ? `-D ${esa(config.binddn)}`
-              : void 0,
-            config.passwd
-              ? `-w ${esa(config.passwd)}`
-              : void 0,
-            config.uri
-              ? `-H ${esa(config.uri)}`
-              : void 0,
+            config.mesh ? `-Y ${esa(config.mesh)}` : void 0,
+            config.binddn ? `-D ${esa(config.binddn)}` : void 0,
+            config.passwd ? `-w ${esa(config.passwd)}` : void 0,
+            config.uri ? `-H ${esa(config.uri)}` : void 0,
             `-s ${user.userPassword}`,
             `${esa(user.dn)}`,
           ].join(" "),

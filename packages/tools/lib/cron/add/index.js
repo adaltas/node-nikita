@@ -1,14 +1,19 @@
 // Dependencies
-import dedent from "dedent";
 import utils from "@nikitajs/tools/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     const command = config.user ? `crontab -u ${config.user}` : "crontab";
     // console.log(await this.tools.cron.list().then(({ entries }) => entries))
-    const entries = await this.tools.cron.list()
+    const entries = await this.tools.cron
+      .list()
       .then(({ entries }) => entries.map(({ raw }) => raw));
     const new_job = `${config.when} ${config.command}`;
     // remove useless last element
@@ -56,24 +61,20 @@ export default {
       };
     }
     await this.execute({
-      command: [
-        `${command} - <<EOF`,
-        ...jobs,
-        'EOF',
-      ].join('\n')
+      command: [`${command} - <<EOF`, ...jobs, "EOF"].join("\n"),
     });
     if (config.exec) {
       await this.execute({
         command:
-          config.user != null
-            ? `su -l ${config.user} -c '${config.command}'`
-            : config.command,
+          config.user != null ?
+            `su -l ${config.user} -c '${config.command}'`
+          : config.command,
       });
     }
     return {
       $status: true,
       diff: diff,
-    }
+    };
   },
   metadata: {
     definitions: definitions,

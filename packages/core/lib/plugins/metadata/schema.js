@@ -1,4 +1,3 @@
-
 /*
 # Plugin `@nikitajs/core/plugins/metadata/schema`
 
@@ -8,33 +7,34 @@ object.
 */
 
 // Dependencies
-import dedent from 'dedent';
-import {mutate} from 'mixme';
+import dedent from "dedent";
+import { mutate } from "mixme";
 
 // Plugin
 export default {
-  name: '@nikitajs/core/plugins/metadata/schema',
-  require: [
-    '@nikitajs/core/plugins/tools/schema'
-  ],
+  name: "@nikitajs/core/plugins/metadata/schema",
+  require: ["@nikitajs/core/plugins/tools/schema"],
   hooks: {
-    'nikita:schema': function({schema}) {
-      mutate(schema.definitions.metadata.properties, {
-        definitions: {
-          type: 'object',
-          description: dedent`
+    "nikita:schema": {
+      before: "@nikitajs/core/plugins/tools/schema",
+      handler: function ({ schema }) {
+        mutate(schema.definitions.metadata.properties, {
+          definitions: {
+            type: "object",
+            description: dedent`
             Schema definition or \`false\` to disable schema validation in the
             current action.
-          `
-        }
-      });
+          `,
+          },
+        });
+      },
     },
-    'nikita:action': {
+    "nikita:action": {
       after: [
-        '@nikitajs/core/plugins/global',
-        '@nikitajs/core/plugins/metadata/disabled',
+        "@nikitajs/core/plugins/global",
+        "@nikitajs/core/plugins/metadata/disabled",
       ],
-      handler: async function(action) {
+      handler: async function (action) {
         if (action.metadata.schema === false) {
           return;
         }
@@ -42,7 +42,7 @@ export default {
         if (error) {
           throw error;
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };

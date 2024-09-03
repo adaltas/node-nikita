@@ -14,7 +14,7 @@ const compare = function (...modes) {
   for (let i = 1; i < modes.length; i++) {
     const mode = this.stringify(modes[i]);
     if (
-      !ref.some( (m) => {
+      !ref.some((m) => {
         const l = Math.min(m.length, mode.length);
         return m.slice(-l) === mode.slice(-l);
       })

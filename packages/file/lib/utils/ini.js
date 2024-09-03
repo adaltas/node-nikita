@@ -151,7 +151,7 @@ const parse_multi_brackets_multi_lines = function (str, options = {}) {
   const comment = options.comment || ";";
   let writing = false;
   let previous = {};
-  utils.string.lines(str).forEach(function (line, _, __) {
+  utils.string.lines(str).forEach(function (line) {
     if (!line || line.match(/^\s*$/)) {
       return;
     }
@@ -231,7 +231,6 @@ const stringify = function (obj, section, options = {}) {
     } else if (typeof val === "boolean") {
       if (val === true) {
         return (out += safe(k) + options.eol);
-      } else {
       }
     } else {
       // disregard false value
@@ -247,7 +246,7 @@ const stringify = function (obj, section, options = {}) {
     const child = stringify(
       obj[k],
       (section ? section + "." : "") + nk,
-      options
+      options,
     );
     if (out.length && child.length) {
       out += options.eol;
@@ -277,17 +276,17 @@ const stringify_single_key = function (obj, section, options = {}) {
     if (val && Array.isArray(val)) {
       return val.forEach(function (item) {
         return (out +=
-          val === "" || val === true
-            ? `${k}` + "\n"
-            : safe(`${k}[]`) + options.separator + safe(item) + "\n");
+          val === "" || val === true ?
+            `${k}` + "\n"
+          : safe(`${k}[]`) + options.separator + safe(item) + "\n");
       });
     } else if (val && typeof val === "object") {
       return children.push(k);
     } else {
       return (out +=
-        val === "" || val === true
-          ? `${k}` + options.eol
-          : safe(k) + options.separator + safe(val) + options.eol);
+        val === "" || val === true ?
+          `${k}` + options.eol
+        : safe(k) + options.separator + safe(val) + options.eol);
     }
   });
   if (section && out.length) {
@@ -298,7 +297,7 @@ const stringify_single_key = function (obj, section, options = {}) {
     const child = stringify_single_key(
       obj[k],
       (section ? section + "." : "") + nk,
-      options
+      options,
     );
     if (out.length && child.length) {
       out += options.eol;
@@ -311,7 +310,7 @@ const stringify_single_key = function (obj, section, options = {}) {
 const stringify_brackets_then_curly = function (
   content,
   depth = 0,
-  options = {}
+  options = {},
 ) {
   if (arguments.length === 2) {
     options = depth;
@@ -336,19 +335,11 @@ const stringify_brackets_then_curly = function (
     if (isObj) {
       if (depth === 0) {
         out += `${prefix}[${k}]${options.eol}`;
-        out += stringify_brackets_then_curly(
-          v,
-          depth + 1,
-          options
-        );
+        out += stringify_brackets_then_curly(v, depth + 1, options);
         out += `${options.eol}`;
       } else {
         out += `${prefix}${k}${options.separator}{${options.eol}`;
-        out += stringify_brackets_then_curly(
-          v,
-          depth + 1,
-          options
-        );
+        out += stringify_brackets_then_curly(v, depth + 1, options);
         out += `${prefix}}${options.eol}`;
       }
     } else {
@@ -409,7 +400,7 @@ const stringify_multi_brackets = function (content, depth = 0, options = {}) {
         .map(function (vv) {
           if (typeof vv !== "string") {
             throw Error(
-              `Stringify Invalid Value: expect a string for key ${k}, got ${vv}`
+              `Stringify Invalid Value: expect a string for key ${k}, got ${vv}`,
             );
           }
           return `${prefix}${k}${options.separator}${vv}`;

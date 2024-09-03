@@ -1,32 +1,37 @@
 // Dependencies
-import path from 'node:path'
-import definitions from "./schema.json" with { type: "json" };
+import path from "node:path";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     if (config.rootdir) {
       config.target = `${path.join(config.rootdir, config.target)}`;
     }
     // Write configuration
-    const {data} = await this.fs.readFile({
+    const { data } = await this.fs.readFile({
       target: config.target,
-      encoding: 'ascii'
+      encoding: "ascii",
     });
     let status = false;
-    const locales = data.split('\n');
+    const locales = data.split("\n");
     for (const i in locales) {
-      const locale = locales[i]
+      const locale = locales[i];
       let match;
-      if (match = /^#([\w_\-\.]+)($| .+$)/.exec(locale)) {
+      if ((match = /^#([\w_\-.]+)($| .+$)/.exec(locale))) {
         if (config.locales.includes(match[1]) === true) {
           locales[i] = match[1] + match[2];
           status = true;
         }
       }
-      if (match = /^([\w_\-\.]+)($| .+$)/.exec(locale)) {
+      if ((match = /^([\w_\-.]+)($| .+$)/.exec(locale))) {
         if (config.locales.includes(match[1]) === false) {
-          locales[i] = '#' + match[1] + match[2];
+          locales[i] = "#" + match[1] + match[2];
           status = true;
         }
       }
@@ -34,20 +39,20 @@ export default {
     if (status) {
       await this.fs.writeFile({
         target: config.target,
-        content: locales.join('\n')
+        content: locales.join("\n"),
       });
     }
     // Reload configuration
     await this.execute({
       $if: config.generate != null ? config.generate : status,
       rootdir: config.rootdir,
-      command: "locale-gen"
+      command: "locale-gen",
     });
     return {
-      $status: status || config.generate
+      $status: status || config.generate,
     };
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

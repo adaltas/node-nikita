@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -19,7 +23,7 @@ export default {
     // Install packages
     const installed = Object.keys(packages);
     const install = config.name.filter(
-      (name) => !installed.includes(name.split("@")[0])
+      (name) => !installed.includes(name.split("@")[0]),
     );
     if (!install.length) {
       return;

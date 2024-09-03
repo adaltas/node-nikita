@@ -1,13 +1,17 @@
-
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/docker/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function ({ config, tools: { find } }) {
+  handler: async function ({ config }) {
     // Build Docker
     config.opts = Object.keys(config.opts)
       .filter((opt) => config.opts[opt] != null)
@@ -20,11 +24,11 @@ export default {
           val = "false";
         }
         if (["tlsverify", "debug"].includes(opt)) {
-          if(val === "true"){
-            return `${esa('--'+opt)}`;
+          if (val === "true") {
+            return `${esa("--" + opt)}`;
           }
         } else {
-          return `${esa('--'+opt)}=${esa(val)}`;
+          return `${esa("--" + opt)}=${esa(val)}`;
         }
       })
       .join(" ");
@@ -45,13 +49,13 @@ export default {
               fi
               eval "$(docker-machine env \${machine})"
             `,
-          config.compose
-            ? dedent`
+          config.compose ?
+            dedent`
               opts='${config.opts}'
               bin=\`command -v docker-compose >/dev/null 2>&1  && echo "docker-compose $opts" || echo "docker $opts compose"\` 
               $bin ${config.command}
             `
-            : `docker ${config.opts} ${config.command}`,
+          : `docker ${config.opts} ${config.command}`,
         ]
           .filter(Boolean)
           .join("\n"),
@@ -62,10 +66,10 @@ export default {
       }
       if (/^Error response from daemon/.test(error.stderr)) {
         throw Error(
-          error.stderr.trim().replace("Error response from daemon: ", "")
+          error.stderr.trim().replace("Error response from daemon: ", ""),
         );
       }
-      throw error
+      throw error;
     }
   },
   metadata: {

@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -26,7 +30,7 @@ export default {
       }
       const data = await config.serializer["nikita:action:start"].apply(
         null,
-        arguments
+        arguments,
       );
       if (data != null) {
         return config.stream.write(data);
@@ -36,23 +40,32 @@ export default {
       if (!config.serializer["nikita:action:end"]) {
         return;
       }
-      const data = config.serializer["nikita:action:end"].apply(null, arguments);
+      const data = config.serializer["nikita:action:end"].apply(
+        null,
+        arguments,
+      );
       if (data != null) {
         return config.stream.write(data);
       }
     });
-    events.on("nikita:resolved", function ({ action }) {
+    events.on("nikita:resolved", function () {
       if (config.serializer["nikita:resolved"]) {
-        const data = config.serializer["nikita:resolved"].apply(null, arguments);
+        const data = config.serializer["nikita:resolved"].apply(
+          null,
+          arguments,
+        );
         if (data != null) {
           config.stream.write(data);
         }
       }
       return close();
     });
-    events.on("nikita:rejected", function ({ action }) {
+    events.on("nikita:rejected", function () {
       if (config.serializer["nikita:rejected"]) {
-        const data = config.serializer["nikita:rejected"].apply(null, arguments);
+        const data = config.serializer["nikita:rejected"].apply(
+          null,
+          arguments,
+        );
         if (data != null) {
           config.stream.write(data);
         }

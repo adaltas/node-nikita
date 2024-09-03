@@ -1,12 +1,17 @@
 // Dependencies
 import utils from "@nikitajs/system/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Parse the passwd output
 const str2passwd = function (data) {
   const passwd = {};
   for (const line of utils.string.lines(data)) {
-    const record = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec(line);
+    const record = /(.*):\w:(.*):(.*):(.*):(.*):(.*)/.exec(line);
     if (!record) {
       continue;
     }
@@ -53,7 +58,7 @@ export default {
       const user = passwd[config.uid];
       if (!user) {
         throw Error(
-          `Invalid Option: no uid matching ${JSON.stringify(config.uid)}`
+          `Invalid Option: no uid matching ${JSON.stringify(config.uid)}`,
         );
       }
       return {
@@ -66,7 +71,7 @@ export default {
       })[0];
       if (!user) {
         throw Error(
-          `Invalid Option: no uid matching ${JSON.stringify(config.uid)}`
+          `Invalid Option: no uid matching ${JSON.stringify(config.uid)}`,
         );
       }
       return {

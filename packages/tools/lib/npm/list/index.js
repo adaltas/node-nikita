@@ -1,21 +1,27 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
-    const {stdout} = await this.execute({
-      command: ['npm list', '--json', config.global ? '--global' : void 0].join(' '),
+  handler: async function ({ config }) {
+    const { stdout } = await this.execute({
+      command: ["npm list", "--json", config.global ? "--global" : void 0].join(
+        " ",
+      ),
       code: [0, 1],
       cwd: config.cwd,
-      stdout_log: false
+      stdout_log: false,
     });
     return {
-      packages: JSON.parse(stdout).dependencies || {}
+      packages: JSON.parse(stdout).dependencies || {},
     };
   },
   metadata: {
     definitions: definitions,
-    shy: true
-  }
+    shy: true,
+  },
 };

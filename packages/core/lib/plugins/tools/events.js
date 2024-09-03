@@ -13,9 +13,8 @@ export default {
       if (action.tools == null) {
         action.tools = {};
       }
-      action.tools.events = action.parent
-        ? action.parent.tools.events
-        : new EventEmitter();
+      action.tools.events =
+        action.parent ? action.parent.tools.events : new EventEmitter();
     },
     "nikita:action": function (action) {
       action.tools.events.emit("nikita:action:start", {
@@ -59,7 +58,7 @@ export default {
       action.tools.events.emit("nikita:rejected", {
         action: action,
         error: error,
-        event: "nikita:rejected"
+        event: "nikita:rejected",
       });
     },
   },

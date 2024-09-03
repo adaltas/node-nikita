@@ -6,13 +6,13 @@ Management facility to register and unregister actions.
 
 // Dependencies
 import path from "node:path";
-import {is_object, merge, mutate} from 'mixme';
+import { is_object, merge, mutate } from "mixme";
 
 // Register all functions
-const create = function({chain, on_register, parent, plugins} = {}) {
+const create = function ({ chain, on_register, parent, plugins } = {}) {
   const store = {};
   const obj = {
-    chain: chain
+    chain: chain,
   };
   /*
 
@@ -32,13 +32,16 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     Parent registry.
   
    */
-  obj.create = function(options = {}) {
+  obj.create = function (options = {}) {
     // Inherit options from parent
-    options = merge({
-      chain: obj.chain,
-      on_register: on_register,
-      parent: parent
-    }, options);
+    options = merge(
+      {
+        chain: obj.chain,
+        on_register: on_register,
+        parent: parent,
+      },
+      options,
+    );
     // Create the child registry
     return create(options);
   };
@@ -49,17 +52,19 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   Load an action from the module name.
   
   */
-  obj.load = async function(module) {
-    if (typeof module !== 'string') {
-      throw Error(`Invalid Argument: module must be a string, got ${module.toString()}`);
+  obj.load = async function (module) {
+    if (typeof module !== "string") {
+      throw Error(
+        `Invalid Argument: module must be a string, got ${module.toString()}`,
+      );
     }
-    if (module.startsWith('.')) {
+    if (module.startsWith(".")) {
       module = path.resolve(process.cwd(), module);
     }
     let action = (await import(module)).default;
-    if (typeof action === 'function') {
+    if (typeof action === "function") {
       action = {
-        handler: action
+        handler: action,
       };
     }
     action.metadata ??= {};
@@ -85,7 +90,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     Call the 'nikita:registry:normalize' hook.
 
    */
-  obj.get = async function(namespace, options) {
+  obj.get = async function (namespace, options) {
     if (arguments.length === 1 && is_object(arguments[0])) {
       options = namespace;
       namespace = null;
@@ -97,11 +102,11 @@ const create = function({chain, on_register, parent, plugins} = {}) {
       // Flatten result
       if (options.flatten) {
         const actions = [];
-        const walk = function(store, keys) {
+        const walk = function (store, keys) {
           const results = [];
           for (const k in store) {
             const v = store[k];
-            if (k === '') {
+            if (k === "") {
               if (v.metadata?.deprecate && !options.deprecate) {
                 continue;
               }
@@ -121,12 +126,12 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         }
       } else {
         // Tree result
-        const walk = function(store, keys) {
+        const walk = function (store, keys) {
           const res = {};
           for (const k in store) {
             let v = store[k];
-            if (k === '') {
-              if (v.metadata?.deprecate && !options.deprecate){
+            if (k === "") {
+              if (v.metadata?.deprecate && !options.deprecate) {
                 continue;
               }
               res[k] = merge(v);
@@ -143,18 +148,18 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         if (!parent) {
           return actions;
         } else {
-          return merge((await parent.get(options)), actions);
+          return merge(await parent.get(options), actions);
         }
       }
     }
-    if (typeof namespace === 'string') {
+    if (typeof namespace === "string") {
       // Return one action
       namespace = [namespace];
     }
     let action = null;
     // Search for action in the current registry
     let child_store = store;
-    const namespaceTemp = namespace.concat(['']);
+    const namespaceTemp = namespace.concat([""]);
     for (let i = 0; i < namespaceTemp.length; i++) {
       const n = namespaceTemp[i];
       if (!child_store[n]) {
@@ -170,7 +175,7 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     if (!action && parent) {
       action = await parent.get(namespace, {
         ...options,
-        normalize: false
+        normalize: false,
       });
     }
     if (action == null) {
@@ -184,9 +189,9 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     if (plugins) {
       // Hook attented to modify an action returned by the registry
       return await plugins.call({
-        name: 'nikita:registry:normalize',
+        name: "nikita:registry:normalize",
         args: action,
-        handler: (action) => action
+        handler: (action) => action,
       });
     } else {
       return action;
@@ -249,19 +254,19 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   ```
 
    */
-  obj.register = async function(namespace, action) {
-    if (typeof namespace === 'string') {
+  obj.register = async function (namespace, action) {
+    if (typeof namespace === "string") {
       namespace = [namespace];
     }
     if (Array.isArray(namespace)) {
       if (action === void 0) {
         return obj.chain || obj;
       }
-      if (typeof action === 'string') {
+      if (typeof action === "string") {
         action = await obj.load(action);
-      } else if (typeof action === 'function') {
+      } else if (typeof action === "function") {
         action = {
-          handler: action
+          handler: action,
         };
       }
       let child_store = store;
@@ -270,29 +275,38 @@ const create = function({chain, on_register, parent, plugins} = {}) {
         child_store[property] ??= {};
         child_store = child_store[property];
       }
-      child_store[''] = action;
+      child_store[""] = action;
       if (on_register) {
         await on_register(namespace, action);
       }
     } else {
-      const walk = async function(namespace, store) {
+      const walk = async function (namespace, store) {
         for (const k in store) {
           action = store[k];
-          if (k !== '' && action && typeof action === 'object' && !Array.isArray(action) && !(action.handler || action.module)) {
+          if (
+            k !== "" &&
+            action &&
+            typeof action === "object" &&
+            !Array.isArray(action) &&
+            !(action.handler || action.module)
+          ) {
             namespace.push(k);
             await walk(namespace, action);
           } else {
-            if (typeof action === 'string') {
+            if (typeof action === "string") {
               action = await obj.load(action);
-            } else if (typeof action === 'function') {
+            } else if (typeof action === "function") {
               action = {
-                handler: action
+                handler: action,
               };
             }
             namespace.push(k);
-            store[k] = k === '' ? action : {
-              '': action
-            };
+            store[k] =
+              k === "" ? action : (
+                {
+                  "": action,
+                }
+              );
             if (on_register) {
               await on_register(namespace, action);
             }
@@ -323,23 +337,23 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   ```
 
    */
-  obj.deprecate = async function(old_name, new_name, action) {
+  obj.deprecate = async function (old_name, new_name, action) {
     let handler;
     if (arguments.length === 2) {
       handler = new_name;
       new_name = null;
     }
-    if (typeof action === 'string') {
+    if (typeof action === "string") {
       action = await obj.load(action);
     }
-    if (typeof handler === 'function') {
+    if (typeof handler === "function") {
       action = {
-        handler: handler
+        handler: handler,
       };
     }
     action.metadata ??= {};
     action.metadata.deprecate = new_name;
-    if (typeof action.module === 'string') {
+    if (typeof action.module === "string") {
       action.metadata.deprecate ??= action.module;
     }
     action.metadata.deprecate ??= true;
@@ -360,8 +374,8 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     Return true if name match a namespace and not a leaf action.
 
    */
-  obj.registered = function(name, options = {}) {
-    if (typeof name === 'string') {
+  obj.registered = function (name, options = {}) {
+    if (typeof name === "string") {
       name = [name];
     }
     if (!options.local && parent && parent.registered(name, options)) {
@@ -370,13 +384,16 @@ const create = function({chain, on_register, parent, plugins} = {}) {
     let child_store = store;
     for (let i = 0; i < name.length; i++) {
       const n = name[i];
-      if ((child_store[n] == null) || !child_store.propertyIsEnumerable(n)) {
+      if (
+        child_store[n] == null ||
+        !Object.prototype.propertyIsEnumerable.call(child_store, n)
+      ) {
         return false;
       }
       if (options.partial && child_store[n] && i === name.length - 1) {
         return true;
       }
-      if (child_store[n][''] && i === name.length - 1) {
+      if (child_store[n][""] && i === name.length - 1) {
         return true;
       }
       child_store = child_store[n];
@@ -390,8 +407,8 @@ const create = function({chain, on_register, parent, plugins} = {}) {
   Remove an action from registry.
 
    */
-  obj.unregister = function(name) {
-    if (typeof name === 'string') {
+  obj.unregister = function (name) {
+    if (typeof name === "string") {
       name = [name];
     }
     let child_store = store;

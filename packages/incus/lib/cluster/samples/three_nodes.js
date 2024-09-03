@@ -1,6 +1,7 @@
 // Dependencies
 import path from "node:path";
-import nikita from '@nikitajs/core';
+import dedent from "dedent";
+import nikita from "@nikitajs/core";
 import "@nikitajs/log/register";
 import "@nikitajs/incus/register";
 import "@nikitajs/tools/register";
@@ -152,7 +153,7 @@ nikita.log
         },
       },
     },
-    prevision: async function ({ config }) {
+    prevision: async function () {
       return await this.tools.ssh.keygen({
         $header: "SSH key",
         target: "./assets/id_ed25519",
@@ -193,5 +194,5 @@ nikita.log
   })
   .then(
     () => console.info("OK"),
-    (err) => console.error("KO", err)
+    (err) => console.error("KO", err),
   );

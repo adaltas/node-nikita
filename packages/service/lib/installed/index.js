@@ -1,16 +1,22 @@
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, parent: { state }, tools: { log } }) {
-    let packages = config.cache ? state["nikita:service:packages:installed"] : undefined;
+    let packages =
+      config.cache ? state["nikita:service:packages:installed"] : undefined;
     if (packages !== undefined) {
       return {
         packages: packages,
-      }
+      };
     }
     try {
       ({ data: packages } = await this.execute({
@@ -28,7 +34,7 @@ export default {
           fi
         `,
         // code: [0, 1],
-        format: ({stdout}) => utils.string.lines(stdout),
+        format: ({ stdout }) => utils.string.lines(stdout),
         stdout_log: false,
       }));
       log("INFO", "Installed packages retrieved");
@@ -36,30 +42,30 @@ export default {
       if (error.exit_code === 2) {
         throw utils.error(
           "NIKITA_SERVICE_INSTALLED_UNSUPPORTED_PACKAGE_MANAGER",
-          "at the moment, rpm (yum, dnf, ...), pacman and dpkg (apt, apt-get, ...) are supported."
+          "at the moment, rpm (yum, dnf, ...), pacman and dpkg (apt, apt-get, ...) are supported.",
         );
       }
       throw error;
     }
     if (config.cache) {
-      log("INFO", 'Caching installed packages.');
+      log("INFO", "Caching installed packages.");
       state["nikita:service:packages:installed"] = packages;
     }
-    if(config.name) {
+    if (config.name) {
       return {
-        installed: packages.includes(config.name)
-      }
-    }else{
+        installed: packages.includes(config.name),
+      };
+    } else {
       return {
         packages: packages,
-      }
+      };
     }
   },
   metadata: {
     argument_to_config: "name",
     definitions: definitions,
     metadata: {
-      shy: true
-    }
+      shy: true,
+    },
   },
 };

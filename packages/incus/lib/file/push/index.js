@@ -1,8 +1,13 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import dedent from "dedent";
 import utils from "@nikitajs/incus/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -11,7 +16,7 @@ export default {
     if (config.content != null) {
       const tmpfile = path.join(
         tmpdir,
-        `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`
+        `nikita.${Date.now()}${Math.round(Math.random() * 1000)}`,
       );
       await this.fs.writeFile({
         target: tmpfile,
@@ -31,7 +36,7 @@ export default {
     let isTargetIdentical;
     if (isContainerRunning) {
       try {
-        const {$status} = await this.execute({
+        const { $status } = await this.execute({
           command: dedent`
             # Ensure source is a file
             [ -f "${config.source}" ] || exit 2
@@ -50,13 +55,13 @@ export default {
           code: [0, 42],
           trap: true,
         });
-        isTargetIdentical = $status
+        isTargetIdentical = $status;
       } catch (error) {
         if (error.exit_code === 2) {
           throw Error(
             `Invalid Option: source is not a file, got ${JSON.stringify(
-              config.source
-            )}`
+              config.source,
+            )}`,
           );
         }
         if (error.exit_code === 3) {
@@ -83,7 +88,9 @@ export default {
           typeof config.gid === "number" && "--gid",
           typeof config.uid === "number" && "--uid",
           config.mode && `--mode ${config.mode}`,
-        ].filter(Boolean).join(" ")}`,
+        ]
+          .filter(Boolean)
+          .join(" ")}`,
         trap: true,
         trim: true,
       });

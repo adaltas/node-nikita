@@ -48,3 +48,15 @@ describe 'utils.promise', ->
 
     it 'false', ->
       promise.is({}).should.be.false()
+  
+  describe 'withResolvers', ->
+
+    it 'resolve', ->
+      { promise: p, resolve } = promise.withResolvers()
+      resolve('ok')
+      p.should.finally.eql 'ok'
+
+    it 'reject', ->
+      { promise: p, reject } = promise.withResolvers()
+      reject(new Error('ok'))
+      p.should.be.rejectedWith 'ok'

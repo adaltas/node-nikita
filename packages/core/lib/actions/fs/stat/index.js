@@ -1,27 +1,38 @@
-
 // Dependencies
-import dedent from 'dedent';
-import utils from '@nikitajs/core/utils';
+import dedent from "dedent";
+import utils from "@nikitajs/core/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 const errors = {
-  NIKITA_FS_STAT_TARGET_ENOENT: ({config, error}) =>
-    utils.error('NIKITA_FS_STAT_TARGET_ENOENT', ['failed to stat the target, no file exists for target,', `got ${JSON.stringify(config.target)}`], {
-      exit_code: error.exit_code,
-      errno: -2,
-      syscall: 'rmdir',
-      path: config.target
-    })
+  NIKITA_FS_STAT_TARGET_ENOENT: ({ config, error }) =>
+    utils.error(
+      "NIKITA_FS_STAT_TARGET_ENOENT",
+      [
+        "failed to stat the target, no file exists for target,",
+        `got ${JSON.stringify(config.target)}`,
+      ],
+      {
+        exit_code: error.exit_code,
+        errno: -2,
+        syscall: "rmdir",
+        path: config.target,
+      },
+    ),
 };
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     // Normalize configuration
     // config.dereference ??= true;
     const dereference = config.dereference ? "-L" : "";
-    const {stdout} = await this.execute({
+    const { stdout } = await this.execute({
       command: dedent`
         [ ! -e ${config.target} ] && exit 3
         if [ -d /private ]; then
@@ -30,12 +41,12 @@ export default {
           stat ${dereference} -c '%f|%u|%g|%s|%X|%Y' ${esa(config.target)} # Linux
         fi
       `,
-      trim: true
-    }).catch( error => {
+      trim: true,
+    }).catch((error) => {
       if (error.exit_code === 3) {
         throw errors.NIKITA_FS_STAT_TARGET_ENOENT({
           config: config,
-          error: error
+          error: error,
         });
       }
       throw error;
@@ -53,9 +64,9 @@ export default {
     };
   },
   metadata: {
-    argument_to_config: 'target',
+    argument_to_config: "target",
     log: false,
     raw_output: true,
-    definitions: definitions
+    definitions: definitions,
   },
 };

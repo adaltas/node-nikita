@@ -1,7 +1,12 @@
 // Dependencies
-import utils from '@nikitajs/core/utils'
+import utils from "@nikitajs/core/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -12,23 +17,28 @@ export default {
         command: [
           "images",
           "--format '{{json .}}'",
-          ...Object.keys(config.filters || []).map(
-            (property) => {
-              const value = config.filters[property];
-              if (typeof value === 'string') {
-                return '--filter ' + esa(property) + "=" + esa(value)
-              }else if(typeof value === 'boolean'){
-                return '--filter ' + esa(property) + "=" + esa(value ? 'true' : 'false')
-              }else {
-                throw utils.error('NIKITA_DOCKER_IMAGES_FILTER', [
-                  'Unsupported filter value type,',
-                  'expect a string or a boolean value,',
-                  "got ${JSON.stringify(property)}."
-                ])
-              }
+          ...Object.keys(config.filters || []).map((property) => {
+            const value = config.filters[property];
+            if (typeof value === "string") {
+              return "--filter " + esa(property) + "=" + esa(value);
+            } else if (typeof value === "boolean") {
+              return (
+                "--filter " +
+                esa(property) +
+                "=" +
+                esa(value ? "true" : "false")
+              );
+            } else {
+              throw utils.error("NIKITA_DOCKER_IMAGES_FILTER", [
+                "Unsupported filter value type,",
+                "expect a string or a boolean value,",
+                "got ${JSON.stringify(property)}.",
+              ]);
             }
-          ),
-        ].filter(Boolean).join(' '),
+          }),
+        ]
+          .filter(Boolean)
+          .join(" "),
       })
       .then(({ data }) => data);
     return {
@@ -38,6 +48,6 @@ export default {
   },
   metadata: {
     shy: true,
-    definitions: definitions
+    definitions: definitions,
   },
 };

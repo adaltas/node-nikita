@@ -2,7 +2,12 @@
 import crypto from "crypto";
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 const errors = {
   NIKITA_FS_HASH_FILETYPE_UNSUPPORTED: function ({ config, stats }) {
@@ -15,7 +20,7 @@ const errors = {
       ],
       {
         target: config.target,
-      }
+      },
     );
   },
   NIKITA_FS_HASH_MISSING_OPENSSL: function () {
@@ -34,7 +39,7 @@ const errors = {
       ],
       {
         target: config.target,
-      }
+      },
     );
   },
 };
@@ -42,9 +47,8 @@ const errors = {
 // Action
 export default {
   handler: async function ({ config }) {
-    const { stats } = config.stats
-      ? config.stats
-      : await this.fs.stat(config.target);
+    const { stats } =
+      config.stats ? config.stats : await this.fs.stat(config.target);
     if (
       !utils.stats.isFile(stats.mode) &&
       !utils.stats.isDirectory(stats.mode)
@@ -65,7 +69,7 @@ export default {
             "command -v openssl >/dev/null || exit 2",
             ...files.map(
               (file) =>
-                `[ -f ${file} ] && openssl dgst -${config.algo} ${file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
+                `[ -f ${file} ] && openssl dgst -${config.algo} ${file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`,
             ),
             "exit 0",
           ].join("\n"),
@@ -80,11 +84,12 @@ export default {
           .lines(stdout)
           .filter((line) => /\w+/.test(line))
           .sort();
-        return hashs.length === 0
-          ? crypto.createHash(config.algo).update("").digest("hex")
-          : hashs.length === 1
-          ? hashs[0]
-          : crypto.createHash(config.algo).update(hashs.join("")).digest("hex");
+        return (
+          hashs.length === 0 ?
+            crypto.createHash(config.algo).update("").digest("hex")
+          : hashs.length === 1 ? hashs[0]
+          : crypto.createHash(config.algo).update(hashs.join("")).digest("hex")
+        );
         // Target is a file
       } else if (utils.stats.isFile(stats.mode)) {
         const { stdout: hash } = await this.execute({

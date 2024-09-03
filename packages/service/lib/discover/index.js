@@ -1,6 +1,11 @@
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -17,14 +22,12 @@ export default {
       `,
       code: [[1, 2], 3],
     });
-    const loader =
-      data.code === 1
-        ? "systemctl"
-        : data.code === 2
-        ? "service"
-        : undefined;
+    let loader =
+      data.code === 1 ? "systemctl"
+      : data.code === 2 ? "service"
+      : undefined;
     if (loader == null && config.strict) {
-      throw Error("Undetected Operating System Loader")
+      throw Error("Undetected Operating System Loader");
     }
     if (config.cache) {
       state["nikita:service:loader"] = loader;

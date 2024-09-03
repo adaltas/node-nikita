@@ -16,11 +16,11 @@ import utils from "@nikitajs/core/utils";
 const dig_down = async function (action, digger) {
   const results = [];
   await each(action.children.reverse(), async (child) =>
-    results.push(...(await dig_down(child, digger)))
+    results.push(...(await dig_down(child, digger))),
   );
   if (action.siblings) {
     await each(action.siblings.reverse(), async (sibling) =>
-      results.push(...(await dig_down(sibling, digger)))
+      results.push(...(await dig_down(sibling, digger))),
     );
   }
   const precious = await digger(action);
@@ -38,7 +38,7 @@ const dig_up = async function (action, digger) {
   }
   if (action.siblings) {
     await each(action.siblings.reverse(), async (sibling) =>
-      results.push(...(await dig_down(sibling, digger)))
+      results.push(...(await dig_down(sibling, digger))),
     );
   }
   if (action.parent) {

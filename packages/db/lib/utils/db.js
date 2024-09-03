@@ -54,7 +54,7 @@ const command = function (...opts) {
         // -s, --silent              Be more silent. Print results with a tab as separator, each row on new line.
         // -r, --raw                 Write fields without conversion. Used with --batch.
         config.silent ? "-N -s -r" : void 0,
-        config.command ? `-e \"${escape(config.command)}\"` : void 0,
+        config.command ? `-e "${escape(config.command)}"` : void 0,
       ]
         .filter(Boolean)
         .join(" ");
@@ -77,7 +77,7 @@ const command = function (...opts) {
         // -A, --no-align           Unaligned table output mode
         // -q, --quiet              Run quietly (no messages, only query output)
         "-tAq",
-        config.command ? `-c \"${config.command}\"` : void 0,
+        config.command ? `-c "${config.command}"` : void 0,
       ]
         .filter(Boolean)
         .join(" ");
@@ -104,7 +104,7 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
 */
 const jdbc = function (jdbc) {
   if (/^jdbc:mysql:/.test(jdbc)) {
-    let [_, __, addresses, database] =
+    let [, , addresses, database] =
       /^jdbc:(.*?):\/+(.*?)\/(.*?)(\?(.*)|$)/.exec(jdbc);
     return {
       engine: "mysql",
@@ -118,7 +118,7 @@ const jdbc = function (jdbc) {
       database: database,
     };
   } else if (/^jdbc:postgresql:/.test(jdbc)) {
-    let [_, __, addresses, database] =
+    let [, , addresses, database] =
       /^jdbc:(.*?):\/+(.*?)\/(.*?)(\?(.*)|$)/.exec(jdbc);
     return {
       engine: "postgresql",
@@ -138,15 +138,19 @@ const jdbc = function (jdbc) {
 
 // Filter connection properties
 const connection_config = function (opts) {
-  return utils.object.filter(opts, [], [
-    "admin_username",
-    "admin_password",
-    "database",
-    "engine",
-    "host",
-    "port",
-    "silent",
-  ]);
+  return utils.object.filter(
+    opts,
+    [],
+    [
+      "admin_username",
+      "admin_password",
+      "database",
+      "engine",
+      "host",
+      "port",
+      "silent",
+    ],
+  );
 };
 
 export { escape, command, jdbc, connection_config };

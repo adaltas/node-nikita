@@ -4,7 +4,12 @@ import dedent from "dedent";
 import connect from "ssh2-connect";
 import exec from "ssh2-exec";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -32,7 +37,7 @@ export default {
       config.selinux !== "disabled"
     ) {
       // Validation
-      throw Error(`Invalid option \"selinux\": ${config.selinux}`);
+      throw Error(`Invalid option "selinux": ${config.selinux}`);
     }
     let rebooting = false;
     // Read public key if option is a path
@@ -49,10 +54,10 @@ export default {
     }
     // Read private key if option is a path
     if (config.private_key_path && !config.private_key) {
-      log({
-        message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-        level: "DEBUG",
-      });
+      log(
+        "DEBUG",
+        `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
+      );
       const location = await utils.tilde.normalize(config.private_key_path);
       try {
         ({ data: config.private_key } = await fs.readFile(location, "ascii"));
@@ -69,7 +74,7 @@ export default {
       log("INFO", "Connection establish");
       let command = [];
       command.push(
-        `sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`
+        `sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;`,
       );
       if (config.public_key) {
         command.push(dedent`
@@ -100,20 +105,14 @@ export default {
             config.command += `-u ${config.user} `;
           }
           if (config.password) {
-            config.command = `echo -e \"${config.password}\\n\" | ${config.command} -S `;
+            config.command = `echo -e "${config.password}\\n" | ${config.command} -S `;
           }
-          config.command += `-- sh -c \"${command}\"`;
+          config.command += `-- sh -c "${command}"`;
           command = config.command;
         }
       }
-      log({
-        message: "Enable Root Access",
-        level: "DEBUG",
-      });
-      log({
-        message: command,
-        type: "stdin",
-      });
+      log("DEBUG", "Enable Root Access");
+      log("stdin", command);
       if (!metadata.dry) {
         const child = exec(
           {
@@ -127,20 +126,16 @@ export default {
             } else {
               throw error;
             }
-          }
+          },
         );
         child.stdout.on("data", (data) =>
-          log({ message: data, type: "stdout" })
+          log({ message: data, type: "stdout" }),
         );
-        child.stdout.on("end", () =>
-          log({ message: null, type: "stdout" })
-        );
+        child.stdout.on("end", () => log({ message: null, type: "stdout" }));
         child.stderr.on("data", (data) =>
-          log({ message: data, type: "stderr" })
+          log({ message: data, type: "stderr" }),
         );
-        child.stderr.on("end", () =>
-          log({ message: null, type: "stderr" })
-        );
+        child.stderr.on("end", () => log({ message: null, type: "stderr" }));
       }
     });
     await this.call(
@@ -151,7 +146,7 @@ export default {
       },
       async function () {
         (await connect(config)).end();
-      }
+      },
     );
   },
   metadata: {

@@ -1,45 +1,50 @@
-
-import path from 'node:path';
-import dedent from 'dedent';
-import runner from '@nikitajs/incus-runner';
-const __dirname = new URL( '.', import.meta.url).pathname
+import path from "node:path";
+import dedent from "dedent";
+import runner from "@nikitajs/incus-runner";
+const __dirname = new URL(".", import.meta.url).pathname;
 
 runner({
-  cwd: '/nikita/packages/core',
-  container: 'nikita-core-ssh',
-  logdir: path.resolve(__dirname, './logs'),
+  cwd: "/nikita/packages/core",
+  container: "nikita-core-ssh",
+  logdir: path.resolve(__dirname, "./logs"),
   test_user: 1234,
   cluster: {
     containers: {
-      'nikita-core-ssh': {
-        image: 'images:almalinux/8',
+      "nikita-core-ssh": {
+        image: "images:almalinux/8",
         properties: {
-          'environment.NIKITA_TEST_MODULE': '/nikita/packages/core/env/ssh/test.coffee',
-          'environment.HOME': '/home/source', // Fix, Incus doesnt set HOME with --user
-          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 1234' : `both ${process.getuid()} 1234`
+          "environment.NIKITA_TEST_MODULE":
+            "/nikita/packages/core/env/ssh/test.coffee",
+          "environment.HOME": "/home/source", // Fix, Incus doesnt set HOME with --user
+          "raw.idmap":
+            process.env["NIKITA_INCUS_IN_VAGRANT"] ?
+              "both 1000 1234"
+            : `both ${process.getuid()} 1234`,
         },
         disk: {
           nikitadir: {
-            path: '/nikita',
-            source: process.env['NIKITA_HOME'] || path.join(__dirname, '../../../../')
-          }
+            path: "/nikita",
+            source:
+              process.env["NIKITA_HOME"] ||
+              path.join(__dirname, "../../../../"),
+          },
         },
         ssh: {
-          enabled: true
-        }
-      }
+          enabled: true,
+        },
+      },
     },
-    provision_container: async function({config}) {
+    provision_container: async function ({ config }) {
       await this.incus.exec({
-        $header: 'Dependencies',
+        $header: "Dependencies",
         container: config.container,
         command: dedent`
           # nvm require the tar commands
           yum install -y tar
-        `
+        `,
       });
       await this.incus.exec({
-        $header: 'User `source`',
+        $header: "User `source`",
         container: config.container,
         command: dedent`
           if ! id -u 1234 ; then
@@ -51,10 +56,10 @@ runner({
           fi
           chown -R source /home/source/
         `,
-        trap: true
+        trap: true,
       });
       await this.incus.exec({
-        $header: 'Node.js',
+        $header: "Node.js",
         container: config.container,
         command: dedent`
           if command -v node ; then exit 42; fi
@@ -63,12 +68,12 @@ runner({
           nvm install 22
         `,
         user: 1234,
-        shell: 'bash',
+        shell: "bash",
         trap: true,
-        code: [0, 42]
+        code: [0, 42],
       });
       await this.incus.exec({
-        $header: 'User `target`',
+        $header: "User `target`",
         container: config.container,
         command: dedent`
           if ! id -u 1235; then
@@ -81,8 +86,8 @@ runner({
           fi
           chown -R target /home/target/
         `,
-        trap: true
+        trap: true,
       });
-    }
-  }
+    },
+  },
 });

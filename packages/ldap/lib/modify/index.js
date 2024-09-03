@@ -1,33 +1,38 @@
 // Dependencies
 import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import utils from '@nikitajs/ldap/utils'
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/ldap/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     // Auth related config
     if (config.uri === true) {
       if (config.mesh == null) {
-        config.mesh = 'EXTERNAL';
+        config.mesh = "EXTERNAL";
       }
-      config.uri = 'ldapi:///';
+      config.uri = "ldapi:///";
     }
     // const uri = config.uri ? `-H ${config.uri}` : ''; // URI is obtained from local openldap conf unless provided
     // Add related config
-    let ldif = '';
+    let ldif = "";
     const originals = [];
     for (const operation of config.operations) {
       if (!config.shortcut) {
-        const {stdout} = await this.ldap.search({
+        const { stdout } = await this.ldap.search({
           ...utils.ldap.config_connection(config),
-          base: operation.dn
+          base: operation.dn,
         });
         originals.push(stdout);
       }
       // Generate ldif content
-      ldif += '\n';
+      ldif += "\n";
       ldif += `dn: ${operation.dn}\n`;
       ldif += "changetype: modify\n";
       for (const attribute of operation.attributes) {
@@ -35,7 +40,7 @@ export default {
         if (attribute.value) {
           ldif += `${attribute.name}: ${attribute.value}\n`;
         }
-        ldif += '-\n';
+        ldif += "-\n";
       }
     }
     await this.execute({
@@ -43,17 +48,13 @@ export default {
         [
           "ldapmodify",
           config.continuous ? "-c" : undefined,
-          config.mesh
-            ? `-Y ${esa(config.mesh)}`
-            : undefined,
-          config.binddn
-            ? `-D ${esa(config.binddn)}`
-            : undefined,
-          config.passwd
-            ? `-w ${esa(config.passwd)}`
-            : undefined,
+          config.mesh ? `-Y ${esa(config.mesh)}` : undefined,
+          config.binddn ? `-D ${esa(config.binddn)}` : undefined,
+          config.passwd ? `-w ${esa(config.passwd)}` : undefined,
           config.uri ? `-H ${esa(config.uri)}` : undefined,
-        ].filter(Boolean).join(" "),
+        ]
+          .filter(Boolean)
+          .join(" "),
         dedent`
           <<-EOF
           ${ldif}
@@ -65,9 +66,9 @@ export default {
     for (const i in config.operations) {
       const operation = config.operations[i];
       if (!config.shortcut) {
-        const {stdout} = await this.ldap.search({
+        const { stdout } = await this.ldap.search({
           ...utils.ldap.config_connection(config),
-          base: operation.dn
+          base: operation.dn,
         });
         if (stdout !== originals[i]) {
           status = true;
@@ -77,14 +78,14 @@ export default {
     return status;
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       if (!Array.isArray(config.operations)) {
-        return config.operations = [config.operations];
+        return (config.operations = [config.operations]);
       }
-    }
+    },
   },
   metadata: {
-    global: 'ldap'
+    global: "ldap",
   },
-  definitions: definitions
+  definitions: definitions,
 };

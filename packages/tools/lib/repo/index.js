@@ -1,9 +1,13 @@
 // Dependencies
 import each from "each";
 import dedent from "dedent";
-import url from "node:url";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -12,7 +16,7 @@ export default {
     if (config.source != null && config.target == null) {
       config.target = path.resolve(
         "/etc/yum.repos.d",
-        path.basename(config.source)
+        path.basename(config.source),
       );
     }
     // Unless absolute, path is relative to the default yum repo location
@@ -75,7 +79,7 @@ export default {
           target: config.target,
           encoding: "utf8",
         })
-        .then(({ data }) => data)
+        .then(({ data }) => data),
     );
     // Extract repo IDs
     const repoids = Object.keys(data);
@@ -112,10 +116,12 @@ export default {
           command: `rpm --import ${config.gpg_dir}/${path.basename(gpgKey)}`,
         });
         return isKeyUpdated;
-      }).then( statuses => statuses.some( status => status === true));
+      }).then((statuses) => statuses.some((status) => status === true));
       // Clean Metadata
       await this.execute({
-        $if: path.relative("/etc/yum.repos.d", config.target) !== ".." && areKeysUpdated,
+        $if:
+          path.relative("/etc/yum.repos.d", config.target) !== ".." &&
+          areKeysUpdated,
         // wdavidw: 180114, was "yum clean metadata"
         // explanation is provided in case of revert.
         // expire-cache is much faster, it forces yum to go redownload the small

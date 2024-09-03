@@ -9,7 +9,7 @@ always posix but this is not yet handled and tested.
 */
 
 const normalize = function (location) {
-  return new Promise(function (accept, reject) {
+  return new Promise(function (accept) {
     return tilde(location, function (location) {
       return accept(path.normalize(location));
     });

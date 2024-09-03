@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -9,7 +13,7 @@ export default {
     });
     return {
       $status: true,
-      list: data.map(line => line.split('/').pop())
+      list: data.map((line) => line.split("/").pop()),
     };
   },
   metadata: {

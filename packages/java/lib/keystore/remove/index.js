@@ -1,11 +1,17 @@
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
-    const aliases = [...config.caname, ...config.name].join(' ').trim();
+  handler: async function ({ config }) {
+    const aliases = [...config.caname, ...config.name].join(" ").trim();
     await this.execute({
       bash: true,
       command: dedent`
@@ -27,7 +33,7 @@ export default {
         [ $count -eq 0 ] && exit 3
         exit 0
       `,
-      code: [0, 3]
+      code: [0, 3],
     }).catch((error) => {
       if (error.exit_code === 43) {
         throw utils.error("NIKITA_JAVA_KEYTOOL_NOT_FOUND", [
@@ -40,6 +46,6 @@ export default {
     });
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

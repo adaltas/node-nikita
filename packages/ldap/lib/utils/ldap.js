@@ -1,4 +1,4 @@
-import utils from "@nikitajs/core/utils"
+import utils from "@nikitajs/core/utils";
 
 export default {
   acl: {
@@ -24,19 +24,19 @@ export default {
     ]
     ```
     */
-    parse: function(olcAccesses) {
+    parse: function (olcAccesses) {
       const isArray = Array.isArray(olcAccesses);
       if (!isArray) {
         olcAccesses = [olcAccesses];
       }
-      olcAccesses = olcAccesses.map( olcAccess => {
-        const match = /^\{(\d+)\}to\s+(.*?)(\s*by\s+|$)(.*)$/.exec(olcAccess)
-        if (!match) throw Error('Invalid olcAccess entry');
+      olcAccesses = olcAccesses.map((olcAccess) => {
+        const match = /^\{(\d+)\}to\s+(.*?)(\s*by\s+|$)(.*)$/.exec(olcAccess);
+        if (!match) throw Error("Invalid olcAccess entry");
         return {
           index: parseInt(match[1], 10),
           to: match[2],
           by: match[4].split(/\s+by\s+/),
-        }
+        };
       });
       if (isArray) {
         return olcAccesses;
@@ -49,7 +49,7 @@ export default {
 
     Stringify one or multiple "olcAccess" entries.
     */
-    stringify: function(olcAccesses) {
+    stringify: function (olcAccesses) {
       const isArray = Array.isArray(olcAccesses);
       if (!isArray) {
         olcAccesses = [olcAccesses];
@@ -67,10 +67,10 @@ export default {
       } else {
         return olcAccesses[0];
       }
-    }
+    },
   },
-  config_connection(config){
-    return utils.object.filter(config, [], ['binddn', 'mesh', 'passwd', 'uri'])
+  config_connection(config) {
+    return utils.object.filter(config, [], ["binddn", "mesh", "passwd", "uri"]);
   },
   index: {
     /*
@@ -78,16 +78,16 @@ export default {
 
     Parse one or multiple "olcDbIndex" entries.
     */
-    parse: function(indexes) {
+    parse: function (indexes) {
       const isArray = Array.isArray(indexes);
       if (!isArray) {
         indexes = [indexes];
       }
-      indexes.forEach(function(index, i) {
+      indexes.forEach(function (index, i) {
         if (i === 0) {
           indexes = {};
         }
-        const [k, v] = index.split(' ');
+        const [k, v] = index.split(" ");
         indexes[k] = v;
       });
       if (isArray) {
@@ -101,17 +101,17 @@ export default {
 
     Stringify one or multiple "olcDbIndex" entries.
     */
-    stringify: function(indexes) {
+    stringify: function (indexes) {
       const isArray = Array.isArray(indexes);
       if (!isArray) {
         indexes = [indexes];
       }
-      indexes = indexes.map((v, k) => `${k} ${v}`)
+      indexes = indexes.map((v, k) => `${k} ${v}`);
       if (isArray) {
         return indexes;
       } else {
         return indexes[0];
       }
-    }
-  }
+    },
+  },
 };

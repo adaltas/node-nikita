@@ -1,4 +1,4 @@
-import dedent from 'dedent';
+import dedent from "dedent";
 
 const options = [
   "api-cors-header",

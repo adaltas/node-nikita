@@ -1,6 +1,7 @@
 
 export default
-  tags: {}
+  tags:
+    api: true
   config: [
     label: 'local'
   ,

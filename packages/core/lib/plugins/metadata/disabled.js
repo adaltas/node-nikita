@@ -17,17 +17,20 @@ import { mutate } from "mixme";
 export default {
   name: "@nikitajs/core/plugins/metadata/disabled",
   hooks: {
-    "nikita:schema": function ({ schema }) {
-      mutate(schema.definitions.metadata.properties, {
-        disabled: {
-          type: "boolean",
-          description: dedent`
+    "nikita:schema": {
+      before: "@nikitajs/core/plugins/tools/schema",
+      handler: function ({ schema }) {
+        mutate(schema.definitions.metadata.properties, {
+          disabled: {
+            type: "boolean",
+            description: dedent`
             Disable the execution of the current action and consequently the
             execution of its child actions.
           `,
-          default: false,
-        },
-      });
+            default: false,
+          },
+        });
+      },
     },
     "nikita:action": function (action, handler) {
       if (action.metadata.disabled == null) {

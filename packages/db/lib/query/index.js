@@ -1,6 +1,11 @@
 // Dependencies
 import utils from "@nikitajs/db/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -11,9 +16,10 @@ export default {
       trim: config.trim,
     });
     return {
-      $status: config.grep
-        ? utils.regexp.is(config.grep)
-          ? stdout.split("\n").some((line) => config.grep.test(line))
+      $status:
+        config.grep ?
+          utils.regexp.is(config.grep) ?
+            stdout.split("\n").some((line) => config.grep.test(line))
           : stdout.split("\n").some((line) => line === config.grep)
         : $status,
       stdout: stdout,

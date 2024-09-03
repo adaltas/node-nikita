@@ -1,4 +1,3 @@
-
 /*
 Usage:
 schedule([handlers], [options])
@@ -11,18 +10,21 @@ Options:
   Prevent the execution of newly registered tasks, call resume to trigger the
   execution.
 */
-export default function(handlers, options) {
+export default function (handlers, options) {
   var opts, promise, scheduler, stack, state;
   if (Array.isArray(handlers) || (handlers != null) === false) {
     if (options == null) {
       options = {};
     }
-  } else if (typeof handlers === 'object' && (Array.isArray(options) || (options != null) === false)) {
+  } else if (
+    typeof handlers === "object" &&
+    (Array.isArray(options) || (options != null) === false)
+  ) {
     opts = options;
     options = handlers;
     handlers = opts;
   } else {
-    throw Error('Invalid arguments');
+    throw Error("Invalid arguments");
   }
   // Options normalisation
   if (options.strict == null) {
@@ -38,22 +40,22 @@ export default function(handlers, options) {
     paused: options.paused,
     output: [],
     resolved: false,
-    running: false
+    running: false,
   };
-  promise = new Promise(function(resolve, reject) {
+  promise = new Promise(function (resolve, reject) {
     scheduler = {
-      pause: function() {
-        return state.paused = true;
+      pause: function () {
+        return (state.paused = true);
       },
-      resume: function() {
+      resume: function () {
         state.paused = false;
         return scheduler.pump();
       },
-      end: function(err, output) {
+      end: function (err, output) {
         var task;
         state.resolved = true;
         if (err) {
-          while (task = stack.shift()) {
+          while ((task = stack.shift())) {
             task.reject(err);
           }
           return reject(err);
@@ -61,7 +63,7 @@ export default function(handlers, options) {
           return resolve(output);
         }
       },
-      pump: function() {
+      pump: function () {
         var item;
         if (state.running) {
           return;
@@ -76,11 +78,10 @@ export default function(handlers, options) {
         }
         state.running = true;
         item = stack.shift();
-        item = item;
-        return setImmediate(async function() {
+        return setImmediate(async function () {
           var error, result;
           try {
-            result = (await item.handler.call());
+            result = await item.handler.call();
             state.running = false;
             item.resolve.call(null, result);
             if (item.options.output) {
@@ -89,7 +90,7 @@ export default function(handlers, options) {
               // Use the push output option to include additionnal tasks
               state.output.push(result);
             }
-            return setImmediate(function() {
+            return setImmediate(function () {
               return scheduler.pump();
             });
           } catch (error1) {
@@ -99,92 +100,98 @@ export default function(handlers, options) {
             if (options.strict) {
               return scheduler.end(error);
             } else {
-              return setImmediate(function() {
+              return setImmediate(function () {
                 return scheduler.pump();
               });
             }
           }
         });
       },
-      unshift: function(handlers, options = {}) {
+      unshift: function (handlers, options = {}) {
         var isArray;
         if (options.pump == null) {
           options.pump = true;
         }
         isArray = Array.isArray(handlers);
-        if (!(isArray || typeof handlers === 'function')) {
-          throw Error('Invalid Argument');
+        if (!(isArray || typeof handlers === "function")) {
+          throw Error("Invalid Argument");
         }
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
           var handler;
           if (!isArray) {
             stack.unshift({
               handler: handlers,
               resolve: resolve,
               reject: reject,
-              options: options
+              options: options,
             });
             if (!state.paused) {
               return scheduler.pump();
             }
           } else {
             // Unshift from the last to the first element to preserve order
-            return Promise.all(((function() {
-              var i, len, ref, results;
-              ref = handlers.reverse();
-              results = [];
-              for (i = 0, len = ref.length; i < len; i++) {
-                handler = ref[i];
-                results.push(scheduler.unshift(handler, {
-                  pump: false
-                }));
-              }
-              return results;
-            })()).reverse()).then(resolve, reject);
+            return Promise.all(
+              (function () {
+                var i, len, ref, results;
+                ref = handlers.reverse();
+                results = [];
+                for (i = 0, len = ref.length; i < len; i++) {
+                  handler = ref[i];
+                  results.push(
+                    scheduler.unshift(handler, {
+                      pump: false,
+                    }),
+                  );
+                }
+                return results;
+              })().reverse(),
+            ).then(resolve, reject);
           }
         });
       },
-      push: function(handlers, options = {}) {
+      push: function (handlers, options = {}) {
         var isArray, prom;
         isArray = Array.isArray(handlers);
-        if (!(isArray || typeof handlers === 'function')) {
-          throw Error('Invalid Argument');
+        if (!(isArray || typeof handlers === "function")) {
+          throw Error("Invalid Argument");
         }
-        prom = new Promise(function(resolve, reject) {
+        prom = new Promise(function (resolve, reject) {
           var handler;
           if (!isArray) {
             stack.push({
               handler: handlers,
               resolve: resolve,
               reject: reject,
-              options: options
+              options: options,
             });
             if (!state.paused) {
               return scheduler.pump();
             }
           } else {
-            return Promise.all((function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = handlers.length; i < len; i++) {
-                handler = handlers[i];
-                results.push(scheduler.push(handler, options));
-              }
-              return results;
-            })()).then(resolve, reject);
+            return Promise.all(
+              (function () {
+                var i, len, results;
+                results = [];
+                for (i = 0, len = handlers.length; i < len; i++) {
+                  handler = handlers[i];
+                  results.push(scheduler.push(handler, options));
+                }
+                return results;
+              })(),
+            ).then(resolve, reject);
           }
         });
-        prom.catch((function() {})); // Handle strict unhandled rejections
+        prom.catch(function () {}); // Handle strict unhandled rejections
         return prom;
       },
-      call: function(handlers, options = {}) {
+      call: function (handlers, options = {}) {
         return this.push(handlers, options);
-      }
+      },
     };
     if (handlers) {
       if (handlers.length) {
         scheduler.push(handlers, {
-          output: true
+          output: true,
         });
         return scheduler.pump();
       } else {
@@ -192,11 +199,11 @@ export default function(handlers, options) {
       }
     }
   });
-  promise.catch((function() {})); // Handle strict unhandled rejections
+  promise.catch(function () {}); // Handle strict unhandled rejections
   return new Proxy(promise, {
-    get: function(target, name) {
+    get: function (target, name) {
       if (target[name] != null) {
-        if (typeof target[name] === 'function') {
+        if (typeof target[name] === "function") {
           return target[name].bind(target);
         } else {
           return target[name];
@@ -204,6 +211,6 @@ export default function(handlers, options) {
       } else {
         return scheduler[name];
       }
-    }
+    },
   });
-};
+}

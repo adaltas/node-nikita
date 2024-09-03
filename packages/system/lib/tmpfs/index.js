@@ -1,8 +1,12 @@
-
 // Dependencies
-import {merge} from 'mixme';
+import { merge } from "mixme";
 import utils from "@nikitajs/system/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -27,9 +31,9 @@ export default {
     }
     if (config.target == null) {
       config.target =
-        config.name != null
-          ? `/etc/tmpfiles.d/${config.name}.conf`
-          : "/etc/tmpfiles.d/default.conf";
+        config.name != null ?
+          `/etc/tmpfiles.d/${config.name}.conf`
+        : "/etc/tmpfiles.d/default.conf";
     }
     log("DEBUG", `target set to ${config.target}`);
     if (config.merge) {

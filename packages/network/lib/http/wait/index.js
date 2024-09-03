@@ -1,12 +1,19 @@
 // Dependencies
 import utils from "@nikitajs/network/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Errors
 const errors = {
-  NIKITA_HTTP_WAIT_TIMEOUT: function({config}) {
-    return utils.error('NIKITA_HTTP_WAIT_TIMEOUT', [`timeout reached after ${config.timeout}ms.`]);
-  }
+  NIKITA_HTTP_WAIT_TIMEOUT: function ({ config }) {
+    return utils.error("NIKITA_HTTP_WAIT_TIMEOUT", [
+      `timeout reached after ${config.timeout}ms.`,
+    ]);
+  },
 };
 
 // Action
@@ -28,8 +35,9 @@ export default {
         timeout: config.timeout,
       });
       log({
-        message: error
-          ? `Attemp ${count} failed with error`
+        message:
+          error ?
+            `Attemp ${count} failed with error`
           : `Attemp ${count} return status ${status_code}`,
         attempt: count,
         status_code: status_code,

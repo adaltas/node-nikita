@@ -1,7 +1,12 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -29,7 +34,7 @@ export default {
       merge: config.merge,
     });
     await this.execute({
-      $if: config.reload != null ?  config.reload : $status,
+      $if: config.reload != null ? config.reload : $status,
       sudo: true,
       command: dedent`
         systemctl daemon-reload

@@ -1,11 +1,15 @@
-
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler:  async function({config}) {
+  handler: async function ({ config }) {
     if (config.argument != null) {
       config.properties = config.argument;
     }
@@ -16,7 +20,7 @@ export default {
     for (const path in config.properties) {
       const properties = config.properties[path];
       results.push(
-        await (async function() {
+        await async function () {
           const results1 = [];
           for (const key in properties) {
             const value = properties[key];
@@ -26,17 +30,17 @@ export default {
                   gsettings get ${path} ${key} | grep -x "${value}" && exit 3
                   gsettings set ${path} ${key} "${value}"
                 `,
-                code: [0, 3]
-              })
+                code: [0, 3],
+              }),
             );
           }
           return results1;
-        }).call(this)
+        }.call(this),
       );
     }
     return results;
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

@@ -12,9 +12,9 @@ import ajv_keywords from "ajv-keywords";
 import ajv_formats from "ajv-formats";
 import utils from "@nikitajs/core/utils";
 import instanceofDef from "ajv-keywords/dist/definitions/instanceof.js";
-import cast_code from '@nikitajs/core/plugins/tools/schema.keyword.cast_code';
-import coercion from '@nikitajs/core/plugins/tools/schema.keyword.coercion';
-import filemode from '@nikitajs/core/plugins/tools/schema.keyword.filemode';
+import cast_code from "@nikitajs/core/plugins/tools/schema.keyword.cast_code";
+import coercion from "@nikitajs/core/plugins/tools/schema.keyword.coercion";
+import filemode from "@nikitajs/core/plugins/tools/schema.keyword.filemode";
 
 instanceofDef.CONSTRUCTORS["Error"] = Error;
 instanceofDef.CONSTRUCTORS["stream.Writable"] = stream.Writable;
@@ -56,58 +56,41 @@ export default {
           strict: true,
           strictRequired: false, // see https://github.com/ajv-validator/ajv/issues/1571
           // coerceTypes: 'array',
-          loadSchema: (uri) =>
-            new Promise(async function (accept, reject) {
-              let pathname, protocol;
+          loadSchema: async (uri) => {
+            const { protocol, pathname } = parse(uri);
+            if (protocol === "module:") {
               try {
-                ({ protocol, pathname } = parse(uri));
+                const act = (await import(pathname)).default;
+                return {
+                  definitions: act.metadata.definitions,
+                };
               } catch (error) {
-                return reject(error);
+                throw utils.error("NIKITA_SCHEMA_INVALID_MODULE", [
+                  "the module location is not resolvable,",
+                  `module name is ${JSON.stringify(pathname)},`,
+                  `error message is ${JSON.stringify(error.message)}.`,
+                ]);
               }
-              switch (protocol) {
-                case "module:":
-                  try {
-                    const act = (await import(pathname)).default;
-                    return accept({
-                      definitions: act.metadata.definitions,
-                    });
-                  } catch (error) {
-                    return reject(
-                      utils.error("NIKITA_SCHEMA_INVALID_MODULE", [
-                        "the module location is not resolvable,",
-                        `module name is ${JSON.stringify(pathname)},`,
-                        `error message is ${JSON.stringify(error.message)}.`,
-                      ])
-                    );
-                  }
-                  break;
-                case "registry:":
-                  const module = pathname.split("/");
-                  const act = await action.registry.get(module);
-                  if (act) {
-                    return accept({
-                      definitions: act.metadata.definitions,
-                    });
-                  } else {
-                    return reject(
-                      utils.error("NIKITA_SCHEMA_UNREGISTERED_ACTION", [
-                        "the action is not registered inside the Nikita registry,",
-                        `action namespace is ${JSON.stringify(
-                          module.join(".")
-                        )}.`,
-                      ])
-                    );
-                  }
-                  break;
-                default:
-                  return reject(
-                    utils.error("NIKITA_SCHEMA_UNSUPPORTED_PROTOCOL", [
-                      "the $ref instruction reference an unsupported protocol,",
-                      `got ${JSON.stringify(protocol)}.`,
-                    ])
-                  );
+            } else if (protocol === "registry:") {
+              const module = pathname.split("/");
+              const act = await action.registry.get(module);
+              if (act) {
+                return {
+                  definitions: act.metadata.definitions,
+                };
+              } else {
+                throw utils.error("NIKITA_SCHEMA_UNREGISTERED_ACTION", [
+                  "the action is not registered inside the Nikita registry,",
+                  `action namespace is ${JSON.stringify(module.join("."))}.`,
+                ]);
               }
-            }),
+            } else {
+              throw utils.error("NIKITA_SCHEMA_UNSUPPORTED_PROTOCOL", [
+                "the $ref instruction reference an unsupported protocol,",
+                `got ${JSON.stringify(protocol)}.`,
+              ]);
+            }
+          },
         });
         ajv_keywords(ajv);
         ajv_formats(ajv);
@@ -148,8 +131,9 @@ export default {
                 // definitions: {config: {}, ...definitions},
                 type: "object",
                 properties: {
-                  config: definitions?.config
-                    ? {
+                  config:
+                    definitions?.config ?
+                      {
                         type: "object",
                         // additionalProperties: false,
                         unevaluatedProperties: false,
@@ -168,16 +152,18 @@ export default {
                   "NIKITA_SCHEMA_INVALID_DEFINITION",
                   [
                     "schema failed to compile in ",
-                    action.metadata.namespace.length
-                      ? `action \`${action.metadata.namespace.join(".")}\``
-                      : "root action",
-                    action.metadata.namespace.join(".") === "call" &&
-                    action.metadata.module !== "@nikitajs/core/actions/call"
-                      ? ` in module ${action.metadata.module}`
-                      : undefined,
+                    action.metadata.namespace.length ?
+                      `action \`${action.metadata.namespace.join(".")}\``
+                    : "root action",
+                    (
+                      action.metadata.namespace.join(".") === "call" &&
+                      action.metadata.module !== "@nikitajs/core/actions/call"
+                    ) ?
+                      ` in module ${action.metadata.module}`
+                    : undefined,
                     ", ",
                     error.message,
-                  ].join("") + "."
+                  ].join("") + ".",
                 );
               } else {
                 return error;
@@ -189,16 +175,18 @@ export default {
             return utils.error(
               "NIKITA_SCHEMA_VALIDATION_CONFIG",
               [
-                validate.errors.length === 1
-                  ? "one error was found in the configuration of "
-                  : "multiple errors were found in the configuration of ",
-                action.metadata.namespace.length
-                  ? `action \`${action.metadata.namespace.join(".")}\``
-                  : "root action",
-                action.metadata.namespace.join(".") === "call" &&
-                action.metadata.module !== "@nikitajs/core/actions/call"
-                  ? ` in module ${action.metadata.module}`
-                  : undefined,
+                validate.errors.length === 1 ?
+                  "one error was found in the configuration of "
+                : "multiple errors were found in the configuration of ",
+                action.metadata.namespace.length ?
+                  `action \`${action.metadata.namespace.join(".")}\``
+                : "root action",
+                (
+                  action.metadata.namespace.join(".") === "call" &&
+                  action.metadata.module !== "@nikitajs/core/actions/call"
+                ) ?
+                  ` in module ${action.metadata.module}`
+                : undefined,
                 ":",
                 validate.errors
                   .map((err) => {
@@ -215,7 +203,7 @@ export default {
                   })
                   .sort()
                   .join(";"),
-              ].join("") + "."
+              ].join("") + ".",
             );
           },
         };

@@ -1,6 +1,11 @@
 // Dependencies
-import definitions from "./schema.json" with { type: "json" };
 import utils from "@nikitajs/file/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -55,7 +60,7 @@ export default {
         level: "DEBUG",
       });
       for (const k in config.source) {
-        const v = config.source[k];
+        let v = config.source[k];
         if (typeof v === "number") {
           v = `${v}`;
         }
@@ -70,7 +75,7 @@ export default {
       level: "DEBUG",
     });
     for (const k in config.properties) {
-      const v = config.properties[k];
+      let v = config.properties[k];
       if (typeof v === "number") {
         v = `${v}`;
       }
@@ -107,7 +112,7 @@ export default {
         level: "WARN",
       });
     }
-    if(exists &&  Object.keys(keys).length === 0){
+    if (exists && Object.keys(keys).length === 0) {
       log({
         message: `No properties to write.`,
         level: "DEBUG",

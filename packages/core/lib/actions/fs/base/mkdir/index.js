@@ -1,6 +1,11 @@
 // Dependencies
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 const errors = {
   NIKITA_FS_MKDIR_TARGET_EEXIST: ({ config }) =>
@@ -16,7 +21,7 @@ const errors = {
         errno: -17,
         path: config.target_tmp || config.target, // Native Node.js api doesn't provide path
         syscall: "mkdir",
-      }
+      },
     ),
 };
 
@@ -37,12 +42,14 @@ export default {
             config.uid && `-o '${config.uid}'`,
             config.gid && `-g '${config.gid}'`,
             `-d '${config.target}'`,
-          ].filter(Boolean).join(" "),
-        ].join("\n")
+          ]
+            .filter(Boolean)
+            .join(" "),
+        ].join("\n"),
       );
     } catch (error) {
       if (error.exit_code === 17) {
-        error = errors.NIKITA_FS_MKDIR_TARGET_EEXIST({
+        throw errors.NIKITA_FS_MKDIR_TARGET_EEXIST({
           config: config,
         });
       }

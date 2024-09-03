@@ -1,7 +1,12 @@
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -20,7 +25,7 @@ export default {
     let princ_entries = [];
     let princ = {};
     // Get keytab entries
-    const { $status: entriesExist, stdout: entriesStdout, stderr } = await this.execute(
+    const { $status: entriesExist, stdout: entriesStdout } = await this.execute(
       {
         $shy: true,
         command: dedent`
@@ -31,20 +36,20 @@ export default {
           CMD
         `,
         code: [0, 42, 1],
-      }
+      },
     );
     if (entriesExist) {
       log("DEBUG", "Principals exist in Keytab, check kvno validity");
       const lines = utils.string.lines(entriesStdout);
       for (const line of lines) {
         const match =
-          /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec(
-            line
+          /^\s*(\d+)\s*(\d+)\s+([\d/:]+\s+[\d/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec(
+            line,
           );
         if (!match) {
           continue;
         }
-        const [_, slot, kvno, timestamp, principal, enctype] = match;
+        const [, slot, kvno, timestamp, principal, enctype] = match;
         entries.push({
           slot: slot,
           kvno: parseInt(kvno, 10),
@@ -80,19 +85,19 @@ export default {
     const removeCommand = config.enctypes
       .map((enctype) => {
         const filteredPrincEntries = princ_entries.filter(
-          (entry) => entry.enctype === enctype
+          (entry) => entry.enctype === enctype,
         );
         const entry =
-          filteredPrincEntries.length === 1
-            ? entries.filter((entry) => entry.enctype === enctype)[0]
-            : null;
+          filteredPrincEntries.length === 1 ?
+            entries.filter((entry) => entry.enctype === enctype)[0]
+          : null;
         // remove entry if kvno not identical
         if (entry === null || entry?.kvno === princ.kvno) {
           return;
         }
         log(
           "INFO",
-          `Remove from Keytab kvno '${entry.kvno}', principal kvno '${princ.kvno}'`
+          `Remove from Keytab kvno '${entry.kvno}', principal kvno '${princ.kvno}'`,
         );
         return `delete_entry ${entry != null ? entry.slot : void 0}`;
       })
@@ -107,7 +112,7 @@ export default {
           ${removeCommand.join("\n")}
           write_kt ${tmp_keytab}
           EOF
-        `
+        `,
       });
       await this.fs.move({
         $if: removeCommand.length,
@@ -124,12 +129,12 @@ export default {
     const createCommand = config.enctypes
       .map((enctype) => {
         const filteredPrincEntries = princ_entries.filter(
-          (entry) => entry.enctype === enctype
+          (entry) => entry.enctype === enctype,
         );
         const entry =
-          filteredPrincEntries.length === 1
-            ? entries.filter((entry) => entry.enctype === enctype)[0]
-            : null;
+          filteredPrincEntries.length === 1 ?
+            entries.filter((entry) => entry.enctype === enctype)[0]
+          : null;
         if (entry?.kvno === princ.kvno) {
           return;
         }
@@ -143,7 +148,7 @@ export default {
         ${createCommand.join("\n")}
         wkt ${config.keytab}
         EOF
-      `
+      `,
     });
     // Keytab ownership and permissions
     await this.fs.chown({

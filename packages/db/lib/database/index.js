@@ -1,7 +1,12 @@
 // Dependencies
 import dedent from "dedent";
 import { db } from "@nikitajs/db/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -10,9 +15,9 @@ export default {
     config.engine = config.engine.toLowerCase();
     log("DEBUG", `Database engine set to ${config.engine}`);
     const engine =
-      config.engine === "mysql" || config.engine === "mariadb"
-        ? "mysql"
-        : "postgresql";
+      config.engine === "mysql" || config.engine === "mariadb" ?
+        "mysql"
+      : "postgresql";
     if (engine === "mysql") {
       config.character_set ??= "latin1"; // MySQL default
       switch (config.character_set) {
@@ -26,33 +31,33 @@ export default {
     // Create the database if it does not exists
     log("DEBUG", `Check if database ${config.database} exists`);
     const { exists } = await this.db.database.exists(
-      db.connection_config(config)
+      db.connection_config(config),
     );
     if (!exists) {
       await this.execute({
         command:
-          engine === "mysql"
-            ? db.command(
-                config,
-                {
-                  database: null,
-                },
-                [
-                  `CREATE DATABASE ${config.database}`,
-                  `DEFAULT CHARACTER SET ${config.character_set}`,
-                  config.collation
-                    ? `DEFAULT COLLATE ${config.collation}`
-                    : void 0,
-                  ";",
-                ].join(" ")
-              )
-            : db.command(
-                config,
-                {
-                  database: null,
-                },
-                `CREATE DATABASE ${config.database};`
-              ),
+          engine === "mysql" ?
+            db.command(
+              config,
+              {
+                database: null,
+              },
+              [
+                `CREATE DATABASE ${config.database}`,
+                `DEFAULT CHARACTER SET ${config.character_set}`,
+                config.collation ?
+                  `DEFAULT COLLATE ${config.collation}`
+                : void 0,
+                ";",
+              ].join(" "),
+            )
+          : db.command(
+              config,
+              {
+                database: null,
+              },
+              `CREATE DATABASE ${config.database};`,
+            ),
       });
       log("WARN", `Database created: ${JSON.stringify(config.database)}`);
     }
@@ -60,7 +65,7 @@ export default {
     for (const user of config.user) {
       log(
         "DEBUG",
-        `Check if user ${user} has PRIVILEGES on ${config.database} `
+        `Check if user ${user} has PRIVILEGES on ${config.database} `,
       );
       const { exists } = await this.db.user.exists({
         ...db.connection_config(config),
@@ -70,37 +75,37 @@ export default {
         throw Error(`DB user does not exists: ${user}`);
       }
       const command_has_privileges =
-        engine === "mysql"
-          ? db.command(
-              config,
-              {
-                database: "mysql",
-              },
-              `SELECT user FROM db WHERE db='${config.database}';`
-            ) + ` | grep '${user}'`
-          : db.command(
-              config,
-              {
-                database: config.database,
-              },
-              "\\l"
-            ) + ` | egrep '^${user}='`;
+        engine === "mysql" ?
+          db.command(
+            config,
+            {
+              database: "mysql",
+            },
+            `SELECT user FROM db WHERE db='${config.database}';`,
+          ) + ` | grep '${user}'`
+        : db.command(
+            config,
+            {
+              database: config.database,
+            },
+            "\\l",
+          ) + ` | egrep '^${user}='`;
       const command_grant_privileges =
-        engine === "mysql"
-          ? db.command(
-              config,
-              {
-                database: null,
-              },
-              `GRANT ALL PRIVILEGES ON ${config.database}.* TO '${user}' WITH GRANT OPTION;`
-            )
-          : db.command(
-              config,
-              {
-                database: null,
-              },
-              `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`
-            );
+        engine === "mysql" ?
+          db.command(
+            config,
+            {
+              database: null,
+            },
+            `GRANT ALL PRIVILEGES ON ${config.database}.* TO '${user}' WITH GRANT OPTION;`,
+          )
+        : db.command(
+            config,
+            {
+              database: null,
+            },
+            `GRANT ALL PRIVILEGES ON DATABASE ${config.database} TO ${user}`,
+          );
       const { $status } = await this.execute({
         command: dedent`
           if ${command_has_privileges}; then

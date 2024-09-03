@@ -1,19 +1,27 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     if (config.rootdir) {
       config.target = `${path.join(config.rootdir, config.target)}`;
     }
-    return await this.file.ini({
-      stringify: utils.ini.stringify_single_key
-    }, utils.object.filter(config, ['rootdir']));
+    return await this.file.ini(
+      {
+        stringify: utils.ini.stringify_single_key,
+      },
+      utils.object.filter(config, ["rootdir"]),
+    );
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

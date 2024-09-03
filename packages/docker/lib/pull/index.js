@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -10,7 +14,7 @@ export default {
     if (tag && config.tag) {
       // it can be later changed to give a preference instead of error
       throw Error(
-        "Tag must be specified either in the image or in the tag config"
+        "Tag must be specified either in the image or in the tag config",
       );
     }
     if (config.tag == null) {

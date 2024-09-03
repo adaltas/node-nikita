@@ -1,16 +1,21 @@
 // Dependencies
-import dedent from 'dedent';
-import yaml from 'js-yaml';
-import diff from 'object-diff';
-import definitions from "./schema.json" with { type: "json" };
+import dedent from "dedent";
+import yaml from "js-yaml";
+import diff from "object-diff";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     // Normalize config
     for (const k in config.properties) {
       const v = config.properties[k];
-      if (typeof v === 'string') {
+      if (typeof v === "string") {
         continue;
       }
       config.properties[k] = v.toString();
@@ -49,14 +54,21 @@ export default {
     for (const key in changes) {
       const value = changes[key];
       await this.execute({
-        command: ['incus', 'storage', 'set', config.name, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+        command: [
+          "incus",
+          "storage",
+          "set",
+          config.name,
+          key,
+          `'${value.replace("'", "\\'")}'`,
+        ].join(" "),
       });
     }
     return {
-      $status: Object.keys(changes).length > 0
+      $status: Object.keys(changes).length > 0,
     };
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

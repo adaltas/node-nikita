@@ -1,18 +1,19 @@
 // Dependencies
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     // Trim
-    let fnl_props = config.trim
-      ? utils.object.trim(config.content)
-      : config.content;
-    log({
-      message: `Merging \"${config.merge ? "true" : "false"}\"`,
-      level: "DEBUG",
-    });
+    let fnl_props =
+      config.trim ? utils.object.trim(config.content) : config.content;
+    log("DEBUG", `Merging "${config.merge ? "true" : "false"}"`);
     // Read Original
     const { exists } = await this.fs.exists({
       target: config.target,
@@ -38,10 +39,10 @@ export default {
       }
       for (const key of Object.keys(keys)) {
         if (`${org_props[key]}` !== `${fnl_props[key]}`) {
-          log({
-            message: `Property '${key}' was '${org_props[key]}' and is now '${fnl_props[key]}'`,
-            level: "WARN",
-          });
+          log(
+            "WARN",
+            `Property '${key}' was '${org_props[key]}' and is now '${fnl_props[key]}'`,
+          );
           if (fnl_props[key] != null) {
             status = true;
           }
@@ -52,19 +53,17 @@ export default {
     // Merge
     if (config.merge) {
       for (const k in fnl_props) {
-        const v = fnl_props[k];
         org_props[k] = fnl_props[k];
       }
       fnl_props = org_props;
     }
     // Write data
-    const keys = config.sort
-      ? Object.keys(fnl_props).sort()
-      : Object.keys(fnl_props);
+    const keys =
+      config.sort ? Object.keys(fnl_props).sort() : Object.keys(fnl_props);
     const data = keys.map((key) =>
-      fnl_props[key] != null
-        ? `${key}${config.separator}${fnl_props[key]}`
-        : `${key}`
+      fnl_props[key] != null ?
+        `${key}${config.separator}${fnl_props[key]}`
+      : `${key}`,
     );
     await this.file({
       $shy: true,

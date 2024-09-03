@@ -86,7 +86,7 @@ const whoami = function ({ ssh, platform = process.platform } = {}) {
   if (/^\/root$/.test(process.env["HOME"])) {
     return process.env["HOME"].split("/")[1];
   }
-  if (/^\/home\/[^\/]+$/.test(process.env["HOME"])) {
+  if (/^\/home\/[^/]+$/.test(process.env["HOME"])) {
     return process.env["HOME"].split("/")[2];
   }
 };

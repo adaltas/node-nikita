@@ -1,14 +1,16 @@
 // Dependencies
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
-    log({
-      message: `Startup service ${config.name}`,
-      level: "INFO",
-    });
+    log(`Startup service ${config.name}`);
     if (!config.command) {
       const { stdout } = await this.execute({
         $shy: true,
@@ -34,160 +36,155 @@ export default {
         throw Error("Unsupported Loader");
       }
     }
-    switch (config.command) {
-      case "systemctl": // systemd
-        try {
-          const { $status } = await this.execute({
-            command: `
-              startup=${config.startup ? "1" : ""}
-              if systemctl is-enabled ${config.name}; then
-                [ -z "$startup" ] || exit 3
-                echo 'Disable ${config.name}'
-                systemctl disable ${config.name}
-              else
-                [ -z "$startup" ] && exit 3
-                echo 'Enable ${config.name}'
-                systemctl enable ${config.name}
-              fi
-            `,
-            trap: true,
-            code: [0, 3],
-          });
-          // arch_chroot: config.arch_chroot
-          // arch_chroot_rootdir: config.arch_chroot_rootdir
-          const message = config.startup ? "activated" : "disabled";
-          return log(
-            $status
-              ? {
-                  message: `Service startup updated: ${message}`,
-                  level: "WARN",
-                }
-              : {
-                  message: `Service startup not modified: ${message}`,
-                  level: "INFO",
-                }
-          );
-        } catch {
-          if (config.startup) {
-            throw Error(`Startup Enable Failed: ${config.name}`);
-          }
-          if (!config.startup) {
-            throw Error(`Startup Disable Failed: ${config.name}`);
-          }
-        }
-        break;
-      case "chkconfig":
-        try {
-          const { $status, stdout, stderr } = await this.execute({
-            $shy: true,
-            command: `chkconfig --list ${config.name}`,
-            code: [0, 1],
-          });
-          // Invalid service name return code is 0 and message in stderr start by error
-          if (/^error/.test(stderr)) {
-            log({
-              message: `Invalid chkconfig name for \"${config.name}\"`,
-              level: "ERROR",
-            });
-            throw Error(`Invalid chkconfig name for \`${config.name}\``);
-          }
-          let current_startup = "";
-          if ($status) {
-            for (const c of stdout.split(" ").pop().trim().split("\t")) {
-              const [level, status] = c.split(":");
-              if (["on", "marche"].indexOf(status) > -1) {
-                current_startup += level;
-              }
-            }
-          }
-          if (config.startup === true && current_startup.length) {
-            return;
-          }
-          if (config.startup === current_startup) {
-            return;
-          }
-          if ($status && config.startup === false && current_startup === "") {
-            return;
-          }
-          if (config.startup) {
-            let command = `chkconfig --add ${config.name};`;
-            if (typeof config.startup === "string") {
-              let startup_on = startup_off = "";
-              for (i = k = 0; k < 6; i = ++k) {
-                if (config.startup.indexOf(i) !== -1) {
-                  startup_on += i;
-                } else {
-                  startup_off += i;
-                }
-              }
-              if (startup_on) {
-                command += `chkconfig --level ${startup_on} ${config.name} on;`;
-              }
-              if (startup_off) {
-                command += `chkconfig --level ${startup_off} ${config.name} off;`;
-              }
-            } else {
-              command += `chkconfig ${config.name} on;`;
-            }
-            await this.execute({
-              command: command,
-            });
-          }
-          if (!config.startup) {
-            log({
-              message: "Desactivating startup rules",
-              level: "DEBUG",
-            });
-            // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
-            await this.execute({
-              command: `chkconfig ${config.name} off`,
-            });
-          }
-          const message = config.startup ? "activated" : "disabled";
-          return log(
-            $status
-              ? {
-                  message: `Service startup updated: ${message}`,
-                  level: "WARN",
-                }
-              : {
-                  message: `Service startup not modified: ${message}`,
-                  level: "INFO",
-                }
-          );
-        } catch (error) {
-          throw error
-        }
-      case "update-rc": // System-V
+    if (config.command === "systemctl") {
+      // systemd
+      try {
         const { $status } = await this.execute({
-          command: dedent`
+          command: `
             startup=${config.startup ? "1" : ""}
-            if ls /etc/rc*.d/S??${config.name}; then
+            if systemctl is-enabled ${config.name}; then
               [ -z "$startup" ] || exit 3
               echo 'Disable ${config.name}'
-              update-rc.d -f ${config.name} disable
+              systemctl disable ${config.name}
             else
               [ -z "$startup" ] && exit 3
               echo 'Enable ${config.name}'
-              update-rc.d -f ${config.name} enable
+              systemctl enable ${config.name}
             fi
           `,
+          trap: true,
           code: [0, 3],
         });
         // arch_chroot: config.arch_chroot
         // arch_chroot_rootdir: config.arch_chroot_rootdir
         const message = config.startup ? "activated" : "disabled";
-        log(
-          $status
-            ? {
-                message: `Service startup updated: ${message}`,
-                level: "WARN",
-              }
-            : {
-                message: `Service startup not modified: ${message}`,
-                level: "INFO",
-              }
+        return log(
+          $status ?
+            {
+              message: `Service startup updated: ${message}`,
+              level: "WARN",
+            }
+          : {
+              message: `Service startup not modified: ${message}`,
+              level: "INFO",
+            },
         );
+      } catch {
+        if (config.startup) {
+          throw Error(`Startup Enable Failed: ${config.name}`);
+        }
+        if (!config.startup) {
+          throw Error(`Startup Disable Failed: ${config.name}`);
+        }
+      }
+    } else if (config.command === "chkconfig") {
+      const { $status, stdout, stderr } = await this.execute({
+        $shy: true,
+        command: `chkconfig --list ${config.name}`,
+        code: [0, 1],
+      });
+      // Invalid service name return code is 0 and message in stderr start by error
+      if (/^error/.test(stderr)) {
+        log({
+          message: `Invalid chkconfig name for "${config.name}"`,
+          level: "ERROR",
+        });
+        throw Error(`Invalid chkconfig name for "${config.name}"`);
+      }
+      let current_startup = "";
+      if ($status) {
+        for (const c of stdout.split(" ").pop().trim().split("\t")) {
+          const [level, status] = c.split(":");
+          if (["on", "marche"].indexOf(status) > -1) {
+            current_startup += level;
+          }
+        }
+      }
+      if (config.startup === true && current_startup.length) {
+        return;
+      }
+      if (config.startup === current_startup) {
+        return;
+      }
+      if ($status && config.startup === false && current_startup === "") {
+        return;
+      }
+      if (config.startup) {
+        let command = `chkconfig --add ${config.name};`;
+        if (typeof config.startup === "string") {
+          let startup_on = "";
+          let startup_off = "";
+          for (let i = 0; i < 6; i++) {
+            if (config.startup.indexOf(i) !== -1) {
+              startup_on += i;
+            } else {
+              startup_off += i;
+            }
+          }
+          if (startup_on) {
+            command += `chkconfig --level ${startup_on} ${config.name} on;`;
+          }
+          if (startup_off) {
+            command += `chkconfig --level ${startup_off} ${config.name} off;`;
+          }
+        } else {
+          command += `chkconfig ${config.name} on;`;
+        }
+        await this.execute({
+          command: command,
+        });
+      }
+      if (!config.startup) {
+        log("DEBUG", "Desactivating startup rules");
+        // Setting the level to off. An alternative is to delete it: `chkconfig --del #{config.name}`
+        await this.execute({
+          command: `chkconfig ${config.name} off`,
+        });
+      }
+      const message = config.startup ? "activated" : "disabled";
+      return log(
+        $status ?
+          {
+            message: `Service startup updated: ${message}`,
+            level: "WARN",
+          }
+        : {
+            message: `Service startup not modified: ${message}`,
+            level: "INFO",
+          },
+      );
+    } else if (config.command === "update-rc") {
+      // System-V
+
+      const { $status } = await this.execute({
+        command: dedent`
+          startup=${config.startup ? "1" : ""}
+          if ls /etc/rc*.d/S??${config.name}; then
+            [ -z "$startup" ] || exit 3
+            echo 'Disable ${config.name}'
+            update-rc.d -f ${config.name} disable
+          else
+            [ -z "$startup" ] && exit 3
+            echo 'Enable ${config.name}'
+            update-rc.d -f ${config.name} enable
+          fi
+        `,
+        code: [0, 3],
+      });
+      // arch_chroot: config.arch_chroot
+      // arch_chroot_rootdir: config.arch_chroot_rootdir
+      const message = config.startup ? "activated" : "disabled";
+      log(
+        $status ?
+          {
+            message: `Service startup updated: ${message}`,
+            level: "WARN",
+          }
+        : {
+            message: `Service startup not modified: ${message}`,
+            level: "INFO",
+          },
+      );
     }
   },
   metadata: {

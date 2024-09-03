@@ -1,7 +1,11 @@
 // Dependencies
-import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -31,28 +35,31 @@ export default {
       });
       // Log information
       log(
-        $status
-          ? {
-              message: "Service removed",
-              level: "WARN",
-            }
-          : {
-              message: "Service already removed",
-              level: "INFO",
-            }
+        $status ?
+          {
+            message: "Service removed",
+            level: "WARN",
+          }
+        : {
+            message: "Service already removed",
+            level: "INFO",
+          },
       );
-    } catch (error) {
+    } catch {
       throw utils.error(
         "NIKITA_SERVICE_REMOVE_INVALID_SERVICE",
-        `Invalid Service Name: ${config.name}`
+        `Invalid Service Name: ${config.name}`,
       );
     }
     if (config.cache) {
-      log("INFO", 'Remove package from cache key in "nikita:service:packages:installed"');
+      log(
+        "INFO",
+        'Remove package from cache key in "nikita:service:packages:installed"',
+      );
       const packages = state["nikita:service:packages"];
       state["nikita:service:packages:installed"] = packages.splice(
         packages.indexOf(config.name),
-        1
+        1,
       );
     }
   },

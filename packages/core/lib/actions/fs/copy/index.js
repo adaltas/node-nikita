@@ -1,6 +1,11 @@
 // Dependencies
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -12,9 +17,11 @@ export default {
         return config.source_stats;
       }
       log("DEBUG", `Stats source file ${config.source}`);
-      return await this.fs.stat({
-        target: config.source,
-      }).then( ({stats}) => stats);
+      return await this.fs
+        .stat({
+          target: config.source,
+        })
+        .then(({ stats }) => stats);
     })();
     // Retrieve stat information about the traget unless provided through the "target_stats" option.
     const target_stats = await (async () => {
@@ -57,7 +64,7 @@ export default {
       if (target_stats && !sourceEndWithSlash) {
         config.target = path.resolve(
           config.target,
-          path.basename(config.source)
+          path.basename(config.source),
         );
       }
       log("Source is a directory");
@@ -67,7 +74,7 @@ export default {
       for (const source of files) {
         const target = path.resolve(
           config.target,
-          path.relative(config.source, source)
+          path.relative(config.source, source),
         );
         const { stats } = await this.fs.stat({
           target: source,
@@ -118,7 +125,7 @@ export default {
     } else {
       log(
         "WARN",
-        `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`
+        `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
       );
       await this.fs.base.copy({
         source: config.source,
@@ -142,9 +149,9 @@ export default {
       target: config.target,
       stats: target_stats,
       mode:
-        config.preserve && config.mode == null
-          ? source_stats.mode
-          : config.mode,
+        config.preserve && config.mode == null ?
+          source_stats.mode
+        : config.mode,
     });
     return {};
   },

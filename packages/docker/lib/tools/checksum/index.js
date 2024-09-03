@@ -1,38 +1,40 @@
-
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({
-    config,
-    tools: {log}
-  }) {
-    log('DEBUG', `Getting image checksum :${config.image}`);
+  handler: async function ({ config, tools: { log } }) {
+    log("DEBUG", `Getting image checksum :${config.image}`);
     // Run `docker images` with the following config:
     // - `--no-trunc`: display full checksum
     // - `--quiet`: discard headers
-    const {$status, stdout} = await this.docker.tools.execute({
+    const { $status, stdout } = await this.docker.tools.execute({
       command: `images --no-trunc --quiet ${config.image}:${config.tag}`,
     });
-    const checksum = stdout === '' ? undefined : stdout.toString().trim();
+    const checksum = stdout === "" ? undefined : stdout.toString().trim();
     if ($status) {
-      log('INFO', `Image checksum for ${config.image}: ${checksum}`);
+      log("INFO", `Image checksum for ${config.image}: ${checksum}`);
     }
     return {
       $status: $status,
-      checksum: checksum
+      checksum: checksum,
     };
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       if (config.repository) {
-        throw Error('Configuration `repository` is deprecated, use `image` instead');
+        throw Error(
+          "Configuration `repository` is deprecated, use `image` instead",
+        );
       }
-    }
+    },
   },
   metadata: {
     definitions: definitions,
     global: "docker",
-  }
+  },
 };

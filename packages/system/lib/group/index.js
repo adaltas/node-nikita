@@ -1,7 +1,11 @@
-
 // Dependencies
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -11,9 +15,9 @@ export default {
     const info = groups[config.name];
     log(
       "DEBUG",
-      info
-        ? `Got group information for ${JSON.stringify(config.name)}`
-        : `Group ${JSON.stringify(config.name)} not present`
+      info ?
+        `Got group information for ${JSON.stringify(config.name)}`
+      : `Group ${JSON.stringify(config.name)} not present`,
     );
     if (!info) {
       // Create group
@@ -21,21 +25,23 @@ export default {
         command: [
           "groupadd",
           config.system && "-r",
-          config.gid != null && `-g ${esa(''+config.gid)}`,
+          config.gid != null && `-g ${esa("" + config.gid)}`,
           esa(config.name),
-        ].filter(Boolean).join(" "),
+        ]
+          .filter(Boolean)
+          .join(" "),
         code: [0, 9],
       });
       if (!$status) {
         // Modify group
-        log({
-          message: "Group defined elsewhere than '/etc/group', exit code is 9",
-          level: "WARN",
-        });
+        log(
+          "WARN",
+          "Group defined elsewhere than '/etc/group', exit code is 9",
+        );
       }
     } else {
-      const changes = ["gid"].filter( (k) =>
-        config[k] != null && `${info[k]}` !== `${config[k]}`
+      const changes = ["gid"].filter(
+        (k) => config[k] != null && `${info[k]}` !== `${config[k]}`,
       );
       if (changes.length) {
         await this.execute({
@@ -45,15 +51,9 @@ export default {
             esa(config.name),
           ].join(" "),
         });
-        log({
-          message: "Group information modified",
-          level: "WARN",
-        });
+        log("WARN", "Group information modified");
       } else {
-        log({
-          message: "Group information unchanged",
-          level: "INFO",
-        });
+        log("Group information unchanged");
       }
     }
   },

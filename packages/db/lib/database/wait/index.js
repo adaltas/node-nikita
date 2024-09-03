@@ -1,34 +1,43 @@
 // Dependencies
 import { db } from "@nikitajs/db/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
-    const cmd_list_tables = config.engine === 'postgresql'
-      ? `SELECT datname FROM pg_database WHERE datname = '${config.database}';`
-      : config.engine === 'mariadb' || config.engine === 'mysql'
-      ? `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='${config.database}';`
+  handler: async function ({ config }) {
+    const cmd_list_tables =
+      config.engine === "postgresql" ?
+        `SELECT datname FROM pg_database WHERE datname = '${config.database}';`
+      : config.engine === "mariadb" || config.engine === "mysql" ?
+        `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='${config.database}';`
       : undefined;
-    const {$status} = await this.wait({
-      retry: config.retry,
-      interval: config.interval,
-    }, async function() {
-      const { stdout } = await this.db.query({
-        ...db.connection_config(config),
-        command: cmd_list_tables,
-        database: null,
-        grep: config.database,
-      });
-      if(stdout.trim() === '') throw Error('NIKITA_DB_WAIT_NOT_READY')
-    });
+    const { $status } = await this.wait(
+      {
+        retry: config.retry,
+        interval: config.interval,
+      },
+      async function () {
+        const { stdout } = await this.db.query({
+          ...db.connection_config(config),
+          command: cmd_list_tables,
+          database: null,
+          grep: config.database,
+        });
+        if (stdout.trim() === "") throw Error("NIKITA_DB_WAIT_NOT_READY");
+      },
+    );
     return {
-      exists: $status
+      exists: $status,
     };
   },
   metadata: {
-    argument_to_config: 'database',
-    global: 'db',
-    definitions: definitions
-  }
+    argument_to_config: "database",
+    global: "db",
+    definitions: definitions,
+  },
 };

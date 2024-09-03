@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -9,15 +13,9 @@ export default {
       $shy: true,
     });
     if ($status) {
-      log({
-        message: `Stopping container ${config.container}`,
-        level: "INFO",
-      });
+      log("INFO", `Stopping container ${config.container}`);
     } else {
-      log({
-        message: `Container already stopped ${config.container} (Skipping)`,
-        level: "INFO",
-      });
+      log("INFO", `Container already stopped ${config.container} (Skipping)`);
     }
     await this.docker.tools.execute({
       $if: $status,

@@ -2,7 +2,12 @@
 import path from "node:path";
 import utils from "@nikitajs/docker/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 const errors = {
   NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED: function () {
@@ -26,9 +31,9 @@ export default {
     // Retrieve previous image
     const { images: oldImages } = await this.docker.images({
       filters: {
-        reference: config.tag ? `${config.image}:${config.tag}` : config.image
-      }
-    })
+        reference: config.tag ? `${config.image}:${config.tag}` : config.image,
+      },
+    });
     const oldID = oldImages.length === 1 ? oldImages[0].ID : null;
     // Make sure the Dockerfile exists
     if (!config.content) {
@@ -47,51 +52,49 @@ export default {
           ["build_arg"]
             .filter((opt) => !!config[opt])
             .map((opt) =>
-              (Array.isArray(values) ? config[opt] : [config[opt]]).map(
-                (value) => `--${opt.replace("_", "-")} ${esa(value)}`
-              )
-            )
+              (Array.isArray(config[opt]) ? config[opt] : [config[opt]]).map(
+                (value) => `--${opt.replace("_", "-")} ${esa(value)}`,
+              ),
+            ),
         ),
         // arguments is a boolean string
         "--rm=" + (config.rm ? "true" : "false"),
         "-t " + esa(config.image + (config.tag ? `:${config.tag}` : "")),
-        config.content != null
-          ? (log({
-              message:
-                "Building from text: Docker won't have a context. ADD/COPY not working",
-              level: "WARN",
-            }),
-            config.content != null
-              ? `- <<DOCKERFILE\n${config.content}\nDOCKERFILE`
-              : void 0)
-          : config.file != null
-          ? (log({
-              message: `Building from Dockerfile: \"${config.file}\"`,
-              level: "INFO",
-            }),
-            `-f ${config.file} ${config.cwd}`)
-          : (log({
-              message: "Building from CWD",
-              level: "INFO",
-            }),
-            "."),
+        config.content != null ?
+          (log({
+            message:
+              "Building from text: Docker won't have a context. ADD/COPY not working",
+            level: "WARN",
+          }),
+          config.content != null ?
+            `- <<DOCKERFILE\n${config.content}\nDOCKERFILE`
+          : void 0)
+        : config.file != null ?
+          (log({
+            message: `Building from Dockerfile: "${config.file}"`,
+            level: "INFO",
+          }),
+          `-f ${config.file} ${config.cwd}`)
+        : (log({
+            message: "Building from CWD",
+            level: "INFO",
+          }),
+          "."),
       ].join(" "),
       cwd: config.cwd,
     });
     // Extract the new image ID
     const { images: newImages } = await this.docker.images({
       filters: {
-        reference: config.tag ? `${config.image}:${config.tag}` : config.image
-      }
-    })
+        reference: config.tag ? `${config.image}:${config.tag}` : config.image,
+      },
+    });
     const [newImage] = newImages;
     const { ID: newID } = newImage;
     // Output
     log(
       "INFO",
-      oldID !== newID
-        ? `New image id ${newID}`
-        : `Identical image id ${newID}`
+      oldID !== newID ? `New image id ${newID}` : `Identical image id ${newID}`,
     );
     return {
       $status: oldID !== newID,

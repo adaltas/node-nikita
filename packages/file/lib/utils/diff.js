@@ -10,12 +10,12 @@ import { diffLines } from "diff";
 import string from "@nikitajs/utils/string";
 
 // Utils
-export default function(oldStr, newStr) {
+export default function (oldStr, newStr) {
   if (oldStr == null) {
-    oldStr = '';
+    oldStr = "";
   }
   if (newStr == null) {
-    newStr = '';
+    newStr = "";
   }
   const lines = diffLines(oldStr, newStr);
   let text = [];
@@ -35,19 +35,21 @@ export default function(oldStr, newStr) {
     if (line.added) {
       for (const line of ls) {
         count_added++;
-        text.push(`${pad(padsize, '' + count_added)} + ${line}`);
+        text.push(`${pad(padsize, "" + count_added)} + ${line}`);
       }
     } else {
       for (const line of ls) {
         count_removed++;
-        text.push(`${pad(padsize, '' + count_removed)} - ${line}`);
+        text.push(`${pad(padsize, "" + count_removed)} - ${line}`);
       }
     }
   }
   return {
     raw: lines,
-    text: text.map(function(t) {
-      return `${t}\n`;
-    }).join('')
+    text: text
+      .map(function (t) {
+        return `${t}\n`;
+      })
+      .join(""),
   };
-};
+}

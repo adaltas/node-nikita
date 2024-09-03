@@ -1,6 +1,11 @@
 // Dependencies
 import utils from "@nikitajs/ldap/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -25,7 +30,8 @@ export default {
       filter: "(olcDbIndex=*)",
     });
     for (const line of utils.string.lines(stdout)) {
-      let match; if (!(match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec(line))) {
+      let match;
+      if (!(match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec(line))) {
         continue;
       }
       const [, attrlist, indices] = match;

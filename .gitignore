@@ -1,8 +1,7 @@
 .*
 /playground
 node_modules
-!.eslintrc
-!.travis.yml
+!.prettierrc.yml
 !.gitignore
 !.github
 !.gitattributes

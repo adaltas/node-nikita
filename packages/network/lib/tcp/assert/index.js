@@ -1,6 +1,11 @@
 // Dependencies
-import definitions from "./schema.json" with { type: "json" };
 import wait from "@nikitajs/network/tcp/wait";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -12,12 +17,12 @@ export default {
           command: `bash -c 'echo > /dev/tcp/${server.host}/${server.port}'`,
         });
         if (config.not === true) {
-          error = `Address listening: \"${server.host}:${server.port}\"`;
+          error = `Address listening: "${server.host}:${server.port}"`;
           break;
         }
-      } catch (err) {
+      } catch {
         if (config.not !== true) {
-          error = `Address not listening: \"${server.host}:${server.port}\"`;
+          error = `Address not listening: "${server.host}:${server.port}"`;
           break;
         }
       }

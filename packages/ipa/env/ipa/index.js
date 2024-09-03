@@ -1,8 +1,7 @@
-
-import path from 'node:path';
-import dedent from 'dedent';
-import runner from '@nikitajs/incus-runner';
-const __dirname = new URL( '.', import.meta.url).pathname;
+import path from "node:path";
+import dedent from "dedent";
+import runner from "@nikitajs/incus-runner";
+const __dirname = new URL(".", import.meta.url).pathname;
 
 // Note:
 
@@ -32,9 +31,9 @@ const __dirname = new URL( '.', import.meta.url).pathname;
 // Long term solution:
 // Disable the re-generation of resolv.conf by /usr/sbin/dhclient-script
 runner({
-  cwd: '/nikita/packages/ipa',
-  container: 'nikita-ipa',
-  logdir: path.resolve(__dirname, './logs'),
+  cwd: "/nikita/packages/ipa",
+  container: "nikita-ipa",
+  logdir: path.resolve(__dirname, "./logs"),
   cluster: {
     // FreeIPA do a reverse lookup on initialisation
     // Using the default bridge yields to the error "The host name
@@ -42,55 +41,61 @@ runner({
     // reverse lookup on IP address fd42:f662:97ea:ba7f:216:3eff:fe1d:96f2%215"
     networks: {
       nktipapub: {
-        'ipv4.address': '10.10.11.1/24',
-        'ipv4.nat': true,
-        'ipv6.address': 'none',
-        'dns.domain': 'nikita.local'
-      }
+        "ipv4.address": "10.10.11.1/24",
+        "ipv4.nat": true,
+        "ipv6.address": "none",
+        "dns.domain": "nikita.local",
+      },
     },
     containers: {
-      'nikita-ipa': {
-        image: 'images:almalinux/8',
+      "nikita-ipa": {
+        image: "images:almalinux/8",
         properties: {
-          'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee',
-          'raw.idmap': process.env['NIKITA_INCUS_IN_VAGRANT'] ? 'both 1000 0' : `both ${process.getuid()} 0`
+          "environment.NIKITA_TEST_MODULE":
+            "/nikita/packages/ipa/env/ipa/test.coffee",
+          "raw.idmap":
+            process.env["NIKITA_INCUS_IN_VAGRANT"] ?
+              "both 1000 0"
+            : `both ${process.getuid()} 0`,
         },
         disk: {
           nikitadir: {
-            path: '/nikita',
-            source: process.env['NIKITA_HOME'] || path.join(__dirname, '../../../../')
-          }
+            path: "/nikita",
+            source:
+              process.env["NIKITA_HOME"] ||
+              path.join(__dirname, "../../../../"),
+          },
         },
         nic: {
           eth0: {
-            name: 'eth0',
-            nictype: 'bridged',
-            parent: 'nktipapub',
-            'ipv4.address': '10.10.11.2'
-          }
+            name: "eth0",
+            nictype: "bridged",
+            parent: "nktipapub",
+            "ipv4.address": "10.10.11.2",
+          },
         },
         proxy: {
           ssh: {
-            listen: 'tcp:0.0.0.0:2200',
-            connect: 'tcp:127.0.0.1:22'
+            listen: "tcp:0.0.0.0:2200",
+            connect: "tcp:127.0.0.1:22",
           },
           ipa_ui_http: {
-            listen: 'tcp:0.0.0.0:2080',
-            connect: 'tcp:127.0.0.1:80'
+            listen: "tcp:0.0.0.0:2080",
+            connect: "tcp:127.0.0.1:80",
           },
           ipa_ui_https: {
-            listen: 'tcp:0.0.0.0:2443',
-            connect: 'tcp:127.0.0.1:443'
-          }
+            listen: "tcp:0.0.0.0:2443",
+            connect: "tcp:127.0.0.1:443",
+          },
         },
         ssh: {
-          enabled: true
-        }
-      }
+          enabled: true,
+        },
+      },
     },
-    provision_container: async function({config}) {
+    provision_container: async function ({ config }) {
       await this.incus.exec({
-        $header: 'Node.js',
+        $header: "Node.js",
         code: [0, 42],
         command: dedent`
           dnf install -y tar # Not present on almalinux
@@ -100,10 +105,10 @@ runner({
           nvm install 22
         `,
         container: config.container,
-        trap: true
+        trap: true,
       });
       await this.incus.exec({
-        $header: 'SSH keys',
+        $header: "SSH keys",
         code: [0, 42],
         command: dedent`
           grep "\`cat /root/.ssh/id_rsa.pub\`" /root/.ssh/authorized_keys && exit 42
@@ -114,10 +119,10 @@ runner({
           fi
         `,
         container: config.container,
-        trap: true
+        trap: true,
       });
       await this.incus.exec({
-        $header: 'Install FreeIPA',
+        $header: "Install FreeIPA",
         code: [0, 42],
         // Other possibilities to check ipa status:
         // echo > /dev/tcp/localhost/443
@@ -130,8 +135,8 @@ runner({
           dnf install -y freeipa-server ipa-server-dns
           hostnamectl set-hostname ipa.nikita.local --static
           ${[
-            'ipa-server-install',
-            '-U',
+            "ipa-server-install",
+            "-U",
             //  Basic options
             "-a admin_pw",
             "-p manager_pw",
@@ -152,23 +157,23 @@ runner({
             // Chrony doesnt start inside a container, no permission to change clock
             // Fatal error : adjtimex(0x8001) failed : Operation not permitted
             // See https://bugs.launchpad.net/ubuntu/+source/chrony/+bug/1589780
-            "--no-ntp"
-          ].join(' ')}
+            "--no-ntp",
+          ].join(" ")}
         `,
-        container: config.container
+        container: config.container,
       });
       // ipa-server-install --uninstall
       // ipa-server-install -U -a admin_pw -p manager_pw --hostname ipa.nikita.local --domain nikita.local --auto-reverse --setup-dns --auto-forwarders -r NIKITA.LOCAL
       await this.incus.exec({
-        $header: 'Immutable DNS',
+        $header: "Immutable DNS",
         code: [0, 42],
         command: dedent`
           cat /etc/sysconfig/network-scripts/ifcfg-eth0 | egrep '^PEERDNS=no' && exit 42
           echo 'PEERDNS=no' >> /etc/sysconfig/network-scripts/ifcfg-eth0
         `,
         container: config.container,
-        trap: true
+        trap: true,
       });
-    }
-  }
+    },
+  },
 });

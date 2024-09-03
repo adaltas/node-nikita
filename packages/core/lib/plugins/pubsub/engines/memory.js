@@ -3,10 +3,10 @@ Default in-memory engine implementation.
 */
 
 // Plugin
-export default function() {
+export default function () {
   const store = {};
   return {
-    set: function(key, value) {
+    set: function (key, value) {
       if (store[key] == null) {
         store[key] = {};
       }
@@ -14,12 +14,13 @@ export default function() {
       if (store[key].promises == null) {
         store[key].promises = [];
       }
-      let promise; while (promise = store[key].promises.shift()) {
+      let promise;
+      while ((promise = store[key].promises.shift())) {
         promise.call(null, store[key].value);
       }
     },
-    get: function(key) {
-      return new Promise(function(resolve) {
+    get: function (key) {
+      return new Promise(function (resolve) {
         if (store[key]?.value) {
           resolve(store[key].value);
         } else {
@@ -32,6 +33,6 @@ export default function() {
           store[key].promises.push(resolve);
         }
       });
-    }
+    },
   };
-};
+}

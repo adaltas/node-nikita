@@ -1,5 +1,11 @@
 // Dependencies
-import definitions from "./schema.json" with { type: "json" };
+import path from "node:path";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -28,7 +34,7 @@ export default {
     //   -b "cn=schema,cn=config" \
     //   "cn={8}samba,cn=schema,cn=config"
     const { $status: exists } = await this.execute({
-      command: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
+      command: `ldapsearch -LLL ${binddn} ${passwd} ${uri} -b "cn=schema,cn=config" | grep -E cn=\\{[0-9]+\\}${config.name},cn=schema,cn=config`,
       code: [1, 0],
     });
     if (!exists) {
@@ -106,7 +112,7 @@ export default {
     await this.execute({
       command: `ldapadd ${uri} ${binddn} ${passwd} -f ${ldifTmpDir}/cn=config/cn=schema/cn=${config.name}.ldif`,
     });
-    log("INFO" `Schema added: ${config.name}`);
+    log("INFO"`Schema added: ${config.name}`);
   },
   metadata: {
     tmpdir: true,

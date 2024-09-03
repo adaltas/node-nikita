@@ -1,17 +1,19 @@
 // Dependencies
-import fs from 'node:fs'
-import path from 'node:path'
+import fs from "node:fs";
+import path from "node:path";
 import utils from "@nikitajs/file/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     const algo = config.sha1 != null ? "sha1" : "md5";
-    log({
-      message: `Source is \"${config.source}\", target is \"${config.target}\"`,
-      level: "DEBUG",
-    });
+    log("DEBUG", `Source is "${config.source}", target is "${config.target}"`);
     // Stat the target and redefine its path if a directory
     const stats = await this.call(
       {
@@ -32,14 +34,14 @@ export default {
             // Target is invalid
             throw Error(
               `Invalid Target: expect a file, a symlink or a directory for ${JSON.stringify(
-                config.target
-              )}`
+                config.target,
+              )}`,
             );
           }
           // Target is a directory
           config.target = path.resolve(
             config.target,
-            path.basename(config.source)
+            path.basename(config.source),
           );
           try {
             const { stats } = await this.fs.stat({
@@ -63,11 +65,11 @@ export default {
           }
           throw error;
         }
-      }
+      },
     );
     // Now that we know the real name of the target, define a temporary file to write
     const stage_target = `${config.target}.${Date.now()}${Math.round(
-      Math.random() * 1000
+      Math.random() * 1000,
     )}`;
     const { $status } = await this.call(async function () {
       if (!stats) {
@@ -85,15 +87,12 @@ export default {
       });
       const match = hash_source === hash_target;
       log(
-        match
-          ? {
-              message: `Hash matches as '${hash_source}'`,
-              level: "INFO",
-            }
-          : {
-              message: `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
-              level: "WARN",
-            }
+        match ?
+          `Hash matches as '${hash_source}'`
+        : {
+            message: `Hash dont match, source is '${hash_source}' and target is '${hash_target}'`,
+            level: "WARN",
+          },
       );
       return !match;
     });

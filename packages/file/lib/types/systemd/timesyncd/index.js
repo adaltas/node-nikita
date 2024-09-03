@@ -1,11 +1,16 @@
 // Dependencies
-import path from 'node:path'
+import path from "node:path";
 import dedent from "dedent";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     if (config.rootdir) {
       config.target = `${path.join(config.rootdir, config.target)}`;
     }
@@ -16,14 +21,14 @@ export default {
       config.content.FallbackNTP = config.content.FallbackNTP.join(" ");
     }
     // Write configuration
-    const {$status} = (await this.file.ini({
+    const { $status } = await this.file.ini({
       separator: "=",
       target: config.target,
       content: {
-        'Time': config.content
+        Time: config.content,
       },
-      merge: config.merge
-    }));
+      merge: config.merge,
+    });
     await this.execute({
       $if: config.reload != null ? config.reload : $status,
       sudo: true,
@@ -35,6 +40,6 @@ export default {
     });
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

@@ -1,29 +1,34 @@
 // Dependencies
-import {merge} from 'mixme';
-import definitions from "./schema.json" with { type: "json" };
+import { merge } from "mixme";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
+  handler: async function ({ config }) {
     if (config.merge) {
       try {
-        const {data} = await this.fs.readFile({
+        const { data } = await this.fs.readFile({
           target: config.target,
-          encoding: 'utf8'
+          encoding: "utf8",
         });
         config.content = merge(JSON.parse(data), config.content);
       } catch (error) {
-        if (error.code !== 'NIKITA_FS_CRS_TARGET_ENOENT') {
+        if (error.code !== "NIKITA_FS_CRS_TARGET_ENOENT") {
           throw error;
         }
       }
     }
     if (config.source) {
-      const {data} = await this.fs.readFile({
+      const { data } = await this.fs.readFile({
         $ssh: config.local ? false : void 0,
         $sudo: config.local ? false : void 0,
         target: config.source,
-        encoding: 'utf8'
+        encoding: "utf8",
       });
       config.content = merge(JSON.parse(data), config.content);
     }
@@ -32,7 +37,7 @@ export default {
     }
     await this.file({
       target: config.target,
-      content: function() {
+      content: function () {
         return JSON.stringify(config.content, null, config.pretty);
       },
       backup: config.backup,
@@ -40,18 +45,18 @@ export default {
       eof: config.eof,
       gid: config.gid,
       uid: config.uid,
-      mode: config.mode
+      mode: config.mode,
     });
     return {};
   },
   hooks: {
-    on_action: function({config}) {
+    on_action: function ({ config }) {
       if (config.pretty === true) {
-        return config.pretty = 2;
+        return (config.pretty = 2);
       }
-    }
+    },
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

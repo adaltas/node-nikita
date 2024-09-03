@@ -2,7 +2,12 @@
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -15,17 +20,17 @@ export default {
     // Update paths in case of download
     const files = {
       cert:
-        ssh && config.local && config.cert != null
-          ? `${tmpdir}/${path.local.basename(config.cert)}`
-          : config.cert,
+        ssh && config.local && config.cert != null ?
+          `${tmpdir}/${path.local.basename(config.cert)}`
+        : config.cert,
       cacert:
-        ssh && config.local && config.cacert != null
-          ? `${tmpdir}/${path.local.basename(config.cacert)}`
-          : config.cacert,
+        ssh && config.local && config.cacert != null ?
+          `${tmpdir}/${path.local.basename(config.cacert)}`
+        : config.cacert,
       key:
-        ssh && config.local && config.key != null
-          ? `${tmpdir}/${path.local.basename(config.key)}`
-          : config.key,
+        ssh && config.local && config.key != null ?
+          `${tmpdir}/${path.local.basename(config.key)}`
+        : config.key,
     };
     // Temporary directory
     // Used to upload certificates and to isolate certificates from their file
@@ -67,7 +72,7 @@ export default {
       target: path.dirname(config.keystore),
     });
     try {
-      if (!!config.cert) {
+      if (config.cert) {
         await this.execute({
           bash: true,
           command: dedent`
@@ -185,7 +190,7 @@ export default {
           "Keystore password is invalid,",
           "change it manually with:",
           `\`keytool -storepasswd -keystore ${esa(
-            config.keystore
+            config.keystore,
           )} -storepass <old_pasword> -new <new_password>'\``,
         ]);
       }

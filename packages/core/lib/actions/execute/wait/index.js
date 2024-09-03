@@ -1,33 +1,45 @@
-
 // ## Dependencies
-import utils from '@nikitajs/core/utils';
-import definitions from "./schema.json" with { type: "json" };
+import utils from "@nikitajs/core/utils";
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config, tools: { log } }) {
     let attempts = 0;
-    const wait = (timeout) => timeout && new Promise( (resolve) => setTimeout(resolve, timeout) );
+    const wait = (timeout) =>
+      timeout && new Promise((resolve) => setTimeout(resolve, timeout));
     let commands = config.command;
     while (attempts !== config.retry) {
       attempts++;
       log("DEBUG", `Start attempt #${attempts}`);
-      commands = await utils.promise.array_filter(commands, config.concurrency, async (command) => {
-        const { $status: success } = await this.execute({
-          command: command,
-          code: config.code,
-          stdin_log: config.stdin_log,
-          stdout_log: config.stdout_log,
-          stderr_log: config.stderr_log,
-          $relax: config.code.false.length === 0,
-        });
-        return !success;
-      });
-      log("INFO", `Attempt #${attempts}, expect ${
+      commands = await utils.promise.array_filter(
+        commands,
+        config.concurrency,
+        async (command) => {
+          const { $status: success } = await this.execute({
+            command: command,
+            code: config.code,
+            stdin_log: config.stdin_log,
+            stdout_log: config.stdout_log,
+            stderr_log: config.stderr_log,
+            $relax: config.code.false.length === 0,
+          });
+          return !success;
+        },
+      );
+      log(
+        "INFO",
+        `Attempt #${attempts}, expect ${
           config.quorum
         } success to reach the quorum, got ${
           config.command.length - commands.length
-        }`);
+        }`,
+      );
       if (commands.length <= config.command.length - config.quorum) {
         return {
           attempts: attempts,

@@ -14,8 +14,9 @@ await runner({
         properties: {
           "environment.NIKITA_TEST_MODULE":
             "/nikita/packages/service/env/systemctl/test.coffee",
-          "raw.idmap": process.env["NIKITA_INCUS_IN_VAGRANT"]
-            ? "both 1000 0"
+          "raw.idmap":
+            process.env["NIKITA_INCUS_IN_VAGRANT"] ?
+              "both 1000 0"
             : `both ${process.getuid()} 0`,
         },
         disk: {
@@ -45,7 +46,7 @@ await runner({
         code: [0, 42],
       });
       await this.incus.exec({
-        $header: 'SSH keys',
+        $header: "SSH keys",
         container: config.container,
         command: dedent`
           mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -54,7 +55,7 @@ await runner({
             cat /root/.ssh/id_ed25519.pub > /root/.ssh/authorized_keys
           fi
         `,
-        trap: true
+        trap: true,
       });
     },
   },

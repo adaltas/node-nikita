@@ -1,24 +1,28 @@
-
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function({config}) {
-    config.connection.http_headers['Referer'] ??= config.connection.referer || config.connection.url;
-    const {exists} = await this.ipa.group.exists({
+  handler: async function ({ config }) {
+    config.connection.http_headers["Referer"] ??=
+      config.connection.referer || config.connection.url;
+    const { exists } = await this.ipa.group.exists({
       connection: config.connection,
-      cn: config.cn
+      cn: config.cn,
     });
     // Add or modify a group
-    const {data} = await this.network.http(config.connection, {
+    const { data } = await this.network.http(config.connection, {
       negotiate: true,
-      method: 'POST',
+      method: "POST",
       data: {
         method: !exists ? "group_add/1" : "group_mod/1",
         params: [[config.cn], config.attributes],
-        id: 0
-      }
+        id: 0,
+      },
     });
     let result, $status;
     if (data.error != null) {
@@ -35,17 +39,17 @@ export default {
     }
     // Get info even when no modification was performed
     if (!result) {
-      ({result} = await this.ipa.group.show({
+      ({ result } = await this.ipa.group.show({
         connection: config.connection,
-        cn: config.cn
+        cn: config.cn,
       }));
     }
     return {
       $status: $status,
-      result: result
+      result: result,
     };
   },
   metadata: {
-    definitions: definitions
-  }
+    definitions: definitions,
+  },
 };

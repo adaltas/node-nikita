@@ -1,5 +1,9 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -31,12 +35,12 @@ export default {
       source: config.source,
       target: config.target,
       uid: config.uid,
-    }
+    };
     await (config.context ? this.file.render(args) : this.file(args));
     if (config.loader === "systemctl") {
       const reload = await this.execute({
         $shy: true,
-        command: `systemctl status ${config.name} 2>\&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
+        command: `systemctl status ${config.name} 2>&1 | egrep '(Reason: No such file or directory)|(Unit ${config.name}.service could not be found)|(${config.name}.service changed on disk)'`,
         code: [0, 1],
       }).then(({ $status }) => $status);
       await this.execute({

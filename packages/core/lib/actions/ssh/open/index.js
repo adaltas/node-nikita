@@ -2,7 +2,12 @@
 import connect from "ssh2-connect";
 import fs from "node:fs/promises";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -17,10 +22,7 @@ export default {
     }
     // Read private key if option is a path
     if (!config.private_key && !config.password) {
-      log({
-        message: `Read Private Key from: ${config.private_key_path}`,
-        level: "DEBUG",
-      });
+      log("DEBUG", `Read Private Key from: ${config.private_key_path}`);
       const location = await utils.tilde.normalize(config.private_key_path);
       try {
         ({ data: config.private_key } = await fs.readFile(location, "ascii"));
@@ -33,37 +35,25 @@ export default {
     }
     try {
       // Establish connection
-      log({
-        message: `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
-        level: "DEBUG",
-      });
+      log(
+        "DEBUG",
+        `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
+      );
       const conn = await connect(config);
-      log({
-        message: "Connection is established",
-        level: "INFO",
-      });
+      log("INFO", "Connection is established");
       return {
         ssh: conn,
       };
-    } catch (error) {
-      log({
-        message: "Connection failed",
-        level: "WARN",
-      });
+    } catch {
+      log("WARN", "Connection failed");
       // Continue to bootstrap root access
     }
     // Enable root access
     if (config.root.username) {
-      log({
-        message: "Bootstrap Root Access",
-        level: "INFO",
-      });
+      log("INFO", "Bootstrap Root Access");
       await this.ssh.root(config.root);
     }
-    log({
-      message: "Establish Connection: attempt after enabling root access",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Establish Connection: attempt after enabling root access");
     return await this.call(
       {
         $retry: 3,
@@ -72,7 +62,7 @@ export default {
         return {
           ssh: await connect(config),
         };
-      }
+      },
     );
   },
   hooks: {

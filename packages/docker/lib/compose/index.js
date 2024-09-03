@@ -1,11 +1,16 @@
 // Dependencies
 import utils from "@nikitajs/docker/utils";
 import path from "node:path";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function ({ config, tools: { find, log } }) {
+  handler: async function ({ config, tools: { log } }) {
     // Validate parameters
     if (config.target == null && config.content == null) {
       throw Error("Missing docker-compose content or target");
@@ -39,7 +44,7 @@ export default {
     let { $status, stdout } = await this.docker.tools.execute({
       $shy: true,
       command: `--file ${config.target} ps -q | xargs docker ${utils.opts(
-        config
+        config,
       )} inspect`,
       compose: true,
       cwd: config.cwd,
@@ -67,8 +72,6 @@ export default {
         cwd: path.dirname(config.target),
         uid: config.uid,
       });
-    } catch (error) {
-      throw error;
     } finally {
       await this.fs.remove({
         $if: clean_target,

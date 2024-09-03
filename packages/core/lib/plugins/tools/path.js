@@ -16,9 +16,10 @@ export default {
         action.tools ??= {};
         // Path is alwaws posix over ssh
         // otherwise it is platform dependent
-        action.tools.path = !action.ssh
-          ? os.platform === "win32"
-            ? path.win32
+        action.tools.path =
+          !action.ssh ?
+            os.platform === "win32" ?
+              path.win32
             : path.posix
           : path.posix;
         // Local is agnostic of ssh

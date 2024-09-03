@@ -1,6 +1,9 @@
-
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -8,11 +11,11 @@ export default {
     await this.docker.run({
       detach: true,
       rm: false,
-      ...config
+      ...config,
     });
   },
   metadata: {
     definitions: definitions,
     global: "docker",
-  }
+  },
 };

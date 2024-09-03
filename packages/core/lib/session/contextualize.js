@@ -1,4 +1,4 @@
-import { clone, merge, mutate, is_object_literal } from "mixme";
+import { clone, mutate, is_object_literal } from "mixme";
 import utils from "@nikitajs/core/utils";
 
 const properties = [
@@ -82,7 +82,7 @@ export default function ({ action = {}, args }) {
             }
           } else {
             for (const k in arg) {
-              if (k === '$') continue;
+              if (k === "$") continue;
               const v = arg[k];
               if (["config", "metadata"].includes(k)) {
                 mutate(action[k], v);

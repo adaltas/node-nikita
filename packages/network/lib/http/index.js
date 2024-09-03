@@ -2,19 +2,24 @@
 import dedent from "dedent";
 import utils from "@nikitajs/network/utils";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
   handler: async function ({ config }) {
     if (config.principal && !config.password) {
       throw Error(
-        "Required Option: `password` is required if principal is provided"
+        "Required Option: `password` is required if principal is provided",
       );
     }
     if ((config.method === "POST" || config.method === "PUT") && !config.data) {
       throw Error(
-        "Required Option: `data` is required with POST and PUT requests"
+        "Required Option: `data` is required with POST and PUT requests",
       );
     }
     if (config.data != null && typeof config.data !== "string") {
@@ -45,43 +50,41 @@ export default {
       const { stdout } = await this.execute({
         command: dedent`
           ${
-            !config.principal
-              ? ""
-              : [
-                  "echo",
-                  config.password,
-                  "|",
-                  "kinit",
-                  config.principal,
-                  ">/dev/null",
-                ].join(" ")
+            !config.principal ? "" : (
+              [
+                "echo",
+                config.password,
+                "|",
+                "kinit",
+                config.principal,
+                ">/dev/null",
+              ].join(" ")
+            )
           }
           command -v curl >/dev/null || exit 90
           ${[
             "curl",
-            config.timeout
-              ? `--max-time '${Math.max(config.timeout / 1000)}'`
-              : void 0,
+            config.timeout ?
+              `--max-time '${Math.max(config.timeout / 1000)}'`
+            : void 0,
             "--include", // Include protocol headers in the output (H/F)
             "--silent", // Dont print progression to stderr
             config.fail ? "--fail" : void 0,
-            !config.cacert && config.url.startsWith("https:")
-              ? "--insecure"
-              : void 0,
+            !config.cacert && config.url.startsWith("https:") ?
+              "--insecure"
+            : void 0,
             config.cacert ? "--cacert #{config.cacert}" : void 0,
             config.negotiate ? "--negotiate -u:" : void 0,
             config.location ? "--location" : void 0,
             ...Object.keys(config.http_headers).map(
               (header) =>
-                `--header ${esa(header + ": " + config.http_headers[header])}`
+                `--header ${esa(header + ": " + config.http_headers[header])}`,
             ),
             ...config.cookies.map((cookie) => `--cookie ${esa(cookie)}`),
             config.target ? `-o ${config.target}` : void 0,
             config.proxy ? `-x ${config.proxy}` : void 0,
             config.method !== "GET" ? `-X ${config.method}` : void 0,
-            config.data
-              ? `--data ${esa(config.data)}`
-              : void 0,
+            config.data ? `--data ${esa(config.data)}` : void 0,
             `${config.url}`,
           ].join(" ")}
         `,

@@ -163,7 +163,7 @@ describe 'tools.repo', ->
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.0/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.4/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
@@ -171,13 +171,13 @@ describe 'tools.repo', ->
       await @service.install
         name: 'MariaDB-client'
       await @execute
-        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
+        command: "mariadb --version | egrep '11.4.[0-9]+-MariaDB'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mariadb.repo'
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.6/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
@@ -188,14 +188,14 @@ describe 'tools.repo', ->
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.6/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
             'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
+        command: "mariadb --version | egrep '11.4.[0-9]+-MariaDB'"
 
   they 'config `update` is `true`', ({ssh, sudo}) ->
     nikita
@@ -210,7 +210,7 @@ describe 'tools.repo', ->
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.0/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.4/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
@@ -218,14 +218,14 @@ describe 'tools.repo', ->
       await @service.install
         name: 'MariaDB-client'
       await @execute
-        command: "mariadb --version | egrep '11.0.[0-9]+-MariaDB'"
+        command: "mariadb --version | egrep '11.4.[0-9]+-MariaDB'"
       {$status} = await @tools.repo
         target: '/etc/yum.repos.d/mariadb.repo'
         update: true
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.6/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
@@ -237,14 +237,14 @@ describe 'tools.repo', ->
         content:
           'mariadb':
             'name': 'MariaDB'
-            'baseurl': "https://yum.mariadb.org/11.3/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
+            'baseurl': "https://yum.mariadb.org/11.6/#{test.mariadb.distrib}-#{test.mariadb.basearch}"
             'enabled':'1'
             'module_hotfixes': '1'
             'gpgkey': 'https://yum.mariadb.org/RPM-GPG-KEY-MariaDB'
             'gpgcheck': '1'
       $status.should.be.false()
       await @execute
-        command: "mariadb --version | egrep '11.3.[0-9]+-MariaDB'"
+        command: "mariadb --version | egrep '11.6.[0-9]+-MariaDB'"
   
   they 'Download config `gpg_key` fails because `gpg_key` unset and not in .repo', ({ssh, sudo}) ->
     nikita

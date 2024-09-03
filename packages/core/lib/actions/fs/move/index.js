@@ -1,9 +1,13 @@
-// Dependencies
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function ({ config, tools: { log, path } }) {
+  handler: async function ({ config, tools: { log } }) {
     const { exists } = await this.fs.exists(config.target);
     if (!exists) {
       log("WARN", `Rename ${config.source} to ${config.target}`);

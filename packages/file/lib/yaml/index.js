@@ -2,7 +2,12 @@
 import utils from "@nikitajs/file/utils";
 import yaml from "js-yaml";
 import { merge } from "mixme";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
@@ -21,22 +26,18 @@ export default {
       }
     }
     if (config.clean) {
-      log({
-        message: "Cleaning content",
-        level: "INFO",
-      });
+      log("Cleaning content");
       utils.object.clean(config.content);
     }
-    log({
-      message: "Serialize content",
-      level: "DEBUG",
-    });
+    log("DEBUG", "Serialize content");
     config.content = yaml.dump(config.content, {
       indent: config.indent,
       noRefs: true,
       lineWidth: config.line_width,
     });
-    await this.file(utils.object.filter(config, ['clean', 'indent', 'line_width', 'merge']));
+    await this.file(
+      utils.object.filter(config, ["clean", "indent", "line_width", "merge"]),
+    );
   },
   metadata: {
     definitions: definitions,

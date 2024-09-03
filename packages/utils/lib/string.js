@@ -10,7 +10,7 @@ import error from "./error.js";
  * @returns Single quote escaped argument
  */
 const escapeshellarg = function (arg) {
-  const result = arg.replace(/'/g, (match) => "'\"'\"'");
+  const result = arg.replace(/'/g, () => "'\"'\"'");
   return `'${result}'`;
 };
 

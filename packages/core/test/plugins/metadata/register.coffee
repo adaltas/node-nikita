@@ -1,7 +1,8 @@
 import registry from '@nikitajs/core/registry'
 import session from '@nikitajs/core/session'
 import metadataRegister from '@nikitajs/core/plugins/metadata/register'
-import utils from '@nikitajs/utils'
+import metadataSchema from '@nikitajs/core/plugins/metadata/schema'
+import toolsSchema from '@nikitajs/core/plugins/tools/schema'
 import test from '../../test.coffee'
 # Note, register is imported on purpose
 # When the test is executed along other tests,
@@ -12,6 +13,25 @@ import '@nikitajs/core/register'
 
 describe 'plugins.metadata.register', ->
   return unless test.tags.api
+  
+  it 'validate schema', ->
+    session
+      $register: false
+      $plugins: [
+        metadataRegister,
+        metadataSchema,
+        toolsSchema
+      ]
+      $handler: (->)
+    .should.be.rejectedWith
+      code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+      message: [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of root action:'
+        'nikita#/definitions/metadata/properties/register/type'
+        'metadata/register must be object,'
+        'type is "object".'
+      ].join ' '
 
   it 'in session', ->
     session

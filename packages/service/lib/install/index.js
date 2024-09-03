@@ -1,11 +1,16 @@
 // Dependencies
 import dedent from "dedent";
 import utils from "@nikitajs/core/utils";
-import definitions from "./schema.json" with { type: "json" };
+// Schema
+// import definitions from "./schema.json" with { type: "json" };
+import { readFile } from "node:fs/promises";
+const definitions = JSON.parse(
+  await readFile(new URL("./schema.json", import.meta.url), "utf8"),
+);
 
 // Action
 export default {
-  handler: async function ({ config, parent: { state }, tools: { log } }) {
+  handler: async function ({ config, tools: { log } }) {
     let packages = {
       // installed: config.cache ? state["nikita:service:packages:installed"] : undefined,
       // installed: config.cache ? state["nikita:service:packages:outdated"] : undefined,
@@ -38,14 +43,16 @@ export default {
     // Start real work
     log("INFO", `Install service ${config.name}`);
     // List installed packages
-    const installed = packages.installed
-      ? packages.installed.includes(config.name)
+    const installed =
+      packages.installed ?
+        packages.installed.includes(config.name)
       : await this.service
           .installed(config.name)
           .then(({ installed }) => installed);
     // List packages waiting for update
-    const outdated = packages.outdated
-      ? packages.outdated.includes(config.name)
+    const outdated =
+      packages.outdated ?
+        packages.outdated.includes(config.name)
       : await this.service
           .outdated(config.name, { cacheonly: config.cacheonly })
           .then(({ outdated }) => outdated);
@@ -69,17 +76,17 @@ export default {
           `,
           code: config.code,
         });
-        log("WARN", `Package \"${config.name}\" is installed`);
+        log("WARN", `Package "${config.name}" is installed`);
       } catch (error) {
         if (error.exit_code === 2) {
           throw Error(
-            "Unsupported Package Manager: apt-get, pacman, yay, yum supported"
+            "Unsupported Package Manager: apt-get, pacman, yay, yum supported",
           );
         }
-        throw utils.error(
-          "NIKITA_SERVICE_INSTALL",
-          ["failed to install package,", `name is ${JSON.stringify(config.name)}`],
-        );
+        throw utils.error("NIKITA_SERVICE_INSTALL", [
+          "failed to install package,",
+          `name is ${JSON.stringify(config.name)}`,
+        ]);
       }
     }
     // Enrich installed array with package name unless already there
