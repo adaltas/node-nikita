@@ -70,7 +70,7 @@ export default {
     log("DEBUG", `Read GPG keys from ${config.target}`);
     // Extract repo information from file
     const data = utils.ini.parse_multi_brackets(
-      await this.fs.base
+      await this.fs
         .readFile({
           target: config.target,
           encoding: "utf8",

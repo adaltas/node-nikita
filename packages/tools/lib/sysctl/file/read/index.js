@@ -7,7 +7,7 @@ import definitions from "./schema.json" with { type: "json" };
 export default {
   handler: async function ({ config, tools: { log } }) {
     log("DEBUG", `Read sysctl file: ${config.target}`);
-    const data = await this.fs.base
+    const data = await this.fs
       .readFile({
         target: config.target,
         encoding: "ascii",
