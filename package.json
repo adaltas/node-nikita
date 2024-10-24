@@ -1,17 +1,17 @@
 {
   "private": true,
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
-    "@eslint/js": "^9.9.1",
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/js": "^9.13.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9.9.1",
+    "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.0",
-    "husky": "^9.1.1",
-    "lerna": "^8.1.6",
+    "husky": "^9.1.6",
+    "lerna": "^8.1.8",
     "prettier": "^3.3.3"
   },
   "scripts": {
@@ -27,7 +27,7 @@
     "goodies:incus:macos": "./packages/incus/assets/multipass.sh",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "check-packages": "yarn clean && yarn compile && yarn test && yarn lint",
-    "postinstall": "husky install"
+    "prepare": "husky install"
   },
   "workspaces": [
     "docs/*",

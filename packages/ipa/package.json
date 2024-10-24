@@ -32,8 +32,8 @@
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
     "mixme": "^1.1.0",
-    "mocha": "^10.7.0",
-    "mocha-they": "^0.1.3",
+    "mocha": "^10.7.3",
+    "mocha-they": "^0.1.10",
     "should": "^13.2.3"
   },
   "engines": {

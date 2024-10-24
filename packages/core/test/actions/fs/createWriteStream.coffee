@@ -7,7 +7,7 @@ they = mochaThey(test.config)
 
 describe 'actions.fs.createWriteStream', ->
   return unless test.tags.posix
-  
+
   describe 'validation', ->
 
     it 'schema stream is required', ->
@@ -46,7 +46,7 @@ describe 'actions.fs.createWriteStream', ->
           code: 'NIKITA_FS_CWS_TARGET_ENOENT'
           syscall: 'open'
           path: "#{tmpdir}/a_dir/a_file"
-  
+
   describe 'usage', ->
 
     they 'write a file', ({ssh}) ->
@@ -89,7 +89,7 @@ describe 'actions.fs.createWriteStream', ->
           mode: 0o0611
         {stats} = await @fs.stat "#{tmpdir}/a_file"
         utils.mode.compare(stats.mode, 0o0611).should.be.true()
-    
+
     they 'config `flags` equal "a"', ({ssh}) ->
       nikita
         $ssh: ssh

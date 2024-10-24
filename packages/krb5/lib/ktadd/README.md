@@ -1,8 +1,7 @@
 
 # `nikita.krb5.ktadd`
 
-Create and manage a keytab. This function is usually not used directly but instead
-called by the `krb5.addprinc` function.
+Create and manage a keytab. This function is usually not used directly but instead called by the `krb5.addprinc` action.
 
 ## Example
 

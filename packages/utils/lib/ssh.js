@@ -1,5 +1,5 @@
 import { merge } from "mixme";
-import connect from "ssh2-connect";
+import * as connect from "ssh2-connect";
 import { whoami } from "./os.js";
 import { hash as hash_str } from "./string.js";
 

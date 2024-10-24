@@ -182,7 +182,8 @@ export default {
       if (config.dry) {
         return resolve(result);
       }
-      const child = exec(config, {
+      const child = exec({
+        ...config,
         ssh: ssh,
         env: config.env,
       });

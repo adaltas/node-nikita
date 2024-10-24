@@ -15,7 +15,7 @@ describe 'actions.execute.wait', ->
       {$status} = await @execute.wait
         command: "test -d #{tmpdir}"
       $status.should.be.false()
-  
+
   they 'single command, status true', ({ssh}) ->
     nikita
       $ssh: ssh
@@ -100,9 +100,9 @@ describe 'actions.execute.wait', ->
           $log: ({log}) ->
             logs++ if log.type in ['stdin', 'stdout', 'stderr']
         logs.should.eql 0
-  
+
   describe 'config `code`', ->
-  
+
     they 'error with code.false, first attempt', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -115,7 +115,7 @@ describe 'actions.execute.wait', ->
         .should.be.rejectedWith
           code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
           exit_code: 99
-    
+
     they 'error with code.false, retried attempt', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -138,7 +138,7 @@ describe 'actions.execute.wait', ->
         attempts.should.be.above 1
 
   describe 'config `quorum`', ->
-    
+
     it 'boolean `true` is converted to quorum', ->
       # Odd number
       quorum = await nikita.execute.wait
@@ -233,9 +233,9 @@ describe 'actions.execute.wait', ->
         await @fs.assert
           target: "#{tmpdir}/result"
           content: '1\n2\n'
-  
+
   describe 'option `retry`', ->
-    
+
     they 'when `0`, not execution', ({ssh}) ->
       nikita
         $ssh: ssh

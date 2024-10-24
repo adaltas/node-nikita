@@ -40,7 +40,7 @@ export default {
         `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
       );
       const conn = await connect(config);
-      log("INFO", "Connection is established");
+      log("Connection is established");
       return {
         ssh: conn,
       };
@@ -50,7 +50,7 @@ export default {
     }
     // Enable root access
     if (config.root.username) {
-      log("INFO", "Bootstrap Root Access");
+      log("Bootstrap Root Access");
       await this.ssh.root(config.root);
     }
     log("DEBUG", "Establish Connection: attempt after enabling root access");
@@ -67,26 +67,18 @@ export default {
   },
   hooks: {
     on_action: function ({ config }) {
-      if (config.private_key == null) {
-        config.private_key = config.privateKey;
-      }
+      config.private_key ??= config.privateKey;
       // Define host from ip
       if (config.ip && !config.host) {
         config.host = config.ip;
       }
       // Default root properties
-      if (config.root == null) {
-        config.root = {};
-      }
+      config.root ??= {};
       if (config.root.ip && !config.root.host) {
         config.root.host = config.root.ip;
       }
-      if (config.root.host == null) {
-        config.root.host = config.host;
-      }
-      if (config.root.port == null) {
-        config.root.port = config.port;
-      }
+      config.root.host ??= config.host;
+      config.root.port ??= config.port;
     },
   },
   metadata: {

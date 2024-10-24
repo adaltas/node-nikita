@@ -43,14 +43,14 @@ export default {
       // In append mode, we write to a copy of the target file located in a temporary location
       if (config.flags[0] === "a") {
         const whoami = utils.os.whoami({ ssh });
-        await exec(
-          ssh,
-          [
+        await exec({
+          ssh: ssh,
+          command: [
             sudo(`[ ! -f '${config.target}' ] && exit`),
             sudo(`cp '${config.target}' '${config.target_tmp}'`),
             sudo(`chown ${whoami} '${config.target_tmp}'`),
           ].join("\n"),
-        );
+        });
         log(
           "INFO",
           "Append prepared by placing a copy of the original file in a temporary path",
@@ -85,7 +85,8 @@ export default {
     await promise;
     // Replace the target file in append or sudo mode
     if (config.target_tmp) {
-      await exec(ssh, {
+      await exec({
+        ssh: ssh,
         command: [
           sudo(`mv '${config.target_tmp}' '${config.target}'`),
           config.sudo ? sudo(`chown root:root '${config.target}'`) : undefined,

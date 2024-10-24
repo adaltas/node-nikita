@@ -22,9 +22,9 @@ describe 'file config diff', ->
         diff: (text, diff) ->
           diffcalled = true
           diff.should.eql [
-            { value: 'Testing diff\n', count: 1 }
-            { value: 'original text', count: 1, added: undefined, removed: true }
-            { value: 'new text', count: 1, added: true, removed: undefined }
+            { added: false, count: 1, removed: false, value: 'Testing diff\n' }
+            { added: false, count: 1, removed: true, value: 'original text' }
+            { added: true, count: 1, removed: false, value: 'new text' }
           ]
       .should.be.finally.containEql $status: true
 
@@ -93,7 +93,7 @@ describe 'file config diff', ->
         content: 'some content'
         diff: (text, raw) -> diff = text
       diff.should.eql '1 + some content\n'
-  
+
   they 'honored by `log.md` action', ({ssh}) ->
     nikita
       $ssh: ssh

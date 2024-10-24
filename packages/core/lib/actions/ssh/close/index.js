@@ -1,5 +1,5 @@
 // Dependencies
-import connect from "ssh2-connect";
+import * as connect from "ssh2-connect";
 import utils from "@nikitajs/core/utils";
 // Schema
 // import definitions from "./schema.json" with { type: "json" };
