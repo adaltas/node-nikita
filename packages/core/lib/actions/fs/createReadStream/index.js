@@ -1,5 +1,5 @@
 // Dependencies
-import fs from "ssh2-fs";
+import * as fs from "ssh2-fs";
 import exec from "ssh2-exec/promises";
 import utils from "@nikitajs/core/utils";
 // Schema

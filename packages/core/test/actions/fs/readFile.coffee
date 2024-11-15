@@ -1,5 +1,4 @@
 
-import fs from 'ssh2-fs'
 import nikita from '@nikitajs/core'
 import test from '../../test.coffee'
 import mochaThey from 'mocha-they'
@@ -49,7 +48,7 @@ describe 'actions.fs.readFile', ->
         encoding: 'ascii'
         trim: true
       .should.be.finally.containEql data: 'hello'
-  
+
   describe 'config `format`', ->
 
     they 'as udf', ({ssh}) ->
@@ -80,9 +79,9 @@ describe 'actions.fs.readFile', ->
           target: "{{parent.metadata.tmpdir}}/a_file"
           format: 'json'
         data.should.eql key: 'value'
-  
+
   describe 'error', ->
-  
+
     they 'forward errors from createReadStream', ({ssh}) ->
       nikita
         $ssh: ssh

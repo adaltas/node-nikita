@@ -1,5 +1,5 @@
 import os from "node:os";
-import fs from "ssh2-fs";
+import * as fs from "ssh2-fs";
 import exec from "ssh2-exec/promises";
 import { is_object_literal } from "mixme";
 import utils from "@nikitajs/core/utils";
