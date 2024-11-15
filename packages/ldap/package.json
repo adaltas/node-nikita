@@ -24,8 +24,8 @@
   ],
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "mocha": "^10.7.3",
-    "mocha-they": "^0.1.10",
+    "mocha": "^10.8.2",
+    "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
   "engines": {

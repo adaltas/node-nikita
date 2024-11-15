@@ -61,13 +61,13 @@
     "ssh2-fs": "^1.2.2",
     "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",
-    "uuid": "^10.0.0"
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mocha": "^10.7.3",
-    "mocha-they": "^0.1.10",
+    "mocha": "^10.8.2",
+    "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
   "engines": {

@@ -48,11 +48,11 @@
     "tilde-expansion": "^0.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.9",
-    "@babel/preset-env": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "coffeescript": "^2.7.0",
-    "mocha": "^10.7.3",
-    "mocha-they": "^0.1.10",
+    "mocha": "^10.8.2",
+    "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
   "engines": {
