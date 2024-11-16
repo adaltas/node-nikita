@@ -9,7 +9,7 @@
       "container": {
         "type": "string",
         "pattern": "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",
-        "description": "The name of the container. Must:\n- be between 1 and 63 characters long\n- be made up exclusively of letters, numbers and dashes from the ASCII table\n- not start with a digit or a dash\n- not end with a dash"
+        "description": "The name of the container. Must be between 1 and 63 characters long, be made up exclusively of letters, numbers and dashes from the ASCII table, not start with a digit or a dash, and not end with a dash"
       },
       "network": {
         "type": "string",
@@ -17,7 +17,7 @@
       },
       "storage": {
         "type": "string",
-        "description": "Storage name where to store the container, [default_storage] by\ndefault."
+        "description": "Storage name where to store the container, [default_storage] by default."
       },
       "profile": {
         "type": "string",
@@ -48,9 +48,6 @@
         "description": "If the LXC is clustered, instantiate the container on a specific node."
       }
     },
-    "required": [
-      "image",
-      "container"
-    ]
+    "required": ["image", "container"]
   }
 }
