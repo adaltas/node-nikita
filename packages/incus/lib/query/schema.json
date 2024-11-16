@@ -6,7 +6,7 @@
         "$ref": "module://@nikitajs/core/actions/execute#/definitions/config/properties/code"
       },
       "data": {
-        "type": "string",
+        "type": ["boolean", "number", "object", "string"],
         "description": "Data to send to the action in the form of application/json stringified object."
       },
       "format": {

@@ -17,7 +17,7 @@ export default {
         config.wait && "--wait",
         "--request",
         config.request,
-        config.data != null && `--data ${esa(config.data)}`,
+        config.data != null && `--data ${esa(JSON.stringify(config.data))}`,
         `${config.path}?${new URLSearchParams(config.query)}`,
       ]
         .filter(Boolean)
@@ -28,7 +28,7 @@ export default {
       case "json":
         if ($status) {
           return {
-            data: JSON.parse(stdout),
+            data: JSON.parse(stdout || "{}"),
           };
         } else {
           return {

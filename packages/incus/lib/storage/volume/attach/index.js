@@ -53,7 +53,7 @@ export default {
     const { $status } = await this.incus.query({
       path: `/1.0/instances/${config.container}`,
       request: "PATCH",
-      data: JSON.stringify({
+      data: {
         devices: {
           [`${config.device}`]: {
             pool: config.pool,
@@ -62,7 +62,7 @@ export default {
             path: config.path != null ? config.path : null,
           },
         },
-      }),
+      },
       wait: true,
       format: "string",
       code: [0, 1],
