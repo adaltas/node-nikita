@@ -12,7 +12,7 @@ export default {
   handler: async function ({ config }) {
     const path = [
       config.path,
-      Object.keys(config.path).length && "?",
+      Object.keys(config.query).length && "?",
       new URLSearchParams(config.query),
     ]
       .filter(Boolean)
