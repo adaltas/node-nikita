@@ -60,6 +60,7 @@ const actions = {
       "": "@nikitajs/incus/storage",
       delete: "@nikitajs/incus/storage/delete",
       exists: "@nikitajs/incus/storage/exists",
+      set: "@nikitajs/incus/storage/set",
       show: "@nikitajs/incus/storage/show",
       list: "@nikitajs/incus/storage/list",
       volume: {

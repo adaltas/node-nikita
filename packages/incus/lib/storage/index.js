@@ -1,6 +1,4 @@
 // Dependencies
-import dedent from "dedent";
-import yaml from "js-yaml";
 import diff from "object-diff";
 // Schema
 // import definitions from "./schema.json" with { type: "json" };
@@ -44,24 +42,11 @@ export default {
     if (config.properties == null) {
       return;
     }
-    const { data } = await this.incus.storage.show(config.name);
-    const changes = diff(data.config, config.properties);
-    for (const key in changes) {
-      const value = changes[key];
-      await this.execute({
-        command: [
-          "incus",
-          "storage",
-          "set",
-          config.name,
-          key,
-          `'${value.replace("'", "\\'")}'`,
-        ].join(" "),
-      });
-    }
-    return {
-      $status: Object.keys(changes).length > 0,
-    };
+    return this.incus.storage.set({
+      name: config.name,
+      description: config.description,
+      properties: config.properties,
+    });
   },
   metadata: {
     definitions: definitions,

@@ -22,7 +22,7 @@
             "type": ["string", "boolean", "number"]
           }
         },
-        "description": "The configuration to use to configure this storage, depends on the\ndriver. See [available\nfields](https://incus.readthedocs.io/en/latest/storage/)."
+        "description": "The configuration to use to configure this storage, depends on the driver. See [available fields](https://incus.readthedocs.io/en/latest/storage/)."
       }
     },
     "required": ["name", "driver"]

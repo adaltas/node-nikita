@@ -1,0 +1,17 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "$ref": "module://@nikitajs/incus/storage#/definitions/config/properties/name"
+      },
+      "description": {
+        "$ref": "module://@nikitajs/incus/storage#/definitions/config/properties/description"
+      },
+      "properties": {
+        "$ref": "module://@nikitajs/incus/storage#/definitions/config/properties/properties"
+      }
+    },
+    "required": ["name"]
+  }
+}

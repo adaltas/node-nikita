@@ -3,12 +3,10 @@
     "type": "object",
     "properties": {
       "name": {
-        "type": "string",
+        "$ref": "module://@nikitajs/incus/storage#/definitions/config/properties/name",
         "description": "The name of the storage to check."
       }
     },
-    "required": [
-      "name"
-    ]
+    "required": ["name"]
   }
 }
