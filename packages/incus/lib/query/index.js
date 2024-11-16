@@ -18,7 +18,7 @@ export default {
         "--request",
         config.request,
         config.data != null && `--data ${esa(config.data)}`,
-        config.path,
+        `${config.path}?${new URLSearchParams(config.query)}`,
       ]
         .filter(Boolean)
         .join(" "),

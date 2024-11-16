@@ -11,25 +11,21 @@
       },
       "format": {
         "type": "string",
-        "enum": [
-          "json",
-          "string"
-        ],
+        "enum": ["json", "string"],
         "default": "json",
         "description": "Format to use for the output data, either `json` or `string`."
+      },
+      "query": {
+        "type": "object",
+        "default": {},
+        "additionalProperties": { "type": ["boolean", "number", "string"] }
       },
       "path": {
         "type": "string",
         "description": "The API path in the form of `[<remote>:]<API path>`, for example\n`/1.0/instances/c1`"
       },
       "request": {
-        "enum": [
-          "GET",
-          "PUT",
-          "DELETE",
-          "POST",
-          "PATCH"
-        ],
+        "enum": ["GET", "PUT", "DELETE", "POST", "PATCH"],
         "default": "GET",
         "description": "Action to use for the API call."
       },
@@ -39,8 +35,6 @@
         "description": "If true, activates the wait flag that waits for the operation to complete."
       }
     },
-    "required": [
-      "path"
-    ]
+    "required": ["path"]
   }
 }
