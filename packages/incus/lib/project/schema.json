@@ -1,0 +1,16 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "string",
+        "description": "Information describing the project."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of the project."
+      }
+    },
+    "required": ["name"]
+  }
+}
