@@ -50,6 +50,7 @@ const actions = {
     query: "@nikitajs/incus/query",
     list: "@nikitajs/incus/list",
     project: {
+      exists: "@nikitajs/incus/project/exists",
       list: "@nikitajs/incus/project/list",
     },
     running: "@nikitajs/incus/running",
