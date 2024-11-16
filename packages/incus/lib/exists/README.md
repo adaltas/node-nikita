@@ -11,6 +11,6 @@ Check if the container exists. If a container does not exists, the output value 
 ## Short usage example
 
 ```js
-const {$status, config} = await nikita.incus.exists("my_container")
-console.info($status ? `Container exists` : 'Container does not exists')
+const {exists} = await nikita.incus.exists("my_container")
+console.info(exists ? `Container exists` : 'Container does not exists')
 ```
