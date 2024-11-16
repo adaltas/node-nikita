@@ -49,6 +49,9 @@ const actions = {
     },
     query: "@nikitajs/incus/query",
     list: "@nikitajs/incus/list",
+    project: {
+      list: "@nikitajs/incus/project/list",
+    },
     running: "@nikitajs/incus/running",
     storage: {
       "": "@nikitajs/incus/storage",
