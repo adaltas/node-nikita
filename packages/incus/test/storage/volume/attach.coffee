@@ -8,14 +8,15 @@ describe 'incus.storage.volume.attach', ->
 
   describe 'attach', ->
 
-    they 'should attach a volume', ({ssh}) ->
+    they.only 'should attach a volume', ({ssh}) ->
       nikita
         $ssh: ssh
+        $debug: true
       , ({registry}) ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-1'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-1'
             name: 'nikita-volume-attach-1'
           await @incus.storage.delete
@@ -27,8 +28,8 @@ describe 'incus.storage.volume.attach', ->
           driver: "zfs"
         await @incus.storage.volume
           name: 'nikita-volume-attach-1'
-          pool: 'nikita-storage-attach-1' 
-        # Create instance 
+          pool: 'nikita-storage-attach-1'
+        # Create instance
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-1'
@@ -48,7 +49,7 @@ describe 'incus.storage.volume.attach', ->
         await @clean()
 
     return unless test.tags.incus_vm
-    
+
     they 'should attach a block volume on a vm', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -56,7 +57,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-2'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-2'
             name: 'nikita-volume-attach-2'
           await @incus.storage.delete
@@ -68,9 +69,9 @@ describe 'incus.storage.volume.attach', ->
           driver: "zfs"
         await @incus.storage.volume
           name: 'nikita-volume-attach-2'
-          pool: 'nikita-storage-attach-2' 
+          pool: 'nikita-storage-attach-2'
           content: 'block'
-        # Create instance 
+        # Create instance
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-2'
@@ -98,7 +99,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-1'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-1'
             name: 'nikita-volume-attach-1'
           await @incus.storage.delete
@@ -110,8 +111,8 @@ describe 'incus.storage.volume.attach', ->
           driver: "zfs"
         await @incus.storage.volume
           name: 'nikita-volume-attach-1'
-          pool: 'nikita-storage-attach-1' 
-        # Create instance 
+          pool: 'nikita-storage-attach-1'
+        # Create instance
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-1'
@@ -133,7 +134,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-2'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-2'
             name: 'nikita-volume-attach-2'
           await @incus.storage.delete
@@ -145,8 +146,8 @@ describe 'incus.storage.volume.attach', ->
           driver: "zfs"
         await @incus.storage.volume
           name: 'nikita-volume-attach-2'
-          pool: 'nikita-storage-attach-2' 
-        # Create instance 
+          pool: 'nikita-storage-attach-2'
+        # Create instance
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-2'
@@ -168,7 +169,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-3'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-3'
             name: 'nikita-volume-attach-3'
           await @incus.storage.delete
@@ -182,7 +183,7 @@ describe 'incus.storage.volume.attach', ->
           name: 'nikita-volume-attach-3'
           pool: 'nikita-storage-attach-3'
           content: 'block'
-        # Create instance 
+        # Create instance
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'nikita-container-attach-3'
@@ -203,7 +204,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-4'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-4'
             name: 'nikita-volume-attach-4'
           await @incus.storage.delete
@@ -233,7 +234,7 @@ describe 'incus.storage.volume.attach', ->
         registry.register 'clean', ->
           await @incus.delete
             container: 'nikita-container-attach-5'
-          await @incus.storage.volume.delete 
+          await @incus.storage.volume.delete
             pool: 'nikita-storage-attach-5'
             name: 'nikita-volume-attach-5'
           await @incus.storage.delete

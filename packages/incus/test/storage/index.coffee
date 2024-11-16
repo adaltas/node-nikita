@@ -67,6 +67,7 @@ describe 'incus.storage', ->
         driver: 'zfs'
         properties:
           size: '10GB'
+      # Apply some changes, size is different, zfs.clone.copy is new
       {$status} = await @incus.storage
         name: 'nikita-storage-4'
         driver: 'zfs'
@@ -74,4 +75,12 @@ describe 'incus.storage', ->
           size: '20GB'
           'zfs.clone_copy': false
       $status.should.be.true()
+      # Applyl the same changes, no changes shall be detected
+      {$status} = await @incus.storage
+        name: 'nikita-storage-4'
+        driver: 'zfs'
+        properties:
+          size: '20GB'
+          'zfs.clone_copy': false
+      $status.should.be.false()
       await @clean()

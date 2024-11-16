@@ -1,3 +1,4 @@
+import { escapeshellarg as esa } from "@nikitajs/utils/string";
 // Schema
 // import definitions from "./schema.json" with { type: "json" };
 import { readFile } from "node:fs/promises";
@@ -7,19 +8,15 @@ const definitions = JSON.parse(
 
 // Action
 export default {
-  handler: async function () {
-    const { data: storages } = await this.incus.query({
-      path: `/1.0/storage-pools`,
-      query: {
-        recursion: 1,
-      },
+  handler: async function ({ config }) {
+    const { data } = await await this.incus.query({
+      $shy: false,
+      path: `/1.0/storage-pools/${config.name}`,
     });
-    return {
-      storages: storages,
-    };
+    return { data };
   },
   metadata: {
+    argument_to_config: "name",
     definitions: definitions,
-    shy: true,
   },
 };

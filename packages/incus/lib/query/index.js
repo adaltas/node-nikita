@@ -10,6 +10,13 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
+    const path = [
+      config.path,
+      Object.keys(config.path).length && "?",
+      new URLSearchParams(config.query),
+    ]
+      .filter(Boolean)
+      .join("");
     const { $status, stdout } = await this.execute({
       command: [
         "incus",
@@ -18,7 +25,7 @@ export default {
         "--request",
         config.request,
         config.data != null && `--data ${esa(JSON.stringify(config.data))}`,
-        `${config.path}?${new URLSearchParams(config.query)}`,
+        path,
       ]
         .filter(Boolean)
         .join(" "),

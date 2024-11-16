@@ -21,36 +21,31 @@ export default {
       config.properties[k] = v.toString();
     }
     // Check if exists
-    const { stdout, code } = await this.execute({
-      command: dedent`
-        incus storage show ${config.name} && exit 42
-        ${[
-          "incus",
-          "storage",
-          "create",
-          config.name,
-          config.driver,
-          ...(function () {
-            const results = [];
-            for (const key in config.properties) {
-              const value = config.properties[key];
-              results.push(`${key}='${value.replace("'", "\\'")}'`);
-            }
-            return results;
-          })(),
-        ].join(" ")}
-      `,
-      code: [0, 42],
+    const exists = await this.incus.storage
+      .exists(config.name)
+      .then(({ exists }) => exists);
+    // Create if it does not exists
+    await this.incus.query({
+      $shy: false,
+      $unless: exists,
+      path: `/1.0/storage-pools`,
+      data: {
+        config: config.properties,
+        description: config.description,
+        name: config.name,
+        driver: config.driver,
+      },
+      request: "POST",
     });
-    if (code !== 42) {
+    if (!exists) {
       return;
     }
     // Storage already exists, find the changes
     if (config.properties == null) {
       return;
     }
-    const { config: currentProperties } = yaml.load(stdout);
-    const changes = diff(currentProperties, config.properties);
+    const { data } = await this.incus.storage.show(config.name);
+    const changes = diff(data.config, config.properties);
     for (const key in changes) {
       const value = changes[key];
       await this.execute({
