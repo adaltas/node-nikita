@@ -31,12 +31,12 @@ describe("incus.storage.volume.get", function () {
             name: "nikita-volume-get-1",
             pool: "nikita-storage-get-1",
           });
-          const { $status, data } = await this.incus.storage.volume.get({
+          const { $status, volume } = await this.incus.storage.volume.get({
             pool: "nikita-storage-get-1",
             name: "nikita-volume-get-1",
           });
           $status.should.be.eql(true);
-          data.name.should.be.eql("nikita-volume-get-1");
+          volume.name.should.be.eql("nikita-volume-get-1");
         });
         try {
           await this.clean();

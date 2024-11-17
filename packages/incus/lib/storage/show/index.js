@@ -9,11 +9,11 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    const { data } = await await this.incus.query({
+    const { storage } = await await this.incus.query({
       $shy: false,
       path: `/1.0/storage-pools/${config.name}`,
     });
-    return { data };
+    return { storage };
   },
   metadata: {
     argument_to_config: "name",

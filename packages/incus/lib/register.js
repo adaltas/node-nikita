@@ -26,9 +26,6 @@ const actions = {
     init: "@nikitajs/incus/init",
     info: "@nikitajs/incus/info",
     delete: "@nikitajs/incus/delete",
-    start: "@nikitajs/incus/start",
-    state: "@nikitajs/incus/state",
-    stop: "@nikitajs/incus/stop",
     exec: "@nikitajs/incus/exec",
     file: {
       exists: "@nikitajs/incus/file/exists",
@@ -38,6 +35,9 @@ const actions = {
     },
     goodies: {
       prlimit: "@nikitajs/incus/goodies/prlimit",
+    },
+    operation: {
+      list: "@nikitajs/incus/operation/list",
     },
     network: {
       "": "@nikitajs/incus/network",
@@ -58,7 +58,12 @@ const actions = {
       exists: "@nikitajs/incus/project/exists",
       list: "@nikitajs/incus/project/list",
     },
-    running: "@nikitajs/incus/running",
+    start: "@nikitajs/incus/start",
+    state: {
+      "": "@nikitajs/incus/state",
+      running: "@nikitajs/incus/state/running",
+    },
+    stop: "@nikitajs/incus/stop",
     storage: {
       "": "@nikitajs/incus/storage",
       delete: "@nikitajs/incus/storage/delete",

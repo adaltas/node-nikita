@@ -17,7 +17,7 @@ export default {
       },
       async function () {
         const {
-          config: { processes },
+          state: { processes },
         } = await this.incus.state({
           $header: "Checking if instance is ready",
           container: config.container,
@@ -33,7 +33,7 @@ export default {
           command: dedent`
           if ( command -v systemctl || command -v rc-service ); then
             exit 0
-          else 
+          else
             exit 42
           fi
         `,

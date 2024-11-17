@@ -18,7 +18,7 @@ export default {
     if (!config.target) {
       throw Error("Invalid Option: target is required");
     }
-    const { $status } = await this.incus.running({
+    const { $status } = await this.incus.state.running({
       container: config.container,
     });
     const isContainerRunning = $status;

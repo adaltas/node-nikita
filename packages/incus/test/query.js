@@ -110,11 +110,11 @@ describe("incus.query", function () {
           const { $status } = await this.incus.query({
             path: "/1.0/instances/nikita-query-1/state",
             request: "PUT",
-            data: '{"action": "stop", "force": true}',
+            data: { action: "stop", force: true },
             wait: true,
           });
           $status.should.eql(true);
-          const result = await this.incus.running({
+          const result = await this.incus.state.running({
             container: "nikita-query-1",
           });
           result.$status.should.eql(false);

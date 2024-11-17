@@ -6,9 +6,9 @@ they = mochaThey(test.config)
 
 describe 'incus.init', ->
   return unless test.tags.incus
-  
+
   describe 'schema', ->
-  
+
     it 'Container name is between 1 and 63 characters long', ->
       nikita
       .incus.init
@@ -23,7 +23,7 @@ describe 'incus.init', ->
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
-  
+
     it 'Container name accepts letters, numbers and dashes from the ASCII table', ->
       nikita
       .incus.init
@@ -38,7 +38,7 @@ describe 'incus.init', ->
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
-  
+
     it 'Container name must not start with a digit', ->
       nikita.incus.init
         image: "images:#{test.images.alpine}"
@@ -52,7 +52,7 @@ describe 'incus.init', ->
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
-    
+
     it 'Container name must not start with a dash', ->
       nikita.incus.init
         image: "images:#{test.images.alpine}"
@@ -66,7 +66,7 @@ describe 'incus.init', ->
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
-  
+
     it 'Container name is not end with a dash', ->
       nikita
       .incus.init
@@ -81,9 +81,9 @@ describe 'incus.init', ->
           '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",'
           'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".'
         ].join ' '
-  
+
   describe 'container', ->
-  
+
     they 'Init a new container', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -96,7 +96,7 @@ describe 'incus.init', ->
           container: 'nikita-init-1'
         $status.should.be.true()
         await @clean()
-        
+
     they 'Config `start`', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -108,11 +108,11 @@ describe 'incus.init', ->
           image: "images:#{test.images.alpine}"
           container: 'nikita-init-2'
           start: true
-        {$status} = await @incus.running
+        {$status} = await @incus.state.running
           container: 'nikita-init-2'
         $status.should.be.true()
         await @clean()
-  
+
     they 'Validate name', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -125,7 +125,7 @@ describe 'incus.init', ->
           container: 'nikita-init-3'
         $status.should.be.true()
         await @clean()
-  
+
     they 'Container already exist', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -141,7 +141,7 @@ describe 'incus.init', ->
           container: 'nikita-init-4'
         $status.should.be.false()
         await @clean()
-    
+
   describe 'vm', ->
     return unless test.tags.incus_vm
 
@@ -158,21 +158,25 @@ describe 'incus.init', ->
           vm: true
         $status.should.be.true()
         await @clean()
-  
+
     they 'VM already exist', ({ssh}) ->
       nikita
         $ssh: ssh
       , ({registry}) ->
         registry.register 'clean', ->
           @incus.delete 'nikita-init-vm2', force: true
-        await @clean()
-        await @incus.init
-          image: "images:#{test.images.alpine}"
-          container: 'nikita-init-vm2'
-          vm: true
-        {$status} = await @incus.init
-          image: "images:#{test.images.alpine}"
-          container: 'nikita-init-vm2'
-          vm: true
-        $status.should.be.false()
-        await @clean()
+        registry.register 'test', ->
+          await @incus.init
+            image: "images:#{test.images.alpine}"
+            container: 'nikita-init-vm2'
+            vm: true
+          {$status} = await @incus.init
+            image: "images:#{test.images.alpine}"
+            container: 'nikita-init-vm2'
+            vm: true
+          $status.should.be.false()
+        try
+          await @clean()
+          await @test()
+        finally
+          await @clean()

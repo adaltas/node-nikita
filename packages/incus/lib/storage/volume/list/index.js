@@ -8,16 +8,19 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    let { $status, data } = await this.incus.query({
+    let { $status, data: volumes } = await this.incus.query({
       path: `/1.0/storage-pools/${config.pool}/volumes/${config.type}`,
       code: [0, 1],
+      query: {
+        recursion: "1",
+      },
     });
-    if (!Array.isArray(data)) {
-      data = []; // empty list of volumes return `{}` instead of `[]`
+    if (!Array.isArray(volumes)) {
+      volumes = []; // empty list of volumes return `{}` instead of `[]`
     }
     return {
       $status: $status,
-      list: data.map((paths) => paths.split("/").pop()),
+      volumes,
     };
   },
   metadata: {

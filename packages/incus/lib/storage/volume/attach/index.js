@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     // note, getting the volume to make sure it exists
-    const { $status: volumeExists, data: volume } =
+    const { $status: volumeExists, volume } =
       await this.incus.storage.volume.get({
         pool: config.pool,
         name: config.name,
@@ -21,7 +21,7 @@ export default {
       );
     }
     // note, getting the container to make sure it exists
-    const { $status: containerExists, data: container } = await this.incus.info(
+    const { $status: containerExists, container } = await this.incus.info(
       config.container,
       { $relax: true },
     );

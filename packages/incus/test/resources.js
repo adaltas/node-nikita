@@ -13,11 +13,11 @@ describe("incus.resources", function () {
         $ssh: ssh,
       },
       async function () {
-        const { $status, config } = await this.incus.resources();
+        const { $status, resources } = await this.incus.resources();
         $status.should.eql(true);
         ({
-          cpus: config.cpu.total.toString(),
-          memory: config.memory.total.toString(),
+          cpus: resources.cpu.total.toString(),
+          memory: resources.memory.total.toString(),
         }).should.match({
           cpus: /^\d+$/,
           memory: /^\d+$/,

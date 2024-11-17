@@ -31,11 +31,16 @@ describe("incus.storage.volume.list", function () {
             name: "nikita-volume-list-1",
             pool: "nikita-storage-list-1",
           });
-          const { $status, list } = await this.incus.storage.volume.list({
-            pool: "nikita-storage-list-1",
-          });
-          $status.should.be.eql(true);
-          list.should.containEql("nikita-volume-list-1");
+          await this.incus.storage.volume
+            .list({
+              pool: "nikita-storage-list-1",
+            })
+            .then(({ $status, volumes }) => {
+              $status.should.be.eql(true);
+              volumes
+                .map((volume) => volume.name)
+                .should.containEql("nikita-volume-list-1");
+            });
         });
         try {
           await this.clean();

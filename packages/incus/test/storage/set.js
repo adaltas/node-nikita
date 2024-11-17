@@ -30,8 +30,10 @@ describe("incus.storage.set", function () {
         });
         $status.should.be.true();
         // Ensure changes are applied
-        const { data } = await this.incus.storage.show("nikita-storage-set-1");
-        data.should.match({
+        const { volume } = await this.incus.storage.show(
+          "nikita-storage-set-1",
+        );
+        volume.should.match({
           config: {
             size: "10GiB",
             "zfs.clone_copy": "false",

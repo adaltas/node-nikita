@@ -40,11 +40,11 @@ export default {
     if (config.vm) {
       // See `agent:config` annoucement in 0.5.1
       // https://discuss.linuxcontainers.org/t/incus-0-5-1-has-been-released/18848
-      await this.execute({
-        command: dedent`
-          incus config device add ${esa(config.container)} agent disk source=agent:config
-        `,
-      });
+      // await this.execute({
+      //   command: dedent`
+      //     incus config device add ${esa(config.container)} agent disk source=agent:config
+      //   `,
+      // });
     }
     await this.incus.start({
       $if: config.start,

@@ -8,9 +8,9 @@ __dirname = new URL( '.', import.meta.url).pathname
 
 describe 'incus.cluster', ->
   return unless test.tags.incus
-  
+
   describe 'validation', ->
-    
+
     it 'validate container.image', ->
       nikita.incus.cluster
         containers:
@@ -24,7 +24,7 @@ describe 'incus.cluster', ->
             image: 'images:centos/7'
       , (->)
       .should.be.fulfilled()
-  
+
     it 'validate disk', ->
       # Source is invalid
       nikita.incus.cluster
@@ -80,10 +80,8 @@ describe 'incus.cluster', ->
         await @incus.delete
           container: 'nikita-cluster-1'
           force: true
-        await @incus.network.delete
-          network: 'nktincuspub'
-        await @incus.network.delete
-          network: 'nktincusprv'
+        await @incus.network.delete 'nktincuspub'
+        await @incus.network.delete 'nktincusprv'
       await registry.register ['test'], ->
         await @incus.cluster cluster
         {exists} = await @incus.config.device.exists
@@ -103,7 +101,7 @@ describe 'incus.cluster', ->
         await @test()
       catch err
         await @clean()
-      finally 
+      finally
         await @clean()
 
   they 'ip and ssh', ({ssh}) ->
@@ -115,8 +113,7 @@ describe 'incus.cluster', ->
         await @incus.delete
           container: 'nikita-cluster-2'
           force: true
-        await @incus.network.delete
-          network: 'nktincusprv'
+        await @incus.network.delete 'nktincusprv'
       await registry.register 'test', ({config}) ->
         await @incus.cluster
           networks:
@@ -167,10 +164,10 @@ describe 'incus.cluster', ->
             'nikita-cluster-3':
               image: "images:centos/7"
               vm: true
-              properties: 
+              properties:
                 'security.secureboot': false
               ssh: enabled: true
-        {$status} = await @incus.running
+        {$status} = await @incus.state.running
           container: 'nikita-cluster-3'
         $status.should.be.eql true
       try

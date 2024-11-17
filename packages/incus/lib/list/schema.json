@@ -2,14 +2,9 @@
   "config": {
     "type": "object",
     "properties": {
-      "filter": {
+      "type": {
         "type": "string",
-        "enum": [
-          "containers",
-          "virtual-machines",
-          "instances"
-        ],
-        "default": "instances",
+        "enum": ["container", "virtual-machine"],
         "description": "Display only one type of instances."
       }
     }

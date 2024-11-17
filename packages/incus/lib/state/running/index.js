@@ -8,19 +8,14 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    // Check if container is not already running
-    const { running } = await this.incus.state.running(config.container);
-    if (running) {
-      return false;
-    }
-    // Start the container
-    return await this.execute({
-      command: ["incus", "start", config.container].join(" "),
-      code: [0, 42],
-    });
+    const { state } = await this.incus.state(config.container);
+    return {
+      running: state.status === "Running",
+    };
   },
   metadata: {
     argument_to_config: "container",
     definitions: definitions,
+    shy: true,
   },
 };

@@ -146,11 +146,11 @@ describe("incus.storage.volume", function () {
                 size: "10GB",
               },
             });
-            const { data } = await this.incus.storage.volume.get({
+            const { volume } = await this.incus.storage.volume.get({
               pool: "nikita-storage-config-1",
               name: "nikita-volume-config-1",
             });
-            data.config.size.should.be.eql("10GB");
+            volume.config.size.should.be.eql("10GB");
           });
           try {
             await this.clean();
@@ -226,11 +226,11 @@ describe("incus.storage.volume", function () {
               pool: "nikita-storage-config-3",
               content: "block",
             });
-            const { data } = await this.incus.storage.volume.get({
+            const { volume } = await this.incus.storage.volume.get({
               pool: "nikita-storage-config-3",
               name: "nikita-volume-config-3",
             });
-            data.content_type.should.be.eql("block");
+            volume.content_type.should.be.eql("block");
           });
           try {
             await this.clean();

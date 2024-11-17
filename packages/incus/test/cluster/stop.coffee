@@ -32,10 +32,10 @@ describe 'incus.cluster.stop', ->
       await @wait time: 200
       {$status} = await @incus.cluster.stop {...cluster, wait: true}
       $status.should.be.true()
-      {config} = await @incus.state
+      {state} = await @incus.state
         container: 'nikita-cluster-stop-1'
-      config.status.should.eql 'Stopped'
-      {config} = await @incus.state
+      state.status.should.eql 'Stopped'
+      {state} = await @incus.state
         container: 'nikita-cluster-stop-2'
-      config.status.should.eql 'Stopped'
+      state.status.should.eql 'Stopped'
       await @clean()

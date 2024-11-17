@@ -29,7 +29,7 @@ export default {
     if (config.incus_target == null) {
       config.incus_target = `${path.join(config.container, config.target)}`;
     }
-    const { $status } = await this.incus.running({
+    const { $status } = await this.incus.state.running({
       container: config.container,
     });
     const isContainerRunning = $status;

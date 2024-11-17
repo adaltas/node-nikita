@@ -7,14 +7,14 @@ const definitions = JSON.parse(
 
 // Action
 export default {
-  handler: async function ({ config }) {
-    return await this.execute({
-      command: `incus list -c ns --format csv | grep '${config.container},RUNNING' || exit 42`,
-      code: [0, 42],
+  handler: async function () {
+    return this.incus.query({
+      path: `/1.0/operations`,
+      request: "DELETE",
+      code: [0, 1],
     });
   },
   metadata: {
-    argument_to_config: "container",
     definitions: definitions,
     shy: true,
   },

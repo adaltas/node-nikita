@@ -8,12 +8,12 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function () {
-    const { data, $status } = await this.incus.query({
+    const { $status, data: resources } = await this.incus.query({
       path: "/1.0/resources",
     });
     return {
       $status: $status,
-      config: data,
+      resources,
     };
   },
   metadata: {

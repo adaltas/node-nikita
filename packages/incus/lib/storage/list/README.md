@@ -1,4 +1,3 @@
-
 # `nikita.incus.storage.list`
 
 List available storage pools.
@@ -12,8 +11,8 @@ The action doesn't accept any property.
 ## Example
 
 ```js
-const {storages} = await nikita.incus.storage.list()
-console.info(`Available storages: ${storages.map(', ')}`)
+const { storages } = await nikita.incus.storage.list();
+console.info(`Available storages: ${storages.map(", ")}`);
 ```
 
 The `storages` object looks like:
@@ -28,9 +27,7 @@ The `storages` object looks like:
     },
     "description": "",
     "driver": "zfs",
-    "locations": [
-      "none"
-    ],
+    "locations": ["none"],
     "name": "default",
     "status": "Created",
     "used_by": [
@@ -48,9 +45,7 @@ The `storages` object looks like:
     },
     "description": "",
     "driver": "zfs",
-    "locations": [
-      "none"
-    ],
+    "locations": ["none"],
     "name": "nikita-storage-list-1",
     "status": "Created",
     "used_by": null

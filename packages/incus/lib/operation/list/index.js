@@ -7,15 +7,14 @@ const definitions = JSON.parse(
 
 // Action
 export default {
-  handler: async function ({ config }) {
-    const { $status, data: volume } = await this.incus.query({
-      path: `/1.0/storage-pools/${config.pool}/volumes/${config.type}/${config.name}`,
-      code: [0, 1],
+  handler: async function () {
+    const { data: operations } = await this.incus.query({
+      path: `/1.0/operations`,
+      query: {
+        recursion: "1",
+      },
     });
-    return {
-      $status: $status,
-      volume,
-    };
+    return { $status: true, operations };
   },
   metadata: {
     definitions: definitions,

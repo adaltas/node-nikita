@@ -11,19 +11,19 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     // Current configuration retrieval
-    const { data } = await this.incus.storage.show(config.name);
+    const { storage } = await this.incus.storage.show(config.name);
     // Change detection
-    const changes = diff(data.config, config.properties);
+    const changes = diff(storage.config, config.properties);
     if (!Object.keys(changes).length) return false;
     // Changes persistence
     await this.incus.query({
       path: `/1.0/storage-pools/${config.name}`,
       data: {
         config: {
-          ...data.config,
+          ...storage.config,
           ...config.properties,
         },
-        description: config.description ?? data.description,
+        description: config.description ?? storage.description,
       },
       request: "PUT",
     });

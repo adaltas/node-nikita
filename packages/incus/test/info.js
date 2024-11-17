@@ -7,7 +7,7 @@ const they = mochaThey(test.config);
 describe("incus.info", function () {
   if (!test.tags.incus) return;
 
-  they("argument is a string", function ({ ssh }) {
+  they("argument is a string", function () {
     return nikita.incus.info("nikita-info-1", function ({ config }) {
       return config.container.should.eql("nikita-info-1");
     });
@@ -29,7 +29,7 @@ describe("incus.info", function () {
         });
         await this.incus
           .info("nikita-info-2")
-          .should.finally.match({ data: { name: "nikita-info-2" } });
+          .should.finally.match({ container: { name: "nikita-info-2" } });
         await this.clean();
       },
     );

@@ -12,7 +12,6 @@ describe("incus.cluster.delete", function () {
     return nikita(
       {
         $ssh: ssh,
-        $debug: true,
       },
       async function ({ registry }) {
         const cluster = {
@@ -52,22 +51,28 @@ describe("incus.cluster.delete", function () {
         });
         await registry.register("test", async function () {
           await this.incus.cluster(cluster);
-          const { list } = await this.incus.list({
-            filter: "containers",
-          });
           const { $status } = await this.incus.cluster.delete({
             ...cluster,
             force: true,
           });
           $status.should.be.true();
           // Containers and network shall no longer exist
-          list.should.not.containEql("nikita-cluster-del-1");
-          list.should.not.containEql("nikita-cluster-del-2");
-          const { list: networkList } = await this.incus.network.list();
-          networkList.should.not.containEql("nktincuspub");
+          const instances = await this.incus
+            .list({
+              filter: "containers",
+            })
+            .then(({ instances }) =>
+              instances.map((instance) => instance.name),
+            );
+          instances.should.not.containEql("nikita-cluster-del-1");
+          instances.should.not.containEql("nikita-cluster-del-2");
+          const networks = await this.incus.network
+            .list()
+            .then(({ networks }) => networks.map((network) => network.name));
+          networks.should.not.containEql("nktincuspub");
         });
         try {
-          await this.clean();
+          // await this.clean();
           await this.test();
         } finally {
           await this.clean();

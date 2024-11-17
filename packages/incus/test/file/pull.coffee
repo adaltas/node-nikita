@@ -13,7 +13,7 @@ they = mochaThey(test.config)
 
 describe 'incus.file.pull', ->
   return unless test.tags.incus
-    
+
   they 'require openssl', ({ssh}) ->
     nikita
       $ssh: ssh
@@ -33,12 +33,12 @@ describe 'incus.file.pull', ->
           target: "#{tmpdir}"
         .should.be.rejectedWith
           code: 'NIKITA_LXD_FILE_PULL_MISSING_OPENSSL'
-      try 
+      try
           await @clean()
           await @test()
         catch err
           await @clean()
-        finally 
+        finally
           await @clean()
 
   they 'should pull a file from a remote server', ({ssh})  ->
@@ -48,19 +48,14 @@ describe 'incus.file.pull', ->
         $tmpdir: true
       , ({metadata: {tmpdir}, registry}) ->
         await registry.register 'clean', ->
-          await @incus.delete 
-            container: 'nikita-file-pull-2'
-            force: true
-          await @incus.network.delete
-            network: 'nktincuspub'
+          await @incus.delete 'nikita-file-pull-2', force: true
+          await @incus.network.delete 'nktincuspub'
         await registry.register 'test', ->
           # creating network
-          await @incus.network
-            network: 'nktincuspub'
-            properties:
-              'ipv4.address': '10.10.40.1/24'
-              'ipv4.nat': true
-              'ipv6.address': 'none'
+          await @incus.network 'nktincuspub', properties:
+            'ipv4.address': '10.10.40.1/24'
+            'ipv4.nat': true
+            'ipv6.address': 'none'
           # creating a container
           await @incus.init
             image: "images:#{test.images.alpine}"
@@ -73,7 +68,7 @@ describe 'incus.file.pull', ->
           # attaching network
           await @incus.network.attach
             container: 'nikita-file-pull-2'
-            network: 'nktincuspub'
+            name: 'nktincuspub'
           # adding openssl for file pull
           await @incus.exec
             $retry: 100
@@ -92,10 +87,10 @@ describe 'incus.file.pull', ->
           {exists} = await @fs.exists
             target: "#{tmpdir}/file.sh"
           exists.should.be.eql true
-        try 
+        try
           await @clean()
           await @test()
         catch err
           await @clean()
-        finally 
+        finally
           await @clean()

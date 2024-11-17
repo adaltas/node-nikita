@@ -5,7 +5,7 @@ import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
 describe 'incus.file.push', ->
-  
+
   describe 'schema', ->
     return unless test.tags.api
 
@@ -26,10 +26,10 @@ describe 'incus.file.push', ->
         mode: '700'
       , ({config}) ->
         config.mode.should.eql 0o0700
-  
+
   describe 'usage', ->
     return unless test.tags.incus
-    
+
     they 'require openssl', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -58,11 +58,11 @@ describe 'incus.file.push', ->
         $tmpdir: true
       , ({metadata: {tmpdir}, registry}) ->
         await registry.register 'clean', ->
-          await @incus.delete 
+          await @incus.delete
             container: 'nikita-file-push-2'
             force: true
           await @incus.network.delete
-            network: 'nktincuspub'
+            name: 'nktincuspub'
         await registry.register 'test', ->
           # creating network
           await @incus.network
@@ -83,7 +83,7 @@ describe 'incus.file.push', ->
           # attaching network
           await @incus.network.attach
             container: 'nikita-file-push-2'
-            network: 'nktincuspub'
+            name: 'nktincuspub'
           # adding openssl for file push
           await @incus.exec
             $retry: 100
@@ -102,12 +102,12 @@ describe 'incus.file.push', ->
             container: 'nikita-file-push-2'
             target: '/root/a_file'
           $status.should.be.true()
-        try 
+        try
           await @clean()
           await @test()
         catch err
           await @clean()
-        finally 
+        finally
           await @clean()
 
     they 'the same file', ({ssh}) ->
@@ -139,7 +139,7 @@ describe 'incus.file.push', ->
           target: '/root/a_file'
         $status.should.be.false()
         await @clean()
-  
+
   describe 'content', ->
     return unless test.tags.incus
 
@@ -194,10 +194,10 @@ describe 'incus.file.push', ->
           content: 'something'
         $status.should.be.false()
         await @clean()
-  
+
   describe 'mode', ->
     return unless test.tags.incus
-    
+
     they 'absolute mode', ({ssh}) ->
       nikita
         $ssh: ssh
@@ -224,4 +224,3 @@ describe 'incus.file.push', ->
           trim: true
         stdout.should.match /^-rwx------\s+/
         await @clean()
-  

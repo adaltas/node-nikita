@@ -1,14 +1,14 @@
 
 import nikita from '@nikitajs/core'
-import test from './test.coffee'
+import test from '../test.coffee'
 import mochaThey from 'mocha-they'
 they = mochaThey(test.config)
 
-describe 'incus.running', ->
+describe 'incus.test.running', ->
   return unless test.tags.incus
 
   they 'argument is a string', ({ssh}) ->
-    await nikita.incus.running 'nikita-running-1', ({config}) ->
+    await nikita.incus.state.running 'nikita-running-1', ({config}) ->
       config.container.should.eql 'nikita-running-1'
 
   they 'Running container', ({ssh}) ->
@@ -22,7 +22,7 @@ describe 'incus.running', ->
         image: "images:#{test.images.alpine}"
         container: 'nikita-running-2'
         start: true
-      {$status} = await @incus.running
+      {$status} = await @incus.test.running
         container: 'nikita-running-2'
       $status.should.be.true()
       await @clean()
@@ -37,7 +37,7 @@ describe 'incus.running', ->
       await @incus.init
         image: "images:#{test.images.alpine}"
         container: 'nikita-running-3'
-      {$status} = await @incus.running
+      {$status} = await @incus.test.running
         container: 'nikita-running-3'
       $status.should.be.false()
       await @clean()

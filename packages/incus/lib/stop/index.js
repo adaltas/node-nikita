@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     // Check if container is running
-    const { $status: running } = await this.incus.running(config.container);
+    const { running } = await this.incus.state.running(config.container);
     if (!running) {
       return false;
     }

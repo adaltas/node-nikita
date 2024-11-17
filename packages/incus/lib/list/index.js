@@ -8,12 +8,18 @@ const definitions = JSON.parse(
 // ## Exports
 export default {
   handler: async function ({ config }) {
-    const { data } = await this.incus.query({
+    let { data: instances } = await this.incus.query({
       $shy: false,
-      path: `/1.0/${config.filter}`,
+      path: `/1.0/instances`,
+      query: {
+        recursion: "1",
+      },
     });
+    if (config.type) {
+      instances = instances.filter((instance) => instance.type === config.type);
+    }
     return {
-      list: data.map((line) => line.split("/").pop()),
+      instances,
     };
   },
   metadata: {
