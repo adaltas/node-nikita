@@ -21,15 +21,17 @@ describe("incus.network.set", function () {
           .set("nkt-set-modify", {
             properties: { "ipv4.nat": false },
           })
-          .then(({ $status }) => $status)
-          .should.finally.be.true();
+          .should.finally.match({
+            $status: true,
+          });
         // Status is false when no modification
         await this.incus.network
           .set("nkt-set-modify", {
             properties: { "ipv4.nat": false },
           })
-          .then(({ $status }) => $status)
-          .should.finally.be.false();
+          .should.finally.match({
+            $status: false,
+          });
       });
       try {
         await this.clean();

@@ -29,7 +29,7 @@ describe("incus.network.show", function () {
         await this.incus.network("nkt-show");
         await this.incus.network
           .show("nkt-show")
-          .then(({ data }) => data)
+          .then(({ network }) => network)
           .should.finally.match({
             config: { "ipv4.nat": "true" },
             description: "",

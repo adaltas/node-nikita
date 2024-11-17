@@ -10,7 +10,7 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    const { data } = await this.incus
+    const { data: network } = await this.incus
       .query({
         path: `/1.0/networks/${config.name}`,
       })
@@ -21,7 +21,7 @@ export default {
           `or an unexpected error occured.`,
         ]);
       });
-    return { data };
+    return { network };
   },
   metadata: {
     argument_to_config: "name",

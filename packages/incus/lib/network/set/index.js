@@ -15,19 +15,19 @@ export default {
       config.properties[key] = config.properties[key].toString();
     }
     // Current configuration retrieval
-    const { data } = await this.incus.network.show(config.name);
+    const { network } = await this.incus.network.show(config.name);
     // Change detection
-    const changes = diff(data.config, config.properties);
+    const changes = diff(network.config, config.properties);
     if (!Object.keys(changes).length) return false;
     // Changes persistence
     await this.incus.query({
       path: `/1.0/networks/${config.name}`,
       data: {
         config: {
-          ...data.config,
+          ...network.config,
           ...config.properties,
         },
-        description: config.description ?? data.description,
+        description: config.description ?? network.description,
       },
       request: "PUT",
     });

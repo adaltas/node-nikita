@@ -1,18 +1,23 @@
 
-# `nikita.incus.list`
+# `nikita.incus.set`
 
-List the networks managed by LXD.
+Set Incus network configuration properties.
 
 ## Example
 
 ```js
-const { data } = await nikita.incus.network.show();
-console.info(`LXD networks: ${list}`);
+const { $status } = await nikita.incus.network.set({
+  name: "my-network",
+  properites: {
+    "ipv4.nat": "true"
+  }
+});
+console.info(`Network configuration changed:`, $status);
 ```
 
-## Incus output
+## Incus output example
 
-Incus output is available in the `data` returned property. Here is an example
+Incus output is available in the `network` returned property.
 
 ```json
 {
