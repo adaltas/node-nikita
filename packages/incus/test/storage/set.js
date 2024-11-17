@@ -1,5 +1,5 @@
 import nikita from "@nikitajs/core";
-import test from "../test.coffee";
+import test from "../test.js";
 import mochaThey from "mocha-they";
 
 const they = mochaThey(test.config);
@@ -30,10 +30,10 @@ describe("incus.storage.set", function () {
         });
         $status.should.be.true();
         // Ensure changes are applied
-        const { volume } = await this.incus.storage.show(
+        const { storage } = await this.incus.storage.show(
           "nikita-storage-set-1",
         );
-        volume.should.match({
+        storage.should.match({
           config: {
             size: "10GiB",
             "zfs.clone_copy": "false",

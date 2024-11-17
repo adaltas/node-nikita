@@ -183,12 +183,12 @@ export default {
                   $header: "Create",
                   container: containerName,
                   command: dedent`
-                id ${userName} && exit 42
-                useradd --create-home --system ${userName}
-                mkdir -p /home/${userName}/.ssh
-                chown ${userName}.${userName} /home/${userName}/.ssh
-                chmod 700 /home/${userName}/.ssh
-              `,
+                    id ${userName} && exit 42
+                    useradd --create-home --system ${userName}
+                    mkdir -p /home/${userName}/.ssh
+                    chown ${userName}.${userName} /home/${userName}/.ssh
+                    chmod 700 /home/${userName}/.ssh
+                  `,
                   trap: true,
                   code: [0, 42],
                 });
@@ -198,11 +198,11 @@ export default {
                   $header: "Sudo",
                   container: containerName,
                   command: dedent`
-                yum install -y sudo
-                command -v sudo
-                cat /etc/sudoers | grep "${userName}" && exit 42
-                echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-              `,
+                    yum install -y sudo
+                    command -v sudo
+                    cat /etc/sudoers | grep "${userName}" && exit 42
+                    echo "${userName} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+                  `,
                   trap: true,
                   code: [0, 42],
                 });

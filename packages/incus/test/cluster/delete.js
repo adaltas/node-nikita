@@ -1,5 +1,5 @@
 import nikita from "@nikitajs/core";
-import test from "../test.coffee";
+import test from "../test.js";
 import mochaThey from "mocha-they";
 
 const they = mochaThey(test.config);
@@ -7,7 +7,7 @@ const they = mochaThey(test.config);
 describe("incus.cluster.delete", function () {
   if (!test.tags.incus) return;
 
-  they.only("delete a cluster", function ({ ssh }) {
+  they("delete a cluster", function ({ ssh }) {
     this.timeout(-1); // yum install take a lot of time
     return nikita(
       {
@@ -59,7 +59,7 @@ describe("incus.cluster.delete", function () {
           // Containers and network shall no longer exist
           const instances = await this.incus
             .list({
-              filter: "containers",
+              type: "container",
             })
             .then(({ instances }) =>
               instances.map((instance) => instance.name),
@@ -185,13 +185,13 @@ describe("incus.cluster.delete", function () {
               force: true,
             });
             $status.should.be.true();
-            const { list } = await this.incus.list({
-              filter: "containers",
+            const { instances } = await this.incus.list({
+              type: "container",
             });
-            list.should.not.containEql("nikita-cluster-del-1");
-            list.should.not.containEql("nikita-cluster-del-2");
-            const { list: networkList } = await this.incus.network.list();
-            networkList.should.not.containEql("nktincuspub");
+            instances.should.not.containEql("nikita-cluster-del-1");
+            instances.should.not.containEql("nikita-cluster-del-2");
+            const { networks } = await this.incus.network.list();
+            networks.should.not.containEql("nktincuspub");
           });
           try {
             await this.clean();

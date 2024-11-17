@@ -1,5 +1,5 @@
 import nikita from "@nikitajs/core";
-import test from "./test.coffee";
+import test from "./test.js";
 import mochaThey from "mocha-they";
 const they = mochaThey(test.config);
 
@@ -114,10 +114,10 @@ describe("incus.query", function () {
             wait: true,
           });
           $status.should.eql(true);
-          const result = await this.incus.state.running({
+          const { running } = await this.incus.state.running({
             container: "nikita-query-1",
           });
-          result.$status.should.eql(false);
+          running.should.eql(false);
           await this.clean();
         },
       );

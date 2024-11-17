@@ -1,5 +1,5 @@
 import nikita from "@nikitajs/core";
-import test from "../../test.coffee";
+import test from "../../test.js";
 import mochaThey from "mocha-they";
 
 const they = mochaThey(test.config);

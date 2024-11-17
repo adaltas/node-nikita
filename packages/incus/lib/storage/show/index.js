@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    const { storage } = await await this.incus.query({
+    const { data: storage } = await await this.incus.query({
       $shy: false,
       path: `/1.0/storage-pools/${config.name}`,
     });
