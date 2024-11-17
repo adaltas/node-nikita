@@ -12,20 +12,34 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     //Build command
-    const command_attach = [
-      "incus",
-      "network",
-      "attach",
-      esa(config.network),
-      esa(config.container),
-    ].join(" ");
-    //Execute
+    const { exists } = await this.incus.config.device.exists({
+      container: config.container,
+      device: config.name,
+    });
+    if (exists) return false;
+    // const { data } = await this.incus.info(config.container);
+    // const res = await this.incus.query({
+    //   path: `/1.0/instances/${config.container}`,
+    //   request: "PUT",
+    //   data: {
+    //     devices: {
+    //       ...data.devices,
+    //       [config.name]: {
+    //         network: config.name,
+    //         type: "nic",
+    //       },
+    //     },
+    //   },
+    // });
+    // console.log(res);
     return await this.execute({
-      command: dedent`
-        incus config device list ${esa(config.container)} | grep ${esa(config.network)} && exit 42
-        ${command_attach}
-      `,
-      code: [0, 42],
+      command: [
+        "incus",
+        "network",
+        "attach",
+        esa(config.name),
+        esa(config.container),
+      ].join(" "),
     });
   },
   metadata: {

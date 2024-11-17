@@ -9,13 +9,14 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     return await this.incus.query({
-      path: `/1.0/networks/${config.network}`,
+      path: `/1.0/networks/${config.name}`,
       request: "DELETE",
       format: "string",
       code: [0, 1],
     });
   },
   metadata: {
+    argument_to_config: "name",
     definitions: definitions,
   },
 };

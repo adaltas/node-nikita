@@ -12,7 +12,7 @@ Attach an existing network to a container.
 
 ```js
 const {$status} = await nikita.incus.network.attach({
-  network: 'network0',
+  name: 'network0',
   container: 'container1'
 })
 console.info(`Network was attached: ${$status}`)

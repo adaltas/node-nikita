@@ -24,7 +24,7 @@ export default {
     for (const name in config.networks) {
       await this.incus.network.delete({
         $header: `Network ${name} : delete`,
-        network: name,
+        name: name,
       });
     }
     return {};

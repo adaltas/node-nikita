@@ -6,17 +6,18 @@
         "type": "string",
         "description": "Information describing the storage pool."
       },
-      "name": {
-        "type": "string",
-        "description": "The name of the storage to create or update."
-      },
       "driver": {
         "type": "string",
         "enum": ["btrfs", "ceph", "cephfs", "dir", "lvm", "zfs"],
         "description": "The underlying driver name. Can be btrfs, ceph, cephfs, dir, lvm, zfs."
       },
+      "name": {
+        "type": "string",
+        "description": "The name of the storage to create or update."
+      },
       "properties": {
         "type": "object",
+        "default": {},
         "patternProperties": {
           "": {
             "type": ["string", "boolean", "number"]

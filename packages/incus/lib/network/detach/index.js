@@ -10,10 +10,16 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
+    const { exists } = await this.incus.config.device.exists({
+      container: config.container,
+      device: config.name,
+    });
+    if (!exists) return false;
+    // console.log(${["incus", "network", "detach", config.name, config.container].join(" ")})
+    // process.exit()
     const { $status } = await this.execute({
       command: dedent`
-        incus config device list ${config.container} | grep ${config.network} || exit 42
-        ${["incus", "network", "detach", config.network, config.container].join(" ")}
+        ${["incus", "network", "detach", config.name, config.container].join(" ")}
       `,
       code: [0, 42],
     });

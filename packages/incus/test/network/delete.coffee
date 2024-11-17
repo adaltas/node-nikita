@@ -12,21 +12,22 @@ describe 'incus.network.delete', ->
       $ssh: ssh
     , ->
       await @incus.network
-        network: "nkt-delete-1"
+        name: "nkt-delete-1"
       {$status} = await @incus.network.delete
-        network: "nkt-delete-1"
+        name: "nkt-delete-1"
       $status.should.be.true()
-      {list} = await @incus.network.list()
-      list.should.not.containEql 'nkt-delete-1'
-          
+      await @incus.network.list()
+        .then ({networks}) => networks.map (network) => network.name
+        .should.finally.not.containEql 'nkt-delete-1'
+
   they 'Network already deleted', ({ssh}) ->
     nikita
       $ssh: ssh
     , ->
       await @incus.network
-        network: "nkt-delete-2"
+        name: "nkt-delete-2"
       await @incus.network.delete
-        network: "nkt-delete-2"
+        name: "nkt-delete-2"
       {$status} = await @incus.network.delete
-        network: "nkt-delete-2"
+        name: "nkt-delete-2"
       $status.should.be.false()

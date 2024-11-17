@@ -2,7 +2,7 @@
   "config": {
     "type": "object",
     "properties": {
-      "network": {
+      "name": {
         "type": "string",
         "description": "The network name to attach."
       },
@@ -10,9 +10,6 @@
         "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
       }
     },
-    "required": [
-      "network",
-      "container"
-    ]
+    "required": ["name", "container"]
   }
 }

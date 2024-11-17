@@ -1,16 +1,15 @@
-
 # `nikita.incus.info`
 
-Obtain container information.
+Retrieve detailed container information.
 
 ## Output
 
-* `container`
+- `container`
   Information object returned by LXD.
 
 ## Short usage example
 
 ```js
-const {container} = await nikita.incus.info("my_container")
-console.info("Container information:", JSON.stringify(container, null, 2))
+const { data } = await nikita.incus.info("my_container");
+console.info("Container information:", JSON.stringify(data, null, 2));
 ```

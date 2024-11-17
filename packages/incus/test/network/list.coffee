@@ -13,18 +13,19 @@ describe 'incus.network.list', ->
     , ({registry}) ->
       registry.register 'clean', ->
         await @incus.network.delete
-          network: 'nkttestnetlist'
+          name: 'nkttestnetlist'
       registry.register 'test', ->
         await @incus.network
-          network: 'nkttestnetlist'
+          name: 'nkttestnetlist'
           properties:
             'ipv4.address': '192.0.2.1/30'
             'dns.domain': 'nikita.net.test'
-        {$status, list} = await @incus.network.list()
-        $status.should.be.true()
-        list.should.containEql 'nkttestnetlist'
-      try 
+        await @incus.network.list()
+          .then ({$status, networks}) =>
+            $status.should.be.true()
+            networks.map( (network) => network.name).should.containEql 'nkttestnetlist'
+      try
         await @clean()
         await @test()
-      finally 
+      finally
         await @clean()

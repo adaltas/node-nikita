@@ -16,16 +16,16 @@ describe 'incus.network.attach', ->
           container: 'u0'
           force: true
         await @incus.network.delete
-          network: "nkt-attach-1"
+          name: "nkt-attach-1"
       try
         await @clean()
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'u0'
         await @incus.network
-          network: "nkt-attach-1"
+          name: "nkt-attach-1"
         {$status} = await @incus.network.attach
-          network: "nkt-attach-1"
+          name: "nkt-attach-1"
           container: "u0"
         $status.should.be.true()
       finally
@@ -40,19 +40,19 @@ describe 'incus.network.attach', ->
           container: 'u0'
           force: true
         await @incus.network.delete
-          network: "nkt-attach-2"
+          name: "nkt-attach-2"
       await @clean()
       try
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'u0'
         await @incus.network
-          network: "nkt-attach-2"
+          name: "nkt-attach-2"
         await @incus.network.attach
-          network: "nkt-attach-2"
+          name: "nkt-attach-2"
           container: "u0"
         {$status} = await @incus.network.attach
-          network: "nkt-attach-2"
+          name: "nkt-attach-2"
           container: "u0"
         $status.should.be.false()
       finally

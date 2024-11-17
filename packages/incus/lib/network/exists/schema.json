@@ -4,7 +4,7 @@
     "properties": {
       "name": {
         "$ref": "module://@nikitajs/incus/network#/definitions/config/properties/name",
-        "description": "Name of the network to delete."
+        "description": "The network name to check."
       }
     },
     "required": ["name"]

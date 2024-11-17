@@ -6,22 +6,22 @@ they = mochaThey(test.config)
 
 describe 'incus.network.create', ->
   return unless test.tags.incus
-  
+
   they 'schema dns.domain valid', ({ssh}) ->
     nikita
       $ssh: ssh
     .incus.network
-      network: "nkt-network-1"
+      name: "nkt-network-1"
       properties:
         'ipv4.address': '192.0.2.1/30'
         'dns.domain': 'nikita.local'
       $handler: (->)
-            
+
   they 'schema dns.domain invalid', ({ssh}) ->
     nikita
       $ssh: ssh
     .incus.network
-      network: "nkt-network-1"
+      name: "nkt-network-1"
       properties:
         'ipv4.address': '192.0.2.1/30'
         'dns.domain': '(oo)'
@@ -34,11 +34,11 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-2"
+          name: "nkt-network-2"
       try
         await @clean()
         {$status} = await @incus.network
-          network: "nkt-network-2"
+          name: "nkt-network-2"
         $status.should.be.true()
       finally
         await @clean()
@@ -49,10 +49,10 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-3"
+          name: "nkt-network-3"
       try
         {$status} = await @incus.network
-          network: "nkt-network-3"
+          name: "nkt-network-3"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': false
@@ -67,12 +67,12 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-4"
+          name: "nkt-network-4"
       try
         await @incus.network
-          network: "nkt-network-4"
+          name: "nkt-network-4"
         {$status} = await @incus.network
-          network: "nkt-network-4"
+          name: "nkt-network-4"
         $status.should.be.false()
       finally
         await @clean()
@@ -83,12 +83,12 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-5"
+          name: "nkt-network-5"
       try
         await @incus.network
-          network: "nkt-network-5"
+          name: "nkt-network-5"
         {$status} = await @incus.network
-          network: "nkt-network-5"
+          name: "nkt-network-5"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': false
@@ -102,22 +102,22 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-6"
+          name: "nkt-network-6"
       try
         {$status} = await @incus.network
-          network: "nkt-network-6"
+          name: "nkt-network-6"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': true
         $status.should.be.true()
         {$status} = await @incus.network
-          network: "nkt-network-6"
+          name: "nkt-network-6"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': true
         $status.should.be.false()
         {$status} = await @incus.network
-          network: "nkt-network-6"
+          name: "nkt-network-6"
           properties:
             'ipv4.address': "192.0.2.1/30"
             'ipv4.dhcp': false
@@ -131,14 +131,14 @@ describe 'incus.network.create', ->
     , ({registry}) ->
       await registry.register 'clean', ->
         await @incus.network.delete
-          network: "nkt-network-7"
+          name: "nkt-network-7"
       try
         await @incus.network
-          network: "nkt-network-7"
+          name: "nkt-network-7"
           properties:
             'ipv4.address': "192.0.2.1/30"
         {$status} = await @incus.network
-          network: "nkt-network-7"
+          name: "nkt-network-7"
           properties:
             'ipv4.address': "192.0.2.1/30"
         $status.should.be.false()

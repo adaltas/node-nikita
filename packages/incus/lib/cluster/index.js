@@ -15,11 +15,11 @@ export default {
       await this.call(config, config.prevision);
     }
     // Create a network
-    for (const networkName in config.networks) {
-      const networkProperties = config.networks[networkName];
+    for (const name in config.networks) {
+      const networkProperties = config.networks[name];
       await this.incus.network({
-        $header: `Network ${networkName}`,
-        network: networkName,
+        $header: `Network ${name}`,
+        name: name,
         properties: networkProperties,
       });
     }

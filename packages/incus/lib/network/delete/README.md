@@ -12,7 +12,7 @@ Delete an existing incus network.
 
 ```js
 const {$status} = await nikita.incus.network.delete({
-  network: 'network0'
+  name: 'network0'
 })
 console.info(`Network was deleted: ${$status}`)
 ```

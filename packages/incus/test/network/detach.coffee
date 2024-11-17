@@ -16,21 +16,23 @@ describe 'incus.network.detach', ->
           container: 'u0'
           force: true
         await @incus.network.delete
-          network: "nkt-detach-1"
-      try
-        await @clean()
+          name: "nkt-detach-1"
+      await registry.register 'test', ->
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'u0'
         await @incus.network
-          network: "nkt-detach-1"
+          name: "nkt-detach-1"
         await @incus.network.attach
-          network: "nkt-detach-1"
+          name: "nkt-detach-1"
           container: "u0"
         {$status} = await @incus.network.detach
-          network: "nkt-detach-1"
+          name: "nkt-detach-1"
           container: "u0"
         $status.should.be.true()
+      try
+        await @clean()
+        await @test()
       finally
         await @clean()
 
@@ -43,16 +45,16 @@ describe 'incus.network.detach', ->
           container: 'u0'
           force: true
         await @incus.network.delete
-          network: "nkt-detach-2"
+          name: "nkt-detach-2"
       try
         await @clean()
         await @incus.init
           image: "images:#{test.images.alpine}"
           container: 'u0'
         await @incus.network
-          network: "nkt-detach-2"
+          name: "nkt-detach-2"
         {$status} = await @incus.network.detach
-          network: "nkt-detach-2"
+          name: "nkt-detach-2"
           container: "u0"
         $status.should.be.false()
       finally

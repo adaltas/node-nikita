@@ -1,0 +1,11 @@
+{
+  "config": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "$ref": "module://@nikitajs/incus/network#/definitions/config/properties/name"
+      }
+    },
+    "required": ["name"]
+  }
+}

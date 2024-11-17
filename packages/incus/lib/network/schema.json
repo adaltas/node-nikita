@@ -2,7 +2,11 @@
   "config": {
     "type": "object",
     "properties": {
-      "network": {
+      "description": {
+        "type": "string",
+        "description": "Information describing the storage pool."
+      },
+      "name": {
         "type": "string",
         "description": "The network name to create."
       },
@@ -16,18 +20,20 @@
             "description": "Domain to advertise to DHCP clients and use for DNS resolution. Note, single label domains like `nikita` are supported by LXD but are not valid. For exemple, FreeIPA will fail to Initialize. Use `nikita.local` instead."
           },
           ".*": {
-            "type": [
-              "string",
-              "boolean",
-              "number"
-            ]
+            "type": ["string", "boolean", "number"]
           }
         },
         "description": "The network configuration, see [available fields](https://incus.readthedocs.io/en/latest/networks/)."
+      },
+      "target": {
+        "type": "string",
+        "description": "The cluster member name."
+      },
+      "type": {
+        "type": "string",
+        "description": "The network type."
       }
     },
-    "required": [
-      "network"
-    ]
+    "required": ["name"]
   }
 }
