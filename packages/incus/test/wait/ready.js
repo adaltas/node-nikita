@@ -16,7 +16,7 @@ describe("incus.wait.ready", function () {
         async function ({ registry }) {
           await registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-wait-1",
+              name: "nikita-wait-1",
               force: true,
             });
           });
@@ -24,7 +24,7 @@ describe("incus.wait.ready", function () {
           await registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-wait-1",
+              name: "nikita-wait-1",
               start: true,
             });
             const { $status } = await this.incus.wait.ready("nikita-wait-1");
@@ -54,7 +54,7 @@ describe("incus.wait.ready", function () {
         async function ({ registry }) {
           await registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-wait-2",
+              name: "nikita-wait-2",
               force: true,
             });
           });
@@ -62,7 +62,7 @@ describe("incus.wait.ready", function () {
           await registry.register("test", async function () {
             await this.incus.init({
               image: "images:ubuntu/24.04",
-              container: "nikita-wait-2",
+              name: "nikita-wait-2",
               vm: true,
               config: {
                 "security.secureboot": false,
@@ -92,7 +92,7 @@ describe("incus.wait.ready", function () {
         async function ({ registry }) {
           await registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-wait-3",
+              name: "nikita-wait-3",
               force: true,
             });
           });
@@ -100,7 +100,7 @@ describe("incus.wait.ready", function () {
           await registry.register("test", async function () {
             await this.incus.init({
               image: "images:ubuntu/24.04",
-              container: "nikita-wait-3",
+              name: "nikita-wait-3",
               vm: true,
               config: {
                 "security.secureboot": false,
@@ -109,7 +109,7 @@ describe("incus.wait.ready", function () {
             });
             await this.incus.wait.ready("nikita-wait-3");
             const { $status } = await this.incus.exec({
-              container: "nikita-wait-3",
+              name: "nikita-wait-3",
               command: 'echo "hello"',
             });
             $status.should.be.true();
@@ -134,7 +134,7 @@ describe("incus.wait.ready", function () {
         async function ({ registry }) {
           await registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-wait-4",
+              name: "nikita-wait-4",
               force: true,
             });
           });
@@ -142,7 +142,7 @@ describe("incus.wait.ready", function () {
           await registry.register("test", async function () {
             await this.incus.init({
               image: "images:ubuntu/24.04",
-              container: "nikita-wait-4",
+              name: "nikita-wait-4",
               vm: true,
               config: {
                 "security.secureboot": false,
@@ -150,7 +150,7 @@ describe("incus.wait.ready", function () {
               start: true,
             });
             await this.incus.exec({
-              container: "nikita-wait-4",
+              name: "nikita-wait-4",
               command: 'echo "hello"',
             });
           });

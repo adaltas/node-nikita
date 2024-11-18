@@ -7,7 +7,7 @@ Push files into containers.
 
 ```js
 const {$status} = await nikita.incus.file.push({
-  container: 'my_container',
+  name: 'my-container',
   source: `#{scratch}/a_file`,
   target: '/root/a_file'
 })

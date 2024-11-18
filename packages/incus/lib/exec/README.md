@@ -1,19 +1,19 @@
-
 # `nikita.incus.exec`
 
-Execute command in containers.
+Execute a command inside the targeted container.
 
 ## Example
 
 ```js
-const {$status, stdout, stderr} = await nikita.incus.exec({
-  container: "my-container",
-  command: "whoami"
-})
-console.info(`Command was executed: ${$status}`)
-console.info(stdout)
+const { $status, stdout, stderr } = await nikita.incus.exec({
+  name: "my-container",
+  command: "whoami",
+});
+console.info(`Command was executed: ${$status}`);
+console.info("stdout:", stdout);
+console.info("stderr:", stderr);
 ```
 
 ## Todo
 
-* Support `env` option
+- Support `env` option

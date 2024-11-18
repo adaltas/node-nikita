@@ -11,7 +11,7 @@ describe("incus.test.running", function () {
     return nikita.incus.state.running(
       "nikita-running-1",
       function ({ config }) {
-        return config.container.should.eql("nikita-running-1");
+        return config.name.should.eql("nikita-running-1");
       },
     );
   });
@@ -28,13 +28,13 @@ describe("incus.test.running", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-running-2",
+            name: "nikita-running-2",
             start: true,
           });
-          const { $status } = await this.incus.state.running({
-            container: "nikita-running-2",
+          const { running } = await this.incus.state.running({
+            name: "nikita-running-2",
           });
-          $status.should.be.true();
+          running.should.be.true();
         });
         try {
           await this.clean();
@@ -58,10 +58,10 @@ describe("incus.test.running", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-running-3",
+            name: "nikita-running-3",
           });
           const { running } = await this.incus.state.running({
-            container: "nikita-running-3",
+            name: "nikita-running-3",
           });
           running.should.be.false();
         });

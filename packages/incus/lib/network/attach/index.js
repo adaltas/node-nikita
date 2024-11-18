@@ -1,5 +1,4 @@
 // Dependencies
-import dedent from "dedent";
 import { escapeshellarg as esa } from "@nikitajs/utils/string";
 // Schema
 // import definitions from "./schema.json" with { type: "json" };
@@ -13,7 +12,7 @@ export default {
   handler: async function ({ config }) {
     //Build command
     const { exists } = await this.incus.config.device.exists({
-      container: config.container,
+      name: config.container,
       device: config.name,
     });
     if (exists) return false;

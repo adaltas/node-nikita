@@ -58,11 +58,11 @@ describe("incus.cluster.stop", function () {
         });
         $status.should.be.true();
         const { state: state1 } = await this.incus.state({
-          container: "nikita-cluster-stop-1",
+          name: "nikita-cluster-stop-1",
         });
         state1.status.should.eql("Stopped");
         const { state: state2 } = await this.incus.state({
-          container: "nikita-cluster-stop-2",
+          name: "nikita-cluster-stop-2",
         });
         state2.status.should.eql("Stopped");
         await this.clean();

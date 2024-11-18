@@ -129,8 +129,7 @@ describe("incus.cluster", function () {
           },
         };
         await registry.register(["clean"], async function () {
-          await this.incus.delete({
-            container: "nikita-cluster-1",
+          await this.incus.delete("nikita-cluster-1", {
             force: true,
           });
           await this.incus.network.delete("nktincuspub");
@@ -139,17 +138,17 @@ describe("incus.cluster", function () {
         await registry.register(["test"], async function () {
           await this.incus.cluster(cluster);
           const { exists } = await this.incus.config.device.exists({
-            container: "nikita-cluster-1",
+            name: "nikita-cluster-1",
             device: "nikitadir",
           });
           exists.should.be.true();
           const { exists: exists2 } = await this.incus.config.device.exists({
-            container: "nikita-cluster-1",
+            name: "nikita-cluster-1",
             device: "eth0",
           });
           exists2.should.be.true();
           const { exists: exists3 } = await this.incus.config.device.exists({
-            container: "nikita-cluster-1",
+            name: "nikita-cluster-1",
             device: "eth1",
           });
           exists3.should.be.true();
@@ -173,7 +172,7 @@ describe("incus.cluster", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "nikita-cluster-2",
+            name: "nikita-cluster-2",
             force: true,
           });
           await this.incus.network.delete("nktincusprv");
@@ -206,7 +205,7 @@ describe("incus.cluster", function () {
             },
           });
           await this.incus.exec({
-            container: "nikita-cluster-2",
+            name: "nikita-cluster-2",
             command: "nc -zvw2 192.0.2.6 22",
             code: config.enabled ? 0 : 1,
           });
@@ -235,7 +234,7 @@ describe("incus.cluster", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "nikita-cluster-3",
+            name: "nikita-cluster-3",
             force: true,
           });
         });
@@ -253,7 +252,7 @@ describe("incus.cluster", function () {
             },
           });
           const { running } = await this.incus.state.running({
-            container: "nikita-cluster-3",
+            name: "nikita-cluster-3",
           });
           running.should.be.eql(true);
         });

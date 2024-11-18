@@ -22,7 +22,7 @@ export default {
     }
     const { stdout } = await this.execute({
       $shy: true,
-      command: `${["incus", "config", "show", config.container].join(" ")}`,
+      command: `${["incus", "config", "show", config.name].join(" ")}`,
       code: [0, 42],
     });
     const { config: properties } = yaml.load(stdout);
@@ -37,7 +37,7 @@ export default {
           "incus",
           "config",
           "set",
-          config.container,
+          config.name,
           key,
           `'${value.replace("'", "\\'")}'`,
         ].join(" "),

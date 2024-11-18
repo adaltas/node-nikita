@@ -12,8 +12,8 @@ Detach a network from a container.
 
 ```js
 const {$status} = await nikita.incus.network.detach({
-  name: 'network0',
-  container: 'container1'
+  name: 'my-network',
+  container: 'my-container'
 })
 console.info(`Network was detached: ${$status}`)
 ```

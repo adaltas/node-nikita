@@ -19,14 +19,14 @@ describe("incus.file.exists", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-file-exists-1",
+            name: "nikita-file-exists-1",
             start: true,
           });
           await this.execute({
             command: "incus exec nikita-file-exists-1 -- touch /root/a_file",
           });
           const { exists } = await this.incus.file.exists({
-            container: "nikita-file-exists-1",
+            name: "nikita-file-exists-1",
             target: "/root/a_file",
           });
           exists.should.be.true();
@@ -53,11 +53,11 @@ describe("incus.file.exists", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-file-exists-2",
+            name: "nikita-file-exists-2",
             start: true,
           });
           const { exists } = await this.incus.file.exists({
-            container: "nikita-file-exists-2",
+            name: "nikita-file-exists-2",
             target: "/root/a_file",
           });
           exists.should.be.false();
@@ -84,26 +84,26 @@ describe("incus.file.exists", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-file-exists-3",
+            name: "nikita-file-exists-3",
             start: true,
           });
           // check is exists is true
           await this.incus.exec({
-            container: "nikita-file-exists-3",
+            name: "nikita-file-exists-3",
             command: "touch /root/a_file",
           });
           let { exists } = await this.incus.file.exists({
-            container: "nikita-file-exists-3",
+            name: "nikita-file-exists-3",
             target: "/root/a_file",
           });
           exists.should.be.true();
           // check is exists is false
           await this.incus.exec({
-            container: "nikita-file-exists-3",
+            name: "nikita-file-exists-3",
             command: "rm -f /root/a_file",
           });
           ({ exists } = await this.incus.file.exists({
-            container: "nikita-file-exists-3",
+            name: "nikita-file-exists-3",
             target: "/root/a_file",
           }));
           exists.should.be.false();

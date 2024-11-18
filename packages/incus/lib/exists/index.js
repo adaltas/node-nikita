@@ -10,13 +10,13 @@ export default {
   handler: async function ({ config }) {
     // Check if container exist
     const { $status } = await this.incus.query({
-      path: `/1.0/instances/${config.container}`,
+      path: `/1.0/instances/${config.name}`,
       code: [0, 1],
     });
     return { exists: $status };
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
   },
 };

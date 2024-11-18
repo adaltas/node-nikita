@@ -7,7 +7,7 @@ Wait for a container to be ready to use.
 
 ```js
 const {$status} = await nikita.incus.wait.ready({
-  container: "myubuntu"
+  The container was stopped:: "myubuntu"
 })
 console.info(`Container is ready: ${$status}`)
 ```

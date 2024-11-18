@@ -27,14 +27,13 @@ export default {
     // note, name could be obtained from incus_target
     // throw Error "Invalid Option: target is required" if not config.target and not config.incus_target
     if (config.incus_target == null) {
-      config.incus_target = `${path.join(config.container, config.target)}`;
+      config.incus_target = `${path.join(config.name, config.target)}`;
     }
-    const { $status } = await this.incus.state.running({
-      container: config.container,
+    const { running } = await this.incus.state.running({
+      name: config.name,
     });
-    const isContainerRunning = $status;
     let isTargetIdentical;
-    if (isContainerRunning) {
+    if (running) {
       try {
         const { $status } = await this.execute({
           command: dedent`
@@ -43,7 +42,7 @@ export default {
             command -v openssl >/dev/null || exit 3
             sourceDgst=\`openssl dgst -${config.algo} ${config.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`
             # Get target hash
-            targetDgst=\`cat <<EOF | incus exec ${config.container} -- sh
+            targetDgst=\`cat <<EOF | incus exec ${config.name} -- sh
             # Ensure openssl is available
             command -v openssl >/dev/null || exit 4
             # Target does not exist
@@ -76,7 +75,7 @@ export default {
       }
     }
     let status = false;
-    if (!isContainerRunning || isTargetIdentical) {
+    if (!running || isTargetIdentical) {
       await this.execute({
         command: `${[
           "incus",
@@ -98,14 +97,14 @@ export default {
     }
     if (typeof config.gid === "string") {
       await this.incus.exec({
-        container: config.container,
+        name: config.name,
         command: `chgrp ${config.gid} ${config.target}`,
       });
       status = true;
     }
     if (typeof config.uid === "string") {
       await this.incus.exec({
-        container: config.container,
+        name: config.name,
         command: `chown ${config.uid} ${config.target}`,
       });
       status = true;

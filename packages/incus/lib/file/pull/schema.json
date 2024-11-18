@@ -6,8 +6,8 @@
         "$ref": "module://@nikitajs/core/actions/fs/hash#/definitions/config/properties/algo",
         "default": "md5"
       },
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container",
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name",
         "description": "Name of the container in incus."
       },
       "source": {
@@ -24,10 +24,6 @@
         "description": "Local machine side. If true, create any directories necessary when pulling the image to your local machine."
       }
     },
-    "required": [
-      "container",
-      "source",
-      "target"
-    ]
+    "required": ["name", "source", "target"]
   }
 }

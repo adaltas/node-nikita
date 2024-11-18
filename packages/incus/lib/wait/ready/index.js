@@ -20,7 +20,7 @@ export default {
           state: { processes },
         } = await this.incus.state({
           $header: "Checking if instance is ready",
-          container: config.container,
+          name: config.name,
         });
         // Processes are at -1 when they aren't ready
         if (processes < 0) {
@@ -29,7 +29,7 @@ export default {
         // Sometimes processes alone aren't enough, so we test if we can get the container
         const { $status } = await this.incus.exec({
           $header: "Trying to execute a command",
-          container: config.container,
+          name: config.name,
           command: dedent`
           if ( command -v systemctl || command -v rc-service ); then
             exit 0
@@ -46,7 +46,7 @@ export default {
         if (config.nat === true) {
           const { $status } = await this.incus.exec({
             $header: "Trying to connect to internet",
-            container: config.container,
+            name: config.name,
             command: config.nat_check,
             code: [0, 42],
           });
@@ -61,7 +61,7 @@ export default {
     };
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
   },
 };

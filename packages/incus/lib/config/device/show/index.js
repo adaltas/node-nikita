@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     const { data } = await this.incus.query({
-      path: "/" + ["1.0", "instances", config.container].join("/"),
+      path: `/1.0/instances/${config.name}`,
     });
     return {
       $status: true,

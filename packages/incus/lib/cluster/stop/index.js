@@ -12,10 +12,10 @@ export default {
       await this.call(config, config.pre_stop);
     }
     // Stop containers
-    for (const containerName in config.containers) {
+    for (const name in config.containers) {
       await this.incus.stop({
-        $header: `Container ${containerName} : stop`,
-        container: containerName,
+        $header: `Container ${name} : stop`,
+        name: name,
         wait: config.wait,
       });
     }
@@ -26,7 +26,7 @@ export default {
       before: ["@nikitajs/core/src/plugins/metadata/schema"],
       handler: function ({ config }) {
         for (const name in config.containers) {
-          config.containers[name].container = name;
+          config.containers[name].name = name;
         }
       },
     },

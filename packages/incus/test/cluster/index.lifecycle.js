@@ -35,7 +35,7 @@ describe("incus.cluster.lifecycle", function () {
             },
             prevision_container: function ({ config }) {
               lifecycle.push("prevision_container");
-              config.container.should.eql("nikita-cluster-lifecycle-1");
+              config.name.should.eql("nikita-cluster-lifecycle-1");
             },
             provision: function ({ config }) {
               lifecycle.push("provision");
@@ -45,7 +45,7 @@ describe("incus.cluster.lifecycle", function () {
             },
             provision_container: function ({ config }) {
               lifecycle.push("provision_container");
-              config.container.should.eql("nikita-cluster-lifecycle-1");
+              config.name.should.eql("nikita-cluster-lifecycle-1");
             },
           });
           lifecycle.should.eql([

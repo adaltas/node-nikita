@@ -32,7 +32,7 @@ export default {
       {
         ...utils.object.copy(config, properties),
         command: [
-          `cat <<'NIKITAINCUSEXEC' | incus exec ${opt} ${esa(config.container)} -- ${esa(config.shell)}`,
+          `cat <<'NIKITAINCUSEXEC' | incus exec ${opt} ${esa(config.name)} -- ${esa(config.shell)}`,
           config.trap && "set -e",
           config.command,
           "NIKITAINCUSEXEC",

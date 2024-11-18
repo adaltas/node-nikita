@@ -24,29 +24,29 @@ export default {
       });
     }
     if (config.prevision_container) {
-      for (const containerName in config.containers) {
-        const containerConfig = config.containers[containerName];
+      for (const name in config.containers) {
+        const container = config.containers[name];
         await this.call(
           {
-            container: containerName,
+            name: name,
           },
-          containerConfig,
+          container,
           config.prevision_container,
         );
       }
     }
     // Init containers
-    for (const containerName in config.containers) {
-      const containerConfig = config.containers[containerName];
+    for (const name in config.containers) {
+      const container = config.containers[name];
       await this.call(
         {
-          $header: `Container ${containerName}`,
+          $header: `Container ${name}`,
         },
         async function () {
           // Set configuration
           await this.incus.init({
             $header: "Init",
-            ...utils.object.filter(containerConfig, [
+            ...utils.object.filter(container, [
               "disk",
               "nic",
               "properties",
@@ -56,45 +56,44 @@ export default {
             ]),
           });
           // Set config
-          if (containerConfig != null ? containerConfig.properties : void 0) {
+          if (container.properties) {
             await this.incus.config.set({
               $header: "Properties",
-              container: containerName,
-              properties: containerConfig.properties,
+              name: name,
+              properties: container.properties,
             });
           }
           // Create disk device
-          for (const deviceName in containerConfig.disk) {
-            const configDisk = containerConfig.disk[deviceName];
+          for (const deviceName in container.disk) {
             await this.incus.config.device({
               $header: `Device ${deviceName} disk`,
-              container: containerName,
+              name: name,
               device: deviceName,
               type: "disk",
-              properties: configDisk,
+              properties: container.disk[deviceName],
             });
           }
           // Create nic device
-          for (const deviceName in containerConfig.nic) {
-            const configNic = containerConfig.nic[deviceName];
+          for (const deviceName in container.nic) {
+            const configNic = container.nic[deviceName];
             // note: `confignic.config.parent` is not required for each type
             // throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
             await this.incus.config.device({
               $header: `Device ${deviceName} nic`,
-              container: containerName,
+              name: name,
               device: deviceName,
               type: "nic",
               properties: utils.object.filter(configNic, ["ip", "netmask"]),
             });
           }
           // Create proxy device
-          for (const deviceName in containerConfig.proxy) {
-            const configProxy = containerConfig.proxy[deviceName];
+          for (const deviceName in container.proxy) {
+            const configProxy = container.proxy[deviceName];
             // todo: add host detection and port forwarding to VirtualBox
             // VBoxManage controlvm 'incus' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
             await this.incus.config.device({
-              $header: `Device ${deviceName} proxy`,
-              container: containerName,
+              $header: `Device ${name} proxy`,
+              name: name,
               device: deviceName,
               type: "proxy",
               properties: configProxy,
@@ -103,19 +102,19 @@ export default {
           // Start container
           await this.incus.start({
             $header: "Start",
-            container: containerName,
+            name: name,
           });
           // Wait until container is ready
           await this.incus.wait.ready({
             $header: "Wait for container to be ready to use",
-            container: containerName,
+            name: name,
             nat: true,
             nat_check: process.env.CI ? "wget -q google.com" : undefined,
           });
           // Openssl is required by the `incus.file.push` action
           await this.incus.exec({
             $header: "OpenSSL",
-            container: containerName,
+            name: name,
             command: dedent`
             command -v openssl && exit 42
             if command -v yum >/dev/null 2>&1; then
@@ -133,10 +132,10 @@ export default {
             code: [0, 42],
           });
           // Enable SSH
-          if (containerConfig.ssh?.enabled) {
+          if (container.ssh?.enabled) {
             await this.incus.exec({
               $header: "SSH",
-              container: containerName,
+              name: name,
               command: dedent`
               if command -v systemctl >/dev/null 2>&1; then
                 srv=\`systemctl list-units --all --type=service | grep ssh | sed 's/ *\\(ssh.*\\)\.service.*/\\1/'\`
@@ -172,8 +171,8 @@ export default {
             });
           }
           // Create users
-          for (const userName in containerConfig.user) {
-            const configUser = containerConfig.user[userName];
+          for (const userName in container.user) {
+            const configUser = container.user[userName];
             await this.call(
               {
                 $header: `User ${userName}`,
@@ -181,7 +180,7 @@ export default {
               async function () {
                 await this.incus.exec({
                   $header: "Create",
-                  container: containerName,
+                  name: name,
                   command: dedent`
                     id ${userName} && exit 42
                     useradd --create-home --system ${userName}
@@ -196,7 +195,7 @@ export default {
                 await this.incus.exec({
                   $if: configUser.sudo,
                   $header: "Sudo",
-                  container: containerName,
+                  name: name,
                   command: dedent`
                     yum install -y sudo
                     command -v sudo
@@ -210,7 +209,7 @@ export default {
                 await this.incus.file.push({
                   $if: configUser.authorized_keys,
                   $header: "Authorize",
-                  container: containerName,
+                  name: name,
                   gid: `${userName}`,
                   uid: `${userName}`,
                   mode: 600,
@@ -224,13 +223,13 @@ export default {
       );
     }
     if (config.provision_container) {
-      for (const containerName in config.containers) {
-        const containerConfig = config.containers[containerName];
+      for (const name in config.containers) {
+        const container = config.containers[name];
         await this.call(
           {
-            container: containerName,
+            name: name,
           },
-          containerConfig,
+          container,
           config.provision_container,
         );
       }
@@ -244,7 +243,7 @@ export default {
       before: ["@nikitajs/core/src/plugins/metadata/schema"],
       handler: function ({ config }) {
         for (const name in config.containers) {
-          config.containers[name].container = name;
+          config.containers[name].name = name;
         }
       },
     },

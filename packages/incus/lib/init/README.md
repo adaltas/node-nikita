@@ -1,21 +1,20 @@
-
 # `nikita.incus.init`
 
 Initialize a Linux Container with given image name, container name and config.
 
 ## Output
 
-* `$status`
+- `$status`
   Was the container successfully created
 
 ## Example
 
 ```js
-const {$status} = await nikita.incus.init({
+const { $status } = await nikita.incus.init({
   image: "ubuntu:18.04",
-  container: "my_container"
-})
-console.info(`Container was created: ${$status}`)
+  name: "my-container",
+});
+console.info("Container created", $status);
 ```
 
 ## Implementation details

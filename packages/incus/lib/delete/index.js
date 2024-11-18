@@ -12,14 +12,14 @@ export default {
   handler: async function ({ config }) {
     return await this.execute({
       command: dedent`
-        incus info ${config.container} > /dev/null || exit 42
-        ${["incus", "delete", config.container, config.force ? "--force" : void 0].join(" ")}
+        incus info ${config.name} > /dev/null || exit 42
+        ${["incus", "delete", config.name, config.force ? "--force" : void 0].join(" ")}
       `,
       code: [0, 42],
     });
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
   },
 };

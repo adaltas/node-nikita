@@ -1,6 +1,5 @@
 // Dependencies
 import dedent from "dedent";
-import { escapeshellarg as esa } from "@nikitajs/utils/string";
 // Schema
 // import definitions from "./schema.json" with { type: "json" };
 import { readFile } from "node:fs/promises";
@@ -18,7 +17,7 @@ export default {
       "incus",
       "init",
       config.image,
-      config.container,
+      config.name,
       configValue,
       config.network && `--network ${config.network}`,
       config.storage && `--storage ${config.storage}`,
@@ -32,7 +31,7 @@ export default {
     // Execution
     const { $status } = await this.execute({
       command: dedent`
-        incus info ${config.container} >/dev/null && exit 42
+        incus info ${config.name} >/dev/null && exit 42
         echo '' | ${commandInit}
       `,
       code: [0, 42],
@@ -42,13 +41,13 @@ export default {
       // https://discuss.linuxcontainers.org/t/incus-0-5-1-has-been-released/18848
       // await this.execute({
       //   command: dedent`
-      //     incus config device add ${esa(config.container)} agent disk source=agent:config
+      //     incus config device add ${esa(config.name)} agent disk source=agent:config
       //   `,
       // });
     }
     await this.incus.start({
       $if: config.start,
-      container: config.container,
+      name: config.name,
     });
     return $status;
   },

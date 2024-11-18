@@ -12,7 +12,7 @@ Create a device or update its configuration.
 
 ```js
 const {$status} = await nikita.incus.config.device({
-  container: 'container1',
+  name: 'my-container',
   device: 'root',
   type: 'disk',
   properties: {

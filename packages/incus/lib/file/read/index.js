@@ -9,8 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     let { data } = await this.incus.query({
-      $header: `Check if file exists in container ${config.container}`,
-      path: `/1.0/instances/${config.container}/files?path=${config.target}`,
+      path: `/1.0/instances/${config.name}/files?path=${config.target}`,
       format: "string",
     });
     if (config.trim) {

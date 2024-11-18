@@ -16,7 +16,7 @@ export default {
     for (const name in config.containers) {
       await this.incus.delete({
         $header: `Container ${name} : delete`,
-        container: name,
+        name: name,
         force: config.force,
       });
     }
@@ -34,7 +34,7 @@ export default {
       before: ["@nikitajs/core/src/plugins/metadata/schema"],
       handler: function ({ config }) {
         for (const name in config.containers) {
-          config.containers[name].container = name;
+          config.containers[name].name = name;
         }
       },
     },

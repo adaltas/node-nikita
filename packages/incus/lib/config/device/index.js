@@ -24,7 +24,7 @@ export default {
     }
     // Obtain current device properties
     const { properties } = await this.incus.config.device.show({
-      container: config.container,
+      name: config.name,
       device: config.device,
     });
     try {
@@ -36,7 +36,7 @@ export default {
             "config",
             "device",
             "add",
-            config.container,
+            config.name,
             config.device,
             config.type,
             ...Object.keys(config.properties).map(
@@ -57,7 +57,7 @@ export default {
               "config",
               "device",
               "set",
-              config.container,
+              config.name,
               config.device,
               key,
               esa(value),

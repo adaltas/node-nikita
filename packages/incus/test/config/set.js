@@ -14,15 +14,15 @@ describe("incus.config.set", function () {
       },
       async function () {
         await this.incus.delete({
-          container: "nikita-config-set-1",
+          name: "nikita-config-set-1",
           force: true,
         });
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-config-set-1",
+          name: "nikita-config-set-1",
         });
         const { $status } = await this.incus.config.set({
-          container: "nikita-config-set-1",
+          name: "nikita-config-set-1",
           properties: {
             "environment.MY_KEY_1": "my value 1",
             "environment.MY_KEY_2": "my value 2",
@@ -30,7 +30,7 @@ describe("incus.config.set", function () {
         });
         $status.should.be.true();
         await this.incus.start({
-          container: "nikita-config-set-1",
+          name: "nikita-config-set-1",
         });
         const { stdout: stdout1 } = await this.execute({
           command: "incus exec nikita-config-set-1 -- env | grep MY_KEY_1",
@@ -53,22 +53,22 @@ describe("incus.config.set", function () {
       },
       async function () {
         await this.incus.delete({
-          container: "nikita-config-set-2",
+          name: "nikita-config-set-2",
           force: true,
         });
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-config-set-2",
+          name: "nikita-config-set-2",
         });
         const { $status: status1 } = await this.incus.config.set({
-          container: "nikita-config-set-2",
+          name: "nikita-config-set-2",
           properties: {
             "environment.MY_KEY_1": "my value 1",
           },
         });
         status1.should.be.true();
         const { $status: status2 } = await this.incus.config.set({
-          container: "nikita-config-set-2",
+          name: "nikita-config-set-2",
           properties: {
             "environment.MY_KEY_1": "my value 1",
           },

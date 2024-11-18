@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     const { data: container } = await this.incus.query({
-      path: `/1.0/instances/${config.container}`,
+      path: `/1.0/instances/${config.name}`,
       query: {
         recursion: 1,
       },
@@ -17,7 +17,7 @@ export default {
     return { $status: true, container };
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
     shy: true,
   },

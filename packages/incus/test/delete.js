@@ -14,17 +14,17 @@ describe("incus.delete", function () {
       async function () {
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-delete-1",
+          name: "nikita-delete-1",
         });
         await this.incus.stop({
-          container: "nikita-delete-1",
+          name: "nikita-delete-1",
         });
         const { $status } = await this.incus.delete({
-          container: "nikita-delete-1",
+          name: "nikita-delete-1",
         });
         $status.should.be.true();
         const { $status: status2 } = await this.incus.delete({
-          container: "nikita-delete-1",
+          name: "nikita-delete-1",
         });
         status2.should.be.false();
       },
@@ -39,11 +39,11 @@ describe("incus.delete", function () {
       async function () {
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-delete-2",
+          name: "nikita-delete-2",
           start: true,
         });
         const { $status } = await this.incus.delete({
-          container: "nikita-delete-2",
+          name: "nikita-delete-2",
           force: true,
         });
         $status.should.be.true();
@@ -59,10 +59,10 @@ describe("incus.delete", function () {
       async function () {
         await this.incus.delete({
           // repeated to be sure the container is absent
-          container: "nikita-delete-3",
+          name: "nikita-delete-3",
         });
         const { $status } = await this.incus.delete({
-          container: "nikita-delete-3",
+          name: "nikita-delete-3",
         });
         $status.should.be.false();
       },

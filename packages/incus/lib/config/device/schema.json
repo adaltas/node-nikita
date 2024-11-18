@@ -2,8 +2,8 @@
   "config": {
     "type": "object",
     "properties": {
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       },
       "device": {
         "type": "string",
@@ -13,11 +13,7 @@
         "type": "object",
         "patternProperties": {
           "": {
-            "type": [
-              "string",
-              "boolean",
-              "number"
-            ]
+            "type": ["string", "boolean", "number"]
           }
         },
         "description": "One or multiple keys to set depending on the type."
@@ -62,12 +58,7 @@
         "$ref": "#/definitions/usb"
       }
     ],
-    "required": [
-      "container",
-      "device",
-      "properties",
-      "type"
-    ]
+    "required": ["name", "device", "properties", "type"]
   },
   "disk": {
     "type": "object",
@@ -84,9 +75,7 @@
             "description": "Path on the host, either to a file/directory or to a block\ndevice."
           }
         },
-        "required": [
-          "path"
-        ]
+        "required": ["path"]
       },
       "type": {
         "const": "disk"
@@ -101,10 +90,7 @@
         "properties": {
           "nictype": {
             "type": "string",
-            "enum": [
-              "physical",
-              "sriov"
-            ],
+            "enum": ["physical", "sriov"],
             "description": "The device type, one of \"physical\", or \"sriov\"."
           },
           "parent": {
@@ -112,10 +98,7 @@
             "description": "The name of the host device or bridge."
           }
         },
-        "required": [
-          "nictype",
-          "parent"
-        ]
+        "required": ["nictype", "parent"]
       },
       "type": {
         "const": "infiniband"
@@ -138,13 +121,7 @@
         "properties": {
           "nictype": {
             "type": "string",
-            "enum": [
-              "physical",
-              "bridged",
-              "macvlan",
-              "p2p",
-              "sriov"
-            ],
+            "enum": ["physical", "bridged", "macvlan", "p2p", "sriov"],
             "description": "LXD supports different kind of [network\ndevices](https://incus.readthedocs.io/en/stable-3.0/containers/#type-nic)\nand each type of network interface types have different\nadditional properties."
           }
         },
@@ -268,10 +245,7 @@
             "description": "The address and port to connect to\n(<type>:<addr>:<port>[-<port>][,<port>])"
           }
         },
-        "required": [
-          "connect",
-          "listen"
-        ]
+        "required": ["connect", "listen"]
       },
       "type": {
         "const": "proxy"
@@ -313,9 +287,7 @@
             "description": "Path inside the instance (only for containers)."
           }
         },
-        "required": [
-          "path"
-        ]
+        "required": ["path"]
       },
       "type": {
         "const": "unix-hotplug"

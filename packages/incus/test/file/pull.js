@@ -24,14 +24,14 @@ describe("incus.file.pull", function () {
         registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-file-pull-1",
+            name: "nikita-file-pull-1",
             start: true,
           });
           await this.incus.start("nikita-file-pull-1");
           // pulling file from container
           await this.incus.file
             .pull({
-              container: "nikita-file-pull-1",
+              name: "nikita-file-pull-1",
               source: "/etc/passwd",
               target: `${tmpdir}/nikita-file-pull-1`,
             })
@@ -73,7 +73,7 @@ describe("incus.file.pull", function () {
           // creating a container
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-file-pull-2",
+            name: "nikita-file-pull-2",
             start: true,
           });
           // attaching network
@@ -85,16 +85,16 @@ describe("incus.file.pull", function () {
           await this.incus.exec({
             $retry: 100,
             $wait: 200, // Wait for network to be ready
-            container: "nikita-file-pull-2",
+            name: "nikita-file-pull-2",
             command: "apk add openssl",
           });
           await this.incus.exec({
-            container: "nikita-file-pull-2",
+            name: "nikita-file-pull-2",
             command: "touch file.sh && echo 'hello' > file.sh",
           });
           // pulling file from container
           await this.incus.file.pull({
-            container: "nikita-file-pull-2",
+            name: "nikita-file-pull-2",
             source: "/root/file.sh",
             target: `${tmpdir}/`,
           });

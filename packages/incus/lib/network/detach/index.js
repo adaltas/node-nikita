@@ -11,7 +11,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     const { exists } = await this.incus.config.device.exists({
-      container: config.container,
+      name: config.container,
       device: config.name,
     });
     if (!exists) return false;

@@ -9,7 +9,7 @@ describe("incus.exists", function () {
 
   it("argument is a string", function () {
     return nikita.incus.exists("nikita-exists-1", function ({ config }) {
-      config.container.should.eql("nikita-exists-1");
+      config.name.should.eql("nikita-exists-1");
     });
   });
 
@@ -25,7 +25,7 @@ describe("incus.exists", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-exists-2",
+          name: "nikita-exists-2",
         });
         await this.incus
           .exists("nikita-exists-2")

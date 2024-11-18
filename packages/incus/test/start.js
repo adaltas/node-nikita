@@ -9,7 +9,7 @@ describe("incus.start", function () {
 
   it("argument is a string", async function () {
     await nikita.incus.start("nikita-start-1", function ({ config }) {
-      config.container.should.eql("nikita-start-1");
+      config.name.should.eql("nikita-start-1");
     });
   });
 
@@ -25,10 +25,10 @@ describe("incus.start", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-start-2",
+          name: "nikita-start-2",
         });
         const { $status } = await this.incus.start({
-          container: "nikita-start-2",
+          name: "nikita-start-2",
         });
         $status.should.be.true();
         await this.clean();
@@ -48,13 +48,13 @@ describe("incus.start", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-start-3",
+          name: "nikita-start-3",
         });
         await this.incus.start({
-          container: "nikita-start-3",
+          name: "nikita-start-3",
         });
         const { $status } = await this.incus.start({
-          container: "nikita-start-3",
+          name: "nikita-start-3",
         });
         $status.should.be.false();
         await this.clean();

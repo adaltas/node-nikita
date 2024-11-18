@@ -104,7 +104,7 @@ describe("incus.query", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-query-1",
+            name: "nikita-query-1",
             start: true,
           });
           const { $status } = await this.incus.query({
@@ -115,7 +115,7 @@ describe("incus.query", function () {
           });
           $status.should.eql(true);
           const { running } = await this.incus.state.running({
-            container: "nikita-query-1",
+            name: "nikita-query-1",
           });
           running.should.eql(false);
           await this.clean();

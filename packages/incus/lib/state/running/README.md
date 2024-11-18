@@ -4,14 +4,14 @@ Check if container is running.
 
 ## Output
 
-- `$status`
+- `running`  
   Was the container started or already running.
 
 ## Example
 
 ```js
 const { running } = await nikita.incus.state.running({
-  container: "my_container",
+  name: "my-container",
 });
 console.info(`Container is running: ${running}`);
 ```

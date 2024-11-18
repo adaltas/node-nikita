@@ -15,7 +15,7 @@ describe("incus.network.detach", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "nkt-detach-1-container",
+            name: "nkt-detach-1-container",
             force: true,
           });
           await this.incus.network.delete({
@@ -25,7 +25,7 @@ describe("incus.network.detach", function () {
         await registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nkt-detach-1-container",
+            name: "nkt-detach-1-container",
           });
           await this.incus.network({
             name: "nkt-detach-1",
@@ -58,7 +58,7 @@ describe("incus.network.detach", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "nkt-detach-2-container",
+            name: "nkt-detach-2-container",
             force: true,
           });
           await this.incus.network.delete({
@@ -68,7 +68,7 @@ describe("incus.network.detach", function () {
         await registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nkt-detach-2-container",
+            name: "nkt-detach-2-container",
           });
           await this.incus.network({
             name: "nkt-detach-2",

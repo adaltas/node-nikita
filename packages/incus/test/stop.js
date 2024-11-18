@@ -9,7 +9,7 @@ describe("incus.stop", function () {
 
   it("argument is a string", function () {
     return nikita.incus.stop("nikita-stop-1", function ({ config }) {
-      config.container.should.eql("nikita-stop-1");
+      config.name.should.eql("nikita-stop-1");
     });
   });
 
@@ -27,10 +27,10 @@ describe("incus.stop", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-stop-2",
+            name: "nikita-stop-2",
           });
           const { $status } = await this.incus.stop({
-            container: "nikita-stop-2",
+            name: "nikita-stop-2",
           });
           $status.should.be.false();
           await this.clean();
@@ -52,11 +52,11 @@ describe("incus.stop", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-stop-3",
+            name: "nikita-stop-3",
             start: true,
           });
           const { $status } = await this.incus.stop({
-            container: "nikita-stop-3",
+            name: "nikita-stop-3",
           });
           $status.should.be.true();
           await this.clean();

@@ -16,7 +16,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-1",
+              name: "nikita-container-attach-1",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-1",
@@ -39,7 +39,7 @@ describe("incus.storage.volume.attach", function () {
             // Create instance
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-container-attach-1",
+              name: "nikita-container-attach-1",
             });
             // Attach volume to instance
             const { $status } = await this.incus.storage.volume.attach({
@@ -84,7 +84,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-2",
+              name: "nikita-container-attach-2",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-2",
@@ -108,7 +108,7 @@ describe("incus.storage.volume.attach", function () {
             // Create instance
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-container-attach-2",
+              name: "nikita-container-attach-2",
               vm: true,
             });
             // Attach volume to instance
@@ -152,7 +152,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-1",
+              name: "nikita-container-attach-1",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-1",
@@ -175,7 +175,7 @@ describe("incus.storage.volume.attach", function () {
             // Create instance
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-container-attach-1",
+              name: "nikita-container-attach-1",
             });
             // Attach volume to instance
             await this.incus.storage.volume
@@ -209,7 +209,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-2",
+              name: "nikita-container-attach-2",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-2",
@@ -232,7 +232,7 @@ describe("incus.storage.volume.attach", function () {
             // Create instance
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-container-attach-2",
+              name: "nikita-container-attach-2",
               vm: true,
             });
             // Attach volume to instance
@@ -268,7 +268,7 @@ describe("incus.storage.volume.attach", function () {
           async function ({ registry }) {
             registry.register("clean", async function () {
               await this.incus.delete({
-                container: "nikita-container-attach-3",
+                name: "nikita-container-attach-3",
               });
               await this.incus.storage.volume.delete({
                 pool: "nikita-storage-attach-3",
@@ -292,7 +292,7 @@ describe("incus.storage.volume.attach", function () {
               // Create instance
               await this.incus.init({
                 image: `images:${test.images.alpine}`,
-                container: "nikita-container-attach-3",
+                name: "nikita-container-attach-3",
               });
               // Attach volume to instance
               await this.incus.storage.volume
@@ -326,7 +326,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-4",
+              name: "nikita-container-attach-4",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-4",
@@ -344,7 +344,7 @@ describe("incus.storage.volume.attach", function () {
             });
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-container-attach-4",
+              name: "nikita-container-attach-4",
             });
             // Attach volume to instance
             await this.incus.storage.volume
@@ -377,7 +377,7 @@ describe("incus.storage.volume.attach", function () {
         async function ({ registry }) {
           registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-container-attach-5",
+              name: "nikita-container-attach-5",
             });
             await this.incus.storage.volume.delete({
               pool: "nikita-storage-attach-5",

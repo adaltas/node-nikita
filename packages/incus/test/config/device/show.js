@@ -13,15 +13,15 @@ describe("incus.config.device.show", function () {
       },
       async function () {
         await this.incus.delete({
-          container: "nikita-config-show-1",
+          name: "nikita-config-show-1",
           force: true,
         });
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-config-show-1",
+          name: "nikita-config-show-1",
         });
         await this.incus.config.device({
-          container: "nikita-config-show-1",
+          name: "nikita-config-show-1",
           device: "test",
           type: "unix-char",
           properties: {
@@ -30,7 +30,7 @@ describe("incus.config.device.show", function () {
           },
         });
         const { $status, properties } = await this.incus.config.device.show({
-          container: "nikita-config-show-1",
+          name: "nikita-config-show-1",
           device: "test",
         });
         $status.should.be.true();

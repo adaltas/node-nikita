@@ -11,7 +11,7 @@ describe("incus.exec", function () {
     it("extends nikita.execute using `code`", function () {
       return nikita.incus
         .exec({
-          container: "fake",
+          name: "fake",
           command: "whoami",
           code: function () {},
         })
@@ -38,11 +38,11 @@ describe("incus.exec", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-exec-1",
+          name: "nikita-exec-1",
           start: true,
         });
         const { $status, stdout } = await this.incus.exec({
-          container: "nikita-exec-1",
+          name: "nikita-exec-1",
           command: "cat /etc/os-release | egrep ^ID=",
         });
         stdout.trim().should.eql("ID=alpine");
@@ -65,11 +65,11 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-2",
+            name: "nikita-exec-2",
             start: true,
           });
           const { stdout } = await this.incus.exec({
-            container: "nikita-exec-2",
+            name: "nikita-exec-2",
             command: "echo $0",
             trim: true,
           });
@@ -85,28 +85,34 @@ describe("incus.exec", function () {
           $ssh: ssh,
         },
         async function ({ registry }) {
-          registry.register("clean", function () {
-            return this.incus.delete("nikita-exec-3", { force: true });
+          registry.register("clean", async function () {
+            this.incus.delete("nikita-exec-3", { force: true });
           });
-          await this.clean();
-          await this.incus.init({
-            image: `images:${test.images.alpine}`,
-            container: "nikita-exec-3",
-            start: true,
+          registry.register("test", async function () {
+            await this.incus.init({
+              image: `images:${test.images.alpine}`,
+              name: "nikita-exec-3",
+              start: true,
+            });
+            await this.incus.exec({
+              $$: { retry: 3, sleep: 200 },
+              name: "nikita-exec-3",
+              command: "apk add bash",
+            });
+            const { stdout } = await this.incus.exec({
+              name: "nikita-exec-3",
+              command: "echo $0",
+              shell: "bash",
+              trim: true,
+            });
+            stdout.should.eql("bash");
           });
-          await this.incus.exec({
-            $$: { retry: 3, sleep: 200 },
-            container: "nikita-exec-3",
-            command: "apk add bash",
-          });
-          const { stdout } = await this.incus.exec({
-            container: "nikita-exec-3",
-            command: "echo $0",
-            shell: "bash",
-            trim: true,
-          });
-          stdout.should.eql("bash");
-          await this.clean();
+          try {
+            await this.clean();
+            await this.test();
+          } finally {
+            await this.clean();
+          }
         },
       );
     });
@@ -125,12 +131,12 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-4",
+            name: "nikita-exec-4",
             start: true,
           });
           await this.incus
             .exec({
-              container: "nikita-exec-4",
+              name: "nikita-exec-4",
               trap: true,
               command: "false\ntrue",
             })
@@ -154,11 +160,11 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-5",
+            name: "nikita-exec-5",
             start: true,
           });
           const { $status, code } = await this.incus.exec({
-            container: "nikita-exec-5",
+            name: "nikita-exec-5",
             trap: false,
             command: "false\ntrue",
           });
@@ -183,11 +189,11 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-6",
+            name: "nikita-exec-6",
             start: true,
           });
           const { stdout } = await this.incus.exec({
-            container: "nikita-exec-6",
+            name: "nikita-exec-6",
             env: {
               ENV_VAR_1: "value 1",
               ENV_VAR_2: "value 1",
@@ -219,15 +225,15 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-7",
+            name: "nikita-exec-7",
             start: true,
           });
           await this.incus.exec({
-            container: "nikita-exec-7",
+            name: "nikita-exec-7",
             command: "adduser --uid 1234 --disabled-password nikita",
           });
           const { stdout } = await this.incus.exec({
-            container: "nikita-exec-7",
+            name: "nikita-exec-7",
             user: 1234,
             command: "whoami",
             trim: true,
@@ -252,11 +258,11 @@ describe("incus.exec", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-exec-8",
+            name: "nikita-exec-8",
             start: true,
           });
           const { stdout } = await this.incus.exec({
-            container: "nikita-exec-8",
+            name: "nikita-exec-8",
             cwd: "/bin",
             command: "pwd",
             trim: true,

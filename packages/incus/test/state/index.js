@@ -9,7 +9,7 @@ describe("incus.state", function () {
 
   it("argument is a string", async function () {
     await nikita.incus.state("nikita-state-1", function ({ config }) {
-      config.container.should.eql("nikita-state-1");
+      config.name.should.eql("nikita-state-1");
     });
   });
 
@@ -25,10 +25,10 @@ describe("incus.state", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-state-2",
+          name: "nikita-state-2",
         });
         const { $status, state } = await this.incus.state({
-          container: "nikita-state-2",
+          name: "nikita-state-2",
         });
         $status.should.be.true();
         state.status.should.eql("Stopped");
@@ -49,7 +49,7 @@ describe("incus.state", function () {
         await this.clean();
         await this.incus
           .state({
-            container: "nikita-state-3",
+            name: "nikita-state-3",
           })
           .should.be.rejectedWith({
             exit_code: 1,

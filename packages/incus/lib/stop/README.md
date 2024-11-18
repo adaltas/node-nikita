@@ -7,9 +7,9 @@ Stop a running Linux Container.
 
 ```js
 const { $status } = await nikita.incus.stop({
-  container: "myubuntu",
+  container: "my-container",
   wait: true,
   wait_retry: 5,
 });
-console.info(`The container was stopped: ${$status}`);
+console.info("The container was stopped:", $status);
 ```

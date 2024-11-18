@@ -15,7 +15,7 @@ describe("incus.network.attach", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "u0",
+            name: "nkt-attache-1-device",
             force: true,
           });
           await this.incus.network.delete({
@@ -25,14 +25,14 @@ describe("incus.network.attach", function () {
         await registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "u0",
+            name: "nkt-attache-1-device",
           });
           await this.incus.network({
             name: "nkt-attach-1",
           });
           const { $status } = await this.incus.network.attach({
             name: "nkt-attach-1",
-            container: "u0",
+            container: "nkt-attache-1-device",
           });
           $status.should.be.true();
         });
@@ -54,7 +54,7 @@ describe("incus.network.attach", function () {
       async function ({ registry }) {
         await registry.register("clean", async function () {
           await this.incus.delete({
-            container: "u0",
+            name: "nkt-attache-2-device",
             force: true,
           });
           await this.incus.network.delete({
@@ -64,18 +64,18 @@ describe("incus.network.attach", function () {
         await registry.register("test", async function () {
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "u0",
+            name: "nkt-attache-2-device",
           });
           await this.incus.network({
             name: "nkt-attach-2",
           });
           await this.incus.network.attach({
             name: "nkt-attach-2",
-            container: "u0",
+            container: "nkt-attache-2-device",
           });
           const { $status } = await this.incus.network.attach({
             name: "nkt-attach-2",
-            container: "u0",
+            container: "nkt-attache-2-device",
           });
           $status.should.be.false();
         });

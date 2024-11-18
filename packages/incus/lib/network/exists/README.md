@@ -1,19 +1,18 @@
-
 # `nikita.incus.network.detach`
 
 Detach a network from a container.
 
 ## Output
 
-* `$status`
+- `$status`
   True if the network was detached
 
 ## Example
 
 ```js
-const {$status} = await nikita.incus.network.detach({
-  network: 'network0',
-  container: 'container1'
-})
-console.info(`Network was detached: ${$status}`)
+const { $status } = await nikita.incus.network.detach({
+  network: "my-network",
+  container: "my-container",
+});
+console.info(`Network was detached: ${$status}`);
 ```

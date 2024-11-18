@@ -9,19 +9,19 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     // Check if container is running
-    const { running } = await this.incus.state.running(config.container);
+    const { running } = await this.incus.state.running(config.name);
     if (!running) {
       return false;
     }
     // Stop the container
     await this.execute({
-      command: `incus stop ${config.container}`,
+      command: `incus stop ${config.name}`,
       code: [0, 42],
     });
     if (config.wait) {
       await this.execute.wait({
         $shy: true,
-        command: `incus info ${config.container} | grep 'Status: STOPPED'`,
+        command: `incus info ${config.name} | grep 'Status: STOPPED'`,
         retry: config.wait_retry,
         interval: config.wait_interval,
       });
@@ -29,7 +29,7 @@ export default {
     return true;
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
   },
 };

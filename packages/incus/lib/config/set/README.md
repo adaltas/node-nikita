@@ -7,7 +7,7 @@ Set container or server configuration keys.
 
 ```js
 const {$status} = await nikita.incus.config.set({
-  name: "my_container",
+  name: "my-container",
   properties: {
     'boot.autostart.priority': 100
   }

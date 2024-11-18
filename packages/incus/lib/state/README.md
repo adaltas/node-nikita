@@ -13,7 +13,7 @@ The query URL is `/1.0/instances/<container>/state`.
 
 ```js
 const { state } = await nikita.incus.state({
-  container: "container1",
+  name: "my-container",
 });
 console.info("Container state:", state);
 ```

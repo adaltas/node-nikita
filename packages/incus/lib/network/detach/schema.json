@@ -7,7 +7,7 @@
         "description": "The network name to detach."
       },
       "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       }
     },
     "required": ["name", "container"]

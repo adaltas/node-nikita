@@ -2,8 +2,8 @@
   "config": {
     "type": "object",
     "properties": {
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       },
       "nat": {
         "type": "boolean",
@@ -16,8 +16,6 @@
         "description": "Command use to check network activation. Expect exit code `0` when\nready, exit code `42` if not yet ready and any other code on error."
       }
     },
-    "required": [
-      "container"
-    ]
+    "required": ["name"]
   }
 }

@@ -9,7 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     const { properties } = await this.incus.config.device.show({
-      container: config.container,
+      name: config.name,
       device: config.device,
     });
     if (!properties) {
@@ -23,7 +23,7 @@ export default {
         "config",
         "device",
         "remove",
-        config.container,
+        config.name,
         config.device,
       ].join(" "),
     });

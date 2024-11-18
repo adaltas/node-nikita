@@ -11,7 +11,7 @@ describe("incus.file.push", function () {
     it("mode symbolic", function () {
       return nikita.incus.file
         .push({
-          container: "nikita-file-push",
+          name: "nikita-file-push",
           target: "/root/a_file",
           content: "something",
           mode: "u=rwx",
@@ -24,7 +24,7 @@ describe("incus.file.push", function () {
     it("mode coercion", function () {
       return nikita.incus.file.push(
         {
-          container: "nikita-file-push",
+          name: "nikita-file-push",
           target: "/root/a_file",
           content: "something",
           mode: "700",
@@ -52,7 +52,7 @@ describe("incus.file.push", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-1",
+              name: "nikita-file-push-1",
               start: true,
             });
             await this.file.touch({
@@ -60,7 +60,7 @@ describe("incus.file.push", function () {
             });
             await this.incus.file
               .push({
-                container: "nikita-file-push-1",
+                name: "nikita-file-push-1",
                 source: `${tmpdir}/a_file`,
                 target: "/root/a_file",
               })
@@ -87,7 +87,7 @@ describe("incus.file.push", function () {
         async function ({ metadata: { tmpdir }, registry }) {
           await registry.register("clean", async function () {
             await this.incus.delete({
-              container: "nikita-file-push-2",
+              name: "nikita-file-push-2",
               force: true,
             });
             await this.incus.network.delete({
@@ -105,7 +105,7 @@ describe("incus.file.push", function () {
             });
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-2",
+              name: "nikita-file-push-2",
               start: true,
             });
             await this.incus.network.attach({
@@ -115,7 +115,7 @@ describe("incus.file.push", function () {
             await this.incus.exec({
               $retry: 100,
               $wait: 200,
-              container: "nikita-file-push-2",
+              name: "nikita-file-push-2",
               command: "apk add openssl",
             });
             await this.file({
@@ -123,13 +123,13 @@ describe("incus.file.push", function () {
               content: "something",
             });
             const { $status } = await this.incus.file.push({
-              container: "nikita-file-push-2",
+              name: "nikita-file-push-2",
               source: `${tmpdir}/a_file`,
               target: "/root/a_file",
             });
             $status.should.be.true();
             const { $status: exists } = await this.incus.file.exists({
-              container: "nikita-file-push-2",
+              name: "nikita-file-push-2",
               target: "/root/a_file",
             });
             exists.should.be.true();
@@ -158,12 +158,12 @@ describe("incus.file.push", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-3",
+              name: "nikita-file-push-3",
               start: true,
             });
             await this.incus.exec({
               $$: { retry: 3, sleep: 200 },
-              container: "nikita-file-push-3",
+              name: "nikita-file-push-3",
               command: "apk add openssl",
             });
             await this.file({
@@ -171,12 +171,12 @@ describe("incus.file.push", function () {
               content: "something",
             });
             await this.incus.file.push({
-              container: "nikita-file-push-3",
+              name: "nikita-file-push-3",
               source: `${tmpdir}/a_file`,
               target: "/root/a_file",
             });
             const { $status } = await this.incus.file.push({
-              container: "nikita-file-push-3",
+              name: "nikita-file-push-3",
               source: `${tmpdir}/a_file`,
               target: "/root/a_file",
             });
@@ -208,22 +208,22 @@ describe("incus.file.push", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-4",
+              name: "nikita-file-push-4",
               start: true,
             });
             await this.incus.exec({
               $$: { retry: 3, sleep: 200 },
-              container: "nikita-file-push-4",
+              name: "nikita-file-push-4",
               command: "apk add openssl",
             });
             const { $status } = await this.incus.file.push({
-              container: "nikita-file-push-4",
+              name: "nikita-file-push-4",
               target: "/root/a_file",
               content: "something",
             });
             $status.should.be.true();
             const { stdout } = await this.incus.exec({
-              container: "nikita-file-push-4",
+              name: "nikita-file-push-4",
               command: "cat /root/a_file",
             });
             stdout.trim().should.eql("something");
@@ -250,21 +250,21 @@ describe("incus.file.push", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-5",
+              name: "nikita-file-push-5",
               start: true,
             });
             await this.incus.exec({
               $$: { retry: 3, sleep: 200 },
-              container: "nikita-file-push-5",
+              name: "nikita-file-push-5",
               command: "apk add openssl",
             });
             await this.incus.file.push({
-              container: "nikita-file-push-5",
+              name: "nikita-file-push-5",
               target: "/root/a_file",
               content: "something",
             });
             const { $status } = await this.incus.file.push({
-              container: "nikita-file-push-5",
+              name: "nikita-file-push-5",
               target: "/root/a_file",
               content: "something",
             });
@@ -296,22 +296,22 @@ describe("incus.file.push", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-file-push-6",
+              name: "nikita-file-push-6",
               start: true,
             });
             await this.incus.exec({
               $$: { retry: 3, sleep: 200 },
-              container: "nikita-file-push-6",
+              name: "nikita-file-push-6",
               command: "apk add openssl",
             });
             await this.incus.file.push({
-              container: "nikita-file-push-6",
+              name: "nikita-file-push-6",
               target: "/root/a_file",
               content: "something",
               mode: 700,
             });
             const { stdout } = await this.incus.exec({
-              container: "nikita-file-push-6",
+              name: "nikita-file-push-6",
               command: "ls -l /root/a_file",
               trim: true,
             });

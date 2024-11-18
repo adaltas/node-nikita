@@ -10,6 +10,6 @@ Retrieve detailed container information.
 ## Short usage example
 
 ```js
-const { data } = await nikita.incus.info("my_container");
-console.info("Container information:", JSON.stringify(data, null, 2));
+const { container } = await nikita.incus.info("my-container");
+console.info("Container information:", container);
 ```

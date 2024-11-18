@@ -1,4 +1,3 @@
-
 # `nikita.incus.goodies.prlimit`
 
 Print the process limit associated with a running container.
@@ -12,19 +11,19 @@ and run the action in this node.
 
 ## Output
 
-* `error` (object)
+- `error` (object)
   The error object, if any.
-* `output.stdout` (string)
+- `output.stdout` (string)
   The standard output from the `prlimit` command.
-* `output.limits` (array)
+- `output.limits` (array)
   The limit object parsed from `stdout`; each element of the array contains the
   keys `resource`, `description`, `soft`, `hard` and `units`.
 
 ## Example
 
 ```js
-const {stdout, limits} = await nikita.incus.goodies.prlimit({
-  container: "my_container"
-})
-console.info( `${stdout} ${JSON.decode(limits)}`)
+const { stdout, limits } = await nikita.incus.goodies.prlimit({
+  name: "my-container",
+});
+console.info(`${stdout} ${JSON.decode(limits)}`);
 ```

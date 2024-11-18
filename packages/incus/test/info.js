@@ -9,7 +9,7 @@ describe("incus.info", function () {
 
   they("argument is a string", function () {
     return nikita.incus.info("nikita-info-1", function ({ config }) {
-      return config.container.should.eql("nikita-info-1");
+      return config.name.should.eql("nikita-info-1");
     });
   });
 
@@ -25,7 +25,7 @@ describe("incus.info", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-info-2",
+          name: "nikita-info-2",
         });
         await this.incus
           .info("nikita-info-2")

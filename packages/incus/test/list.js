@@ -19,12 +19,12 @@ describe("incus.list", function () {
         await this.clean();
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-list-c1",
+          name: "nikita-list-c1",
         });
         await this.incus.init({
           $if: test.tags.incus_vm,
           image: `images:${test.images.alpine}`,
-          container: "nikita-list-vm1",
+          name: "nikita-list-vm1",
           vm: true,
         });
         await this.wait({ time: 200 });
@@ -57,12 +57,12 @@ describe("incus.list", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-list-c1",
+            name: "nikita-list-c1",
           });
           await this.incus.init({
             $if: test.tags.incus_vm,
             image: `images:${test.images.alpine}`,
-            container: "nikita-list-vm1",
+            name: "nikita-list-vm1",
             vm: true,
           });
           const { $status, instances } = await this.incus.list({
@@ -94,12 +94,12 @@ describe("incus.list", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-list-c1",
+            name: "nikita-list-c1",
           });
           await this.incus.init({
             $if: test.tags.incus_vm,
             image: `images:${test.images.alpine}`,
-            container: "nikita-list-vm1",
+            name: "nikita-list-vm1",
             vm: true,
           });
           const { $status, instances } = await this.incus.list({

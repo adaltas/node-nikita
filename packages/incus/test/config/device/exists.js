@@ -14,15 +14,15 @@ describe("incus.config.device.exists", function () {
       },
       async function () {
         await this.incus.delete({
-          container: "nikita-config-device-exists-1",
+          name: "nikita-config-device-exists-1",
           force: true,
         });
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-config-device-exists-1",
+          name: "nikita-config-device-exists-1",
         });
         const { exists } = await this.incus.config.device.exists({
-          container: "nikita-config-device-exists-1",
+          name: "nikita-config-device-exists-1",
           device: "test",
         });
         exists.should.be.false();
@@ -37,15 +37,15 @@ describe("incus.config.device.exists", function () {
       },
       async function () {
         await this.incus.delete({
-          container: "nikita-config-device-exists-2",
+          name: "nikita-config-device-exists-2",
           force: true,
         });
         await this.incus.init({
           image: `images:${test.images.alpine}`,
-          container: "nikita-config-device-exists-2",
+          name: "nikita-config-device-exists-2",
         });
         await this.incus.config.device({
-          container: "nikita-config-device-exists-2",
+          name: "nikita-config-device-exists-2",
           device: "test",
           type: "unix-char",
           properties: {
@@ -54,7 +54,7 @@ describe("incus.config.device.exists", function () {
           },
         });
         const { exists } = await this.incus.config.device.exists({
-          container: "nikita-config-device-exists-2",
+          name: "nikita-config-device-exists-2",
           device: "test",
         });
         exists.should.be.true();

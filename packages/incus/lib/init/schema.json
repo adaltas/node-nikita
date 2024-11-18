@@ -6,7 +6,7 @@
         "type": "string",
         "description": "The image the container will use, name:[version] (e.g: ubuntu:16.04.)."
       },
-      "container": {
+      "name": {
         "type": "string",
         "pattern": "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",
         "description": "The name of the container. Must be between 1 and 63 characters long, be made up exclusively of letters, numbers and dashes from the ASCII table, not start with a digit or a dash, and not end with a dash"
@@ -48,6 +48,6 @@
         "description": "If the LXC is clustered, instantiate the container on a specific node."
       }
     },
-    "required": ["image", "container"]
+    "required": ["image", "name"]
   }
 }

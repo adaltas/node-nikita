@@ -9,8 +9,7 @@ const definitions = JSON.parse(
 export default {
   handler: async function ({ config }) {
     const { $status } = await this.incus.exec({
-      $header: `Check if file exists in container ${config.container}`,
-      container: config.container,
+      name: config.name,
       command: `test -f ${config.target}`,
       code: [0, 1],
     });

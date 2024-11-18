@@ -2,8 +2,8 @@
   "config": {
     "type": "object",
     "properties": {
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       },
       "wait": {
         "type": "boolean",
@@ -21,8 +21,6 @@
         "description": "Time interval between each container state check in ms, default to 2s."
       }
     },
-    "required": [
-      "container"
-    ]
+    "required": ["name"]
   }
 }

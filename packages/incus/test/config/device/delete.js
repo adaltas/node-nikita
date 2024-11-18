@@ -14,16 +14,16 @@ describe("incus.config.device.delete", function () {
         },
         async function () {
           await this.incus.delete({
-            container: "nikita-config-device-delete-1",
+            name: "nikita-config-device-delete-1",
             force: true,
           });
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-config-device-delete-1",
+            name: "nikita-config-device-delete-1",
           });
           const { $status } = await this.incus.config.device.delete({
             device: "nondevice",
-            container: "nikita-config-device-delete-1",
+            name: "nikita-config-device-delete-1",
           });
           $status.should.be.false();
         },
@@ -39,15 +39,15 @@ describe("incus.config.device.delete", function () {
         },
         async function () {
           await this.incus.delete({
-            container: "nikita-config-device-delete-2",
+            name: "nikita-config-device-delete-2",
             force: true,
           });
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-config-device-delete-2",
+            name: "nikita-config-device-delete-2",
           });
           await this.incus.config.device({
-            container: "nikita-config-device-delete-2",
+            name: "nikita-config-device-delete-2",
             device: "test",
             type: "unix-char",
             properties: {
@@ -57,7 +57,7 @@ describe("incus.config.device.delete", function () {
           });
           const { $status } = await this.incus.config.device.delete({
             device: "test",
-            container: "nikita-config-device-delete-2",
+            name: "nikita-config-device-delete-2",
           });
           $status.should.be.true();
         },

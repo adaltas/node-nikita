@@ -8,13 +8,13 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ config }) {
-    const { state } = await this.incus.state(config.container);
+    const { state } = await this.incus.state(config.name);
     return {
       running: state.status === "Running",
     };
   },
   metadata: {
-    argument_to_config: "container",
+    argument_to_config: "name",
     definitions: definitions,
     shy: true,
   },

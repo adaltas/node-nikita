@@ -2,8 +2,8 @@
   "config": {
     "type": "object",
     "properties": {
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       },
       "force": {
         "type": "boolean",
@@ -11,8 +11,6 @@
         "description": "If true, the container will be deleted even if running."
       }
     },
-    "required": [
-      "container"
-    ]
+    "required": ["name"]
   }
 }

@@ -25,7 +25,7 @@ export default {
       const { stdout } = await this.execute({
         command: dedent`
           command -v prlimit || exit 3
-          sudo prlimit -p $(incus info ${config.container} | awk '$1=="PID:"{print $2}')
+          sudo prlimit -p $(incus info ${config.name} | awk '$1=="PID:"{print $2}')
         `,
       });
       const limits = (function () {

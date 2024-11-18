@@ -2,8 +2,8 @@
   "config": {
     "type": "object",
     "properties": {
-      "container": {
-        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/container"
+      "name": {
+        "$ref": "module://@nikitajs/incus/init#/definitions/config/properties/name"
       },
       "target": {
         "type": "string",
@@ -15,8 +15,6 @@
         "description": "Trim the file content."
       }
     },
-    "required": [
-      "container"
-    ]
+    "required": ["name"]
   }
 }

@@ -1,5 +1,4 @@
 import fs from "node:fs/promises";
-import * as url from "node:url";
 const dirname = new URL(".", import.meta.url).pathname;
 
 const exists = async function (path) {

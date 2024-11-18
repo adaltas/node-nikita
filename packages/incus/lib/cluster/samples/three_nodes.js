@@ -165,7 +165,7 @@ nikita.log
     provision_container: async function ({ config }) {
       return await this.incus.exec({
         $header: "Node.js",
-        container: config.container,
+        name: config.name,
         command: dedent`
         command -v node && exit 42
         curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
@@ -177,7 +177,7 @@ nikita.log
     },
     // await @incus.exec
     //   $header: 'FQND'
-    //   container: config.container
+    //   name: config.name
     //   command: """
     //   fqdn=`hostnamectl status | grep 'Static hostname' | sed 's/^.* \\(.*\\)$/\\1/'`
     //   [[ $fqdn == "#{config.fqdn}" ]] && exit 3
@@ -186,7 +186,7 @@ nikita.log
     // @incus.file.push
     //   debug: true
     //   header: 'Test configuration'
-    //   container: options.container
+    //   name: options.name
     //   gid: 'nikita'
     //   uid: 'nikita'
     //   source: './test.coffee'

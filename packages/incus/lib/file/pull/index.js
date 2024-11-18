@@ -19,7 +19,7 @@ export default {
       throw Error("Invalid Option: target is required");
     }
     const { $status } = await this.incus.state.running({
-      container: config.container,
+      name: config.name,
     });
     const isContainerRunning = $status;
     let isTargetIdentical;
@@ -30,9 +30,9 @@ export default {
             # Is open ssl installed on host?
             command -v openssl >/dev/null || exit 2
             # Ensure source is a file
-            incus exec ${config.container} -- [ -f "${config.source}" ] || exit 3
+            incus exec ${config.name} -- [ -f "${config.source}" ] || exit 3
             # Get source hash
-            sourceDgst=\`cat <<EOF | incus exec ${config.container} -- sh
+            sourceDgst=\`cat <<EOF | incus exec ${config.name} -- sh
             # Ensure openssl is available
             command -v openssl >/dev/null || exit 4
             # Source does not exist
@@ -77,7 +77,7 @@ export default {
       // In this current implementation, file must not be too large
       // since its content is stored in memory
       const { data, $status } = await this.incus.query({
-        path: `/1.0/instances/${config.container}/files?path=${config.source}`,
+        path: `/1.0/instances/${config.name}/files?path=${config.source}`,
         wait: true,
         format: "string",
       });

@@ -12,15 +12,14 @@ describe("incus.init", function () {
       return nikita.incus
         .init({
           image: `images:${test.images.alpine}`,
-          container:
-            "very-long-long-long-long-long-long-long-long-long-long-long-long-long-name",
+          name: "very-long-long-long-long-long-long-long-long-long-long-long-long-long-name",
         })
         .should.be.rejectedWith({
           code: "NIKITA_SCHEMA_VALIDATION_CONFIG",
           message: [
             "NIKITA_SCHEMA_VALIDATION_CONFIG:",
             "one error was found in the configuration of action `incus.init`:",
-            "#/definitions/config/properties/container/pattern config/container must match pattern",
+            "#/definitions/config/properties/name/pattern config/name must match pattern",
             '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",',
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".',
           ].join(" "),
@@ -31,14 +30,14 @@ describe("incus.init", function () {
       return nikita.incus
         .init({
           image: `images:${test.images.alpine}`,
-          container: "my_name",
+          name: "my_name",
         })
         .should.be.rejectedWith({
           code: "NIKITA_SCHEMA_VALIDATION_CONFIG",
           message: [
             "NIKITA_SCHEMA_VALIDATION_CONFIG:",
             "one error was found in the configuration of action `incus.init`:",
-            "#/definitions/config/properties/container/pattern config/container must match pattern",
+            "#/definitions/config/properties/name/pattern config/name must match pattern",
             '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",',
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".',
           ].join(" "),
@@ -49,14 +48,14 @@ describe("incus.init", function () {
       return nikita.incus
         .init({
           image: `images:${test.images.alpine}`,
-          container: "1u",
+          name: "1u",
         })
         .should.be.rejectedWith({
           code: "NIKITA_SCHEMA_VALIDATION_CONFIG",
           message: [
             "NIKITA_SCHEMA_VALIDATION_CONFIG:",
             "one error was found in the configuration of action `incus.init`:",
-            "#/definitions/config/properties/container/pattern config/container must match pattern",
+            "#/definitions/config/properties/name/pattern config/name must match pattern",
             '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",',
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".',
           ].join(" "),
@@ -67,14 +66,14 @@ describe("incus.init", function () {
       return nikita.incus
         .init({
           image: `images:${test.images.alpine}`,
-          container: "-u1",
+          name: "-u1",
         })
         .should.be.rejectedWith({
           code: "NIKITA_SCHEMA_VALIDATION_CONFIG",
           message: [
             "NIKITA_SCHEMA_VALIDATION_CONFIG:",
             "one error was found in the configuration of action `incus.init`:",
-            "#/definitions/config/properties/container/pattern config/container must match pattern",
+            "#/definitions/config/properties/name/pattern config/name must match pattern",
             '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",',
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".',
           ].join(" "),
@@ -85,14 +84,14 @@ describe("incus.init", function () {
       return nikita.incus
         .init({
           image: `images:${test.images.alpine}`,
-          container: "u1-",
+          name: "u1-",
         })
         .should.be.rejectedWith({
           code: "NIKITA_SCHEMA_VALIDATION_CONFIG",
           message: [
             "NIKITA_SCHEMA_VALIDATION_CONFIG:",
             "one error was found in the configuration of action `incus.init`:",
-            "#/definitions/config/properties/container/pattern config/container must match pattern",
+            "#/definitions/config/properties/name/pattern config/name must match pattern",
             '"(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)",',
             'pattern is "(^[a-zA-Z][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?!-)$)|(^[a-zA-Z]$)".',
           ].join(" "),
@@ -113,7 +112,7 @@ describe("incus.init", function () {
           await this.clean();
           const { $status } = await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-1",
+            name: "nikita-init-1",
           });
           $status.should.be.true();
           await this.clean();
@@ -133,11 +132,11 @@ describe("incus.init", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-2",
+            name: "nikita-init-2",
             start: true,
           });
           const { $status } = await this.incus.state.running({
-            container: "nikita-init-2",
+            name: "nikita-init-2",
           });
           $status.should.be.true();
           await this.clean();
@@ -157,7 +156,7 @@ describe("incus.init", function () {
           await this.clean();
           const { $status } = await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-3",
+            name: "nikita-init-3",
           });
           $status.should.be.true();
           await this.clean();
@@ -177,11 +176,11 @@ describe("incus.init", function () {
           await this.clean();
           await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-4",
+            name: "nikita-init-4",
           });
           const { $status } = await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-4",
+            name: "nikita-init-4",
           });
           $status.should.be.false();
           await this.clean();
@@ -205,7 +204,7 @@ describe("incus.init", function () {
           await this.clean();
           const { $status } = await this.incus.init({
             image: `images:${test.images.alpine}`,
-            container: "nikita-init-vm1",
+            name: "nikita-init-vm1",
             vm: true,
           });
           $status.should.be.true();
@@ -226,12 +225,12 @@ describe("incus.init", function () {
           registry.register("test", async function () {
             await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-init-vm2",
+              name: "nikita-init-vm2",
               vm: true,
             });
             const { $status } = await this.incus.init({
               image: `images:${test.images.alpine}`,
-              container: "nikita-init-vm2",
+              name: "nikita-init-vm2",
               vm: true,
             });
             $status.should.be.false();
