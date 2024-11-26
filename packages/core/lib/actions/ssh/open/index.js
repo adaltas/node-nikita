@@ -54,16 +54,9 @@ export default {
       await this.ssh.root(config.root);
     }
     log("DEBUG", "Establish Connection: attempt after enabling root access");
-    return await this.call(
-      {
-        $retry: 3,
-      },
-      async function () {
-        return {
-          ssh: await connect(config),
-        };
-      },
-    );
+    return {
+      ssh: await connect(config),
+    };
   },
   hooks: {
     on_action: function ({ config }) {
