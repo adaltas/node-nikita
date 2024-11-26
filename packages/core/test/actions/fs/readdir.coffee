@@ -8,7 +8,7 @@ they = mochaThey(test.config)
 
 describe 'actions.fs.readdir', ->
   return unless test.tags.posix
-  
+
   it 'get native behavior', ->
     nikita
       $tmpdir: true
@@ -22,15 +22,17 @@ describe 'actions.fs.readdir', ->
       files.should.eql ['a_dir', 'file_1', 'file_2']
       # Option `withFileTypes`
       files = await fs.readdir "#{tmpdir}/parent", withFileTypes: true
+      # console.log files.sort().map (file) -> JSON.parse JSON.stringify file
       files
       .sort()
       .map (file) -> JSON.parse JSON.stringify file # Convert Dirent to object literal
       .should.match [
-        { name: 'a_dir' }
-        { name: 'file_1', path: "#{tmpdir}/parent" }
-        { name: 'file_2', path: "#{tmpdir}/parent" }
+        { name: 'a_dir', parentPath: "#{tmpdir}/parent" }
+        { name: 'file_1', parentPath: "#{tmpdir}/parent" }
+        { name: 'file_2', parentPath: "#{tmpdir}/parent" }
       ].map (match) =>
         # Node.js 20 introduce a `path` property with the parent dir
+        # Node.js 23 remove path in favor of parentPath
         if parseInt(process.versions.node.split('.')[0], 10) < 20 then name: match.name else match
       files[0].isDirectory().should.be.true()
       files[1].isFile().should.be.true()
