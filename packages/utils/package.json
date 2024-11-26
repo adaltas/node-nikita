@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "dedent": "^1.5.3",
-    "each": "^2.7.0",
+    "each": "^2.7.2",
     "mixme": "^1.1.0",
     "regexp-quote": "^0.0.0",
     "semver": "^7.6.3",
