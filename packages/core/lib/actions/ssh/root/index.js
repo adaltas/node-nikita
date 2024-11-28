@@ -14,19 +14,10 @@ const definitions = JSON.parse(
 // Action
 export default {
   handler: async function ({ metadata, config, tools: { log } }) {
-    if (config.host == null) {
-      config.host = config.ip;
-    }
-    // config.command ?= 'su -'
-    if (config.username == null) {
-      config.username = null;
-    }
-    if (config.password == null) {
-      config.password = null;
-    }
-    if (config.selinux == null) {
-      config.selinux = false;
-    }
+    config.host ??= config.ip;
+    config.username ??= null;
+    config.password ??= null;
+    config.selinux ??= false;
     if (config.selinux === true) {
       config.selinux = "permissive";
     }
