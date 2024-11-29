@@ -13,10 +13,11 @@
           }
         ],
         "default": "127.0.0.1",
-        "description": "Hostname or IP address of the remote server."
+        "description": "The address used for the connection. Hostname or IP address of the remote server."
       },
       "ip": {
         "type": "string",
+        "format": "ipv4",
         "description": "IP address of the remote server, used if `host` isn't already defined."
       },
       "password": {

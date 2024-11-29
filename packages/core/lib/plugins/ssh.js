@@ -15,6 +15,8 @@ import log from "@nikitajs/core/plugins/tools/log";
 import status from "@nikitajs/core/plugins/output/status";
 import raw from "@nikitajs/core/plugins/metadata/raw";
 import history from "@nikitajs/core/plugins/history";
+import metadata_schema from "@nikitajs/core/plugins/metadata/schema";
+import tools_schema from "@nikitajs/core/plugins/tools/schema";
 
 // Plugin
 export default {
@@ -26,7 +28,16 @@ export default {
       if (action.ssh && !utils.ssh.is(action.ssh)) {
         let { ssh } = await session({
           // Inject `tools.log` and its depedendencies
-          $plugins: [events, find, log, status, raw, history], // Need to inject `tools.log`
+          $plugins: [
+            events,
+            find,
+            history,
+            log,
+            metadata_schema,
+            raw,
+            status,
+            tools_schema,
+          ], // Need to inject `tools.log`
         }).ssh.open(action.ssh);
         action.metadata.ssh_dispose = true;
         action.ssh = ssh;
