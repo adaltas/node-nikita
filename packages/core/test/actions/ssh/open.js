@@ -6,13 +6,21 @@ import mochaThey from "mocha-they";
 const they = mochaThey(test.config.filter(({ ssh }) => !!ssh));
 
 describe("actions.ssh.open", function () {
-  describe("schema", function () {
+  describe("validation", function () {
     if (!test.tags.api) return;
 
-    they("config.host", function ({ ssh }) {
+    they("schema config.host", function ({ ssh }) {
       return nikita.ssh
-        .open({ ...ssh, host: "_invalid_", debug: undefined })
+        .open({ ...ssh, host: "_invalid_" })
         .should.be.rejectedWith({ code: "NIKITA_SCHEMA_VALIDATION_CONFIG" });
+    });
+
+    they("private key not found", function ({ ssh }) {
+      return nikita.ssh
+        .open({ ...ssh, private_key_path: "_invalid_" })
+        .should.be.rejectedWith({
+          code: "NIKITA_SSH_OPEN_PRIVATE_KEY_NOT_FOUND",
+        });
     });
   });
 

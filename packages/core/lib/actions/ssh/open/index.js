@@ -25,10 +25,15 @@ export default {
       log("DEBUG", `Read Private Key from: ${config.private_key_path}`);
       const location = await utils.tilde.normalize(config.private_key_path);
       try {
-        ({ data: config.private_key } = await fs.readFile(location, "ascii"));
+        config.private_key = await fs
+          .readFile(location, "ascii")
+          .then(({ data }) => data);
       } catch (error) {
         if (error.code === "ENOENT") {
-          throw Error(`Private key doesnt exists: ${JSON.stringify(location)}`);
+          throw utils.error(
+            "NIKITA_SSH_OPEN_PRIVATE_KEY_NOT_FOUND",
+            `private key doesnt exists: ${JSON.stringify(location)}`,
+          );
         }
         throw error;
       }
@@ -40,12 +45,10 @@ export default {
         `Read Private Key: ${JSON.stringify(config.private_key_path)}`,
       );
       const conn = await connect(config);
-      log("Connection is established");
-      return {
-        ssh: conn,
-      };
+      log("SSH connection is established");
+      return { ssh: conn };
     } catch {
-      log("WARN", "Connection failed");
+      log("WARN", "SSH connection failed");
       // Continue to bootstrap root access
     }
     // Enable root access
@@ -62,14 +65,10 @@ export default {
     on_action: function ({ config }) {
       config.private_key ??= config.privateKey;
       // Define host from ip
-      if (config.ip && !config.host) {
-        config.host = config.ip;
-      }
+      config.host ??= config.ip;
       // Default root properties
       config.root ??= {};
-      if (config.root.ip && !config.root.host) {
-        config.root.host = config.root.ip;
-      }
+      config.root.host ??= config.root.ip;
       config.root.host ??= config.host;
       config.root.port ??= config.port;
     },
