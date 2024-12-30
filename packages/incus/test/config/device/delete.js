@@ -37,29 +37,39 @@ describe("incus.config.device.delete", function () {
         {
           $ssh: ssh,
         },
-        async function () {
-          await this.incus.delete({
-            name: "nikita-config-device-delete-2",
-            force: true,
+        async function ({ registry }) {
+          registry.register("clean", async function () {
+            await this.incus.delete({
+              name: "nikita-config-device-delete-2",
+              force: true,
+            });
           });
-          await this.incus.init({
-            image: `images:${test.images.alpine}`,
-            name: "nikita-config-device-delete-2",
+          registry.register("test", async function () {
+            await this.incus.init({
+              image: `images:${test.images.alpine}`,
+              name: "nikita-config-device-delete-2",
+            });
+            await this.incus.config.device({
+              name: "nikita-config-device-delete-2",
+              device: "test",
+              type: "unix-char",
+              properties: {
+                source: "/dev/urandom",
+                path: "/testrandom",
+              },
+            });
+            const { $status } = await this.incus.config.device.delete({
+              device: "test",
+              name: "nikita-config-device-delete-2",
+            });
+            $status.should.be.true();
           });
-          await this.incus.config.device({
-            name: "nikita-config-device-delete-2",
-            device: "test",
-            type: "unix-char",
-            properties: {
-              source: "/dev/urandom",
-              path: "/testrandom",
-            },
-          });
-          const { $status } = await this.incus.config.device.delete({
-            device: "test",
-            name: "nikita-config-device-delete-2",
-          });
-          $status.should.be.true();
+          try {
+            await this.clean();
+            await this.test();
+          } finally {
+            await this.clean();
+          }
         },
       );
     };
