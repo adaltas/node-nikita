@@ -210,7 +210,6 @@ describe("incus.cluster", function () {
             code: config.enabled ? 0 : 1,
           });
         });
-
         try {
           await this.clean();
           await this.test({ enabled: true });

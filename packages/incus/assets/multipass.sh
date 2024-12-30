@@ -1,8 +1,6 @@
 #/bin/bash
 set -e
 
-
-
 help(){
   echo """
 Usage:
