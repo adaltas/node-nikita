@@ -1,5 +1,10 @@
 {
   "private": true,
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
@@ -12,7 +17,12 @@
     "glob": "^11.0.0",
     "husky": "^9.1.7",
     "lerna": "^8.1.9",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.4.0"
+  },
+  "lint-staged": {
+    "*.js": "npm run lint:fix",
+    "*.md": "prettier -w"
   },
   "scripts": {
     "compile": "lerna run compile",
@@ -22,23 +32,19 @@
     "lint": "lerna run lint",
     "lint:check": "eslint",
     "lint:fix": "eslint --fix",
+    "lint:staged": "npx lint-staged",
     "test": "lerna run test",
     "test:local": "lerna run test:local",
     "goodies:incus:macos": "./packages/incus/assets/multipass.sh",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "check-packages": "yarn clean && yarn compile && yarn test && yarn lint",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "workspaces": [
     "docs/*",
     "extra/*",
     "packages/*"
   ],
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
   "type": "module",
   "packageManager": "yarn@1.22.22"
 }
