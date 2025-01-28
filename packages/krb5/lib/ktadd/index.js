@@ -72,11 +72,9 @@ export default {
           kvno: parseInt(values[8], 10),
         };
         log(
-          "INFO",
           `Keytab kvno '${keytab[config.principal].kvno}', principal kvno '${princ.kvno}'`,
         );
         log(
-          "INFO",
           `Keytab mdate '${new Date(keytab[config.principal].mdate)}', principal mdate '${new Date(princ.mdate)}'`,
         );
       }
