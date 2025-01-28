@@ -33,13 +33,13 @@
     "@nikitajs/service": "^1.0.0-alpha.9",
     "dayjs": "^1.11.13",
     "dedent": "^1.5.3",
-    "jsesc": "^3.0.2",
-    "mixme": "^1.1.0"
+    "jsesc": "^3.1.0",
+    "mixme": "^2.0.0"
   },
   "devDependencies": {
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mocha": "^10.8.2",
+    "mocha": "^11.1.0",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },

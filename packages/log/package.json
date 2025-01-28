@@ -35,12 +35,12 @@
   ],
   "dependencies": {
     "colors": "^1.4.0",
-    "mixme": "^1.1.0",
+    "mixme": "^2.0.0",
     "pad": "^3.3.0"
   },
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "mocha": "^10.8.2",
+    "mocha": "^11.1.0",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },

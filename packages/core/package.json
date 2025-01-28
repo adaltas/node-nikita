@@ -46,11 +46,11 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "ajv-keywords": "^5.1.0",
-    "chalk": "^5.3.0",
+    "chalk": "^5.4.1",
     "dedent": "^1.5.3",
     "each": "^2.7.2",
     "minimatch": "^10.0.1",
-    "mixme": "^1.1.0",
+    "mixme": "^2.0.0",
     "pad": "^3.3.0",
     "plug-and-play": "^2.5.8",
     "regexp-quote": "^0.0.0",
@@ -61,12 +61,12 @@
     "ssh2-fs": "^1.3.3",
     "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mocha": "^10.8.2",
+    "mocha": "^11.1.0",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
