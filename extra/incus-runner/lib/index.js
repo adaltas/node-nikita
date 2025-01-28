@@ -103,8 +103,8 @@ export default function (config) {
       },
       state: {
         description: `Print machine state and information.`,
-        handler: function ({ params }) {
-          return nikita({
+        handler: async function ({ params }) {
+          const { state } = await nikita({
             $debug: params.debug,
           })
             .log.cli({
@@ -120,6 +120,14 @@ export default function (config) {
               ...config,
               ...params,
             });
+          setImmediate(() => {
+            process.stdout.write(
+              state === "NOT_CREATED" ?
+                "Container is not created."
+              : `State could not be found, found ${state}.`,
+            );
+            process.stdout.write("\n");
+          });
         },
       },
       run: {
