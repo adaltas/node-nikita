@@ -10,7 +10,7 @@ time the `log` function is called with the `log`, `config` and `metadata` argume
 */
 
 import path from "node:path";
-import stackTrace from "stack-trace";
+import { get } from "stack-trace";
 import { is_object_literal, mutate } from "mixme";
 import utils from "@nikitajs/core/utils";
 
@@ -77,7 +77,7 @@ export default {
           log.depth = action.metadata.depth;
           log.index = action.metadata.index;
           log.position = action.metadata.position;
-          const frame = stackTrace.get()[1];
+          const frame = get()[1];
           log.filename = frame.getFileName();
           log.file = path.basename(frame.getFileName());
           log.line = frame.getLineNumber();

@@ -24,7 +24,7 @@
   ],
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "mocha": "^11.1.0",
+    "mocha": "^11.7.6",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
@@ -71,7 +71,7 @@
     "test:local": "mocha 'test/**/*.coffee'"
   },
   "dependencies": {
-    "mixme": "^2.0.0"
+    "mixme": "^2.0.2"
   },
   "type": "module"
 }

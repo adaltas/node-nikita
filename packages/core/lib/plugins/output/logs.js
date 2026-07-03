@@ -5,7 +5,7 @@ Return events emitted inside the action.
 */
 
 import { is_object_literal } from "mixme";
-import stackTrace from "stack-trace";
+import { get } from "stack-trace";
 import path from "node:path";
 
 export default {
@@ -29,7 +29,7 @@ export default {
               return log;
             }
             // Re-compute filename
-            const frame = stackTrace.get()[1];
+            const frame = get()[1];
             log.filename = frame.getFileName();
             log.file = path.basename(frame.getFileName());
             log.line = frame.getLineNumber();

@@ -30,12 +30,12 @@
   ],
   "dependencies": {
     "@nikitajs/file": "^1.0.0-alpha.9",
-    "dedent": "^1.5.3"
+    "dedent": "^1.7.2"
   },
   "devDependencies": {
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mocha": "^11.1.0",
+    "mocha": "^11.7.6",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },

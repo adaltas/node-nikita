@@ -39,19 +39,19 @@
     }
   ],
   "dependencies": {
-    "dedent": "^1.5.3",
+    "dedent": "^1.7.2",
     "each": "^2.7.2",
-    "mixme": "^2.0.0",
+    "mixme": "^2.0.2",
     "regexp-quote": "^0.0.0",
-    "semver": "^7.6.3",
+    "semver": "^7.8.5",
     "ssh2-connect": "^4.2.0",
     "tilde-expansion": "^0.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.7",
-    "@babel/preset-env": "^7.26.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "coffeescript": "^2.7.0",
-    "mocha": "^11.1.0",
+    "mocha": "^11.7.6",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },

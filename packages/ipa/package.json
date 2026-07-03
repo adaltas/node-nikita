@@ -26,13 +26,13 @@
     }
   ],
   "dependencies": {
-    "object-diff": "^0.0.4"
+    "object-diff": "^2.0.0"
   },
   "devDependencies": {
     "@nikitajs/incus-runner": "^1.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mixme": "^2.0.0",
-    "mocha": "^11.1.0",
+    "mixme": "^2.0.2",
+    "mocha": "^11.7.6",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },

@@ -35,18 +35,18 @@
   ],
   "dependencies": {
     "cson": "^8.4.0",
-    "dedent": "^1.5.3",
-    "diff": "^7.0.0",
-    "handlebars": "^4.7.8",
-    "ini": "^5.0.0",
-    "mixme": "^2.0.0",
+    "dedent": "^1.7.2",
+    "diff": "^9.0.0",
+    "handlebars": "^4.7.9",
+    "ini": "^7.0.0",
+    "mixme": "^2.0.2",
     "xmlbuilder": "^15.1.1",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
     "@nikitajs/log": "^2.0.0-alpha.6",
     "coffeescript": "^2.7.0",
-    "mocha": "^11.1.0",
+    "mocha": "^11.7.6",
     "mocha-they": "^0.1.11",
     "should": "^13.2.3"
   },
