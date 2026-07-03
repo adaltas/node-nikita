@@ -3,24 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/nikita@1.0.0-alpha.1...nikita@1.0.0-alpha.2) (2021-08-30)
+# [1.0.0-alpha.10](https://github.com/adaltas/node-nikita/compare/nikita@1.0.0-alpha.9...nikita@1.0.0-alpha.10) (2026-07-03)
 
+**Note:** Version bump only for package nikita
+
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/nikita@1.0.0-alpha.1...nikita@1.0.0-alpha.2) (2021-08-30)
 
 ### Bug Fixes
 
-* **nikita:** register system ([5761436](https://github.com/adaltas/node-nikita/commit/5761436a40e28b1d12d8bae59e73a6b41bc59603))
-
-
-
-
+- **nikita:** register system ([5761436](https://github.com/adaltas/node-nikita/commit/5761436a40e28b1d12d8bae59e73a6b41bc59603))
 
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/nikita@1.0.0-alpha.0...nikita@1.0.0-alpha.1) (2021-03-10)
 
 **Note:** Version bump only for package nikita
-
-
-
-
 
 # [1.0.0-alpha.0](https://github.com/adaltas/node-nikita/compare/nikita@0.9.7...nikita@1.0.0-alpha.0) (2021-02-03)
 

@@ -3,47 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@1.0.0-alpha.1...@nikitajs/lxd@1.0.0-alpha.2) (2021-08-30)
-
+# [1.0.0-alpha.10](https://github.com/adaltas/node-nikita/compare/@nikitajs/incus@1.0.0-alpha.9...@nikitajs/incus@1.0.0-alpha.10) (2026-07-03)
 
 ### Bug Fixes
 
-* log dependency declarations ([0469f05](https://github.com/adaltas/node-nikita/commit/0469f05d0ef5d3675f21bbd260b2dcfe94bfa3a7))
-
+- **incus:** init schema description ([575d82a](https://github.com/adaltas/node-nikita/commit/575d82abd9d411d9fc358505490d1e5f92ebe056))
+- **incus:** remove trailing question mark when no query params ([905f5db](https://github.com/adaltas/node-nikita/commit/905f5db0125dfd45757831d00f028fbe97deaa39))
 
 ### Features
 
-* **lxd:** add list actions for instances and networks ([97927bc](https://github.com/adaltas/node-nikita/commit/97927bcc0fb495098a26e8d36bc6cc66dda654e4))
-* **lxd:** add stop and delete actions to lxc.cluster ([0b94441](https://github.com/adaltas/node-nikita/commit/0b944419c6b8918e085a00ae02ee90e80b9a8c3e))
-* **lxd:** replace ip with native ipv4.address ([49137f8](https://github.com/adaltas/node-nikita/commit/49137f857d59e8acfdc22c2a53819ff7e30ea6cb))
-* **lxd:** schema migration ([058ec1e](https://github.com/adaltas/node-nikita/commit/058ec1ec3faefed3b75e29f98f4b689b2c5005aa))
-* **lxd:** support for apk and rc in cluster ([cb2da1c](https://github.com/adaltas/node-nikita/commit/cb2da1cf5c7c7f4f72e83bded982278192530ad1))
+- **incus:** new exists, set and show network actions ([43218d3](https://github.com/adaltas/node-nikita/commit/43218d3d1f7b05c82eb8da38a7b6e0e5fbdd8156))
+- **incus:** new project create and delete actions ([ca3f0e9](https://github.com/adaltas/node-nikita/commit/ca3f0e9ed09d422d3a35b4e26dd1b59c32f40735))
+- **incus:** new project exists action ([a09d005](https://github.com/adaltas/node-nikita/commit/a09d00547f5d7b858d698a12fc6e1e59721a114b))
+- **incus:** new project list action ([1d7e002](https://github.com/adaltas/node-nikita/commit/1d7e00277e48a2ea2fde50945e30a61535c658ae))
+- **incus:** new query property ([dd8a6fc](https://github.com/adaltas/node-nikita/commit/dd8a6fc23c9909b953e67267fa9d464a26b82158))
+- **incus:** new storage set action ([234659f](https://github.com/adaltas/node-nikita/commit/234659f11049592e241d5fb2161842495b73839c))
+- **incus:** new storage show action ([33f4c1c](https://github.com/adaltas/node-nikita/commit/33f4c1c2525a0cdc334250cf7b320629ddf477aa))
+- **incus:** query data stringify ([6929cf2](https://github.com/adaltas/node-nikita/commit/6929cf2e4c75154012b7b3ff34644ffbcde5ace0))
+- latest dependencies ([22c094f](https://github.com/adaltas/node-nikita/commit/22c094f1f3230501e24744fd14d45c823ccddad9))
 
+# [1.0.0-alpha.2](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@1.0.0-alpha.1...@nikitajs/lxd@1.0.0-alpha.2) (2021-08-30)
 
+### Bug Fixes
 
+- log dependency declarations ([0469f05](https://github.com/adaltas/node-nikita/commit/0469f05d0ef5d3675f21bbd260b2dcfe94bfa3a7))
 
+### Features
+
+- **lxd:** add list actions for instances and networks ([97927bc](https://github.com/adaltas/node-nikita/commit/97927bcc0fb495098a26e8d36bc6cc66dda654e4))
+- **lxd:** add stop and delete actions to lxc.cluster ([0b94441](https://github.com/adaltas/node-nikita/commit/0b944419c6b8918e085a00ae02ee90e80b9a8c3e))
+- **lxd:** replace ip with native ipv4.address ([49137f8](https://github.com/adaltas/node-nikita/commit/49137f857d59e8acfdc22c2a53819ff7e30ea6cb))
+- **lxd:** schema migration ([058ec1e](https://github.com/adaltas/node-nikita/commit/058ec1ec3faefed3b75e29f98f4b689b2c5005aa))
+- **lxd:** support for apk and rc in cluster ([cb2da1c](https://github.com/adaltas/node-nikita/commit/cb2da1cf5c7c7f4f72e83bded982278192530ad1))
 
 # [1.0.0-alpha.1](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@1.0.0-alpha.0...@nikitajs/lxd@1.0.0-alpha.1) (2021-03-10)
 
-
 ### Bug Fixes
 
-* **lxd:** openssl status in cluster ([e206c18](https://github.com/adaltas/node-nikita/commit/e206c1828721d5fb51904426ee5dea5c2c9f5885))
-
+- **lxd:** openssl status in cluster ([e206c18](https://github.com/adaltas/node-nikita/commit/e206c1828721d5fb51904426ee5dea5c2c9f5885))
 
 ### Features
 
-* **lxd:** argument to config in delete ([d19391b](https://github.com/adaltas/node-nikita/commit/d19391b99672493a35e6822aabf7953020318bd9))
-* **lxd:** argument to config in storage delete ([9a6763a](https://github.com/adaltas/node-nikita/commit/9a6763a5224b5c7622106af3cac7b24d5a9b7aeb))
-* **lxd:** exec.cwd config ([0d3d7f4](https://github.com/adaltas/node-nikita/commit/0d3d7f415da5f9524daec925ba87a88023b0f2f6))
-* **lxd:** exec.user config ([8019f8a](https://github.com/adaltas/node-nikita/commit/8019f8a20def0481d3e9389a699461abd78d6255))
-* **lxd:** openssl install with apt in cluster ([d706807](https://github.com/adaltas/node-nikita/commit/d706807c3d81aca1335e64199f112b4239f78dae))
-* **lxd:** option env in exec ([5a904b0](https://github.com/adaltas/node-nikita/commit/5a904b0a7c174619ee78cb39a6cb71878a385301))
-* schema coercion ([9e52391](https://github.com/adaltas/node-nikita/commit/9e52391852a8e45b35674faa44f17747303b2851))
-
-
-
-
+- **lxd:** argument to config in delete ([d19391b](https://github.com/adaltas/node-nikita/commit/d19391b99672493a35e6822aabf7953020318bd9))
+- **lxd:** argument to config in storage delete ([9a6763a](https://github.com/adaltas/node-nikita/commit/9a6763a5224b5c7622106af3cac7b24d5a9b7aeb))
+- **lxd:** exec.cwd config ([0d3d7f4](https://github.com/adaltas/node-nikita/commit/0d3d7f415da5f9524daec925ba87a88023b0f2f6))
+- **lxd:** exec.user config ([8019f8a](https://github.com/adaltas/node-nikita/commit/8019f8a20def0481d3e9389a699461abd78d6255))
+- **lxd:** openssl install with apt in cluster ([d706807](https://github.com/adaltas/node-nikita/commit/d706807c3d81aca1335e64199f112b4239f78dae))
+- **lxd:** option env in exec ([5a904b0](https://github.com/adaltas/node-nikita/commit/5a904b0a7c174619ee78cb39a6cb71878a385301))
+- schema coercion ([9e52391](https://github.com/adaltas/node-nikita/commit/9e52391852a8e45b35674faa44f17747303b2851))
 
 # [1.0.0-alpha.0](https://github.com/adaltas/node-nikita/compare/@nikitajs/lxd@0.9.7...@nikitajs/lxd@1.0.0-alpha.0) (2021-02-03)
 
@@ -57,21 +64,23 @@ lxd: start/stop cluster log
 ## 0.9.6
 
 New features:
-* lxd.exec: reduce collision risk in heredoc
-* lxd.show: new action
-* lxd.cluster: refactor cli
-* lxd: validate container name
-* lxd: import cluster code
-* lxd.exec: enforce trap
-* lxd.goodies.prlimit: print container limits
-* file.cache: new cookies option
-* lxd.config.set: implement new action
-* lxd.config.set: new action
-* lxd.config.device.exists: new action
-* lxd.running: new action
-* lxd: added network actions
-* lxd.stop: new action
-* lxd.start: new action
+
+- lxd.exec: reduce collision risk in heredoc
+- lxd.show: new action
+- lxd.cluster: refactor cli
+- lxd: validate container name
+- lxd: import cluster code
+- lxd.exec: enforce trap
+- lxd.goodies.prlimit: print container limits
+- file.cache: new cookies option
+- lxd.config.set: implement new action
+- lxd.config.set: new action
+- lxd.config.device.exists: new action
+- lxd.running: new action
+- lxd: added network actions
+- lxd.stop: new action
+- lxd.start: new action
 
 Cleanup:
-* package: simplify test command
+
+- package: simplify test command
