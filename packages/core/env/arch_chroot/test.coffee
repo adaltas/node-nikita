@@ -7,7 +7,7 @@ export default
     arch: 'x86_64'
     distribution: 'arch'
     # version is a moving target
-    # linux_version is automatically detected 
+    # linux_version is automatically detected
   config: [
     label: 'local'
   ,

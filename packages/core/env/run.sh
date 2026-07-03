@@ -3,7 +3,8 @@ set -e
 
 cd `pwd`/`dirname ${BASH_SOURCE}`
 
-./arch_chroot/run.sh
+node ./arch_chroot/index.js run
+./arch_chroot_docker/run.sh
 ./rocky9/run.sh
 node ./chown/index.js run
 node ./ssh/index.js run

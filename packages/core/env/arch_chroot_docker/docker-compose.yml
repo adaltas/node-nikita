@@ -1,13 +1,12 @@
-
 services:
   nodejs:
     build: .
     cap_add:
       - SYS_ADMIN # Required to use `mount`
-    container_name: nikita_core_arch_chroot_nodejs
+    container_name: nikita_core_arch_chroot_docker_nodejs
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/core/env/arch_chroot/test.coffee
-    image: nikita_core_arch_chroot
+      NIKITA_TEST_MODULE: /nikita/packages/core/env/arch_chroot_docker/test.coffee
+    image: nikita_core_arch_chroot_docker
     networks:
       - nikita
     platform: linux/amd64 # Required on Apple M1
